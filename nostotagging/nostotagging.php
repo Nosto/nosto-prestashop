@@ -98,7 +98,7 @@ class NostoTagging extends Module
         }
 
         $form_action = AdminController::$currentIndex.'&configure='.$this->name;
-        $form_action.= '&token='.Tools::getAdminTokenLite('AdminModules');
+        $form_action .= '&token='.Tools::getAdminTokenLite('AdminModules');
 
         $this->smarty->assign(array(
             'messages' => $messages,
@@ -168,8 +168,8 @@ class NostoTagging extends Module
     {
         $html = '';
 
-        $html.= $this->getCustomerTagging();
-        $html.= $this->getCartTagging();
+        $html .= $this->getCustomerTagging();
+        $html .= $this->getCartTagging();
 
         return $html;
     }
@@ -187,7 +187,7 @@ class NostoTagging extends Module
 
         /** @var $product Product */
         $product = isset($params['product']) ? $params['product'] : null;
-        $html.= $this->getProductTagging($product);
+        $html .= $this->getProductTagging($product);
 
         return $html;
     }
@@ -206,7 +206,7 @@ class NostoTagging extends Module
         $order = isset($params['objOrder']) ? $params['objOrder'] : null;
         /** @var $currency Currency */
         $currency = isset($params['currencyObj']) ? $params['currencyObj'] : null;
-        $html.= $this->getOrderTagging($order, $currency);
+        $html .= $this->getOrderTagging($order, $currency);
 
         return $html;
     }
@@ -234,7 +234,7 @@ class NostoTagging extends Module
 
         /** @var $category Category */
         $category = isset($params['category']) ? $params['category'] : null;
-        $html.= $this->getCategoryTagging($category);
+        $html .= $this->getCategoryTagging($category);
 
         return $html;
     }
@@ -356,7 +356,7 @@ class NostoTagging extends Module
         if (empty($category_list))
             return '';
 
-        return DS . implode(DS, array_reverse($category_list));
+        return DS.implode(DS, array_reverse($category_list));
     }
 
     /**
@@ -390,7 +390,8 @@ class NostoTagging extends Module
         $currency = $this->context->currency;
 
         $nosto_line_items = array();
-        foreach ($products as $product) {
+        foreach ($products as $product)
+        {
             $nosto_line_items[] = array(
                 'product_id' => $product['id_product'],
                 'quantity' => $product['quantity'],
@@ -475,7 +476,8 @@ class NostoTagging extends Module
         $nosto_order['customer'] = $order->getCustomer();
         $nosto_order['purchased_items'] = array();
 
-        foreach ($order->getProducts() as $product) {
+        foreach ($order->getProducts() as $product)
+        {
             $p = new Product($product['product_id'], false, $this->context->language->id);
             if (isset($p->id) && isset($p->name))
                 $nosto_order['purchased_items'][] = array(
