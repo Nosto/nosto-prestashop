@@ -20,9 +20,24 @@ class NostoTagging extends Module
      */
     protected $custom_hooks = array(
         array(
+            'name' => 'displayCategoryTop',
+            'title' => 'Category top',
+            'description' => 'Add new blocks above the category product list',
+        ),
+        array(
             'name' => 'displayCategoryFooter',
             'title' => 'Category footer',
-            'description' => 'Add new blocks under the category product list',
+            'description' => 'Add new blocks below the category product list',
+        ),
+        array(
+            'name' => 'displaySearchTop',
+            'title' => 'Search top',
+            'description' => 'Add new blocks above the search result list.',
+        ),
+        array(
+            'name' => 'displaySearchFooter',
+            'title' => 'Search footer',
+            'description' => 'Add new blocks below the search result list.',
         ),
     );
 
@@ -57,10 +72,18 @@ class NostoTagging extends Module
         return parent::install()
             && $this->initConfig()
             && $this->initHooks()
-            && $this->registerHook('top')
+            && $this->registerHook('displayHeader')
+            && $this->registerHook('displayTop')
+            && $this->registerHook('displayFooter')
+            && $this->registerHook('displayLeftColumn')
+            && $this->registerHook('displayRightColumn')
             && $this->registerHook('displayFooterProduct')
+            && $this->registerHook('displayShoppingCartFooter')
+            && $this->registerHook('displayOrderConfirmation')
+            && $this->registerHook('displayCategoryTop')
             && $this->registerHook('displayCategoryFooter')
-            && $this->registerHook('displayOrderConfirmation');
+            && $this->registerHook('displaySearchTop')
+            && $this->registerHook('displaySearchFooter');
     }
 
     /**
@@ -91,8 +114,8 @@ class NostoTagging extends Module
             $errors = $this->validateAdminForm();
             if (empty($errors))
             {
-                $this->setServerAddress(Tools::getValue($this->name.'_server_address'));
-                $this->setAccountName(Tools::getValue($this->name.'_account_name'));
+                $this->setServerAddress((string)Tools::getValue($this->name.'_server_address'));
+                $this->setAccountName((string)Tools::getValue($this->name.'_account_name'));
                 $messages[] = $this->l('Configuration saved');
             }
         }
@@ -160,7 +183,33 @@ class NostoTagging extends Module
     }
 
     /**
+     * Hook for adding content to the <head> section of the HTML pages.
+     *
+     * Adds the Nosto embed script.
+     *
+     * @return string The HTML to output
+     */
+    public function hookDisplayHeader()
+    {
+        $server_address = $this->getServerAddress();
+        $account_name = $this->getAccountName();
+
+        if (empty($server_address) || empty($account_name))
+            return '';
+
+        $this->smarty->assign(array(
+            'server_address' => $server_address,
+            'account_name' => $account_name,
+        ));
+
+        return $this->display(__FILE__, 'header_embed-script.tpl');
+    }
+
+    /**
      * Hook for adding content to the top of every page.
+     *
+     * Adds customer and cart tagging.
+     * Adds nosto elements.
      *
      * @return string The HTML to output
      */
@@ -170,35 +219,90 @@ class NostoTagging extends Module
 
         $html .= $this->getCustomerTagging();
         $html .= $this->getCartTagging();
+        $html .= $this->display(__FILE__, 'top_nosto-elements.tpl');
 
         return $html;
     }
 
     /**
-     * Hook for adding content below the product description on the product page.
+     * Hook for adding content to the footer of every page.
      *
-     * @param array $params
+     * Adds nosto elements.
      *
      * @return string The HTML to output
      */
-    public function hookDisplayFooterProduct($params)
+    public function hookDisplayFooter()
+    {
+        return $this->display(__FILE__, 'footer_nosto-elements.tpl');
+    }
+
+    /**
+     * Hook for adding content to the left column of every page.
+     *
+     * Adds nosto elements.
+     *
+     * @return string The HTML to output
+     */
+    public function hookDisplayLeftColumn()
+    {
+        return $this->display(__FILE__, 'left-column_nosto-elements.tpl');
+    }
+
+    /**
+     * Hook for adding content to the right column of every page.
+     *
+     * Adds nosto elements.
+     *
+     * @return string The HTML to output
+     */
+    public function hookDisplayRightColumn()
+    {
+        return $this->display(__FILE__, 'right-column_nosto-elements.tpl');
+    }
+
+    /**
+     * Hook for adding content below the product description on the product page.
+     *
+     * Adds product tagging.
+     * Adds nosto elements.
+     *
+     * @param array $params
+     * @return string The HTML to output
+     */
+    public function hookDisplayFooterProduct(Array $params)
     {
         $html = '';
 
         /** @var $product Product */
         $product = isset($params['product']) ? $params['product'] : null;
         $html .= $this->getProductTagging($product);
+        $html .= $this->display(__FILE__, 'footer-product_nosto-elements.tpl');
 
         return $html;
     }
 
     /**
+     * Hook for adding content below the product list on the shopping cart page.
+     *
+     * Adds nosto elements.
+     *
+     * @return string The HTML to output
+     */
+    public function hookDisplayShoppingCartFooter()
+    {
+        return $this->display(__FILE__, 'shopping-cart-footer_nosto-elements.tpl');
+    }
+
+    /**
      * Hook for adding content on the order confirmation page.
+     *
+     * Adds completed order tagging.
+     * Adds nosto elements.
      *
      * @param array $params
      * @return string The HTML to output
      */
-    public function hookDisplayOrderConfirmation($params)
+    public function hookDisplayOrderConfirmation(Array $params)
     {
         $html = '';
 
@@ -212,7 +316,33 @@ class NostoTagging extends Module
     }
 
     /**
-     * Hook for adding content to category page footer.
+     * Hook for adding content to category page above the product list.
+     *
+     * Adds nosto elements.
+     *
+     * Please note that in order for this hook to be executed, it will have to be added both the category controller
+     * and the theme catalog.tpl file.
+     *
+     * - CategoryController::initContent()
+     *   $this->context->smarty->assign(array(
+     *       'HOOK_CATEGORY_TOP' => Hook::exec('displayCategoryTop', array('category' => $this->category))
+     *   ));
+     *
+     * - Theme catalog.tpl
+     *   {if isset($HOOK_CATEGORY_TOP) && $HOOK_CATEGORY_TOP}{$HOOK_CATEGORY_TOP}{/if}
+     *
+     * @return string The HTML to output
+     */
+    public function hookDisplayCategoryTop()
+    {
+        return $this->display(__FILE__, 'category-top_nosto-elements.tpl');
+    }
+
+    /**
+     * Hook for adding content to category page below the product list.
+     *
+     * Adds category tagging.
+     * Adds nosto elements.
      *
      * Please note that in order for this hook to be executed, it will have to be added both the category controller
      * and the theme catalog.tpl file.
@@ -228,15 +358,62 @@ class NostoTagging extends Module
      * @param array $params
      * @return string The HTML to output
      */
-    public function hookDisplayCategoryFooter($params)
+    public function hookDisplayCategoryFooter(Array $params)
     {
         $html = '';
 
         /** @var $category Category */
         $category = isset($params['category']) ? $params['category'] : null;
         $html .= $this->getCategoryTagging($category);
+        $html .= $this->display(__FILE__, 'category-footer_nosto-elements.tpl');
 
         return $html;
+    }
+
+    /**
+     * Hook for adding content to search page above the search result list.
+     *
+     * Adds nosto elements.
+     *
+     * Please note that in order for this hook to be executed, it will have to be added both the search controller
+     * and the theme search.tpl file.
+     *
+     * - SearchController::initContent()
+     *   $this->context->smarty->assign(array(
+     *       'HOOK_SEARCH_TOP' => Hook::exec('displaySearchTop')
+     *   ));
+     *
+     * - Theme search.tpl
+     *   {if isset($HOOK_SEARCH_TOP) && $HOOK_SEARCH_TOP}{$HOOK_SEARCH_TOP}{/if}
+     *
+     * @return string The HTML to output
+     */
+    public function hookDisplaySearchTop()
+    {
+        return $this->display(__FILE__, 'search-top_nosto-elements.tpl');
+    }
+
+    /**
+     * Hook for adding content to search page below the search result list.
+     *
+     * Adds nosto elements.
+     *
+     * Please note that in order for this hook to be executed, it will have to be added both the search controller
+     * and the theme search.tpl file.
+     *
+     * - SearchController::initContent()
+     *   $this->context->smarty->assign(array(
+     *       'HOOK_SEARCH_FOOTER' => Hook::exec('displaySearchFooter')
+     *   ));
+     *
+     * - Theme search.tpl
+     *   {if isset($HOOK_SEARCH_FOOTER) && $HOOK_SEARCH_FOOTER}{$HOOK_SEARCH_FOOTER}{/if}
+     *
+     * @return string The HTML to output
+     */
+    public function hookDisplaySearchFooter()
+    {
+        return $this->display(__FILE__, 'search-footer_nosto-elements.tpl');
     }
 
     /**
@@ -248,8 +425,8 @@ class NostoTagging extends Module
     {
         $errors = array();
 
-        $server_address = Tools::getValue($this->name.'_server_address');
-        $account_name = Tools::getValue($this->name.'_account_name');
+        $server_address = (string)Tools::getValue($this->name.'_server_address');
+        $account_name = (string)Tools::getValue($this->name.'_account_name');
 
         if (!Validate::isUrl($server_address))
             $errors[] = $this->l('Server address is not a valid URL.');
@@ -319,7 +496,7 @@ class NostoTagging extends Module
      */
     protected function formatPrice($price)
     {
-        return number_format($price, 2, '.', '');
+        return number_format((float)$price, 2, '.', '');
     }
 
     /**
@@ -330,7 +507,7 @@ class NostoTagging extends Module
      */
     protected function formatDate($date)
     {
-        return date('Y-m-d', strtotime($date));
+        return date('Y-m-d', strtotime((string)$date));
     }
 
     /**
@@ -343,15 +520,13 @@ class NostoTagging extends Module
     {
         $category_list = array();
 
-        $category = new Category($category_id, $this->context->language->id);
+        $lang_id = $this->context->language->id;
+        $category = new Category((int)$category_id, $lang_id);
 
         if (Validate::isLoadedObject($category))
-        {
-            $parent_category_list = $category->getParentsCategories($this->context->language->id);
-            foreach ($parent_category_list as $parent_category)
+            foreach ($category->getParentsCategories($lang_id) as $parent_category)
                 if (isset($parent_category['name']))
                     $category_list[] = $parent_category['name'];
-        }
 
         if (empty($category_list))
             return '';
@@ -391,7 +566,6 @@ class NostoTagging extends Module
 
         $nosto_line_items = array();
         foreach ($products as $product)
-        {
             $nosto_line_items[] = array(
                 'product_id' => $product['id_product'],
                 'quantity' => $product['quantity'],
@@ -399,7 +573,6 @@ class NostoTagging extends Module
                 'unit_price' => $this->formatPrice($product['price_wt']),
                 'price_currency_code' => $currency->iso_code,
             );
-        }
 
         $this->smarty->assign(array(
             'nosto_line_items' => $nosto_line_items,
@@ -468,7 +641,8 @@ class NostoTagging extends Module
      */
     protected function getOrderTagging(Order $order, Currency $currency)
     {
-        if (!($order instanceof Order) || !($currency instanceof Currency))
+        if (!($order instanceof Order) || !Validate::isLoadedObject($order)
+            || !($currency instanceof Currency) || !Validate::isLoadedObject($currency))
             return '';
 
         $nosto_order = array();
@@ -479,7 +653,7 @@ class NostoTagging extends Module
         foreach ($order->getProducts() as $product)
         {
             $p = new Product($product['product_id'], false, $this->context->language->id);
-            if (isset($p->id) && isset($p->name))
+            if (Validate::isLoadedObject($p))
                 $nosto_order['purchased_items'][] = array(
                     'product_id' => $p->id,
                     'quantity' => $product['product_quantity'],
