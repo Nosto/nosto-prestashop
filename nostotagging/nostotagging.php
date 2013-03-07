@@ -69,8 +69,11 @@ class NostoTagging extends Module
      */
     public function install()
     {
+        require_once(dirname(__FILE__) . '/nostotagging-top-sellers-page.php');
+
         return parent::install()
             && $this->initConfig()
+            && NostoTaggingTopSellersPage::addPage()
             && $this->initHooks()
             && $this->registerHook('displayHeader')
             && $this->registerHook('displayTop')
@@ -96,7 +99,43 @@ class NostoTagging extends Module
      */
     public function uninstall()
     {
-        return parent::uninstall() && $this->deleteConfig();
+        require_once(dirname(__FILE__) . '/nostotagging-top-sellers-page.php');
+
+        return parent::uninstall()
+            && NostoTaggingTopSellersPage::deletePage()
+            && $this->deleteConfig();
+    }
+
+    /**
+     * Enables the module.
+     *
+     * @param bool $forceAll Enable module for all shops
+     * @return bool
+     */
+    public function enable($forceAll = false)
+    {
+        require_once(dirname(__FILE__) . '/nostotagging-top-sellers-page.php');
+
+        if (parent::enable($forceAll))
+        {
+            NostoTaggingTopSellersPage::enablePage();
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Disables the module.
+     *
+     * @param bool $forceAll Disable module for all shops
+     */
+    public function disable($forceAll = false)
+    {
+        require_once(dirname(__FILE__) . '/nostotagging-top-sellers-page.php');
+
+        parent::disable($forceAll);
+        NostoTaggingTopSellersPage::disablePage();
     }
 
     /**
@@ -148,14 +187,21 @@ class NostoTagging extends Module
      * Setter for the Nosto server address.
      *
      * @param string $server_address
+     * @param bool $global
      * @return bool
      */
-    public function setServerAddress($server_address)
+    public function setServerAddress($server_address, $global = false)
     {
-        return Configuration::updateValue(
-            self::NOSTOTAGGING_CONFIG_KEY_SERVER_ADDRESS,
-            $server_address
-        );
+        if (!$global)
+            return Configuration::updateValue(
+                self::NOSTOTAGGING_CONFIG_KEY_SERVER_ADDRESS,
+                $server_address
+            );
+        else
+            return Configuration::updateGlobalValue(
+                self::NOSTOTAGGING_CONFIG_KEY_SERVER_ADDRESS,
+                $server_address
+            );
     }
 
     /**
@@ -172,14 +218,21 @@ class NostoTagging extends Module
      * Setter for the Nosto account name.
      *
      * @param string $account_name
+     * @param bool $global
      * @return bool
      */
-    public function setAccountName($account_name)
+    public function setAccountName($account_name, $global = false)
     {
-        return Configuration::updateValue(
-            self::NOSTOTAGGING_CONFIG_KEY_ACCOUNT_NAME,
-            $account_name
-        );
+        if (!$global)
+            return Configuration::updateValue(
+                self::NOSTOTAGGING_CONFIG_KEY_ACCOUNT_NAME,
+                $account_name
+            );
+        else
+            return Configuration::updateGlobalValue(
+                self::NOSTOTAGGING_CONFIG_KEY_ACCOUNT_NAME,
+                $account_name
+            );
     }
 
     /**
@@ -473,8 +526,8 @@ class NostoTagging extends Module
      */
     protected function initConfig()
     {
-        return ($this->setServerAddress(self::NOSTOTAGGING_DEFAULT_SERVER_ADDRESS)
-            && $this->setAccountName(''));
+        return ($this->setServerAddress(self::NOSTOTAGGING_DEFAULT_SERVER_ADDRESS, true)
+            && $this->setAccountName('', true));
     }
 
     /**
