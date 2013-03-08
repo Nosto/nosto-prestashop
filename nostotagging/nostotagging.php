@@ -9,6 +9,7 @@ class NostoTagging extends Module
 {
     const NOSTOTAGGING_CONFIG_KEY_SERVER_ADDRESS = 'NOSTOTAGGING_SERVER_ADDRESS';
     const NOSTOTAGGING_CONFIG_KEY_ACCOUNT_NAME = 'NOSTOTAGGING_ACCOUNT_NAME';
+    const NOSTOTAGGING_CONFIG_KEY_USE_DEFAULT_NOSTO_ELEMENTS = 'NOSTOTAGGING_DEFAULT_ELEMENTS';
     const NOSTOTAGGING_DEFAULT_SERVER_ADDRESS = 'connect.nosto.com';
     const NOSTOTAGGING_PRODUCT_IN_STOCK = 'InStock';
     const NOSTOTAGGING_PRODUCT_OUT_OF_STOCK = 'OutOfStock';
@@ -150,13 +151,24 @@ class NostoTagging extends Module
 
         if (Tools::isSubmit($this->name.'_admin_submit'))
         {
+            $server_address = (string)Tools::getValue($this->name.'_server_address');
+            $account_name = (string)Tools::getValue($this->name.'_account_name');
+            $use_default_nosto_elements = (int)Tools::getValue($this->name.'_default_nosto_elements');
+
             $errors = $this->validateAdminForm();
             if (empty($errors))
             {
-                $this->setServerAddress((string)Tools::getValue($this->name.'_server_address'));
-                $this->setAccountName((string)Tools::getValue($this->name.'_account_name'));
+                $this->setServerAddress($server_address);
+                $this->setAccountName($account_name);
+                $this->setUseDefaultNostoElements($use_default_nosto_elements);
                 $messages[] = $this->l('Configuration saved');
             }
+        }
+        else
+        {
+            $server_address = $this->getServerAddress();
+            $account_name = $this->getAccountName();
+            $use_default_nosto_elements = $this->getUseDefaultNostoElements();
         }
 
         $form_action = AdminController::$currentIndex.'&configure='.$this->name;
@@ -166,8 +178,9 @@ class NostoTagging extends Module
             'messages' => $messages,
             'errors' => $errors,
             'form_action' => $form_action,
-            'server_address' => $this->getServerAddress(),
-            'account_name' => $this->getAccountName(),
+            'server_address' => $server_address,
+            'account_name' => $account_name,
+            'use_default_nosto_elements' => $use_default_nosto_elements,
         ));
 
         return $this->display(__FILE__, 'views/templates/admin/form.tpl');
@@ -180,7 +193,7 @@ class NostoTagging extends Module
      */
     public function getServerAddress()
     {
-        return Configuration::get(self::NOSTOTAGGING_CONFIG_KEY_SERVER_ADDRESS);
+        return (string)Configuration::get(self::NOSTOTAGGING_CONFIG_KEY_SERVER_ADDRESS);
     }
 
     /**
@@ -192,16 +205,16 @@ class NostoTagging extends Module
      */
     public function setServerAddress($server_address, $global = false)
     {
-        if (!$global)
-            return Configuration::updateValue(
-                self::NOSTOTAGGING_CONFIG_KEY_SERVER_ADDRESS,
-                $server_address
-            );
-        else
+        if ((bool)$global === true)
             return Configuration::updateGlobalValue(
                 self::NOSTOTAGGING_CONFIG_KEY_SERVER_ADDRESS,
-                $server_address
+                (string)$server_address
             );
+
+        return Configuration::updateValue(
+            self::NOSTOTAGGING_CONFIG_KEY_SERVER_ADDRESS,
+            (string)$server_address
+        );
     }
 
     /**
@@ -211,7 +224,7 @@ class NostoTagging extends Module
      */
     public function getAccountName()
     {
-        return Configuration::get(self::NOSTOTAGGING_CONFIG_KEY_ACCOUNT_NAME);
+        return (string)Configuration::get(self::NOSTOTAGGING_CONFIG_KEY_ACCOUNT_NAME);
     }
 
     /**
@@ -223,16 +236,47 @@ class NostoTagging extends Module
      */
     public function setAccountName($account_name, $global = false)
     {
-        if (!$global)
-            return Configuration::updateValue(
-                self::NOSTOTAGGING_CONFIG_KEY_ACCOUNT_NAME,
-                $account_name
-            );
-        else
+        if ((bool)$global === true)
             return Configuration::updateGlobalValue(
                 self::NOSTOTAGGING_CONFIG_KEY_ACCOUNT_NAME,
-                $account_name
+                (string)$account_name
             );
+
+        return Configuration::updateValue(
+            self::NOSTOTAGGING_CONFIG_KEY_ACCOUNT_NAME,
+            (string)$account_name
+        );
+    }
+
+    /**
+     * Getter for the "use default nosto elements" settings.
+     *
+     * @return int
+     */
+    public function getUseDefaultNostoElements()
+    {
+        return (int)Configuration::get(self::NOSTOTAGGING_CONFIG_KEY_USE_DEFAULT_NOSTO_ELEMENTS);
+    }
+
+    /**
+     * Setter for the "use default nosto elements" settings.
+     *
+     * @param int $value Either 1 or 0.
+     * @param bool $global
+     * @return bool
+     */
+    public function setUseDefaultNostoElements($value, $global = false)
+    {
+        if ((bool)$global === true)
+            return Configuration::updateGlobalValue(
+                self::NOSTOTAGGING_CONFIG_KEY_USE_DEFAULT_NOSTO_ELEMENTS,
+                (int)$value
+            );
+
+        return Configuration::updateValue(
+            self::NOSTOTAGGING_CONFIG_KEY_USE_DEFAULT_NOSTO_ELEMENTS,
+            (int)$value
+        );
     }
 
     /**
@@ -272,7 +316,9 @@ class NostoTagging extends Module
 
         $html .= $this->getCustomerTagging();
         $html .= $this->getCartTagging();
-        $html .= $this->display(__FILE__, 'top_nosto-elements.tpl');
+
+        if ($this->getUseDefaultNostoElements())
+            $html .= $this->display(__FILE__, 'top_nosto-elements.tpl');
 
         return $html;
     }
@@ -286,6 +332,9 @@ class NostoTagging extends Module
      */
     public function hookDisplayFooter()
     {
+        if (!$this->getUseDefaultNostoElements())
+            return '';
+
         return $this->display(__FILE__, 'footer_nosto-elements.tpl');
     }
 
@@ -298,6 +347,9 @@ class NostoTagging extends Module
      */
     public function hookDisplayLeftColumn()
     {
+        if (!$this->getUseDefaultNostoElements())
+            return '';
+
         return $this->display(__FILE__, 'left-column_nosto-elements.tpl');
     }
 
@@ -310,6 +362,9 @@ class NostoTagging extends Module
      */
     public function hookDisplayRightColumn()
     {
+        if (!$this->getUseDefaultNostoElements())
+            return '';
+
         return $this->display(__FILE__, 'right-column_nosto-elements.tpl');
     }
 
@@ -329,7 +384,9 @@ class NostoTagging extends Module
         /** @var $product Product */
         $product = isset($params['product']) ? $params['product'] : null;
         $html .= $this->getProductTagging($product);
-        $html .= $this->display(__FILE__, 'footer-product_nosto-elements.tpl');
+
+        if ($this->getUseDefaultNostoElements())
+            $html .= $this->display(__FILE__, 'footer-product_nosto-elements.tpl');
 
         return $html;
     }
@@ -343,6 +400,9 @@ class NostoTagging extends Module
      */
     public function hookDisplayShoppingCartFooter()
     {
+        if (!$this->getUseDefaultNostoElements())
+            return '';
+
         return $this->display(__FILE__, 'shopping-cart-footer_nosto-elements.tpl');
     }
 
@@ -388,6 +448,9 @@ class NostoTagging extends Module
      */
     public function hookDisplayCategoryTop()
     {
+        if (!$this->getUseDefaultNostoElements())
+            return '';
+
         return $this->display(__FILE__, 'category-top_nosto-elements.tpl');
     }
 
@@ -418,7 +481,9 @@ class NostoTagging extends Module
         /** @var $category Category */
         $category = isset($params['category']) ? $params['category'] : null;
         $html .= $this->getCategoryTagging($category);
-        $html .= $this->display(__FILE__, 'category-footer_nosto-elements.tpl');
+
+        if ($this->getUseDefaultNostoElements())
+            $html .= $this->display(__FILE__, 'category-footer_nosto-elements.tpl');
 
         return $html;
     }
@@ -443,6 +508,9 @@ class NostoTagging extends Module
      */
     public function hookDisplaySearchTop()
     {
+        if (!$this->getUseDefaultNostoElements())
+            return '';
+
         return $this->display(__FILE__, 'search-top_nosto-elements.tpl');
     }
 
@@ -466,6 +534,9 @@ class NostoTagging extends Module
      */
     public function hookDisplaySearchFooter()
     {
+        if (!$this->getUseDefaultNostoElements())
+            return '';
+
         return $this->display(__FILE__, 'search-footer_nosto-elements.tpl');
     }
 
@@ -480,6 +551,7 @@ class NostoTagging extends Module
 
         $server_address = (string)Tools::getValue($this->name.'_server_address');
         $account_name = (string)Tools::getValue($this->name.'_account_name');
+        $default_nosto_elements = (int)Tools::getValue($this->name.'_default_nosto_elements');
 
         if (!Validate::isUrl($server_address))
             $errors[] = $this->l('Server address is not a valid URL.');
@@ -489,6 +561,9 @@ class NostoTagging extends Module
 
         if (empty($account_name))
             $errors[] = $this->l('Account name cannot be empty.');
+
+        if ($default_nosto_elements !== 0 && $default_nosto_elements !== 1)
+            $errors[] = $this->l('Use default nosto elements setting is invalid.');
 
         return $errors;
     }
@@ -527,7 +602,8 @@ class NostoTagging extends Module
     protected function initConfig()
     {
         return ($this->setServerAddress(self::NOSTOTAGGING_DEFAULT_SERVER_ADDRESS, true)
-            && $this->setAccountName('', true));
+            && $this->setAccountName('', true)
+            && $this->setUseDefaultNostoElements(1, true));
     }
 
     /**
@@ -538,7 +614,8 @@ class NostoTagging extends Module
     protected function deleteConfig()
     {
         return (Configuration::deleteByName(self::NOSTOTAGGING_CONFIG_KEY_SERVER_ADDRESS)
-            && Configuration::deleteByName(self::NOSTOTAGGING_CONFIG_KEY_ACCOUNT_NAME));
+            && Configuration::deleteByName(self::NOSTOTAGGING_CONFIG_KEY_ACCOUNT_NAME)
+            && Configuration::deleteByName(self::NOSTOTAGGING_CONFIG_KEY_USE_DEFAULT_NOSTO_ELEMENTS));
     }
 
     /**

@@ -28,7 +28,9 @@
             <input id="nosto-server-address" type="text" name="nostotagging_server_address"
                    value="{$server_address|escape:'htmlall':'UTF-8'}"/>
             <sup>*</sup>
-            <p class="preference_description">{l s='The server address for the Nosto marketing automation service.'}</p>
+            <p class="preference_description">
+				{l s='The server address for the Nosto marketing automation service.'}
+			</p>
         </div>
 
         <label for="nosto-account-name">{l s='Account name'}</label>
@@ -39,17 +41,21 @@
             <p class="preference_description">{l s='Your Nosto marketing automation service account name.'}</p>
         </div>
 
-        <label>{l s='Default elements'}</label>
+        <label>{l s='Use default nosto elements'}</label>
         <div class="margin-form">
-            <input type="radio" id="nosto-default-elements-on" name="nostotagging_default_elements" value="1"/>
-            <label class="t"  for="nosto-default-elements-on">
+            <input type="radio" id="nosto-default-nosto-elements-on" name="nostotagging_default_nosto_elements"
+				   value="1" {if $use_default_nosto_elements eq 1}checked="checked"{/if} />
+            <label class="t"  for="nosto-default-nosto-elements-on">
 				<img src="../img/admin/enabled.gif" alt="Enabled" title="Enabled">
 			</label>
-            <input type="radio" id="nosto-default-elements-off" name="nostotagging_default_elements" value="0"/>
-            <label class="t" for="nosto-default-elements-off">
+            <input type="radio" id="nosto-default-nosto-elements-off" name="nostotagging_default_nosto_elements"
+				   value="0" {if $use_default_nosto_elements eq 0}checked="checked"{/if}/>
+            <label class="t" for="nosto-default-nosto-elements-off">
                 <img src="../img/admin/disabled.gif" alt="Disabled" title="Disabled">
             </label>
-            <p class="preference_description">{l s='Use default placeholder elements for showing product recommendations.'}</p>
+            <p class="preference_description">
+				{l s='Use default nosto elements for showing product recommendations.'}
+			</p>
         </div>
 
         <div class="margin-form">
