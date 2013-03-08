@@ -777,8 +777,11 @@ class NostoTagging extends Module
         $nosto_product['product_id'] = (int)$product->id;
         $nosto_product['name'] = (string)$product->name;
 
-        $link = $this->context->link;
-        $image_url = $link->getImageLink($product->link_rewrite, $product->getCoverWs(), 'large_default');
+        $image_id = $product->getCoverWs();
+        if (ctype_digit((string)$image_id))
+            $image_url =  $this->context->link->getImageLink($product->link_rewrite, $image_id, 'large_default');
+        else
+            $image_url = '';
         $nosto_product['image_url'] = (string)$image_url;
 
         $nosto_product['price'] = $this->formatPrice($product->getPrice());

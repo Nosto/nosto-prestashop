@@ -3,7 +3,9 @@
 		<span class="url">{$nosto_product.url}</span>
 		<span class="product_id">{$nosto_product.product_id}</span>
 		<span class="name">{$nosto_product.name|escape:'htmlall':'UTF-8'}</span>
-		<span class="image_url">{$nosto_product.image_url}</span>
+		{if $nosto_product.image_url neq ''}
+			<span class="image_url">{$nosto_product.image_url}</span>
+		{/if}
 		<span class="price">{$nosto_product.price}</span>
         <span class="list_price">{$nosto_product.list_price}</span>
 		<span class="price_currency_code">{$nosto_product.price_currency_code}</span>
