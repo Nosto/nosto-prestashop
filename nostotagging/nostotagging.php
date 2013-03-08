@@ -70,7 +70,7 @@ class NostoTagging extends Module
      */
     public function install()
     {
-        require_once(dirname(__FILE__) . '/nostotagging-top-sellers-page.php');
+        require_once(dirname(__FILE__).'/nostotagging-top-sellers-page.php');
 
         return parent::install()
             && $this->initConfig()
@@ -100,7 +100,7 @@ class NostoTagging extends Module
      */
     public function uninstall()
     {
-        require_once(dirname(__FILE__) . '/nostotagging-top-sellers-page.php');
+        require_once(dirname(__FILE__).'/nostotagging-top-sellers-page.php');
 
         return parent::uninstall()
             && NostoTaggingTopSellersPage::deletePage()
@@ -110,80 +110,155 @@ class NostoTagging extends Module
     /**
      * Enables the module.
      *
-     * @param bool $forceAll Enable module for all shops
+     * @param bool $force_all Enable module for all shops
      * @return bool
      */
-    public function enable($forceAll = false)
+    public function enable($force_all = false)
     {
-        require_once(dirname(__FILE__) . '/nostotagging-top-sellers-page.php');
+        require_once(dirname(__FILE__).'/nostotagging-top-sellers-page.php');
 
-        if (parent::enable($forceAll))
-        {
-            NostoTaggingTopSellersPage::enablePage();
-            return true;
-        }
+        if (!parent::enable($force_all))
+            return false;
 
-        return false;
+        NostoTaggingTopSellersPage::enablePage();
+
+        return true;
     }
 
     /**
      * Disables the module.
      *
-     * @param bool $forceAll Disable module for all shops
+     * @param bool $force_all Disable module for all shops
      */
-    public function disable($forceAll = false)
+    public function disable($force_all = false)
     {
-        require_once(dirname(__FILE__) . '/nostotagging-top-sellers-page.php');
+        require_once(dirname(__FILE__).'/nostotagging-top-sellers-page.php');
 
-        parent::disable($forceAll);
+        parent::disable($force_all);
+
         NostoTaggingTopSellersPage::disablePage();
     }
 
     /**
-     * Renders the HTML for the module configuration form.
+     * Renders the module administration form.
+     * Also handles the form submit action.
      *
-     * @return string The admin form HTML
+     * @return string The HTML to output.
      */
     public function getContent()
     {
-        $messages = array();
-        $errors = array();
+        $output = '';
 
-        if (Tools::isSubmit($this->name.'_admin_submit'))
+        if (Tools::isSubmit('submit'.$this->name))
         {
             $server_address = (string)Tools::getValue($this->name.'_server_address');
             $account_name = (string)Tools::getValue($this->name.'_account_name');
-            $use_default_nosto_elements = (int)Tools::getValue($this->name.'_default_nosto_elements');
+            $default_nosto_elements = (int)Tools::getValue($this->name.'_default_elements');
 
-            $errors = $this->validateAdminForm();
-            if (empty($errors))
+            if (!Validate::isUrl($server_address))
+                $output .= $this->displayError($this->l('Server address is not a valid URL.'));
+
+            if (preg_match('@^https?://@i', $server_address))
+                $output .= $this->displayError($this->l('Server address cannot contain the protocol (http or https).'));
+
+            if (empty($account_name))
+                $output .= $this->displayError($this->l('Account name cannot be empty.'));
+
+            if ($default_nosto_elements !== 0 && $default_nosto_elements !== 1)
+                $output .= $this->displayError($this->l('Use default nosto elements setting is invalid.'));
+
+            if (empty($output))
             {
                 $this->setServerAddress($server_address);
                 $this->setAccountName($account_name);
-                $this->setUseDefaultNostoElements($use_default_nosto_elements);
-                $messages[] = $this->l('Configuration saved');
+                $this->setUseDefaultNostoElements($default_nosto_elements);
+                $output .= $this->displayConfirmation($this->l('Configuration saved'));
             }
         }
-        else
-        {
-            $server_address = $this->getServerAddress();
-            $account_name = $this->getAccountName();
-            $use_default_nosto_elements = $this->getUseDefaultNostoElements();
-        }
 
-        $form_action = AdminController::$currentIndex.'&configure='.$this->name;
-        $form_action .= '&token='.Tools::getAdminTokenLite('AdminModules');
+        return $output.$this->displayForm();
+    }
 
-        $this->smarty->assign(array(
-            'messages' => $messages,
-            'errors' => $errors,
-            'form_action' => $form_action,
-            'server_address' => $server_address,
-            'account_name' => $account_name,
-            'use_default_nosto_elements' => $use_default_nosto_elements,
-        ));
+    /**
+     * Renders the module administration form.
+     *
+     * @return string The HTML to output.
+     */
+    public function displayForm()
+    {
+        $field_server_address = $this->name.'_server_address';
+        $field_account_name = $this->name.'_account_name';
+        $field_default_elements = $this->name.'_default_elements';
 
-        return $this->display(__FILE__, 'views/templates/admin/form.tpl');
+        $fields_form = array();
+
+        $fields_form[0]['form'] = array(
+            'legend' => array(
+                'title' => $this->l('General Settings'),
+            ),
+            'input' => array(
+                array(
+                    'type' => 'text',
+                    'label' => $this->l('Server address'),
+                    'name' => $field_server_address,
+                    'desc' => $this->l('The server address for the Nosto marketing automation service.'),
+                    'size' => 40,
+                    'required' => true,
+                ),
+                array(
+                    'type' => 'text',
+                    'label' => $this->l('Account name'),
+                    'name' => $field_account_name,
+                    'desc' => $this->l('Your Nosto marketing automation service account name.'),
+                    'size' => 40,
+                    'required' => true,
+                ),
+                array(
+                    'type' => 'radio',
+                    'label' => $this->l('Use default nosto elements'),
+                    'name' => $field_default_elements,
+                    'desc' => $this->l('Use default nosto elements for showing product recommendations.'),
+                    'values' => array(
+                        array(
+                            'id' => $this->name.'_defaults_on',
+                            'value' => 1,
+                            'label' => $this->l('Enabled'),
+                        ),
+                        array(
+                            'id' => $this->name.'_defaults_off',
+                            'value' => 0,
+                            'label' => $this->l('Disabled'),
+                        ),
+                    ),
+                    'is_bool' => true,
+                    'class' => 't',
+                    'required' => true,
+                ),
+            ),
+            'submit' => array(
+                'title' => $this->l('Save'),
+                'name' => 'submit'.$this->name,
+                'class' => 'button',
+            ),
+        );
+
+        $helper = new HelperForm();
+
+        $helper->module = $this;
+        $helper->name_controller = $this->name;
+        $helper->token = Tools::getAdminTokenLite('AdminModules');
+        $helper->currentIndex = AdminController::$currentIndex.'&configure='.$this->name;
+
+        $helper->title = $this->displayName;
+        $helper->submit_action = '';
+
+        $helper->fields_value = array(
+            $field_server_address => (string)Tools::getValue($field_server_address, $this->getServerAddress()),
+            $field_account_name => (string)Tools::getValue($field_account_name, $this->getAccountName()),
+            $field_default_elements => (int)Tools::getValue($field_default_elements, $this->getUseDefaultNostoElements()),
+        );
+
+        return $helper->generateForm($fields_form);
     }
 
     /**
@@ -541,34 +616,6 @@ class NostoTagging extends Module
     }
 
     /**
-     * Validates the admin form post data.
-     *
-     * @return array List of error messages
-     */
-    protected function validateAdminForm()
-    {
-        $errors = array();
-
-        $server_address = (string)Tools::getValue($this->name.'_server_address');
-        $account_name = (string)Tools::getValue($this->name.'_account_name');
-        $default_nosto_elements = (int)Tools::getValue($this->name.'_default_nosto_elements');
-
-        if (!Validate::isUrl($server_address))
-            $errors[] = $this->l('Server address is not a valid URL.');
-
-        if (preg_match('@^https?://@i', $server_address))
-            $errors[] = $this->l('Server address cannot contain the protocol (http or https).');
-
-        if (empty($account_name))
-            $errors[] = $this->l('Account name cannot be empty.');
-
-        if ($default_nosto_elements !== 0 && $default_nosto_elements !== 1)
-            $errors[] = $this->l('Use default nosto elements setting is invalid.');
-
-        return $errors;
-    }
-
-    /**
      * Adds custom hooks used by this module.
      * Run on module install.
      *
@@ -582,8 +629,8 @@ class NostoTagging extends Module
             foreach ($this->custom_hooks as $hook)
             {
                 $query = 'SELECT `name`
-                  FROM `'._DB_PREFIX_.'hook`
-                  WHERE `name` = "'.$hook['name'].'"';
+                          FROM `'._DB_PREFIX_.'hook`
+                          WHERE `name` = "'.$hook['name'].'"';
 
                 if (!$db->getRow($query))
                     if (!$db->insert('hook', $hook))
@@ -650,13 +697,13 @@ class NostoTagging extends Module
     {
         $category_list = array();
 
-        $lang_id = $this->context->language->id;
+        $lang_id = (int)$this->context->language->id;
         $category = new Category((int)$category_id, $lang_id);
 
         if (Validate::isLoadedObject($category))
             foreach ($category->getParentsCategories($lang_id) as $parent_category)
                 if (isset($parent_category['name']))
-                    $category_list[] = $parent_category['name'];
+                    $category_list[] = (string)$parent_category['name'];
 
         if (empty($category_list))
             return '';
@@ -671,7 +718,7 @@ class NostoTagging extends Module
      */
     protected function getCustomerTagging()
     {
-        if (!$this->context->customer->isLogged())
+        if (!isset($this->context->customer) || !$this->context->customer->isLogged())
             return '';
 
         $this->smarty->assign(array(
@@ -688,7 +735,10 @@ class NostoTagging extends Module
      */
     protected function getCartTagging()
     {
-        $products = $this->context->cart->getProducts();
+        if (!isset($this->context->cart))
+            return '';
+
+        $products = (array)$this->context->cart->getProducts();
         if (empty($products))
             return '';
 
@@ -697,11 +747,11 @@ class NostoTagging extends Module
         $nosto_line_items = array();
         foreach ($products as $product)
             $nosto_line_items[] = array(
-                'product_id' => $product['id_product'],
-                'quantity' => $product['quantity'],
-                'name' => $product['name'],
+                'product_id' => (int)$product['id_product'],
+                'quantity' => (int)$product['quantity'],
+                'name' => (string)$product['name'],
                 'unit_price' => $this->formatPrice($product['price_wt']),
-                'price_currency_code' => $currency->iso_code,
+                'price_currency_code' => (string)$currency->iso_code,
             );
 
         $this->smarty->assign(array(
@@ -723,16 +773,16 @@ class NostoTagging extends Module
             return '';
 
         $nosto_product = array();
-        $nosto_product['url'] = $product->getLink();
-        $nosto_product['product_id'] = $product->id;
-        $nosto_product['name'] = $product->name;
+        $nosto_product['url'] = (string)$product->getLink();
+        $nosto_product['product_id'] = (int)$product->id;
+        $nosto_product['name'] = (string)$product->name;
 
         $link = $this->context->link;
         $image_url = $link->getImageLink($product->link_rewrite, $product->getCoverWs(), 'large_default');
-        $nosto_product['image_url'] = $image_url;
+        $nosto_product['image_url'] = (string)$image_url;
 
         $nosto_product['price'] = $this->formatPrice($product->getPrice());
-        $nosto_product['price_currency_code'] = $this->context->currency->iso_code;
+        $nosto_product['price_currency_code'] = (string)$this->context->currency->iso_code;
 
         if ($product->checkQty(1))
             $nosto_product['availability'] = self::NOSTOTAGGING_PRODUCT_IN_STOCK;
@@ -744,14 +794,14 @@ class NostoTagging extends Module
         {
             $category = $this->buildCategoryString($category_id);
             if (!empty($category))
-                $nosto_product['categories'][] = $category;
+                $nosto_product['categories'][] = (string)$category;
         }
 
-        $nosto_product['description'] = $product->description_short;
+        $nosto_product['description'] = (string)$product->description_short;
         $nosto_product['list_price'] = $this->formatPrice($product->getPriceWithoutReduct());
 
-        if (is_string($product->manufacturer_name))
-            $nosto_product['brand'] = $product->manufacturer_name;
+        if (!empty($product->manufacturer_name))
+            $nosto_product['brand'] = (string)$product->manufacturer_name;
 
         $nosto_product['date_published'] = $this->formatDate($product->date_add);
 
@@ -776,7 +826,7 @@ class NostoTagging extends Module
             return '';
 
         $nosto_order = array();
-        $nosto_order['order_number'] = $order->id;
+        $nosto_order['order_number'] = (int)$order->id;
         $nosto_order['customer'] = $order->getCustomer();
         $nosto_order['purchased_items'] = array();
 
@@ -785,11 +835,11 @@ class NostoTagging extends Module
             $p = new Product($product['product_id'], false, $this->context->language->id);
             if (Validate::isLoadedObject($p))
                 $nosto_order['purchased_items'][] = array(
-                    'product_id' => $p->id,
-                    'quantity' => $product['product_quantity'],
-                    'name' => $p->name,
+                    'product_id' => (int)$p->id,
+                    'quantity' => (int)$product['product_quantity'],
+                    'name' => (string)$p->name,
                     'unit_price' => $this->formatPrice($product['product_price_wt']),
-                    'price_currency_code' => $currency->iso_code,
+                    'price_currency_code' => (string)$currency->iso_code,
                 );
         }
 
@@ -797,31 +847,31 @@ class NostoTagging extends Module
             return '';
 
         // Add special items for shipping, discounts and wrapping.
-        if ($order->total_discounts_tax_incl && $order->total_discounts_tax_incl > 0)
+        if (is_numeric($order->total_discounts_tax_incl) && $order->total_discounts_tax_incl > 0)
             $nosto_order['purchased_items'][] = array(
                 'product_id' => -1,
                 'quantity' => 1,
                 'name' => 'Discount',
-                'unit_price' => $this->formatPrice($order->total_discounts_tax_incl),
-                'price_currency_code' => $currency->iso_code,
+                'unit_price' => $this->formatPrice(-$order->total_discounts_tax_incl),
+                'price_currency_code' => (string)$currency->iso_code,
             );
 
-        if ($order->total_shipping_tax_incl && $order->total_shipping_tax_incl > 0)
+        if (is_numeric($order->total_shipping_tax_incl) && $order->total_shipping_tax_incl > 0)
             $nosto_order['purchased_items'][] = array(
                 'product_id' => -1,
                 'quantity' => 1,
                 'name' => 'Shipping',
                 'unit_price' => $this->formatPrice($order->total_shipping_tax_incl),
-                'price_currency_code' => $currency->iso_code,
+                'price_currency_code' => (string)$currency->iso_code,
             );
 
-        if ($order->total_wrapping_tax_incl && $order->total_wrapping_tax_incl > 0)
+        if (is_numeric($order->total_wrapping_tax_incl) && $order->total_wrapping_tax_incl > 0)
             $nosto_order['purchased_items'][] = array(
                 'product_id' => -1,
                 'quantity' => 1,
                 'name' => 'Wrapping',
                 'unit_price' => $this->formatPrice($order->total_wrapping_tax_incl),
-                'price_currency_code' => $currency->iso_code,
+                'price_currency_code' => (string)$currency->iso_code,
             );
 
         $this->smarty->assign(array(
@@ -847,7 +897,7 @@ class NostoTagging extends Module
             return '';
 
         $this->smarty->assign(array(
-            'category' => $category_string,
+            'category' => (string)$category_string,
         ));
 
         return $this->display(__FILE__, 'category-footer_category-tagging.tpl');

@@ -59,10 +59,12 @@ class NostoTaggingTopSellersPage
 
                 self::addPageToShops($cms->id);
                 self::addPageToMenu($cms->id);
+
+                return true;
             }
         }
 
-        return true;
+        return false;
     }
 
     /**
@@ -78,13 +80,13 @@ class NostoTaggingTopSellersPage
             if (Shop::isFeatureActive())
                 $cms->id_shop_list = Shop::getCompleteListOfShopsID();
 
-            $cms->delete();
+            if (!$cms->delete())
+                return false;
+
             self::deletePageFromMenu($cms->id, true);
         }
 
-        Configuration::deleteByName(self::NOSTOTAGGING_CONFIG_KEY_TOP_SELLERS_CMS_ID);
-
-        return true;
+        return Configuration::deleteByName(self::NOSTOTAGGING_CONFIG_KEY_TOP_SELLERS_CMS_ID);
     }
 
     /**
@@ -191,7 +193,8 @@ class NostoTaggingTopSellersPage
             $menu_item = 'CMS'.(int)$cms_id;
             $config = self::getMenuConfig();
 
-            foreach ($config as $item) {
+            foreach ($config as $item)
+            {
                 $menu_items = Configuration::get('MOD_BLOCKTOPMENU_ITEMS', null,
                     $item['id_shop_group'], $item['id_shop']);
                 if (is_string($menu_items))
@@ -230,7 +233,8 @@ class NostoTaggingTopSellersPage
                 {
                     $menu_items = explode(',', $menu_items);
                     $i = array_search($menu_item, $menu_items);
-                    if ($i !== false) {
+                    if ($i !== false)
+                    {
                         unset($menu_items[$i]);
                         $menu_items = implode(',', $menu_items);
                         Configuration::updateValue('MOD_BLOCKTOPMENU_ITEMS', $menu_items, false,
@@ -265,7 +269,7 @@ class NostoTaggingTopSellersPage
             {
                 $id_shop = Shop::getContextShopID(true);
                 $id_shop_group = Shop::getContextShopGroupID(true);
-                if ($all_shops ||($id_shop === null && $id_shop_group === null))
+                if ($all_shops || ($id_shop === null && $id_shop_group === null))
                 {
                     $shops = Shop::getShopsCollection();
                     foreach ($shops as $shop)
