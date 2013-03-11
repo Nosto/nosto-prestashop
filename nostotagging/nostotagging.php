@@ -153,7 +153,7 @@ class NostoTagging extends Module
         {
             $server_address = (string)Tools::getValue($this->name.'_server_address');
             $account_name = (string)Tools::getValue($this->name.'_account_name');
-            $default_nosto_elements = (int)Tools::getValue($this->name.'_default_elements');
+            $default_nosto_elements = (int)Tools::getValue($this->name.'_use_defaults');
 
             if (!Validate::isUrl($server_address))
                 $output .= $this->displayError($this->l('Server address is not a valid URL.'));
@@ -188,57 +188,59 @@ class NostoTagging extends Module
     {
         $field_server_address = $this->name.'_server_address';
         $field_account_name = $this->name.'_account_name';
-        $field_default_elements = $this->name.'_default_elements';
+        $field_use_defaults = $this->name.'_use_defaults';
 
-        $fields_form = array();
-
-        $fields_form[0]['form'] = array(
-            'legend' => array(
-                'title' => $this->l('General Settings'),
-            ),
-            'input' => array(
-                array(
-                    'type' => 'text',
-                    'label' => $this->l('Server address'),
-                    'name' => $field_server_address,
-                    'desc' => $this->l('The server address for the Nosto marketing automation service.'),
-                    'size' => 40,
-                    'required' => true,
-                ),
-                array(
-                    'type' => 'text',
-                    'label' => $this->l('Account name'),
-                    'name' => $field_account_name,
-                    'desc' => $this->l('Your Nosto marketing automation service account name.'),
-                    'size' => 40,
-                    'required' => true,
-                ),
-                array(
-                    'type' => 'radio',
-                    'label' => $this->l('Use default nosto elements'),
-                    'name' => $field_default_elements,
-                    'desc' => $this->l('Use default nosto elements for showing product recommendations.'),
-                    'values' => array(
+        $fields_form = array(
+            array(
+                'form' => array(
+                    'legend' => array(
+                        'title' => $this->l('General Settings'),
+                    ),
+                    'input' => array(
                         array(
-                            'id' => $this->name.'_defaults_on',
-                            'value' => 1,
-                            'label' => $this->l('Enabled'),
+                            'type' => 'text',
+                            'label' => $this->l('Server address'),
+                            'name' => $field_server_address,
+                            'desc' => $this->l('The server address for the Nosto marketing automation service.'),
+                            'size' => 40,
+                            'required' => true,
                         ),
                         array(
-                            'id' => $this->name.'_defaults_off',
-                            'value' => 0,
-                            'label' => $this->l('Disabled'),
+                            'type' => 'text',
+                            'label' => $this->l('Account name'),
+                            'name' => $field_account_name,
+                            'desc' => $this->l('Your Nosto marketing automation service account name.'),
+                            'size' => 40,
+                            'required' => true,
+                        ),
+                        array(
+                            'type' => 'radio',
+                            'label' => $this->l('Use default nosto elements'),
+                            'name' => $field_use_defaults,
+                            'desc' => $this->l('Use default nosto elements for showing product recommendations.'),
+                            'values' => array(
+                                array(
+                                    'id' => $this->name.'_defaults_on',
+                                    'value' => 1,
+                                    'label' => $this->l('Enabled'),
+                                ),
+                                array(
+                                    'id' => $this->name.'_defaults_off',
+                                    'value' => 0,
+                                    'label' => $this->l('Disabled'),
+                                ),
+                            ),
+                            'is_bool' => true,
+                            'class' => 't',
+                            'required' => true,
                         ),
                     ),
-                    'is_bool' => true,
-                    'class' => 't',
-                    'required' => true,
+                    'submit' => array(
+                        'title' => $this->l('Save'),
+                        'name' => 'submit'.$this->name,
+                        'class' => 'button',
+                    ),
                 ),
-            ),
-            'submit' => array(
-                'title' => $this->l('Save'),
-                'name' => 'submit'.$this->name,
-                'class' => 'button',
             ),
         );
 
@@ -255,7 +257,7 @@ class NostoTagging extends Module
         $helper->fields_value = array(
             $field_server_address => (string)Tools::getValue($field_server_address, $this->getServerAddress()),
             $field_account_name => (string)Tools::getValue($field_account_name, $this->getAccountName()),
-            $field_default_elements => (int)Tools::getValue($field_default_elements, $this->getUseDefaultNostoElements()),
+            $field_use_defaults => (int)Tools::getValue($field_use_defaults, $this->getUseDefaultNostoElements()),
         );
 
         return $helper->generateForm($fields_form);
@@ -280,16 +282,12 @@ class NostoTagging extends Module
      */
     public function setServerAddress($server_address, $global = false)
     {
-        if ((bool)$global === true)
-            return Configuration::updateGlobalValue(
-                self::NOSTOTAGGING_CONFIG_KEY_SERVER_ADDRESS,
-                (string)$server_address
-            );
-
-        return Configuration::updateValue(
-            self::NOSTOTAGGING_CONFIG_KEY_SERVER_ADDRESS,
-            (string)$server_address
+        $callback = array(
+            'Configuration',
+            $global ? 'updateGlobalValue' : 'updateValue'
         );
+
+        return call_user_func($callback, self::NOSTOTAGGING_CONFIG_KEY_SERVER_ADDRESS, (string)$server_address);
     }
 
     /**
@@ -311,16 +309,12 @@ class NostoTagging extends Module
      */
     public function setAccountName($account_name, $global = false)
     {
-        if ((bool)$global === true)
-            return Configuration::updateGlobalValue(
-                self::NOSTOTAGGING_CONFIG_KEY_ACCOUNT_NAME,
-                (string)$account_name
-            );
-
-        return Configuration::updateValue(
-            self::NOSTOTAGGING_CONFIG_KEY_ACCOUNT_NAME,
-            (string)$account_name
+        $callback = array(
+            'Configuration',
+            $global ? 'updateGlobalValue' : 'updateValue'
         );
+
+        return call_user_func($callback, self::NOSTOTAGGING_CONFIG_KEY_ACCOUNT_NAME, (string)$account_name);
     }
 
     /**
@@ -342,16 +336,12 @@ class NostoTagging extends Module
      */
     public function setUseDefaultNostoElements($value, $global = false)
     {
-        if ((bool)$global === true)
-            return Configuration::updateGlobalValue(
-                self::NOSTOTAGGING_CONFIG_KEY_USE_DEFAULT_NOSTO_ELEMENTS,
-                (int)$value
-            );
-
-        return Configuration::updateValue(
-            self::NOSTOTAGGING_CONFIG_KEY_USE_DEFAULT_NOSTO_ELEMENTS,
-            (int)$value
+        $callback = array(
+            'Configuration',
+            $global ? 'updateGlobalValue' : 'updateValue'
         );
+
+        return call_user_func($callback, self::NOSTOTAGGING_CONFIG_KEY_USE_DEFAULT_NOSTO_ELEMENTS, (int)$value);
     }
 
     /**
@@ -630,7 +620,7 @@ class NostoTagging extends Module
             {
                 $query = 'SELECT `name`
                           FROM `'._DB_PREFIX_.'hook`
-                          WHERE `name` = "'.$hook['name'].'"';
+                          WHERE `name` = "'.$db->escape($hook['name']).'"';
 
                 if (!$db->getRow($query))
                     if (!$db->insert('hook', $hook))
@@ -666,7 +656,7 @@ class NostoTagging extends Module
     }
 
     /**
-     * Formats price into Nosto format, e.g. 1000.99.
+     * Formats price into Nosto format (e.g. 1000.99).
      *
      * @param string|int|float $price
      * @return string
@@ -779,7 +769,7 @@ class NostoTagging extends Module
 
         $image_id = $product->getCoverWs();
         if (ctype_digit((string)$image_id))
-            $image_url =  $this->context->link->getImageLink($product->link_rewrite, $image_id, 'large_default');
+            $image_url = $this->context->link->getImageLink($product->link_rewrite, $image_id, 'large_default');
         else
             $image_url = '';
         $nosto_product['image_url'] = (string)$image_url;
@@ -872,7 +862,7 @@ class NostoTagging extends Module
             $nosto_order['purchased_items'][] = array(
                 'product_id' => -1,
                 'quantity' => 1,
-                'name' => 'Wrapping',
+                'name' => 'Gift Wrapping',
                 'unit_price' => $this->formatPrice($order->total_wrapping_tax_incl),
                 'price_currency_code' => (string)$currency->iso_code,
             );

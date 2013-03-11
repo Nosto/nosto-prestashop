@@ -47,11 +47,15 @@ class NostoTaggingTopSellersPage
                 'link_rewrite' => self::$link_rewrite,
                 'content' => self::$content,
             );
-
             $languages = Language::getLanguages(false);
-            foreach ($languages as $language)
-                foreach ($multi_lang_fields as $field => $item)
-                    $cms->{$field}[(int)$language['id_lang']] = $item;
+
+            foreach ($multi_lang_fields as $field => $item)
+            {
+                $data = array();
+                foreach ($languages as $language)
+                    $data[(int)$language['id_lang']] = $item;
+                $cms->{$field} = $data;
+            }
 
             if ($cms->add())
             {
@@ -184,6 +188,9 @@ class NostoTaggingTopSellersPage
      * The menu is assumed to be implemented by the default "Blocktopmenu" module.
      * If the module is not installed, then do nothing.
      *
+     * The menu items are stored in the configuration table as a comma separated string.
+     * The "Top Sellers" page is added to the config for the current context shops.
+     *
      * @param int $cms_id
      */
     protected static function addPageToMenu($cms_id)
@@ -191,19 +198,25 @@ class NostoTaggingTopSellersPage
         if (Module::isInstalled('Blocktopmenu'))
         {
             $menu_item = 'CMS'.(int)$cms_id;
+            // Get all menu config rows where we need to add the page identifier.
             $config = self::getMenuConfig();
 
             foreach ($config as $item)
             {
+                // Add page identifier if it does not already exist in this menu.
                 $menu_items = Configuration::get('MOD_BLOCKTOPMENU_ITEMS', null,
                     $item['id_shop_group'], $item['id_shop']);
+
                 if (is_string($menu_items))
                 {
-                    if (!empty($menu_items))
-                        $menu_items .= ',';
-                    $menu_items .= $menu_item;
-                    Configuration::updateValue('MOD_BLOCKTOPMENU_ITEMS', $menu_items, false,
-                        $item['id_shop_group'], $item['id_shop']);
+                    $menu_items = explode(',', $menu_items);
+                    if (!in_array($menu_item, $menu_items))
+                    {
+                        $menu_items[] = $menu_item;
+                        $menu_items = implode(',', $menu_items);
+                        Configuration::updateValue('MOD_BLOCKTOPMENU_ITEMS', $menu_items, false,
+                            $item['id_shop_group'], $item['id_shop']);
+                    }
                 }
             }
         }
@@ -215,6 +228,9 @@ class NostoTaggingTopSellersPage
      * The menu is assumed to be implemented by the default "Blocktopmenu" module.
      * If the module is not installed, then do nothing.
      *
+     * The menu items are stored in the configuration table as a comma separated string.
+     * The "Top Sellers" page is removed from the config for the current context shops.
+     *
      * @param int $cms_id
      * @param bool $all_shops
      */
@@ -223,10 +239,12 @@ class NostoTaggingTopSellersPage
         if (Module::isInstalled('Blocktopmenu'))
         {
             $menu_item = 'CMS'.(int)$cms_id;
+            // Get all menu config rows from where we need to remove the page identifier.
             $config = self::getMenuConfig($all_shops);
 
             foreach ($config as $item)
             {
+                // Remove page identifier if it exists in this menu.
                 $menu_items = Configuration::get('MOD_BLOCKTOPMENU_ITEMS', null,
                     $item['id_shop_group'], $item['id_shop']);
                 if (is_string($menu_items))
@@ -260,6 +278,7 @@ class NostoTaggingTopSellersPage
 
         if (Module::isInstalled('Blocktopmenu'))
         {
+            // Default menu config that applies to the current shop context.
             $config[] = array(
                 'id_shop_group' => null,
                 'id_shop' => null,
@@ -267,6 +286,8 @@ class NostoTaggingTopSellersPage
 
             if (Shop::isFeatureActive())
             {
+                // If the context is "all shops" then we need to check all individual
+                // shops and all shop groups, as they can override the global menu.
                 $id_shop = Shop::getContextShopID(true);
                 $id_shop_group = Shop::getContextShopGroupID(true);
                 if ($all_shops || ($id_shop === null && $id_shop_group === null))
