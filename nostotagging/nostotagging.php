@@ -774,7 +774,7 @@ class NostoTagging extends Module
             $image_url = '';
         $nosto_product['image_url'] = (string)$image_url;
 
-        $nosto_product['price'] = $this->formatPrice($product->getPrice());
+        $nosto_product['price'] = $this->formatPrice($product->getPrice(true, null));
         $nosto_product['price_currency_code'] = (string)$this->context->currency->iso_code;
 
         if ($product->checkQty(1))
@@ -791,7 +791,7 @@ class NostoTagging extends Module
         }
 
         $nosto_product['description'] = (string)$product->description_short;
-        $nosto_product['list_price'] = $this->formatPrice($product->getPriceWithoutReduct());
+        $nosto_product['list_price'] = $this->formatPrice($product->getPriceWithoutReduct(false, null));
 
         if (!empty($product->manufacturer_name))
             $nosto_product['brand'] = (string)$product->manufacturer_name;
