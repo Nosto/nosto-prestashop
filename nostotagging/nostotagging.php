@@ -733,16 +733,30 @@ class NostoTagging extends Module
             return '';
 
         $currency = $this->context->currency;
+        $cart_rules = (array)$this->context->cart->getCartRules(CartRule::FILTER_ACTION_GIFT);
 
         $nosto_line_items = array();
         foreach ($products as $product)
+        {
+            $product_id = (int)$product['id_product'];
+
+            $gift = false;
+            foreach ($cart_rules as $cart_rule)
+                if ((int)$cart_rule['gift_product']
+                    && $product_id === (int)$cart_rule['gift_product']
+                    && (int)$product['id_product_attribute'] === (int)$cart_rule['gift_product_attribute'])
+                    $gift = true;
+
+            $price = $gift ? 0 : $product['price_wt'];
+
             $nosto_line_items[] = array(
-                'product_id' => (int)$product['id_product'],
+                'product_id' => $product_id,
                 'quantity' => (int)$product['quantity'],
                 'name' => (string)$product['name'],
-                'unit_price' => $this->formatPrice($product['price_wt']),
+                'unit_price' => $this->formatPrice($price),
                 'price_currency_code' => (string)$currency->iso_code,
             );
+        }
 
         $this->smarty->assign(array(
             'nosto_line_items' => $nosto_line_items,
@@ -818,6 +832,13 @@ class NostoTagging extends Module
             || !($currency instanceof Currency) || !Validate::isLoadedObject($currency))
             return '';
 
+        $gift_total_tax_incl = 0;
+        $cart = $this->context->cart->getCartByOrderId($order->id);
+        if ($cart instanceof Cart)
+            $cart_rules = (array)$cart->getCartRules();
+        else
+            $cart_rules = array();
+
         $nosto_order = array();
         $nosto_order['order_number'] = (int)$order->id;
         $nosto_order['customer'] = $order->getCustomer();
@@ -827,29 +848,55 @@ class NostoTagging extends Module
         {
             $p = new Product($product['product_id'], false, $this->context->language->id);
             if (Validate::isLoadedObject($p))
+            {
+                $gift = false;
+                foreach ($cart_rules as $cart_rule)
+                    if ((int)$cart_rule['gift_product']
+                        && (int)$p->id === (int)$cart_rule['gift_product']
+                        && (int)$product['product_attribute_id'] === (int)$cart_rule['gift_product_attribute'])
+                    {
+                        $gift_total_tax_incl += $product['product_price_wt'];
+                        $gift = true;
+                    }
+
+                $price = $gift ? 0 : $product['product_price_wt'];
+
                 $nosto_order['purchased_items'][] = array(
                     'product_id' => (int)$p->id,
                     'quantity' => (int)$product['product_quantity'],
                     'name' => (string)$p->name,
-                    'unit_price' => $this->formatPrice($product['product_price_wt']),
+                    'unit_price' => $this->formatPrice($price),
                     'price_currency_code' => (string)$currency->iso_code,
                 );
+            }
         }
 
         if (empty($nosto_order['purchased_items']))
             return '';
 
-        // Add special items for shipping, discounts and wrapping.
-        if (is_numeric($order->total_discounts_tax_incl) && $order->total_discounts_tax_incl > 0)
-            $nosto_order['purchased_items'][] = array(
-                'product_id' => -1,
-                'quantity' => 1,
-                'name' => 'Discount',
-                'unit_price' => $this->formatPrice(-$order->total_discounts_tax_incl),
-                'price_currency_code' => (string)$currency->iso_code,
-            );
+        // Add special items for discounts, shipping and gift wrapping.
 
-        if (is_numeric($order->total_shipping_tax_incl) && $order->total_shipping_tax_incl > 0)
+        if (is_numeric($order->total_discounts_tax_incl) && $order->total_discounts_tax_incl > 0)
+        {
+            // Subtract possible gift product price from total as gifts are tagged with price zero (0).
+            $total_discounts_tax_incl = $order->total_discounts_tax_incl - $gift_total_tax_incl;
+            if ($total_discounts_tax_incl > 0)
+                $nosto_order['purchased_items'][] = array(
+                    'product_id' => -1,
+                    'quantity' => 1,
+                    'name' => 'Discount',
+                    'unit_price' => $this->formatPrice(-$total_discounts_tax_incl), // Note the negative value.
+                    'price_currency_code' => (string)$currency->iso_code,
+                );
+        }
+
+        // Check is free shipping applies to the cart.
+        $free_shipping = false;
+        foreach ($cart_rules as $cart_rule)
+            if ((int)$cart_rule['free_shipping'])
+                $free_shipping = true;
+
+        if (!$free_shipping && is_numeric($order->total_shipping_tax_incl) && $order->total_shipping_tax_incl > 0)
             $nosto_order['purchased_items'][] = array(
                 'product_id' => -1,
                 'quantity' => 1,
