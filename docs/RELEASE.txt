@@ -1,0 +1,24 @@
+New releases
+============
+
+When doing new releases of the module, check the following:
+
+* Version number
+    * Always change the version number when doing a new release of the module
+        * PrestaShop does not require any specific versioning scheme, but it is recommended to use one, e.g.
+        Semantic Versioning (http://semver.org/)
+    * The version number is located in two files, but you need only update one
+        * Change the version number in file nostotagging.php,which is the main module file and the version number can
+        be found in the NostoTagging class constructor
+        * The version number can also be found in config.xml, but this is updated automatically by PrestaShop after
+        changing the version number in nostotagging.php and reloading a page in the PrestaShop installation where
+        the module is installed
+
+When the module is ready to be released, create a zip archive of the entire "nostotagging" directory from the
+repository and name it "nostotagging.zip".
+
+The archive can then be uploaded to the PrestaShop market place (http://addons.prestashop.com) through your sellers
+account.
+
+For more information on creating PrestaShop modules, please refer to the official documentation at:
+http://doc.prestashop.com/display/PS15/Creating+a+PrestaShop+module
