@@ -735,28 +735,44 @@ class NostoTagging extends Module
         $currency = $this->context->currency;
         $cart_rules = (array)$this->context->cart->getCartRules(CartRule::FILTER_ACTION_GIFT);
 
+        $gift_products = array();
+        foreach ($cart_rules as $cart_rule)
+            if ((int)$cart_rule['gift_product'])
+            {
+                foreach ($products as $key => &$product)
+                    if (empty($product['gift'])
+                        && (int)$product['id_product'] === (int)$cart_rule['gift_product']
+                        && (int)$product['id_product_attribute'] === (int)$cart_rule['gift_product_attribute'])
+                    {
+                        $product['cart_quantity'] = (int)$product['cart_quantity'];
+                        $product['cart_quantity']--;
+
+                        if (!($product['cart_quantity'] > 0))
+                            unset($products[$key]);
+
+                        $gift_product = $product;
+                        $gift_product['cart_quantity'] = 1;
+                        $gift_product['price_wt'] = 0;
+                        $gift_product['gift'] = true;
+
+                        $gift_products[] = $gift_product;
+
+                        break; // One gift product per cart rule
+                    }
+                unset($product);
+            }
+
+        $items = array_merge($products, $gift_products);
+
         $nosto_line_items = array();
-        foreach ($products as $product)
-        {
-            $product_id = (int)$product['id_product'];
-
-            $gift = false;
-            foreach ($cart_rules as $cart_rule)
-                if ((int)$cart_rule['gift_product']
-                    && $product_id === (int)$cart_rule['gift_product']
-                    && (int)$product['id_product_attribute'] === (int)$cart_rule['gift_product_attribute'])
-                    $gift = true;
-
-            $price = $gift ? 0 : $product['price_wt'];
-
+        foreach ($items as $item)
             $nosto_line_items[] = array(
-                'product_id' => $product_id,
-                'quantity' => (int)$product['quantity'],
-                'name' => (string)$product['name'],
-                'unit_price' => $this->formatPrice($price),
+                'product_id' => (int)$item['id_product'],
+                'quantity' => (int)$item['cart_quantity'],
+                'name' => (string)$item['name'],
+                'unit_price' => $this->formatPrice($item['price_wt']),
                 'price_currency_code' => (string)$currency->iso_code,
             );
-        }
 
         $this->smarty->assign(array(
             'nosto_line_items' => $nosto_line_items,
@@ -806,10 +822,7 @@ class NostoTagging extends Module
 
         $nosto_product['description'] = (string)$product->description_short;
         $nosto_product['list_price'] = $this->formatPrice($product->getPriceWithoutReduct(false, null));
-
-        if (!empty($product->manufacturer_name))
-            $nosto_product['brand'] = (string)$product->manufacturer_name;
-
+        $nosto_product['brand'] = (string)$product->manufacturer_name;
         $nosto_product['date_published'] = $this->formatDate($product->date_add);
 
         $this->smarty->assign(array(
@@ -832,43 +845,78 @@ class NostoTagging extends Module
             || !($currency instanceof Currency) || !Validate::isLoadedObject($currency))
             return '';
 
-        $gift_total_tax_incl = 0;
+        $products = array();
+        $total_discounts_tax_incl = 0;
+        $total_shipping_tax_incl = 0;
+        $total_wrapping_tax_incl = 0;
+        $total_gift_tax_incl = 0;
+
+        // One order can be split into multiple orders, so we need to combine their data.
+        $order_collection = Order::getByReference($order->reference);
+        foreach ($order_collection as $item)
+        {
+            /** @var $item Order */
+            $products = array_merge($products, $item->getProducts());
+            $total_discounts_tax_incl = Tools::ps_round($total_discounts_tax_incl + $item->total_discounts_tax_incl, 2);
+            $total_shipping_tax_incl = Tools::ps_round($total_shipping_tax_incl + $item->total_shipping_tax_incl, 2);
+            $total_wrapping_tax_incl = Tools::ps_round($total_wrapping_tax_incl + $item->total_wrapping_tax_incl, 2);
+        }
+
+        // We need the cart rules used for the order to check for gift products and free shipping.
+        // The cart is the same even if the order is split into many objects.
         $cart = $this->context->cart->getCartByOrderId($order->id);
         if ($cart instanceof Cart)
             $cart_rules = (array)$cart->getCartRules();
         else
             $cart_rules = array();
 
+        $gift_products = array();
+        foreach ($cart_rules as $cart_rule)
+            if ((int)$cart_rule['gift_product'])
+            {
+                foreach ($products as $key => &$product)
+                    if (empty($product['gift'])
+                        && (int)$product['product_id'] === (int)$cart_rule['gift_product']
+                        && (int)$product['product_attribute_id'] === (int)$cart_rule['gift_product_attribute'])
+                    {
+                        $product['product_quantity'] = (int)$product['product_quantity'];
+                        $product['product_quantity']--;
+
+                        if (!($product['product_quantity'] > 0))
+                            unset($products[$key]);
+
+                        $total_gift_tax_incl += $product['product_price_wt'];
+
+                        $gift_product = $product;
+                        $gift_product['product_quantity'] = 1;
+                        $gift_product['product_price_wt'] = 0;
+                        $gift_product['gift'] = true;
+
+                        $gift_products[] = $gift_product;
+
+                        break; // One gift product per cart rule
+                    }
+                unset($product);
+            }
+
+        $items = array_merge($products, $gift_products);
+
         $nosto_order = array();
-        $nosto_order['order_number'] = (int)$order->id;
+        $nosto_order['order_number'] = (string)$order->reference;
         $nosto_order['customer'] = $order->getCustomer();
         $nosto_order['purchased_items'] = array();
 
-        foreach ($order->getProducts() as $product)
+        foreach ($items as $item)
         {
-            $p = new Product($product['product_id'], false, $this->context->language->id);
+            $p = new Product($item['product_id'], false, $this->context->language->id);
             if (Validate::isLoadedObject($p))
-            {
-                $gift = false;
-                foreach ($cart_rules as $cart_rule)
-                    if ((int)$cart_rule['gift_product']
-                        && (int)$p->id === (int)$cart_rule['gift_product']
-                        && (int)$product['product_attribute_id'] === (int)$cart_rule['gift_product_attribute'])
-                    {
-                        $gift_total_tax_incl += $product['product_price_wt'];
-                        $gift = true;
-                    }
-
-                $price = $gift ? 0 : $product['product_price_wt'];
-
                 $nosto_order['purchased_items'][] = array(
                     'product_id' => (int)$p->id,
-                    'quantity' => (int)$product['product_quantity'],
+                    'quantity' => (int)$item['product_quantity'],
                     'name' => (string)$p->name,
-                    'unit_price' => $this->formatPrice($price),
+                    'unit_price' => $this->formatPrice($item['product_price_wt']),
                     'price_currency_code' => (string)$currency->iso_code,
                 );
-            }
         }
 
         if (empty($nosto_order['purchased_items']))
@@ -876,10 +924,10 @@ class NostoTagging extends Module
 
         // Add special items for discounts, shipping and gift wrapping.
 
-        if (is_numeric($order->total_discounts_tax_incl) && $order->total_discounts_tax_incl > 0)
+        if ($total_discounts_tax_incl > 0)
         {
             // Subtract possible gift product price from total as gifts are tagged with price zero (0).
-            $total_discounts_tax_incl = $order->total_discounts_tax_incl - $gift_total_tax_incl;
+            $total_discounts_tax_incl = Tools::ps_round($total_discounts_tax_incl - $total_gift_tax_incl, 2);
             if ($total_discounts_tax_incl > 0)
                 $nosto_order['purchased_items'][] = array(
                     'product_id' => -1,
@@ -894,23 +942,26 @@ class NostoTagging extends Module
         $free_shipping = false;
         foreach ($cart_rules as $cart_rule)
             if ((int)$cart_rule['free_shipping'])
+            {
                 $free_shipping = true;
+                break;
+            }
 
-        if (!$free_shipping && is_numeric($order->total_shipping_tax_incl) && $order->total_shipping_tax_incl > 0)
+        if (!$free_shipping && $total_shipping_tax_incl > 0)
             $nosto_order['purchased_items'][] = array(
                 'product_id' => -1,
                 'quantity' => 1,
                 'name' => 'Shipping',
-                'unit_price' => $this->formatPrice($order->total_shipping_tax_incl),
+                'unit_price' => $this->formatPrice($total_shipping_tax_incl),
                 'price_currency_code' => (string)$currency->iso_code,
             );
 
-        if (is_numeric($order->total_wrapping_tax_incl) && $order->total_wrapping_tax_incl > 0)
+        if ($total_wrapping_tax_incl > 0)
             $nosto_order['purchased_items'][] = array(
                 'product_id' => -1,
                 'quantity' => 1,
                 'name' => 'Gift Wrapping',
-                'unit_price' => $this->formatPrice($order->total_wrapping_tax_incl),
+                'unit_price' => $this->formatPrice($total_wrapping_tax_incl),
                 'price_currency_code' => (string)$currency->iso_code,
             );
 
