@@ -68,9 +68,9 @@ installation in order for the module to work properly.
 	* This hook should be placed above the product list on category pages
 	* You need to add "`{if isset($HOOK_CATEGORY_TOP) && $HOOK_CATEGORY_TOP}{$HOOK_CATEGORY_TOP}{/if}`" in your themes
 	category.tpl file at the appropriate location
-	* You also need to include the smarty variable in the CategoryController class by adding
+	* You also need to include the smarty variable in the CategoryController class (`prestashop/controllers/front/CategoryController.php`) by adding
 	"`'HOOK_CATEGORY_TOP' => Hook::exec('HOOK_CATEGORY_TOP', array('category' => $this->category))`" in the `initContent`
-	method. Here's an snippet that shows what the resultant code should look like:
+	method. Here's a snippet that shows what the resultant code should look like:
         
             public function initContent()
             {
@@ -86,9 +86,9 @@ installation in order for the module to work properly.
 	* This hook should be placed below the product list on category pages
 	* You need to add "`{if isset($HOOK_CATEGORY_FOOTER) && $HOOK_CATEGORY_FOOTER}{$HOOK_CATEGORY_FOOTER}{/if}`" in your
 	themes category.tpl file at the appropriate location
-	* You also need to include the smarty variable in the CategoryController class by adding
+	* You also need to include the smarty variable in the CategoryController class (`prestashop/controllers/front/CategoryController.php`) by adding
 	"`'HOOK_CATEGORY_FOOTER' => Hook::exec('displayCategoryFooter', array('category' => $this->category))`" in the
-	`initContent` method. Here's an snippet that shows what the resultant code should look like:
+	`initContent` method. Here's a snippet that shows what the resultant code should look like:
         
             public function initContent()
             {
@@ -103,8 +103,8 @@ installation in order for the module to work properly.
 	* This hook should be placed above the search result list on search pages
 	* You need to add "`{if isset($HOOK_SEARCH_TOP) && $HOOK_SEARCH_TOP}{$HOOK_SEARCH_TOP}{/if}`" in your themes search.tpl
 	file at the appropriate location
-	* You also need to include the smarty variable in the SearchController class by adding
-	"`'HOOK_SEARCH_TOP' => Hook::exec('displaySearchTop')`" in the `initContent` method. Here's an snippet that shows what the resultant code should look like:
+	* You also need to include the smarty variable in the SearchController class (`prestashop/controllers/front/SearchController.php`) by adding
+	"`'HOOK_SEARCH_TOP' => Hook::exec('displaySearchTop')`" in the `initContent` method. Here's a snippet that shows what the resultant code should look like:
         
             public function initContent()
             {
@@ -119,8 +119,8 @@ installation in order for the module to work properly.
 	* This hook should be placed below the search result list on search pages
 	* You need to add "`{if isset($HOOK_SEARCH_FOOTER) && $HOOK_SEARCH_FOOTER}{$HOOK_SEARCH_FOOTER}{/if}`" in your themes
 	search.tpl file at the appropriate location
-	* You also need to include the smarty variable in the SearchController class by adding
-	"`'HOOK_SEARCH_FOOTER' => Hook::exec('displaySearchFooter')`" in the `initContent` method. Here's an snippet that shows what the resultant code should look like:
+	* You also need to include the smarty variable in the SearchController class (`prestashop/controllers/front/SearchController.php`) by adding
+	"`'HOOK_SEARCH_FOOTER' => Hook::exec('displaySearchFooter')`" in the `initContent` method. Here's a snippet that shows what the resultant code should look like:
         
             public function initContent()
             {
