@@ -69,27 +69,68 @@ installation in order for the module to work properly.
 	* You need to add "`{if isset($HOOK_CATEGORY_TOP) && $HOOK_CATEGORY_TOP}{$HOOK_CATEGORY_TOP}{/if}`" in your themes
 	category.tpl file at the appropriate location
 	* You also need to include the smarty variable in the CategoryController class by adding
-	"`'HOOK_CATEGORY_TOP' => Hook::exec('displayCategoryTop', array('category' => $this->category))`" in the initContent
-	method
+	"`'HOOK_CATEGORY_TOP' => Hook::exec('HOOK_CATEGORY_TOP', array('category' => $this->category))`" in the `initContent`
+	method. Here's an snippet that shows what the resultant code should look like:
+        
+            public function initContent()
+            {
+                parent::initContent();
+             
+             	$this->context->smarty->assign(array('HOOK_CATEGORY_TOP' => Hook::exec('HOOK_CATEGORY_TOP', array('category' => $this->category))));
+        
+                ...
+
+            }
+
 * displayCategoryFooter
 	* This hook should be placed below the product list on category pages
 	* You need to add "`{if isset($HOOK_CATEGORY_FOOTER) && $HOOK_CATEGORY_FOOTER}{$HOOK_CATEGORY_FOOTER}{/if}`" in your
 	themes category.tpl file at the appropriate location
 	* You also need to include the smarty variable in the CategoryController class by adding
 	"`'HOOK_CATEGORY_FOOTER' => Hook::exec('displayCategoryFooter', array('category' => $this->category))`" in the
-	initContent method
+	`initContent` method. Here's an snippet that shows what the resultant code should look like:
+        
+            public function initContent()
+            {
+                parent::initContent();
+             
+             	$this->context->smarty->assign(array('HOOK_CATEGORY_FOOTER' => Hook::exec('displayCategoryFooter', array('category' => $this->category))));
+        
+                ...
+
+            }
 * displaySearchTop
 	* This hook should be placed above the search result list on search pages
 	* You need to add "`{if isset($HOOK_SEARCH_TOP) && $HOOK_SEARCH_TOP}{$HOOK_SEARCH_TOP}{/if}`" in your themes search.tpl
 	file at the appropriate location
 	* You also need to include the smarty variable in the SearchController class by adding
-	"`'HOOK_SEARCH_TOP' => Hook::exec('displaySearchTop')`" in the initContent method
+	"`'HOOK_SEARCH_TOP' => Hook::exec('displaySearchTop')`" in the `initContent` method. Here's an snippet that shows what the resultant code should look like:
+        
+            public function initContent()
+            {
+                parent::initContent();
+             
+             	$this->context->smarty->assign(array('HOOK_SEARCH_TOP' => Hook::exec('displaySearchTop')));
+        
+                ...
+
+            }
 * displaySearchFooter
 	* This hook should be placed below the search result list on search pages
 	* You need to add "`{if isset($HOOK_SEARCH_FOOTER) && $HOOK_SEARCH_FOOTER}{$HOOK_SEARCH_FOOTER}{/if}`" in your themes
 	search.tpl file at the appropriate location
 	* You also need to include the smarty variable in the SearchController class by adding
-	"`'HOOK_SEARCH_FOOTER' => Hook::exec('displaySearchFooter')`" in the initContent method
+	"`'HOOK_SEARCH_FOOTER' => Hook::exec('displaySearchFooter')`" in the `initContent` method. Here's an snippet that shows what the resultant code should look like:
+        
+            public function initContent()
+            {
+                parent::initContent();
+             
+             	$this->context->smarty->assign(array('HOOK_SEARCH_FOOTER' => Hook::exec('displaySearchFooter')));
+        
+                ...
+
+            }
 
 ## Configuration
 
