@@ -76,7 +76,7 @@ installation in order for the module to work properly.
             {
                 parent::initContent();
              
-             	$this->context->smarty->assign(array('HOOK_CATEGORY_TOP' => Hook::exec('HOOK_CATEGORY_TOP', array('category' => $this->category))));
+             	$this->context->smarty->assign(array('HOOK_CATEGORY_TOP' => Hook::exec('displayCategoryTop', array('category' => $this->category))));
         
                 ...
 
