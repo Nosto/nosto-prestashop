@@ -690,9 +690,9 @@ class NostoTagging extends Module
         $lang_id = (int)$this->context->language->id;
         $category = new Category((int)$category_id, $lang_id);
 
-        if (Validate::isLoadedObject($category))
+        if (Validate::isLoadedObject($category) && (int)$category->active === 1)
             foreach ($category->getParentsCategories($lang_id) as $parent_category)
-                if (isset($parent_category['name']))
+                if (isset($parent_category['name'], $parent_category['active']) && (int)$parent_category['active'] === 1)
                     $category_list[] = (string)$parent_category['name'];
 
         if (empty($category_list))
