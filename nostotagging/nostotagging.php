@@ -54,6 +54,7 @@ class NostoTagging extends Module
         $this->version = '1.0.0';
         $this->author = 'Nosto Solutions Ltd';
         $this->need_instance = 0;
+        $this->bootstrap = true;
 
         parent::__construct();
 
@@ -195,6 +196,7 @@ class NostoTagging extends Module
                 'form' => array(
                     'legend' => array(
                         'title' => $this->l('General Settings'),
+                        'icon' => 'icon-cogs'
                     ),
                     'input' => array(
                         array(
@@ -204,6 +206,7 @@ class NostoTagging extends Module
                             'desc' => $this->l('The server address for the Nosto marketing automation service.'),
                             'size' => 40,
                             'required' => true,
+                            'class' => 'fixed-width-xxl',
                         ),
                         array(
                             'type' => 'text',
@@ -212,9 +215,10 @@ class NostoTagging extends Module
                             'desc' => $this->l('Your Nosto marketing automation service account name.'),
                             'size' => 40,
                             'required' => true,
+                            'class' => 'fixed-width-xxl',
                         ),
                         array(
-                            'type' => 'radio',
+                            'type' => (substr(_PS_VERSION_, 0, 3) === '1.5') ? 'radio' : 'switch',
                             'label' => $this->l('Use default nosto elements'),
                             'name' => $field_use_defaults,
                             'desc' => $this->l('Use default nosto elements for showing product recommendations.'),
@@ -238,7 +242,7 @@ class NostoTagging extends Module
                     'submit' => array(
                         'title' => $this->l('Save'),
                         'name' => 'submit'.$this->name,
-                        'class' => 'button',
+                        'class' => 'button btn btn-default pull-right',
                     ),
                 ),
             ),
