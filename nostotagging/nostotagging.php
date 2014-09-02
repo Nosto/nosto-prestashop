@@ -799,7 +799,7 @@ class NostoTagging extends Module
 
         $image_id = $product->getCoverWs();
         if (ctype_digit((string)$image_id))
-            $image_url = $this->context->link->getImageLink($product->link_rewrite, $image_id, 'large_default');
+            $image_url = $this->context->link->getImageLink($product->link_rewrite, $product->id . '-' . $image_id, 'large_default');
         else
             $image_url = '';
         $nosto_product['image_url'] = (string)$image_url;
