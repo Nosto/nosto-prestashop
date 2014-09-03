@@ -816,6 +816,9 @@ class NostoTagging extends Module
         else
             $nosto_product['availability'] = self::NOSTOTAGGING_PRODUCT_OUT_OF_STOCK;
 
+        $current_category_id = $this->context->controller->getCategory()->id;
+        $nosto_product['current_category'] = $this->buildCategoryString($current_category_id);
+
         $nosto_product['categories'] = array();
         foreach ($product->getCategories() as $category_id)
         {
