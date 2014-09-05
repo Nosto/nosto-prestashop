@@ -818,6 +818,7 @@ class NostoTagging extends Module
 
         $current_category_id = $this->context->controller->getCategory()->id;
         $nosto_product['current_category'] = $this->buildCategoryString($current_category_id);
+        $nosto_product['tags'] = explode(', ',  $product->getTags($this->context->language->id));
 
         $nosto_product['categories'] = array();
         foreach ($product->getCategories() as $category_id)

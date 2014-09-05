@@ -22,6 +22,11 @@
 		{if $nosto_product.date_published neq ''}
 			<span class="date_published">{$nosto_product.date_published}</span>
 		{/if}
+		{foreach from=$nosto_product.tags item=tag}
+		{if $tag neq ''}
+		<span class="tag1">{$tag}</span>
+		{/if}
+		{/foreach}
 	</div>
 {/if}
 {if $nosto_product.current_category neq ''}
