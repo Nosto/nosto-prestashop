@@ -9,10 +9,13 @@ class NostoTagging extends Module
 {
     const NOSTOTAGGING_CONFIG_KEY_SERVER_ADDRESS = 'NOSTOTAGGING_SERVER_ADDRESS';
     const NOSTOTAGGING_CONFIG_KEY_ACCOUNT_NAME = 'NOSTOTAGGING_ACCOUNT_NAME';
+    const NOSTOTAGGING_CONFIG_KEY_SSO_TOKEN = 'NOSTOTAGGING_SSO_TOKEN';
     const NOSTOTAGGING_CONFIG_KEY_USE_DEFAULT_NOSTO_ELEMENTS = 'NOSTOTAGGING_DEFAULT_ELEMENTS';
     const NOSTOTAGGING_DEFAULT_SERVER_ADDRESS = 'connect.nosto.com';
     const NOSTOTAGGING_PRODUCT_IN_STOCK = 'InStock';
     const NOSTOTAGGING_PRODUCT_OUT_OF_STOCK = 'OutOfStock';
+    const NOSTOTAGGING_API_SIGNUP_URL = 'http://localhost:9000/api/accounts/create';
+    const NOSTOTAGGING_API_SIGNUP_TOKEN = 'ulHkQOQqulzahkUIkFOBzaessaFtq5M4vz7G5Vk1ZjOC4VEhWllYoK6EPNfj2Wto';
 
     /**
      * Custom hooks to add for this module.
@@ -58,6 +61,9 @@ class NostoTagging extends Module
 
         parent::__construct();
 
+        if (empty($this->getAccountName())) {
+            $this->warning = $this->l('Account details must be configured before using this module.');
+        }
         $this->displayName = $this->l('Nosto Tagging');
         $this->description = $this->l('Integrates Nosto marketing automation service.');
     }
@@ -76,6 +82,7 @@ class NostoTagging extends Module
         return parent::install()
             && $this->initConfig()
             && NostoTaggingTopSellersPage::addPage()
+            && $this->createAccount()
             && $this->initHooks()
             && $this->registerHook('displayHeader')
             && $this->registerHook('displayTop')
@@ -177,7 +184,12 @@ class NostoTagging extends Module
             }
         }
 
-        return $output.$this->displayForm();
+        if (empty($this->getAccountName())) {
+            $output = $output . $this->displayError($this->l('You haven\'t configured a Nosto account. Please visit nosto.com to create an account and get started.'));
+        }
+
+        $output = $output . $this->displayForm();
+        return $output;
     }
 
     /**
@@ -319,6 +331,23 @@ class NostoTagging extends Module
         );
 
         return call_user_func($callback, self::NOSTOTAGGING_CONFIG_KEY_ACCOUNT_NAME, (string)$account_name);
+    }
+
+    /**
+     * Setter for the Nosto SSO token.
+     *
+     * @param string $sso_token
+     * @param bool $global
+     * @return bool
+     */
+    public function setSSOToken($sso_token, $global = false)
+    {
+        $callback = array(
+            'Configuration',
+            $global ? 'updateGlobalValue' : 'updateValue'
+        );
+
+        return call_user_func($callback, self::NOSTOTAGGING_CONFIG_KEY_SSO_TOKEN, (string)$sso_token);
     }
 
     /**
@@ -636,6 +665,65 @@ class NostoTagging extends Module
     }
 
     /**
+     * Calls the Nosto account-creation endpoint to create an account if
+     * one hasn't been already configured. It stores the account name and the
+     * SSO token to the configuration
+     *
+     * @return bool
+     */
+    protected function createAccount()
+    {
+
+        if (empty($this->getAccountName())) 
+        {
+            $default_currency = new Currency(intval(Configuration::get('PS_CURRENCY_DEFAULT')));
+            $default_country = new Country(intval(Configuration::get('PS_COUNTRY_DEFAULT')));
+            $default_language = new Language($this->context->language->id);
+
+            $signup_params = array();
+            $signup_params['title'] = Configuration::get('PS_SHOP_NAME');
+            $signup_params['name'] = substr(sha1(rand()), 0, 8);
+            $signup_params['platform'] = 'prestashop';
+            $signup_params['front_page_url'] = "http://" . Configuration::get('PS_SHOP_DOMAIN');
+            $signup_params['currency_code'] = $default_currency->iso_code;
+            $signup_params['language_code'] = $default_language->iso_code;
+            $signup_params['owner']['first_name'] = $this->context->employee->lastname;
+            $signup_params['owner']['last_name'] = $this->context->employee->firstname;
+            $signup_params['owner']['email'] = $this->context->employee->email;
+            $signup_params['billing_details']['country'] = $default_country->iso_code;
+
+            $api_endpoint = self::NOSTOTAGGING_API_SIGNUP_URL;
+            $api_token = self::NOSTOTAGGING_API_SIGNUP_TOKEN;
+            $options = array(
+                'http' => array(
+                    'header'  => "Content-type: application/json\r\n",
+                    'header' => "Authorization: Basic " . base64_encode(":" . $api_token) . "\r\n",
+                    'method'  => 'POST',
+                    'content' => json_encode($signup_params),
+                ),
+            );
+            $context  = stream_context_create($options);
+            $result = file_get_contents($api_endpoint, false, $context);
+
+            //We only set the values if the request was a success, else notify the
+            //user to manually create the account.
+            if (empty($result)) 
+            {
+                $this->setAccountName('');
+                $this->setSSOToken('');
+            } 
+            else 
+            {
+                $result = json_decode($result);
+                $this->setAccountName($signup_params['name']);
+                $this->setSSOToken($result->sso_token);
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Adds initial config values for Nosto server address and account name.
      *
      * @return bool
@@ -643,7 +731,6 @@ class NostoTagging extends Module
     protected function initConfig()
     {
         return ($this->setServerAddress(self::NOSTOTAGGING_DEFAULT_SERVER_ADDRESS, true)
-            && $this->setAccountName('', true)
             && $this->setUseDefaultNostoElements(1, true));
     }
 
@@ -655,7 +742,6 @@ class NostoTagging extends Module
     protected function deleteConfig()
     {
         return (Configuration::deleteByName(self::NOSTOTAGGING_CONFIG_KEY_SERVER_ADDRESS)
-            && Configuration::deleteByName(self::NOSTOTAGGING_CONFIG_KEY_ACCOUNT_NAME)
             && Configuration::deleteByName(self::NOSTOTAGGING_CONFIG_KEY_USE_DEFAULT_NOSTO_ELEMENTS));
     }
 
