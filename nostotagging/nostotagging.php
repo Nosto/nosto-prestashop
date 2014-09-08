@@ -88,7 +88,8 @@ class NostoTagging extends Module
             && $this->registerHook('displayCategoryTop')
             && $this->registerHook('displayCategoryFooter')
             && $this->registerHook('displaySearchTop')
-            && $this->registerHook('displaySearchFooter');
+            && $this->registerHook('displaySearchFooter')
+            && $this->registerHook('actionPaymentConfirmation');
     }
 
     /**
@@ -609,6 +610,23 @@ class NostoTagging extends Module
         return $this->display(__FILE__, 'search-footer_nosto-elements.tpl');
     }
 
+
+
+
+    public function hookActionPaymentConfirmation(Array $params)
+    {
+        var_dump('actionPaymentConfirmation', $params);die;
+
+//        $nosto_order = $this->getOrderData($order, $currency);
+//        if (!empty($nosto_order))
+//        {
+//            // todo: send order data to Nosto
+//        }
+    }
+
+
+
+
     /**
      * Adds custom hooks used by this module.
      * Run on module install.
@@ -845,9 +863,29 @@ class NostoTagging extends Module
      */
     protected function getOrderTagging(Order $order, Currency $currency)
     {
+        $nosto_order = $this->getOrderData($order, $currency);
+        if (empty($nosto_order))
+            return '';
+
+        $this->smarty->assign(array(
+            'nosto_order' => $nosto_order,
+        ));
+
+        return $this->display(__FILE__, 'order-confirmation_order-tagging.tpl');
+    }
+
+    /**
+     * Returns data about the order in a format that can be sent to Nosto.
+     *
+     * @param Order $order
+     * @param Currency $currency
+     * @return false|array the order data array or false.
+     */
+    protected function getOrderData(Order $order, Currency $currency)
+    {
         if (!($order instanceof Order) || !Validate::isLoadedObject($order)
             || !($currency instanceof Currency) || !Validate::isLoadedObject($currency))
-            return '';
+            return false;
 
         $products = array();
         $total_discounts_tax_incl = 0;
@@ -905,9 +943,14 @@ class NostoTagging extends Module
 
         $items = array_merge($products, $gift_products);
 
+        $customer = $order->getCustomer();
         $nosto_order = array();
         $nosto_order['order_number'] = (string)$order->reference;
-        $nosto_order['customer'] = $order->getCustomer();
+        $nosto_order['customer'] = array(
+            'firstname' => $customer->firstname,
+            'lastname' => $customer->lastname,
+            'email' => $customer->email,
+        );
         $nosto_order['purchased_items'] = array();
 
         foreach ($items as $item)
@@ -924,7 +967,7 @@ class NostoTagging extends Module
         }
 
         if (empty($nosto_order['purchased_items']))
-            return '';
+            return false;
 
         // Add special items for discounts, shipping and gift wrapping.
 
@@ -969,11 +1012,7 @@ class NostoTagging extends Module
                 'price_currency_code' => (string)$currency->iso_code,
             );
 
-        $this->smarty->assign(array(
-            'nosto_order' => $nosto_order,
-        ));
-
-        return $this->display(__FILE__, 'order-confirmation_order-tagging.tpl');
+        return $nosto_order;
     }
 
     /**
