@@ -1,6 +1,6 @@
 <?php
 if (!defined('_PS_VERSION_'))
-  exit;
+	exit;
 
 /**
  * NostoTagging module that integrates Nosto marketing automation service.
