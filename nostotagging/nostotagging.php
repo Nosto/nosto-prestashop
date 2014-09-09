@@ -622,8 +622,6 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayPaymentTop()
 	{
-//        var_dump($this->context->customer->id, $_COOKIE[self::NOSTOTAGGING_CUSTOMER_ID_COOKIE]);
-
 		if (isset($this->context->customer->id, $_COOKIE[self::NOSTOTAGGING_CUSTOMER_ID_COOKIE]))
 		{
 			$table = _DB_PREFIX_.self::NOSTOTAGGING_CUSTOMER_LINK_TABLE;
@@ -645,11 +643,9 @@ class NostoTagging extends Module
 	 */
 	public function hookActionPaymentConfirmation(Array $params)
 	{
-//		var_dump('actionPaymentConfirmation', $params);
-
-		if (isset($params['order_id']))
+		if (isset($params['id_order']))
 		{
-			$order = new Order($params['order_id']);
+			$order = new Order($params['id_order']);
 			$currency = new Currency($order->id_currency);
 			$nosto_order = $this->getOrderData($order, $currency);
 			$nosto_customer_id = $this->getNostoCustomerId();
@@ -663,9 +659,7 @@ class NostoTagging extends Module
 					)
 				);
 				$context = stream_context_create($options);
-				$result = file_get_contents(self::NOSTOTAGGING_API_ORDER_TAGGING_URL, false, $context);
-
-//				var_dump($result);
+				file_get_contents(self::NOSTOTAGGING_API_ORDER_TAGGING_URL, false, $context);
 			}
 		}
 	}
