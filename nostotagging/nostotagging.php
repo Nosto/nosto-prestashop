@@ -80,22 +80,22 @@ class NostoTagging extends Module
 		require_once(dirname(__FILE__).'/nostotagging-top-sellers-page.php');
 
 		return parent::install()
-		&& $this->initConfig()
-		&& NostoTaggingTopSellersPage::addPage()
-		&& $this->createAccount()
-		&& $this->initHooks()
-		&& $this->registerHook('displayHeader')
-		&& $this->registerHook('displayTop')
-		&& $this->registerHook('displayFooter')
-		&& $this->registerHook('displayLeftColumn')
-		&& $this->registerHook('displayRightColumn')
-		&& $this->registerHook('displayFooterProduct')
-		&& $this->registerHook('displayShoppingCartFooter')
-		&& $this->registerHook('displayOrderConfirmation')
-		&& $this->registerHook('displayCategoryTop')
-		&& $this->registerHook('displayCategoryFooter')
-		&& $this->registerHook('displaySearchTop')
-		&& $this->registerHook('displaySearchFooter');
+			&& $this->initConfig()
+			&& NostoTaggingTopSellersPage::addPage()
+			&& $this->createAccount()
+			&& $this->initHooks()
+			&& $this->registerHook('displayHeader')
+			&& $this->registerHook('displayTop')
+			&& $this->registerHook('displayFooter')
+			&& $this->registerHook('displayLeftColumn')
+			&& $this->registerHook('displayRightColumn')
+			&& $this->registerHook('displayFooterProduct')
+			&& $this->registerHook('displayShoppingCartFooter')
+			&& $this->registerHook('displayOrderConfirmation')
+			&& $this->registerHook('displayCategoryTop')
+			&& $this->registerHook('displayCategoryFooter')
+			&& $this->registerHook('displaySearchTop')
+			&& $this->registerHook('displaySearchFooter');
 	}
 
 	/**
@@ -111,8 +111,8 @@ class NostoTagging extends Module
 		require_once(dirname(__FILE__).'/nostotagging-top-sellers-page.php');
 
 		return parent::uninstall()
-		&& NostoTaggingTopSellersPage::deletePage()
-		&& $this->deleteConfig();
+			&& NostoTaggingTopSellersPage::deletePage()
+			&& $this->deleteConfig();
 	}
 
 	/**
@@ -717,8 +717,7 @@ class NostoTagging extends Module
 			$context = stream_context_create($options);
 			$result = file_get_contents($api_endpoint, false, $context);
 
-			//We only set the values if the request was a success, else notify the
-			//user to manually create the account.
+			// Set the values if the request was a success, else notify the user to manually create the account.
 			if (empty($result))
 			{
 				$this->setAccountName('');
