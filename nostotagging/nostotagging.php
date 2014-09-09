@@ -186,9 +186,8 @@ class NostoTagging extends Module
 
         if (!$this->hasAccountName())
         {
-            $message = 'You haven\'t configured a Nosto account. ';
-            $message = $message.'Please visit nosto.com to create an account and get started.';
-            $output = $output.$this->displayError($this->l($message));
+            $message = $this->l('You haven\'t configured a Nosto account. Please visit nosto.com to create an account and get started.');
+            $output = $output.$this->displayError($message);
         }
 
         $output = $output.$this->displayForm();
