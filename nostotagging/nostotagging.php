@@ -64,7 +64,7 @@ class NostoTagging extends Module
 		if (!$this->hasAccountName())
 			$this->warning = $this->l('Account details must be configured before using this module.');
 
-		$this->displayName = $this->l('Nosto Tagging');
+		$this->displayName = $this->l('Nosto Recommendations');
 		$this->description = $this->l('Integrates Nosto marketing automation service.');
 	}
 
