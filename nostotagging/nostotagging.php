@@ -689,28 +689,28 @@ class NostoTagging extends Module
 	{
 		if (!$this->hasAccountName())
 		{
-			$default_currency = new Currency(intval(Configuration::get('PS_CURRENCY_DEFAULT')));
-			$default_country = new Country(intval(Configuration::get('PS_COUNTRY_DEFAULT')));
-			$default_language = new Language($this->context->language->id);
-
-			$signup_params = array();
-			$signup_params['title'] = Configuration::get('PS_SHOP_NAME');
-			$signup_params['name'] = substr(sha1(rand()), 0, 8);
-			$signup_params['platform'] = 'prestashop';
-			$signup_params['front_page_url'] = 'http://'.Configuration::get('PS_SHOP_DOMAIN');
-			$signup_params['currency_code'] = $default_currency->iso_code;
-			$signup_params['language_code'] = $default_language->iso_code;
-			$signup_params['owner']['first_name'] = $this->context->employee->lastname;
-			$signup_params['owner']['last_name'] = $this->context->employee->firstname;
-			$signup_params['owner']['email'] = $this->context->employee->email;
-			$signup_params['billing_details']['country'] = $default_country->iso_code;
-
+			$params = array(
+				'title' => Configuration::get('PS_SHOP_NAME'),
+				'name' => substr(sha1(rand()), 0, 8),
+				'platform' => 'prestashop',
+				'front_page_url' => 'http://'.Configuration::get('PS_SHOP_DOMAIN'),
+				'currency_code' => $this->context->currency->iso_code,
+				'language_code' => $this->context->language->iso_code,
+				'owner' => array(
+					'first_name' => $this->context->employee->lastname,
+					'last_name' => $this->context->employee->firstname,
+					'email' => $this->context->employee->email,
+				),
+				'billing_details' => array(
+					'country' => $this->context->country->iso_code
+				)
+			);
 			$options = array(
 				'http' => array(
 					'header' => 'Content-type: application/json\r\n'.
 								'Authorization: Basic '.base64_encode(':'.self::NOSTOTAGGING_API_SIGNUP_TOKEN).'\r\n',
 					'method' => 'POST',
-					'content' => json_encode($signup_params),
+					'content' => json_encode($params),
 				),
 			);
 			$context = stream_context_create($options);
@@ -725,7 +725,7 @@ class NostoTagging extends Module
 			}
 			else
 			{
-				$this->setAccountName($signup_params['name']);
+				$this->setAccountName($params['name']);
 				$this->setSSOToken($result->sso_token);
 			}
 		}
