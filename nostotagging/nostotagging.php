@@ -15,8 +15,7 @@ class NostoTagging extends Module
 	const NOSTOTAGGING_PRODUCT_OUT_OF_STOCK = 'OutOfStock';
 	const NOSTOTAGGING_CUSTOMER_ID_COOKIE = '2c.cId';
 	const NOSTOTAGGING_CUSTOMER_LINK_TABLE = 'nostotagging_customer_link';
-	const NOSTOTAGGING_API_ORDER_TAGGING_URL = ''; // todo: add url
-	const NOSTOTAGGING_API_ORDER_TAGGING_TOKEN = ''; // todo: add token
+	const NOSTOTAGGING_API_ORDER_TAGGING_URL = 'http://localhost:9000/api/visits/order/confirmation/{m}/{cid}';
 
 	/**
 	 * Custom hooks to add for this module.
@@ -625,11 +624,13 @@ class NostoTagging extends Module
 		if (isset($this->context->customer->id, $_COOKIE[self::NOSTOTAGGING_CUSTOMER_ID_COOKIE]))
 		{
 			$table = _DB_PREFIX_.self::NOSTOTAGGING_CUSTOMER_LINK_TABLE;
-			$data = array(
-				'id_customer' => (int)$this->context->customer->id,
-				'id_nosto_customer' => pSQL($_COOKIE[self::NOSTOTAGGING_CUSTOMER_ID_COOKIE]),
-			);
-			Db::getInstance()->insert($table, $data, false /*$null_values*/, true /*$use_cache*/, Db::REPLACE);
+			$id_customer = (int)$this->context->customer->id;
+			$id_nosto_customer = pSQL($_COOKIE[self::NOSTOTAGGING_CUSTOMER_ID_COOKIE]);
+			$existing_link = Db::getInstance()->getRow('SELECT * FROM `'.$table.'` WHERE `id_customer` = '.$id_customer.' AND `id_nosto_customer` = "'.$id_nosto_customer.'"');
+			if (empty($existing_link))
+				Db::getInstance()->execute('INSERT INTO `'.$table.'` (`id_customer`, `id_nosto_customer`, `date_add`) VALUES ('.$id_customer.', "'.$id_nosto_customer.'", NOW())');
+			else
+				Db::getInstance()->execute('UPDATE `'.$table.'` SET `date_upd` = NOW() WHERE `id_customer` = '.$id_customer.' AND `id_nosto_customer` = "'.$id_nosto_customer.'"');
 		}
 	}
 
@@ -648,9 +649,12 @@ class NostoTagging extends Module
 			$order = new Order($params['id_order']);
 			$currency = new Currency($order->id_currency);
 			$nosto_order = $this->getOrderData($order, $currency);
-			$nosto_customer_id = $this->getNostoCustomerId();
-			if (!empty($nosto_order) && !empty($nosto_customer_id))
+			$id_nosto_customer = $this->getNostoCustomerId();
+			$account_name = $this->getAccountName();
+			if (!empty($nosto_order) && !empty($id_nosto_customer) && !empty($account_name))
 			{
+				$nosto_order['customer']['order_number'] = $nosto_order['order_number'];
+				unset($nosto_order['order_number']);
 				$options = array(
 					'http' => array(
 						'method' => 'POST',
@@ -659,7 +663,11 @@ class NostoTagging extends Module
 					)
 				);
 				$context = stream_context_create($options);
-				file_get_contents(self::NOSTOTAGGING_API_ORDER_TAGGING_URL, false, $context);
+				$url = strtr(self::NOSTOTAGGING_API_ORDER_TAGGING_URL, array(
+					'{m}' => $account_name,
+					'{cid}' => $id_nosto_customer,
+				));
+				file_get_contents($url, false, $context);
 			}
 		}
 	}
@@ -675,8 +683,8 @@ class NostoTagging extends Module
 			return false;
 
 		$table = _DB_PREFIX_.self::NOSTOTAGGING_CUSTOMER_LINK_TABLE;
-		$sql = 'SELECT `id_nosto_customer` FROM `'.$table.'` WHERE `id_customer` = '.(int)$this->context->customer->id;
-		return Db::getInstance()->getValue($sql);
+		$id_customer = (int)$this->context->customer->id;
+		return Db::getInstance()->getValue('SELECT `id_nosto_customer` FROM `'.$table.'` WHERE `id_customer` = '.$id_customer.' ORDER BY `date_add` ASC');
 	}
 
 	/**
@@ -739,10 +747,13 @@ class NostoTagging extends Module
 	{
 		$table = _DB_PREFIX_.self::NOSTOTAGGING_CUSTOMER_LINK_TABLE;
 		$sql = 'CREATE TABLE IF NOT EXISTS `'.$table.'` (
-            `id_customer` INT(10) UNSIGNED NOT NULL PRIMARY KEY,
-            `id_nosto_customer` VARCHAR(255) NOT NULL
+            `id_customer` INT(10) UNSIGNED NOT NULL,
+            `id_nosto_customer` VARCHAR(255) NOT NULL,
+            `date_add` DATETIME NOT NULL,
+            `date_upd` DATETIME NULL,
+            PRIMARY KEY (`id_customer`, `id_nosto_customer`)
         ) ENGINE InnoDB';
-		return Db::getInstance()->Execute($sql);
+		return Db::getInstance()->execute($sql);
 	}
 
 	/**
@@ -753,8 +764,7 @@ class NostoTagging extends Module
 	protected function removeCustomerLinkTable()
 	{
 		$table = _DB_PREFIX_.self::NOSTOTAGGING_CUSTOMER_LINK_TABLE;
-		$sql = 'DROP TABLE IF EXISTS `'.$table.'`';
-		return Db::getInstance()->Execute($sql);
+		return Db::getInstance()->execute('DROP TABLE IF EXISTS `'.$table.'`');
 	}
 
 	/**
