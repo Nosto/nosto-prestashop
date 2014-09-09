@@ -670,7 +670,7 @@ class NostoTagging extends Module
 					$new_hook = new Hook();
 					$new_hook->name = pSQL($hook['name']);
 					$new_hook->title = pSQL($hook['title']);
-					$new_hook->title = pSQL($hook['description']);
+					$new_hook->description = pSQL($hook['description']);
 					$new_hook->add();
 					$id_hook = $new_hook->id;
 					if (!$id_hook)
