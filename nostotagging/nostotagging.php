@@ -494,7 +494,8 @@ class NostoTagging extends Module
 
 		/** @var $product Product */
 		$product = isset($params['product']) ? $params['product'] : null;
-		$html .= $this->getProductTagging($product);
+		$category = isset($params['category']) ? $params['category'] : null;
+		$html .= $this->getProductTagging($product, $category);
 
 		if ($this->getUseDefaultNostoElements())
 			$html .= $this->display(__FILE__, 'footer-product_nosto-elements.tpl');
@@ -886,9 +887,10 @@ class NostoTagging extends Module
 	 * Render meta-data (tagging) for a product.
 	 *
 	 * @param Product $product
+	 * @param Category $category
 	 * @return string The rendered HTML
 	 */
-	protected function getProductTagging(Product $product)
+	protected function getProductTagging(Product $product, Category $category)
 	{
 		if (!($product instanceof Product) || !Validate::isLoadedObject($product))
 			return '';
@@ -913,10 +915,11 @@ class NostoTagging extends Module
 		else
 			$nosto_product['availability'] = self::NOSTOTAGGING_PRODUCT_OUT_OF_STOCK;
 
-		$current_category_id = $this->context->controller->getCategory()->id;
-		$nosto_product['current_category'] = $this->buildCategoryString($current_category_id);
 		$nosto_product['tags'] = explode(', ', $product->getTags($this->context->language->id));
 
+		if (Validate::isLoadedObject($category))
+			$nosto_product['current_category'] = $this->buildCategoryString($category->id);
+		
 		$nosto_product['categories'] = array();
 		foreach ($product->getCategories() as $category_id)
 		{

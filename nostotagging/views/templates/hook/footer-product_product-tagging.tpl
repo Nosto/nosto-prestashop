@@ -28,7 +28,7 @@
 		{/if}
 		{/foreach}
 	</div>
-{if $nosto_product.current_category neq ''}
-	<div class="nosto_category" style="display:none">{$nosto_product.current_category|escape:'htmlall':'UTF-8'}</div>
-{/if}
+    {if isset($nosto_product.current_category) && $nosto_product.current_category neq ''}
+        <div class="nosto_category" style="display:none">{$nosto_product.current_category|escape:'htmlall':'UTF-8'}</div>
+    {/if}
 {/if}
