@@ -705,18 +705,17 @@ class NostoTagging extends Module
 			$signup_params['owner']['email'] = $this->context->employee->email;
 			$signup_params['billing_details']['country'] = $default_country->iso_code;
 
-			$api_endpoint = self::NOSTOTAGGING_API_SIGNUP_URL;
-			$api_token = self::NOSTOTAGGING_API_SIGNUP_TOKEN;
 			$options = array(
 				'http' => array(
 					'header' => 'Content-type: application/json\r\n'.
-								'Authorization: Basic '.base64_encode(':'.$api_token).'\r\n',
+								'Authorization: Basic '.base64_encode(':'.self::NOSTOTAGGING_API_SIGNUP_TOKEN).'\r\n',
 					'method' => 'POST',
 					'content' => json_encode($signup_params),
 				),
 			);
 			$context = stream_context_create($options);
-			$result = file_get_contents($api_endpoint, false, $context);
+			$result = file_get_contents(self::NOSTOTAGGING_API_SIGNUP_URL, false, $context);
+			$result = json_decode($result);
 
 			// Set the values if the request was a success, else notify the user to manually create the account.
 			if (empty($result))
@@ -726,7 +725,6 @@ class NostoTagging extends Module
 			}
 			else
 			{
-				$result = json_decode($result);
 				$this->setAccountName($signup_params['name']);
 				$this->setSSOToken($result->sso_token);
 			}
