@@ -61,8 +61,9 @@ class NostoTagging extends Module
 
         parent::__construct();
 
-        if (empty($this->getAccountName()))
+        if (!$this->hasAccountName())
             $this->warning = $this->l('Account details must be configured before using this module.');
+
         $this->displayName = $this->l('Nosto Tagging');
         $this->description = $this->l('Integrates Nosto marketing automation service.');
     }
@@ -183,7 +184,7 @@ class NostoTagging extends Module
             }
         }
 
-        if (empty($this->getAccountName()))
+        if (!$this->hasAccountName())
         {
             $message = 'You haven\'t configured a Nosto account. ';
             $message = $message.'Please visit nosto.com to create an account and get started.';
@@ -317,6 +318,17 @@ class NostoTagging extends Module
     {
         return (string)Configuration::get(self::NOSTOTAGGING_CONFIG_KEY_ACCOUNT_NAME);
     }
+
+	/**
+	 * Checks if the account name is set.
+	 *
+	 * @return bool
+	 */
+	public function hasAccountName()
+	{
+		$account = $this->getAccountName();
+		return !empty($account);
+	}
 
     /**
      * Setter for the Nosto account name.
@@ -675,7 +687,7 @@ class NostoTagging extends Module
      */
     protected function createAccount()
     {
-        if (empty($this->getAccountName()))
+        if (!$this->hasAccountName())
         {
             $default_currency = new Currency(intval(Configuration::get('PS_CURRENCY_DEFAULT')));
             $default_country = new Country(intval(Configuration::get('PS_COUNTRY_DEFAULT')));
