@@ -708,8 +708,8 @@ class NostoTagging extends Module
 			$api_token = self::NOSTOTAGGING_API_SIGNUP_TOKEN;
 			$options = array(
 				'http' => array(
-					'header' => 'Content-type: application/json\r\n',
-					'header' => 'Authorization: Basic '.base64_encode(':'.$api_token).'\r\n',
+					'header' => 'Content-type: application/json\r\n'.
+								'Authorization: Basic '.base64_encode(':'.$api_token).'\r\n',
 					'method' => 'POST',
 					'content' => json_encode($signup_params),
 				),
