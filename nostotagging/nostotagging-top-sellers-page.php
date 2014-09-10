@@ -132,7 +132,8 @@ class NostoTaggingTopSellersPage
                                AND id_shop IN ('.implode(', ', $shop_ids).')';
 					Db::getInstance()->delete('cms_shop', $where);
 				}
-			} elseif ($cms->active)
+			}
+			elseif ($cms->active)
 			{
 				$cms->active = 0;
 				$cms->save();

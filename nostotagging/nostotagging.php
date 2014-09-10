@@ -14,6 +14,9 @@ class NostoTagging extends Module
 	const NOSTOTAGGING_DEFAULT_SERVER_ADDRESS = 'connect.nosto.com';
 	const NOSTOTAGGING_PRODUCT_IN_STOCK = 'InStock';
 	const NOSTOTAGGING_PRODUCT_OUT_OF_STOCK = 'OutOfStock';
+	const NOSTOTAGGING_CUSTOMER_ID_COOKIE = '2c.cId';
+	const NOSTOTAGGING_CUSTOMER_LINK_TABLE = 'nostotagging_customer_link';
+	const NOSTOTAGGING_API_ORDER_TAGGING_URL = 'http://localhost:9000/api/visits/order/confirmation/{m}/{cid}';
 	const NOSTOTAGGING_API_SIGNUP_URL = 'http://localhost:9000/api/accounts/create';
 	const NOSTOTAGGING_API_SIGNUP_TOKEN = 'ulHkQOQqulzahkUIkFOBzaessaFtq5M4vz7G5Vk1ZjOC4VEhWllYoK6EPNfj2Wto';
 
@@ -82,6 +85,7 @@ class NostoTagging extends Module
 		return parent::install()
 			&& $this->initConfig()
 			&& NostoTaggingTopSellersPage::addPage()
+			&& $this->createCustomerLinkTable()
 			&& $this->createAccount()
 			&& $this->initHooks()
 			&& $this->registerHook('displayHeader')
@@ -95,7 +99,9 @@ class NostoTagging extends Module
 			&& $this->registerHook('displayCategoryTop')
 			&& $this->registerHook('displayCategoryFooter')
 			&& $this->registerHook('displaySearchTop')
-			&& $this->registerHook('displaySearchFooter');
+			&& $this->registerHook('displaySearchFooter')
+			&& $this->registerHook('actionPaymentConfirmation')
+			&& $this->registerHook('displayPaymentTop');
 	}
 
 	/**
@@ -112,6 +118,7 @@ class NostoTagging extends Module
 
 		return parent::uninstall()
 			&& NostoTaggingTopSellersPage::deletePage()
+			&& $this->removeCustomerLinkTable()
 			&& $this->deleteConfig();
 	}
 
@@ -491,7 +498,6 @@ class NostoTagging extends Module
 	{
 		$html = '';
 
-		/** @var $product Product */
 		$product = isset($params['product']) ? $params['product'] : null;
 		$category = isset($params['category']) ? $params['category'] : null;
 		$html .= $this->getProductTagging($product, $category);
@@ -530,9 +536,7 @@ class NostoTagging extends Module
 	{
 		$html = '';
 
-		/** @var $order Order */
 		$order = isset($params['objOrder']) ? $params['objOrder'] : null;
-		/** @var $currency Currency */
 		$currency = isset($params['currencyObj']) ? $params['currencyObj'] : null;
 		$html .= $this->getOrderTagging($order, $currency);
 
@@ -589,7 +593,6 @@ class NostoTagging extends Module
 	{
 		$html = '';
 
-		/** @var $category Category */
 		$category = isset($params['category']) ? $params['category'] : null;
 		$html .= $this->getCategoryTagging($category);
 
@@ -652,7 +655,93 @@ class NostoTagging extends Module
 	}
 
 	/**
+	 * Hook for updating the customer link table with the Prestashop customer id and the Nosto customer id.
+	 */
+	public function hookDisplayPaymentTop()
+	{
+		if (isset($this->context->customer->id, $_COOKIE[self::NOSTOTAGGING_CUSTOMER_ID_COOKIE]))
+		{
+			$table = _DB_PREFIX_.self::NOSTOTAGGING_CUSTOMER_LINK_TABLE;
+			$id_customer = (int)$this->context->customer->id;
+			$id_nosto_customer = pSQL($_COOKIE[self::NOSTOTAGGING_CUSTOMER_ID_COOKIE]);
+			$where = '`id_customer` = '.$id_customer.' AND `id_nosto_customer` = "'.$id_nosto_customer.'"';
+			$existing_link = Db::getInstance()->getRow('SELECT * FROM `'.$table.'` WHERE '.$where);
+			if (empty($existing_link))
+			{
+				$data = array(
+					'id_customer' => $id_customer,
+					'id_nosto_customer' => $id_nosto_customer,
+					'date_add' => date('Y-m-d H:i:s')
+				);
+				Db::getInstance()->insert($table, $data, false, true, Db::INSERT, false);
+			}
+			else
+			{
+				$data = array(
+					'date_upd' => date('Y-m-d H:i:s')
+				);
+				Db::getInstance()->update($table, $data, $where, 0, false, true, false);
+			}
+		}
+	}
+
+	/**
+	 * Hook for sending order tagging information to Nosto via their API.
+	 *
+	 * This is a fallback for the regular order tagging on the "order confirmation page", as there are cases when
+	 * the customer does not get redirected back to the shop after the payment is completed.
+	 *
+	 * @param array $params
+	 */
+	public function hookActionPaymentConfirmation(Array $params)
+	{
+		if (isset($params['id_order']))
+		{
+			$order = new Order($params['id_order']);
+			$currency = new Currency($order->id_currency);
+			$nosto_order = $this->getOrderData($order, $currency);
+			$id_nosto_customer = $this->getNostoCustomerId();
+			$account_name = $this->getAccountName();
+			if (!empty($nosto_order) && !empty($id_nosto_customer) && !empty($account_name))
+			{
+				// Move the 'order_number' inside the customer array because it is required by the API.
+				$nosto_order['customer']['order_number'] = $nosto_order['order_number'];
+				unset($nosto_order['order_number']);
+				$options = array(
+					'http' => array(
+						'method' => 'POST',
+						'header' => 'Content-type: application/json',
+						'content' => json_encode($nosto_order),
+					)
+				);
+				$context = stream_context_create($options);
+				$url = strtr(self::NOSTOTAGGING_API_ORDER_TAGGING_URL, array(
+					'{m}' => $account_name,
+					'{cid}' => $id_nosto_customer,
+				));
+				file_get_contents($url, false, $context);
+			}
+		}
+	}
+
+	/**
+	 * Returns the Nosto customer id for the current Prestashop customer.
+	 *
+	 * @return string
+	 */
+	protected function getNostoCustomerId()
+	{
+		if (!isset($this->context->customer->id))
+			return false;
+
+		$table = _DB_PREFIX_.self::NOSTOTAGGING_CUSTOMER_LINK_TABLE;
+		$id_customer = (int)$this->context->customer->id;
+		return Db::getInstance()->getValue('SELECT `id_nosto_customer` FROM `'.$table.'` WHERE `id_customer` = '.$id_customer.' ORDER BY `date_add` ASC');
+	}
+
+	/**
 	 * Adds custom hooks used by this module.
+	 *
 	 * Run on module install.
 	 *
 	 * @return bool
@@ -675,6 +764,7 @@ class NostoTagging extends Module
 					if (!$id_hook)
 						return false;
 				}
+			}
 		}
 
 		return true;
@@ -755,6 +845,35 @@ class NostoTagging extends Module
 	{
 		return (Configuration::deleteByName(self::NOSTOTAGGING_CONFIG_KEY_SERVER_ADDRESS)
 			&& Configuration::deleteByName(self::NOSTOTAGGING_CONFIG_KEY_USE_DEFAULT_NOSTO_ELEMENTS));
+	}
+
+	/**
+	 * Creates the customer link table to be able to link between the Prestashop customer and the Nosto customer.
+	 *
+	 * @return bool
+	 */
+	protected function createCustomerLinkTable()
+	{
+		$table = _DB_PREFIX_.self::NOSTOTAGGING_CUSTOMER_LINK_TABLE;
+		$sql = 'CREATE TABLE IF NOT EXISTS `'.$table.'` (
+			`id_customer` INT(10) UNSIGNED NOT NULL,
+			`id_nosto_customer` VARCHAR(255) NOT NULL,
+			`date_add` DATETIME NOT NULL,
+			`date_upd` DATETIME NULL,
+			PRIMARY KEY (`id_customer`, `id_nosto_customer`)
+		) ENGINE '._MYSQL_ENGINE_;
+		return Db::getInstance()->execute($sql);
+	}
+
+	/**
+	 * Removes the customer link table.
+	 *
+	 * @return bool
+	 */
+	protected function removeCustomerLinkTable()
+	{
+		$table = _DB_PREFIX_.self::NOSTOTAGGING_CUSTOMER_LINK_TABLE;
+		return Db::getInstance()->execute('DROP TABLE IF EXISTS `'.$table.'`');
 	}
 
 	/**
@@ -919,7 +1038,7 @@ class NostoTagging extends Module
 
 		if (Validate::isLoadedObject($category))
 			$nosto_product['current_category'] = $this->buildCategoryString($category->id);
-		
+
 		$nosto_product['categories'] = array();
 		foreach ($product->getCategories() as $category_id)
 		{
@@ -949,9 +1068,29 @@ class NostoTagging extends Module
 	 */
 	protected function getOrderTagging(Order $order, Currency $currency)
 	{
+		$nosto_order = $this->getOrderData($order, $currency);
+		if (empty($nosto_order))
+			return '';
+
+		$this->smarty->assign(array(
+			'nosto_order' => $nosto_order,
+		));
+
+		return $this->display(__FILE__, 'order-confirmation_order-tagging.tpl');
+	}
+
+	/**
+	 * Returns data about the order in a format that can be sent to Nosto.
+	 *
+	 * @param Order $order
+	 * @param Currency $currency
+	 * @return false|array the order data array or false.
+	 */
+	protected function getOrderData(Order $order, Currency $currency)
+	{
 		if (!($order instanceof Order) || !Validate::isLoadedObject($order)
 			|| !($currency instanceof Currency) || !Validate::isLoadedObject($currency))
-			return '';
+			return false;
 
 		$products = array();
 		$total_discounts_tax_incl = 0;
@@ -1009,9 +1148,14 @@ class NostoTagging extends Module
 
 		$items = array_merge($products, $gift_products);
 
+		$customer = $order->getCustomer();
 		$nosto_order = array();
 		$nosto_order['order_number'] = (string)$order->reference;
-		$nosto_order['customer'] = $order->getCustomer();
+		$nosto_order['customer'] = array(
+			'first_name' => $customer->firstname,
+			'last_name' => $customer->lastname,
+			'email' => $customer->email,
+		);
 		$nosto_order['purchased_items'] = array();
 
 		foreach ($items as $item)
@@ -1028,7 +1172,7 @@ class NostoTagging extends Module
 		}
 
 		if (empty($nosto_order['purchased_items']))
-			return '';
+			return false;
 
 		// Add special items for discounts, shipping and gift wrapping.
 
@@ -1073,11 +1217,7 @@ class NostoTagging extends Module
 				'price_currency_code' => (string)$currency->iso_code,
 			);
 
-		$this->smarty->assign(array(
-			'nosto_order' => $nosto_order,
-		));
-
-		return $this->display(__FILE__, 'order-confirmation_order-tagging.tpl');
+		return $nosto_order;
 	}
 
 	/**
