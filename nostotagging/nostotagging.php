@@ -16,9 +16,9 @@ class NostoTagging extends Module
 	const NOSTOTAGGING_PRODUCT_OUT_OF_STOCK = 'OutOfStock';
 	const NOSTOTAGGING_CUSTOMER_ID_COOKIE = '2c.cId';
 	const NOSTOTAGGING_CUSTOMER_LINK_TABLE = 'nostotagging_customer_link';
-	const NOSTOTAGGING_API_ORDER_TAGGING_URL = 'http://localhost:9000/api/visits/order/confirmation/{m}/{cid}';
-	const NOSTOTAGGING_API_SIGNUP_URL = 'http://localhost:9000/api/accounts/create';
-	const NOSTOTAGGING_API_SIGNUP_TOKEN = 'ulHkQOQqulzahkUIkFOBzaessaFtq5M4vz7G5Vk1ZjOC4VEhWllYoK6EPNfj2Wto';
+	const NOSTOTAGGING_API_ORDER_TAGGING_URL = 'https://api.nosto.com/visits/order/confirmation/{m}/{cid}';
+	const NOSTOTAGGING_API_SIGNUP_URL = 'https://api.nosto.com/accounts/create';
+	const NOSTOTAGGING_API_SIGNUP_TOKEN = 'akmAhjiTjyPfvSn2WviDePpLqGkZXlqYBkLQGc9pyKT3NdAPRgUO3iu2ESlBt060';
 
 	/**
 	 * Custom hooks to add for this module.
@@ -57,7 +57,7 @@ class NostoTagging extends Module
 	{
 		$this->name = 'nostotagging';
 		$this->tab = 'advertising_marketing';
-		$this->version = '1.0.0';
+		$this->version = '1.1.0';
 		$this->author = 'Nosto';
 		$this->need_instance = 0;
 		$this->bootstrap = true;
@@ -797,10 +797,13 @@ class NostoTagging extends Module
 					'country' => $this->context->country->iso_code
 				)
 			);
+			$headers = array(
+				'Content-type: application/json',
+				'Authorization: Basic '.base64_encode(':'.self::NOSTOTAGGING_API_SIGNUP_TOKEN)
+			);
 			$options = array(
 				'http' => array(
-					'header' => 'Content-type: application/json\r\n'.
-								'Authorization: Basic '.base64_encode(':'.self::NOSTOTAGGING_API_SIGNUP_TOKEN).'\r\n',
+					'header' => implode('\r\n', $headers),
 					'method' => 'POST',
 					'content' => json_encode($params),
 				),
@@ -852,7 +855,7 @@ class NostoTagging extends Module
 	 *
 	 * @return bool
 	 */
-	protected function createCustomerLinkTable()
+	public function createCustomerLinkTable()
 	{
 		$table = _DB_PREFIX_.self::NOSTOTAGGING_CUSTOMER_LINK_TABLE;
 		$sql = 'CREATE TABLE IF NOT EXISTS `'.$table.'` (
