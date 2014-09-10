@@ -765,7 +765,7 @@ class NostoTagging extends Module
 			`date_add` DATETIME NOT NULL,
 			`date_upd` DATETIME NULL,
 			PRIMARY KEY (`id_customer`, `id_nosto_customer`)
-		) ENGINE InnoDB';
+		) ENGINE '._MYSQL_ENGINE_;
 		return Db::getInstance()->execute($sql);
 	}
 
