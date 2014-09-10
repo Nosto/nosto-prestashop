@@ -190,8 +190,7 @@ class NostoTagging extends Module
 			$output = $output.$this->displayError($message);
 		}
 
-		$output = $output.$this->displayForm();
-		return $output;
+		return $output.$this->displayForm();
 	}
 
 	/**
@@ -662,17 +661,20 @@ class NostoTagging extends Module
 	{
 		if (!empty($this->custom_hooks))
 		{
-			$db = Db::getInstance();
 			foreach ($this->custom_hooks as $hook)
 			{
-				$query = 'SELECT `name`
-                          FROM `'._DB_PREFIX_.'hook`
-                          WHERE `name` = "'.$db->escape($hook['name']).'"';
-
-				if (!$db->getRow($query))
-					if (!$db->insert('hook', $hook))
+				$id_hook = Hook::getIdByName($hook['name']);
+				if (!$id_hook)
+				{
+					$new_hook = new Hook();
+					$new_hook->name = pSQL($hook['name']);
+					$new_hook->title = pSQL($hook['title']);
+					$new_hook->description = pSQL($hook['description']);
+					$new_hook->add();
+					$id_hook = $new_hook->id;
+					if (!$id_hook)
 						return false;
-			}
+				}
 		}
 
 		return true;
