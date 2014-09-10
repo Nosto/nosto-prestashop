@@ -921,7 +921,7 @@ class NostoTagging extends Module
 
 		if (Validate::isLoadedObject($category))
 			$nosto_product['current_category'] = $this->buildCategoryString($category->id);
-		
+
 		$nosto_product['categories'] = array();
 		foreach ($product->getCategories() as $category_id)
 		{
