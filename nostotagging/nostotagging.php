@@ -9,6 +9,7 @@ class NostoTagging extends Module
 {
 	const NOSTOTAGGING_CONFIG_KEY_SERVER_ADDRESS = 'NOSTOTAGGING_SERVER_ADDRESS';
 	const NOSTOTAGGING_CONFIG_KEY_ACCOUNT_NAME = 'NOSTOTAGGING_ACCOUNT_NAME';
+	const NOSTOTAGGING_CONFIG_KEY_SSO_TOKEN = 'NOSTOTAGGING_SSO_TOKEN';
 	const NOSTOTAGGING_CONFIG_KEY_USE_DEFAULT_NOSTO_ELEMENTS = 'NOSTOTAGGING_DEFAULT_ELEMENTS';
 	const NOSTOTAGGING_DEFAULT_SERVER_ADDRESS = 'connect.nosto.com';
 	const NOSTOTAGGING_PRODUCT_IN_STOCK = 'InStock';
@@ -16,6 +17,8 @@ class NostoTagging extends Module
 	const NOSTOTAGGING_CUSTOMER_ID_COOKIE = '2c.cId';
 	const NOSTOTAGGING_CUSTOMER_LINK_TABLE = 'nostotagging_customer_link';
 	const NOSTOTAGGING_API_ORDER_TAGGING_URL = 'http://localhost:9000/api/visits/order/confirmation/{m}/{cid}';
+	const NOSTOTAGGING_API_SIGNUP_URL = 'http://localhost:9000/api/accounts/create';
+	const NOSTOTAGGING_API_SIGNUP_TOKEN = 'ulHkQOQqulzahkUIkFOBzaessaFtq5M4vz7G5Vk1ZjOC4VEhWllYoK6EPNfj2Wto';
 
 	/**
 	 * Custom hooks to add for this module.
@@ -55,13 +58,16 @@ class NostoTagging extends Module
 		$this->name = 'nostotagging';
 		$this->tab = 'advertising_marketing';
 		$this->version = '1.0.0';
-		$this->author = 'Nosto Solutions Ltd';
+		$this->author = 'Nosto';
 		$this->need_instance = 0;
 		$this->bootstrap = true;
 
 		parent::__construct();
 
-		$this->displayName = $this->l('Nosto Tagging');
+		if (!$this->hasAccountName())
+			$this->warning = $this->l('Account details must be configured before using this module.');
+
+		$this->displayName = $this->l('Nosto Recommendations');
 		$this->description = $this->l('Integrates Nosto marketing automation service.');
 	}
 
@@ -80,6 +86,7 @@ class NostoTagging extends Module
 			&& $this->initConfig()
 			&& NostoTaggingTopSellersPage::addPage()
 			&& $this->createCustomerLinkTable()
+			&& $this->createAccount()
 			&& $this->initHooks()
 			&& $this->registerHook('displayHeader')
 			&& $this->registerHook('displayTop')
@@ -182,6 +189,12 @@ class NostoTagging extends Module
 				$this->setUseDefaultNostoElements($default_nosto_elements);
 				$output .= $this->displayConfirmation($this->l('Configuration saved'));
 			}
+		}
+
+		if (!$this->hasAccountName())
+		{
+			$message = $this->l('You haven\'t configured a Nosto account. Please visit nosto.com to create an account and get started.');
+			$output = $output.$this->displayError($message);
 		}
 
 		return $output.$this->displayForm();
@@ -312,6 +325,17 @@ class NostoTagging extends Module
 	}
 
 	/**
+	 * Checks if the account name is set.
+	 *
+	 * @return bool
+	 */
+	public function hasAccountName()
+	{
+		$account = $this->getAccountName();
+		return !empty($account);
+	}
+
+	/**
 	 * Setter for the Nosto account name.
 	 *
 	 * @param string $account_name
@@ -326,6 +350,23 @@ class NostoTagging extends Module
 		);
 
 		return call_user_func($callback, self::NOSTOTAGGING_CONFIG_KEY_ACCOUNT_NAME, (string)$account_name);
+	}
+
+	/**
+	 * Setter for the Nosto SSO token.
+	 *
+	 * @param string $sso_token
+	 * @param bool $global
+	 * @return bool
+	 */
+	public function setSSOToken($sso_token, $global = false)
+	{
+		$callback = array(
+			'Configuration',
+			$global ? 'updateGlobalValue' : 'updateValue'
+		);
+
+		return call_user_func($callback, self::NOSTOTAGGING_CONFIG_KEY_SSO_TOKEN, (string)$sso_token);
 	}
 
 	/**
@@ -457,9 +498,9 @@ class NostoTagging extends Module
 	{
 		$html = '';
 
-		/** @var $product Product */
 		$product = isset($params['product']) ? $params['product'] : null;
-		$html .= $this->getProductTagging($product);
+		$category = isset($params['category']) ? $params['category'] : null;
+		$html .= $this->getProductTagging($product, $category);
 
 		if ($this->getUseDefaultNostoElements())
 			$html .= $this->display(__FILE__, 'footer-product_nosto-elements.tpl');
@@ -495,9 +536,7 @@ class NostoTagging extends Module
 	{
 		$html = '';
 
-		/** @var $order Order */
 		$order = isset($params['objOrder']) ? $params['objOrder'] : null;
-		/** @var $currency Currency */
 		$currency = isset($params['currencyObj']) ? $params['currencyObj'] : null;
 		$html .= $this->getOrderTagging($order, $currency);
 
@@ -554,7 +593,6 @@ class NostoTagging extends Module
 	{
 		$html = '';
 
-		/** @var $category Category */
 		$category = isset($params['category']) ? $params['category'] : null;
 		$html .= $this->getCategoryTagging($category);
 
@@ -666,6 +704,7 @@ class NostoTagging extends Module
 			$account_name = $this->getAccountName();
 			if (!empty($nosto_order) && !empty($id_nosto_customer) && !empty($account_name))
 			{
+				// Move the 'order_number' inside the customer array because it is required by the API.
 				$nosto_order['customer']['order_number'] = $nosto_order['order_number'];
 				unset($nosto_order['order_number']);
 				$options = array(
@@ -711,16 +750,75 @@ class NostoTagging extends Module
 	{
 		if (!empty($this->custom_hooks))
 		{
-			$db = Db::getInstance();
 			foreach ($this->custom_hooks as $hook)
 			{
-				$query = 'SELECT `name`
-                          FROM `'._DB_PREFIX_.'hook`
-                          WHERE `name` = "'.$db->escape($hook['name']).'"';
-
-				if (!$db->getRow($query))
-					if (!$db->insert('hook', $hook))
+				$id_hook = Hook::getIdByName($hook['name']);
+				if (!$id_hook)
+				{
+					$new_hook = new Hook();
+					$new_hook->name = pSQL($hook['name']);
+					$new_hook->title = pSQL($hook['title']);
+					$new_hook->description = pSQL($hook['description']);
+					$new_hook->add();
+					$id_hook = $new_hook->id;
+					if (!$id_hook)
 						return false;
+				}
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Calls the Nosto account-creation endpoint to create an account if
+	 * one hasn't been already configured. It stores the account name and the
+	 * SSO token to the configuration
+	 *
+	 * @return bool
+	 */
+	protected function createAccount()
+	{
+		if (!$this->hasAccountName())
+		{
+			$params = array(
+				'title' => Configuration::get('PS_SHOP_NAME'),
+				'name' => substr(sha1(rand()), 0, 8),
+				'platform' => 'prestashop',
+				'front_page_url' => 'http://'.Configuration::get('PS_SHOP_DOMAIN'),
+				'currency_code' => $this->context->currency->iso_code,
+				'language_code' => $this->context->language->iso_code,
+				'owner' => array(
+					'first_name' => $this->context->employee->lastname,
+					'last_name' => $this->context->employee->firstname,
+					'email' => $this->context->employee->email,
+				),
+				'billing_details' => array(
+					'country' => $this->context->country->iso_code
+				)
+			);
+			$options = array(
+				'http' => array(
+					'header' => 'Content-type: application/json\r\n'.
+								'Authorization: Basic '.base64_encode(':'.self::NOSTOTAGGING_API_SIGNUP_TOKEN).'\r\n',
+					'method' => 'POST',
+					'content' => json_encode($params),
+				),
+			);
+			$context = stream_context_create($options);
+			$result = file_get_contents(self::NOSTOTAGGING_API_SIGNUP_URL, false, $context);
+			$result = json_decode($result);
+
+			// Set the values if the request was a success, else notify the user to manually create the account.
+			if (empty($result))
+			{
+				$this->setAccountName('');
+				$this->setSSOToken('');
+			}
+			else
+			{
+				$this->setAccountName($params['name']);
+				$this->setSSOToken($result->sso_token);
 			}
 		}
 
@@ -735,7 +833,6 @@ class NostoTagging extends Module
 	protected function initConfig()
 	{
 		return ($this->setServerAddress(self::NOSTOTAGGING_DEFAULT_SERVER_ADDRESS, true)
-			&& $this->setAccountName('', true)
 			&& $this->setUseDefaultNostoElements(1, true));
 	}
 
@@ -747,7 +844,6 @@ class NostoTagging extends Module
 	protected function deleteConfig()
 	{
 		return (Configuration::deleteByName(self::NOSTOTAGGING_CONFIG_KEY_SERVER_ADDRESS)
-			&& Configuration::deleteByName(self::NOSTOTAGGING_CONFIG_KEY_ACCOUNT_NAME)
 			&& Configuration::deleteByName(self::NOSTOTAGGING_CONFIG_KEY_USE_DEFAULT_NOSTO_ELEMENTS));
 	}
 
@@ -910,9 +1006,10 @@ class NostoTagging extends Module
 	 * Render meta-data (tagging) for a product.
 	 *
 	 * @param Product $product
+	 * @param Category $category
 	 * @return string The rendered HTML
 	 */
-	protected function getProductTagging(Product $product)
+	protected function getProductTagging(Product $product, Category $category)
 	{
 		if (!($product instanceof Product) || !Validate::isLoadedObject($product))
 			return '';
@@ -936,6 +1033,11 @@ class NostoTagging extends Module
 			$nosto_product['availability'] = self::NOSTOTAGGING_PRODUCT_IN_STOCK;
 		else
 			$nosto_product['availability'] = self::NOSTOTAGGING_PRODUCT_OUT_OF_STOCK;
+
+		$nosto_product['tags'] = explode(', ', $product->getTags($this->context->language->id));
+
+		if (Validate::isLoadedObject($category))
+			$nosto_product['current_category'] = $this->buildCategoryString($category->id);
 
 		$nosto_product['categories'] = array();
 		foreach ($product->getCategories() as $category_id)
