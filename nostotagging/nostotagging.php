@@ -14,7 +14,7 @@ class NostoTagging extends Module
 	const NOSTOTAGGING_DEFAULT_SERVER_ADDRESS = 'connect.nosto.com';
 	const NOSTOTAGGING_PRODUCT_IN_STOCK = 'InStock';
 	const NOSTOTAGGING_PRODUCT_OUT_OF_STOCK = 'OutOfStock';
-	const NOSTOTAGGING_CUSTOMER_ID_COOKIE = '2c.cId';
+	const NOSTOTAGGING_CUSTOMER_ID_COOKIE = '2c_cId';
 	const NOSTOTAGGING_CUSTOMER_LINK_TABLE = 'nostotagging_customer_link';
 	const NOSTOTAGGING_API_ORDER_TAGGING_URL = 'https://api.nosto.com/visits/order/confirmation/{m}/{cid}';
 	const NOSTOTAGGING_API_SIGNUP_URL = 'https://api.nosto.com/accounts/create';
@@ -821,7 +821,7 @@ class NostoTagging extends Module
 			}
 			else
 			{
-				$this->setAccountName($params['name']);
+				$this->setAccountName(self::NOSTOTAGGING_API_PLATFORM_NAME.'-'.$params['name']);
 				$this->setSSOToken($result->sso_token);
 			}
 		}
@@ -1115,8 +1115,9 @@ class NostoTagging extends Module
 
 		// We need the cart rules used for the order to check for gift products and free shipping.
 		// The cart is the same even if the order is split into many objects.
-		$cart = $this->context->cart->getCartByOrderId($order->id);
-		if ($cart instanceof Cart)
+		$cart = new Cart($order->id_cart);
+
+		if ($cart instanceof Cart && Validate::isLoadedObject($cart))
 			$cart_rules = (array)$cart->getCartRules();
 		else
 			$cart_rules = array();
