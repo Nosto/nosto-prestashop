@@ -626,11 +626,24 @@ class NostoTagging extends Module
 			$table = _DB_PREFIX_.self::NOSTOTAGGING_CUSTOMER_LINK_TABLE;
 			$id_customer = (int)$this->context->customer->id;
 			$id_nosto_customer = pSQL($_COOKIE[self::NOSTOTAGGING_CUSTOMER_ID_COOKIE]);
-			$existing_link = Db::getInstance()->getRow('SELECT * FROM `'.$table.'` WHERE `id_customer` = '.$id_customer.' AND `id_nosto_customer` = "'.$id_nosto_customer.'"');
+			$where = '`id_customer` = '.$id_customer.' AND `id_nosto_customer` = "'.$id_nosto_customer.'"';
+			$existing_link = Db::getInstance()->getRow('SELECT * FROM `'.$table.'` WHERE '.$where);
 			if (empty($existing_link))
-				Db::getInstance()->execute('INSERT INTO `'.$table.'` (`id_customer`, `id_nosto_customer`, `date_add`) VALUES ('.$id_customer.', "'.$id_nosto_customer.'", NOW())');
+			{
+				$data = array(
+					'id_customer' => $id_customer,
+					'id_nosto_customer' => $id_nosto_customer,
+					'date_add' => date('Y-m-d H:i:s')
+				);
+				Db::getInstance()->insert($table, $data, false, true, Db::INSERT, false);
+			}
 			else
-				Db::getInstance()->execute('UPDATE `'.$table.'` SET `date_upd` = NOW() WHERE `id_customer` = '.$id_customer.' AND `id_nosto_customer` = "'.$id_nosto_customer.'"');
+			{
+				$data = array(
+					'date_upd' => date('Y-m-d H:i:s')
+				);
+				Db::getInstance()->update($table, $data, $where, 0, false, true, false);
+			}
 		}
 	}
 
@@ -747,12 +760,12 @@ class NostoTagging extends Module
 	{
 		$table = _DB_PREFIX_.self::NOSTOTAGGING_CUSTOMER_LINK_TABLE;
 		$sql = 'CREATE TABLE IF NOT EXISTS `'.$table.'` (
-            `id_customer` INT(10) UNSIGNED NOT NULL,
-            `id_nosto_customer` VARCHAR(255) NOT NULL,
-            `date_add` DATETIME NOT NULL,
-            `date_upd` DATETIME NULL,
-            PRIMARY KEY (`id_customer`, `id_nosto_customer`)
-        ) ENGINE InnoDB';
+			`id_customer` INT(10) UNSIGNED NOT NULL,
+			`id_nosto_customer` VARCHAR(255) NOT NULL,
+			`date_add` DATETIME NOT NULL,
+			`date_upd` DATETIME NULL,
+			PRIMARY KEY (`id_customer`, `id_nosto_customer`)
+		) ENGINE InnoDB';
 		return Db::getInstance()->execute($sql);
 	}
 
