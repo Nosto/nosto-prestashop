@@ -19,6 +19,7 @@ class NostoTagging extends Module
 	const NOSTOTAGGING_API_ORDER_TAGGING_URL = 'https://api.nosto.com/visits/order/confirmation/{m}/{cid}';
 	const NOSTOTAGGING_API_SIGNUP_URL = 'https://api.nosto.com/accounts/create';
 	const NOSTOTAGGING_API_SIGNUP_TOKEN = 'akmAhjiTjyPfvSn2WviDePpLqGkZXlqYBkLQGc9pyKT3NdAPRgUO3iu2ESlBt060';
+    const NOSTOTAGGING_API_PLATFORM_NAME = 'example-prestashop';
 
 	/**
 	 * Custom hooks to add for this module.
@@ -784,7 +785,7 @@ class NostoTagging extends Module
 			$params = array(
 				'title' => Configuration::get('PS_SHOP_NAME'),
 				'name' => substr(sha1(rand()), 0, 8),
-				'platform' => 'prestashop',
+				'platform' => self::NOSTOTAGGING_API_PLATFORM_NAME,
 				'front_page_url' => 'http://'.Configuration::get('PS_SHOP_DOMAIN'),
 				'currency_code' => $this->context->currency->iso_code,
 				'language_code' => $this->context->language->iso_code,
@@ -803,7 +804,7 @@ class NostoTagging extends Module
 			);
 			$options = array(
 				'http' => array(
-					'header' => implode('\r\n', $headers),
+					'header' => implode("\r\n", $headers)."\r\n",
 					'method' => 'POST',
 					'content' => json_encode($params),
 				),
