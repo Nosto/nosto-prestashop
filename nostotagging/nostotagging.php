@@ -199,7 +199,6 @@ class NostoTagging extends Module
 	 */
 	public function displayForm()
 	{
-		$field_server_address = $this->name.'_server_address';
 		$field_account_name = $this->name.'_account_name';
 		$field_use_defaults = $this->name.'_use_defaults';
 
@@ -784,7 +783,7 @@ class NostoTagging extends Module
 	}
 
 	/**
-	 * Adds initial config values for Nosto server address and account name.
+	 * Adds initial config values for the module.
 	 *
 	 * @return bool
 	 */
@@ -794,7 +793,10 @@ class NostoTagging extends Module
 	}
 
 	/**
-	 * Deletes all config entries created by the module.
+	 * Deletes config entries created by the module.
+	 *
+	 * The "account_name" and "sso_token" is left in the database to enable the merchant to use the same account
+	 * as before, without entering it again, if the module is installed again.
 	 *
 	 * @return bool
 	 */
