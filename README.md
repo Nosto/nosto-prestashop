@@ -87,6 +87,10 @@ module in the modules listing. This will open a new page with the module configu
 	* This setting controls if the module should create and output the default nosto elements for showing the product
 	recommendations
 	* You can disable the defaults if you want to use your own elements in your layout
+* Inject category and search page recommendations
+    * This setting controls if the module should automatically inject recommendation slots to the category and search
+    pages. These need to be managed separately as there are no Prestashop hooks on these pages.
+    * You can disable this setting if you need more control over how the recommendation slots are displayed.
 
 ## License
 
