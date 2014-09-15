@@ -3,7 +3,7 @@
 global $_MODULE;
 $_MODULE = array();
 $_MODULE['<{nostotagging}prestashop>nostotagging_285cb38d23cdf651e85a327334a9e67d'] = 'Les données du compte doivent être configurées avant l\'utilisation de ce module.';
-$_MODULE['<{nostotagging}prestashop>nostotagging_ec222200fe23009388901af3ec23a7de'] = 'Recommandations Nosto';
+$_MODULE['<{nostotagging}prestashop>nostotagging_60178e9bea87234e2bc0bd22a09b20a4'] = 'Recommandations personnalisées';
 $_MODULE['<{nostotagging}prestashop>nostotagging_70b3fe372fa6162e116fd7244c9d1bba'] = 'Intègre les fonctionnalités de marketing automatisé Nosto';
 $_MODULE['<{nostotagging}prestashop>nostotagging_dc5be3e3ca8cc71dd53e412ad625ecd4'] = 'Le nom du compte doit être renseigné';
 $_MODULE['<{nostotagging}prestashop>nostotagging_310d1e088e81ab4bbc800099de257ef2'] = 'Les paramètres d\'utilisation des bandeaux de recommandation par défaut sont incorrects.';
