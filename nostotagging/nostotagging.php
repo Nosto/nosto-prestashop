@@ -553,16 +553,10 @@ class NostoTagging extends Module
 	 *
 	 * Adds nosto elements.
 	 *
-	 * Please note that in order for this hook to be executed, it will have to be added both the category controller
-	 * and the theme catalog.tpl file.
+	 * Please note that in order for this hook to be executed, it will have to be added to the theme category.tpl file.
 	 *
-	 * - CategoryController::initContent()
-	 *   $this->context->smarty->assign(array(
-	 *       'HOOK_CATEGORY_TOP' => Hook::exec('displayCategoryTop', array('category' => $this->category))
-	 *   ));
-	 *
-	 * - Theme catalog.tpl
-	 *   {if isset($HOOK_CATEGORY_TOP) && $HOOK_CATEGORY_TOP}{$HOOK_CATEGORY_TOP}{/if}
+	 * - Theme category.tpl: add the below line to the top of the file
+	 *   {hook h='displayCategoryTop'}
 	 *
 	 * @return string The HTML to output
 	 */
@@ -579,16 +573,10 @@ class NostoTagging extends Module
 	 *
 	 * Adds nosto elements.
 	 *
-	 * Please note that in order for this hook to be executed, it will have to be added both the category controller
-	 * and the theme catalog.tpl file.
+	 * Please note that in order for this hook to be executed, it will have to be added to the theme category.tpl file.
 	 *
-	 * - CategoryController::initContent()
-	 *   $this->context->smarty->assign(array(
-	 *       'HOOK_CATEGORY_FOOTER' => Hook::exec('displayCategoryFooter', array('category' => $this->category))
-	 *   ));
-	 *
-	 * - Theme catalog.tpl
-	 *   {if isset($HOOK_CATEGORY_FOOTER) && $HOOK_CATEGORY_FOOTER}{$HOOK_CATEGORY_FOOTER}{/if}
+	 * - Theme category.tpl: add the below line to the end of the file
+	 *   {hook h='displayCategoryFooter'}
 	 *
 	 * @return string The HTML to output
 	 */
@@ -605,16 +593,10 @@ class NostoTagging extends Module
 	 *
 	 * Adds nosto elements.
 	 *
-	 * Please note that in order for this hook to be executed, it will have to be added both the search controller
-	 * and the theme search.tpl file.
+	 * Please note that in order for this hook to be executed, it will have to be added to the theme search.tpl file.
 	 *
-	 * - SearchController::initContent()
-	 *   $this->context->smarty->assign(array(
-	 *       'HOOK_SEARCH_TOP' => Hook::exec('displaySearchTop')
-	 *   ));
-	 *
-	 * - Theme search.tpl
-	 *   {if isset($HOOK_SEARCH_TOP) && $HOOK_SEARCH_TOP}{$HOOK_SEARCH_TOP}{/if}
+	 * - Theme search.tpl: add the below line to the top of the file
+	 *   {hook h='displaySearchTop'}
 	 *
 	 * @return string The HTML to output
 	 */
@@ -631,16 +613,10 @@ class NostoTagging extends Module
 	 *
 	 * Adds nosto elements.
 	 *
-	 * Please note that in order for this hook to be executed, it will have to be added both the search controller
-	 * and the theme search.tpl file.
+	 * Please note that in order for this hook to be executed, it will have to be added to the theme search.tpl file.
 	 *
-	 * - SearchController::initContent()
-	 *   $this->context->smarty->assign(array(
-	 *       'HOOK_SEARCH_FOOTER' => Hook::exec('displaySearchFooter')
-	 *   ));
-	 *
-	 * - Theme search.tpl
-	 *   {if isset($HOOK_SEARCH_FOOTER) && $HOOK_SEARCH_FOOTER}{$HOOK_SEARCH_FOOTER}{/if}
+	 * - Theme search.tpl: add the below line to the end of the file
+	 *   {hook h='displaySearchFooter'}
 	 *
 	 * @return string The HTML to output
 	 */
