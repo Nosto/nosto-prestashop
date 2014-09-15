@@ -435,6 +435,10 @@ class NostoTagging extends Module
 		$html .= $this->getCustomerTagging();
 		$html .= $this->getCartTagging();
 
+		$controller = $this->context->controller;
+		if ($controller->php_self === 'category' && method_exists($controller, 'getCategory'))
+			$html .= $this->getCategoryTagging($controller->getCategory());
+
 		if ($this->getUseDefaultNostoElements())
 			$html .= $this->display(__FILE__, 'top_nosto-elements.tpl');
 
@@ -573,7 +577,6 @@ class NostoTagging extends Module
 	/**
 	 * Hook for adding content to category page below the product list.
 	 *
-	 * Adds category tagging.
 	 * Adds nosto elements.
 	 *
 	 * Please note that in order for this hook to be executed, it will have to be added both the category controller
@@ -587,20 +590,14 @@ class NostoTagging extends Module
 	 * - Theme catalog.tpl
 	 *   {if isset($HOOK_CATEGORY_FOOTER) && $HOOK_CATEGORY_FOOTER}{$HOOK_CATEGORY_FOOTER}{/if}
 	 *
-	 * @param array $params
 	 * @return string The HTML to output
 	 */
-	public function hookDisplayCategoryFooter(Array $params)
+	public function hookDisplayCategoryFooter()
 	{
-		$html = '';
+		if (!$this->getUseDefaultNostoElements())
+			return '';
 
-		$category = isset($params['category']) ? $params['category'] : null;
-		$html .= $this->getCategoryTagging($category);
-
-		if ($this->getUseDefaultNostoElements())
-			$html .= $this->display(__FILE__, 'category-footer_nosto-elements.tpl');
-
-		return $html;
+		return $this->display(__FILE__, 'category-footer_nosto-elements.tpl');
 	}
 
 	/**
