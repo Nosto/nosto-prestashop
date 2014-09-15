@@ -7,11 +7,10 @@ if (!defined('_PS_VERSION_'))
  */
 class NostoTagging extends Module
 {
-	const NOSTOTAGGING_CONFIG_KEY_SERVER_ADDRESS = 'NOSTOTAGGING_SERVER_ADDRESS';
 	const NOSTOTAGGING_CONFIG_KEY_ACCOUNT_NAME = 'NOSTOTAGGING_ACCOUNT_NAME';
 	const NOSTOTAGGING_CONFIG_KEY_SSO_TOKEN = 'NOSTOTAGGING_SSO_TOKEN';
 	const NOSTOTAGGING_CONFIG_KEY_USE_DEFAULT_NOSTO_ELEMENTS = 'NOSTOTAGGING_DEFAULT_ELEMENTS';
-	const NOSTOTAGGING_DEFAULT_SERVER_ADDRESS = 'connect.nosto.com';
+	const NOSTOTAGGING_SERVER_ADDRESS = 'connect.nosto.com';
 	const NOSTOTAGGING_PRODUCT_IN_STOCK = 'InStock';
 	const NOSTOTAGGING_PRODUCT_OUT_OF_STOCK = 'OutOfStock';
 	const NOSTOTAGGING_CUSTOMER_ID_COOKIE = '2c_cId';
@@ -129,15 +128,8 @@ class NostoTagging extends Module
 
 		if (Tools::isSubmit('submit'.$this->name))
 		{
-			$server_address = (string)Tools::getValue($this->name.'_server_address');
 			$account_name = (string)Tools::getValue($this->name.'_account_name');
 			$default_nosto_elements = (int)Tools::getValue($this->name.'_use_defaults');
-
-			if (!Validate::isUrl($server_address))
-				$output .= $this->displayError($this->l('Server address is not a valid URL.'));
-
-			if (preg_match('@^https?://@i', $server_address))
-				$output .= $this->displayError($this->l('Server address cannot contain the protocol (http or https).'));
 
 			if (empty($account_name))
 				$output .= $this->displayError($this->l('Account name cannot be empty.'));
@@ -147,7 +139,6 @@ class NostoTagging extends Module
 
 			if (empty($output))
 			{
-				$this->setServerAddress($server_address);
 				$this->setAccountName($account_name);
 				$this->setUseDefaultNostoElements($default_nosto_elements);
 				$output .= $this->displayConfirmation($this->l('Configuration saved'));
@@ -170,7 +161,6 @@ class NostoTagging extends Module
 	 */
 	public function displayForm()
 	{
-		$field_server_address = $this->name.'_server_address';
 		$field_account_name = $this->name.'_account_name';
 		$field_use_defaults = $this->name.'_use_defaults';
 
@@ -182,15 +172,6 @@ class NostoTagging extends Module
 						'icon' => 'icon-cogs'
 					),
 					'input' => array(
-						array(
-							'type' => 'text',
-							'label' => $this->l('Server address'),
-							'name' => $field_server_address,
-							'desc' => $this->l('The server address for the Nosto marketing automation service.'),
-							'size' => 40,
-							'required' => true,
-							'class' => 'fixed-width-xxl',
-						),
 						array(
 							'type' => 'text',
 							'label' => $this->l('Account name'),
@@ -242,39 +223,11 @@ class NostoTagging extends Module
 		$helper->submit_action = '';
 
 		$helper->fields_value = array(
-			$field_server_address => (string)Tools::getValue($field_server_address, $this->getServerAddress()),
 			$field_account_name => (string)Tools::getValue($field_account_name, $this->getAccountName()),
 			$field_use_defaults => (int)Tools::getValue($field_use_defaults, $this->getUseDefaultNostoElements()),
 		);
 
 		return $helper->generateForm($fields_form);
-	}
-
-	/**
-	 * Getter for the Nosto server address.
-	 *
-	 * @return string
-	 */
-	public function getServerAddress()
-	{
-		return (string)Configuration::get(self::NOSTOTAGGING_CONFIG_KEY_SERVER_ADDRESS);
-	}
-
-	/**
-	 * Setter for the Nosto server address.
-	 *
-	 * @param string $server_address
-	 * @param bool $global
-	 * @return bool
-	 */
-	public function setServerAddress($server_address, $global = false)
-	{
-		$callback = array(
-			'Configuration',
-			$global ? 'updateGlobalValue' : 'updateValue'
-		);
-
-		return call_user_func($callback, self::NOSTOTAGGING_CONFIG_KEY_SERVER_ADDRESS, (string)$server_address);
 	}
 
 	/**
@@ -368,7 +321,7 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayHeader()
 	{
-		$server_address = $this->getServerAddress();
+		$server_address = self::NOSTOTAGGING_SERVER_ADDRESS;
 		$account_name = $this->getAccountName();
 
 		if (empty($server_address) || empty($account_name))
@@ -792,25 +745,26 @@ class NostoTagging extends Module
 	}
 
 	/**
-	 * Adds initial config values for Nosto server address and account name.
+	 * Adds initial config values for the module.
 	 *
 	 * @return bool
 	 */
 	protected function initConfig()
 	{
-		return ($this->setServerAddress(self::NOSTOTAGGING_DEFAULT_SERVER_ADDRESS, true)
-			&& $this->setUseDefaultNostoElements(1, true));
+		return $this->setUseDefaultNostoElements(1, true);
 	}
 
 	/**
-	 * Deletes all config entries created by the module.
+	 * Deletes config entries created by the module.
+	 *
+	 * The "account_name" and "sso_token" is left in the database to enable the merchant to use the same account
+	 * as before, without entering it again, if the module is installed again.
 	 *
 	 * @return bool
 	 */
 	protected function deleteConfig()
 	{
-		return (Configuration::deleteByName(self::NOSTOTAGGING_CONFIG_KEY_SERVER_ADDRESS)
-			&& Configuration::deleteByName(self::NOSTOTAGGING_CONFIG_KEY_USE_DEFAULT_NOSTO_ELEMENTS));
+		return Configuration::deleteByName(self::NOSTOTAGGING_CONFIG_KEY_USE_DEFAULT_NOSTO_ELEMENTS);
 	}
 
 	/**
