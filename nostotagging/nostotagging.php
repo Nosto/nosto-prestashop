@@ -81,11 +81,8 @@ class NostoTagging extends Module
 	 */
 	public function install()
 	{
-		require_once(dirname(__FILE__).'/nostotagging-top-sellers-page.php');
-
 		return parent::install()
 			&& $this->initConfig()
-			&& NostoTaggingTopSellersPage::addPage()
 			&& $this->createCustomerLinkTable()
 			&& $this->createAccount()
 			&& $this->initHooks()
@@ -115,44 +112,9 @@ class NostoTagging extends Module
 	 */
 	public function uninstall()
 	{
-		require_once(dirname(__FILE__).'/nostotagging-top-sellers-page.php');
-
 		return parent::uninstall()
-			&& NostoTaggingTopSellersPage::deletePage()
 			&& $this->removeCustomerLinkTable()
 			&& $this->deleteConfig();
-	}
-
-	/**
-	 * Enables the module.
-	 *
-	 * @param bool $force_all Enable module for all shops
-	 * @return bool
-	 */
-	public function enable($force_all = false)
-	{
-		require_once(dirname(__FILE__).'/nostotagging-top-sellers-page.php');
-
-		if (!parent::enable($force_all))
-			return false;
-
-		NostoTaggingTopSellersPage::enablePage();
-
-		return true;
-	}
-
-	/**
-	 * Disables the module.
-	 *
-	 * @param bool $force_all Disable module for all shops
-	 */
-	public function disable($force_all = false)
-	{
-		require_once(dirname(__FILE__).'/nostotagging-top-sellers-page.php');
-
-		parent::disable($force_all);
-
-		NostoTaggingTopSellersPage::disablePage();
 	}
 
 	/**

@@ -2,6 +2,8 @@
 
 /**
  * Helper class for managing the "Top Sellers" CMS page.
+ *
+ * CURRENTLY NOT IN USE.
  */
 class NostoTaggingTopSellersPage
 {
