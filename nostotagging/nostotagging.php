@@ -11,6 +11,7 @@ class NostoTagging extends Module
 	const NOSTOTAGGING_CONFIG_KEY_ACCOUNT_NAME = 'NOSTOTAGGING_ACCOUNT_NAME';
 	const NOSTOTAGGING_CONFIG_KEY_SSO_TOKEN = 'NOSTOTAGGING_SSO_TOKEN';
 	const NOSTOTAGGING_CONFIG_KEY_USE_DEFAULT_NOSTO_ELEMENTS = 'NOSTOTAGGING_DEFAULT_ELEMENTS';
+	const NOSTOTAGGING_CONFIG_KEY_INJECT_SLOTS = 'NOSTOTAGGING_INJECT_SLOTS';
 	const NOSTOTAGGING_DEFAULT_SERVER_ADDRESS = 'connect.nosto.com';
 	const NOSTOTAGGING_PRODUCT_IN_STOCK = 'InStock';
 	const NOSTOTAGGING_PRODUCT_OUT_OF_STOCK = 'OutOfStock';
@@ -170,6 +171,7 @@ class NostoTagging extends Module
 			$server_address = (string)Tools::getValue($this->name.'_server_address');
 			$account_name = (string)Tools::getValue($this->name.'_account_name');
 			$default_nosto_elements = (int)Tools::getValue($this->name.'_use_defaults');
+			$inject_slots = (int)Tools::getValue($this->name.'_inject_slots');
 
 			if (!Validate::isUrl($server_address))
 				$output .= $this->displayError($this->l('Server address is not a valid URL.'));
@@ -183,11 +185,15 @@ class NostoTagging extends Module
 			if ($default_nosto_elements !== 0 && $default_nosto_elements !== 1)
 				$output .= $this->displayError($this->l('Use default nosto elements setting is invalid.'));
 
+			if ($inject_slots !== 0 && $inject_slots !== 1)
+				$output .= $this->displayError($this->l('Inject category and search page recommendations setting is invalid.'));
+
 			if (empty($output))
 			{
 				$this->setServerAddress($server_address);
 				$this->setAccountName($account_name);
 				$this->setUseDefaultNostoElements($default_nosto_elements);
+				$this->setInjectSlots($inject_slots);
 				$output .= $this->displayConfirmation($this->l('Configuration saved'));
 			}
 		}
@@ -211,6 +217,7 @@ class NostoTagging extends Module
 		$field_server_address = $this->name.'_server_address';
 		$field_account_name = $this->name.'_account_name';
 		$field_use_defaults = $this->name.'_use_defaults';
+		$field_inject_slots = $this->name.'_inject_slots';
 
 		$fields_form = array(
 			array(
@@ -259,6 +266,27 @@ class NostoTagging extends Module
 							'class' => 't',
 							'required' => true,
 						),
+						array(
+							'type' => (substr(_PS_VERSION_, 0, 3) === '1.5') ? 'radio' : 'switch',
+							'label' => $this->l('Inject category and search page recommendations'),
+							'name' => $field_inject_slots,
+							'desc' => $this->l('Automatically inject category and search page recommendations without modifying the theme. For full control of the recommendation slots, you should disable this and add the hooks to the themes template files as per the modules install instructions.'),
+							'values' => array(
+								array(
+									'id' => $this->name.'_inject_on',
+									'value' => 1,
+									'label' => $this->l('Enabled'),
+								),
+								array(
+									'id' => $this->name.'_inject_off',
+									'value' => 0,
+									'label' => $this->l('Disabled'),
+								),
+							),
+							'is_bool' => true,
+							'class' => 't',
+							'required' => true,
+						),
 					),
 					'submit' => array(
 						'title' => $this->l('Save'),
@@ -283,6 +311,7 @@ class NostoTagging extends Module
 			$field_server_address => (string)Tools::getValue($field_server_address, $this->getServerAddress()),
 			$field_account_name => (string)Tools::getValue($field_account_name, $this->getAccountName()),
 			$field_use_defaults => (int)Tools::getValue($field_use_defaults, $this->getUseDefaultNostoElements()),
+			$field_inject_slots => (int)Tools::getValue($field_inject_slots, $this->getInjectSlots()),
 		);
 
 		return $helper->generateForm($fields_form);
@@ -398,6 +427,33 @@ class NostoTagging extends Module
 	}
 
 	/**
+	 * Getter for the "inject slots" settings.
+	 *
+	 * @return int
+	 */
+	public function getInjectSlots()
+	{
+		return (int)Configuration::get(self::NOSTOTAGGING_CONFIG_KEY_INJECT_SLOTS);
+	}
+
+	/**
+	 * Setter for the "inject slots" settings.
+	 *
+	 * @param int $value Either 1 or 0.
+	 * @param bool $global
+	 * @return bool
+	 */
+	public function setInjectSlots($value, $global = false)
+	{
+		$callback = array(
+			'Configuration',
+			$global ? 'updateGlobalValue' : 'updateValue'
+		);
+
+		return call_user_func($callback, self::NOSTOTAGGING_CONFIG_KEY_INJECT_SLOTS, (int)$value);
+	}
+
+	/**
 	 * Hook for adding content to the <head> section of the HTML pages.
 	 *
 	 * Adds the Nosto embed script.
@@ -415,6 +471,7 @@ class NostoTagging extends Module
 		$this->smarty->assign(array(
 			'server_address' => $server_address,
 			'account_name' => $account_name,
+			'inject_slots' => $this->getInjectSlots(),
 		));
 
 		return $this->display(__FILE__, 'header_embed-script.tpl');
@@ -436,8 +493,29 @@ class NostoTagging extends Module
 		$html .= $this->getCartTagging();
 
 		$controller = $this->context->controller;
-		if ($controller->php_self === 'category' && method_exists($controller, 'getCategory'))
-			$html .= $this->getCategoryTagging($controller->getCategory());
+		if ($controller->php_self === 'category')
+		{
+			if (method_exists($controller, 'getCategory'))
+				$html .= $this->getCategoryTagging($controller->getCategory());
+
+			if ($this->getInjectSlots())
+			{
+				$html .= '<div id="hidden_nosto_elements" style="display: none;">';
+				$html .= '<div class="prepend">'.$this->display(__FILE__, 'category-top_nosto-elements.tpl').'</div>';
+				$html .= '<div class="append">'.$this->display(__FILE__, 'category-footer_nosto-elements.tpl').'</div>';
+				$html .= '</div>';
+			}
+		}
+		elseif ($controller->php_self === 'search')
+		{
+			if ($this->getInjectSlots())
+			{
+				$html .= '<div id="hidden_nosto_elements" style="display: none;">';
+				$html .= '<div class="prepend">'.$this->display(__FILE__, 'search-top_nosto-elements.tpl').'</div>';
+				$html .= '<div class="append">'.$this->display(__FILE__, 'search-footer_nosto-elements.tpl').'</div>';
+				$html .= '</div>';
+			}
+		}
 
 		if ($this->getUseDefaultNostoElements())
 			$html .= $this->display(__FILE__, 'top_nosto-elements.tpl');
@@ -810,7 +888,8 @@ class NostoTagging extends Module
 	protected function initConfig()
 	{
 		return ($this->setServerAddress(self::NOSTOTAGGING_DEFAULT_SERVER_ADDRESS, true)
-			&& $this->setUseDefaultNostoElements(1, true));
+			&& $this->setUseDefaultNostoElements(1, true)
+			&& $this->setInjectSlots(1, true));
 	}
 
 	/**
@@ -821,7 +900,8 @@ class NostoTagging extends Module
 	protected function deleteConfig()
 	{
 		return (Configuration::deleteByName(self::NOSTOTAGGING_CONFIG_KEY_SERVER_ADDRESS)
-			&& Configuration::deleteByName(self::NOSTOTAGGING_CONFIG_KEY_USE_DEFAULT_NOSTO_ELEMENTS));
+			&& Configuration::deleteByName(self::NOSTOTAGGING_CONFIG_KEY_USE_DEFAULT_NOSTO_ELEMENTS)
+			&& Configuration::deleteByName(self::NOSTOTAGGING_CONFIG_KEY_INJECT_SLOTS));
 	}
 
 	/**

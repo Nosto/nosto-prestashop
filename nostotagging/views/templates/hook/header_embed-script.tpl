@@ -1,6 +1,16 @@
 {if isset($server_address) && isset($account_name)}
 <script type="text/javascript">
-	{literal}window.embedjs=function(c,g){function h(){window.hasLoaded=!0}function i(a){return["<he","ad></he","ad><bo","dy onload=\"var d=document;d.getElementsByTagName('he","ad')[0].appendChild(d.createElement('scr","ipt')).src='",a,"'\"></bo","dy>"].join("")}window.addEventListener?window.addEventListener("load",h,!1):window.attachEvent("onload",h);var d=document.body;if(!d)return setTimeout(function(){embedjs(c,g)},100);var b=document.location.protocol;b=(b=="https:"?b:"http:")+"//"+c+g;var e=document.createElement("div"),k=e.appendChild(document.createElement("div")),a=document.createElement("iframe");e.style.display="none";d.insertBefore(e,d.firstChild).id="embedjs-"+c;a.frameBorder="0";a.id="embedjs-frame-"+c;/MSIE[ ]+6/.test(navigator.userAgent)&&(a.src="javascript:false");a.allowTransparency="true";k.appendChild(a);var f;try{a.contentWindow.document.open()}catch(l){f="javascript:var d=document.open();d.domain='"+document.domain+"';",a.src=f+"void(0);"}try{var j=a.contentWindow.document;j.write(i(b));j.close()}catch(m){a.src=f+'d.write("'+i(b).replace(/"/g,String.fromCharCode(92)+'"')+'");d.close();'}};{/literal}
-    embedjs('{$server_address|escape:'javascript':'UTF-8'}', '/include/{$account_name|escape:'javascript':'UTF-8'}');
+    //<![CDATA[
+    (function(){
+        var sa = "{$server_address|escape:"javascript":"UTF-8"}";
+        {literal}function a(a){var b,c,d=window.document.createElement("iframe");d.src="javascript:false",(d.frameElement||d).style.cssText="width: 0; height: 0; border: 0";var e=window.document.createElement("div");e.style.display="none";var f=window.document.createElement("div");e.appendChild(f),window.document.body.insertBefore(e,window.document.body.firstChild),f.appendChild(d);try{c=d.contentWindow.document}catch(g){b=document.domain,d.src="javascript:var d=document.open();d.domain='"+b+"';void(0);",c=d.contentWindow.document}return c.open()._l=function(){b&&(this.domain=b);var c=this.createElement("scr".concat("ipt"));c.src=a,this.body.appendChild(c)},c.write("<bo".concat('dy onload="document._l();">')),c.close(),d}var b="nostojs";window[b]=window[b]||function(a){(window[b].q=window[b].q||[]).push(a)},window[b].l=new Date;var c=function(d,e){if(!document.body)return setTimeout(function(){c(d,e)},30);e=e||{},window[b].o=e;var f=document.location.protocol,g=["https:"===f?f:"http:","//",e.host||sa,e.path||"/include/",d].join("");a(g)};window[b].init=c{/literal}
+    })();
+    nostojs.init("{$account_name|escape:"javascript":"UTF-8"}");
+    //]]>
+</script>
+{/if}
+{if isset($inject_slots) && $inject_slots === 1}
+<script type="text/javascript">
+    {literal}$(function(){ var $c=$('#center_column'),$n=$('#hidden_nosto_elements');if($c && $n){ $n.find('.prepend .nosto_element').each(function(){ $(this).prependTo($c);});$n.find('.append .nosto_element').each(function(){ $(this).appendTo($c);});$n.remove();}});{/literal}
 </script>
 {/if}
