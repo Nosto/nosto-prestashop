@@ -45,9 +45,6 @@ Note that you can change what recommendations are shown in which nosto elements.
 to the site by simply dropping in div elements of the following format:
 '`<div class="nosto_element" id="{id of your choice}"></div>`'
 
-The module also creates a new page called "Top Sellers". The page is added to the sites main menu automatically when
-installing the module. The page contains only one Nosto element by default.
-
 ## Installation
 
 Please refer to the PrestaShop documentation on how to get the module to appear in your installation admin section.
@@ -55,10 +52,6 @@ Please refer to the PrestaShop documentation on how to get the module to appear 
 Once the module appears in your installation, you must install it into the store. Navigate to the "Modules" section and
 locate the module, it will show up under the "Advertising & Marketing" section. The installation is done simply by
 clicking the "install" button on the right by the module in the list.
-
-The install procedure will create a new CMS page called "Top Sellers" and will try to put a menu item for the page in
-the shop top menu, given that the default "Blocktopmenu" module is used to manage the menu. If you are using some other
-module for your menu, then you will have to create the menu item yourself.
 
 During the install the module also creates some new hooks for PrestaShop, namely "displayCategoryTop",
 "displayCategoryFooter", "displaySearchTop" and "displaySearchFooter". You will need to implement these in your
