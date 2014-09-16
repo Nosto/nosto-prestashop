@@ -402,7 +402,10 @@ class NostoTagging extends Module
 			if ($this->getInjectSlots())
 			{
 				$html .= '<div id="hidden_nosto_elements" style="display: none;">';
-				$html .= '<div class="append">'.$this->display(__FILE__, 'category-top_nosto-elements.tpl').$this->display(__FILE__, 'category-footer_nosto-elements.tpl').'</div>';
+				$html .= '<div class="append">';
+				$html .= $this->display(__FILE__, 'category-top_nosto-elements.tpl');
+				$html .= $this->display(__FILE__, 'category-footer_nosto-elements.tpl');
+				$html .= '</div>';
 				$html .= '</div>';
 			}
 		}
