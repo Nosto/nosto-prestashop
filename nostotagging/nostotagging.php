@@ -21,6 +21,11 @@ class NostoTagging extends Module
 	const NOSTOTAGGING_API_SIGNUP_TOKEN = 'JRtgvoZLMl4NPqO9XWhRdvxkTMtN82ITTJij8U7necieJPCvjtZjm5C4fpNrYJ81';
     const NOSTOTAGGING_API_PLATFORM_NAME = 'prestashop';
 
+	const NOSTOTAGGING_LOG_SEVERITY_INFO = 1;
+	const NOSTOTAGGING_LOG_SEVERITY_WARNING = 2;
+	const NOSTOTAGGING_LOG_SEVERITY_ERROR = 3;
+	const NOSTOTAGGING_LOG_SEVERITY_FATAL = 4;
+
 	/**
 	 * Custom hooks to add for this module.
 	 *
@@ -99,7 +104,8 @@ class NostoTagging extends Module
 			&& $this->registerHook('displaySearchTop')
 			&& $this->registerHook('displaySearchFooter')
 			&& $this->registerHook('actionPaymentConfirmation')
-			&& $this->registerHook('displayPaymentTop');
+			&& $this->registerHook('displayPaymentTop')
+			&& $this->registerHook('displayHome');
 	}
 
 	/**
@@ -289,12 +295,7 @@ class NostoTagging extends Module
 	 */
 	public function setAccountName($account_name, $global = false)
 	{
-		$callback = array(
-			'Configuration',
-			$global ? 'updateGlobalValue' : 'updateValue'
-		);
-
-		return call_user_func($callback, self::NOSTOTAGGING_CONFIG_KEY_ACCOUNT_NAME, (string)$account_name);
+		return $this->setConfigValue(self::NOSTOTAGGING_CONFIG_KEY_ACCOUNT_NAME, (string)$account_name, $global);
 	}
 
 	/**
@@ -306,12 +307,7 @@ class NostoTagging extends Module
 	 */
 	public function setSSOToken($sso_token, $global = false)
 	{
-		$callback = array(
-			'Configuration',
-			$global ? 'updateGlobalValue' : 'updateValue'
-		);
-
-		return call_user_func($callback, self::NOSTOTAGGING_CONFIG_KEY_SSO_TOKEN, (string)$sso_token);
+		return $this->setConfigValue(self::NOSTOTAGGING_CONFIG_KEY_SSO_TOKEN, (string)$sso_token, $global);
 	}
 
 	/**
@@ -333,12 +329,7 @@ class NostoTagging extends Module
 	 */
 	public function setUseDefaultNostoElements($value, $global = false)
 	{
-		$callback = array(
-			'Configuration',
-			$global ? 'updateGlobalValue' : 'updateValue'
-		);
-
-		return call_user_func($callback, self::NOSTOTAGGING_CONFIG_KEY_USE_DEFAULT_NOSTO_ELEMENTS, (int)$value);
+		return $this->setConfigValue(self::NOSTOTAGGING_CONFIG_KEY_USE_DEFAULT_NOSTO_ELEMENTS, (int)$value, $global);
 	}
 
 	/**
@@ -360,12 +351,7 @@ class NostoTagging extends Module
 	 */
 	public function setInjectSlots($value, $global = false)
 	{
-		$callback = array(
-			'Configuration',
-			$global ? 'updateGlobalValue' : 'updateValue'
-		);
-
-		return call_user_func($callback, self::NOSTOTAGGING_CONFIG_KEY_INJECT_SLOTS, (int)$value);
+		return $this->setConfigValue(self::NOSTOTAGGING_CONFIG_KEY_INJECT_SLOTS, (int)$value, $global);
 	}
 
 	/**
@@ -687,8 +673,81 @@ class NostoTagging extends Module
 					'{cid}' => $id_nosto_customer,
 				));
 				file_get_contents($url, false, $context);
+				if (!isset($http_response_header) || (isset($http_response_header[0]) && $http_response_header[0] !== 'HTTP/1.1 200 OK'))
+				{
+					$error_code = isset($http_response_header) ? $this->parseHttpResponseCode($http_response_header) : 0;
+					$this->log(
+						__CLASS__.'::'.__FUNCTION__.' - Order was not be sent to Nosto',
+						self::NOSTOTAGGING_LOG_SEVERITY_ERROR,
+						$error_code,
+						'Order',
+						(int)$params['id_order']
+					);
+				}
 			}
 		}
+	}
+
+	/**
+	 * Hook for adding content to the home page.
+	 *
+	 * Adds nosto elements.
+	 *
+	 * @return string The HTML to output
+	 */
+	public function hookDisplayHome()
+	{
+		if (!$this->getUseDefaultNostoElements())
+			return '';
+
+		return $this->display(__FILE__, 'home_nosto-elements.tpl');
+	}
+
+	/**
+	 * Registers a new config entry for key => value pair.
+	 *
+	 * @param string $key the key to store the value by in config.
+	 * @param mixed $value the value of the config entry.
+	 * @param bool $global
+	 * @return bool
+	 */
+	protected function setConfigValue($key, $value, $global = false)
+	{
+		$callback = array(
+			'Configuration',
+			$global ? 'updateGlobalValue' : 'updateValue'
+		);
+		return call_user_func($callback, (string)$key, $value);
+	}
+
+	/**
+	 * Logs an event to the Prestashop log.
+	 *
+	 * @param string $message the message to log.
+	 * @param int $severity the log severity (use class constants).
+	 * @param null|int $error_code the error code if any.
+	 * @param null|string $object_type the object type if any.
+	 * @param null|int $object_id the object id if any.
+	 */
+	protected function log($message, $severity = 1, $error_code = null, $object_type = null, $object_id = null)
+	{
+		$logger = (class_exists('PrestaShopLogger') ? 'PrestaShopLogger' : (class_exists('Logger') ? 'Logger' : null));
+		if (!empty($logger))
+			call_user_func(array($logger, 'addLog'), $message, $severity, $error_code, $object_type, $object_id, true);
+	}
+
+	/**
+	 * Parse the http response code of last request and return it.
+	 *
+	 * @param array $http_response_header
+	 * @return int
+	 */
+	protected function parseHttpResponseCode($http_response_header)
+	{
+		$matches = array();
+		if (isset($http_response_header[0]))
+			preg_match('|HTTP/\d\.\d\s+(\d+)\s+.*|', $http_response_header[0], $matches);
+		return isset($matches[1]) ? (int)$matches[1] : 0;
 	}
 
 	/**
@@ -784,6 +843,12 @@ class NostoTagging extends Module
 			{
 				$this->setAccountName('');
 				$this->setSSOToken('');
+				$error_code = isset($http_response_header) ? $this->parseHttpResponseCode($http_response_header) : 0;
+				$this->log(
+					__CLASS__.'::'.__FUNCTION__.' - Nosto account was not automatically created',
+					self::NOSTOTAGGING_LOG_SEVERITY_ERROR,
+					$error_code
+				);
 			}
 			else
 			{
