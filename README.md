@@ -106,13 +106,17 @@ PrestaShop version 1.5.x - 1.6.x
     * Added current category to the product page tagging
     * Added product tags to the product page tagging
     * Added French translations
-    * Improved the admin user interface for Prestashop 1.6
     * Added Nosto icon and improved the description
     * Added support for actionPaymentConfirmation hook to push order confirmations to Nosto's REST API
-    * Added support for automatic account creation on plugin install
+    * Added support for automatic account creation on module install
+    * Added configuration option for automatically injecting recommendation slots on the category and search pages
     * Fixed initial installation error
     * Fixed category tagging to display only active and visible categories
     * Fixed broken product image URL when using the legacy image filesystem
+    * Removed the "Top Sellers" page
+    * Removed "Server Address" from module configuration
+    * Updated Nosto JavaScript to the newest version
+    * Updated the admin user interface for Prestashop 1.6
 
 * 1.0.0
 	* Initial release
