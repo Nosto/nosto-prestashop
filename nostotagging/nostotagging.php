@@ -394,29 +394,32 @@ class NostoTagging extends Module
 		$html .= $this->getCartTagging();
 
 		$controller = $this->context->controller;
-		if ($controller->php_self === 'category')
+		if (!empty($controller->php_self))
 		{
-			if (method_exists($controller, 'getCategory'))
-				$html .= $this->getCategoryTagging($controller->getCategory());
+			if ($controller->php_self === 'category')
+			{
+				if (method_exists($controller, 'getCategory'))
+					$html .= $this->getCategoryTagging($controller->getCategory());
 
-			if ($this->getInjectSlots())
-			{
-				$html .= '<div id="hidden_nosto_elements" style="display: none;">';
-				$html .= '<div class="append">';
-				$html .= $this->display(__FILE__, 'category-top_nosto-elements.tpl');
-				$html .= $this->display(__FILE__, 'category-footer_nosto-elements.tpl');
-				$html .= '</div>';
-				$html .= '</div>';
+				if ($this->getInjectSlots())
+				{
+					$html .= '<div id="hidden_nosto_elements" style="display: none;">';
+					$html .= '<div class="append">';
+					$html .= $this->display(__FILE__, 'category-top_nosto-elements.tpl');
+					$html .= $this->display(__FILE__, 'category-footer_nosto-elements.tpl');
+					$html .= '</div>';
+					$html .= '</div>';
+				}
 			}
-		}
-		elseif ($controller->php_self === 'search')
-		{
-			if ($this->getInjectSlots())
+			elseif ($controller->php_self === 'search')
 			{
-				$html .= '<div id="hidden_nosto_elements" style="display: none;">';
-				$html .= '<div class="prepend">'.$this->display(__FILE__, 'search-top_nosto-elements.tpl').'</div>';
-				$html .= '<div class="append">'.$this->display(__FILE__, 'search-footer_nosto-elements.tpl').'</div>';
-				$html .= '</div>';
+				if ($this->getInjectSlots())
+				{
+					$html .= '<div id="hidden_nosto_elements" style="display: none;">';
+					$html .= '<div class="prepend">'.$this->display(__FILE__, 'search-top_nosto-elements.tpl').'</div>';
+					$html .= '<div class="append">'.$this->display(__FILE__, 'search-footer_nosto-elements.tpl').'</div>';
+					$html .= '</div>';
+				}
 			}
 		}
 
