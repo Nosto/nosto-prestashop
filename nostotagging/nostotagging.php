@@ -19,7 +19,7 @@ class NostoTagging extends Module
 	const NOSTOTAGGING_API_ORDER_TAGGING_URL = 'https://api.nosto.com/visits/order/confirmation/{m}/{cid}';
 	const NOSTOTAGGING_API_SIGNUP_URL = 'https://api.nosto.com/accounts/create';
 	const NOSTOTAGGING_API_SIGNUP_TOKEN = 'JRtgvoZLMl4NPqO9XWhRdvxkTMtN82ITTJij8U7necieJPCvjtZjm5C4fpNrYJ81';
-    const NOSTOTAGGING_API_PLATFORM_NAME = 'prestashop';
+	const NOSTOTAGGING_API_PLATFORM_NAME = 'prestashop';
 
 	const NOSTOTAGGING_LOG_SEVERITY_INFO = 1;
 	const NOSTOTAGGING_LOG_SEVERITY_WARNING = 2;
