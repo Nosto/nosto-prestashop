@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <module>
 	<name>nostotagging</name>
-	<displayName><![CDATA[Recommandations Nosto]]></displayName>
+	<displayName><![CDATA[Recommandations personnalis&eacute;es]]></displayName>
 	<version><![CDATA[1.1.0]]></version>
 	<description><![CDATA[Int&egrave;gre les fonctionnalit&eacute;s de marketing automatis&eacute; Nosto]]></description>
 	<author><![CDATA[Nosto]]></author>
