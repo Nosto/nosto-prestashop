@@ -673,12 +673,13 @@ class NostoTagging extends Module
 					'{cid}' => $id_nosto_customer,
 				));
 				file_get_contents($url, false, $context);
-				if (isset($http_response_header[0]) && $http_response_header[0] !== 'HTTP/1.1 200 OK')
+				if (!isset($http_response_header) || (isset($http_response_header[0]) && $http_response_header[0] !== 'HTTP/1.1 200 OK'))
 				{
+					$error_code = isset($http_response_header) ? $this->parseHttpResponseCode($http_response_header) : 0;
 					$this->log(
 						__CLASS__.'::'.__FUNCTION__.' - Order was not be sent to Nosto',
 						self::NOSTOTAGGING_LOG_SEVERITY_ERROR,
-						$this->parseHttpResponseCode($http_response_header),
+						$error_code,
 						'Order',
 						(int)$params['id_order']
 					);
@@ -842,10 +843,11 @@ class NostoTagging extends Module
 			{
 				$this->setAccountName('');
 				$this->setSSOToken('');
+				$error_code = isset($http_response_header) ? $this->parseHttpResponseCode($http_response_header) : 0;
 				$this->log(
 					__CLASS__.'::'.__FUNCTION__.' - Nosto account was not automatically created',
 					self::NOSTOTAGGING_LOG_SEVERITY_ERROR,
-					$this->parseHttpResponseCode($http_response_header)
+					$error_code
 				);
 			}
 			else
