@@ -1052,7 +1052,7 @@ class NostoTagging extends Module
 	 * @param Category $category
 	 * @return string The rendered HTML
 	 */
-	protected function getProductTagging(Product $product, Category $category)
+	protected function getProductTagging(Product $product, Category $category = null)
 	{
 		if (!($product instanceof Product) || !Validate::isLoadedObject($product))
 			return '';
