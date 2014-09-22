@@ -2,6 +2,10 @@
 if (!defined('_PS_VERSION_'))
 	exit;
 
+require_once(dirname(__FILE__).'/classes/nostotagging-logger.php');
+require_once(dirname(__FILE__).'/classes/nostotagging-http-request.php');
+require_once(dirname(__FILE__).'/classes/nostotagging-http-response.php');
+
 /**
  * NostoTagging module that integrates Nosto marketing automation service.
  */
@@ -20,11 +24,6 @@ class NostoTagging extends Module
 	const NOSTOTAGGING_API_SIGNUP_URL = 'https://api.nosto.com/accounts/create';
 	const NOSTOTAGGING_API_SIGNUP_TOKEN = 'JRtgvoZLMl4NPqO9XWhRdvxkTMtN82ITTJij8U7necieJPCvjtZjm5C4fpNrYJ81';
 	const NOSTOTAGGING_API_PLATFORM_NAME = 'prestashop';
-
-	const NOSTOTAGGING_LOG_SEVERITY_INFO = 1;
-	const NOSTOTAGGING_LOG_SEVERITY_WARNING = 2;
-	const NOSTOTAGGING_LOG_SEVERITY_ERROR = 3;
-	const NOSTOTAGGING_LOG_SEVERITY_FATAL = 4;
 
 	/**
 	 * Custom hooks to add for this module.
@@ -664,30 +663,21 @@ class NostoTagging extends Module
 				// Move the 'order_number' inside the customer array because it is required by the API.
 				$nosto_order['customer']['order_number'] = $nosto_order['order_number'];
 				unset($nosto_order['order_number']);
-				$options = array(
-					'http' => array(
-						'method' => 'POST',
-						'header' => 'Content-type: application/json',
-						'content' => json_encode($nosto_order),
-					)
-				);
-				$context = stream_context_create($options);
+
 				$url = strtr(self::NOSTOTAGGING_API_ORDER_TAGGING_URL, array(
 					'{m}' => $account_name,
 					'{cid}' => $id_nosto_customer,
 				));
-				file_get_contents($url, false, $context);
-				if (!isset($http_response_header) || (isset($http_response_header[0]) && $http_response_header[0] !== 'HTTP/1.1 200 OK'))
-				{
-					$error_code = isset($http_response_header) ? $this->parseHttpResponseCode($http_response_header) : 0;
-					$this->log(
+				$request = new NostoTaggingHttpRequest();
+				$response = $request->post($url, array('Content-type: application/json'), json_encode($nosto_order));
+				if ($response->getCode() !== 200)
+					NostoTaggingLogger::log(
 						__CLASS__.'::'.__FUNCTION__.' - Order was not be sent to Nosto',
-						self::NOSTOTAGGING_LOG_SEVERITY_ERROR,
-						$error_code,
+						NostoTaggingLogger::LOG_SEVERITY_ERROR,
+						$response->getCode(),
 						'Order',
 						(int)$params['id_order']
 					);
-				}
 			}
 		}
 	}
@@ -733,36 +723,6 @@ class NostoTagging extends Module
 			$global ? 'updateGlobalValue' : 'updateValue'
 		);
 		return call_user_func($callback, (string)$key, $value);
-	}
-
-	/**
-	 * Logs an event to the Prestashop log.
-	 *
-	 * @param string $message the message to log.
-	 * @param int $severity the log severity (use class constants).
-	 * @param null|int $error_code the error code if any.
-	 * @param null|string $object_type the object type if any.
-	 * @param null|int $object_id the object id if any.
-	 */
-	protected function log($message, $severity = 1, $error_code = null, $object_type = null, $object_id = null)
-	{
-		$logger = (class_exists('PrestaShopLogger') ? 'PrestaShopLogger' : (class_exists('Logger') ? 'Logger' : null));
-		if (!empty($logger))
-			call_user_func(array($logger, 'addLog'), $message, $severity, $error_code, $object_type, $object_id, true);
-	}
-
-	/**
-	 * Parse the http response code of last request and return it.
-	 *
-	 * @param array $http_response_header
-	 * @return int
-	 */
-	protected function parseHttpResponseCode($http_response_header)
-	{
-		$matches = array();
-		if (isset($http_response_header[0]))
-			preg_match('|HTTP/\d\.\d\s+(\d+)\s+.*|', $http_response_header[0], $matches);
-		return isset($matches[1]) ? (int)$matches[1] : 0;
 	}
 
 	/**
@@ -838,31 +798,26 @@ class NostoTagging extends Module
 					'country' => $this->context->country->iso_code
 				)
 			);
-			$headers = array(
-				'Content-type: application/json',
-				'Authorization: Basic '.base64_encode(':'.self::NOSTOTAGGING_API_SIGNUP_TOKEN)
-			);
-			$options = array(
-				'http' => array(
-					'header' => implode("\r\n", $headers)."\r\n",
-					'method' => 'POST',
-					'content' => json_encode($params),
+			$request = new NostoTaggingHttpRequest();
+			$response = $request->post(
+				self::NOSTOTAGGING_API_SIGNUP_URL,
+				array(
+					'Content-type: application/json',
+					'Authorization: Basic '.base64_encode(':'.self::NOSTOTAGGING_API_SIGNUP_TOKEN)
 				),
+				json_encode($params)
 			);
-			$context = stream_context_create($options);
-			$result = file_get_contents(self::NOSTOTAGGING_API_SIGNUP_URL, false, $context);
-			$result = json_decode($result);
+			$result = json_decode($response->getResult());
 
 			// Set the values if the request was a success, else notify the user to manually create the account.
 			if (empty($result))
 			{
 				$this->setAccountName('');
 				$this->setSSOToken('');
-				$error_code = isset($http_response_header) ? $this->parseHttpResponseCode($http_response_header) : 0;
-				$this->log(
+				NostoTaggingLogger::log(
 					__CLASS__.'::'.__FUNCTION__.' - Nosto account was not automatically created',
-					self::NOSTOTAGGING_LOG_SEVERITY_ERROR,
-					$error_code
+					NostoTaggingLogger::LOG_SEVERITY_ERROR,
+					$response->getCode()
 				);
 			}
 			else
