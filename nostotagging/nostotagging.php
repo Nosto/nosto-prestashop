@@ -1019,8 +1019,30 @@ class NostoTagging extends Module
 	 */
 	protected function getProductTagging(Product $product, Category $category = null)
 	{
-		if (!($product instanceof Product) || !Validate::isLoadedObject($product))
+		$nosto_product = $this->getProductData($product);
+		if (empty($nosto_product))
 			return '';
+
+		if (Validate::isLoadedObject($category))
+			$nosto_product['current_category'] = $this->buildCategoryString($category->id);
+
+		$this->smarty->assign(array(
+			'nosto_product' => $nosto_product,
+		));
+
+		return $this->display(__FILE__, 'footer-product_product-tagging.tpl');
+	}
+
+	/**
+	 * Returns data about the product in a format that can be sent to Nosto.
+	 *
+	 * @param Product $product
+	 * @return false|array the product data array or false.
+	 */
+	public function getProductData(Product $product)
+	{
+		if (!Validate::isLoadedObject($product))
+			return false;
 
 		$nosto_product = array();
 		$nosto_product['url'] = (string)$product->getLink();
@@ -1042,10 +1064,8 @@ class NostoTagging extends Module
 		else
 			$nosto_product['availability'] = self::NOSTOTAGGING_PRODUCT_OUT_OF_STOCK;
 
-		$nosto_product['tags'] = explode(', ', $product->getTags($this->context->language->id));
-
-		if (Validate::isLoadedObject($category))
-			$nosto_product['current_category'] = $this->buildCategoryString($category->id);
+		if (($tags = $product->getTags($this->context->language->id)) !== '')
+			$nosto_product['tags'] = explode(', ', $tags);
 
 		$nosto_product['categories'] = array();
 		foreach ($product->getCategories() as $category_id)
@@ -1057,14 +1077,13 @@ class NostoTagging extends Module
 
 		$nosto_product['description'] = (string)$product->description_short;
 		$nosto_product['list_price'] = $this->formatPrice($product->getPriceWithoutReduct(false, null));
-		$nosto_product['brand'] = (string)$product->manufacturer_name;
+
+		if (!empty($product->manufacturer_name))
+			$nosto_product['brand'] = (string)$product->manufacturer_name;
+
 		$nosto_product['date_published'] = $this->formatDate($product->date_add);
 
-		$this->smarty->assign(array(
-			'nosto_product' => $nosto_product,
-		));
-
-		return $this->display(__FILE__, 'footer-product_product-tagging.tpl');
+		return $nosto_product;
 	}
 
 	/**
@@ -1094,10 +1113,9 @@ class NostoTagging extends Module
 	 * @param Currency $currency
 	 * @return false|array the order data array or false.
 	 */
-	protected function getOrderData(Order $order, Currency $currency)
+	public function getOrderData(Order $order, Currency $currency)
 	{
-		if (!($order instanceof Order) || !Validate::isLoadedObject($order)
-			|| !($currency instanceof Currency) || !Validate::isLoadedObject($currency))
+		if (!Validate::isLoadedObject($order) || !Validate::isLoadedObject($currency))
 			return false;
 
 		$products = array();
@@ -1120,8 +1138,7 @@ class NostoTagging extends Module
 		// We need the cart rules used for the order to check for gift products and free shipping.
 		// The cart is the same even if the order is split into many objects.
 		$cart = new Cart($order->id_cart);
-
-		if ($cart instanceof Cart && Validate::isLoadedObject($cart))
+		if (Validate::isLoadedObject($cart))
 			$cart_rules = (array)$cart->getCartRules();
 		else
 			$cart_rules = array();

@@ -51,4 +51,16 @@ class NostoTaggingHttpResponse
 			preg_match('|HTTP/\d\.\d\s+(\d+)\s+.*|', $this->http_response_header[0], $matches);
 		return isset($matches[1]) ? (int)$matches[1] : 0;
 	}
+
+	/**
+	 * Returns the raw http status string.
+	 *
+	 * @return string the status string or empty if not set.
+	 */
+	public function getRawStatus()
+	{
+		if (isset($this->http_response_header) &&  isset($this->http_response_header[0]))
+			return $this->http_response_header[0];
+		return '';
+	}
 }

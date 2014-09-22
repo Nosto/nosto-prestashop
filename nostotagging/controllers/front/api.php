@@ -1,10 +1,26 @@
 <?php
 
-class NostoTaggingApiModuleFrontController extends ModuleFrontController
+/**
+ * Base controller for all Nosto API front controllers.
+ *
+ * @property NostoTagging $module
+ * @property Context $context
+ */
+abstract class NostoTaggingApiModuleFrontController extends ModuleFrontController
 {
-	public $limit = 100000;
+	/**
+	 * @var int the amount of items to fetch.
+	 */
+	public $limit = 100;
+
+	/**
+	 * @var int the offset of items to fetch.
+	 */
 	public $offset = 0;
 
+	/**
+	 * @inheritdoc
+	 */
 	public function __construct()
 	{
 		parent::__construct();

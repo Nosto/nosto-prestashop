@@ -1,63 +1,75 @@
 <?php
 
+require_once(dirname(__FILE__).'/api.php');
+
+/**
+ * Front controller for gathering all products from the shop and sending the meta-data to Nosto.
+ *
+ * This controller should only be invoked once, when the Nosto module has been installed.
+ */
 class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFrontController
 {
-    const NOSTOTAGGING_API_REGISTER_ORDERS_URL = 'http://localhost:9000/api/register/products';
+    const API_REGISTER_PRODUCTS_URL = 'https://api.nosto.com/register/products';
+	const API_BOOTSTRAP_TOKEN = 'yrneZyrBuHTrNPIi31k7Bw9TaPhCGsHrdBozoXkqCKKFwQLqZJBZrAZvyHNpDg1F';
 
-    public function initContent()
+	/**
+	 * @inheritdoc
+	 */
+	public function initContent()
     {
-        $products_sql = <<<EOT
-            SELECT p.id_product AS product_id,
-                   pl.name,
-                   GROUP_CONCAT(DISTINCT(cl.name) SEPARATOR ",") AS categories,
-                   p.price,
-                   p.reference, 
-                   p.supplier_reference,
-                   p.id_manufacturer AS brand,
-                   p.upc,
-                   IFNULL(pl.description_short, pl.description) AS description,
-                   GROUP_CONCAT(DISTINCT(pa.name) SEPARATOR "," ) AS tags,
-                   pl.available_now,
-                   pl.available_later,
-                   p.available_for_order
-              FROM ps_product p
-              LEFT 
-              JOIN ps_product_lang pl 
-                ON p.id_product = pl.id_product
-              LEFT 
-              JOIN ps_category_product cp 
-                ON p.id_product = cp.id_product
-              LEFT 
-              JOIN ps_category_lang cl 
-                ON cp.id_category = cl.id_category
-              LEFT 
-              JOIN ps_category c 
-                ON cp.id_category = c.id_category
-              LEFT 
-              JOIN ps_product_tag pt 
-                ON p.id_product = pt.id_product
-              LEFT
-              JOIN ps_tag pa
-                ON pt.id_tag = pa.id_tag
-             WHERE pl.id_lang = 1
-               AND cl.id_lang = 1
-               AND p.id_shop_default = 1
-               AND c.id_shop_default = 1
-               AND p.active = 1
-             GROUP 
-                BY p.id_product
-             LIMIT $this->limit
+		$nosto_products = array();
+		foreach ($this->getProductIds() as $id_product)
+		{
+			$product = new Product($id_product, true, $this->context->language->id, $this->context->shop->id);
+			$nosto_product = $this->module->getProductData($product);
+			if (!empty($nosto_product))
+				$nosto_products[] = $nosto_product;
+			$product = null;
+		}
+
+		if (!empty($nosto_products))
+		{
+			$request = new NostoTaggingHttpRequest();
+			$response = $request->post(
+				self::API_REGISTER_PRODUCTS_URL,
+				array(
+					'Content-type: application/json',
+					'Authorization: Basic '.base64_encode(':'.self::API_BOOTSTRAP_TOKEN)
+				),
+				gzencode(json_encode($nosto_products), 9)
+			);
+			if ($response->getCode() !== 200)
+				NostoTaggingLogger::log(
+					__CLASS__.'::'.__FUNCTION__.' - Failed to send product data to Nosto',
+					NostoTaggingLogger::LOG_SEVERITY_ERROR,
+					$response->getCode()
+				);
+
+			header($response->getRawStatus());
+		}
+		die;
+    }
+
+	/**
+	 * Returns a list of all active product ids with limit and offset applied.
+	 *
+	 * @return array the product id list.
+	 */
+	protected function getProductIds()
+	{
+		$product_ids = array();
+		$sql = <<<EOT
+            SELECT `id_product`
+            FROM `ps_product`
+			WHERE `active` = 1
+				AND `available_for_order` = 1
+				AND `visibility` != 'none'
+            LIMIT $this->limit
             OFFSET $this->offset
 EOT;
-
-print("vxvxv");
-die;
-        if ($products = Db::getInstance()->ExecuteS($products_sql))
-        {
-            header('Content-Type: application/json');
-            print(json_encode($products, JSON_PRETTY_PRINT));
-        }
-        die;
-    }
+		$rows = Db::getInstance()->executeS($sql);
+		foreach ($rows as $row)
+			$product_ids[] = (int)$row['id_product'];
+		return $product_ids;
+	}
 }
-?>
