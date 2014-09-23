@@ -9,9 +9,6 @@ require_once(dirname(__FILE__).'/api.php');
  */
 class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFrontController
 {
-    const API_REGISTER_PRODUCTS_URL = 'https://api.nosto.com/register/products';
-	const API_BOOTSTRAP_TOKEN = 'yrneZyrBuHTrNPIi31k7Bw9TaPhCGsHrdBozoXkqCKKFwQLqZJBZrAZvyHNpDg1F';
-
 	/**
 	 * @inheritdoc
 	 */
@@ -27,27 +24,7 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
 			$product = null;
 		}
 
-		if (!empty($nosto_products))
-		{
-			$request = new NostoTaggingHttpRequest();
-			$response = $request->post(
-				self::API_REGISTER_PRODUCTS_URL,
-				array(
-					'Content-type: application/json',
-					'Authorization: Basic '.base64_encode(':'.self::API_BOOTSTRAP_TOKEN)
-				),
-				gzencode(json_encode($nosto_products), 9)
-			);
-			if ($response->getCode() !== 200)
-				NostoTaggingLogger::log(
-					__CLASS__.'::'.__FUNCTION__.' - Failed to send product data to Nosto',
-					NostoTaggingLogger::LOG_SEVERITY_ERROR,
-					$response->getCode()
-				);
-
-			header($response->getRawStatus());
-		}
-		die;
+		$this->encryptOutput(json_encode($nosto_products));
     }
 
 	/**

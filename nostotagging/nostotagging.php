@@ -5,6 +5,7 @@ if (!defined('_PS_VERSION_'))
 require_once(dirname(__FILE__).'/classes/nostotagging-logger.php');
 require_once(dirname(__FILE__).'/classes/nostotagging-http-request.php');
 require_once(dirname(__FILE__).'/classes/nostotagging-http-response.php');
+require_once(dirname(__FILE__).'/classes/nostotagging-cipher.php');
 
 /**
  * NostoTagging module that integrates Nosto marketing automation service.
@@ -295,6 +296,16 @@ class NostoTagging extends Module
 	public function setAccountName($account_name, $global = false)
 	{
 		return $this->setConfigValue(self::NOSTOTAGGING_CONFIG_KEY_ACCOUNT_NAME, (string)$account_name, $global);
+	}
+
+	/**
+	 * Getter for the SSO token.
+	 *
+	 * @return string
+	 */
+	public function getSSOToken()
+	{
+		return (string)Configuration::get(self::NOSTOTAGGING_CONFIG_KEY_SSO_TOKEN);
 	}
 
 	/**

@@ -9,9 +9,6 @@ require_once(dirname(__FILE__).'/api.php');
  */
 class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontController
 {
-    const API_REGISTER_ORDERS_URL = 'https://api.nosto.com/register/orders';
-	const API_BOOTSTRAP_TOKEN = 'yrneZyrBuHTrNPIi31k7Bw9TaPhCGsHrdBozoXkqCKKFwQLqZJBZrAZvyHNpDg1F';
-
 	/**
 	 * @inheritdoc
 	 */
@@ -29,27 +26,7 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
 			$currency = null;
 		}
 
-		if (!empty($nosto_orders))
-		{
-			$request = new NostoTaggingHttpRequest();
-			$response = $request->post(
-				self::API_REGISTER_ORDERS_URL,
-				array(
-					'Content-type: application/json',
-					'Authorization: Basic '.base64_encode(':'.self::API_BOOTSTRAP_TOKEN)
-				),
-				gzencode(json_encode($nosto_orders), 9)
-			);
-			if ($response->getCode() !== 200)
-				NostoTaggingLogger::log(
-					__CLASS__.'::'.__FUNCTION__.' - Failed to send order history to Nosto',
-					NostoTaggingLogger::LOG_SEVERITY_ERROR,
-					$response->getCode()
-				);
-
-			header($response->getRawStatus());
-		}
-		die;
+		$this->encryptOutput(json_encode($nosto_orders));
     }
 
 	/**

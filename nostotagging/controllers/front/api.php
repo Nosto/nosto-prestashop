@@ -31,4 +31,21 @@ abstract class NostoTaggingApiModuleFrontController extends ModuleFrontControlle
 		if (($offset = Tools::getValue('offset')) !== false && !empty($offset))
 			$this->offset = (int)$offset;
 	}
+
+	/**
+	 * Encrypts and outputs the string and ends the application flow.
+	 *
+	 * @param string $string the data to output as encrypted response.
+	 */
+	public function encryptOutput($string)
+	{
+		$secret = $this->module->getSSOToken();
+		if (!empty($secret))
+		{
+			$cipher = new NostoTaggingCipher($secret);
+			$cipher_text = $cipher->encrypt($string);
+			echo base64_encode($cipher_text);
+		}
+		die;
+	}
 } 
