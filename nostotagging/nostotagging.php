@@ -136,23 +136,23 @@ class NostoTagging extends Module
 		if (Tools::isSubmit('submit'.$this->name))
 		{
 			$account_name = (string)Tools::getValue($this->name.'_account_name');
-			$default_nosto_elements = (int)Tools::getValue($this->name.'_use_defaults');
-			$inject_slots = (int)Tools::getValue($this->name.'_inject_slots');
+//			$default_nosto_elements = (int)Tools::getValue($this->name.'_use_defaults');
+//			$inject_slots = (int)Tools::getValue($this->name.'_inject_slots');
 
 			if (empty($account_name))
 				$output .= $this->displayError($this->l('Account name cannot be empty.'));
 
-			if ($default_nosto_elements !== 0 && $default_nosto_elements !== 1)
-				$output .= $this->displayError($this->l('Use default nosto elements setting is invalid.'));
-
-			if ($inject_slots !== 0 && $inject_slots !== 1)
-				$output .= $this->displayError($this->l('Inject category and search page recommendations setting is invalid.'));
+//			if ($default_nosto_elements !== 0 && $default_nosto_elements !== 1)
+//				$output .= $this->displayError($this->l('Use default nosto elements setting is invalid.'));
+//
+//			if ($inject_slots !== 0 && $inject_slots !== 1)
+//				$output .= $this->displayError($this->l('Inject category and search page recommendations setting is invalid.'));
 
 			if (empty($output))
 			{
 				$this->setAccountName($account_name);
-				$this->setUseDefaultNostoElements($default_nosto_elements);
-				$this->setInjectSlots($inject_slots);
+//				$this->setUseDefaultNostoElements($default_nosto_elements);
+//				$this->setInjectSlots($inject_slots);
 				$output .= $this->displayConfirmation($this->l('Configuration saved'));
 			}
 		}
@@ -162,6 +162,8 @@ class NostoTagging extends Module
 			$message = $this->l('You haven\'t configured a Nosto account. Please visit nosto.com to create an account and get started.');
 			$output = $output.$this->displayError($message);
 		}
+
+		$this->context->controller->addJS($this->_path.'js/nostotagging-configuration.js');
 
 		return $output.$this->displayForm();
 	}
@@ -173,9 +175,12 @@ class NostoTagging extends Module
 	 */
 	public function displayForm()
 	{
+		$field_has_account = $this->name.'_has_account';
 		$field_account_name = $this->name.'_account_name';
-		$field_use_defaults = $this->name.'_use_defaults';
-		$field_inject_slots = $this->name.'_inject_slots';
+//		$field_use_defaults = $this->name.'_use_defaults';
+//		$field_inject_slots = $this->name.'_inject_slots';
+
+		$has_account = $this->getAccountName();
 
 		$fields_form = array(
 			array(
@@ -185,6 +190,27 @@ class NostoTagging extends Module
 						'icon' => 'icon-cogs'
 					),
 					'input' => array(
+
+						array(
+							'type' => (substr(_PS_VERSION_, 0, 3) === '1.5') ? 'radio' : 'switch',
+							'label' => $this->l('Already have a Nosto account?'),
+							'name' => $field_has_account,
+							'values' => array(
+								array(
+									'id' => $field_has_account.'_yes',
+									'value' => 1,
+									'label' => $this->l('Yes'),
+								),
+								array(
+									'id' => $field_has_account.'_no',
+									'value' => 0,
+									'label' => $this->l('No'),
+								),
+							),
+							'is_bool' => true,
+							'class' => 't',
+						),
+
 						array(
 							'type' => 'text',
 							'label' => $this->l('Account name'),
@@ -192,50 +218,51 @@ class NostoTagging extends Module
 							'desc' => $this->l('Your Nosto marketing automation service account name.'),
 							'size' => 40,
 							'required' => true,
-							'class' => 'fixed-width-xxl',
+							'class' => 'fixed-width-xxl'.(!$has_account ? 'hidden' : ''),
 						),
-						array(
-							'type' => (substr(_PS_VERSION_, 0, 3) === '1.5') ? 'radio' : 'switch',
-							'label' => $this->l('Use default nosto elements'),
-							'name' => $field_use_defaults,
-							'desc' => $this->l('Use default nosto elements for showing product recommendations.'),
-							'values' => array(
-								array(
-									'id' => $this->name.'_defaults_on',
-									'value' => 1,
-									'label' => $this->l('Enabled'),
-								),
-								array(
-									'id' => $this->name.'_defaults_off',
-									'value' => 0,
-									'label' => $this->l('Disabled'),
-								),
-							),
-							'is_bool' => true,
-							'class' => 't',
-							'required' => true,
-						),
-						array(
-							'type' => (substr(_PS_VERSION_, 0, 3) === '1.5') ? 'radio' : 'switch',
-							'label' => $this->l('Inject category and search page recommendations'),
-							'name' => $field_inject_slots,
-							'desc' => $this->l('Automatically inject category and search page recommendations without modifying the theme. For full control of the recommendation slots, you should disable this and add the hooks to the themes template files as per the modules install instructions.'),
-							'values' => array(
-								array(
-									'id' => $this->name.'_inject_on',
-									'value' => 1,
-									'label' => $this->l('Enabled'),
-								),
-								array(
-									'id' => $this->name.'_inject_off',
-									'value' => 0,
-									'label' => $this->l('Disabled'),
-								),
-							),
-							'is_bool' => true,
-							'class' => 't',
-							'required' => true,
-						),
+
+//						array(
+//							'type' => (substr(_PS_VERSION_, 0, 3) === '1.5') ? 'radio' : 'switch',
+//							'label' => $this->l('Use default nosto elements'),
+//							'name' => $field_use_defaults,
+//							'desc' => $this->l('Use default nosto elements for showing product recommendations.'),
+//							'values' => array(
+//								array(
+//									'id' => $this->name.'_defaults_on',
+//									'value' => 1,
+//									'label' => $this->l('Enabled'),
+//								),
+//								array(
+//									'id' => $this->name.'_defaults_off',
+//									'value' => 0,
+//									'label' => $this->l('Disabled'),
+//								),
+//							),
+//							'is_bool' => true,
+//							'class' => 't',
+//							'required' => true,
+//						),
+//						array(
+//							'type' => (substr(_PS_VERSION_, 0, 3) === '1.5') ? 'radio' : 'switch',
+//							'label' => $this->l('Inject category and search page recommendations'),
+//							'name' => $field_inject_slots,
+//							'desc' => $this->l('Automatically inject category and search page recommendations without modifying the theme. For full control of the recommendation slots, you should disable this and add the hooks to the themes template files as per the modules install instructions.'),
+//							'values' => array(
+//								array(
+//									'id' => $this->name.'_inject_on',
+//									'value' => 1,
+//									'label' => $this->l('Enabled'),
+//								),
+//								array(
+//									'id' => $this->name.'_inject_off',
+//									'value' => 0,
+//									'label' => $this->l('Disabled'),
+//								),
+//							),
+//							'is_bool' => true,
+//							'class' => 't',
+//							'required' => true,
+//						),
 					),
 					'submit' => array(
 						'title' => $this->l('Save'),
@@ -257,9 +284,10 @@ class NostoTagging extends Module
 		$helper->submit_action = '';
 
 		$helper->fields_value = array(
+			$field_has_account => ($has_account ? 1 : 0),
 			$field_account_name => (string)Tools::getValue($field_account_name, $this->getAccountName()),
-			$field_use_defaults => (int)Tools::getValue($field_use_defaults, $this->getUseDefaultNostoElements()),
-			$field_inject_slots => (int)Tools::getValue($field_inject_slots, $this->getInjectSlots()),
+//			$field_use_defaults => (int)Tools::getValue($field_use_defaults, $this->getUseDefaultNostoElements()),
+//			$field_inject_slots => (int)Tools::getValue($field_inject_slots, $this->getInjectSlots()),
 		);
 
 		return $helper->generateForm($fields_form);
