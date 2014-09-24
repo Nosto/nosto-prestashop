@@ -793,11 +793,16 @@ class NostoTagging extends Module
 	{
 		if (!$this->hasAccountName())
 		{
+			if ((int)Configuration::get('PS_SSL_ENABLED'))
+				$domain = 'https://'.Configuration::get('PS_SHOP_DOMAIN_SSL');
+			else
+				$domain = 'http://'.Configuration::get('PS_SHOP_DOMAIN');
+
 			$params = array(
 				'title' => Configuration::get('PS_SHOP_NAME'),
 				'name' => substr(sha1(rand()), 0, 8),
 				'platform' => self::NOSTOTAGGING_API_PLATFORM_NAME,
-				'front_page_url' => 'http://'.Configuration::get('PS_SHOP_DOMAIN'),
+				'front_page_url' => $domain,
 				'currency_code' => $this->context->currency->iso_code,
 				'language_code' => $this->context->language->iso_code,
 				'owner' => array(
