@@ -21,7 +21,12 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
 			$currency = new Currency($order->id_currency);
 			$nosto_order = $this->module->getOrderData($order, $currency);
 			if (!empty($nosto_order))
+			{
+				// Move the 'order_number' inside the customer array because it is required by the API.
+				$nosto_order['customer']['order_number'] = $nosto_order['order_number'];
+				unset($nosto_order['order_number']);
 				$nosto_orders[] = $nosto_order;
+			}
 			$order = null;
 			$currency = null;
 		}
