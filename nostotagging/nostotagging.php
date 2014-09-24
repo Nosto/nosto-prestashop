@@ -89,7 +89,6 @@ class NostoTagging extends Module
 		return parent::install()
 			&& $this->initConfig()
 			&& $this->createCustomerLinkTable()
-			&& $this->createAccount()
 			&& $this->initHooks()
 			&& $this->registerHook('displayHeader')
 			&& $this->registerHook('displayTop')
@@ -133,94 +132,77 @@ class NostoTagging extends Module
 	{
 		$output = '';
 
-		if (Tools::isSubmit('submit'.$this->name))
+		$field_has_account = $this->name.'_has_account';
+		$field_account_name = $this->name.'_account_name';
+
+		if (Tools::isSubmit('submit_nostotagging_new_account'))
 		{
-			$account_name = (string)Tools::getValue($this->name.'_account_name');
-//			$default_nosto_elements = (int)Tools::getValue($this->name.'_use_defaults');
-//			$inject_slots = (int)Tools::getValue($this->name.'_inject_slots');
+			if ($this->createAccount())
+				$output .= $this->displayConfirmation($this->l('Account created.'));
+			else
+				$output .= $this->displayError($this->l('Account could not be automatically created. Please visit nosto.com to create a new account.'));
+		}
+		elseif (Tools::isSubmit('submit_nostotagging_general_settings'))
+		{
+			$account_name = (string)Tools::getValue($field_account_name);
 
 			if (empty($account_name))
 				$output .= $this->displayError($this->l('Account name cannot be empty.'));
 
-//			if ($default_nosto_elements !== 0 && $default_nosto_elements !== 1)
-//				$output .= $this->displayError($this->l('Use default nosto elements setting is invalid.'));
-//
-//			if ($inject_slots !== 0 && $inject_slots !== 1)
-//				$output .= $this->displayError($this->l('Inject category and search page recommendations setting is invalid.'));
-
 			if (empty($output))
 			{
 				$this->setAccountName($account_name);
-//				$this->setUseDefaultNostoElements($default_nosto_elements);
-//				$this->setInjectSlots($inject_slots);
-				$output .= $this->displayConfirmation($this->l('Configuration saved'));
+				$output .= $this->displayConfirmation($this->l('Configuration saved.'));
 			}
 		}
 
-		if (!$this->hasAccountName())
-		{
-			$message = $this->l('You haven\'t configured a Nosto account. Please visit nosto.com to create an account and get started.');
-			$output = $output.$this->displayError($message);
-		}
+//		if (!$this->hasAccountName())
+//		{
+//			$message = $this->l('You haven\'t configured a Nosto account. Please visit nosto.com to create an account and get started.');
+//			$output = $output.$this->displayError($message);
+//		}
 
+		$account_name = $this->getAccountName();
 		$this->context->controller->addJS($this->_path.'js/nostotagging-configuration.js');
+		$this->context->smarty->assign(array(
+			$field_has_account => !empty($account_name),
+			$field_account_name => (string)Tools::getValue($field_account_name, $this->getAccountName()),
+		));
+		$output .= $this->display(__FILE__, 'views/templates/admin/configuration.tpl');
 
-		return $output.$this->displayForm();
+		return $output;
 	}
 
-	/**
-	 * Renders the module administration form.
-	 *
-	 * @return string The HTML to output.
-	 */
-	public function displayForm()
-	{
-		$field_has_account = $this->name.'_has_account';
-		$field_account_name = $this->name.'_account_name';
+//	/**
+//	 * Renders the module administration form.
+//	 *
+//	 * @return string The HTML to output.
+//	 */
+//	public function displayForm()
+//	{
+//		$field_account_name = $this->name.'_account_name';
 //		$field_use_defaults = $this->name.'_use_defaults';
 //		$field_inject_slots = $this->name.'_inject_slots';
-
-		$has_account = $this->getAccountName();
-
-		$fields_form = array(
-			array(
-				'form' => array(
-					'legend' => array(
-						'title' => $this->l('General Settings'),
-						'icon' => 'icon-cogs'
-					),
-					'input' => array(
-
-						array(
-							'type' => (substr(_PS_VERSION_, 0, 3) === '1.5') ? 'radio' : 'switch',
-							'label' => $this->l('Already have a Nosto account?'),
-							'name' => $field_has_account,
-							'values' => array(
-								array(
-									'id' => $field_has_account.'_yes',
-									'value' => 1,
-									'label' => $this->l('Yes'),
-								),
-								array(
-									'id' => $field_has_account.'_no',
-									'value' => 0,
-									'label' => $this->l('No'),
-								),
-							),
-							'is_bool' => true,
-							'class' => 't',
-						),
-
-						array(
-							'type' => 'text',
-							'label' => $this->l('Account name'),
-							'name' => $field_account_name,
-							'desc' => $this->l('Your Nosto marketing automation service account name.'),
-							'size' => 40,
-							'required' => true,
-							'class' => 'fixed-width-xxl'.(!$has_account ? 'hidden' : ''),
-						),
-
+//
+//		$has_account = $this->getAccountName();
+//
+//		$fields_form = array(
+//			array(
+//				'form' => array(
+//					'legend' => array(
+//						'title' => $this->l('General Settings'),
+//						'icon' => 'icon-cogs'
+//					),
+//					'input' => array(
+//						array(
+//							'type' => 'text',
+//							'label' => $this->l('Account name'),
+//							'name' => $field_account_name,
+//							'desc' => $this->l('Your Nosto marketing automation service account name.'),
+//							'size' => 40,
+//							'required' => true,
+//							'class' => 'fixed-width-xxl',
+//						),
 //						array(
 //							'type' => (substr(_PS_VERSION_, 0, 3) === '1.5') ? 'radio' : 'switch',
 //							'label' => $this->l('Use default nosto elements'),
@@ -263,35 +245,34 @@ class NostoTagging extends Module
 //							'class' => 't',
 //							'required' => true,
 //						),
-					),
-					'submit' => array(
-						'title' => $this->l('Save'),
-						'name' => 'submit'.$this->name,
-						'class' => 'button btn btn-default pull-right',
-					),
-				),
-			),
-		);
-
-		$helper = new HelperForm();
-
-		$helper->module = $this;
-		$helper->name_controller = $this->name;
-		$helper->token = Tools::getAdminTokenLite('AdminModules');
-		$helper->currentIndex = AdminController::$currentIndex.'&configure='.$this->name;
-
-		$helper->title = $this->displayName;
-		$helper->submit_action = '';
-
-		$helper->fields_value = array(
-			$field_has_account => ($has_account ? 1 : 0),
-			$field_account_name => (string)Tools::getValue($field_account_name, $this->getAccountName()),
+//					),
+//					'submit' => array(
+//						'title' => $this->l('Save'),
+//						'name' => 'submit'.$this->name,
+//						'class' => 'button btn btn-default pull-right',
+//					),
+//				),
+//			),
+//		);
+//
+//		$helper = new HelperForm();
+//
+//		$helper->module = $this;
+//		$helper->name_controller = $this->name;
+//		$helper->token = Tools::getAdminTokenLite('AdminModules');
+//		$helper->currentIndex = AdminController::$currentIndex.'&configure='.$this->name;
+//
+//		$helper->title = $this->displayName;
+//		$helper->submit_action = '';
+//
+//		$helper->fields_value = array(
+//			$field_account_name => (string)Tools::getValue($field_account_name, $this->getAccountName()),
 //			$field_use_defaults => (int)Tools::getValue($field_use_defaults, $this->getUseDefaultNostoElements()),
 //			$field_inject_slots => (int)Tools::getValue($field_inject_slots, $this->getInjectSlots()),
-		);
-
-		return $helper->generateForm($fields_form);
-	}
+//		);
+//
+//		return $helper->generateForm($fields_form);
+//	}
 
 	/**
 	 * Getter for the Nosto account name.
@@ -811,9 +792,8 @@ class NostoTagging extends Module
 	}
 
 	/**
-	 * Calls the Nosto account-creation endpoint to create an account if
-	 * one hasn't been already configured. It stores the account name and the
-	 * SSO token to the configuration
+	 * Calls the Nosto account-creation endpoint to create an account if one hasn't been already configured.
+	 * It stores the account name and the SSO token to the configuration
 	 *
 	 * @return bool
 	 */
@@ -842,16 +822,19 @@ class NostoTagging extends Module
 					'country' => $this->context->country->iso_code
 				)
 			);
-			$request = new NostoTaggingHttpRequest();
-			$response = $request->post(
-				self::NOSTOTAGGING_API_SIGNUP_URL,
-				array(
-					'Content-type: application/json',
-					'Authorization: Basic '.base64_encode(':'.self::NOSTOTAGGING_API_SIGNUP_TOKEN)
-				),
-				json_encode($params)
+//			$request = new NostoTaggingHttpRequest();
+//			$response = $request->post(
+//				self::NOSTOTAGGING_API_SIGNUP_URL,
+//				array(
+//					'Content-type: application/json',
+//					'Authorization: Basic '.base64_encode(':'.self::NOSTOTAGGING_API_SIGNUP_TOKEN)
+//				),
+//				json_encode($params)
+//			);
+//			$result = json_decode($response->getResult());
+			$result = (object)array(
+				'sso_token' => '0000000000000000',
 			);
-			$result = json_decode($response->getResult());
 
 			// Set the values if the request was a success, else notify the user to manually create the account.
 			if (empty($result))
@@ -863,15 +846,17 @@ class NostoTagging extends Module
 					NostoTaggingLogger::LOG_SEVERITY_ERROR,
 					$response->getCode()
 				);
+				return false;
 			}
 			else
 			{
 				$this->setAccountName(self::NOSTOTAGGING_API_PLATFORM_NAME.'-'.$params['name']);
 				$this->setSSOToken($result->sso_token);
+				return true;
 			}
 		}
 
-		return true;
+		return false;
 	}
 
 	/**
