@@ -1212,6 +1212,7 @@ class NostoTagging extends Module
 			'email' => $customer->email,
 		);
 		$nosto_order['purchased_items'] = array();
+		$nosto_order['created_at'] = $this->formatDate($order->date_add);
 
 		foreach ($items as $item)
 		{
