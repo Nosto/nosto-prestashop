@@ -680,10 +680,6 @@ class NostoTagging extends Module
 			$account_name = $this->getAccountName();
 			if (!empty($nosto_order) && !empty($id_nosto_customer) && !empty($account_name))
 			{
-				// Move the 'order_number' inside the customer array because it is required by the API.
-				$nosto_order['customer']['order_number'] = $nosto_order['order_number'];
-				unset($nosto_order['order_number']);
-
 				$url = strtr(self::NOSTOTAGGING_API_ORDER_TAGGING_URL, array(
 					'{m}' => $account_name,
 					'{cid}' => $id_nosto_customer,
