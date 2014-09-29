@@ -1206,7 +1206,7 @@ class NostoTagging extends Module
 		$customer = $order->getCustomer();
 		$nosto_order = array();
 		$nosto_order['order_number'] = (string)$order->reference;
-		$nosto_order['customer'] = array(
+		$nosto_order['buyer'] = array(
 			'first_name' => $customer->firstname,
 			'last_name' => $customer->lastname,
 			'email' => $customer->email,
