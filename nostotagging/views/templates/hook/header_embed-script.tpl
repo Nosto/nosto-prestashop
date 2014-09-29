@@ -1,4 +1,4 @@
-{if isset($server_address) && isset($account_name)}
+{if !empty($server_address) && !empty($account_name)}
 <script type="text/javascript">
     //<![CDATA[
     (function(){
@@ -7,10 +7,5 @@
     })();
     nostojs.init("{$account_name|escape:"javascript":"UTF-8"}");
     //]]>
-</script>
-{/if}
-{if isset($inject_slots) && $inject_slots === 1}
-<script type="text/javascript">
-    {literal}$(function(){ var $c=$('#center_column'),$n=$('#hidden_nosto_elements');if($c && $n){ $n.find('.prepend .nosto_element').each(function(){ $(this).prependTo($c);});$n.find('.append .nosto_element').each(function(){ $(this).appendTo($c);});$n.remove();}});{/literal}
 </script>
 {/if}

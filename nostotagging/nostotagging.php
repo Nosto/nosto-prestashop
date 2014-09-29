@@ -14,8 +14,6 @@ class NostoTagging extends Module
 {
 	const NOSTOTAGGING_CONFIG_KEY_ACCOUNT_NAME = 'NOSTOTAGGING_ACCOUNT_NAME';
 	const NOSTOTAGGING_CONFIG_KEY_SSO_TOKEN = 'NOSTOTAGGING_SSO_TOKEN';
-	const NOSTOTAGGING_CONFIG_KEY_USE_DEFAULT_NOSTO_ELEMENTS = 'NOSTOTAGGING_DEFAULT_ELEMENTS';
-	const NOSTOTAGGING_CONFIG_KEY_INJECT_SLOTS = 'NOSTOTAGGING_INJECT_SLOTS';
 	const NOSTOTAGGING_SERVER_ADDRESS = 'connect.nosto.com';
 	const NOSTOTAGGING_PRODUCT_IN_STOCK = 'InStock';
 	const NOSTOTAGGING_PRODUCT_OUT_OF_STOCK = 'OutOfStock';
@@ -134,154 +132,56 @@ class NostoTagging extends Module
 
 		$field_has_account = $this->name.'_has_account';
 		$field_account_name = $this->name.'_account_name';
+		$field_account_email = $this->name.'_account_email';
+
+		$account_name = (string)Tools::getValue($field_account_name);
+		$account_email = (string)Tools::getValue($field_account_email);
 
 		if (Tools::isSubmit('submit_nostotagging_new_account'))
 		{
-			if ($this->createAccount())
+			if(empty($account_email))
+				$output .= $this->displayError($this->l('Email cannot be empty.'));
+			elseif (!Validate::isEmail($account_email))
+				$output .= $this->displayError($this->l('Email is not a valid email address.'));
+			elseif ($this->createAccount())
+			{
 				$output .= $this->displayConfirmation($this->l('Account created.'));
+				$account_name = $this->getAccountName();
+			}
 			else
 				$output .= $this->displayError($this->l('Account could not be automatically created. Please visit nosto.com to create a new account.'));
 		}
 		elseif (Tools::isSubmit('submit_nostotagging_general_settings'))
 		{
-			$account_name = (string)Tools::getValue($field_account_name);
-
 			if (empty($account_name))
 				$output .= $this->displayError($this->l('Account name cannot be empty.'));
 
 			if (empty($output))
 			{
-				$this->setAccountName($account_name);
+				$this->setAccountName($account_name, true/* $global */);
 				$output .= $this->displayConfirmation($this->l('Configuration saved.'));
 			}
 		}
 
-//		if (!$this->hasAccountName())
-//		{
-//			$message = $this->l('You haven\'t configured a Nosto account. Please visit nosto.com to create an account and get started.');
-//			$output = $output.$this->displayError($message);
-//		}
+		if (empty($output))
+		{
+			$account_name = $this->getAccountName();
+			$account_email = $this->context->employee->email;
+		}
 
-		$account_name = $this->getAccountName();
-		$this->context->controller->addJS($this->_path.'js/nostotagging-configuration.js');
+		$this->context->controller->addJS($this->_path.'js/nostotagging-admin-config.js');
 		$this->context->smarty->assign(array(
-			$field_has_account => !empty($account_name),
-			$field_account_name => (string)Tools::getValue($field_account_name, $this->getAccountName()),
+			$field_has_account => $this->hasAccountName(),
+			$field_account_name => $account_name,
+			$field_account_email => $account_email,
 		));
-		$output .= $this->display(__FILE__, 'views/templates/admin/configuration.tpl');
+		if (version_compare(substr(_PS_VERSION_, 0, 3), '1.6', '>='))
+			$view = 'config-bootstrap.tpl';
+		else
+			$view = 'config.tpl';
+		$output .= $this->display(__FILE__, 'views/templates/admin/'.$view);
 
 		return $output;
-	}
-
-//	/**
-//	 * Renders the module administration form.
-//	 *
-//	 * @return string The HTML to output.
-//	 */
-//	public function displayForm()
-//	{
-//		$field_account_name = $this->name.'_account_name';
-//		$field_use_defaults = $this->name.'_use_defaults';
-//		$field_inject_slots = $this->name.'_inject_slots';
-//
-//		$has_account = $this->getAccountName();
-//
-//		$fields_form = array(
-//			array(
-//				'form' => array(
-//					'legend' => array(
-//						'title' => $this->l('General Settings'),
-//						'icon' => 'icon-cogs'
-//					),
-//					'input' => array(
-//						array(
-//							'type' => 'text',
-//							'label' => $this->l('Account name'),
-//							'name' => $field_account_name,
-//							'desc' => $this->l('Your Nosto marketing automation service account name.'),
-//							'size' => 40,
-//							'required' => true,
-//							'class' => 'fixed-width-xxl',
-//						),
-//						array(
-//							'type' => (substr(_PS_VERSION_, 0, 3) === '1.5') ? 'radio' : 'switch',
-//							'label' => $this->l('Use default nosto elements'),
-//							'name' => $field_use_defaults,
-//							'desc' => $this->l('Use default nosto elements for showing product recommendations.'),
-//							'values' => array(
-//								array(
-//									'id' => $this->name.'_defaults_on',
-//									'value' => 1,
-//									'label' => $this->l('Enabled'),
-//								),
-//								array(
-//									'id' => $this->name.'_defaults_off',
-//									'value' => 0,
-//									'label' => $this->l('Disabled'),
-//								),
-//							),
-//							'is_bool' => true,
-//							'class' => 't',
-//							'required' => true,
-//						),
-//						array(
-//							'type' => (substr(_PS_VERSION_, 0, 3) === '1.5') ? 'radio' : 'switch',
-//							'label' => $this->l('Inject category and search page recommendations'),
-//							'name' => $field_inject_slots,
-//							'desc' => $this->l('Automatically inject category and search page recommendations without modifying the theme. For full control of the recommendation slots, you should disable this and add the hooks to the themes template files as per the modules install instructions.'),
-//							'values' => array(
-//								array(
-//									'id' => $this->name.'_inject_on',
-//									'value' => 1,
-//									'label' => $this->l('Enabled'),
-//								),
-//								array(
-//									'id' => $this->name.'_inject_off',
-//									'value' => 0,
-//									'label' => $this->l('Disabled'),
-//								),
-//							),
-//							'is_bool' => true,
-//							'class' => 't',
-//							'required' => true,
-//						),
-//					),
-//					'submit' => array(
-//						'title' => $this->l('Save'),
-//						'name' => 'submit'.$this->name,
-//						'class' => 'button btn btn-default pull-right',
-//					),
-//				),
-//			),
-//		);
-//
-//		$helper = new HelperForm();
-//
-//		$helper->module = $this;
-//		$helper->name_controller = $this->name;
-//		$helper->token = Tools::getAdminTokenLite('AdminModules');
-//		$helper->currentIndex = AdminController::$currentIndex.'&configure='.$this->name;
-//
-//		$helper->title = $this->displayName;
-//		$helper->submit_action = '';
-//
-//		$helper->fields_value = array(
-//			$field_account_name => (string)Tools::getValue($field_account_name, $this->getAccountName()),
-//			$field_use_defaults => (int)Tools::getValue($field_use_defaults, $this->getUseDefaultNostoElements()),
-//			$field_inject_slots => (int)Tools::getValue($field_inject_slots, $this->getInjectSlots()),
-//		);
-//
-//		return $helper->generateForm($fields_form);
-//	}
-
-	/**
-	 * Getter for the Nosto account name.
-	 *
-	 * @return string
-	 */
-	public function getAccountName()
-	{
-		return (string)Configuration::get(self::NOSTOTAGGING_CONFIG_KEY_ACCOUNT_NAME);
 	}
 
 	/**
@@ -293,6 +193,16 @@ class NostoTagging extends Module
 	{
 		$account = $this->getAccountName();
 		return !empty($account);
+	}
+
+	/**
+	 * Getter for the Nosto account name.
+	 *
+	 * @return string
+	 */
+	public function getAccountName()
+	{
+		return (string)Configuration::get(self::NOSTOTAGGING_CONFIG_KEY_ACCOUNT_NAME);
 	}
 
 	/**
@@ -308,9 +218,18 @@ class NostoTagging extends Module
 	}
 
 	/**
+	 * Checks if there is an SSO token set.
+	 */
+	public function hasSSOToken()
+	{
+		$token = $this->getSSOToken();
+		return !empty($token);
+	}
+
+	/**
 	 * Getter for the SSO token.
 	 *
-	 * @return string
+	 * @return string the token.
 	 */
 	public function getSSOToken()
 	{
@@ -330,50 +249,6 @@ class NostoTagging extends Module
 	}
 
 	/**
-	 * Getter for the "use default nosto elements" settings.
-	 *
-	 * @return int
-	 */
-	public function getUseDefaultNostoElements()
-	{
-		return (int)Configuration::get(self::NOSTOTAGGING_CONFIG_KEY_USE_DEFAULT_NOSTO_ELEMENTS);
-	}
-
-	/**
-	 * Setter for the "use default nosto elements" settings.
-	 *
-	 * @param int $value Either 1 or 0.
-	 * @param bool $global
-	 * @return bool
-	 */
-	public function setUseDefaultNostoElements($value, $global = false)
-	{
-		return $this->setConfigValue(self::NOSTOTAGGING_CONFIG_KEY_USE_DEFAULT_NOSTO_ELEMENTS, (int)$value, $global);
-	}
-
-	/**
-	 * Getter for the "inject slots" settings.
-	 *
-	 * @return int
-	 */
-	public function getInjectSlots()
-	{
-		return (int)Configuration::get(self::NOSTOTAGGING_CONFIG_KEY_INJECT_SLOTS);
-	}
-
-	/**
-	 * Setter for the "inject slots" settings.
-	 *
-	 * @param int $value Either 1 or 0.
-	 * @param bool $global
-	 * @return bool
-	 */
-	public function setInjectSlots($value, $global = false)
-	{
-		return $this->setConfigValue(self::NOSTOTAGGING_CONFIG_KEY_INJECT_SLOTS, (int)$value, $global);
-	}
-
-	/**
 	 * Hook for adding content to the <head> section of the HTML pages.
 	 *
 	 * Adds the Nosto embed script.
@@ -385,15 +260,12 @@ class NostoTagging extends Module
 		$server_address = self::NOSTOTAGGING_SERVER_ADDRESS;
 		$account_name = $this->getAccountName();
 
-		if (empty($server_address) || empty($account_name))
-			return '';
-
 		$this->smarty->assign(array(
 			'server_address' => $server_address,
 			'account_name' => $account_name,
-			'inject_slots' => $this->getInjectSlots(),
 		));
 
+		$this->context->controller->addJS($this->_path.'js/nostotagging-auto-slots.js');
 		return $this->display(__FILE__, 'header_embed-script.tpl');
 	}
 
@@ -422,8 +294,7 @@ class NostoTagging extends Module
 			$html .= $this->getCategoryTagging($category);
 		}
 
-		if ($this->getUseDefaultNostoElements())
-			$html .= $this->display(__FILE__, 'top_nosto-elements.tpl');
+		$html .= $this->display(__FILE__, 'top_nosto-elements.tpl');
 
 		return $html;
 	}
@@ -471,9 +342,6 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayLeftColumn()
 	{
-		if (!$this->getUseDefaultNostoElements())
-			return '';
-
 		return $this->display(__FILE__, 'left-column_nosto-elements.tpl');
 	}
 
@@ -486,9 +354,6 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayRightColumn()
 	{
-		if (!$this->getUseDefaultNostoElements())
-			return '';
-
 		return $this->display(__FILE__, 'right-column_nosto-elements.tpl');
 	}
 
@@ -508,9 +373,7 @@ class NostoTagging extends Module
 		$product = isset($params['product']) ? $params['product'] : null;
 		$category = isset($params['category']) ? $params['category'] : null;
 		$html .= $this->getProductTagging($product, $category);
-
-		if ($this->getUseDefaultNostoElements())
-			$html .= $this->display(__FILE__, 'footer-product_nosto-elements.tpl');
+		$html .= $this->display(__FILE__, 'footer-product_nosto-elements.tpl');
 
 		return $html;
 	}
@@ -524,9 +387,6 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayShoppingCartFooter()
 	{
-		if (!$this->getUseDefaultNostoElements())
-			return '';
-
 		return $this->display(__FILE__, 'shopping-cart-footer_nosto-elements.tpl');
 	}
 
@@ -564,9 +424,6 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayCategoryTop()
 	{
-		if (!$this->getUseDefaultNostoElements())
-			return '';
-
 		return $this->display(__FILE__, 'category-top_nosto-elements.tpl');
 	}
 
@@ -584,9 +441,6 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayCategoryFooter()
 	{
-		if (!$this->getUseDefaultNostoElements())
-			return '';
-
 		return $this->display(__FILE__, 'category-footer_nosto-elements.tpl');
 	}
 
@@ -604,9 +458,6 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplaySearchTop()
 	{
-		if (!$this->getUseDefaultNostoElements())
-			return '';
-
 		return $this->display(__FILE__, 'search-top_nosto-elements.tpl');
 	}
 
@@ -624,9 +475,6 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplaySearchFooter()
 	{
-		if (!$this->getUseDefaultNostoElements())
-			return '';
-
 		return $this->display(__FILE__, 'search-footer_nosto-elements.tpl');
 	}
 
@@ -707,9 +555,6 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayHome()
 	{
-		if (!$this->getUseDefaultNostoElements())
-			return '';
-
 		return $this->display(__FILE__, 'home_nosto-elements.tpl');
 	}
 
@@ -795,64 +640,54 @@ class NostoTagging extends Module
 	 */
 	protected function createAccount()
 	{
-		if (!$this->hasAccountName())
+		if ((int)Configuration::get('PS_SSL_ENABLED'))
+			$domain = 'https://'.Configuration::get('PS_SHOP_DOMAIN_SSL');
+		else
+			$domain = 'http://'.Configuration::get('PS_SHOP_DOMAIN');
+
+		$params = array(
+			'title' => Configuration::get('PS_SHOP_NAME'),
+			'name' => substr(sha1(rand()), 0, 8),
+			'platform' => self::NOSTOTAGGING_API_PLATFORM_NAME,
+			'front_page_url' => $domain,
+			'currency_code' => $this->context->currency->iso_code,
+			'language_code' => $this->context->language->iso_code,
+			'owner' => array(
+				'first_name' => $this->context->employee->firstname,
+				'last_name' => $this->context->employee->lastname,
+				'email' => $this->context->employee->email,
+			),
+			'billing_details' => array(
+				'country' => $this->context->country->iso_code
+			)
+		);
+		$request = new NostoTaggingHttpRequest();
+		$response = $request->post(
+			self::NOSTOTAGGING_API_SIGNUP_URL,
+			array(
+				'Content-type: application/json',
+				'Authorization: Basic '.base64_encode(':'.self::NOSTOTAGGING_API_SIGNUP_TOKEN)
+			),
+			json_encode($params)
+		);
+		$result = json_decode($response->getResult());
+
+		if (empty($result))
 		{
-			if ((int)Configuration::get('PS_SSL_ENABLED'))
-				$domain = 'https://'.Configuration::get('PS_SHOP_DOMAIN_SSL');
-			else
-				$domain = 'http://'.Configuration::get('PS_SHOP_DOMAIN');
+			NostoTaggingLogger::log(
+				__CLASS__.'::'.__FUNCTION__.' - Nosto account was not automatically created',
+				NostoTaggingLogger::LOG_SEVERITY_ERROR,
+				$response->getCode()
 
-			$params = array(
-				'title' => Configuration::get('PS_SHOP_NAME'),
-				'name' => substr(sha1(rand()), 0, 8),
-				'platform' => self::NOSTOTAGGING_API_PLATFORM_NAME,
-				'front_page_url' => $domain,
-				'currency_code' => $this->context->currency->iso_code,
-				'language_code' => $this->context->language->iso_code,
-				'owner' => array(
-					'first_name' => $this->context->employee->firstname,
-					'last_name' => $this->context->employee->lastname,
-					'email' => $this->context->employee->email,
-				),
-				'billing_details' => array(
-					'country' => $this->context->country->iso_code
-				)
 			);
-//			$request = new NostoTaggingHttpRequest();
-//			$response = $request->post(
-//				self::NOSTOTAGGING_API_SIGNUP_URL,
-//				array(
-//					'Content-type: application/json',
-//					'Authorization: Basic '.base64_encode(':'.self::NOSTOTAGGING_API_SIGNUP_TOKEN)
-//				),
-//				json_encode($params)
-//			);
-//			$result = json_decode($response->getResult());
-			$result = (object)array(
-				'sso_token' => '0000000000000000',
-			);
-
-			// Set the values if the request was a success, else notify the user to manually create the account.
-			if (empty($result))
-			{
-				$this->setAccountName('');
-				$this->setSSOToken('');
-				NostoTaggingLogger::log(
-					__CLASS__.'::'.__FUNCTION__.' - Nosto account was not automatically created',
-					NostoTaggingLogger::LOG_SEVERITY_ERROR,
-					$response->getCode()
-				);
-				return false;
-			}
-			else
-			{
-				$this->setAccountName(self::NOSTOTAGGING_API_PLATFORM_NAME.'-'.$params['name']);
-				$this->setSSOToken($result->sso_token);
-				return true;
-			}
+			return false;
 		}
-
-		return false;
+		else
+		{
+			$this->setAccountName(self::NOSTOTAGGING_API_PLATFORM_NAME.'-'.$params['name'], true/* $global */);
+			$this->setSSOToken($result->sso_token, true/* $global */);
+			return true;
+		}
 	}
 
 	/**
@@ -862,22 +697,21 @@ class NostoTagging extends Module
 	 */
 	protected function initConfig()
 	{
-		return ($this->setUseDefaultNostoElements(1, true)
-			&& $this->setInjectSlots(1, true));
+		if (!$this->hasAccountName())
+			$this->setAccountName('', true);
+		if (!$this->hasSSOToken())
+			$this->setSSOToken('', true);
+		return true;
 	}
 
 	/**
 	 * Deletes config entries created by the module.
 	 *
-	 * The "account_name" and "sso_token" is left in the database to enable the merchant to use the same account
-	 * as before, without entering it again, if the module is installed again.
-	 *
 	 * @return bool
 	 */
 	protected function deleteConfig()
 	{
-		return (Configuration::deleteByName(self::NOSTOTAGGING_CONFIG_KEY_USE_DEFAULT_NOSTO_ELEMENTS)
-			&& Configuration::deleteByName(self::NOSTOTAGGING_CONFIG_KEY_INJECT_SLOTS));
+		// nothing to remove.
 	}
 
 	/**

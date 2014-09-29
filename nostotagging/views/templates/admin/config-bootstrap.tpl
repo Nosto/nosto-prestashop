@@ -24,10 +24,15 @@
                 </div>
             </div>
             <div class="form-group" id="nostotagging_new_account_group" style="{if $nostotagging_has_account}display:none;{/if}">
-                <label class="control-label col-lg-3">{l s='New account' mod='nostotagging'}</label>
+                <label class="control-label col-lg-3 required">{l s='Email' mod='nostotagging'}</label>
+                <div class="col-lg-9 ">
+                    <input type="text" name="nostotagging_account_email" id="nostotagging_account_email" value="{$nostotagging_account_email}" class="fixed-width-xxl" size="40" required="required">
+                    <p class="help-block">{l s='This email address will be used to activate your account, so please make sure it is in use.' mod='nostotagging'}</p>
+                </div>
+                <div class="col-lg-3">&nbsp;</div>
                 <div class="col-lg-9">
-                    <button type="submit" value="1" class="btn btn-default" name="submit_nostotagging_new_account">{l s='Create' mod='nostotagging'}</button>
-                    <p class="help-block">By creating a new account you agree to Nosto's <a href="http://www.nosto.com/terms" target="_blank">Terms and Conditions.</a></p>
+                    <button type="submit" value="1" class="btn btn-default" name="submit_nostotagging_new_account">{l s='Create new account' mod='nostotagging'}</button>
+                    <p class="help-block">{l s='By creating a new account you agree to Nosto\'s %1$sTerms and Conditions%2$s.' sprintf=['<a href="http://www.nosto.com/terms" target="_blank">', '</a>']}</p>
                 </div>
             </div>
         </div>
