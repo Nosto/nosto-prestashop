@@ -810,8 +810,8 @@ class NostoTagging extends Module
 				'currency_code' => $this->context->currency->iso_code,
 				'language_code' => $this->context->language->iso_code,
 				'owner' => array(
-					'first_name' => $this->context->employee->lastname,
-					'last_name' => $this->context->employee->firstname,
+					'first_name' => $this->context->employee->firstname,
+					'last_name' => $this->context->employee->lastname,
 					'email' => $this->context->employee->email,
 				),
 				'billing_details' => array(
