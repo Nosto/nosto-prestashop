@@ -11,6 +11,5 @@ if (!defined('_PS_VERSION_'))
  */
 function upgrade_module_1_2_0()
 {
-	return Configuration::deleteByName('NOSTOTAGGING_DEFAULT_ELEMENTS')
-		&& Configuration::deleteByName('NOSTOTAGGING_INJECT_SLOTS');
+	return Configuration::deleteByName('NOSTOTAGGING_INJECT_SLOTS');
 }

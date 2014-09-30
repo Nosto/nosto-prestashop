@@ -4,6 +4,7 @@
             <i class="icon-cogs"></i> {l s='General Settings' mod='nostotagging'}
         </div>
         <div class="form-wrapper">
+
             <div class="form-group">
                 <label class="control-label col-lg-3">{l s='Already have a Nosto account?' mod='nostotagging'}</label>
                 <div class="col-lg-9 ">
@@ -16,6 +17,7 @@
                     </span>
                 </div>
             </div>
+
             <div class="form-group" id="nostotagging_account_name_group" style="{if !$nostotagging_has_account}display:none;{/if}">
                 <label class="control-label col-lg-3 required">{l s='Account name' mod='nostotagging'}</label>
                 <div class="col-lg-9 ">
@@ -23,6 +25,7 @@
                     <p class="help-block">{l s='Your Nosto marketing automation service account name.' mod='nostotagging'}</p>
                 </div>
             </div>
+
             <div class="form-group" id="nostotagging_new_account_group" style="{if $nostotagging_has_account}display:none;{/if}">
                 <label class="control-label col-lg-3 required">{l s='Email' mod='nostotagging'}</label>
                 <div class="col-lg-9 ">
@@ -35,6 +38,20 @@
                     <p class="help-block">{l s='By creating a new account you agree to Nosto\'s %1$sTerms and Conditions%2$s.' sprintf=['<a href="http://www.nosto.com/terms" target="_blank">', '</a>']}</p>
                 </div>
             </div>
+
+            <div class="form-group">
+                <label class="control-label col-lg-3">{l s='Use default nosto elements' mod='nostotagging'}</label>
+                <div class="col-lg-9 ">
+			        <span class="switch prestashop-switch fixed-width-lg">
+					    <input type="radio" name="nostotagging_use_defaults" id="nostotagging_use_defaults_on" value="1" {if $nostotagging_use_defaults}checked="checked"{/if}>
+						<label for="nostotagging_use_defaults_on">{l s='Yes' mod='nostotagging'}</label>
+						<input type="radio" name="nostotagging_use_defaults" id="nostotagging_use_defaults_off" value="0" {if !$nostotagging_use_defaults}checked="checked"{/if}>
+						<label for="nostotagging_use_defaults_off">{l s='No' mod='nostotagging'}</label>
+						<a class="slide-button btn"></a>
+                    </span>
+                </div>
+            </div>
+
         </div>
         <div class="panel-footer">
             <button type="submit" value="1" id="configuration_form_submit_btn" name="submit_nostotagging_general_settings" class="button btn btn-default pull-right">

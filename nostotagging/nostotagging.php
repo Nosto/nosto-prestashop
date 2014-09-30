@@ -13,6 +13,7 @@ require_once(dirname(__FILE__).'/classes/nostotagging-cipher.php');
 class NostoTagging extends Module
 {
 	const NOSTOTAGGING_CONFIG_KEY_ACCOUNT_NAME = 'NOSTOTAGGING_ACCOUNT_NAME';
+	const NOSTOTAGGING_CONFIG_KEY_USE_DEFAULT_NOSTO_ELEMENTS = 'NOSTOTAGGING_DEFAULT_ELEMENTS';
 	const NOSTOTAGGING_CONFIG_KEY_SSO_TOKEN = 'NOSTOTAGGING_SSO_TOKEN';
 	const NOSTOTAGGING_SERVER_ADDRESS = 'connect.nosto.com';
 	const NOSTOTAGGING_PRODUCT_IN_STOCK = 'InStock';
@@ -136,9 +137,11 @@ class NostoTagging extends Module
 		$field_has_account = $this->name.'_has_account';
 		$field_account_name = $this->name.'_account_name';
 		$field_account_email = $this->name.'_account_email';
+		$field_use_defaults = $this->name.'_use_defaults';
 
 		$account_name = (string)Tools::getValue($field_account_name);
 		$account_email = (string)Tools::getValue($field_account_email);
+		$default_elements = (int)Tools::getValue($field_use_defaults);
 
 		if (Tools::isSubmit('submit_nostotagging_new_account'))
 		{
@@ -159,9 +162,13 @@ class NostoTagging extends Module
 			if (empty($account_name))
 				$output .= $this->displayError($this->l('Account name cannot be empty.'));
 
+			if ($default_elements !== 0 && $default_elements !== 1)
+				$output .= $this->displayError($this->l('Use default nosto elements setting is invalid.'));
+
 			if (empty($output))
 			{
 				$this->setAccountName($account_name, true/* $global */);
+				$this->setUseDefaultNostoElements($default_elements, true/* $global */);
 				$output .= $this->displayConfirmation($this->l('Configuration saved.'));
 			}
 		}
@@ -170,6 +177,7 @@ class NostoTagging extends Module
 		{
 			$account_name = $this->getAccountName();
 			$account_email = $this->context->employee->email;
+			$default_elements = $this->getUseDefaultNostoElements();
 		}
 
 		$this->context->controller->addJS($this->_path.'js/nostotagging-admin-config.js');
@@ -177,6 +185,7 @@ class NostoTagging extends Module
 			$field_has_account => $this->hasAccountName(),
 			$field_account_name => $account_name,
 			$field_account_email => $account_email,
+			$field_use_defaults => $default_elements,
 		));
 
 		if (version_compare(substr(_PS_VERSION_, 0, 3), '1.6', '>='))
@@ -232,6 +241,28 @@ class NostoTagging extends Module
 		// Reset the SSO token every time the account name is set.
 		$this->setSSOToken('', $global);
 		return $this->setConfigValue(self::NOSTOTAGGING_CONFIG_KEY_ACCOUNT_NAME, (string)$account_name, $global);
+	}
+
+	/**
+	 * Getter for the "use default nosto elements" settings.
+	 *
+	 * @return int
+	 */
+	public function getUseDefaultNostoElements()
+	{
+		return (int)Configuration::get(self::NOSTOTAGGING_CONFIG_KEY_USE_DEFAULT_NOSTO_ELEMENTS);
+	}
+
+	/**
+	 * Setter for the "use default nosto elements" settings.
+	 *
+	 * @param int $value Either 1 or 0.
+	 * @param bool $global
+	 * @return bool
+	 */
+	public function setUseDefaultNostoElements($value, $global = false)
+	{
+		return $this->setConfigValue(self::NOSTOTAGGING_CONFIG_KEY_USE_DEFAULT_NOSTO_ELEMENTS, (int)$value, $global);
 	}
 
 	/**
@@ -310,7 +341,8 @@ class NostoTagging extends Module
 			$html .= $this->getCategoryTagging($category);
 		}
 
-		$html .= $this->display(__FILE__, 'top_nosto-elements.tpl');
+		if ($this->getUseDefaultNostoElements())
+			$html .= $this->display(__FILE__, 'top_nosto-elements.tpl');
 
 		return $html;
 	}
@@ -324,6 +356,9 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayFooter()
 	{
+		if (!$this->getUseDefaultNostoElements())
+			return '';
+
 		$html = '';
 
 		if ($this->getUseDefaultNostoElements())
@@ -358,6 +393,9 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayLeftColumn()
 	{
+		if (!$this->getUseDefaultNostoElements())
+			return '';
+
 		return $this->display(__FILE__, 'left-column_nosto-elements.tpl');
 	}
 
@@ -370,6 +408,9 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayRightColumn()
 	{
+		if (!$this->getUseDefaultNostoElements())
+			return '';
+
 		return $this->display(__FILE__, 'right-column_nosto-elements.tpl');
 	}
 
@@ -389,7 +430,9 @@ class NostoTagging extends Module
 		$product = isset($params['product']) ? $params['product'] : null;
 		$category = isset($params['category']) ? $params['category'] : null;
 		$html .= $this->getProductTagging($product, $category);
-		$html .= $this->display(__FILE__, 'footer-product_nosto-elements.tpl');
+
+		if ($this->getUseDefaultNostoElements())
+			$html .= $this->display(__FILE__, 'footer-product_nosto-elements.tpl');
 
 		return $html;
 	}
@@ -403,6 +446,9 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayShoppingCartFooter()
 	{
+		if (!$this->getUseDefaultNostoElements())
+			return '';
+
 		return $this->display(__FILE__, 'shopping-cart-footer_nosto-elements.tpl');
 	}
 
@@ -440,6 +486,9 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayCategoryTop()
 	{
+		if (!$this->getUseDefaultNostoElements())
+			return '';
+
 		return $this->display(__FILE__, 'category-top_nosto-elements.tpl');
 	}
 
@@ -457,6 +506,9 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayCategoryFooter()
 	{
+		if (!$this->getUseDefaultNostoElements())
+			return '';
+
 		return $this->display(__FILE__, 'category-footer_nosto-elements.tpl');
 	}
 
@@ -474,6 +526,9 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplaySearchTop()
 	{
+		if (!$this->getUseDefaultNostoElements())
+			return '';
+
 		return $this->display(__FILE__, 'search-top_nosto-elements.tpl');
 	}
 
@@ -491,6 +546,9 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplaySearchFooter()
 	{
+		if (!$this->getUseDefaultNostoElements())
+			return '';
+
 		return $this->display(__FILE__, 'search-footer_nosto-elements.tpl');
 	}
 
@@ -785,6 +843,7 @@ class NostoTagging extends Module
 			$this->setAccountName('', true);
 		if (!$this->hasSSOToken())
 			$this->setSSOToken('', true);
+		$this->setUseDefaultNostoElements(1, true);
 		return true;
 	}
 
@@ -795,7 +854,8 @@ class NostoTagging extends Module
 	 */
 	protected function deleteConfig()
 	{
-		// nothing to remove.
+		Configuration::deleteByName(self::NOSTOTAGGING_CONFIG_KEY_USE_DEFAULT_NOSTO_ELEMENTS);
+		return true;
 	}
 
 	/**
