@@ -298,7 +298,6 @@ class NostoTagging extends Module
 	public function hookDisplayTop()
 	{
 		$html = '';
-
 		$html .= $this->getCustomerTagging();
 		$html .= $this->getCartTagging();
 
