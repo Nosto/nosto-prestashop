@@ -32,6 +32,15 @@ class NostoTaggingHttpResponse
 	}
 
 	/**
+	 * @param bool $assoc
+	 * @return mixed
+	 */
+	public function getJsonResult($assoc = false)
+	{
+		return json_decode($this->result, $assoc);
+	}
+
+	/**
 	 * @param array $http_response_header
 	 */
 	public function setHttpResponseHeader($http_response_header)

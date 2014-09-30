@@ -24,6 +24,8 @@ class NostoTagging extends Module
 	const NOSTOTAGGING_API_SIGNUP_URL = 'https://api.nosto.com/accounts/create';
 	const NOSTOTAGGING_API_SIGNUP_TOKEN = 'JRtgvoZLMl4NPqO9XWhRdvxkTMtN82ITTJij8U7necieJPCvjtZjm5C4fpNrYJ81';
 	const NOSTOTAGGING_API_PLATFORM_NAME = 'prestashop';
+	const NOSTOTAGGING_API_SSOAUTH_URL = 'https://api.nosto.com/users/{email}';
+	const NOSTOTAGGING_IFRAME_URL = '{l}?r=/hub/prestashop/{m}';
 
 	/**
 	 * Custom hooks to add for this module.
@@ -176,11 +178,24 @@ class NostoTagging extends Module
 			$field_account_name => $account_name,
 			$field_account_email => $account_email,
 		));
+
 		if (version_compare(substr(_PS_VERSION_, 0, 3), '1.6', '>='))
-			$view = 'config-bootstrap.tpl';
+		{
+			// Try to login employee to Nosto in order to get a url to the internal settings page,
+			// which is then shown in an iframe on the module config page.
+			$login_url = $this->doSSOLogin();
+			if (!empty($login_url) && !empty($account_name))
+				$this->context->smarty->assign(array(
+					'iframe_url' => strtr(self::NOSTOTAGGING_IFRAME_URL, array(
+						'{l}' => $login_url,
+						'{m}' => $account_name
+					))
+				));
+			$output .= $this->display(__FILE__, 'views/templates/admin/config-bootstrap.tpl');
+		}
 		else
-			$view = 'config.tpl';
-		$output .= $this->display(__FILE__, 'views/templates/admin/'.$view);
+			$output .= $this->display(__FILE__, 'views/templates/admin/config.tpl');
+
 
 		return $output;
 	}
@@ -215,6 +230,8 @@ class NostoTagging extends Module
 	 */
 	public function setAccountName($account_name, $global = false)
 	{
+		// Reset the SSO token every time the account name is set.
+		$this->setSSOToken('', $global);
 		return $this->setConfigValue(self::NOSTOTAGGING_CONFIG_KEY_ACCOUNT_NAME, (string)$account_name, $global);
 	}
 
@@ -589,6 +606,56 @@ class NostoTagging extends Module
 	}
 
 	/**
+	 * Tries to login the employee to Nosto with an SSO token.
+	 *
+	 * Notes that if the current employee is not the one that owns the Nosto account, then the SSO login will fail.
+	 *
+	 * @return string|false the login url or false on failure.
+	 */
+	protected function doSSOLogin()
+	{
+		if (!$this->hasSSOToken())
+			return false;
+
+		$employee = $this->context->employee;
+		$request = new NostoTaggingHttpRequest();
+		$response = $request->post(
+			strtr(self::NOSTOTAGGING_API_SSOAUTH_URL, array('{email}' => $employee->email)),
+			array(
+				'Content-type: application/json',
+				'Authorization: Basic '.base64_encode(':'.$this->getSSOToken())
+			),
+			json_encode(array(
+				'first_name' => $employee->firstname,
+				'last_name' => $employee->lastname
+			))
+		);
+
+		if ($response->getCode() !== 200)
+		{
+			NostoTaggingLogger::log(
+				__CLASS__.'::'.__FUNCTION__.' - Unable to login employee to Nosto with SSO token.',
+				NostoTaggingLogger::LOG_SEVERITY_ERROR,
+				$response->getCode()
+			);
+			return false;
+		}
+
+		$result = $response->getJsonResult();
+		if (empty($result->login_url))
+		{
+			NostoTaggingLogger::log(
+				__CLASS__.'::'.__FUNCTION__.' - No "login_url" returned when logging in employee to Nosto.',
+				NostoTaggingLogger::LOG_SEVERITY_ERROR,
+				$response->getCode()
+			);
+			return false;
+		}
+
+		return $result->login_url;
+	}
+
+	/**
 	 * Registers a new config entry for key => value pair.
 	 *
 	 * @param string $key the key to store the value by in config.
@@ -689,24 +756,24 @@ class NostoTagging extends Module
 			),
 			json_encode($params)
 		);
-		$result = json_decode($response->getResult());
 
-		if (empty($result))
+		if ($response->getCode() !== 200)
 		{
 			NostoTaggingLogger::log(
-				__CLASS__.'::'.__FUNCTION__.' - Nosto account was not automatically created',
+				__CLASS__.'::'.__FUNCTION__.' - Nosto account could not be created',
 				NostoTaggingLogger::LOG_SEVERITY_ERROR,
 				$response->getCode()
 
 			);
 			return false;
 		}
-		else
-		{
-			$this->setAccountName(self::NOSTOTAGGING_API_PLATFORM_NAME.'-'.$params['name'], true/* $global */);
+
+		$result = $response->getJsonResult();
+		$this->setAccountName(self::NOSTOTAGGING_API_PLATFORM_NAME.'-'.$params['name'], true/* $global */);
+		if (!empty($result->sso_token))
 			$this->setSSOToken($result->sso_token, true/* $global */);
-			return true;
-		}
+
+		return true;
 	}
 
 	/**

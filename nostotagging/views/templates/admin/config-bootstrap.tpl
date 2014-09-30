@@ -43,3 +43,6 @@
         </div>
     </div>
 </form>
+{if !empty($iframe_url)}
+<iframe id="nosto_recs" frameborder="0" style="width:100%; height:1450px;" src="{$iframe_url}"></iframe>
+{/if}
