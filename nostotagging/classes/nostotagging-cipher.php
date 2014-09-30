@@ -36,7 +36,7 @@ class NostoTaggingCipher
 	 */
 	public function encrypt($plain_text)
 	{
-		$iv = $this->crypt->iv;
+		$iv = $this->crypt->getIV();
 		$cipher_text = $this->crypt->encrypt($plain_text);
 		return $iv.$cipher_text;
 	}

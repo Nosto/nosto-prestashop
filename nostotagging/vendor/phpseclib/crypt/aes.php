@@ -4,7 +4,7 @@
  *
  * Uses mcrypt, if available/possible, and an internal implementation, otherwise.
  *
- * PHP versions 4 and 5
+ * PHP versions 5
  *
  * If {@link CryptAES::setKeyLength() setKeyLength()} isn't called, it'll be calculated from
  * {@link CryptAES::setKey() setKey()}.  ie. if the key is 128-bits, the key length will be 128-bits.  If it's 136-bits
@@ -61,17 +61,6 @@
  */
 
 /**
- * Include CryptRijndael
- */
-if (!class_exists('CryptRijndael'))
-	require_once('rijndael.php');
-
-/**#@+
- * @access public
- * @see Crypt_AES::encrypt()
- * @see Crypt_AES::decrypt()
- */
-/**
  * Encrypt / decrypt using the Counter mode.
  *
  * Set to -1 since that's what Crypt/Random.php uses to index the CTR mode.
@@ -103,12 +92,7 @@ define('CRYPT_AES_MODE_CFB', CRYPT_MODE_CFB);
  * @link http://en.wikipedia.org/wiki/Block_cipher_modes_of_operation#Output_feedback_.28OFB.29
  */
 define('CRYPT_AES_MODE_OFB', CRYPT_MODE_OFB);
-/**#@-*/
 
-/**#@+
- * @access private
- * @see Crypt_AES::Crypt_AES()
- */
 /**
  * Toggles the internal implementation
  */
@@ -117,14 +101,12 @@ define('CRYPT_AES_MODE_INTERNAL', CRYPT_MODE_INTERNAL);
  * Toggles the mcrypt implementation
  */
 define('CRYPT_AES_MODE_MCRYPT', CRYPT_MODE_MCRYPT);
-/**#@-*/
 
 /**
  * Pure-PHP implementation of AES.
  *
  * @author  Jim Wigginton <terrafrost@php.net>
  * @version 0.1.0
- * @access  public
  * @package CryptAES
  */
 class CryptAES extends CryptRijndael
@@ -132,11 +114,10 @@ class CryptAES extends CryptRijndael
 	/**
 	 * The namespace used by the cipher for its constants.
 	 *
-	 * @see Crypt_Base::const_namespace
+	 * @see CryptBase::const_namespace
 	 * @var String
-	 * @access private
 	 */
-	public $const_namespace = 'AES';
+	protected $const_namespace = 'AES';
 
 	/**
 	 * Default Constructor.
@@ -157,10 +138,9 @@ class CryptAES extends CryptRijndael
 	 *
 	 * If not explictly set, CRYPT_AES_MODE_CBC will be used.
 	 *
-	 * @see Crypt_Rijndael::Crypt_Rijndael()
-	 * @see Crypt_Base::Crypt_Base()
+	 * @see CryptRijndael::__construct()
+	 * @see CryptBase::__construct()
 	 * @param optional Integer $mode
-	 * @access public
 	 */
 	public function __construct($mode = CRYPT_AES_MODE_CBC)
 	{
@@ -172,8 +152,7 @@ class CryptAES extends CryptRijndael
 	 *
 	 * Since CryptAES extends CryptRijndael, this function is, technically, available, but it doesn't do anything.
 	 *
-	 * @see Crypt_Rijndael::setBlockLength()
-	 * @access public
+	 * @see CryptRijndael::setBlockLength()
 	 * @param Integer $length
 	 */
 	public function setBlockLength($length)

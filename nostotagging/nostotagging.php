@@ -196,7 +196,6 @@ class NostoTagging extends Module
 		else
 			$output .= $this->display(__FILE__, 'views/templates/admin/config.tpl');
 
-
 		return $output;
 	}
 
