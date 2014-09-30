@@ -20,6 +20,7 @@ class NostoTagging extends Module
 	const NOSTOTAGGING_CUSTOMER_ID_COOKIE = '2c_cId';
 	const NOSTOTAGGING_CUSTOMER_LINK_TABLE = 'nostotagging_customer_link';
 	const NOSTOTAGGING_API_ORDER_TAGGING_URL = 'https://api.nosto.com/visits/order/confirm/{m}/{cid}';
+	const NOSTOTAGGING_API_UNMATCHED_ORDER_TAGGING_URL = 'https://api.nosto.com/visits/order/unmatched/{m}';
 	const NOSTOTAGGING_API_SIGNUP_URL = 'https://api.nosto.com/accounts/create';
 	const NOSTOTAGGING_API_SIGNUP_TOKEN = 'JRtgvoZLMl4NPqO9XWhRdvxkTMtN82ITTJij8U7necieJPCvjtZjm5C4fpNrYJ81';
 	const NOSTOTAGGING_API_PLATFORM_NAME = 'prestashop';
@@ -524,14 +525,32 @@ class NostoTagging extends Module
 			$order = new Order($params['id_order']);
 			$currency = new Currency($order->id_currency);
 			$nosto_order = $this->getOrderData($order, $currency);
-			$id_nosto_customer = $this->getNostoCustomerId();
 			$account_name = $this->getAccountName();
-			if (!empty($nosto_order) && !empty($id_nosto_customer) && !empty($account_name))
+			if (!empty($nosto_order) && !empty($account_name))
 			{
-				$url = strtr(self::NOSTOTAGGING_API_ORDER_TAGGING_URL, array(
-					'{m}' => $account_name,
-					'{cid}' => $id_nosto_customer,
-				));
+				$id_nosto_customer = $this->getNostoCustomerId();
+				if (!empty($id_nosto_customer))
+				{
+					$url = strtr(self::NOSTOTAGGING_API_ORDER_TAGGING_URL, array(
+						'{m}' => $account_name,
+						'{cid}' => $id_nosto_customer,
+					));
+				}
+				else
+				{
+					$url = strtr(self::NOSTOTAGGING_API_UNMATCHED_ORDER_TAGGING_URL, array(
+						'{m}' => $account_name,
+					));
+					$module_name = $order->module;
+					$module = Module::getInstanceByName($module_name);
+					if ($module !== false && isset($module->version))
+						$module_version = $module->version;
+					else
+						$module_version = 'unknown';
+
+					$nosto_order['payment_provider'] = $module_name.' ['.$module_version.']';
+				}
+
 				$request = new NostoTaggingHttpRequest();
 				$response = $request->post($url, array('Content-type: application/json'), json_encode($nosto_order));
 				if ($response->getCode() !== 200)
