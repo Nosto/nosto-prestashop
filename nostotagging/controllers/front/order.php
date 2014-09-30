@@ -13,7 +13,7 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
 	 * @inheritdoc
 	 */
 	public function initContent()
-    {
+	{
 		$nosto_orders = array();
 		foreach ($this->getOrderIds() as $id_order)
 		{
@@ -27,7 +27,7 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
 		}
 
 		$this->encryptOutput(json_encode($nosto_orders));
-    }
+	}
 
 	/**
 	 * Returns a list of all order ids with limit and offset applied.
@@ -38,10 +38,10 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
 	{
 		$order_ids = array();
 		$sql = <<<EOT
-            SELECT `id_order`
-            FROM `ps_orders`
-            LIMIT $this->limit
-            OFFSET $this->offset
+			SELECT `id_order`
+			FROM `ps_orders`
+			LIMIT $this->limit
+			OFFSET $this->offset
 EOT;
 		$rows = Db::getInstance()->executeS($sql);
 		foreach ($rows as $row)

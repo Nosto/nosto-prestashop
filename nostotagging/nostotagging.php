@@ -142,7 +142,7 @@ class NostoTagging extends Module
 
 		if (Tools::isSubmit('submit_nostotagging_new_account'))
 		{
-			if(empty($account_email))
+			if (empty($account_email))
 				$output .= $this->displayError($this->l('Email cannot be empty.'));
 			elseif (!Validate::isEmail($account_email))
 				$output .= $this->displayError($this->l('Email is not a valid email address.'));

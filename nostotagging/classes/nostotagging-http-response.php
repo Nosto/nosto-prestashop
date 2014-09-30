@@ -56,7 +56,7 @@ class NostoTaggingHttpResponse
 	public function getCode()
 	{
 		$matches = array();
-		if (isset($this->http_response_header) &&  isset($this->http_response_header[0]))
+		if (isset($this->http_response_header) && isset($this->http_response_header[0]))
 			preg_match('|HTTP/\d\.\d\s+(\d+)\s+.*|', $this->http_response_header[0], $matches);
 		return isset($matches[1]) ? (int)$matches[1] : 0;
 	}
@@ -68,7 +68,7 @@ class NostoTaggingHttpResponse
 	 */
 	public function getRawStatus()
 	{
-		if (isset($this->http_response_header) &&  isset($this->http_response_header[0]))
+		if (isset($this->http_response_header) && isset($this->http_response_header[0]))
 			return $this->http_response_header[0];
 		return '';
 	}

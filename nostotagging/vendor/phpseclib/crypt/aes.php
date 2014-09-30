@@ -1,6 +1,4 @@
 <?php
-/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
-
 /**
  * Pure-PHP implementation of AES.
  *
@@ -8,13 +6,13 @@
  *
  * PHP versions 4 and 5
  *
- * If {@link Crypt_AES::setKeyLength() setKeyLength()} isn't called, it'll be calculated from
- * {@link Crypt_AES::setKey() setKey()}.  ie. if the key is 128-bits, the key length will be 128-bits.  If it's 136-bits
- * it'll be null-padded to 192-bits and 192 bits will be the key length until {@link Crypt_AES::setKey() setKey()}
+ * If {@link CryptAES::setKeyLength() setKeyLength()} isn't called, it'll be calculated from
+ * {@link CryptAES::setKey() setKey()}.  ie. if the key is 128-bits, the key length will be 128-bits.  If it's 136-bits
+ * it'll be null-padded to 192-bits and 192 bits will be the key length until {@link CryptAES::setKey() setKey()}
  * is called, again, at which point, it'll be recalculated.
  *
- * Since Crypt_AES extends Crypt_Rijndael, some functions are available to be called that, in the context of AES, don't
- * make a whole lot of sense.  {@link Crypt_AES::setBlockLength() setBlockLength()}, for instance.  Calling that function,
+ * Since CryptAES extends CryptRijndael, some functions are available to be called that, in the context of AES, don't
+ * make a whole lot of sense.  {@link CryptAES::setBlockLength() setBlockLength()}, for instance.  Calling that function,
  * however possible, won't do anything (AES has a fixed block length whereas Rijndael has a variable one).
  *
  * Here's a short example of how to use this library:
@@ -22,7 +20,7 @@
  * <?php
  *    include('Crypt/AES.php');
  *
- *    $aes = new Crypt_AES();
+ *    $aes = new CryptAES();
  *
  *    $aes->setKey('abcdefghijklmnop');
  *
@@ -55,7 +53,7 @@
  * THE SOFTWARE.
  *
  * @category   Crypt
- * @package    Crypt_AES
+ * @package    CryptAES
  * @author     Jim Wigginton <terrafrost@php.net>
  * @copyright  MMVIII Jim Wigginton
  * @license    http://www.opensource.org/licenses/mit-license.html  MIT License
@@ -63,11 +61,10 @@
  */
 
 /**
- * Include Crypt_Rijndael
+ * Include CryptRijndael
  */
-if (!class_exists('Crypt_Rijndael')) {
-    require_once('Rijndael.php');
-}
+if (!class_exists('CryptRijndael'))
+	require_once('rijndael.php');
 
 /**#@+
  * @access public
@@ -128,61 +125,58 @@ define('CRYPT_AES_MODE_MCRYPT', CRYPT_MODE_MCRYPT);
  * @author  Jim Wigginton <terrafrost@php.net>
  * @version 0.1.0
  * @access  public
- * @package Crypt_AES
+ * @package CryptAES
  */
-class Crypt_AES extends Crypt_Rijndael {
-    /**
-     * The namespace used by the cipher for its constants.
-     *
-     * @see Crypt_Base::const_namespace
-     * @var String
-     * @access private
-     */
-    var $const_namespace = 'AES';
+class CryptAES extends CryptRijndael
+{
+	/**
+	 * The namespace used by the cipher for its constants.
+	 *
+	 * @see Crypt_Base::const_namespace
+	 * @var String
+	 * @access private
+	 */
+	public $const_namespace = 'AES';
 
-    /**
-     * Default Constructor.
-     *
-     * Determines whether or not the mcrypt extension should be used.
-     *
-     * $mode could be:
-     *
-     * - CRYPT_AES_MODE_ECB
-     *
-     * - CRYPT_AES_MODE_CBC
-     *
-     * - CRYPT_AES_MODE_CTR
-     *
-     * - CRYPT_AES_MODE_CFB
-     *
-     * - CRYPT_AES_MODE_OFB
-     *
-     * If not explictly set, CRYPT_AES_MODE_CBC will be used.
-     *
-     * @see Crypt_Rijndael::Crypt_Rijndael()
-     * @see Crypt_Base::Crypt_Base()
-     * @param optional Integer $mode
-     * @access public
-     */
-    function Crypt_AES($mode = CRYPT_AES_MODE_CBC)
-    {
-        parent::Crypt_Rijndael($mode);
-    }
+	/**
+	 * Default Constructor.
+	 *
+	 * Determines whether or not the mcrypt extension should be used.
+	 *
+	 * $mode could be:
+	 *
+	 * - CRYPT_AES_MODE_ECB
+	 *
+	 * - CRYPT_AES_MODE_CBC
+	 *
+	 * - CRYPT_AES_MODE_CTR
+	 *
+	 * - CRYPT_AES_MODE_CFB
+	 *
+	 * - CRYPT_AES_MODE_OFB
+	 *
+	 * If not explictly set, CRYPT_AES_MODE_CBC will be used.
+	 *
+	 * @see Crypt_Rijndael::Crypt_Rijndael()
+	 * @see Crypt_Base::Crypt_Base()
+	 * @param optional Integer $mode
+	 * @access public
+	 */
+	public function __construct($mode = CRYPT_AES_MODE_CBC)
+	{
+		parent::__construct($mode);
+	}
 
-    /**
-     * Dummy function
-     *
-     * Since Crypt_AES extends Crypt_Rijndael, this function is, technically, available, but it doesn't do anything.
-     *
-     * @see Crypt_Rijndael::setBlockLength()
-     * @access public
-     * @param Integer $length
-     */
-    function setBlockLength($length)
-    {
-        return;
-    }
+	/**
+	 * Dummy function
+	 *
+	 * Since CryptAES extends CryptRijndael, this function is, technically, available, but it doesn't do anything.
+	 *
+	 * @see Crypt_Rijndael::setBlockLength()
+	 * @access public
+	 * @param Integer $length
+	 */
+	public function setBlockLength($length)
+	{
+	}
 }
-
-// vim: ts=4:sw=4:et:
-// vim6: fdl=1:

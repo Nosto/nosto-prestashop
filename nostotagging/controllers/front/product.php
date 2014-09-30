@@ -13,7 +13,7 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
 	 * @inheritdoc
 	 */
 	public function initContent()
-    {
+	{
 		$nosto_products = array();
 		foreach ($this->getProductIds() as $id_product)
 		{
@@ -25,7 +25,7 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
 		}
 
 		$this->encryptOutput(json_encode($nosto_products));
-    }
+	}
 
 	/**
 	 * Returns a list of all active product ids with limit and offset applied.
@@ -36,13 +36,13 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
 	{
 		$product_ids = array();
 		$sql = <<<EOT
-            SELECT `id_product`
-            FROM `ps_product`
+			SELECT `id_product`
+			FROM `ps_product`
 			WHERE `active` = 1
 				AND `available_for_order` = 1
 				AND `visibility` != 'none'
-            LIMIT $this->limit
-            OFFSET $this->offset
+			LIMIT $this->limit
+			OFFSET $this->offset
 EOT;
 		$rows = Db::getInstance()->executeS($sql);
 		foreach ($rows as $row)

@@ -47,11 +47,13 @@ class NostoTaggingSecurity
 		}
 
 		// If all else fails, fall back on some week entropy pseudo randomness.
+		$rnd = '';
 		do
 		{
 			$entropy = rand().uniqid(mt_rand(), true);
-			$rnd = hash('sha256', $entropy, true);
-		} while ($length > strlen($rnd));
+			$rnd .= hash('sha256', $entropy, true);
+			$len = strlen($rnd);
+		} while ($length > $len);
 		return substr($rnd, 0, $length);
 	}
 } 

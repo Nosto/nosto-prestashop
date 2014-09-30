@@ -11,7 +11,7 @@ require_once(dirname(__FILE__).'/nostotagging-security.php');
 class NostoTaggingCipher
 {
 	/**
-	 * @var Crypt_Base
+	 * @var CryptBase
 	 */
 	private $crypt;
 
@@ -22,7 +22,7 @@ class NostoTaggingCipher
 	 */
 	public function __construct($secret)
 	{
-		$this->crypt = new Crypt_AES(CRYPT_AES_MODE_CBC);
+		$this->crypt = new CryptAES(CRYPT_AES_MODE_CBC);
 		$this->crypt->setKey($secret);
 		// AES has a fixed block size of 128 bytes
 		$this->crypt->setIV(NostoTaggingSecurity::rand(16));
