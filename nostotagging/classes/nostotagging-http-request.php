@@ -34,9 +34,10 @@ class NostoTaggingHttpRequest
 	protected function send($url, array $options = array())
 	{
 		$context = stream_context_create($options);
-		$result = file_get_contents($url, false, $context);
+		$result = @file_get_contents($url, false, $context);
 		$response = new NostoTaggingHttpResponse();
-		$response->setHttpResponseHeader($http_response_header);
+		if (isset($http_response_header))
+			$response->setHttpResponseHeader($http_response_header);
 		$response->setResult($result);
 		return $response;
 	}
