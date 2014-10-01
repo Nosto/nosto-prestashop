@@ -149,7 +149,7 @@ class NostoTagging extends Module
 				$output .= $this->displayError($this->l('Email cannot be empty.'));
 			elseif (!Validate::isEmail($account_email))
 				$output .= $this->displayError($this->l('Email is not a valid email address.'));
-			elseif ($this->createAccount())
+			elseif ($this->createAccount($account_email))
 			{
 				$output .= $this->displayConfirmation($this->l('Account created.'));
 				$account_name = $this->getAccountName();
@@ -783,9 +783,10 @@ class NostoTagging extends Module
 	 * Calls the Nosto account-creation endpoint to create an account if one hasn't been already configured.
 	 * It stores the account name and the SSO token to the configuration
 	 *
+	 * @param string|null $email address to use when signing up (default is current employee's email).
 	 * @return bool
 	 */
-	protected function createAccount()
+	protected function createAccount($email = null)
 	{
 		if ((int)Configuration::get('PS_SSL_ENABLED'))
 			$domain = 'https://'.Configuration::get('PS_SHOP_DOMAIN_SSL');
@@ -802,7 +803,7 @@ class NostoTagging extends Module
 			'owner' => array(
 				'first_name' => $this->context->employee->firstname,
 				'last_name' => $this->context->employee->lastname,
-				'email' => $this->context->employee->email,
+				'email' => (!empty($email) ? $email : $this->context->employee->email),
 			),
 			'billing_details' => array(
 				'country' => $this->context->country->iso_code
