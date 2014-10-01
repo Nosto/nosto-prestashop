@@ -363,11 +363,9 @@ class NostoTagging extends Module
 			return '';
 
 		$html = '';
+		$html .= $this->display(__FILE__, 'footer_nosto-elements.tpl');
 
-		if ($this->getUseDefaultNostoElements())
-			$html .= $this->display(__FILE__, 'footer_nosto-elements.tpl');
-
-		if ($this->isController('category') && $this->getInjectSlots())
+		if ($this->isController('category'))
 		{
 			$html .= '<div id="hidden_nosto_elements" style="display: none;">';
 			$html .= '<div class="append">';
@@ -376,7 +374,7 @@ class NostoTagging extends Module
 			$html .= '</div>';
 			$html .= '</div>';
 		}
-		elseif ($this->isController('search') && $this->getInjectSlots())
+		elseif ($this->isController('search'))
 		{
 			$html .= '<div id="hidden_nosto_elements" style="display: none;">';
 			$html .= '<div class="prepend">'.$this->display(__FILE__, 'search-top_nosto-elements.tpl').'</div>';
