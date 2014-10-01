@@ -313,7 +313,9 @@ class NostoTagging extends Module
 			'account_name' => $account_name,
 		));
 
-		$this->context->controller->addJS($this->_path.'js/nostotagging-auto-slots.js');
+		if ($this->getUseDefaultNostoElements())
+			$this->context->controller->addJS($this->_path.'js/nostotagging-auto-slots.js');
+
 		return $this->display(__FILE__, 'header_embed-script.tpl');
 	}
 
