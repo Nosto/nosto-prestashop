@@ -20,12 +20,13 @@ class NostoTagging extends Module
 	const NOSTOTAGGING_PRODUCT_OUT_OF_STOCK = 'OutOfStock';
 	const NOSTOTAGGING_CUSTOMER_ID_COOKIE = '2c_cId';
 	const NOSTOTAGGING_CUSTOMER_LINK_TABLE = 'nostotagging_customer_link';
-	const NOSTOTAGGING_API_ORDER_TAGGING_URL = 'https://api.nosto.com/visits/order/confirm/{m}/{cid}';
-	const NOSTOTAGGING_API_UNMATCHED_ORDER_TAGGING_URL = 'https://api.nosto.com/visits/order/unmatched/{m}';
-	const NOSTOTAGGING_API_SIGNUP_URL = 'https://api.nosto.com/accounts/create';
+	const NOSTOTAGGING_API_BASE_URL = 'https://api.nosto.com';
+	const NOSTOTAGGING_API_ORDER_TAGGING_PATH = '/visits/order/confirm/{m}/{cid}';
+	const NOSTOTAGGING_API_UNMATCHED_ORDER_TAGGING_PATH = '/visits/order/unmatched/{m}';
+	const NOSTOTAGGING_API_SIGNUP_PATH = '/accounts/create';
 	const NOSTOTAGGING_API_SIGNUP_TOKEN = 'JRtgvoZLMl4NPqO9XWhRdvxkTMtN82ITTJij8U7necieJPCvjtZjm5C4fpNrYJ81';
 	const NOSTOTAGGING_API_PLATFORM_NAME = 'prestashop';
-	const NOSTOTAGGING_API_SSOAUTH_URL = 'https://api.nosto.com/users/{email}';
+	const NOSTOTAGGING_API_SSOAUTH_PATH = '/users/{email}';
 	const NOSTOTAGGING_IFRAME_URL = '{l}?r=/hub/prestashop/{m}';
 
 	/**
@@ -606,16 +607,13 @@ class NostoTagging extends Module
 				$id_nosto_customer = $this->getNostoCustomerId();
 				if (!empty($id_nosto_customer))
 				{
-					$url = strtr(self::NOSTOTAGGING_API_ORDER_TAGGING_URL, array(
-						'{m}' => $account_name,
-						'{cid}' => $id_nosto_customer,
-					));
+					$url = self::NOSTOTAGGING_API_BASE_URL.self::NOSTOTAGGING_API_ORDER_TAGGING_PATH;
+					$url = strtr($url, array('{m}' => $account_name, '{cid}' => $id_nosto_customer));
 				}
 				else
 				{
-					$url = strtr(self::NOSTOTAGGING_API_UNMATCHED_ORDER_TAGGING_URL, array(
-						'{m}' => $account_name,
-					));
+					$url = self::NOSTOTAGGING_API_BASE_URL.self::NOSTOTAGGING_API_UNMATCHED_ORDER_TAGGING_PATH;
+					$url = strtr($url, array('{m}' => $account_name));
 					$module_name = $order->module;
 					$module = Module::getInstanceByName($module_name);
 					if ($module !== false && isset($module->version))
@@ -680,8 +678,9 @@ class NostoTagging extends Module
 
 		$employee = $this->context->employee;
 		$request = new NostoTaggingHttpRequest();
+		$url = self::NOSTOTAGGING_API_BASE_URL.self::NOSTOTAGGING_API_SSOAUTH_PATH;
 		$response = $request->post(
-			strtr(self::NOSTOTAGGING_API_SSOAUTH_URL, array('{email}' => $employee->email)),
+			strtr($url, array('{email}' => $employee->email)),
 			array(
 				'Content-type: application/json',
 				'Authorization: Basic '.base64_encode(':'.$this->getSSOToken())
@@ -810,8 +809,9 @@ class NostoTagging extends Module
 			)
 		);
 		$request = new NostoTaggingHttpRequest();
+		$url = self::NOSTOTAGGING_API_BASE_URL.self::NOSTOTAGGING_API_SIGNUP_PATH;
 		$response = $request->post(
-			self::NOSTOTAGGING_API_SIGNUP_URL,
+			$url,
 			array(
 				'Content-type: application/json',
 				'Authorization: Basic '.base64_encode(':'.self::NOSTOTAGGING_API_SIGNUP_TOKEN)
