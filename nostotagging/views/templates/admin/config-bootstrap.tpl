@@ -8,12 +8,12 @@
             <div class="form-group">
                 <label class="control-label col-lg-3">{l s='Already have a Nosto account?' mod='nostotagging'}</label>
                 <div class="col-lg-9 ">
-			        <span class="switch prestashop-switch fixed-width-lg">
-					    <input type="radio" name="nostotagging_has_account" id="nostotagging_has_account_on" value="1" {if $nostotagging_has_account}checked="checked"{/if}>
-						<label for="nostotagging_has_account_on">{l s='Yes' mod='nostotagging'}</label>
-						<input type="radio" name="nostotagging_has_account" id="nostotagging_has_account_off" value="0" {if !$nostotagging_has_account}checked="checked"{/if}>
-						<label for="nostotagging_has_account_off">{l s='No' mod='nostotagging'}</label>
-						<a class="slide-button btn"></a>
+                    <span class="switch prestashop-switch fixed-width-lg">
+                        <input type="radio" name="nostotagging_has_account" id="nostotagging_has_account_on" value="1" {if $nostotagging_has_account}checked="checked"{/if}>
+                        <label for="nostotagging_has_account_on">{l s='Yes' mod='nostotagging'}</label>
+                        <input type="radio" name="nostotagging_has_account" id="nostotagging_has_account_off" value="0" {if !$nostotagging_has_account}checked="checked"{/if}>
+                        <label for="nostotagging_has_account_off">{l s='No' mod='nostotagging'}</label>
+                        <a class="slide-button btn"></a>
                     </span>
                 </div>
             </div>
@@ -42,12 +42,12 @@
             <div class="form-group">
                 <label class="control-label col-lg-3">{l s='Use default nosto elements' mod='nostotagging'}</label>
                 <div class="col-lg-9 ">
-			        <span class="switch prestashop-switch fixed-width-lg">
-					    <input type="radio" name="nostotagging_use_defaults" id="nostotagging_use_defaults_on" value="1" {if $nostotagging_use_defaults}checked="checked"{/if}>
-						<label for="nostotagging_use_defaults_on">{l s='Yes' mod='nostotagging'}</label>
-						<input type="radio" name="nostotagging_use_defaults" id="nostotagging_use_defaults_off" value="0" {if !$nostotagging_use_defaults}checked="checked"{/if}>
-						<label for="nostotagging_use_defaults_off">{l s='No' mod='nostotagging'}</label>
-						<a class="slide-button btn"></a>
+                    <span class="switch prestashop-switch fixed-width-lg">
+                        <input type="radio" name="nostotagging_use_defaults" id="nostotagging_use_defaults_on" value="1" {if $nostotagging_use_defaults}checked="checked"{/if}>
+                        <label for="nostotagging_use_defaults_on">{l s='Yes' mod='nostotagging'}</label>
+                        <input type="radio" name="nostotagging_use_defaults" id="nostotagging_use_defaults_off" value="0" {if !$nostotagging_use_defaults}checked="checked"{/if}>
+                        <label for="nostotagging_use_defaults_off">{l s='No' mod='nostotagging'}</label>
+                        <a class="slide-button btn"></a>
                     </span>
                 </div>
             </div>
