@@ -649,6 +649,9 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayHome()
 	{
+		if (!$this->getUseDefaultNostoElements())
+			return '';
+
 		return $this->display(__FILE__, 'home_nosto-elements.tpl');
 	}
 
