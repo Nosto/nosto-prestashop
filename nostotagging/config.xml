@@ -2,7 +2,7 @@
 <module>
 	<name>nostotagging</name>
 	<displayName><![CDATA[Personalized Recommendations]]></displayName>
-	<version><![CDATA[1.1.1]]></version>
+	<version><![CDATA[1.1.2]]></version>
 	<description><![CDATA[Integrates Nosto marketing automation service.]]></description>
 	<author><![CDATA[Nosto]]></author>
 	<tab><![CDATA[advertising_marketing]]></tab>
