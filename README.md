@@ -102,6 +102,17 @@ PrestaShop version 1.5.x - 1.6.x
 
 ## Changelog
 
+* 1.2.0
+    * Added option to create a new Nosto account in module settings, or use an existing one
+    * Added support for basic recommendation slot editor in module settings (Prestashop 1.6 only)
+    * Added support for sending order confirmations to Nosto's REST API without having the Nosto customer-id link
+    * Added support for getting product and order history from the shop
+    * Fixed bug in Nosto account creation where the employee first name was put as last name and vice versa
+    * Fixed structure of order confirmations in REST API calls
+
+* 1.1.1
+    * Fixed issue with category not always being passed to hook "hookDisplayFooterProduct"
+
 * 1.1.0
     * Added current category to the product page tagging
     * Added product tags to the product page tagging
