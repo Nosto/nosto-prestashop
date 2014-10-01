@@ -393,34 +393,14 @@ class NostoTagging extends Module
 		$html .= $this->getCustomerTagging();
 		$html .= $this->getCartTagging();
 
-		$controller = $this->context->controller;
-		if (!empty($controller->php_self))
+		if ($this->isController('category'))
 		{
-			if ($controller->php_self === 'category')
-			{
-				if (method_exists($controller, 'getCategory'))
-					$html .= $this->getCategoryTagging($controller->getCategory());
-
-				if ($this->getInjectSlots())
-				{
-					$html .= '<div id="hidden_nosto_elements" style="display: none;">';
-					$html .= '<div class="append">';
-					$html .= $this->display(__FILE__, 'category-top_nosto-elements.tpl');
-					$html .= $this->display(__FILE__, 'category-footer_nosto-elements.tpl');
-					$html .= '</div>';
-					$html .= '</div>';
-				}
-			}
-			elseif ($controller->php_self === 'search')
-			{
-				if ($this->getInjectSlots())
-				{
-					$html .= '<div id="hidden_nosto_elements" style="display: none;">';
-					$html .= '<div class="prepend">'.$this->display(__FILE__, 'search-top_nosto-elements.tpl').'</div>';
-					$html .= '<div class="append">'.$this->display(__FILE__, 'search-footer_nosto-elements.tpl').'</div>';
-					$html .= '</div>';
-				}
-			}
+			// The "getCategory" method is available from Prestashop 1.5.6.0 upwards.
+			if (method_exists($this->context->controller, 'getCategory'))
+				$category = $this->context->controller->getCategory();
+			else
+				$category = new Category((int)Tools::getValue('id_category'), $this->context->language->id);
+			$html .= $this->getCategoryTagging($category);
 		}
 
 		if ($this->getUseDefaultNostoElements())
@@ -441,7 +421,27 @@ class NostoTagging extends Module
 		if (!$this->getUseDefaultNostoElements())
 			return '';
 
-		return $this->display(__FILE__, 'footer_nosto-elements.tpl');
+		$html = '';
+		$html .= $this->display(__FILE__, 'footer_nosto-elements.tpl');
+
+		if ($this->isController('category'))
+		{
+			$html .= '<div id="hidden_nosto_elements" style="display: none;">';
+			$html .= '<div class="append">';
+			$html .= $this->display(__FILE__, 'category-top_nosto-elements.tpl');
+			$html .= $this->display(__FILE__, 'category-footer_nosto-elements.tpl');
+			$html .= '</div>';
+			$html .= '</div>';
+		}
+		elseif ($this->isController('search'))
+		{
+			$html .= '<div id="hidden_nosto_elements" style="display: none;">';
+			$html .= '<div class="prepend">'.$this->display(__FILE__, 'search-top_nosto-elements.tpl').'</div>';
+			$html .= '<div class="append">'.$this->display(__FILE__, 'search-footer_nosto-elements.tpl').'</div>';
+			$html .= '</div>';
+		}
+
+		return $html;
 	}
 
 	/**
@@ -706,6 +706,17 @@ class NostoTagging extends Module
 			return '';
 
 		return $this->display(__FILE__, 'home_nosto-elements.tpl');
+	}
+
+	/**
+	 * Checks if the given controller is the current one.
+	 *
+	 * @param string $name the controller name
+	 * @return bool true if the given name is the same as the controllers php_self variable, false otherwise.
+	 */
+	protected function isController($name)
+	{
+		return (!empty($this->context->controller->php_self) && $this->context->controller->php_self === $name);
 	}
 
 	/**
