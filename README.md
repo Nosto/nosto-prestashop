@@ -110,6 +110,9 @@ PrestaShop version 1.5.x - 1.6.x
     * Fixed bug in Nosto account creation where the employee first name was put as last name and vice versa
     * Fixed structure of order confirmations in REST API calls
 
+* 1.1.2
+    * Fixed category page tagging for Prestashop versions 1.5.x => 1.5.5.0
+
 * 1.1.1
     * Fixed issue with category not always being passed to hook "hookDisplayFooterProduct"
 
