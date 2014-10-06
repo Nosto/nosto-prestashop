@@ -793,11 +793,16 @@ class NostoTagging extends Module
 	 */
 	protected function createAccount($email = null)
 	{
+		// The accounts shop domain is taken from the shop that is currently selected in the context.
+		$shop = $this->context->shop;
+		$domain = (!empty($shop->domain_ssl) ? $shop->domain_ssl : $shop->domain).__PS_BASE_URI__;
+		$domain = (Configuration::get('PS_SSL_ENABLED') ? 'https://' : 'http://').$domain;
+
 		$params = array(
 			'title' => Configuration::get('PS_SHOP_NAME'),
 			'name' => substr(sha1(rand()), 0, 8),
 			'platform' => self::NOSTOTAGGING_API_PLATFORM_NAME,
-			'front_page_url' => Tools::getHttpHost(true).__PS_BASE_URI__,
+			'front_page_url' => $domain,
 			'currency_code' => $this->context->currency->iso_code,
 			'language_code' => $this->context->language->iso_code,
 			'owner' => array(
