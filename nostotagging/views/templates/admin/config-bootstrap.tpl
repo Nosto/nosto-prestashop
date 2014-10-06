@@ -52,6 +52,10 @@
                 </div>
             </div>
 
+            {if !empty($oauth2_authorization_url)}
+                <a href="{$oauth2_authorization_url}">{l s='Authenticate' mod='nostotagging'}</a>
+            {/if}
+
         </div>
         <div class="panel-footer">
             <button type="submit" value="1" id="configuration_form_submit_btn" name="submit_nostotagging_general_settings" class="button btn btn-default pull-right">

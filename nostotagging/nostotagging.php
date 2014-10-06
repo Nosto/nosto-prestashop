@@ -6,6 +6,7 @@ require_once(dirname(__FILE__).'/classes/nostotagging-logger.php');
 require_once(dirname(__FILE__).'/classes/nostotagging-http-request.php');
 require_once(dirname(__FILE__).'/classes/nostotagging-http-response.php');
 require_once(dirname(__FILE__).'/classes/nostotagging-cipher.php');
+require_once(dirname(__FILE__).'/classes/nostotagging-oauth2-client.php');
 
 /**
  * NostoTagging module that integrates Nosto marketing automation service.
@@ -133,6 +134,9 @@ class NostoTagging extends Module
 	 */
 	public function getContent()
 	{
+		// todo: do this here??
+		$this->doOAuth2();
+
 		$output = '';
 
 		$field_has_account = $this->name.'_has_account';
@@ -207,6 +211,18 @@ class NostoTagging extends Module
 			$output .= $this->display(__FILE__, 'views/templates/admin/config.tpl');
 
 		return $output;
+	}
+
+	/**
+	 * Returns the current shop's url from the context.
+	 *
+	 * @return string the absolute url.
+	 */
+	public function getContextShopUrl()
+	{
+		$shop = $this->context->shop;
+		$uri = (!empty($shop->domain_ssl) ? $shop->domain_ssl : $shop->domain).__PS_BASE_URI__;
+		return (Configuration::get('PS_SSL_ENABLED') ? 'https://' : 'http://').$uri;
 	}
 
 	/**
@@ -721,6 +737,41 @@ class NostoTagging extends Module
 	}
 
 	/**
+	 * Does OAuth2 authentication with Nosto and retrieves needed data for this account.
+	 */
+	protected function doOAuth2()
+	{
+		// todo: only do this if we need to.
+		// todo: how do we handle failures?? we need to show the user a message.
+		$client = new NostoTaggingOAuth2Client();
+		$client->setClientId($this->getAccountName());
+		$client->setRedirectUrl(urlencode($this->getCurrentUrl()));
+		$this->context->smarty->assign(array(
+			'oauth2_authorization_url' => $client->getAuthorizationUrl(),
+		));
+		// If this is a request from the Nosto oauth2 server.
+		if (($code = Tools::getValue('code')) !== false)
+		{
+			if ($client->authenticate($code))
+			{
+				$access_token = $client->getAccessToken();
+				// todo: request tokens from Nosto with this access token.
+			}
+		}
+	}
+
+	/**
+	 * Returns the current requested URL.
+	 * The protocol is chosen based on shop settings.
+	 *
+	 * @return string the url.
+	 */
+	protected function getCurrentUrl()
+	{
+		return Tools::getHttpHost(true).$_SERVER['REQUEST_URI'];
+	}
+
+	/**
 	 * Registers a new config entry for key => value pair.
 	 *
 	 * @param string $key the key to store the value by in config.
@@ -793,16 +844,11 @@ class NostoTagging extends Module
 	 */
 	protected function createAccount($email = null)
 	{
-		// The accounts shop domain is taken from the shop that is currently selected in the context.
-		$shop = $this->context->shop;
-		$domain = (!empty($shop->domain_ssl) ? $shop->domain_ssl : $shop->domain).__PS_BASE_URI__;
-		$domain = (Configuration::get('PS_SSL_ENABLED') ? 'https://' : 'http://').$domain;
-
 		$params = array(
 			'title' => Configuration::get('PS_SHOP_NAME'),
 			'name' => substr(sha1(rand()), 0, 8),
 			'platform' => self::NOSTOTAGGING_API_PLATFORM_NAME,
-			'front_page_url' => $domain,
+			'front_page_url' => $this->getContextShopUrl(),
 			'currency_code' => $this->context->currency->iso_code,
 			'language_code' => $this->context->language->iso_code,
 			'owner' => array(
