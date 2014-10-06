@@ -777,8 +777,9 @@ class NostoTagging extends Module
 	}
 
 	/**
-	 * Calls the Nosto account-creation endpoint to create an account if one hasn't been already configured.
-	 * It stores the account name and the SSO token to the configuration
+	 * Calls the Nosto account creation API endpoint to create a new account.
+	 * It stores the account name and the SSO token to the global configuration.
+	 * If a account is already configured, it will be overwritten.
 	 *
 	 * @param string|null $email address to use when signing up (default is current employee's email).
 	 * @return bool
