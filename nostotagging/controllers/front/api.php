@@ -40,12 +40,16 @@ abstract class NostoTaggingApiModuleFrontController extends ModuleFrontControlle
 	public function encryptOutput($string)
 	{
 		// todo: change this once we have a real secret transferred from Nosto.
-		$secret = substr($this->module->getSSOToken(), 0, 16);
-		if (!empty($secret))
+		$token = $this->module->getSSOToken();
+		if (!empty($token))
 		{
-			$cipher = new NostoTaggingCipher($secret);
-			$cipher_text = $cipher->encrypt($string);
-			echo base64_encode($cipher_text);
+			$secret = substr($token, 0, 16);
+			if (!empty($secret))
+			{
+				$cipher = new NostoTaggingCipher($secret);
+				$cipher_text = $cipher->encrypt($string);
+				echo base64_encode($cipher_text);
+			}
 		}
 		die;
 	}
