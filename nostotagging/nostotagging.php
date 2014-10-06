@@ -5,6 +5,7 @@ if (!defined('_PS_VERSION_'))
 require_once(dirname(__FILE__).'/classes/nostotagging-logger.php');
 require_once(dirname(__FILE__).'/classes/nostotagging-http-request.php');
 require_once(dirname(__FILE__).'/classes/nostotagging-http-response.php');
+require_once(dirname(__FILE__).'/classes/nostotagging-cipher.php');
 
 /**
  * NostoTagging module that integrates Nosto marketing automation service.
