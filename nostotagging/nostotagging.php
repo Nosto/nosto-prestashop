@@ -238,8 +238,11 @@ class NostoTagging extends Module
 	 */
 	public function setAccountName($account_name, $global = false)
 	{
-		// Reset the SSO token every time the account name is set.
-		$this->setSSOToken('', $global);
+		// The SSO token is tied to the account, so it needs to be removed if the account is updated.
+		Configuration::deleteByName(self::NOSTOTAGGING_CONFIG_KEY_SSO_TOKEN);
+
+		// Remove all existing settings even if their shop specific (we currently support only global ones).
+		Configuration::deleteByName(self::NOSTOTAGGING_CONFIG_KEY_ACCOUNT_NAME);
 		return $this->setConfigValue(self::NOSTOTAGGING_CONFIG_KEY_ACCOUNT_NAME, (string)$account_name, $global);
 	}
 
@@ -262,6 +265,8 @@ class NostoTagging extends Module
 	 */
 	public function setUseDefaultNostoElements($value, $global = false)
 	{
+		// Remove all existing settings even if their shop specific (we currently support only global ones).
+		Configuration::deleteByName(self::NOSTOTAGGING_CONFIG_KEY_USE_DEFAULT_NOSTO_ELEMENTS);
 		return $this->setConfigValue(self::NOSTOTAGGING_CONFIG_KEY_USE_DEFAULT_NOSTO_ELEMENTS, (int)$value, $global);
 	}
 
@@ -293,6 +298,8 @@ class NostoTagging extends Module
 	 */
 	public function setSSOToken($sso_token, $global = false)
 	{
+		// Remove all existing settings even if their shop specific (we currently support only global ones).
+		Configuration::deleteByName(self::NOSTOTAGGING_CONFIG_KEY_SSO_TOKEN);
 		return $this->setConfigValue(self::NOSTOTAGGING_CONFIG_KEY_SSO_TOKEN, (string)$sso_token, $global);
 	}
 
