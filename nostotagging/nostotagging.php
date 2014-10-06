@@ -626,7 +626,7 @@ class NostoTagging extends Module
 				$response = $request->post($url, array('Content-type: application/json'), json_encode($nosto_order));
 				if ($response->getCode() !== 200)
 					NostoTaggingLogger::log(
-						__CLASS__.'::'.__FUNCTION__.' - Order was not be sent to Nosto',
+						__CLASS__.'::'.__FUNCTION__.' - Order was not sent to Nosto',
 						NostoTaggingLogger::LOG_SEVERITY_ERROR,
 						$response->getCode(),
 						'Order',
