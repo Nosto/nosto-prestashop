@@ -19,7 +19,7 @@ function upgrade_module_1_1_0($object)
 		&& $object->registerHook('actionPaymentConfirmation')
 		&& $object->registerHook('displayPaymentTop')
 		&& $object->registerHook('displayHome')
-		&& $object->setInjectSlots(1, true)
+		&& Configuration::updateGlobalValue('NOSTOTAGGING_INJECT_SLOTS', 1)
 		&& Configuration::deleteByName('NOSTOTAGGING_SERVER_ADDRESS')
 		&& Configuration::deleteByName('NOSTOTAGGING_TOP_SELLERS_CMS_ID');
 }

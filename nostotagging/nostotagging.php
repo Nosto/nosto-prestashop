@@ -867,6 +867,7 @@ class NostoTagging extends Module
 
 	/**
 	 * Creates the customer link table to be able to link between the Prestashop customer and the Nosto customer.
+	 * Note: this method cannot be changed or removed as it is explicitly used in upgrade script for 1.1.0.
 	 *
 	 * @return bool
 	 */
