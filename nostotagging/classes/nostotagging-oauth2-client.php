@@ -16,11 +16,6 @@ class NostoTaggingOAuth2Client
 	protected $client_id;
 
 	/**
-	 * @var string the client secret to identify this application to the oauth2 server.
-	 */
-	protected $client_secret;
-
-	/**
 	 * @var string the redirect url that will be used by the oauth2 server when authenticating the client.
 	 */
 	protected $redirect_url;
@@ -38,16 +33,6 @@ class NostoTaggingOAuth2Client
 	public function setClientId($client_id)
 	{
 		$this->client_id = $client_id;
-	}
-
-	/**
-	 * Setter for the client secret to identify this application to the oauth2 server.
-	 *
-	 * @param string $client_secret the client secret.
-	 */
-	public function setClientSecret($client_secret)
-	{
-		$this->client_secret = $client_secret;
 	}
 
 	/**
@@ -90,7 +75,6 @@ class NostoTaggingOAuth2Client
 		$url = self::NOSTOTAGGING_OAUTH2_CLIENT_BASE_URL.self::NOSTOTAGGING_OAUTH2_CLIENT_AUTH_PATH;
 		return strtr($url, array(
 			'{cid}' => $this->client_id,
-			'{sec}' => $this->client_secret,
 			'{uri}' => $this->redirect_url
 		));
 	}

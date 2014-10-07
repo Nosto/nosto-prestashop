@@ -15,7 +15,7 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
 		{
 			$client = new NostoTaggingOAuth2Client();
 			$client->setAccessToken($access_token);
-			$this->module->handleDataFromNosto($client->exchangeDataWithNosto());
+			$this->module->exchangeDataWithNosto($client);
 			$this->redirectToModuleAdmin();
 		}
 		elseif (($error = Tools::getValue('error')) !== false)

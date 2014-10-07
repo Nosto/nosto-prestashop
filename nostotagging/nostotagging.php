@@ -32,6 +32,15 @@ class NostoTagging extends Module
 	const NOSTOTAGGING_IFRAME_URL = '{l}?r=/hub/prestashop/{m}';
 
 	/**
+	 * Map of what config data we expect from the Nosto data exchange when authorizing the Nosto account.
+	 *
+	 * @var array
+	 */
+	protected static $authorized_data_exchange_config_key_map = array(
+		self::NOSTOTAGGING_CONFIG_KEY_SSO_TOKEN => 'api_sso'
+	);
+
+	/**
 	 * Custom hooks to add for this module.
 	 *
 	 * @var array
@@ -195,11 +204,10 @@ class NostoTagging extends Module
 			$field_use_defaults => $default_elements,
 		));
 
-		if (!$this->accountAuthorized())
+		if (!$this->isAccountAuthorized())
 		{
 			$client = new NostoTaggingOAuth2Client();
 			$client->setClientId($this->getAccountName());
-			$client->setClientSecret(''); // todo: generate this.
 			$client->setRedirectUrl(urlencode($this->getOAuth2ControllerUrl()));
 			$this->context->smarty->assign(array(
 				'oauth2_authorization_url' => $client->getAuthorizationUrl(),
@@ -227,21 +235,21 @@ class NostoTagging extends Module
 	}
 
 	/**
-	 * Handle data exchanged with Nosto though oauth2 authorization.
+	 * Handle data exchanged with Nosto through oauth2 client.
 	 *
-	 * @param mixed $data
+	 * @param NostoTaggingOAuth2Client $client
+	 * @return bool true on success and false on failure.
 	 */
-	public function handleDataFromNosto($data)
+	public function exchangeDataWithNosto(NostoTaggingOAuth2Client $client)
 	{
-		if (!empty($data))
-		{
-			$expected_config_keys = array(
-				self::NOSTOTAGGING_CONFIG_KEY_SSO_TOKEN => 'api_sso'
-			);
-			foreach ($expected_config_keys as $config_key => $data_key)
-				if (isset($data[$data_key]))
-					$this->setConfigValue($config_key, $data[$data_key], true/* $global */);
-		}
+		$data = $client->exchangeDataWithNosto();
+		if (empty($data))
+			return false;
+
+		foreach (self::$authorized_data_exchange_config_key_map as $config_key => $data_key)
+			if (isset($data[$data_key]))
+				$this->setConfigValue($config_key, (string)$data[$data_key], true/* $global */);
+		return true;
 	}
 
 	/**
@@ -733,10 +741,12 @@ class NostoTagging extends Module
 	 *
 	 * @return bool true if the account has been authorized, false otherwise.
 	 */
-	protected function accountAuthorized()
+	protected function isAccountAuthorized()
 	{
-		// todo:
-		return false;
+		foreach (self::$authorized_data_exchange_config_key_map as $config_key => $data_key)
+			if (Configuration::get($config_key) === false)
+				return false;
+		return true;
 	}
 
 	/**
@@ -950,11 +960,9 @@ class NostoTagging extends Module
 	 */
 	protected function initConfig()
 	{
-		if (!$this->hasAccountName())
-			$this->setAccountName('', true);
-		if (!$this->hasSSOToken())
-			$this->setSSOToken('', true);
-		$this->setUseDefaultNostoElements(1, true);
+		$this->setAccountName('', true/* $global */);
+		$this->setSSOToken('', true/* $global */);
+		$this->setUseDefaultNostoElements(1, true/* $global */);
 		return true;
 	}
 
@@ -965,7 +973,14 @@ class NostoTagging extends Module
 	 */
 	protected function deleteConfig()
 	{
-		Configuration::deleteByName(self::NOSTOTAGGING_CONFIG_KEY_USE_DEFAULT_NOSTO_ELEMENTS);
+		$config_keys = array(
+			self::NOSTOTAGGING_CONFIG_KEY_ACCOUNT_NAME,
+			self::NOSTOTAGGING_CONFIG_KEY_SSO_TOKEN,
+			self::NOSTOTAGGING_CONFIG_KEY_USE_DEFAULT_NOSTO_ELEMENTS,
+			self::NOSTOTAGGING_CONFIG_ADMIN_URL,
+		);
+		foreach ($config_keys as $config_key)
+			Configuration::deleteByName($config_key);
 		return true;
 	}
 
