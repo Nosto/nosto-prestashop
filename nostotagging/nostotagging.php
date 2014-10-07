@@ -18,6 +18,7 @@ class NostoTagging extends Module
 	const NOSTOTAGGING_CONFIG_KEY_USE_DEFAULT_NOSTO_ELEMENTS = 'NOSTOTAGGING_DEFAULT_ELEMENTS';
 	const NOSTOTAGGING_CONFIG_KEY_SSO_TOKEN = 'NOSTOTAGGING_SSO_TOKEN';
 	const NOSTOTAGGING_CONFIG_ADMIN_URL = 'NOSTOTAGGING_ADMIN_URL';
+	const NOSTOTAGGING_CONFIG_OAUTH2_CLIENT_SECRET = 'NOSTOTAGGING_OAUTH2_CLIENT_SECRET';
 	const NOSTOTAGGING_SERVER_ADDRESS = 'connect.nosto.com';
 	const NOSTOTAGGING_PRODUCT_IN_STOCK = 'InStock';
 	const NOSTOTAGGING_PRODUCT_OUT_OF_STOCK = 'OutOfStock';
@@ -190,15 +191,38 @@ class NostoTagging extends Module
 					$output .= $this->displayConfirmation($this->l('Configuration saved.'));
 				}
 			}
+			elseif(Tools::isSubmit('submit_nostotagging_authorize_account'))
+			{
+				// The account that is about to be authorized needs to be saved.
+				$saved_account_name = $this->getAccountName();
+				if (empty($saved_account_name) || $saved_account_name !== $account_name)
+					$output .= $this->displayError($this->l('You need to save the account name before the account can be authorized.'));
+
+				if (empty($output))
+				{
+					// The client secret is re-generated every time a new oauth2 request cycle is started.
+					// Initially passed here in the "authorize" request, against the oauth2 "Authorization Code" spec.
+					// This is due to the fact that we do not have a real secret as this module is publicly available.
+					// By passing it here, the authorization server can make sure that both the "authorize" and
+					// the "token" requests comes from the "same" client. The request is made over https, which makes
+					// sure that the secret cannot be intercepted during transfer.
+					// This enables anyone to create their own client which replicates this behavior, but in addition
+					// to the client secret, the redirect_uri that is sent with the request is also validated to make
+					// sure it belongs to the client_id. This stops evil clients from getting the authorization code,
+					// as it can only be sent to the redirect_uri that belongs to the account owner.
+					$client_secret = NostoTaggingSecurity::rand(32);
+					$this->setConfigValue(self::NOSTOTAGGING_CONFIG_OAUTH2_CLIENT_SECRET, $client_secret, true/* global */);
+					$client = new NostoTaggingOAuth2Client();
+					$client->setClientId($account_name);
+					$client->setClientSecret($client_secret);
+					$client->setRedirectUrl(urlencode($this->getOAuth2ControllerUrl()));
+					header('Location: '.$client->getAuthorizationUrl());
+					die();
+				}
+			}
 		}
 		else
 		{
-			// Either "authorize_error" or "authorize_success" can be set by the oauth2 controller.
-			if (($error_message = Tools::getValue('authorize_error')) !== false)
-				$output .= $this->displayError($error_message);
-			if (($success_message = Tools::getValue('authorize_success')) !== false)
-				$output .= $this->displayConfirmation($success_message);
-
 			$account_name = $this->getAccountName();
 			$account_email = $this->context->employee->email;
 			$default_elements = $this->getUseDefaultNostoElements();
@@ -210,17 +234,8 @@ class NostoTagging extends Module
 			$field_account_name => $account_name,
 			$field_account_email => $account_email,
 			$field_use_defaults => $default_elements,
+			'is_account_authorized' => $this->isAccountAuthorized(),
 		));
-
-		if (!empty($account_name) && !$this->isAccountAuthorized())
-		{
-			$client = new NostoTaggingOAuth2Client();
-			$client->setClientId($this->getAccountName());
-			$client->setRedirectUrl(urlencode($this->getOAuth2ControllerUrl()));
-			$this->context->smarty->assign(array(
-				'oauth2_authorization_url' => $client->getAuthorizationUrl(),
-			));
-		}
 
 		if (version_compare(substr(_PS_VERSION_, 0, 3), '1.6', '>='))
 		{
@@ -425,6 +440,16 @@ class NostoTagging extends Module
 	public function setAdminUrl($admin_url, $global = false)
 	{
 		return $this->setConfigValue(self::NOSTOTAGGING_CONFIG_ADMIN_URL, (string)$admin_url, $global);
+	}
+
+	/**
+	 * Getter for the oauth2 client secret.
+	 *
+	 * @return string
+	 */
+	public function getClientSecret()
+	{
+		return (string)Configuration::get(self::NOSTOTAGGING_CONFIG_OAUTH2_CLIENT_SECRET);
 	}
 
 	/**

@@ -7,8 +7,8 @@
 class NostoTaggingOAuth2Client
 {
 	const NOSTOTAGGING_OAUTH2_CLIENT_BASE_URL = 'https://nosto.com/oauth';
-	const NOSTOTAGGING_OAUTH2_CLIENT_AUTH_PATH = '/authorize/?client_id={cid}&redirect_uri={uri}&response_type=code';
-	const NOSTOTAGGING_OAUTH2_CLIENT_TOKEN_PATH = '/token/?client_id={cid}&client_secret={sec}&code={cod}&redirect_uri={uri}&grant_type=authorization_code';
+	const NOSTOTAGGING_OAUTH2_CLIENT_AUTH_PATH = '/authorize/?client_id={cid}&client_secret={sec}&redirect_uri={uri}&response_type=code';
+	const NOSTOTAGGING_OAUTH2_CLIENT_TOKEN_PATH = '/token/?code={cod}&client_id={cid}&client_secret={sec}&redirect_uri={uri}&grant_type=authorization_code';
 
 	/**
 	 * @var string the client id the identify this application to the oauth2 server.
@@ -66,6 +66,7 @@ class NostoTaggingOAuth2Client
 			self::NOSTOTAGGING_OAUTH2_CLIENT_BASE_URL.self::NOSTOTAGGING_OAUTH2_CLIENT_AUTH_PATH,
 			array(
 				'{cid}' => $this->client_id,
+				'{sec}' => $this->client_secret,
 				'{uri}' => $this->redirect_url
 			)
 		);
