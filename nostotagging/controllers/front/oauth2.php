@@ -21,11 +21,11 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
 			{
 				if($this->module->exchangeDataWithNosto($token))
 					$this->redirectToModuleAdmin(array(
-						'success_message' => $this->module->l('Account was successfully authorized.')
+						'authorize_success' => $this->module->l('Account was successfully authorized.')
 					));
 			}
 			$this->redirectToModuleAdmin(array(
-				'error_message' => $this->module->l('Account could not be authorized. Please contact Nosto support.')
+				'authorize_error' => $this->module->l('Account could not be authorized. Please contact Nosto support.')
 			));
 		}
 		$this->notFound();

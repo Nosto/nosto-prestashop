@@ -156,42 +156,49 @@ class NostoTagging extends Module
 		$field_account_email = $this->name.'_account_email';
 		$field_use_defaults = $this->name.'_use_defaults';
 
-		$account_name = (string)Tools::getValue($field_account_name);
-		$account_email = (string)Tools::getValue($field_account_email);
-		$default_elements = (int)Tools::getValue($field_use_defaults);
+		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+			$account_name = (string)Tools::getValue($field_account_name);
+			$account_email = (string)Tools::getValue($field_account_email);
+			$default_elements = (int)Tools::getValue($field_use_defaults);
 
-		if (Tools::isSubmit('submit_nostotagging_new_account'))
-		{
-			if (empty($account_email))
-				$output .= $this->displayError($this->l('Email cannot be empty.'));
-			elseif (!Validate::isEmail($account_email))
-				$output .= $this->displayError($this->l('Email is not a valid email address.'));
-			elseif ($this->createAccount($account_email))
+			if (Tools::isSubmit('submit_nostotagging_new_account'))
 			{
-				$output .= $this->displayConfirmation($this->l('Account created.'));
-				$account_name = $this->getAccountName();
+				if (empty($account_email))
+					$output .= $this->displayError($this->l('Email cannot be empty.'));
+				elseif (!Validate::isEmail($account_email))
+					$output .= $this->displayError($this->l('Email is not a valid email address.'));
+				elseif ($this->createAccount($account_email))
+				{
+					$output .= $this->displayConfirmation($this->l('Account created.'));
+					$account_name = $this->getAccountName();
+				}
+				else
+					$output .= $this->displayError($this->l('Account could not be automatically created. Please visit nosto.com to create a new account.'));
 			}
-			else
-				$output .= $this->displayError($this->l('Account could not be automatically created. Please visit nosto.com to create a new account.'));
-		}
-		elseif (Tools::isSubmit('submit_nostotagging_general_settings'))
-		{
-			if (empty($account_name))
-				$output .= $this->displayError($this->l('Account name cannot be empty.'));
-
-			if ($default_elements !== 0 && $default_elements !== 1)
-				$output .= $this->displayError($this->l('Use default nosto elements setting is invalid.'));
-
-			if (empty($output))
+			elseif (Tools::isSubmit('submit_nostotagging_general_settings'))
 			{
-				$this->setAccountName($account_name, true/* $global */);
-				$this->setUseDefaultNostoElements($default_elements, true/* $global */);
-				$output .= $this->displayConfirmation($this->l('Configuration saved.'));
+				if (empty($account_name))
+					$output .= $this->displayError($this->l('Account name cannot be empty.'));
+
+				if ($default_elements !== 0 && $default_elements !== 1)
+					$output .= $this->displayError($this->l('Use default nosto elements setting is invalid.'));
+
+				if (empty($output))
+				{
+					$this->setAccountName($account_name, true/* $global */);
+					$this->setUseDefaultNostoElements($default_elements, true/* $global */);
+					$output .= $this->displayConfirmation($this->l('Configuration saved.'));
+				}
 			}
 		}
-
-		if (empty($output))
+		else
 		{
+			// Either "authorize_error" or "authorize_success" can be set by the oauth2 controller.
+			if (($error_message = Tools::getValue('authorize_error')) !== false)
+				$output .= $this->displayError($error_message);
+			if (($success_message = Tools::getValue('authorize_success')) !== false)
+				$output .= $this->displayConfirmation($success_message);
+
 			$account_name = $this->getAccountName();
 			$account_email = $this->context->employee->email;
 			$default_elements = $this->getUseDefaultNostoElements();
@@ -333,7 +340,8 @@ class NostoTagging extends Module
 	public function setAccountName($account_name, $global = false)
 	{
 		// The SSO token is tied to the account, so it needs to be removed if the account is updated.
-		Configuration::deleteByName(self::NOSTOTAGGING_CONFIG_KEY_SSO_TOKEN);
+		if ($account_name !== $this->getAccountName())
+			Configuration::deleteByName(self::NOSTOTAGGING_CONFIG_KEY_SSO_TOKEN);
 
 		// Remove all existing settings even if their shop specific (we currently support only global ones).
 		Configuration::deleteByName(self::NOSTOTAGGING_CONFIG_KEY_ACCOUNT_NAME);
