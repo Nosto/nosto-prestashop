@@ -6,6 +6,18 @@
 class NostoTaggingHttpRequest
 {
 	/**
+	 * Builds an uri by replacing the param placeholders in $uri with the ones given in $$replace_params.
+	 *
+	 * @param string $uri
+	 * @param array $replace_params
+	 * @return string
+	 */
+	public static function build_uri($uri, array $replace_params)
+	{
+		return strtr($uri, $replace_params);
+	}
+
+	/**
 	 * Sends a POST request.
 	 *
 	 * @param string $url

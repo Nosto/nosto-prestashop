@@ -7,6 +7,7 @@ require_once(dirname(__FILE__).'/classes/nostotagging-http-request.php');
 require_once(dirname(__FILE__).'/classes/nostotagging-http-response.php');
 require_once(dirname(__FILE__).'/classes/nostotagging-cipher.php');
 require_once(dirname(__FILE__).'/classes/nostotagging-oauth2-client.php');
+require_once(dirname(__FILE__).'/classes/nostotagging-oauth2-token.php');
 
 /**
  * NostoTagging module that integrates Nosto marketing automation service.
@@ -235,20 +236,57 @@ class NostoTagging extends Module
 	}
 
 	/**
-	 * Handle data exchanged with Nosto through oauth2 client.
+	 * Handle data exchanged with Nosto.
 	 *
-	 * @param NostoTaggingOAuth2Client $client
+	 * @param NostoTaggingOAuth2Token $token the authorization token that let's the application act on the users behalf.
 	 * @return bool true on success and false on failure.
 	 */
-	public function exchangeDataWithNosto(NostoTaggingOAuth2Client $client)
+	public function exchangeDataWithNosto(NostoTaggingOAuth2Token $token)
 	{
-		$data = $client->exchangeDataWithNosto();
-		if (empty($data))
+		if (empty($token->access_token))
+		{
+			NostoTaggingLogger::log(
+				__CLASS__.'::'.__FUNCTION__.' - No access token found when trying to exchange data with Nosto.',
+				NostoTaggingLogger::LOG_SEVERITY_ERROR,
+				500
+			);
 			return false;
+		}
+
+		$request = new NostoTaggingHttpRequest();
+		$response = $request->get(
+			self::NOSTOTAGGING_API_BASE_URL.'/exchange',
+			array(
+				'Content-type: application/json',
+				'Authorization: Bearer '.$token->access_token
+			)
+		);
+		$result = $response->getJsonResult();
+
+		if ($response->getCode() !== 200)
+		{
+			NostoTaggingLogger::log(
+				__CLASS__.'::'.__FUNCTION__.' - Failed to exchange data with Nosto.',
+				NostoTaggingLogger::LOG_SEVERITY_ERROR,
+				$response->getCode()
+			);
+			return false;
+		}
+
+		if (empty($result))
+		{
+			NostoTaggingLogger::log(
+				__CLASS__.'::'.__FUNCTION__.' - Received invalid data from Nosto.',
+				NostoTaggingLogger::LOG_SEVERITY_ERROR,
+				$response->getCode()
+			);
+			return false;
+		}
 
 		foreach (self::$authorized_data_exchange_config_key_map as $config_key => $data_key)
 			if (isset($data[$data_key]))
 				$this->setConfigValue($config_key, (string)$data[$data_key], true/* $global */);
+
 		return true;
 	}
 
@@ -736,6 +774,17 @@ class NostoTagging extends Module
 	}
 
 	/**
+	 * Returns the url to the oauth2 controller.
+	 *
+	 * @return string the url.
+	 */
+	public function getOAuth2ControllerUrl()
+	{
+		$link = new Link();
+		return $link->getModuleLink($this->name, 'oauth2');
+	}
+
+	/**
 	 * Checks if the account has been authorized with Nosto.
 	 * This is determined by checking if we have all the data needed for make authorized requests to the Nosto API.
 	 *
@@ -821,17 +870,6 @@ class NostoTagging extends Module
 		$host = Tools::getHttpHost(true);
 		$request_uri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
 		return $host.$request_uri;
-	}
-
-	/**
-	 * Returns the url to the oauth2 controller.
-	 *
-	 * @return string the url.
-	 */
-	protected function getOAuth2ControllerUrl()
-	{
-		$link = new Link();
-		return $link->getModuleLink($this->name, 'oauth2');
 	}
 
 	/**

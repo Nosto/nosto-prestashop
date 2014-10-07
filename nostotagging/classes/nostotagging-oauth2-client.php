@@ -2,13 +2,13 @@
 
 /**
  * Helper class for doing OAuth2 authentication with Nosto.
- * The client implements the implicit grant type, with a twist.
+ * The client implements the 'Authorization Code' grant type.
  */
 class NostoTaggingOAuth2Client
 {
-	const NOSTOTAGGING_OAUTH2_CLIENT_BASE_URL = 'https://api.nosto.com/oauth';
+	const NOSTOTAGGING_OAUTH2_CLIENT_BASE_URL = 'https://nosto.com/oauth';
 	const NOSTOTAGGING_OAUTH2_CLIENT_AUTH_PATH = '/authorize/?client_id={cid}&redirect_uri={uri}&response_type=code';
-	const NOSTOTAGGING_OAUTH2_CLIENT_EXCHANGE_PATH = '/exchange';
+	const NOSTOTAGGING_OAUTH2_CLIENT_TOKEN_PATH = '/token/?client_id={cid}&client_secret={sec}&code={cod}&redirect_uri={uri}&grant_type=authorization_code';
 
 	/**
 	 * @var string the client id the identify this application to the oauth2 server.
@@ -16,14 +16,14 @@ class NostoTaggingOAuth2Client
 	protected $client_id;
 
 	/**
+	 * @var string the client secret the identify this application to the oauth2 server.
+	 */
+	protected $client_secret;
+
+	/**
 	 * @var string the redirect url that will be used by the oauth2 server when authenticating the client.
 	 */
 	protected $redirect_url;
-
-	/**
-	 * @var string access token returned by the oauth2 server after authenticating.
-	 */
-	protected $access_token;
 
 	/**
 	 * Setter for the client id to identify this application to the oauth2 server.
@@ -33,6 +33,16 @@ class NostoTaggingOAuth2Client
 	public function setClientId($client_id)
 	{
 		$this->client_id = $client_id;
+	}
+
+	/**
+	 * Setter for the client secret to identify this application to the oauth2 server.
+	 *
+	 * @param string $client_secret the client secret.
+	 */
+	public function setClientSecret($client_secret)
+	{
+		$this->client_secret = $client_secret;
 	}
 
 	/**
@@ -46,50 +56,33 @@ class NostoTaggingOAuth2Client
 	}
 
 	/**
-	 * The access token returned by the oauth2 server after authenticating.
-	 *
-	 * @param string $access_token the access token.
-	 */
-	public function setAccessToken($access_token)
-	{
-		$this->access_token = $access_token;
-	}
-
-	/**
-	 * Getter for the access token returned by the oauth2 server after authenticating.
-	 *
-	 * @return string the access token.
-	 */
-	public function getAccessToken()
-	{
-		return $this->access_token;
-	}
-
-	/**
 	 * Returns the authentication url to the oauth2 server.
 	 *
 	 * @return string the url.
 	 */
 	public function getAuthorizationUrl()
 	{
-		$url = self::NOSTOTAGGING_OAUTH2_CLIENT_BASE_URL.self::NOSTOTAGGING_OAUTH2_CLIENT_AUTH_PATH;
-		return strtr($url, array(
-			'{cid}' => $this->client_id,
-			'{uri}' => $this->redirect_url
-		));
+		return NostoTaggingHttpRequest::build_uri(
+			self::NOSTOTAGGING_OAUTH2_CLIENT_BASE_URL.self::NOSTOTAGGING_OAUTH2_CLIENT_AUTH_PATH,
+			array(
+				'{cid}' => $this->client_id,
+				'{uri}' => $this->redirect_url
+			)
+		);
 	}
 
 	/**
-	 * Exchanges data with Nosto with the access token if it is set.
+	 * Authenticates the application with the given code to receive an access token.
 	 *
-	 * @return object|bool the result object or false on failure.
+	 * @param string $code code sent by the authorization server to exchange for an access token.
+	 * @return NostoTaggingOAuth2Token|bool a token or false.
 	 */
-	public function exchangeDataWithNosto()
+	public function authenticate($code)
 	{
-		if (empty($this->access_token))
+		if (empty($code))
 		{
 			NostoTaggingLogger::log(
-				__CLASS__.'::'.__FUNCTION__.' - No access token found when trying to exchange data with Nosto.',
+				__CLASS__.'::'.__FUNCTION__.' - Invalid authentication token.',
 				NostoTaggingLogger::LOG_SEVERITY_ERROR,
 				500
 			);
@@ -97,36 +90,46 @@ class NostoTaggingOAuth2Client
 		}
 
 		$request = new NostoTaggingHttpRequest();
-		$url = self::NOSTOTAGGING_OAUTH2_CLIENT_BASE_URL.self::NOSTOTAGGING_OAUTH2_CLIENT_EXCHANGE_PATH;
-		$response = $request->get(
-			$url,
+		$url = NostoTaggingHttpRequest::build_uri(
+			self::NOSTOTAGGING_OAUTH2_CLIENT_BASE_URL.self::NOSTOTAGGING_OAUTH2_CLIENT_TOKEN_PATH,
 			array(
-				'Content-type: application/json',
-				'Authorization: Bearer '.$this->access_token
+				'{cid}' => $this->client_id,
+				'{sec}' => $this->client_secret,
+				'{uri}' => $this->redirect_url,
+				'{cod}' => $code
 			)
 		);
-		$result = $response->getJsonResult();
+		$response = $request->post($url);
+		$result = $response->getJsonResult(true);
 
 		if ($response->getCode() !== 200)
 		{
+			$message_parts = array();
+			if (isset($result->error_reason))
+				$message_parts[] = $result->error_reason;
+			if (isset($result->error_description))
+				$message_parts[] = $result->error_description;
+			if (empty($message_parts))
+				$message_parts[] = 'Failed to authenticate with code.';
+
 			NostoTaggingLogger::log(
-				__CLASS__.'::'.__FUNCTION__.' - Failed to exchange data with Nosto.',
+				__CLASS__.'::'.__FUNCTION__.implode(' - ', $message_parts),
 				NostoTaggingLogger::LOG_SEVERITY_ERROR,
 				$response->getCode()
 			);
 			return false;
 		}
 
-		if (empty($result))
+		if (empty($result['access_token']))
 		{
 			NostoTaggingLogger::log(
-				__CLASS__.'::'.__FUNCTION__.' - Received invalid data from Nosto.',
+				__CLASS__.'::'.__FUNCTION__.' - No "access_token" returned after authenticating with code.',
 				NostoTaggingLogger::LOG_SEVERITY_ERROR,
 				$response->getCode()
 			);
 			return false;
 		}
 
-		return $result;
+		return NostoTaggingOAuth2Token::create($result);
 	}
 } 
