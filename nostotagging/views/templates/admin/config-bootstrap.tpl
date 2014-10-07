@@ -23,6 +23,9 @@
                 <div class="col-lg-9 ">
                     <input type="text" name="nostotagging_account_name" id="nostotagging_account_name" value="{$nostotagging_account_name}" class="fixed-width-xxl" size="40" required="required">
                     <p class="help-block">{l s='Your Nosto marketing automation service account name.' mod='nostotagging'}</p>
+                    {if !empty($oauth2_authorization_url)}
+                        <a href="{$oauth2_authorization_url}">{l s='Authorize' mod='nostotagging'}</a>
+                    {/if}
                 </div>
             </div>
 
@@ -51,10 +54,6 @@
                     </span>
                 </div>
             </div>
-
-            {if !empty($oauth2_authorization_url)}
-                <a href="{$oauth2_authorization_url}">{l s='Authenticate' mod='nostotagging'}</a>
-            {/if}
 
         </div>
         <div class="panel-footer">

@@ -21,6 +21,9 @@
                 <input type="text" name="nostotagging_account_name" id="nostotagging_account_name" value="{$nostotagging_account_name}" size="40">
                 <sup>*</sup>
                 <p class="preference_description">{l s='Your Nosto marketing automation service account name.' mod='nostotagging'}</p>
+                {if !empty($oauth2_authorization_url)}
+                    <a href="{$oauth2_authorization_url}">{l s='Authorize' mod='nostotagging'}</a>
+                {/if}
             </div>
             <div class="clear"></div>
         </div>

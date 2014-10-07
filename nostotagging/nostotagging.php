@@ -212,7 +212,7 @@ class NostoTagging extends Module
 			$field_use_defaults => $default_elements,
 		));
 
-		if (!$this->isAccountAuthorized())
+		if (!empty($account_name) && !$this->isAccountAuthorized())
 		{
 			$client = new NostoTaggingOAuth2Client();
 			$client->setClientId($this->getAccountName());

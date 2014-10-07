@@ -55,10 +55,10 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
 					.((isset($admin_url_parts['fragment'])) ? '#'.$admin_url_parts['fragment'] : '');
 			}
 			header('Location: '.$admin_url);
+			die();
 		}
 		else
 			$this->notFound();
-		die();
 	}
 
 	/**
