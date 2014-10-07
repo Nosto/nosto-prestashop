@@ -16,6 +16,7 @@ class NostoTagging extends Module
 	const NOSTOTAGGING_CONFIG_KEY_ACCOUNT_NAME = 'NOSTOTAGGING_ACCOUNT_NAME';
 	const NOSTOTAGGING_CONFIG_KEY_USE_DEFAULT_NOSTO_ELEMENTS = 'NOSTOTAGGING_DEFAULT_ELEMENTS';
 	const NOSTOTAGGING_CONFIG_KEY_SSO_TOKEN = 'NOSTOTAGGING_SSO_TOKEN';
+	const NOSTOTAGGING_CONFIG_ADMIN_URL = 'NOSTOTAGGING_ADMIN_URL';
 	const NOSTOTAGGING_SERVER_ADDRESS = 'connect.nosto.com';
 	const NOSTOTAGGING_PRODUCT_IN_STOCK = 'InStock';
 	const NOSTOTAGGING_PRODUCT_OUT_OF_STOCK = 'OutOfStock';
@@ -134,8 +135,9 @@ class NostoTagging extends Module
 	 */
 	public function getContent()
 	{
-		// todo: do this here??
-		$this->doOAuth2();
+		// Always update the url to the module admin page when we access it.
+		// This can then later be used by the oauth2 controller to redirect the user back.
+		$this->setAdminUrl($this->getCurrentUrl());
 
 		$output = '';
 
@@ -193,6 +195,17 @@ class NostoTagging extends Module
 			$field_use_defaults => $default_elements,
 		));
 
+		if (!$this->accountAuthorized())
+		{
+			$client = new NostoTaggingOAuth2Client();
+			$client->setClientId($this->getAccountName());
+			$client->setClientSecret(''); // todo: generate this.
+			$client->setRedirectUrl(urlencode($this->getOAuth2ControllerUrl()));
+			$this->context->smarty->assign(array(
+				'oauth2_authorization_url' => $client->getAuthorizationUrl(),
+			));
+		}
+
 		if (version_compare(substr(_PS_VERSION_, 0, 3), '1.6', '>='))
 		{
 			// Try to login employee to Nosto in order to get a url to the internal settings page,
@@ -211,6 +224,38 @@ class NostoTagging extends Module
 			$output .= $this->display(__FILE__, 'views/templates/admin/config.tpl');
 
 		return $output;
+	}
+
+	/**
+	 * Transfer needed data from Nosto using a oauth2 access token.
+	 *
+	 * @param NostoTaggingOAuth2Client $client the client instance.
+	 */
+	public function transferDataFromNosto(NostoTaggingOAuth2Client $client)
+	{
+		$access_token = $client->getAccessToken();
+		if (!empty($access_token))
+		{
+			$request = new NostoTaggingHttpRequest();
+			$url = self::NOSTOTAGGING_API_BASE_URL; // todo: api path
+			$response = $request->post(
+				$url,
+				array(
+					'Content-type: application/json',
+					'Authorization: Bearer '.$access_token
+				)
+			);
+			$result = $response->getJsonResult();
+
+			if ($response->getCode() !== 200)
+				NostoTaggingLogger::log(
+					__CLASS__.'::'.__FUNCTION__.' - ',
+					NostoTaggingLogger::LOG_SEVERITY_ERROR,
+					$response->getCode()
+				);
+
+			// todo: store the result somewhere
+		}
 	}
 
 	/**
@@ -318,6 +363,28 @@ class NostoTagging extends Module
 		// Remove all existing settings even if their shop specific (we currently support only global ones).
 		Configuration::deleteByName(self::NOSTOTAGGING_CONFIG_KEY_SSO_TOKEN);
 		return $this->setConfigValue(self::NOSTOTAGGING_CONFIG_KEY_SSO_TOKEN, (string)$sso_token, $global);
+	}
+
+	/**
+	 * Getter for the admin url.
+	 *
+	 * @return string the token.
+	 */
+	public function getAdminUrl()
+	{
+		return (string)Configuration::get(self::NOSTOTAGGING_CONFIG_ADMIN_URL);
+	}
+
+	/**
+	 * Setter for the admin url.
+	 *
+	 * @param string $admin_url
+	 * @param bool $global
+	 * @return bool
+	 */
+	public function setAdminUrl($admin_url, $global = false)
+	{
+		return $this->setConfigValue(self::NOSTOTAGGING_CONFIG_ADMIN_URL, (string)$admin_url, $global);
 	}
 
 	/**
@@ -675,6 +742,18 @@ class NostoTagging extends Module
 	}
 
 	/**
+	 * Checks if the account has been authorized with Nosto.
+	 * This is determined by checking if we have all the data needed for make authorized requests to the Nosto API.
+	 *
+	 * @return bool true if the account has been authorized, false otherwise.
+	 */
+	protected function accountAuthorized()
+	{
+		// todo:
+		return false;
+	}
+
+	/**
 	 * Checks if the given controller is the current one.
 	 *
 	 * @param string $name the controller name
@@ -737,38 +816,26 @@ class NostoTagging extends Module
 	}
 
 	/**
-	 * Does OAuth2 authentication with Nosto and retrieves needed data for this account.
-	 */
-	protected function doOAuth2()
-	{
-		// todo: only do this if we need to.
-		// todo: how do we handle failures?? we need to show the user a message.
-		$client = new NostoTaggingOAuth2Client();
-		$client->setClientId($this->getAccountName());
-		$client->setRedirectUrl(urlencode($this->getCurrentUrl()));
-		$this->context->smarty->assign(array(
-			'oauth2_authorization_url' => $client->getAuthorizationUrl(),
-		));
-		// If this is a request from the Nosto oauth2 server.
-		if (($code = Tools::getValue('code')) !== false)
-		{
-			if ($client->authenticate($code))
-			{
-				$access_token = $client->getAccessToken();
-				// todo: request tokens from Nosto with this access token.
-			}
-		}
-	}
-
-	/**
-	 * Returns the current requested URL.
-	 * The protocol is chosen based on shop settings.
+	 * Returns the current requested url.
 	 *
 	 * @return string the url.
 	 */
 	protected function getCurrentUrl()
 	{
-		return Tools::getHttpHost(true).$_SERVER['REQUEST_URI'];
+		$host = Tools::getHttpHost(true);
+		$request_uri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
+		return $host.$request_uri;
+	}
+
+	/**
+	 * Returns the url to the oauth2 controller.
+	 *
+	 * @return string the url.
+	 */
+	protected function getOAuth2ControllerUrl()
+	{
+		$link = new Link();
+		return $link->getModuleLink($this->name, 'oauth2');
 	}
 
 	/**
