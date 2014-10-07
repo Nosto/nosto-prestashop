@@ -25,6 +25,26 @@ class NostoTaggingHttpRequest
 	}
 
 	/**
+	 * Sends a GET request.
+	 *
+	 * @param string $url
+	 * @param array $headers
+	 * @param array $params
+	 * @return NostoTaggingHttpResponse
+	 */
+	public function get($url, array $headers = array(), array $params = array())
+	{
+		if (!empty($params))
+			$url .= '?'.http_build_query($params);
+		return $this->send($url, array(
+			'http' => array(
+				'method' => 'GET',
+				'header' => implode("\r\n", $headers),
+			)
+		));
+	}
+
+	/**
 	 * Sends the request and returns a response instance.
 	 *
 	 * @param string $url

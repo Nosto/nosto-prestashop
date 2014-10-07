@@ -227,34 +227,20 @@ class NostoTagging extends Module
 	}
 
 	/**
-	 * Transfer needed data from Nosto using a oauth2 access token.
+	 * Handle data exchanged with Nosto though oauth2 authorization.
 	 *
-	 * @param NostoTaggingOAuth2Client $client the client instance.
+	 * @param mixed $data
 	 */
-	public function transferDataFromNosto(NostoTaggingOAuth2Client $client)
+	public function handleDataFromNosto($data)
 	{
-		$access_token = $client->getAccessToken();
-		if (!empty($access_token))
+		if (!empty($data))
 		{
-			$request = new NostoTaggingHttpRequest();
-			$url = self::NOSTOTAGGING_API_BASE_URL; // todo: api path
-			$response = $request->post(
-				$url,
-				array(
-					'Content-type: application/json',
-					'Authorization: Bearer '.$access_token
-				)
+			$expected_config_keys = array(
+				self::NOSTOTAGGING_CONFIG_KEY_SSO_TOKEN => 'api_sso'
 			);
-			$result = $response->getJsonResult();
-
-			if ($response->getCode() !== 200)
-				NostoTaggingLogger::log(
-					__CLASS__.'::'.__FUNCTION__.' - ',
-					NostoTaggingLogger::LOG_SEVERITY_ERROR,
-					$response->getCode()
-				);
-
-			// todo: store the result somewhere
+			foreach ($expected_config_keys as $config_key => $data_key)
+				if (isset($data[$data_key]))
+					$this->setConfigValue($config_key, $data[$data_key], true/* $global */);
 		}
 	}
 

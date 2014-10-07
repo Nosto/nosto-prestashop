@@ -8,6 +8,7 @@ class NostoTaggingOAuth2Client
 {
 	const NOSTOTAGGING_OAUTH2_CLIENT_BASE_URL = 'https://api.nosto.com/oauth';
 	const NOSTOTAGGING_OAUTH2_CLIENT_AUTH_PATH = '/authorize/?client_id={cid}&redirect_uri={uri}&response_type=code';
+	const NOSTOTAGGING_OAUTH2_CLIENT_EXCHANGE_PATH = '/exchange';
 
 	/**
 	 * @var string the client id the identify this application to the oauth2 server.
@@ -92,5 +93,56 @@ class NostoTaggingOAuth2Client
 			'{sec}' => $this->client_secret,
 			'{uri}' => $this->redirect_url
 		));
+	}
+
+	/**
+	 * Exchanges data with Nosto with the access token if it is set.
+	 *
+	 * @return object|bool the result object or false on failure.
+	 */
+	public function exchangeDataWithNosto()
+	{
+		if (empty($this->access_token))
+		{
+			NostoTaggingLogger::log(
+				__CLASS__.'::'.__FUNCTION__.' - No access token found when trying to exchange data with Nosto.',
+				NostoTaggingLogger::LOG_SEVERITY_ERROR,
+				500
+			);
+			return false;
+		}
+
+		$request = new NostoTaggingHttpRequest();
+		$url = self::NOSTOTAGGING_OAUTH2_CLIENT_BASE_URL.self::NOSTOTAGGING_OAUTH2_CLIENT_EXCHANGE_PATH;
+		$response = $request->get(
+			$url,
+			array(
+				'Content-type: application/json',
+				'Authorization: Bearer '.$this->access_token
+			)
+		);
+		$result = $response->getJsonResult();
+
+		if ($response->getCode() !== 200)
+		{
+			NostoTaggingLogger::log(
+				__CLASS__.'::'.__FUNCTION__.' - Failed to exchange data with Nosto.',
+				NostoTaggingLogger::LOG_SEVERITY_ERROR,
+				$response->getCode()
+			);
+			return false;
+		}
+
+		if (empty($result))
+		{
+			NostoTaggingLogger::log(
+				__CLASS__.'::'.__FUNCTION__.' - Received invalid data from Nosto.',
+				NostoTaggingLogger::LOG_SEVERITY_ERROR,
+				$response->getCode()
+			);
+			return false;
+		}
+
+		return $result;
 	}
 } 
