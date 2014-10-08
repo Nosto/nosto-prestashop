@@ -105,16 +105,8 @@ class NostoTaggingOAuth2Client
 
 		if ($response->getCode() !== 200)
 		{
-			$message_parts = array();
-			if (isset($result->error_reason))
-				$message_parts[] = $result->error_reason;
-			if (isset($result->error_description))
-				$message_parts[] = $result->error_description;
-			if (empty($message_parts))
-				$message_parts[] = 'Failed to authenticate with code.';
-
 			NostoTaggingLogger::log(
-				__CLASS__.'::'.__FUNCTION__.' - '.implode(' - ', $message_parts),
+				__CLASS__.'::'.__FUNCTION__.' - Failed to authenticate with code.',
 				NostoTaggingLogger::LOG_SEVERITY_ERROR,
 				$response->getCode()
 			);

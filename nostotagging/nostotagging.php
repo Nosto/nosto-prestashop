@@ -226,7 +226,11 @@ class NostoTagging extends Module
 			$account_name = $this->getAccountName();
 			$account_email = $this->context->employee->email;
 			$default_elements = $this->getUseDefaultNostoElements();
-			$output .= $this->extractCookieMessages();
+
+			foreach ($this->getAdminFlashMessages('error') as $error_message)
+				$output .= $this->displayError($this->l($error_message));
+			foreach ($this->getAdminFlashMessages('success') as $success_message)
+				$output .= $this->displayConfirmation($this->l($success_message));
 		}
 
 		$this->context->controller->addJS($this->_path.'js/nostotagging-admin-config.js');
@@ -423,12 +427,15 @@ class NostoTagging extends Module
 
 	/**
 	 * Getter for the admin url.
+	 * The url is only returned if the current user is an admin logged in to the back office.
 	 *
-	 * @return string the token.
+	 * @return string the url.
 	 */
 	public function getAdminUrl()
 	{
-		return (string)Configuration::get(self::NOSTOTAGGING_CONFIG_ADMIN_URL);
+		if ($this->isUserAdmin())
+			return (string)Configuration::get(self::NOSTOTAGGING_CONFIG_ADMIN_URL);
+		return '';
 	}
 
 	/**
@@ -819,27 +826,61 @@ class NostoTagging extends Module
 	}
 
 	/**
-	 * Extract any messages we might have in the cookie under "nostotagging" key and then delete them.
+	 * Checks if the current user is logged in the back office.
+	 *
+	 * @return bool true if user is admin, false otherwise.
 	 */
-	protected function extractCookieMessages()
+	public function isUserAdmin()
 	{
-		$output = '';
-		$cookie = $this->context->cookie;
-		if (!empty($cookie->nostotagging))
+		$cookie = new Cookie('psAdmin');
+		return (bool)$cookie->id_employee;
+	}
+
+	/**
+	 * Puts a "flash" message to the admin cookie that can be shown during the next request.
+	 *
+	 * @param string $category the message category, e.g. 'error', 'success'.
+	 * @param string $message the message to show.
+	 */
+	public function setAdminFlashMessage($category, $message)
+	{
+		if ($this->isUserAdmin())
 		{
-			$data = json_decode($cookie->nostotagging);
-			if (!empty($data->messages))
-			{
-				if (isset($data->messages->error))
-					$output .= $this->displayError($data->messages->error);
-				if (isset($data->messages->success))
-					$output .= $this->displayConfirmation($data->messages->success);
-				unset($data->messages);
-			}
-			// Put everything else than the messages back, as we might have other stuff in there.
+			$cookie = new Cookie('psAdmin');
+			if (!empty($cookie->nostotagging))
+				$data = json_decode($cookie->nostotagging, true);
+			else
+				$data = array();
+			$data['messages'][$category][] = $message;
 			$cookie->nostotagging = json_encode($data);
 		}
-		return $output;
+	}
+
+	/**
+	 * Gets flash messages for the admin user with the given category.
+	 * The messages are removed from the cookie after they are extracted.
+	 *
+	 * @param string $category the message category, e.g. 'error', 'success'.
+	 * @return array the list of messages.
+	 */
+	public function getAdminFlashMessages($category)
+	{
+		$messages = array();
+		if ($this->isUserAdmin())
+		{
+			$cookie = new Cookie('psAdmin');
+			if (!empty($cookie->nostotagging))
+			{
+				$data = json_decode($cookie->nostotagging, true);
+				if (!empty($data['messages'][$category]))
+				{
+					$messages = $data['messages'][$category];
+					unset($data['messages'][$category]);
+				}
+				$cookie->nostotagging = json_encode($data);
+			}
+		}
+		return $messages;
 	}
 
 	/**
