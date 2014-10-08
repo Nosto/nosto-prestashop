@@ -30,7 +30,7 @@ class NostoTaggingOAuth2Token
 	{
 		$token = new NostoTaggingOAuth2Token();
 		foreach ($data as $key => $value)
-			if (isset($token->{$key}))
+			if (property_exists($token, $key))
 				$token->{$key} = $value;
 		return $token;
 	}
