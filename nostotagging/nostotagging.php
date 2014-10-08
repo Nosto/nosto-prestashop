@@ -226,6 +226,7 @@ class NostoTagging extends Module
 			$account_name = $this->getAccountName();
 			$account_email = $this->context->employee->email;
 			$default_elements = $this->getUseDefaultNostoElements();
+			$output .= $this->extractCookieMessages();
 		}
 
 		$this->context->controller->addJS($this->_path.'js/nostotagging-admin-config.js');
@@ -815,6 +816,30 @@ class NostoTagging extends Module
 	{
 		$link = new Link();
 		return $link->getModuleLink($this->name, 'oauth2');
+	}
+
+	/**
+	 * Extract any messages we might have in the cookie under "nostotagging" key and then delete them.
+	 */
+	protected function extractCookieMessages()
+	{
+		$output = '';
+		$cookie = $this->context->cookie;
+		if (!empty($cookie->nostotagging))
+		{
+			$data = json_decode($cookie->nostotagging);
+			if (!empty($data->messages))
+			{
+				if (isset($data->messages->error))
+					$output .= $this->displayError($data->messages->error);
+				if (isset($data->messages->success))
+					$output .= $this->displayConfirmation($data->messages->success);
+				unset($data->messages);
+			}
+			// Put everything else than the messages back, as we might have other stuff in there.
+			$cookie->nostotagging = json_encode($data);
+		}
+		return $output;
 	}
 
 	/**

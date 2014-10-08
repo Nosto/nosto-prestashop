@@ -10,7 +10,7 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
 	 */
 	public function initContent()
 	{
-		// If this is a request from the Nosto oauth2 server.
+		// If this "is" a request from the Nosto oauth2 server.
 		if (($code = Tools::getValue('code')) !== false)
 		{
 			$client = new NostoTaggingOAuth2Client();
@@ -18,26 +18,47 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
 			$client->setClientSecret($this->module->getClientSecret());
 			$client->setRedirectUrl($this->module->getOAuth2ControllerUrl());
 			if (($token = $client->authenticate($code)) !== false)
+			{
 				$this->module->exchangeDataWithNosto($token);
-			// todo: show general front end error page instead, because passing a error message to admin part is bad.
-			$this->redirectToModuleAdmin();
+				$this->redirectToModuleAdmin(array(
+					'messages' => array(
+						'success' => $this->module->l('Account successfully authenticated with Nosto.')
+					)
+				));
+			}
+			$this->redirectToModuleAdmin(array(
+				'messages' => array(
+					'error' => $this->module->l('Account could not be authenticated. Please contact Nosto support.')
+				)
+			));
 		}
 		$this->notFound();
 	}
 
 	/**
-	 * Redirects the user to the module admin url.
-	 * If the url cannot be found, then show the 404 page.
+	 * Redirects the user to the module admin url if the current user is logged in as an admin in the back office.
+	 * If the url cannot be found or user is not admin, then show the 404 page.
+	 *
+	 * @param array $data additional data to set in the admin cookie that can be read on the module admin page.
 	 */
-	protected function redirectToModuleAdmin()
+	protected function redirectToModuleAdmin(array $data = array())
 	{
-		// todo: check if the admin is logged in, otherwise just show a view so we do not expose the the admin url to outsiders.
-		$admin_url = $this->module->getAdminUrl();
-		if (!empty($admin_url))
-			header('Location: '.$admin_url);
-		else
-			$this->notFound();
-		die();
+		// Check if user is logged in as admin in back office, so that we do not expose the the admin url to outsiders.
+		// The OAuth2 request cycle is initiated from the back office, so the user should still be logged in.
+		$cookie = new Cookie('psAdmin');
+		if ((bool)$cookie->id_employee)
+		{
+			// Add data to the admin cookie so that we can show messages on admin page.
+			$cookie->nostotagging = json_encode($data);
+			$admin_url = $this->module->getAdminUrl();
+			if (!empty($admin_url))
+			{
+				header('Location: '.$admin_url);
+				die;
+			}
+		}
+
+		$this->notFound();
 	}
 
 	/**
