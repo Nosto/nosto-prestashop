@@ -290,7 +290,7 @@ class NostoTagging extends Module
 				'access_token' => $token->access_token
 			)
 		);
-		$result = $response->getJsonResult();
+		$result = $response->getJsonResult(true);
 
 		if ($response->getCode() !== 200)
 		{
@@ -313,8 +313,8 @@ class NostoTagging extends Module
 		}
 
 		foreach (self::$authorized_data_exchange_config_key_map as $config_key => $data_key)
-			if (isset($data[$data_key]))
-				$this->setConfigValue($config_key, (string)$data[$data_key], true/* $global */);
+			if (isset($result[$data_key]))
+				$this->setConfigValue($config_key, (string)$result[$data_key], true/* $global */);
 
 		return true;
 	}
