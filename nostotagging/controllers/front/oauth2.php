@@ -18,14 +18,12 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
 			$client->setClientSecret($this->module->getClientSecret());
 			$client->setRedirectUrl($this->module->getOAuth2ControllerUrl());
 			if (($token = $client->authenticate($code)) !== false)
-			{
-				$this->module->exchangeDataWithNosto($token);
-				$this->redirectToModuleAdmin(array(
-					'messages' => array(
-						'success' => $this->module->l('Account successfully authenticated with Nosto.')
-					)
-				));
-			}
+				if($this->module->exchangeDataWithNosto($token))
+					$this->redirectToModuleAdmin(array(
+						'messages' => array(
+							'success' => $this->module->l('Account successfully authenticated with Nosto.')
+						)
+					));
 			$this->redirectToModuleAdmin(array(
 				'messages' => array(
 					'error' => $this->module->l('Account could not be authenticated. Please contact Nosto support.')
