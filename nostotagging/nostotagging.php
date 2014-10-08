@@ -210,7 +210,7 @@ class NostoTagging extends Module
 					// to the client secret, the redirect_uri that is sent with the request is also validated to make
 					// sure it belongs to the client_id. This stops evil clients from getting the authorization code,
 					// as it can only be sent to the redirect_uri that belongs to the account owner.
-					$client_secret = NostoTaggingSecurity::rand(32);
+					$client_secret = bin2hex(NostoTaggingSecurity::rand(32));
 					$this->setConfigValue(self::NOSTOTAGGING_CONFIG_OAUTH2_CLIENT_SECRET, $client_secret, true/* global */);
 					$client = new NostoTaggingOAuth2Client();
 					$client->setClientId($account_name);
