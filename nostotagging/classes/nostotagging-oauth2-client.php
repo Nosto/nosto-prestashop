@@ -114,7 +114,7 @@ class NostoTaggingOAuth2Client
 				$message_parts[] = 'Failed to authenticate with code.';
 
 			NostoTaggingLogger::log(
-				__CLASS__.'::'.__FUNCTION__.implode(' - ', $message_parts),
+				__CLASS__.'::'.__FUNCTION__.' - '.implode(' - ', $message_parts),
 				NostoTaggingLogger::LOG_SEVERITY_ERROR,
 				$response->getCode()
 			);
