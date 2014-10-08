@@ -24,10 +24,10 @@
                     <input type="text" name="nostotagging_account_name" id="nostotagging_account_name" value="{$nostotagging_account_name}" class="fixed-width-xxl" size="40" required="required">
                     <p class="help-block">{l s='Your Nosto marketing automation service account name.' mod='nostotagging'}</p>
                     {if $is_account_authorized === false}
-                        <button type="submit" value="1" class="btn btn-default" name="submit_nostotagging_authorize_account">{l s='Authorize account' mod='nostotagging'}</button>
-                        <p class="help-block">{l s='You need to authorize your account in order to use all features provided by Nosto.' mod='nostotagging'}</p>
+                        <button type="submit" value="1" class="btn btn-default" name="submit_nostotagging_authorize_account">{l s='Connect to Nosto' mod='nostotagging'}</button>
+                        <p class="help-block">{l s='In order to use all Nosto features you need to connect your account with Nosto.' mod='nostotagging'}</p>
                     {else}
-                        <p class="help-block">{l s='Your account is authorized.' mod='nostotagging'}</p>
+                        <p class="help-block">{l s='Your account is connected to Nosto.' mod='nostotagging'}</p>
                     {/if}
                 </div>
             </div>

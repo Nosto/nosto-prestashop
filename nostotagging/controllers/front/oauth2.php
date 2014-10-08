@@ -12,6 +12,8 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
 	{
 		if (($code = Tools::getValue('code')) !== false)
 		{
+			// The user accepted the authorization request.
+			// The authorization server responded with a code that can be used to exchange for the access token.
 			$client = new NostoTaggingOAuth2Client();
 			$client->setClientId($this->module->getAccountName());
 			$client->setClientSecret($this->module->getClientSecret());
@@ -19,15 +21,27 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
 			if (($token = $client->authenticate($code)) !== false)
 				if($this->module->exchangeDataWithNosto($token))
 				{
-					$this->module->setAdminFlashMessage('success', $this->module->l('Account successfully authenticated with Nosto.'));
+					$this->module->setAdminFlashMessage('success', $this->module->l('Account successfully connected to Nosto.'));
 					$this->redirectToModuleAdmin();
 				}
-			$this->module->setAdminFlashMessage('error', $this->module->l('Account could not be authenticated. Please contact Nosto support.'));
+			$this->module->setAdminFlashMessage('error', $this->module->l('Account could not be connected to Nosto. Please contact Nosto support.'));
 			$this->redirectToModuleAdmin();
 		}
 		elseif (($error = Tools::getValue('error')) !== false)
 		{
-			// todo: handle the reject error.
+			// The user rejected the authorization request.
+			$message_parts = array($error);
+			if (($error_reason = Tools::getValue('error')) !== false)
+				$message_parts[] = $error_reason;
+			if (($error_description = Tools::getValue('error')) !== false)
+				$message_parts[] = $error_description;
+			NostoTaggingLogger::log(
+				__CLASS__.'::'.__FUNCTION__.' - ',implode(' - ', $message_parts),
+				NostoTaggingLogger::LOG_SEVERITY_ERROR,
+				200
+			);
+			$this->module->setAdminFlashMessage('error', $this->module->l('Account could not be connected to Nosto. You rejected the connection request.'));
+			$this->redirectToModuleAdmin();
 		}
 		$this->notFound();
 	}

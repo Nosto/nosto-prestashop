@@ -196,7 +196,7 @@ class NostoTagging extends Module
 				// The account that is about to be authorized needs to be saved.
 				$saved_account_name = $this->getAccountName();
 				if (empty($saved_account_name) || $saved_account_name !== $account_name)
-					$output .= $this->displayError($this->l('You need to save the account name before the account can be authorized.'));
+					$output .= $this->displayError($this->l('You need to save the account name before connecting to Nosto.'));
 
 				if (empty($output))
 				{
