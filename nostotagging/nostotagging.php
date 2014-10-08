@@ -817,6 +817,7 @@ class NostoTagging extends Module
 	 */
 	protected function isController($name)
 	{
+		// todo: the ControllerBackwardModule class used in presta 1.4 does not have a php_self property
 		return (!empty($this->context->controller->php_self) && $this->context->controller->php_self === $name);
 	}
 
@@ -1131,6 +1132,7 @@ class NostoTagging extends Module
 			return '';
 
 		$currency = $this->context->currency;
+		// todo: Fatal error: Call to undefined method Cart::getCartRules()
 		$cart_rules = (array)$this->context->cart->getCartRules(CartRule::FILTER_ACTION_GIFT);
 
 		$gift_products = array();
