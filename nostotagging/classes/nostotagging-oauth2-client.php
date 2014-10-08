@@ -100,7 +100,7 @@ class NostoTaggingOAuth2Client
 				'{cod}' => $code
 			)
 		);
-		$response = $request->post($url);
+		$response = $request->get($url);
 		$result = $response->getJsonResult(true);
 
 		if ($response->getCode() !== 200)
