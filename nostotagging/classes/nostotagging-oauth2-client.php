@@ -6,7 +6,7 @@
  */
 class NostoTaggingOAuth2Client
 {
-	const NOSTOTAGGING_OAUTH2_CLIENT_BASE_URL = 'https://nosto.com/oauth';
+	const NOSTOTAGGING_OAUTH2_CLIENT_BASE_URL = 'https://my.nosto.com/oauth';
 	const NOSTOTAGGING_OAUTH2_CLIENT_AUTH_PATH = '/authorize/?client_id={cid}&client_secret={sec}&redirect_uri={uri}&response_type=code';
 	const NOSTOTAGGING_OAUTH2_CLIENT_TOKEN_PATH = '/token/?code={cod}&client_id={cid}&client_secret={sec}&redirect_uri={uri}&grant_type=authorization_code';
 
