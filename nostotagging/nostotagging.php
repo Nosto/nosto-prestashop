@@ -559,30 +559,7 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayPaymentTop()
 	{
-		if (isset($this->context->customer->id, $_COOKIE[self::NOSTOTAGGING_CUSTOMER_ID_COOKIE]))
-		{
-			$table = _DB_PREFIX_.self::NOSTOTAGGING_CUSTOMER_LINK_TABLE;
-			$id_customer = (int)$this->context->customer->id;
-			$id_nosto_customer = pSQL($_COOKIE[self::NOSTOTAGGING_CUSTOMER_ID_COOKIE]);
-			$where = '`id_customer` = '.$id_customer.' AND `id_nosto_customer` = "'.$id_nosto_customer.'"';
-			$existing_link = Db::getInstance()->getRow('SELECT * FROM `'.$table.'` WHERE '.$where);
-			if (empty($existing_link))
-			{
-				$data = array(
-					'id_customer' => $id_customer,
-					'id_nosto_customer' => $id_nosto_customer,
-					'date_add' => date('Y-m-d H:i:s')
-				);
-				Db::getInstance()->insert($table, $data, false, true, Db::INSERT, false);
-			}
-			else
-			{
-				$data = array(
-					'date_upd' => date('Y-m-d H:i:s')
-				);
-				Db::getInstance()->update($table, $data, $where, 0, false, true, false);
-			}
-		}
+		$this->updateCustomerLinkTable();
 	}
 
 	/**
@@ -744,6 +721,38 @@ class NostoTagging extends Module
 		$table = _DB_PREFIX_.self::NOSTOTAGGING_CUSTOMER_LINK_TABLE;
 		$id_customer = (int)$this->context->customer->id;
 		return Db::getInstance()->getValue('SELECT `id_nosto_customer` FROM `'.$table.'` WHERE `id_customer` = '.$id_customer.' ORDER BY `date_add` ASC');
+	}
+
+	/**
+	 * Updates the customer link table that handles linking prestashop orders to nosto users.
+	 */
+	protected function updateCustomerLinkTable()
+	{
+		// todo: could we exchange the id_customer with id_cart??
+		if (isset($this->context->customer->id, $_COOKIE[self::NOSTOTAGGING_CUSTOMER_ID_COOKIE]))
+		{
+			$table = _DB_PREFIX_.self::NOSTOTAGGING_CUSTOMER_LINK_TABLE;
+			$id_customer = (int)$this->context->customer->id;
+			$id_nosto_customer = pSQL($_COOKIE[self::NOSTOTAGGING_CUSTOMER_ID_COOKIE]);
+			$where = '`id_customer` = '.$id_customer.' AND `id_nosto_customer` = "'.$id_nosto_customer.'"';
+			$existing_link = Db::getInstance()->getRow('SELECT * FROM `'.$table.'` WHERE '.$where);
+			if (empty($existing_link))
+			{
+				$data = array(
+					'id_customer' => $id_customer,
+					'id_nosto_customer' => $id_nosto_customer,
+					'date_add' => date('Y-m-d H:i:s')
+				);
+				Db::getInstance()->insert($table, $data, false, true, Db::INSERT, false);
+			}
+			else
+			{
+				$data = array(
+					'date_upd' => date('Y-m-d H:i:s')
+				);
+				Db::getInstance()->update($table, $data, $where, 0, false, true, false);
+			}
+		}
 	}
 
 	/**
