@@ -18,8 +18,8 @@ class NostoTagging extends Module
 	const NOSTOTAGGING_CONFIG_KEY_USE_DEFAULT_NOSTO_ELEMENTS = 'NOSTOTAGGING_DEFAULT_ELEMENTS';
 	const NOSTOTAGGING_CONFIG_KEY_SSO_TOKEN = 'NOSTOTAGGING_SSO_TOKEN';
 	const NOSTOTAGGING_CONFIG_ADMIN_URL = 'NOSTOTAGGING_ADMIN_URL';
-	const NOSTOTAGGING_CONFIG_OAUTH2_CLIENT_SECRET = 'NOSTOTAGGING_OAUTH2_CLIENT_SECRET';
 	const NOSTOTAGGING_SERVER_ADDRESS = 'connect.nosto.com';
+	const NOSTOTAGGING_CONFIG_OAUTH2_CLIENT_SECRET = 'NOSTOTAGGING_OAUTH2_CLIENT_KEY';
 	const NOSTOTAGGING_PRODUCT_IN_STOCK = 'InStock';
 	const NOSTOTAGGING_PRODUCT_OUT_OF_STOCK = 'OutOfStock';
 	const NOSTOTAGGING_CUSTOMER_ID_COOKIE = '2c_cId';
@@ -311,6 +311,8 @@ class NostoTagging extends Module
 			);
 			return false;
 		}
+
+		$this->setAccountName($token->merchant_name, true/* $global */);
 
 		foreach (self::$authorized_data_exchange_config_key_map as $config_key => $data_key)
 			if (isset($result[$data_key]))

@@ -7,6 +7,7 @@
 class NostoTaggingOAuth2Client
 {
 	const NOSTOTAGGING_OAUTH2_CLIENT_BASE_URL = 'https://my.nosto.com/oauth';
+	const NOSTOTAGGING_OAUTH2_CLIENT_ID = 'prestashop';
 	const NOSTOTAGGING_OAUTH2_CLIENT_AUTH_PATH = '/authorize?client_id={cid}&client_secret={sec}&redirect_uri={uri}&response_type=code';
 	const NOSTOTAGGING_OAUTH2_CLIENT_TOKEN_PATH = '/token?code={cod}&client_id={cid}&client_secret={sec}&redirect_uri={uri}&grant_type=authorization_code';
 
@@ -65,7 +66,7 @@ class NostoTaggingOAuth2Client
 		return NostoTaggingHttpRequest::build_uri(
 			self::NOSTOTAGGING_OAUTH2_CLIENT_BASE_URL.self::NOSTOTAGGING_OAUTH2_CLIENT_AUTH_PATH,
 			array(
-				'{cid}' => $this->client_id,
+				'{cid}' => self::NOSTOTAGGING_OAUTH2_CLIENT_ID,
 				'{sec}' => $this->client_secret,
 				'{uri}' => $this->redirect_url
 			)
@@ -94,7 +95,7 @@ class NostoTaggingOAuth2Client
 		$url = NostoTaggingHttpRequest::build_uri(
 			self::NOSTOTAGGING_OAUTH2_CLIENT_BASE_URL.self::NOSTOTAGGING_OAUTH2_CLIENT_TOKEN_PATH,
 			array(
-				'{cid}' => $this->client_id,
+				'{cid}' => self::NOSTOTAGGING_OAUTH2_CLIENT_ID,
 				'{sec}' => $this->client_secret,
 				'{uri}' => $this->redirect_url,
 				'{cod}' => $code
@@ -117,6 +118,16 @@ class NostoTaggingOAuth2Client
 		{
 			NostoTaggingLogger::log(
 				__CLASS__.'::'.__FUNCTION__.' - No "access_token" returned after authenticating with code.',
+				NostoTaggingLogger::LOG_SEVERITY_ERROR,
+				$response->getCode()
+			);
+			return false;
+		}
+
+		if (empty($result['merchant_name']))
+		{
+			NostoTaggingLogger::log(
+				__CLASS__.'::'.__FUNCTION__.' - No "merchant_name" returned after authenticating with code.',
 				NostoTaggingLogger::LOG_SEVERITY_ERROR,
 				$response->getCode()
 			);

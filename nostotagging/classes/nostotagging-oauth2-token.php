@@ -11,6 +11,11 @@ class NostoTaggingOAuth2Token
 	public $access_token;
 
 	/**
+	 * @var string the merchant name string.
+	 */
+	public $merchant_name;
+
+	/**
 	 * @var string the type of token, e.g. "bearer".
 	 */
 	public $token_type;
