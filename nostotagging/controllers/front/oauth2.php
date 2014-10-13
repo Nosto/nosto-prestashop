@@ -19,7 +19,7 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
 			if (($token = $client->authenticate($code)) !== false)
 				if($this->module->exchangeDataWithNosto($token))
 				{
-					$msg = $this->module->l('Account "%s" successfully connected to Nosto.');
+					$msg = $this->module->l('Account %s successfully connected to Nosto.');
 					$msg = sprintf($msg, $token->merchant_name);
 					$this->module->setAdminFlashMessage('success', $msg);
 					$this->redirectToModuleAdmin();
