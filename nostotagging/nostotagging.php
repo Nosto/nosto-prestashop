@@ -27,6 +27,7 @@ class NostoTagging extends Module
 	const NOSTOTAGGING_API_SIGNUP_TOKEN = 'JRtgvoZLMl4NPqO9XWhRdvxkTMtN82ITTJij8U7necieJPCvjtZjm5C4fpNrYJ81';
 	const NOSTOTAGGING_API_PLATFORM_NAME = 'prestashop';
 	const NOSTOTAGGING_API_SSOAUTH_PATH = '/users/{email}';
+	const NOSTOTAGGING_API_PRODUCT_RECRAWL_PATH = '/products/recrawl';
 	const NOSTOTAGGING_IFRAME_URL = '{l}?r=/hub/prestashop/{m}';
 
 	/**
@@ -107,7 +108,8 @@ class NostoTagging extends Module
 			&& $this->registerHook('displaySearchFooter')
 			&& $this->registerHook('actionPaymentConfirmation')
 			&& $this->registerHook('displayPaymentTop')
-			&& $this->registerHook('displayHome');
+			&& $this->registerHook('displayHome')
+			&& $this->registerHook('actionObjectUpdateAfter');
 	}
 
 	/**
@@ -656,6 +658,38 @@ class NostoTagging extends Module
 			return '';
 
 		return $this->display(__FILE__, 'home_nosto-elements.tpl');
+	}
+
+	/**
+	 * Hook that is fired after a object is updated in the db.
+	 *
+	 * @param array $params
+	 */
+	public function hookActionObjectUpdateAfter(Array $params)
+	{
+		if (isset($params['object']))
+		{
+			$object = $params['object'];
+			if ($object instanceof Product)
+			{
+				// Send a request to Nosto to re-crawl this product.
+				// todo: how does nosto know which account the product belongs to??
+				$request = new NostoTaggingHttpRequest();
+				$response = $request->post(
+					self::NOSTOTAGGING_API_BASE_URL.self::NOSTOTAGGING_API_PRODUCT_RECRAWL_PATH,
+					array('Content-type: application/json'),
+					json_encode(array('product_ids' => array($object->id)))
+				);
+				if ($response->getCode() !== 200)
+					NostoTaggingLogger::log(
+						__CLASS__.'::'.__FUNCTION__.' - Failed to send re-crawl instruction to Nosto.',
+						NostoTaggingLogger::LOG_SEVERITY_ERROR,
+						$response->getCode(),
+						get_class($object),
+						(int)$object->id
+					);
+			}
+		}
 	}
 
 	/**
