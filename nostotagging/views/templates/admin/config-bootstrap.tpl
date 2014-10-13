@@ -19,10 +19,8 @@
             </div>
 
             <div class="form-group" id="nostotagging_account_name_group" style="{if !$nostotagging_has_account}display:none;{/if}">
-                <label class="control-label col-lg-3 required">{l s='Account name' mod='nostotagging'}</label>
+                <div class="col-lg-3">&nbsp;</div>
                 <div class="col-lg-9 ">
-                    <input type="text" name="nostotagging_account_name" id="nostotagging_account_name" value="{$nostotagging_account_name}" class="fixed-width-xxl" size="40" required="required">
-                    <p class="help-block">{l s='Your Nosto marketing automation service account name.' mod='nostotagging'}</p>
                     {if $is_account_authorized === false}
                         <button type="submit" value="1" class="btn btn-default" name="submit_nostotagging_authorize_account">{l s='Connect to Nosto' mod='nostotagging'}</button>
                         <p class="help-block">{l s='In order to use all Nosto features you need to connect your account with Nosto.' mod='nostotagging'}</p>

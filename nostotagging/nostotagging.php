@@ -19,7 +19,6 @@ class NostoTagging extends Module
 	const NOSTOTAGGING_CONFIG_KEY_SSO_TOKEN = 'NOSTOTAGGING_SSO_TOKEN';
 	const NOSTOTAGGING_CONFIG_ADMIN_URL = 'NOSTOTAGGING_ADMIN_URL';
 	const NOSTOTAGGING_SERVER_ADDRESS = 'connect.nosto.com';
-	const NOSTOTAGGING_CONFIG_OAUTH2_CLIENT_SECRET = 'NOSTOTAGGING_OAUTH2_CLIENT_KEY';
 	const NOSTOTAGGING_PRODUCT_IN_STOCK = 'InStock';
 	const NOSTOTAGGING_PRODUCT_OUT_OF_STOCK = 'OutOfStock';
 	const NOSTOTAGGING_CUSTOMER_ID_COOKIE = '2c_cId';
@@ -153,12 +152,10 @@ class NostoTagging extends Module
 		$output = '';
 
 		$field_has_account = $this->name.'_has_account';
-		$field_account_name = $this->name.'_account_name';
 		$field_account_email = $this->name.'_account_email';
 		$field_use_defaults = $this->name.'_use_defaults';
 
 		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-			$account_name = (string)Tools::getValue($field_account_name);
 			$account_email = (string)Tools::getValue($field_account_email);
 			$default_elements = (int)Tools::getValue($field_use_defaults);
 
@@ -169,61 +166,31 @@ class NostoTagging extends Module
 				elseif (!Validate::isEmail($account_email))
 					$output .= $this->displayError($this->l('Email is not a valid email address.'));
 				elseif ($this->createAccount($account_email))
-				{
 					$output .= $this->displayConfirmation($this->l('Account created.'));
-					$account_name = $this->getAccountName();
-				}
 				else
 					$output .= $this->displayError($this->l('Account could not be automatically created. Please visit nosto.com to create a new account.'));
 			}
 			elseif (Tools::isSubmit('submit_nostotagging_general_settings'))
 			{
-				if (empty($account_name))
-					$output .= $this->displayError($this->l('Account name cannot be empty.'));
-
 				if ($default_elements !== 0 && $default_elements !== 1)
 					$output .= $this->displayError($this->l('Use default nosto elements setting is invalid.'));
 
 				if (empty($output))
 				{
-					$this->setAccountName($account_name, true/* $global */);
 					$this->setUseDefaultNostoElements($default_elements, true/* $global */);
 					$output .= $this->displayConfirmation($this->l('Configuration saved.'));
 				}
 			}
 			elseif(Tools::isSubmit('submit_nostotagging_authorize_account'))
 			{
-				// The account that is about to be authorized needs to be saved.
-				$saved_account_name = $this->getAccountName();
-				if (empty($saved_account_name) || $saved_account_name !== $account_name)
-					$output .= $this->displayError($this->l('You need to save the account name before connecting to Nosto.'));
-
-				if (empty($output))
-				{
-					// The client secret is re-generated every time a new oauth2 request cycle is started.
-					// Initially passed here in the "authorize" request, against the oauth2 "Authorization Code" spec.
-					// This is due to the fact that we do not have a real secret as this module is publicly available.
-					// By passing it here, the authorization server can make sure that both the "authorize" and
-					// the "token" requests comes from the "same" client. The request is made over https, which makes
-					// sure that the secret cannot be intercepted during transfer.
-					// This enables anyone to create their own client which replicates this behavior, but in addition
-					// to the client secret, the redirect_uri that is sent with the request is also validated to make
-					// sure it belongs to the client_id. This stops evil clients from getting the authorization code,
-					// as it can only be sent to the redirect_uri that belongs to the account owner.
-					$client_secret = bin2hex(NostoTaggingSecurity::rand(32));
-					$this->setConfigValue(self::NOSTOTAGGING_CONFIG_OAUTH2_CLIENT_SECRET, $client_secret, true/* global */);
-					$client = new NostoTaggingOAuth2Client();
-					$client->setClientId($account_name);
-					$client->setClientSecret($client_secret);
-					$client->setRedirectUrl(urlencode($this->getOAuth2ControllerUrl()));
-					header('Location: '.$client->getAuthorizationUrl());
-					die();
-				}
+				$client = new NostoTaggingOAuth2Client();
+				$client->setRedirectUrl(urlencode($this->getOAuth2ControllerUrl()));
+				header('Location: '.$client->getAuthorizationUrl());
+				die();
 			}
 		}
 		else
 		{
-			$account_name = $this->getAccountName();
 			$account_email = $this->context->employee->email;
 			$default_elements = $this->getUseDefaultNostoElements();
 
@@ -236,10 +203,9 @@ class NostoTagging extends Module
 		$this->context->controller->addJS($this->_path.'js/nostotagging-admin-config.js');
 		$this->context->smarty->assign(array(
 			$field_has_account => $this->hasAccountName(),
-			$field_account_name => $account_name,
 			$field_account_email => $account_email,
 			$field_use_defaults => $default_elements,
-			'is_account_authorized' => $this->isAccountAuthorized(),
+			'is_account_authorized' => $this->isAccountConnectedToNosto(),
 		));
 
 		if (version_compare(substr(_PS_VERSION_, 0, 3), '1.6', '>='))
@@ -247,11 +213,11 @@ class NostoTagging extends Module
 			// Try to login employee to Nosto in order to get a url to the internal settings page,
 			// which is then shown in an iframe on the module config page.
 			$login_url = $this->doSSOLogin();
-			if (!empty($login_url) && !empty($account_name))
+			if (!empty($login_url) && $this->isAccountConnectedToNosto())
 				$this->context->smarty->assign(array(
 					'iframe_url' => strtr(self::NOSTOTAGGING_IFRAME_URL, array(
 						'{l}' => $login_url,
-						'{m}' => $account_name
+						'{m}' => $this->getAccountName()
 					))
 				));
 			$output .= $this->display(__FILE__, 'views/templates/admin/config-bootstrap.tpl');
@@ -318,7 +284,7 @@ class NostoTagging extends Module
 			if (isset($result[$data_key]))
 				$this->setConfigValue($config_key, (string)$result[$data_key], true/* $global */);
 
-		return true;
+		return $this->isAccountConnectedToNosto();
 	}
 
 	/**
@@ -452,16 +418,6 @@ class NostoTagging extends Module
 	public function setAdminUrl($admin_url, $global = false)
 	{
 		return $this->setConfigValue(self::NOSTOTAGGING_CONFIG_ADMIN_URL, (string)$admin_url, $global);
-	}
-
-	/**
-	 * Getter for the oauth2 client secret.
-	 *
-	 * @return string
-	 */
-	public function getClientSecret()
-	{
-		return (string)Configuration::get(self::NOSTOTAGGING_CONFIG_OAUTH2_CLIENT_SECRET);
 	}
 
 	/**
@@ -893,8 +849,10 @@ class NostoTagging extends Module
 	 *
 	 * @return bool true if the account has been authorized, false otherwise.
 	 */
-	protected function isAccountAuthorized()
+	protected function isAccountConnectedToNosto()
 	{
+		if (!$this->hasAccountName())
+			return false;
 		foreach (self::$authorized_data_exchange_config_key_map as $config_key => $data_key)
 			if (Configuration::get($config_key) === false)
 				return false;

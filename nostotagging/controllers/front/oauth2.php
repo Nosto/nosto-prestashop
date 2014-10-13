@@ -15,13 +15,11 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
 			// The user accepted the authorization request.
 			// The authorization server responded with a code that can be used to exchange for the access token.
 			$client = new NostoTaggingOAuth2Client();
-			$client->setClientId($this->module->getAccountName());
-			$client->setClientSecret($this->module->getClientSecret());
 			$client->setRedirectUrl($this->module->getOAuth2ControllerUrl());
 			if (($token = $client->authenticate($code)) !== false)
 				if($this->module->exchangeDataWithNosto($token))
 				{
-					$this->module->setAdminFlashMessage('success', $this->module->l('Account successfully connected to Nosto.'));
+					$this->module->setAdminFlashMessage('success', $this->module->l('Account %s successfully connected to Nosto.'));
 					$this->redirectToModuleAdmin();
 				}
 			$this->module->setAdminFlashMessage('error', $this->module->l('Account could not be connected to Nosto. Please contact Nosto support.'));

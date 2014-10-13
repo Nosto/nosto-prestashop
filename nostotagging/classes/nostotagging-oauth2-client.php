@@ -8,13 +8,13 @@ class NostoTaggingOAuth2Client
 {
 	const NOSTOTAGGING_OAUTH2_CLIENT_BASE_URL = 'https://my.nosto.com/oauth';
 	const NOSTOTAGGING_OAUTH2_CLIENT_ID = 'prestashop';
-	const NOSTOTAGGING_OAUTH2_CLIENT_AUTH_PATH = '/authorize?client_id={cid}&client_secret={sec}&redirect_uri={uri}&response_type=code';
-	const NOSTOTAGGING_OAUTH2_CLIENT_TOKEN_PATH = '/token?code={cod}&client_id={cid}&client_secret={sec}&redirect_uri={uri}&grant_type=authorization_code';
+	const NOSTOTAGGING_OAUTH2_CLIENT_AUTH_PATH = '/authorize?client_id={cid}&redirect_uri={uri}&response_type=code';
+	const NOSTOTAGGING_OAUTH2_CLIENT_TOKEN_PATH = '/token?code={cod}&client_id={cid}&redirect_uri={uri}&grant_type=authorization_code';
 
 	/**
 	 * @var string the client id the identify this application to the oauth2 server.
 	 */
-	protected $client_id;
+	protected $client_id = self::NOSTOTAGGING_OAUTH2_CLIENT_ID;
 
 	/**
 	 * @var string the client secret the identify this application to the oauth2 server.
@@ -66,8 +66,7 @@ class NostoTaggingOAuth2Client
 		return NostoTaggingHttpRequest::build_uri(
 			self::NOSTOTAGGING_OAUTH2_CLIENT_BASE_URL.self::NOSTOTAGGING_OAUTH2_CLIENT_AUTH_PATH,
 			array(
-				'{cid}' => self::NOSTOTAGGING_OAUTH2_CLIENT_ID,
-				'{sec}' => $this->client_secret,
+				'{cid}' => $this->client_id,
 				'{uri}' => $this->redirect_url
 			)
 		);
@@ -96,7 +95,6 @@ class NostoTaggingOAuth2Client
 			self::NOSTOTAGGING_OAUTH2_CLIENT_BASE_URL.self::NOSTOTAGGING_OAUTH2_CLIENT_TOKEN_PATH,
 			array(
 				'{cid}' => self::NOSTOTAGGING_OAUTH2_CLIENT_ID,
-				'{sec}' => $this->client_secret,
 				'{uri}' => $this->redirect_url,
 				'{cod}' => $code
 			)
