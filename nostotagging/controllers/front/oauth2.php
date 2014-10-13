@@ -37,7 +37,7 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
 			if (($error_description = Tools::getValue('error')) !== false)
 				$message_parts[] = $error_description;
 			NostoTaggingLogger::log(
-				__CLASS__.'::'.__FUNCTION__.' - ',implode(' - ', $message_parts),
+				__CLASS__.'::'.__FUNCTION__.' - '.implode(' - ', $message_parts),
 				NostoTaggingLogger::LOG_SEVERITY_ERROR,
 				200
 			);
