@@ -168,8 +168,8 @@ class NostoTagging extends Module
 
 			if (empty($output))
 			{
-				$this->setAccountName($account_name, true/* $global */);
-				$this->setUseDefaultNostoElements($default_elements, true/* $global */);
+				$this->setAccountName($account_name);
+				$this->setUseDefaultNostoElements($default_elements);
 				$output .= $this->displayConfirmation($this->l('Configuration saved.'));
 			}
 		}
@@ -242,8 +242,6 @@ class NostoTagging extends Module
 		// The SSO token is tied to the account, so it needs to be removed if the account is updated.
 		Configuration::deleteByName(self::NOSTOTAGGING_CONFIG_KEY_SSO_TOKEN);
 
-		// Remove all existing settings even if their shop specific (we currently support only global ones).
-		Configuration::deleteByName(self::NOSTOTAGGING_CONFIG_KEY_ACCOUNT_NAME);
 		return $this->setConfigValue(self::NOSTOTAGGING_CONFIG_KEY_ACCOUNT_NAME, (string)$account_name, $global);
 	}
 
@@ -266,8 +264,6 @@ class NostoTagging extends Module
 	 */
 	public function setUseDefaultNostoElements($value, $global = false)
 	{
-		// Remove all existing settings even if their shop specific (we currently support only global ones).
-		Configuration::deleteByName(self::NOSTOTAGGING_CONFIG_KEY_USE_DEFAULT_NOSTO_ELEMENTS);
 		return $this->setConfigValue(self::NOSTOTAGGING_CONFIG_KEY_USE_DEFAULT_NOSTO_ELEMENTS, (int)$value, $global);
 	}
 
@@ -299,8 +295,6 @@ class NostoTagging extends Module
 	 */
 	public function setSSOToken($sso_token, $global = false)
 	{
-		// Remove all existing settings even if their shop specific (we currently support only global ones).
-		Configuration::deleteByName(self::NOSTOTAGGING_CONFIG_KEY_SSO_TOKEN);
 		return $this->setConfigValue(self::NOSTOTAGGING_CONFIG_KEY_SSO_TOKEN, (string)$sso_token, $global);
 	}
 
@@ -837,9 +831,9 @@ class NostoTagging extends Module
 		}
 
 		$result = $response->getJsonResult();
-		$this->setAccountName(self::NOSTOTAGGING_API_PLATFORM_NAME.'-'.$params['name'], true/* $global */);
+		$this->setAccountName(self::NOSTOTAGGING_API_PLATFORM_NAME.'-'.$params['name']);
 		if (!empty($result->sso_token))
-			$this->setSSOToken($result->sso_token, true/* $global */);
+			$this->setSSOToken($result->sso_token);
 
 		return true;
 	}
