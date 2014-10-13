@@ -191,16 +191,22 @@ class NostoTagging extends Module
 
 		if (version_compare(substr(_PS_VERSION_, 0, 3), '1.6', '>='))
 		{
-			// Try to login employee to Nosto in order to get a url to the internal settings page,
-			// which is then shown in an iframe on the module config page.
+			// Try to login employee to Nosto in order to get a url to the internal setting pages,
+			// which are then shown in iframes on the module config page.
 			$login_url = $this->doSSOLogin();
 			if (!empty($login_url) && !empty($account_name))
+			{
 				$this->context->smarty->assign(array(
-					'iframe_url' => strtr(self::NOSTOTAGGING_IFRAME_URL, array(
+					'manage_slots_iframe_url' => strtr(self::NOSTOTAGGING_IFRAME_URL, array(
 						'{l}' => $login_url,
 						'{m}' => $account_name
-					))
+					)),
+					'look_and_feel_iframe_url' => strtr(self::NOSTOTAGGING_IFRAME_URL, array(
+						'{l}' => $login_url,
+						'{m}' => $account_name
+					)),
 				));
+			}
 			$output .= $this->display(__FILE__, 'views/templates/admin/config-bootstrap.tpl');
 		}
 		else
