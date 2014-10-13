@@ -214,7 +214,7 @@ class NostoTagging extends Module
 			$field_use_defaults => $default_elements,
 		));
 
-		if (version_compare(substr(_PS_VERSION_, 0, 3), '1.6', '>='))
+		if (_PS_VERSION_ >= '1.6')
 		{
 			// Try to login employee to Nosto in order to get a url to the internal settings page,
 			// which is then shown in an iframe on the module config page.
@@ -1138,39 +1138,43 @@ class NostoTagging extends Module
 		if (empty($products))
 			return '';
 
+		// Cart rules are available from prestashop 1.5 onwards.
+		if (_PS_VERSION_ >= '1.5')
+		{
+			$cart_rules = (array)$this->context->cart->getCartRules(CartRule::FILTER_ACTION_GIFT);
+			$gift_products = array();
+			foreach ($cart_rules as $cart_rule)
+				if ((int)$cart_rule['gift_product'])
+				{
+					foreach ($products as $key => &$product)
+						if (empty($product['gift'])
+							&& (int)$product['id_product'] === (int)$cart_rule['gift_product']
+							&& (int)$product['id_product_attribute'] === (int)$cart_rule['gift_product_attribute'])
+						{
+							$product['cart_quantity'] = (int)$product['cart_quantity'];
+							$product['cart_quantity']--;
+
+							if (!($product['cart_quantity'] > 0))
+								unset($products[$key]);
+
+							$gift_product = $product;
+							$gift_product['cart_quantity'] = 1;
+							$gift_product['price_wt'] = 0;
+							$gift_product['gift'] = true;
+
+							$gift_products[] = $gift_product;
+
+							break; // One gift product per cart rule
+						}
+					unset($product);
+				}
+
+			$items = array_merge($products, $gift_products);
+		}
+		else
+			$items = $products;
+
 		$currency = $this->context->currency;
-		// todo: Fatal error: Call to undefined method Cart::getCartRules()
-		$cart_rules = (array)$this->context->cart->getCartRules(CartRule::FILTER_ACTION_GIFT);
-
-		$gift_products = array();
-		foreach ($cart_rules as $cart_rule)
-			if ((int)$cart_rule['gift_product'])
-			{
-				foreach ($products as $key => &$product)
-					if (empty($product['gift'])
-						&& (int)$product['id_product'] === (int)$cart_rule['gift_product']
-						&& (int)$product['id_product_attribute'] === (int)$cart_rule['gift_product_attribute'])
-					{
-						$product['cart_quantity'] = (int)$product['cart_quantity'];
-						$product['cart_quantity']--;
-
-						if (!($product['cart_quantity'] > 0))
-							unset($products[$key]);
-
-						$gift_product = $product;
-						$gift_product['cart_quantity'] = 1;
-						$gift_product['price_wt'] = 0;
-						$gift_product['gift'] = true;
-
-						$gift_products[] = $gift_product;
-
-						break; // One gift product per cart rule
-					}
-				unset($product);
-			}
-
-		$items = array_merge($products, $gift_products);
-
 		$nosto_line_items = array();
 		foreach ($items as $item)
 			$nosto_line_items[] = array(
@@ -1313,44 +1317,50 @@ class NostoTagging extends Module
 			$total_wrapping_tax_incl = Tools::ps_round($total_wrapping_tax_incl + $item->total_wrapping_tax_incl, 2);
 		}
 
-		// We need the cart rules used for the order to check for gift products and free shipping.
-		// The cart is the same even if the order is split into many objects.
-		$cart = new Cart($order->id_cart);
-		if (Validate::isLoadedObject($cart))
-			$cart_rules = (array)$cart->getCartRules();
+		// Cart rules are available from prestashop 1.5 onwards.
+		if (_PS_VERSION_ >= '1.5')
+		{
+			// We need the cart rules used for the order to check for gift products and free shipping.
+			// The cart is the same even if the order is split into many objects.
+			$cart = new Cart($order->id_cart);
+			if (Validate::isLoadedObject($cart))
+				$cart_rules = (array)$cart->getCartRules();
+			else
+				$cart_rules = array();
+
+			$gift_products = array();
+			foreach ($cart_rules as $cart_rule)
+				if ((int)$cart_rule['gift_product'])
+				{
+					foreach ($products as $key => &$product)
+						if (empty($product['gift'])
+							&& (int)$product['product_id'] === (int)$cart_rule['gift_product']
+							&& (int)$product['product_attribute_id'] === (int)$cart_rule['gift_product_attribute'])
+						{
+							$product['product_quantity'] = (int)$product['product_quantity'];
+							$product['product_quantity']--;
+
+							if (!($product['product_quantity'] > 0))
+								unset($products[$key]);
+
+							$total_gift_tax_incl = Tools::ps_round($total_gift_tax_incl + $product['product_price_wt'], 2);
+
+							$gift_product = $product;
+							$gift_product['product_quantity'] = 1;
+							$gift_product['product_price_wt'] = 0;
+							$gift_product['gift'] = true;
+
+							$gift_products[] = $gift_product;
+
+							break; // One gift product per cart rule
+						}
+					unset($product);
+				}
+
+			$items = array_merge($products, $gift_products);
+		}
 		else
-			$cart_rules = array();
-
-		$gift_products = array();
-		foreach ($cart_rules as $cart_rule)
-			if ((int)$cart_rule['gift_product'])
-			{
-				foreach ($products as $key => &$product)
-					if (empty($product['gift'])
-						&& (int)$product['product_id'] === (int)$cart_rule['gift_product']
-						&& (int)$product['product_attribute_id'] === (int)$cart_rule['gift_product_attribute'])
-					{
-						$product['product_quantity'] = (int)$product['product_quantity'];
-						$product['product_quantity']--;
-
-						if (!($product['product_quantity'] > 0))
-							unset($products[$key]);
-
-						$total_gift_tax_incl = Tools::ps_round($total_gift_tax_incl + $product['product_price_wt'], 2);
-
-						$gift_product = $product;
-						$gift_product['product_quantity'] = 1;
-						$gift_product['product_price_wt'] = 0;
-						$gift_product['gift'] = true;
-
-						$gift_products[] = $gift_product;
-
-						break; // One gift product per cart rule
-					}
-				unset($product);
-			}
-
-		$items = array_merge($products, $gift_products);
+			$items = $products;
 
 		$customer = $order->getCustomer();
 		$nosto_order = array();
