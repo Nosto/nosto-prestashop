@@ -19,10 +19,13 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
 			if (($token = $client->authenticate($code)) !== false)
 				if($this->module->exchangeDataWithNosto($token))
 				{
-					$this->module->setAdminFlashMessage('success', $this->module->l('Account %s successfully connected to Nosto.'));
+					$msg = $this->module->l('Account "%s" successfully connected to Nosto.');
+					$msg = sprintf($msg, $token->merchant_name);
+					$this->module->setAdminFlashMessage('success', $msg);
 					$this->redirectToModuleAdmin();
 				}
-			$this->module->setAdminFlashMessage('error', $this->module->l('Account could not be connected to Nosto. Please contact Nosto support.'));
+			$msg = $this->module->l('Account could not be connected to Nosto. Please contact Nosto support.');
+			$this->module->setAdminFlashMessage('error', $msg);
 			$this->redirectToModuleAdmin();
 		}
 		elseif (($error = Tools::getValue('error')) !== false)
@@ -38,7 +41,8 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
 				NostoTaggingLogger::LOG_SEVERITY_ERROR,
 				200
 			);
-			$this->module->setAdminFlashMessage('error', $this->module->l('Account could not be connected to Nosto. You rejected the connection request.'));
+			$msg = $this->module->l('Account could not be connected to Nosto. You rejected the connection request.');
+			$this->module->setAdminFlashMessage('error', $msg);
 			$this->redirectToModuleAdmin();
 		}
 		$this->notFound();
