@@ -6,6 +6,8 @@ require_once(dirname(__FILE__).'/classes/nostotagging-logger.php');
 require_once(dirname(__FILE__).'/classes/nostotagging-http-request.php');
 require_once(dirname(__FILE__).'/classes/nostotagging-http-response.php');
 require_once(dirname(__FILE__).'/classes/nostotagging-cipher.php');
+require_once(dirname(__FILE__).'/classes/nostotagging-oauth2-client.php');
+require_once(dirname(__FILE__).'/classes/nostotagging-oauth2-token.php');
 
 /**
  * NostoTagging module that integrates Nosto marketing automation service.
@@ -15,6 +17,7 @@ class NostoTagging extends Module
 	const NOSTOTAGGING_CONFIG_KEY_ACCOUNT_NAME = 'NOSTOTAGGING_ACCOUNT_NAME';
 	const NOSTOTAGGING_CONFIG_KEY_USE_DEFAULT_NOSTO_ELEMENTS = 'NOSTOTAGGING_DEFAULT_ELEMENTS';
 	const NOSTOTAGGING_CONFIG_KEY_SSO_TOKEN = 'NOSTOTAGGING_SSO_TOKEN';
+	const NOSTOTAGGING_CONFIG_ADMIN_URL = 'NOSTOTAGGING_ADMIN_URL';
 	const NOSTOTAGGING_SERVER_ADDRESS = 'connect.nosto.com';
 	const NOSTOTAGGING_PRODUCT_IN_STOCK = 'InStock';
 	const NOSTOTAGGING_PRODUCT_OUT_OF_STOCK = 'OutOfStock';
@@ -28,6 +31,15 @@ class NostoTagging extends Module
 	const NOSTOTAGGING_API_PLATFORM_NAME = 'prestashop';
 	const NOSTOTAGGING_API_SSOAUTH_PATH = '/users/{email}';
 	const NOSTOTAGGING_IFRAME_URL = '{l}?r=/hub/prestashop/{m}';
+
+	/**
+	 * Map of what config data we expect from the Nosto data exchange when authorizing the Nosto account.
+	 *
+	 * @var array
+	 */
+	protected static $authorized_data_exchange_config_key_map = array(
+		self::NOSTOTAGGING_CONFIG_KEY_SSO_TOKEN => 'api_sso'
+	);
 
 	/**
 	 * Custom hooks to add for this module.
@@ -133,60 +145,67 @@ class NostoTagging extends Module
 	 */
 	public function getContent()
 	{
+		// Always update the url to the module admin page when we access it.
+		// This can then later be used by the oauth2 controller to redirect the user back.
+		$this->setAdminUrl($this->getCurrentUrl());
+
 		$output = '';
 
 		$field_has_account = $this->name.'_has_account';
-		$field_account_name = $this->name.'_account_name';
 		$field_account_email = $this->name.'_account_email';
 		$field_use_defaults = $this->name.'_use_defaults';
 
-		$account_name = (string)Tools::getValue($field_account_name);
-		$account_email = (string)Tools::getValue($field_account_email);
-		$default_elements = (int)Tools::getValue($field_use_defaults);
+		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+			$account_email = (string)Tools::getValue($field_account_email);
+			$default_elements = (int)Tools::getValue($field_use_defaults);
 
-		if (Tools::isSubmit('submit_nostotagging_new_account'))
-		{
-			if (empty($account_email))
-				$output .= $this->displayError($this->l('Email cannot be empty.'));
-			elseif (!Validate::isEmail($account_email))
-				$output .= $this->displayError($this->l('Email is not a valid email address.'));
-			elseif ($this->createAccount($account_email))
+			if (Tools::isSubmit('submit_nostotagging_new_account'))
 			{
-				$output .= $this->displayConfirmation($this->l('Account created.'));
-				$account_name = $this->getAccountName();
+				if (empty($account_email))
+					$output .= $this->displayError($this->l('Email cannot be empty.'));
+				elseif (!Validate::isEmail($account_email))
+					$output .= $this->displayError($this->l('Email is not a valid email address.'));
+				elseif ($this->createAccount($account_email))
+					$output .= $this->displayConfirmation($this->l('Account created.'));
+				else
+					$output .= $this->displayError($this->l('Account could not be automatically created. Please visit nosto.com to create a new account.'));
 			}
-			else
-				$output .= $this->displayError($this->l('Account could not be automatically created. Please visit nosto.com to create a new account.'));
-		}
-		elseif (Tools::isSubmit('submit_nostotagging_general_settings'))
-		{
-			if (empty($account_name))
-				$output .= $this->displayError($this->l('Account name cannot be empty.'));
-
-			if ($default_elements !== 0 && $default_elements !== 1)
-				$output .= $this->displayError($this->l('Use default nosto elements setting is invalid.'));
-
-			if (empty($output))
+			elseif (Tools::isSubmit('submit_nostotagging_general_settings'))
 			{
-				$this->setAccountName($account_name);
-				$this->setUseDefaultNostoElements($default_elements);
-				$output .= $this->displayConfirmation($this->l('Configuration saved.'));
+				if ($default_elements !== 0 && $default_elements !== 1)
+					$output .= $this->displayError($this->l('Use default nosto elements setting is invalid.'));
+
+				if (empty($output))
+				{
+					$this->setUseDefaultNostoElements($default_elements);
+					$output .= $this->displayConfirmation($this->l('Configuration saved.'));
+				}
+			}
+			elseif(Tools::isSubmit('submit_nostotagging_authorize_account'))
+			{
+				$client = new NostoTaggingOAuth2Client();
+				$client->setRedirectUrl(urlencode($this->getOAuth2ControllerUrl()));
+				header('Location: '.$client->getAuthorizationUrl());
+				die();
 			}
 		}
-
-		if (empty($output))
+		else
 		{
-			$account_name = $this->getAccountName();
 			$account_email = $this->context->employee->email;
 			$default_elements = $this->getUseDefaultNostoElements();
+
+			foreach ($this->getAdminFlashMessages('error') as $error_message)
+				$output .= $this->displayError($this->l($error_message));
+			foreach ($this->getAdminFlashMessages('success') as $success_message)
+				$output .= $this->displayConfirmation($this->l($success_message));
 		}
 
 		$this->context->controller->addJS($this->_path.'js/nostotagging-admin-config.js');
 		$this->context->smarty->assign(array(
 			$field_has_account => $this->hasAccountName(),
-			$field_account_name => $account_name,
 			$field_account_email => $account_email,
 			$field_use_defaults => $default_elements,
+			'is_account_authorized' => $this->isAccountConnectedToNosto(),
 		));
 
 		if (version_compare(substr(_PS_VERSION_, 0, 3), '1.6', '>='))
@@ -194,11 +213,11 @@ class NostoTagging extends Module
 			// Try to login employee to Nosto in order to get a url to the internal settings page,
 			// which is then shown in an iframe on the module config page.
 			$login_url = $this->doSSOLogin();
-			if (!empty($login_url) && !empty($account_name))
+			if (!empty($login_url) && $this->isAccountConnectedToNosto())
 				$this->context->smarty->assign(array(
 					'iframe_url' => strtr(self::NOSTOTAGGING_IFRAME_URL, array(
 						'{l}' => $login_url,
-						'{m}' => $account_name
+						'{m}' => $this->getAccountName()
 					))
 				));
 			$output .= $this->display(__FILE__, 'views/templates/admin/config-bootstrap.tpl');
@@ -207,6 +226,77 @@ class NostoTagging extends Module
 			$output .= $this->display(__FILE__, 'views/templates/admin/config.tpl');
 
 		return $output;
+	}
+
+	/**
+	 * Handle data exchanged with Nosto.
+	 *
+	 * @param NostoTaggingOAuth2Token $token the authorization token that let's the application act on the users behalf.
+	 * @return bool true on success and false on failure.
+	 */
+	public function exchangeDataWithNosto(NostoTaggingOAuth2Token $token)
+	{
+		if (empty($token->access_token))
+		{
+			NostoTaggingLogger::log(
+				__CLASS__.'::'.__FUNCTION__.' - No access token found when trying to exchange data with Nosto.',
+				NostoTaggingLogger::LOG_SEVERITY_ERROR,
+				500
+			);
+			return false;
+		}
+
+		$request = new NostoTaggingHttpRequest();
+		// The request is currently not made according the the OAuth2 spec with the access token in the
+		// Authorization header. This is due to the authentication server not implementing the full OAuth2 spec yet.
+		$response = $request->get(
+			NostoTaggingOAuth2Client::NOSTOTAGGING_OAUTH2_CLIENT_BASE_URL.'/exchange',
+			array(), // headers
+			array(
+				'access_token' => $token->access_token
+			)
+		);
+		$result = $response->getJsonResult(true);
+
+		if ($response->getCode() !== 200)
+		{
+			NostoTaggingLogger::log(
+				__CLASS__.'::'.__FUNCTION__.' - Failed to exchange data with Nosto.',
+				NostoTaggingLogger::LOG_SEVERITY_ERROR,
+				$response->getCode()
+			);
+			return false;
+		}
+
+		if (empty($result))
+		{
+			NostoTaggingLogger::log(
+				__CLASS__.'::'.__FUNCTION__.' - Received invalid data from Nosto.',
+				NostoTaggingLogger::LOG_SEVERITY_ERROR,
+				$response->getCode()
+			);
+			return false;
+		}
+
+		$this->setAccountName($token->merchant_name);
+
+		foreach (self::$authorized_data_exchange_config_key_map as $config_key => $data_key)
+			if (isset($result[$data_key]))
+				$this->setConfigValue($config_key, (string)$result[$data_key]);
+
+		return $this->isAccountConnectedToNosto();
+	}
+
+	/**
+	 * Returns the current shop's url from the context.
+	 *
+	 * @return string the absolute url.
+	 */
+	public function getContextShopUrl()
+	{
+		$shop = $this->context->shop;
+		$uri = (!empty($shop->domain_ssl) ? $shop->domain_ssl : $shop->domain).__PS_BASE_URI__;
+		return (Configuration::get('PS_SSL_ENABLED') ? 'https://' : 'http://').$uri;
 	}
 
 	/**
@@ -240,7 +330,8 @@ class NostoTagging extends Module
 	public function setAccountName($account_name, $global = false)
 	{
 		// The SSO token is tied to the account, so it needs to be removed if the account is updated.
-		Configuration::deleteByName(self::NOSTOTAGGING_CONFIG_KEY_SSO_TOKEN);
+		if ($account_name !== $this->getAccountName())
+			Configuration::deleteByName(self::NOSTOTAGGING_CONFIG_KEY_SSO_TOKEN);
 
 		return $this->setConfigValue(self::NOSTOTAGGING_CONFIG_KEY_ACCOUNT_NAME, (string)$account_name, $global);
 	}
@@ -296,6 +387,31 @@ class NostoTagging extends Module
 	public function setSSOToken($sso_token, $global = false)
 	{
 		return $this->setConfigValue(self::NOSTOTAGGING_CONFIG_KEY_SSO_TOKEN, (string)$sso_token, $global);
+	}
+
+	/**
+	 * Getter for the admin url.
+	 * The url is only returned if the current user is an admin logged in to the back office.
+	 *
+	 * @return string the url.
+	 */
+	public function getAdminUrl()
+	{
+		if ($this->isUserAdmin())
+			return (string)Configuration::get(self::NOSTOTAGGING_CONFIG_ADMIN_URL);
+		return '';
+	}
+
+	/**
+	 * Setter for the admin url.
+	 *
+	 * @param string $admin_url
+	 * @param bool $global
+	 * @return bool
+	 */
+	public function setAdminUrl($admin_url, $global = false)
+	{
+		return $this->setConfigValue(self::NOSTOTAGGING_CONFIG_ADMIN_URL, (string)$admin_url, $global);
 	}
 
 	/**
@@ -653,6 +769,91 @@ class NostoTagging extends Module
 	}
 
 	/**
+	 * Returns the url to the oauth2 controller.
+	 *
+	 * @return string the url.
+	 */
+	public function getOAuth2ControllerUrl()
+	{
+		$link = new Link();
+		return $link->getModuleLink($this->name, 'oauth2');
+	}
+
+	/**
+	 * Checks if the current user is logged in the back office.
+	 *
+	 * @return bool true if user is admin, false otherwise.
+	 */
+	public function isUserAdmin()
+	{
+		$cookie = new Cookie('psAdmin');
+		return (bool)$cookie->id_employee;
+	}
+
+	/**
+	 * Puts a "flash" message to the admin cookie that can be shown during the next request.
+	 *
+	 * @param string $category the message category, e.g. 'error', 'success'.
+	 * @param string $message the message to show.
+	 */
+	public function setAdminFlashMessage($category, $message)
+	{
+		if ($this->isUserAdmin())
+		{
+			$cookie = new Cookie('psAdmin');
+			if (!empty($cookie->nostotagging))
+				$data = json_decode($cookie->nostotagging, true);
+			else
+				$data = array();
+			$data['messages'][$category][] = $message;
+			$cookie->nostotagging = json_encode($data);
+		}
+	}
+
+	/**
+	 * Gets flash messages for the admin user with the given category.
+	 * The messages are removed from the cookie after they are extracted.
+	 *
+	 * @param string $category the message category, e.g. 'error', 'success'.
+	 * @return array the list of messages.
+	 */
+	public function getAdminFlashMessages($category)
+	{
+		$messages = array();
+		if ($this->isUserAdmin())
+		{
+			$cookie = new Cookie('psAdmin');
+			if (!empty($cookie->nostotagging))
+			{
+				$data = json_decode($cookie->nostotagging, true);
+				if (!empty($data['messages'][$category]))
+				{
+					$messages = $data['messages'][$category];
+					unset($data['messages'][$category]);
+				}
+				$cookie->nostotagging = json_encode($data);
+			}
+		}
+		return $messages;
+	}
+
+	/**
+	 * Checks if the account has been authorized with Nosto.
+	 * This is determined by checking if we have all the data needed for make authorized requests to the Nosto API.
+	 *
+	 * @return bool true if the account has been authorized, false otherwise.
+	 */
+	protected function isAccountConnectedToNosto()
+	{
+		if (!$this->hasAccountName())
+			return false;
+		foreach (self::$authorized_data_exchange_config_key_map as $config_key => $data_key)
+			if (Configuration::get($config_key) === false)
+				return false;
+		return true;
+	}
+
+	/**
 	 * Checks if the given controller is the current one.
 	 *
 	 * @param string $name the controller name
@@ -712,6 +913,18 @@ class NostoTagging extends Module
 		}
 
 		return $result->login_url;
+	}
+
+	/**
+	 * Returns the current requested url.
+	 *
+	 * @return string the url.
+	 */
+	protected function getCurrentUrl()
+	{
+		$host = Tools::getHttpHost(true);
+		$request_uri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
+		return $host.$request_uri;
 	}
 
 	/**
@@ -787,16 +1000,11 @@ class NostoTagging extends Module
 	 */
 	protected function createAccount($email = null)
 	{
-		// The accounts shop domain is taken from the shop that is currently selected in the context.
-		$shop = $this->context->shop;
-		$domain = (!empty($shop->domain_ssl) ? $shop->domain_ssl : $shop->domain).__PS_BASE_URI__;
-		$domain = (Configuration::get('PS_SSL_ENABLED') ? 'https://' : 'http://').$domain;
-
 		$params = array(
 			'title' => Configuration::get('PS_SHOP_NAME'),
 			'name' => substr(sha1(rand()), 0, 8),
 			'platform' => self::NOSTOTAGGING_API_PLATFORM_NAME,
-			'front_page_url' => $domain,
+			'front_page_url' => $this->getContextShopUrl(),
 			'currency_code' => $this->context->currency->iso_code,
 			'language_code' => $this->context->language->iso_code,
 			'owner' => array(
@@ -845,11 +1053,9 @@ class NostoTagging extends Module
 	 */
 	protected function initConfig()
 	{
-		if (!$this->hasAccountName())
-			$this->setAccountName('', true);
-		if (!$this->hasSSOToken())
-			$this->setSSOToken('', true);
-		$this->setUseDefaultNostoElements(1, true);
+		$this->setAccountName('', true/* $global */);
+		$this->setSSOToken('', true/* $global */);
+		$this->setUseDefaultNostoElements(1, true/* $global */);
 		return true;
 	}
 
@@ -860,7 +1066,14 @@ class NostoTagging extends Module
 	 */
 	protected function deleteConfig()
 	{
-		Configuration::deleteByName(self::NOSTOTAGGING_CONFIG_KEY_USE_DEFAULT_NOSTO_ELEMENTS);
+		$config_keys = array(
+			self::NOSTOTAGGING_CONFIG_KEY_ACCOUNT_NAME,
+			self::NOSTOTAGGING_CONFIG_KEY_SSO_TOKEN,
+			self::NOSTOTAGGING_CONFIG_KEY_USE_DEFAULT_NOSTO_ELEMENTS,
+			self::NOSTOTAGGING_CONFIG_ADMIN_URL,
+		);
+		foreach ($config_keys as $config_key)
+			Configuration::deleteByName($config_key);
 		return true;
 	}
 
