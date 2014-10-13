@@ -27,7 +27,7 @@ class NostoTagging extends Module
 	const NOSTOTAGGING_API_SIGNUP_TOKEN = 'JRtgvoZLMl4NPqO9XWhRdvxkTMtN82ITTJij8U7necieJPCvjtZjm5C4fpNrYJ81';
 	const NOSTOTAGGING_API_PLATFORM_NAME = 'prestashop';
 	const NOSTOTAGGING_API_SSOAUTH_PATH = '/users/{email}';
-	const NOSTOTAGGING_IFRAME_URL = '{l}?r=/hub/prestashop/{m}';
+	const NOSTOTAGGING_IFRAME_URL = '{l}?r=/hub/prestashop/{m}&language={lang}';
 
 	/**
 	 * Custom hooks to add for this module.
@@ -199,11 +199,13 @@ class NostoTagging extends Module
 				$this->context->smarty->assign(array(
 					'manage_slots_iframe_url' => strtr(self::NOSTOTAGGING_IFRAME_URL, array(
 						'{l}' => $login_url,
-						'{m}' => $account_name
+						'{m}' => $account_name,
+						'{lang}' => $this->context->language->iso_code
 					)),
 					'look_and_feel_iframe_url' => strtr(self::NOSTOTAGGING_IFRAME_URL, array(
 						'{l}' => $login_url,
-						'{m}' => $account_name
+						'{m}' => $account_name,
+						'{lang}' => $this->context->language->iso_code
 					)),
 				));
 			}
