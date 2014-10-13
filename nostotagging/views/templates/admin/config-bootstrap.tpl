@@ -56,7 +56,7 @@
                                 </div>
                             </div>
 
-                            <div class="form-group">
+                            <div class="form-group" style="display:none;">
                                 <label class="control-label col-lg-3">{l s='Use default nosto elements' mod='nostotagging'}</label>
                                 <div class="col-lg-9 ">
                                     <span class="switch prestashop-switch fixed-width-lg">
