@@ -329,9 +329,9 @@ class NostoTagging extends Module
 	 */
 	public function setAccountName($account_name, $global = false)
 	{
-		// The SSO token is tied to the account, so it needs to be removed if the account is updated.
+		// The API tokens are tied to the account, so they need to be removed if the account is updated.
 		if ($account_name !== $this->getAccountName())
-			Configuration::deleteByName(self::NOSTOTAGGING_CONFIG_KEY_SSO_TOKEN);
+			$this->removeApiTokens($global);
 
 		return $this->setConfigValue(self::NOSTOTAGGING_CONFIG_KEY_ACCOUNT_NAME, (string)$account_name, $global);
 	}
@@ -835,6 +835,17 @@ class NostoTagging extends Module
 			}
 		}
 		return $messages;
+	}
+
+	/**
+	 * Removes all API tokens that have been transferred from Nosto.
+	 *
+	 * @param bool $global if the api keys are to be removed for all shops, or just for the current one.
+	 */
+	protected function removeApiTokens($global = false)
+	{
+		foreach (self::$authorized_data_exchange_config_key_map as $config_key => $value)
+			$this->setConfigValue($config_key, '', $global);
 	}
 
 	/**
