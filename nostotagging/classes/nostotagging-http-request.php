@@ -6,6 +6,18 @@
 class NostoTaggingHttpRequest
 {
 	/**
+	 * Builds an uri by replacing the param placeholders in $uri with the ones given in $$replace_params.
+	 *
+	 * @param string $uri
+	 * @param array $replace_params
+	 * @return string
+	 */
+	public static function build_uri($uri, array $replace_params)
+	{
+		return strtr($uri, $replace_params);
+	}
+
+	/**
 	 * Sends a POST request.
 	 *
 	 * @param string $url
@@ -20,6 +32,26 @@ class NostoTaggingHttpRequest
 				'method' => 'POST',
 				'header' => implode("\r\n", $headers),
 				'content' => $content
+			)
+		));
+	}
+
+	/**
+	 * Sends a GET request.
+	 *
+	 * @param string $url
+	 * @param array $headers
+	 * @param array $params
+	 * @return NostoTaggingHttpResponse
+	 */
+	public function get($url, array $headers = array(), array $params = array())
+	{
+		if (!empty($params))
+			$url .= '?'.http_build_query($params);
+		return $this->send($url, array(
+			'http' => array(
+				'method' => 'GET',
+				'header' => implode("\r\n", $headers),
 			)
 		));
 	}
