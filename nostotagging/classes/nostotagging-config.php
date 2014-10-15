@@ -95,29 +95,26 @@ class NostoTaggingConfig
 		else
 			$context_restriction = ' AND (`id_shop_group` IS NULL OR `id_shop_group` = 0) AND (`id_shop` IS NULL OR `id_shop` = 0)';
 
-		if ($language_id === null)
-			$language_restriction = ' AND `id_lang` IS NULL';
-		else
-			$language_restriction = ' AND `id_lang` = '.(int)$language_id;
-
 		$config_table = _DB_PREFIX_.bqSQL(Configuration::$definition['table']);
 		$config_lang_table = $config_table.'_lang';
 
+		if (!empty($language_id))
+			Db::getInstance()->execute('
+				DELETE `'.$config_lang_table.'` FROM `'.$config_lang_table.'`
+				INNER JOIN `'.$config_table.'`
+				ON `'.$config_lang_table.'`.`id_configuration` = `'.$config_table.'`.`id_configuration`
+				WHERE `'.$config_table.'`.`name` LIKE "NOSTOTAGGING_%"
+				AND `id_lang` = '.(int)$language_id
+				.$context_restriction
+			);
+		// We do not actually delete the main config entries, just set them to NULL, as there might me other language
+		// specific entries tied to them. The main entries are not used anyways if there are languages defined.
 		Db::getInstance()->execute('
-			DELETE `'.$config_lang_table.'` FROM `'.$config_lang_table.'`
-			INNER JOIN `'.$config_table.'`
-			ON `'.$config_lang_table.'`.`id_configuration` = `'.$config_table.'`.`id_configuration`
-			WHERE `'.$config_table.'`.`name` LIKE "NOSTOTAGGING_%"'
+			UPDATE `'.$config_table.'`
+			SET `value` = NULL
+			WHERE `name` LIKE "NOSTOTAGGING_%"'
 			.$context_restriction
-			.$language_restriction
 		);
-		// todo: we cannot delete the parent entries, as they might have other language specific entries tied to them.
-		// todo: what can we do? set the values to NULL? what does that change?
-//		Db::getInstance()->execute('
-//			DELETE FROM `'.$config_table.'`
-//			WHERE `name` LIKE "NOSTOTAGGING_%"'
-//			.$context_restriction
-//		);
 
 		Configuration::$_cache[Configuration::$definition['table']] = null;
 

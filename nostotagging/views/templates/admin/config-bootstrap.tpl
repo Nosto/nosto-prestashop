@@ -26,7 +26,7 @@
                         <p>{l s='Your account ID is %s' mod='nostotagging' sprintf=[$nostotagging_account_name]}</p>
                         <p>{l s='If you want to change the account, you need to uninstall first' mod='nostotagging'}</p>
                         {if !empty($iframe_url)}<a id="nostotagging_back_to_iframe" class="btn btn-default" role="button">{l s='Back' mod='nostotagging'}</a>{/if}
-                        <button type="submit" value="1" class="btn btn-danger" name="submit_nostotagging_reset_account">{l s='Uninstall Nosto' mod='nostotagging'}</button>
+                        <button type="submit" value="1" class="btn" style="color: white; background-color: rgb(217, 83, 79); border-color: rgb(217, 83, 79);" name="submit_nostotagging_reset_account">{l s='Uninstall Nosto' mod='nostotagging'}</button>
                     </div>
                     {if !empty($iframe_url)}
                         <iframe id="nostotagging_iframe" frameborder="0" scrolling="no" style="width:100%; height:1250px;" src="{$iframe_url}"></iframe>
@@ -48,14 +48,14 @@
                     </div>
 
                     <div class="form-group" id="nostotagging_existing_account_group" style="{if !$nostotagging_has_account}display:none;{/if}">
-                        <button type="submit" value="1" class="btn btn-primary" name="submit_nostotagging_authorize_account">{l s='Connect to Nosto' mod='nostotagging'}</button>
+                        <button type="submit" value="1" class="btn" style="color: white; background-color: rgb(121, 189, 60); border-color: rgb(121, 189, 60);" name="submit_nostotagging_authorize_account">{l s='Connect to Nosto' mod='nostotagging'}</button>
                     </div>
 
                     <div class="form-group" id="nostotagging_new_account_group" style="{if $nostotagging_has_account}display:none;{/if}">
                         <label for="nostotagging_account_email" class="control-label">{l s='Email' mod='nostotagging'}</label>
                         <input type="text" name="nostotagging_account_email" id="nostotagging_account_email" value="{$nostotagging_account_email}" class="fixed-width-xxl" style="margin: auto;" size="40" required="required">
                         <p class="help-block">{l s='This email address will be used to activate your account, so please make sure it is in use.' mod='nostotagging'}</p>
-                        <button type="submit" value="1" class="btn btn-default" name="submit_nostotagging_new_account">{l s='Create new account' mod='nostotagging'}</button>
+                        <button type="submit" value="1" class="btn" style="color: white; background-color: rgb(121, 189, 60); border-color: rgb(121, 189, 60);" name="submit_nostotagging_new_account">{l s='Create new account' mod='nostotagging'}</button>
                         <p class="help-block">{l s='By creating a new account you agree to Nosto\'s %1$sTerms and Conditions%2$s.' sprintf=['<a href="http://www.nosto.com/terms" target="_blank">', '</a>']}</p>
                     </div>
                 {/if}
