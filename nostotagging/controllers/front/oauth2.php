@@ -63,7 +63,7 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
 		// The OAuth2 request cycle is initiated from the back office, so the user should still be logged in.
 		$admin_url = '';
 		if ($this->module->isUserAdmin())
-			$admin_url = NostoTaggingConfig::read(NostoTaggingConfig::ADMIN_URL, 0/*todo*/);
+			$admin_url = NostoTaggingConfig::read(NostoTaggingConfig::ADMIN_URL);
 		if (!empty($admin_url))
 		{
 			header('Location: '.$admin_url);
