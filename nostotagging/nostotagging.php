@@ -211,7 +211,7 @@ class NostoTagging extends Module
 			$iframe_url = $this->doSSOLogin();
 			if (!empty($iframe_url) && $this->isAccountConnectedToNosto($language_id))
 				$this->context->smarty->assign(array(
-					'iframe_url' => strtr(self::NOSTOTAGGING_IFRAME_URL, array(
+					'iframe_url' => NostoTaggingHttpRequest::build_uri(self::NOSTOTAGGING_IFRAME_URL, array(
 						'{l}' => $iframe_url,
 						'{m}' => NostoTaggingConfig::read(NostoTaggingConfig::ACCOUNT_NAME, $language_id),
 						'{lang}' => $this->context->language->iso_code
@@ -596,13 +596,17 @@ class NostoTagging extends Module
 				$id_nosto_customer = $this->getNostoCustomerId();
 				if (!empty($id_nosto_customer))
 				{
-					$url = self::NOSTOTAGGING_API_BASE_URL.self::NOSTOTAGGING_API_ORDER_TAGGING_PATH;
-					$url = strtr($url, array('{m}' => $account_name, '{cid}' => $id_nosto_customer));
+					$url = NostoTaggingHttpRequest::build_uri(
+						self::NOSTOTAGGING_API_BASE_URL.self::NOSTOTAGGING_API_ORDER_TAGGING_PATH,
+						array('{m}' => $account_name, '{cid}' => $id_nosto_customer)
+					);
 				}
 				else
 				{
-					$url = self::NOSTOTAGGING_API_BASE_URL.self::NOSTOTAGGING_API_UNMATCHED_ORDER_TAGGING_PATH;
-					$url = strtr($url, array('{m}' => $account_name));
+					$url = NostoTaggingHttpRequest::build_uri(
+						self::NOSTOTAGGING_API_BASE_URL.self::NOSTOTAGGING_API_UNMATCHED_ORDER_TAGGING_PATH,
+						array('{m}' => $account_name)
+					);
 					$module_name = $order->module;
 					$module = Module::getInstanceByName($module_name);
 					if ($module !== false && isset($module->version))
@@ -756,7 +760,7 @@ class NostoTagging extends Module
 		$request = new NostoTaggingHttpRequest();
 		$url = self::NOSTOTAGGING_API_BASE_URL.self::NOSTOTAGGING_API_SSOAUTH_PATH;
 		$response = $request->post(
-			strtr($url, array('{email}' => $employee->email)),
+			NostoTaggingHttpRequest::build_uri($url,  array('{email}' => $employee->email)),
 			array(
 				'Content-type: application/json',
 				'Authorization: Basic '.base64_encode(':'.$sso_token)
