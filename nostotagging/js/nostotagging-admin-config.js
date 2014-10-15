@@ -13,9 +13,27 @@ $(document).ready( function() {
         }
     });
     // Change event handler for "Edit different shop language:".
-    $(".nostotagging select#nostotagging_language").change(function() {
+    $("#nostotagging_language").change(function() {
         var langId = parseInt($(this).val()),
-            $currentLanguage = $('#nostotagging_current_language');
+            $currentLanguage = $('#nostotagging_current_language'),
+            $form = $('form.nostotagging');
         $currentLanguage.val(langId);
+        $form.submit();
+    });
+    // Click event handler for the "Account settings".
+    $("#nostotagging_account_setup").click(function(event) {
+        event.preventDefault();
+        var $iframe = $('#nostotagging_iframe'),
+            $installedView = $('#nostotagging_installed');
+        $installedView.show();
+        $iframe.hide();
+    });
+    // Click event handler for the "Back" button on the "You have installed Nosto...." page.
+    $('#nostotagging_back_to_iframe').click(function(event) {
+        event.preventDefault();
+        var $iframe = $('#nostotagging_iframe'),
+            $installedView = $('#nostotagging_installed');
+        $iframe.show();
+        $installedView.hide();
     });
 });

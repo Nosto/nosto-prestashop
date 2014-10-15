@@ -14,6 +14,8 @@ require_once(dirname(__FILE__).'/classes/nostotagging-customer-link.php');
 
 /**
  * NostoTagging module that integrates Nosto marketing automation service.
+ *
+ * @property Context $context
  */
 class NostoTagging extends Module
 {
@@ -146,27 +148,33 @@ class NostoTagging extends Module
 		$output = '';
 
 		$field_has_account = $this->name.'_has_account';
+		$field_account_name = $this->name.'_account_name';
 		$field_account_email = $this->name.'_account_email';
 		$field_account_authorized = $this->name.'_account_authorized';
 		$field_languages = $this->name.'_languages';
 		$field_current_language = $this->name.'_current_language';
 
-		$languages = LanguageCore::getLanguages();
+		$languages = Language::getLanguages();
+		$language_id = 0;
+		$account_email = $this->context->employee->email;
 
 		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-			$account_email = (string)Tools::getValue($field_account_email);
-			$language_id = (int)Tools::getValue($field_current_language); // hidden field, no validation.
+			$language_id = (int)Tools::getValue($field_current_language);
+			foreach ($languages as $language)
+				if ($language['id_lang'] == $language_id)
+					$current_language = $language;
 
 			if (Tools::isSubmit('submit_nostotagging_new_account'))
 			{
+				$account_email = (string)Tools::getValue($field_account_email);
 				if (empty($account_email))
 					$output .= $this->displayError($this->l('Email cannot be empty.'));
 				elseif (!Validate::isEmail($account_email))
 					$output .= $this->displayError($this->l('Email is not a valid email address.'));
-				elseif ($this->createAccount($account_email, $language_id))
-					$output .= $this->displayConfirmation($this->l('Account created.'));
-				else
+				elseif (!$this->createAccount($account_email, $language_id))
 					$output .= $this->displayError($this->l('Account could not be automatically created. Please visit nosto.com to create a new account.'));
+				else
+					$output .= $this->displayConfirmation($this->l('Account created.'));
 			}
 			elseif(Tools::isSubmit('submit_nostotagging_authorize_account'))
 			{
@@ -179,36 +187,39 @@ class NostoTagging extends Module
 				header('Location: '.$client->getAuthorizationUrl());
 				die();
 			}
+			elseif (Tools::isSubmit('submit_nostotagging_reset_account'))
+				NostoTaggingConfig::deleteAllFromContext($language_id);
 		}
 		else
 		{
-			$account_email = $this->context->employee->email;
-			// Just take the first found language as the current one.
-			$language_id = isset($languages[0]) ? (int)$languages[0]['id_lang'] : 0;
-
 			foreach ($this->getAdminFlashMessages('error') as $error_message)
 				$output .= $this->displayError($this->l($error_message));
 			foreach ($this->getAdminFlashMessages('success') as $success_message)
 				$output .= $this->displayConfirmation($this->l($success_message));
 		}
 
-		$this->context->controller->addJS($this->_path.'js/nostotagging-admin-config.js');
+		if (empty($language_id) && isset($languages[0]))
+			$current_language = $languages[0];
+		if (!isset($current_language))
+			$current_language = array('id_lang' => 0, 'name' => '');
 
-		// todo: we need to pass $field_has_account per language to JS.
+		$this->context->controller->addCSS($this->_path.'css/nostotagging-admin-config.css');
+		$this->context->controller->addJS($this->_path.'js/nostotagging-admin-config.js');
 
 		$this->context->smarty->assign(array(
 			$field_has_account => NostoTaggingConfig::exists(NostoTaggingConfig::ACCOUNT_NAME, $language_id),
+			$field_account_name => NostoTaggingConfig::read(NostoTaggingConfig::ACCOUNT_NAME, $language_id),
 			$field_account_email => $account_email,
 			$field_account_authorized => $this->isAccountConnectedToNosto($language_id),
-			$field_languages => LanguageCore::getLanguages(),
-			$field_current_language => $language_id,
+			$field_languages => $languages,
+			$field_current_language => $current_language,
 		));
 
 		if (version_compare(substr(_PS_VERSION_, 0, 3), '1.6', '>='))
 		{
 			// Try to login employee to Nosto in order to get a url to the internal setting pages,
-			// which are then shown in iframes on the module config page.
-			$iframe_url = $this->doSSOLogin();
+			// which are then shown in an iframe on the module config page.
+			$iframe_url = $this->doSSOLogin($language_id);
 			if (!empty($iframe_url) && $this->isAccountConnectedToNosto($language_id))
 				$this->context->smarty->assign(array(
 					'iframe_url' => NostoTaggingHttpRequest::build_uri(self::NOSTOTAGGING_IFRAME_URL, array(
@@ -588,8 +599,9 @@ class NostoTagging extends Module
 		if (isset($params['id_order']))
 		{
 			$order = new Order($params['id_order']);
-			$currency = new Currency($order->id_currency); // todo: skip current load here
+			$currency = new Currency($order->id_currency);
 			$nosto_order = $this->getOrderData($order, $currency);
+			// This is done out of context, so we need to specify the exact parameters to get the correct account.
 			$account_name = NostoTaggingConfig::read(NostoTaggingConfig::ACCOUNT_NAME, $order->id_lang, $order->id_shop_group, $order->id_shop);
 			if (!empty($nosto_order) && !empty($account_name))
 			{
@@ -749,11 +761,12 @@ class NostoTagging extends Module
 	 *
 	 * Notes that if the current employee is not the one that owns the Nosto account, then the SSO login will fail.
 	 *
+	 * @param int $language_id the ID of the language object for which to do the SSO login.
 	 * @return string|false the login url or false on failure.
 	 */
-	protected function doSSOLogin()
+	protected function doSSOLogin($language_id = 0)
 	{
-		if (($sso_token = NostoTaggingApiToken::get('sso')) !== false)
+		if (($sso_token = NostoTaggingApiToken::get('sso', $language_id)) === false)
 			return false;
 
 		$employee = $this->context->employee;

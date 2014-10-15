@@ -20,7 +20,7 @@ class NostoTaggingConfig
 	public static function read($name, $lang_id = null, $id_shop_group = null, $id_shop = null, $lang_fallback = true)
 	{
 		$value = Configuration::get($name, $lang_id, $id_shop_group, $id_shop);
-		if ($value === false && $lang_fallback && $lang_id > 0)
+		if ($value === false || $value === null && $lang_fallback && $lang_id > 0)
 			return Configuration::get($name);
 		else
 			return $value;
@@ -32,7 +32,7 @@ class NostoTaggingConfig
 	 * @param bool $global
 	 * @return bool
 	 */
-	public static function write($name, $value, $global = true)
+	public static function write($name, $value, $global = false)
 	{
 		$callback = array(
 			'Configuration',
@@ -50,30 +50,77 @@ class NostoTaggingConfig
 	public static function exists($name, $lang_id = 0, $lang_fallback = true)
 	{
 		$value = self::read($name, $lang_id, $lang_fallback);
-		return ($value !== false);
+		return ($value !== false && $value !== null);
 	}
 
 	/**
-	 * Removes all "NOSTOTAGGING" config entries.
+	 * Removes all "NOSTOTAGGING_" config entries.
 	 */
 	public static function purge()
 	{
-		// todo
-		/*
-		$result = Db::getInstance()->execute('
-		DELETE FROM `'._DB_PREFIX_.bqSQL(self::$definition['table']).'_lang`
-		WHERE `'.bqSQL(self::$definition['primary']).'` IN (
-			SELECT `'.bqSQL(self::$definition['primary']).'`
-			FROM `'._DB_PREFIX_.bqSQL(self::$definition['table']).'`
-			WHERE `name` = "'.pSQL($key).'"
-		)');
+		$config_table = _DB_PREFIX_.bqSQL(Configuration::$definition['table']);
+		$config_lang_table = $config_table.'_lang';
 
-		$result2 = Db::getInstance()->execute('
-		DELETE FROM `'._DB_PREFIX_.bqSQL(self::$definition['table']).'`
-		WHERE `name` = "'.pSQL($key).'"');
+		Db::getInstance()->execute('
+			DELETE FROM `'.$config_lang_table.'`
+			LEFT JOIN `'.$config_table.'`
+			ON `'.$config_lang_table.'`.`id_configuration` = `'.$config_table.'`.`id_configuration`
+			WHERE `'.$config_table.'`.`name` LIKE "NOSTOTAGGING_%"'
+		);
+		Db::getInstance()->execute('
+			DELETE FROM `'.$config_table.'`
+			WHERE `'.$config_table.'`.`name` LIKE "NOSTOTAGGING_%"'
+		);
 
-		self::$_cache[self::$definition['table']] = null;
-		*/
+		Configuration::$_cache[Configuration::$definition['table']] = null;
+
+		return true;
+	}
+
+	/**
+	 * Removes all "NOSTOTAGGING_" config entries for the current context and given language.
+	 *
+	 * @param int|null $language_id the ID of the language object to remove the config entries for.
+	 * @return bool
+	 */
+	public static function deleteAllFromContext($language_id = null)
+	{
+		$id_shop = (int)Shop::getContextShopID(true);
+		$id_shop_group = (int)Shop::getContextShopGroupID(true);
+
+		if ($id_shop)
+			$context_restriction = ' AND `id_shop` = '.$id_shop;
+		elseif ($id_shop_group)
+			$context_restriction = ' AND `id_shop_group` = '.$id_shop_group.' AND (`id_shop` IS NULL OR `id_shop` = 0)';
+		else
+			$context_restriction = ' AND (`id_shop_group` IS NULL OR `id_shop_group` = 0) AND (`id_shop` IS NULL OR `id_shop` = 0)';
+
+		if ($language_id === null)
+			$language_restriction = ' AND `id_lang` IS NULL';
+		else
+			$language_restriction = ' AND `id_lang` = '.(int)$language_id;
+
+		$config_table = _DB_PREFIX_.bqSQL(Configuration::$definition['table']);
+		$config_lang_table = $config_table.'_lang';
+
+		Db::getInstance()->execute('
+			DELETE `'.$config_lang_table.'` FROM `'.$config_lang_table.'`
+			INNER JOIN `'.$config_table.'`
+			ON `'.$config_lang_table.'`.`id_configuration` = `'.$config_table.'`.`id_configuration`
+			WHERE `'.$config_table.'`.`name` LIKE "NOSTOTAGGING_%"'
+			.$context_restriction
+			.$language_restriction
+		);
+		// todo: we cannot delete the parent entries, as they might have other language specific entries tied to them.
+		// todo: what can we do? set the values to NULL? what does that change?
+//		Db::getInstance()->execute('
+//			DELETE FROM `'.$config_table.'`
+//			WHERE `name` LIKE "NOSTOTAGGING_%"'
+//			.$context_restriction
+//		);
+
+		Configuration::$_cache[Configuration::$definition['table']] = null;
+
 		return true;
 	}
 }
