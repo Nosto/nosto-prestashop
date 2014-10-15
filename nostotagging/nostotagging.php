@@ -740,8 +740,11 @@ class NostoTagging extends Module
 		if (!NostoTaggingConfig::exists(NostoTaggingConfig::ACCOUNT_NAME, $lang_id))
 			return false;
 		foreach (self::$authorized_data_exchange_config_key_map as $config_key => $data_key)
-			if (NostoTaggingApiToken::get($config_key, $lang_id) === false)
+		{
+			$token = NostoTaggingApiToken::get($config_key, $lang_id);
+			if ($token === false || $token === null)
 				return false;
+		}
 		return true;
 	}
 
