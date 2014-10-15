@@ -6,21 +6,20 @@
  */
 class NostoTaggingOAuth2Client
 {
-	const NOSTOTAGGING_OAUTH2_CLIENT_BASE_URL = 'https://my.nosto.com/oauth';
-	const NOSTOTAGGING_OAUTH2_CLIENT_ID = 'prestashop';
-	const NOSTOTAGGING_OAUTH2_CLIENT_AUTH_PATH = '/authorize?client_id={cid}&redirect_uri={uri}&response_type=code&scope={sco}';
-	const NOSTOTAGGING_OAUTH2_CLIENT_TOKEN_PATH = '/token?code={cod}&client_id={cid}&client_secret={sec}&redirect_uri={uri}&grant_type=authorization_code';
-    
+	const BASE_URL = 'https://my.nosto.com/oauth';
+	const CLIENT_ID = 'prestashop';
+	const PATH_AUTH = '/authorize?client_id={cid}&redirect_uri={uri}&response_type=code&scope={sco}';
+	const PATH_TOKEN = '/token?code={cod}&client_id={cid}&client_secret={sec}&redirect_uri={uri}&grant_type=authorization_code';
 
 	/**
 	 * @var string the client id the identify this application to the oauth2 server.
 	 */
-	protected $client_id = self::NOSTOTAGGING_OAUTH2_CLIENT_ID;
+	protected $client_id = self::CLIENT_ID;
 
 	/**
 	 * @var string the client secret the identify this application to the oauth2 server.
 	 */
-	protected $client_secret = self::NOSTOTAGGING_OAUTH2_CLIENT_ID;
+	protected $client_secret = self::CLIENT_ID;
 
 	/**
 	 * @var string the redirect url that will be used by the oauth2 server when authenticating the client.
@@ -80,7 +79,7 @@ class NostoTaggingOAuth2Client
 	public function getAuthorizationUrl()
 	{
 		return NostoTaggingHttpRequest::build_uri(
-			self::NOSTOTAGGING_OAUTH2_CLIENT_BASE_URL.self::NOSTOTAGGING_OAUTH2_CLIENT_AUTH_PATH,
+			self::BASE_URL.self::PATH_AUTH,
 			array(
 				'{cid}' => $this->client_id,
 				'{uri}' => $this->redirect_url,
@@ -108,16 +107,14 @@ class NostoTaggingOAuth2Client
 		}
 
 		$request = new NostoTaggingHttpRequest();
-		$url = NostoTaggingHttpRequest::build_uri(
-			self::NOSTOTAGGING_OAUTH2_CLIENT_BASE_URL.self::NOSTOTAGGING_OAUTH2_CLIENT_TOKEN_PATH,
-			array(
-				'{cid}' => $this->client_id,
-				'{sec}' => $this->client_secret,
-				'{uri}' => $this->redirect_url,
-				'{cod}' => $code
-			)
-		);
-		$response = $request->get($url);
+		$request->setUrl(self::BASE_URL.self::PATH_TOKEN);
+		$request->setReplaceParams(array(
+			'{cid}' => $this->client_id,
+			'{sec}' => $this->client_secret,
+			'{uri}' => $this->redirect_url,
+			'{cod}' => $code
+		));
+		$response = $request->get();
 		$result = $response->getJsonResult(true);
 
 		if ($response->getCode() !== 200)

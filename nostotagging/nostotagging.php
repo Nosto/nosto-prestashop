@@ -9,6 +9,7 @@ require_once(dirname(__FILE__).'/classes/nostotagging-cipher.php');
 require_once(dirname(__FILE__).'/classes/nostotagging-oauth2-client.php');
 require_once(dirname(__FILE__).'/classes/nostotagging-oauth2-token.php');
 require_once(dirname(__FILE__).'/classes/nostotagging-config.php');
+require_once(dirname(__FILE__).'/classes/nostotagging-api-request.php');
 require_once(dirname(__FILE__).'/classes/nostotagging-api-token.php');
 require_once(dirname(__FILE__).'/classes/nostotagging-customer-link.php');
 
@@ -259,13 +260,9 @@ class NostoTagging extends Module
 		$request = new NostoTaggingHttpRequest();
 		// The request is currently not made according the the OAuth2 spec with the access token in the
 		// Authorization header. This is due to the authentication server not implementing the full OAuth2 spec yet.
-		$response = $request->get(
-			NostoTaggingOAuth2Client::NOSTOTAGGING_OAUTH2_CLIENT_BASE_URL.'/exchange',
-			array(), // headers
-			array(
-				'access_token' => $token->access_token
-			)
-		);
+		$request->setUrl(NostoTaggingOAuth2Client::BASE_URL.'/exchange');
+		$request->setQueryParams(array('access_token' => $token->access_token));
+		$response = $request->get();
 		$result = $response->getJsonResult(true);
 
 		if ($response->getCode() !== 200)
@@ -595,17 +592,14 @@ class NostoTagging extends Module
 				$id_nosto_customer = $this->getNostoCustomerId();
 				if (!empty($id_nosto_customer))
 				{
-					$url = NostoTaggingHttpRequest::build_uri(
-						self::NOSTOTAGGING_API_BASE_URL.self::NOSTOTAGGING_API_ORDER_TAGGING_PATH,
-						array('{m}' => $account_name, '{cid}' => $id_nosto_customer)
-					);
+					$path = NostoTaggingApiRequest::PATH_ORDER_TAGGING;
+					$replace_params = array('{m}' => $account_name, '{cid}' => $id_nosto_customer);
 				}
 				else
 				{
-					$url = NostoTaggingHttpRequest::build_uri(
-						self::NOSTOTAGGING_API_BASE_URL.self::NOSTOTAGGING_API_UNMATCHED_ORDER_TAGGING_PATH,
-						array('{m}' => $account_name)
-					);
+					$path = NostoTaggingApiRequest::PATH_UNMATCHED_ORDER_TAGGING;
+					$replace_params = array('{m}' => $account_name);
+
 					$module_name = $order->module;
 					$module = Module::getInstanceByName($module_name);
 					if ($module !== false && isset($module->version))
@@ -616,8 +610,12 @@ class NostoTagging extends Module
 					$nosto_order['payment_provider'] = $module_name.' ['.$module_version.']';
 				}
 
-				$request = new NostoTaggingHttpRequest();
-				$response = $request->post($url, array('Content-type: application/json'), json_encode($nosto_order));
+				$request = new NostoTaggingApiRequest();
+				$request->setPath($path);
+				$request->setContentType('application/json');
+				$request->setReplaceParams($replace_params);
+				$response = $request->post(json_encode($nosto_order));
+
 				if ($response->getCode() !== 200)
 					NostoTaggingLogger::log(
 						__CLASS__.'::'.__FUNCTION__.' - Order was not sent to Nosto',
@@ -776,19 +774,16 @@ class NostoTagging extends Module
 			return false;
 
 		$employee = $this->context->employee;
-		$request = new NostoTaggingHttpRequest();
-		$url = self::NOSTOTAGGING_API_BASE_URL.self::NOSTOTAGGING_API_SSOAUTH_PATH;
-		$response = $request->post(
-			NostoTaggingHttpRequest::build_uri($url,  array('{email}' => $employee->email)),
-			array(
-				'Content-type: application/json',
-				'Authorization: Basic '.base64_encode(':'.$sso_token)
-			),
-			json_encode(array(
-				'first_name' => $employee->firstname,
-				'last_name' => $employee->lastname
-			))
-		);
+
+		$request = new NostoTaggingApiRequest();
+		$request->setPath(NostoTaggingApiRequest::PATH_SSO_AUTH);
+		$request->setReplaceParams(array('{email}' => $employee->email));
+		$request->setContentType('application/json');
+		$request->setAuthBasic('', $sso_token);
+		$response = $request->post(json_encode(array(
+			'first_name' => $employee->firstname,
+			'last_name' => $employee->lastname
+		)));
 
 		if ($response->getCode() !== 200)
 		{
@@ -908,16 +903,11 @@ class NostoTagging extends Module
 			),
 			'api_tokens' => $api_tokens
 		);
-		$request = new NostoTaggingHttpRequest();
-		$url = self::NOSTOTAGGING_API_BASE_URL.self::NOSTOTAGGING_API_SIGNUP_PATH;
-		$response = $request->post(
-			$url,
-			array(
-				'Content-type: application/json',
-				'Authorization: Basic '.base64_encode(':'.self::NOSTOTAGGING_API_SIGNUP_TOKEN)
-			),
-			json_encode($params)
-		);
+		$request = new NostoTaggingApiRequest();
+		$request->setPath(NostoTaggingApiRequest::PATH_SIGN_UP);
+		$request->setContentType('application/json');
+		$request->setAuthBasic('', NostoTaggingApiRequest::TOKEN_SIGN_UP);
+		$response = $request->post(json_encode($params));
 
 		if ($response->getCode() !== 200)
 		{
