@@ -1,6 +1,6 @@
-{if isset($nosto_line_items) && is_array($nosto_line_items)}
+{if isset($nosto_cart) && is_object($nosto_cart)}
 	<div class="nosto_cart" style="display:none">
-		{foreach from=$nosto_line_items item=line_item}
+		{foreach from=$nosto_cart->line_items item=line_item}
 			<div class="line_item">
 				<span class="product_id">{$line_item.product_id}</span>
 				<span class="quantity">{$line_item.quantity}</span>

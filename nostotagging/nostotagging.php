@@ -2,6 +2,14 @@
 if (!defined('_PS_VERSION_'))
 	exit;
 
+require_once(dirname(__FILE__).'/classes/nostotagging-block.php');
+require_once(dirname(__FILE__).'/classes/nostotagging-cart.php');
+require_once(dirname(__FILE__).'/classes/nostotagging-category.php');
+require_once(dirname(__FILE__).'/classes/nostotagging-customer.php');
+require_once(dirname(__FILE__).'/classes/nostotagging-order.php');
+require_once(dirname(__FILE__).'/classes/nostotagging-product.php');
+
+require_once(dirname(__FILE__).'/classes/nostotagging-formatter.php');
 require_once(dirname(__FILE__).'/classes/nostotagging-logger.php');
 require_once(dirname(__FILE__).'/classes/nostotagging-http-request.php');
 require_once(dirname(__FILE__).'/classes/nostotagging-http-response.php');
@@ -21,8 +29,6 @@ require_once(dirname(__FILE__).'/classes/nostotagging-customer-link.php');
 class NostoTagging extends Module
 {
 	const NOSTOTAGGING_SERVER_ADDRESS = 'staging.nosto.com';
-	const NOSTOTAGGING_PRODUCT_IN_STOCK = 'InStock';
-	const NOSTOTAGGING_PRODUCT_OUT_OF_STOCK = 'OutOfStock';
 	const NOSTOTAGGING_PLATFORM_NAME = 'prestashop';
 	const NOSTOTAGGING_IFRAME_URL = '{l}?r=/hub/prestashop/{m}&language={lang}';
 
@@ -470,8 +476,7 @@ class NostoTagging extends Module
 		$html = '';
 
 		$order = isset($params['objOrder']) ? $params['objOrder'] : null;
-		$currency = isset($params['currencyObj']) ? $params['currencyObj'] : null;
-		$html .= $this->getOrderTagging($order, $currency);
+		$html .= $this->getOrderTagging($order);
 
 		return $html;
 	}
@@ -577,13 +582,12 @@ class NostoTagging extends Module
 		if (isset($params['id_order']))
 		{
 			$order = new Order($params['id_order']);
-			$currency = new Currency($order->id_currency);
-			$nosto_order = $this->getOrderData($order, $currency);
+			$nosto_order = $this->getOrderData($order);
 			// This is done out of context, so we need to specify the exact parameters to get the correct account.
 			$account_name = NostoTaggingConfig::read(NostoTaggingConfig::ACCOUNT_NAME, $order->id_lang, $order->id_shop_group, $order->id_shop);
 			if (!empty($nosto_order) && !empty($account_name))
 			{
-				$id_nosto_customer = $this->getNostoCustomerId();
+				$id_nosto_customer = NostoTaggingCustomerLink::getNostoCustomerId($this);
 				if (!empty($id_nosto_customer))
 				{
 					$path = NostoTaggingApiRequest::PATH_ORDER_TAGGING;
@@ -816,21 +820,6 @@ class NostoTagging extends Module
 	}
 
 	/**
-	 * Returns the Nosto customer id for the current Prestashop customer.
-	 *
-	 * @return string
-	 */
-	protected function getNostoCustomerId()
-	{
-		if (!isset($this->context->customer->id))
-			return false;
-
-		$table = _DB_PREFIX_.self::NOSTOTAGGING_CUSTOMER_LINK_TABLE;
-		$id_customer = (int)$this->context->customer->id;
-		return Db::getInstance()->getValue('SELECT `id_nosto_customer` FROM `'.$table.'` WHERE `id_customer` = '.$id_customer.' ORDER BY `date_add` ASC');
-	}
-
-	/**
 	 * Adds custom hooks used by this module.
 	 *
 	 * Run on module install.
@@ -936,63 +925,19 @@ class NostoTagging extends Module
 	}
 
 	/**
-	 * Formats price into Nosto format (e.g. 1000.99).
-	 *
-	 * @param string|int|float $price
-	 * @return string
-	 */
-	protected function formatPrice($price)
-	{
-		return number_format((float)$price, 2, '.', '');
-	}
-
-	/**
-	 * Formats date into Nosto format, i.e. Y-m-d.
-	 *
-	 * @param string $date
-	 * @return string
-	 */
-	protected function formatDate($date)
-	{
-		return date('Y-m-d', strtotime((string)$date));
-	}
-
-	/**
-	 * Builds a tagging string of the given category including all its parent categories.
-	 *
-	 * @param string|int $category_id
-	 * @return string
-	 */
-	protected function buildCategoryString($category_id)
-	{
-		$category_list = array();
-
-		$lang_id = (int)$this->context->language->id;
-		$category = new Category((int)$category_id, $lang_id);
-
-		if (Validate::isLoadedObject($category) && (int)$category->active === 1)
-			foreach ($category->getParentsCategories($lang_id) as $parent_category)
-				if (isset($parent_category['name'], $parent_category['active']) && (int)$parent_category['active'] === 1)
-					$category_list[] = (string)$parent_category['name'];
-
-		if (empty($category_list))
-			return '';
-
-		return DS.implode(DS, array_reverse($category_list));
-	}
-
-	/**
 	 * Render meta-data (tagging) for the logged in customer.
 	 *
 	 * @return string The rendered HTML
 	 */
 	protected function getCustomerTagging()
 	{
-		if (!isset($this->context->customer) || !$this->context->customer->isLogged())
+		$nosto_customer = new NostoTaggingCustomer($this);
+		$nosto_customer->populate($this->context->customer);
+		if ($nosto_customer->isEmpty())
 			return '';
 
 		$this->smarty->assign(array(
-			'customer' => $this->context->customer,
+			'customer' => $nosto_customer,
 		));
 
 		return $this->display(__FILE__, 'top_customer-tagging.tpl');
@@ -1005,57 +950,13 @@ class NostoTagging extends Module
 	 */
 	protected function getCartTagging()
 	{
-		if (!isset($this->context->cart))
+		$nosto_cart = new NostoTaggingCart($this);
+		$nosto_cart->populate($this->context->cart);
+		if ($nosto_cart->isEmpty())
 			return '';
-
-		$products = (array)$this->context->cart->getProducts();
-		if (empty($products))
-			return '';
-
-		$currency = $this->context->currency;
-		$cart_rules = (array)$this->context->cart->getCartRules(CartRule::FILTER_ACTION_GIFT);
-
-		$gift_products = array();
-		foreach ($cart_rules as $cart_rule)
-			if ((int)$cart_rule['gift_product'])
-			{
-				foreach ($products as $key => &$product)
-					if (empty($product['gift'])
-						&& (int)$product['id_product'] === (int)$cart_rule['gift_product']
-						&& (int)$product['id_product_attribute'] === (int)$cart_rule['gift_product_attribute'])
-					{
-						$product['cart_quantity'] = (int)$product['cart_quantity'];
-						$product['cart_quantity']--;
-
-						if (!($product['cart_quantity'] > 0))
-							unset($products[$key]);
-
-						$gift_product = $product;
-						$gift_product['cart_quantity'] = 1;
-						$gift_product['price_wt'] = 0;
-						$gift_product['gift'] = true;
-
-						$gift_products[] = $gift_product;
-
-						break; // One gift product per cart rule
-					}
-				unset($product);
-			}
-
-		$items = array_merge($products, $gift_products);
-
-		$nosto_line_items = array();
-		foreach ($items as $item)
-			$nosto_line_items[] = array(
-				'product_id' => (int)$item['id_product'],
-				'quantity' => (int)$item['cart_quantity'],
-				'name' => (string)$item['name'],
-				'unit_price' => $this->formatPrice($item['price_wt']),
-				'price_currency_code' => (string)$currency->iso_code,
-			);
 
 		$this->smarty->assign(array(
-			'nosto_line_items' => $nosto_line_items,
+			'nosto_cart' => $nosto_cart,
 		));
 
 		return $this->display(__FILE__, 'top_cart-tagging.tpl');
@@ -1074,13 +975,17 @@ class NostoTagging extends Module
 		if (empty($nosto_product))
 			return '';
 
+		$params = array('nosto_product' => $nosto_product);
+
 		if (Validate::isLoadedObject($category))
-			$nosto_product['current_category'] = $this->buildCategoryString($category->id);
+		{
+			$nosto_category = new NostoTaggingCategory($this);
+			$nosto_category->populate($category);
+			if (!$nosto_category->isEmpty())
+				$params['nosto_category'] = $nosto_category;
+		}
 
-		$this->smarty->assign(array(
-			'nosto_product' => $nosto_product,
-		));
-
+		$this->smarty->assign($params);
 		return $this->display(__FILE__, 'footer-product_product-tagging.tpl');
 	}
 
@@ -1088,51 +993,14 @@ class NostoTagging extends Module
 	 * Returns data about the product in a format that can be sent to Nosto.
 	 *
 	 * @param Product $product
-	 * @return false|array the product data array or false.
+	 * @return false|NostoTaggingProduct the product data array or false.
 	 */
 	public function getProductData(Product $product)
 	{
-		if (!Validate::isLoadedObject($product))
+		$nosto_product = new NostoTaggingProduct($this);
+		$nosto_product->populate($product);
+		if ($nosto_product->isEmpty())
 			return false;
-
-		$nosto_product = array();
-		$nosto_product['url'] = (string)$product->getLink();
-		$nosto_product['product_id'] = (int)$product->id;
-		$nosto_product['name'] = (string)$product->name;
-
-		$image_id = $product->getCoverWs();
-		if (ctype_digit((string)$image_id))
-			$image_url = $this->context->link->getImageLink($product->link_rewrite, $product->id.'-'.$image_id, 'large_default');
-		else
-			$image_url = '';
-		$nosto_product['image_url'] = (string)$image_url;
-
-		$nosto_product['price'] = $this->formatPrice($product->getPrice(true, null));
-		$nosto_product['price_currency_code'] = (string)$this->context->currency->iso_code;
-
-		if ($product->checkQty(1))
-			$nosto_product['availability'] = self::NOSTOTAGGING_PRODUCT_IN_STOCK;
-		else
-			$nosto_product['availability'] = self::NOSTOTAGGING_PRODUCT_OUT_OF_STOCK;
-
-		if (($tags = $product->getTags($this->context->language->id)) !== '')
-			$nosto_product['tags'] = explode(', ', $tags);
-
-		$nosto_product['categories'] = array();
-		foreach ($product->getCategories() as $category_id)
-		{
-			$category = $this->buildCategoryString($category_id);
-			if (!empty($category))
-				$nosto_product['categories'][] = (string)$category;
-		}
-
-		$nosto_product['description'] = (string)$product->description_short;
-		$nosto_product['list_price'] = $this->formatPrice($product->getPriceWithoutReduct(false, null));
-
-		if (!empty($product->manufacturer_name))
-			$nosto_product['brand'] = (string)$product->manufacturer_name;
-
-		$nosto_product['date_published'] = $this->formatDate($product->date_add);
 
 		return $nosto_product;
 	}
@@ -1141,12 +1009,11 @@ class NostoTagging extends Module
 	 * Render meta-data (tagging) for a completed order.
 	 *
 	 * @param Order $order
-	 * @param Currency $currency
 	 * @return string The rendered HTML
 	 */
-	protected function getOrderTagging(Order $order, Currency $currency)
+	protected function getOrderTagging(Order $order)
 	{
-		$nosto_order = $this->getOrderData($order, $currency);
+		$nosto_order = $this->getOrderData($order);
 		if (empty($nosto_order))
 			return '';
 
@@ -1161,140 +1028,14 @@ class NostoTagging extends Module
 	 * Returns data about the order in a format that can be sent to Nosto.
 	 *
 	 * @param Order $order
-	 * @param Currency $currency
 	 * @return false|array the order data array or false.
 	 */
-	public function getOrderData(Order $order, Currency $currency)
+	public function getOrderData(Order $order)
 	{
-		if (!Validate::isLoadedObject($order) || !Validate::isLoadedObject($currency))
+		$nosto_order = new NostoTaggingOrder($this);
+		$nosto_order->populate($order);
+		if ($nosto_order->isEmpty())
 			return false;
-
-		$products = array();
-		$total_discounts_tax_incl = 0;
-		$total_shipping_tax_incl = 0;
-		$total_wrapping_tax_incl = 0;
-		$total_gift_tax_incl = 0;
-
-		// One order can be split into multiple orders, so we need to combine their data.
-		$order_collection = Order::getByReference($order->reference);
-		foreach ($order_collection as $item)
-		{
-			/** @var $item Order */
-			$products = array_merge($products, $item->getProducts());
-			$total_discounts_tax_incl = Tools::ps_round($total_discounts_tax_incl + $item->total_discounts_tax_incl, 2);
-			$total_shipping_tax_incl = Tools::ps_round($total_shipping_tax_incl + $item->total_shipping_tax_incl, 2);
-			$total_wrapping_tax_incl = Tools::ps_round($total_wrapping_tax_incl + $item->total_wrapping_tax_incl, 2);
-		}
-
-		// We need the cart rules used for the order to check for gift products and free shipping.
-		// The cart is the same even if the order is split into many objects.
-		$cart = new Cart($order->id_cart);
-		if (Validate::isLoadedObject($cart))
-			$cart_rules = (array)$cart->getCartRules();
-		else
-			$cart_rules = array();
-
-		$gift_products = array();
-		foreach ($cart_rules as $cart_rule)
-			if ((int)$cart_rule['gift_product'])
-			{
-				foreach ($products as $key => &$product)
-					if (empty($product['gift'])
-						&& (int)$product['product_id'] === (int)$cart_rule['gift_product']
-						&& (int)$product['product_attribute_id'] === (int)$cart_rule['gift_product_attribute'])
-					{
-						$product['product_quantity'] = (int)$product['product_quantity'];
-						$product['product_quantity']--;
-
-						if (!($product['product_quantity'] > 0))
-							unset($products[$key]);
-
-						$total_gift_tax_incl = Tools::ps_round($total_gift_tax_incl + $product['product_price_wt'], 2);
-
-						$gift_product = $product;
-						$gift_product['product_quantity'] = 1;
-						$gift_product['product_price_wt'] = 0;
-						$gift_product['gift'] = true;
-
-						$gift_products[] = $gift_product;
-
-						break; // One gift product per cart rule
-					}
-				unset($product);
-			}
-
-		$items = array_merge($products, $gift_products);
-
-		$customer = $order->getCustomer();
-		$nosto_order = array();
-		$nosto_order['order_number'] = (string)$order->reference;
-		$nosto_order['buyer'] = array(
-			'first_name' => $customer->firstname,
-			'last_name' => $customer->lastname,
-			'email' => $customer->email,
-		);
-		$nosto_order['purchased_items'] = array();
-		$nosto_order['created_at'] = $this->formatDate($order->date_add);
-
-		foreach ($items as $item)
-		{
-			$p = new Product($item['product_id'], false, $this->context->language->id);
-			if (Validate::isLoadedObject($p))
-				$nosto_order['purchased_items'][] = array(
-					'product_id' => (int)$p->id,
-					'quantity' => (int)$item['product_quantity'],
-					'name' => (string)$p->name,
-					'unit_price' => $this->formatPrice($item['product_price_wt']),
-					'price_currency_code' => (string)$currency->iso_code,
-				);
-		}
-
-		if (empty($nosto_order['purchased_items']))
-			return false;
-
-		// Add special items for discounts, shipping and gift wrapping.
-
-		if ($total_discounts_tax_incl > 0)
-		{
-			// Subtract possible gift product price from total as gifts are tagged with price zero (0).
-			$total_discounts_tax_incl = Tools::ps_round($total_discounts_tax_incl - $total_gift_tax_incl, 2);
-			if ($total_discounts_tax_incl > 0)
-				$nosto_order['purchased_items'][] = array(
-					'product_id' => -1,
-					'quantity' => 1,
-					'name' => 'Discount',
-					'unit_price' => $this->formatPrice(-$total_discounts_tax_incl), // Note the negative value.
-					'price_currency_code' => (string)$currency->iso_code,
-				);
-		}
-
-		// Check is free shipping applies to the cart.
-		$free_shipping = false;
-		foreach ($cart_rules as $cart_rule)
-			if ((int)$cart_rule['free_shipping'])
-			{
-				$free_shipping = true;
-				break;
-			}
-
-		if (!$free_shipping && $total_shipping_tax_incl > 0)
-			$nosto_order['purchased_items'][] = array(
-				'product_id' => -1,
-				'quantity' => 1,
-				'name' => 'Shipping',
-				'unit_price' => $this->formatPrice($total_shipping_tax_incl),
-				'price_currency_code' => (string)$currency->iso_code,
-			);
-
-		if ($total_wrapping_tax_incl > 0)
-			$nosto_order['purchased_items'][] = array(
-				'product_id' => -1,
-				'quantity' => 1,
-				'name' => 'Gift Wrapping',
-				'unit_price' => $this->formatPrice($total_wrapping_tax_incl),
-				'price_currency_code' => (string)$currency->iso_code,
-			);
-
 		return $nosto_order;
 	}
 
@@ -1306,15 +1047,13 @@ class NostoTagging extends Module
 	 */
 	protected function getCategoryTagging(Category $category)
 	{
-		if (!($category instanceof Category) || !Validate::isLoadedObject($category))
-			return '';
-
-		$category_string = $this->buildCategoryString($category->id);
-		if (empty($category_string))
+		$nosto_category = new NostoTaggingCategory($this);
+		$nosto_category->populate($category);
+		if ($nosto_category->isEmpty())
 			return '';
 
 		$this->smarty->assign(array(
-			'category' => (string)$category_string,
+			'nosto_category' => $nosto_category,
 		));
 
 		return $this->display(__FILE__, 'category-footer_category-tagging.tpl');
