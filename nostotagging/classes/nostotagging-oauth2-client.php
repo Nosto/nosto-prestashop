@@ -65,11 +65,11 @@ class NostoTaggingOAuth2Client
 	/**
 	 * Setter for the scopes to identify this application to the oauth2 server.
 	 *
-	 * @param array $scope_list the list of scopes.
+	 * @param array $scopes the list of scopes.
 	 */
-	public function setScopes($scope_list)
+	public function setScopes($scopes)
 	{
-		$this->scopes = $scope_list;
+		$this->scopes = $scopes;
 	}
 
 	/**

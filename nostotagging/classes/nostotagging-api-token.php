@@ -27,11 +27,12 @@ class NostoTaggingApiToken
 	 * @param string $name
 	 * @param string $value
 	 * @param bool $global
+	 * @param int $language_id
 	 * @return bool
 	 */
-	public static function set($name, $value, $global = false)
+	public static function set($name, $value, $global = false, $language_id = 0)
 	{
-		return NostoTaggingConfig::write(self::createConfigKey($name), $value, $global);
+		return NostoTaggingConfig::write(self::createConfigKey($name), $value, $global, $language_id);
 	}
 
 	/**
