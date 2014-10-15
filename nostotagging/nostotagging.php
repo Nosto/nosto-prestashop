@@ -8,16 +8,14 @@ require_once(dirname(__FILE__).'/classes/nostotagging-http-response.php');
 require_once(dirname(__FILE__).'/classes/nostotagging-cipher.php');
 require_once(dirname(__FILE__).'/classes/nostotagging-oauth2-client.php');
 require_once(dirname(__FILE__).'/classes/nostotagging-oauth2-token.php');
+require_once(dirname(__FILE__).'/classes/nostotagging-config.php');
+require_once(dirname(__FILE__).'/classes/nostotagging-api-token.php');
 
 /**
  * NostoTagging module that integrates Nosto marketing automation service.
  */
 class NostoTagging extends Module
 {
-	const NOSTOTAGGING_CONFIG_KEY_ACCOUNT_NAME = 'NOSTOTAGGING_ACCOUNT_NAME';
-	const NOSTOTAGGING_CONFIG_KEY_USE_DEFAULT_NOSTO_ELEMENTS = 'NOSTOTAGGING_DEFAULT_ELEMENTS';
-	const NOSTOTAGGING_CONFIG_KEY_SSO_TOKEN = 'NOSTOTAGGING_SSO_TOKEN';
-	const NOSTOTAGGING_CONFIG_ADMIN_URL = 'NOSTOTAGGING_ADMIN_URL';
 	const NOSTOTAGGING_SERVER_ADDRESS = 'staging.nosto.com';
 	const NOSTOTAGGING_PRODUCT_IN_STOCK = 'InStock';
 	const NOSTOTAGGING_PRODUCT_OUT_OF_STOCK = 'OutOfStock';
@@ -38,7 +36,7 @@ class NostoTagging extends Module
 	 * @var array
 	 */
 	protected static $authorized_data_exchange_config_key_map = array(
-		self::NOSTOTAGGING_CONFIG_KEY_SSO_TOKEN => 'api_sso'
+		'sso' => 'api_sso'
 	);
 
 	/**
@@ -84,9 +82,6 @@ class NostoTagging extends Module
 		$this->bootstrap = true;
 
 		parent::__construct();
-
-		if (!$this->hasAccountName())
-			$this->warning = $this->l('Account details must be configured before using this module.');
 
 		$this->displayName = $this->l('Personalized Recommendations');
 		$this->description = $this->l('Integrates Nosto marketing automation service.');
@@ -134,7 +129,7 @@ class NostoTagging extends Module
 	{
 		return parent::uninstall()
 			&& $this->removeCustomerLinkTable()
-			&& $this->deleteConfig();
+			&& NostoTaggingConfig::purge();
 	}
 
 	/**
@@ -147,7 +142,7 @@ class NostoTagging extends Module
 	{
 		// Always update the url to the module admin page when we access it.
 		// This can then later be used by the oauth2 controller to redirect the user back.
-		$this->setAdminUrl($this->getCurrentUrl());
+		NostoTaggingConfig::write(NostoTaggingConfig::ADMIN_URL, $this->getCurrentUrl());
 
 		$output = '';
 
@@ -156,6 +151,8 @@ class NostoTagging extends Module
 		$field_account_authorized = $this->name.'_account_authorized';
 		$field_languages = $this->name.'_languages';
 		$field_current_language = $this->name.'_current_language';
+
+		$languages = LanguageCore::getLanguages();
 
 		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			$account_email = (string)Tools::getValue($field_account_email);
@@ -187,6 +184,8 @@ class NostoTagging extends Module
 		else
 		{
 			$account_email = $this->context->employee->email;
+			// Just take the first found language as the current one.
+			$language_id = isset($languages[0]) ? (int)$languages[0]['id_lang'] : 0;
 
 			foreach ($this->getAdminFlashMessages('error') as $error_message)
 				$output .= $this->displayError($this->l($error_message));
@@ -198,38 +197,26 @@ class NostoTagging extends Module
 
 		// todo: we need to pass $field_has_account per language to JS.
 
-		// todo: keep the same current while posting
-		$languages = LanguageCore::getLanguages();
-		if (!empty($languages))
-			$current_language = reset($languages);
-		else
-			$current_language = false;
-
 		$this->context->smarty->assign(array(
-			$field_has_account => $this->hasAccountName(),
+			$field_has_account => NostoTaggingConfig::exists(NostoTaggingConfig::ACCOUNT_NAME, $language_id),
 			$field_account_email => $account_email,
-			$field_account_authorized => $this->isAccountConnectedToNosto(),
+			$field_account_authorized => $this->isAccountConnectedToNosto($language_id),
 			$field_languages => LanguageCore::getLanguages(),
-			$field_current_language => $current_language ? $current_language['id_lang'] : 0,
+			$field_current_language => $language_id,
 		));
 
 		if (version_compare(substr(_PS_VERSION_, 0, 3), '1.6', '>='))
 		{
 			// Try to login employee to Nosto in order to get a url to the internal setting pages,
 			// which are then shown in iframes on the module config page.
-			$login_url = $this->doSSOLogin();
-			if (!empty($login_url) && $this->isAccountConnectedToNosto())
+			$iframe_url = $this->doSSOLogin();
+			if (!empty($iframe_url) && $this->isAccountConnectedToNosto($language_id))
 				$this->context->smarty->assign(array(
-					'manage_slots_iframe_url' => strtr(self::NOSTOTAGGING_IFRAME_URL, array(
-						'{l}' => $login_url,
-						'{m}' => $this->getAccountName(),
+					'iframe_url' => strtr(self::NOSTOTAGGING_IFRAME_URL, array(
+						'{l}' => $iframe_url,
+						'{m}' => NostoTaggingConfig::read(NostoTaggingConfig::ACCOUNT_NAME, $language_id),
 						'{lang}' => $this->context->language->iso_code
 					)),
-					'look_and_feel_iframe_url' => strtr(self::NOSTOTAGGING_IFRAME_URL, array(
-						'{l}' => $login_url,
-						'{m}' => $this->getAccountName(),
-						'{lang}' => $this->context->language->iso_code
-					))
 				));
 
 			$output .= $this->display(__FILE__, 'views/templates/admin/config-bootstrap.tpl');
@@ -295,7 +282,7 @@ class NostoTagging extends Module
 			$merchant_name = array($language_id => $token->merchant_name);
 		else
 			$merchant_name = $token->merchant_name;
-		$this->setAccountName($merchant_name);
+		NostoTaggingConfig::write(NostoTaggingConfig::ACCOUNT_NAME, $merchant_name);
 
 		foreach (self::$authorized_data_exchange_config_key_map as $config_key => $data_key)
 			if (isset($result[$data_key]))
@@ -304,10 +291,10 @@ class NostoTagging extends Module
 					$config_value = array($language_id => $result[$data_key]);
 				else
 					$config_value = $result[$data_key];
-				$this->setConfigValue($config_key, $config_value);
+				NostoTaggingApiToken::set($config_key, $config_value);
 			}
 
-		return $this->isAccountConnectedToNosto();
+		return $this->isAccountConnectedToNosto($language_id);
 	}
 
 	/**
@@ -323,128 +310,6 @@ class NostoTagging extends Module
 	}
 
 	/**
-	 * Checks if the account name is set.
-	 *
-	 * @return bool
-	 */
-	public function hasAccountName()
-	{
-		$account = $this->getAccountName();
-		return !empty($account);
-	}
-
-	/**
-	 * Getter for the Nosto account name.
-	 *
-	 * @param int $lang_id the ID of the language model for which to get the account name.
-	 * @param bool $lang_id_fallback whether to fall back on non language setting if language specific is not found.
-	 * @return string
-	 */
-	public function getAccountName($lang_id = 0, $lang_id_fallback = true)
-	{
-		$account_name = (string)Configuration::get(self::NOSTOTAGGING_CONFIG_KEY_ACCOUNT_NAME, $lang_id);
-		// todo: seems like this takes the global and not shop specific one...
-		if (empty($account_name) && $lang_id_fallback && $lang_id > 0)
-			return (string)Configuration::get(self::NOSTOTAGGING_CONFIG_KEY_ACCOUNT_NAME);
-		else
-			return $account_name;
-	}
-
-	/**
-	 * Setter for the Nosto account name.
-	 *
-	 * @param mixed $account_name
-	 * @param bool $global
-	 * @return bool
-	 */
-	public function setAccountName($account_name, $global = false)
-	{
-		// The API tokens are tied to the account, so they need to be removed if the account is updated.
-		if ($account_name !== $this->getAccountName())
-			$this->removeApiTokens($global);
-
-		return $this->setConfigValue(self::NOSTOTAGGING_CONFIG_KEY_ACCOUNT_NAME, $account_name, $global);
-	}
-
-	/**
-	 * Getter for the "use default nosto elements" settings.
-	 *
-	 * @return int
-	 */
-	public function getUseDefaultNostoElements()
-	{
-		return (int)Configuration::get(self::NOSTOTAGGING_CONFIG_KEY_USE_DEFAULT_NOSTO_ELEMENTS);
-	}
-
-	/**
-	 * Setter for the "use default nosto elements" settings.
-	 *
-	 * @param mixed $value
-	 * @param bool $global
-	 * @return bool
-	 */
-	public function setUseDefaultNostoElements($value, $global = false)
-	{
-		return $this->setConfigValue(self::NOSTOTAGGING_CONFIG_KEY_USE_DEFAULT_NOSTO_ELEMENTS, $value, $global);
-	}
-
-	/**
-	 * Checks if there is an SSO token set.
-	 */
-	public function hasSSOToken()
-	{
-		$token = $this->getSSOToken();
-		return !empty($token);
-	}
-
-	/**
-	 * Getter for the SSO token.
-	 *
-	 * @return string the token.
-	 */
-	public function getSSOToken()
-	{
-		return (string)Configuration::get(self::NOSTOTAGGING_CONFIG_KEY_SSO_TOKEN);
-	}
-
-	/**
-	 * Setter for the Nosto SSO token.
-	 *
-	 * @param mixed $sso_token
-	 * @param bool $global
-	 * @return bool
-	 */
-	public function setSSOToken($sso_token, $global = false)
-	{
-		return $this->setConfigValue(self::NOSTOTAGGING_CONFIG_KEY_SSO_TOKEN, $sso_token, $global);
-	}
-
-	/**
-	 * Getter for the admin url.
-	 * The url is only returned if the current user is an admin logged in to the back office.
-	 *
-	 * @return string the url.
-	 */
-	public function getAdminUrl()
-	{
-		if ($this->isUserAdmin())
-			return (string)Configuration::get(self::NOSTOTAGGING_CONFIG_ADMIN_URL);
-		return '';
-	}
-
-	/**
-	 * Setter for the admin url.
-	 *
-	 * @param mixed $admin_url
-	 * @param bool $global
-	 * @return bool
-	 */
-	public function setAdminUrl($admin_url, $global = false)
-	{
-		return $this->setConfigValue(self::NOSTOTAGGING_CONFIG_ADMIN_URL, $admin_url, $global);
-	}
-
-	/**
 	 * Hook for adding content to the <head> section of the HTML pages.
 	 *
 	 * Adds the Nosto embed script.
@@ -454,14 +319,14 @@ class NostoTagging extends Module
 	public function hookDisplayHeader()
 	{
 		$server_address = self::NOSTOTAGGING_SERVER_ADDRESS;
-		$account_name = $this->getAccountName($this->context->language->id);
+		$account_name = NostoTaggingConfig::read(NostoTaggingConfig::ACCOUNT_NAME, $this->context->language->id);
 
 		$this->smarty->assign(array(
 			'server_address' => $server_address,
 			'account_name' => $account_name,
 		));
 
-		if ($this->getUseDefaultNostoElements())
+		if (NostoTaggingConfig::read(NostoTaggingConfig::USE_DEFAULT_NOSTO_ELEMENTS, $this->context->language->id))
 			$this->context->controller->addJS($this->_path.'js/nostotagging-auto-slots.js');
 
 		return $this->display(__FILE__, 'header_embed-script.tpl');
@@ -491,7 +356,7 @@ class NostoTagging extends Module
 			$html .= $this->getCategoryTagging($category);
 		}
 
-		if ($this->getUseDefaultNostoElements())
+		if (NostoTaggingConfig::read(NostoTaggingConfig::USE_DEFAULT_NOSTO_ELEMENTS, $this->context->language->id))
 			$html .= $this->display(__FILE__, 'top_nosto-elements.tpl');
 
 		return $html;
@@ -506,7 +371,7 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayFooter()
 	{
-		if (!$this->getUseDefaultNostoElements())
+		if (!NostoTaggingConfig::read(NostoTaggingConfig::USE_DEFAULT_NOSTO_ELEMENTS, $this->context->language->id))
 			return '';
 
 		$html = '';
@@ -541,7 +406,7 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayLeftColumn()
 	{
-		if (!$this->getUseDefaultNostoElements())
+		if (!NostoTaggingConfig::read(NostoTaggingConfig::USE_DEFAULT_NOSTO_ELEMENTS, $this->context->language->id))
 			return '';
 
 		return $this->display(__FILE__, 'left-column_nosto-elements.tpl');
@@ -556,7 +421,7 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayRightColumn()
 	{
-		if (!$this->getUseDefaultNostoElements())
+		if (!NostoTaggingConfig::read(NostoTaggingConfig::USE_DEFAULT_NOSTO_ELEMENTS, $this->context->language->id))
 			return '';
 
 		return $this->display(__FILE__, 'right-column_nosto-elements.tpl');
@@ -579,7 +444,7 @@ class NostoTagging extends Module
 		$category = isset($params['category']) ? $params['category'] : null;
 		$html .= $this->getProductTagging($product, $category);
 
-		if ($this->getUseDefaultNostoElements())
+		if (NostoTaggingConfig::read(NostoTaggingConfig::USE_DEFAULT_NOSTO_ELEMENTS, $this->context->language->id))
 			$html .= $this->display(__FILE__, 'footer-product_nosto-elements.tpl');
 
 		return $html;
@@ -594,7 +459,7 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayShoppingCartFooter()
 	{
-		if (!$this->getUseDefaultNostoElements())
+		if (!NostoTaggingConfig::read(NostoTaggingConfig::USE_DEFAULT_NOSTO_ELEMENTS, $this->context->language->id))
 			return '';
 
 		return $this->display(__FILE__, 'shopping-cart-footer_nosto-elements.tpl');
@@ -634,7 +499,7 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayCategoryTop()
 	{
-		if (!$this->getUseDefaultNostoElements())
+		if (!NostoTaggingConfig::read(NostoTaggingConfig::USE_DEFAULT_NOSTO_ELEMENTS, $this->context->language->id))
 			return '';
 
 		return $this->display(__FILE__, 'category-top_nosto-elements.tpl');
@@ -654,7 +519,7 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayCategoryFooter()
 	{
-		if (!$this->getUseDefaultNostoElements())
+		if (!NostoTaggingConfig::read(NostoTaggingConfig::USE_DEFAULT_NOSTO_ELEMENTS, $this->context->language->id))
 			return '';
 
 		return $this->display(__FILE__, 'category-footer_nosto-elements.tpl');
@@ -674,7 +539,7 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplaySearchTop()
 	{
-		if (!$this->getUseDefaultNostoElements())
+		if (!NostoTaggingConfig::read(NostoTaggingConfig::USE_DEFAULT_NOSTO_ELEMENTS, $this->context->language->id))
 			return '';
 
 		return $this->display(__FILE__, 'search-top_nosto-elements.tpl');
@@ -694,7 +559,7 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplaySearchFooter()
 	{
-		if (!$this->getUseDefaultNostoElements())
+		if (!NostoTaggingConfig::read(NostoTaggingConfig::USE_DEFAULT_NOSTO_ELEMENTS, $this->context->language->id))
 			return '';
 
 		return $this->display(__FILE__, 'search-footer_nosto-elements.tpl');
@@ -744,9 +609,9 @@ class NostoTagging extends Module
 		if (isset($params['id_order']))
 		{
 			$order = new Order($params['id_order']);
-			$currency = new Currency($order->id_currency);
+			$currency = new Currency($order->id_currency); // todo: skip current load here
 			$nosto_order = $this->getOrderData($order, $currency);
-			$account_name = $this->getAccountName();
+			$account_name = NostoTaggingConfig::read(NostoTaggingConfig::ACCOUNT_NAME, $order->id_lang, $order->id_shop_group, $order->id_shop);
 			if (!empty($nosto_order) && !empty($account_name))
 			{
 				$id_nosto_customer = $this->getNostoCustomerId();
@@ -792,7 +657,7 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayHome()
 	{
-		if (!$this->getUseDefaultNostoElements())
+		if (!NostoTaggingConfig::read(NostoTaggingConfig::USE_DEFAULT_NOSTO_ELEMENTS, $this->context->language->id))
 			return '';
 
 		return $this->display(__FILE__, 'home_nosto-elements.tpl');
@@ -869,28 +734,18 @@ class NostoTagging extends Module
 	}
 
 	/**
-	 * Removes all API tokens that have been transferred from Nosto.
-	 *
-	 * @param bool $global if the api keys are to be removed for all shops, or just for the current one.
-	 */
-	protected function removeApiTokens($global = false)
-	{
-		foreach (self::$authorized_data_exchange_config_key_map as $config_key => $value)
-			$this->setConfigValue($config_key, '', $global);
-	}
-
-	/**
 	 * Checks if the account has been authorized with Nosto.
 	 * This is determined by checking if we have all the data needed for make authorized requests to the Nosto API.
 	 *
+	 * @param int $lang_id the ID of the language model to check if the account is connected to nosto with.
 	 * @return bool true if the account has been authorized, false otherwise.
 	 */
-	protected function isAccountConnectedToNosto()
+	protected function isAccountConnectedToNosto($lang_id = 0)
 	{
-		if (!$this->hasAccountName())
+		if (!NostoTaggingConfig::exists(NostoTaggingConfig::ACCOUNT_NAME, $lang_id))
 			return false;
 		foreach (self::$authorized_data_exchange_config_key_map as $config_key => $data_key)
-			if (Configuration::get($config_key) === false)
+			if (NostoTaggingApiToken::get($config_key, $lang_id) === false)
 				return false;
 		return true;
 	}
@@ -915,7 +770,7 @@ class NostoTagging extends Module
 	 */
 	protected function doSSOLogin()
 	{
-		if (!$this->hasSSOToken())
+		if (($sso_token = NostoTaggingApiToken::get('sso')) !== false)
 			return false;
 
 		$employee = $this->context->employee;
@@ -925,7 +780,7 @@ class NostoTagging extends Module
 			strtr($url, array('{email}' => $employee->email)),
 			array(
 				'Content-type: application/json',
-				'Authorization: Basic '.base64_encode(':'.$this->getSSOToken())
+				'Authorization: Basic '.base64_encode(':'.$sso_token)
 			),
 			json_encode(array(
 				'first_name' => $employee->firstname,
@@ -967,23 +822,6 @@ class NostoTagging extends Module
 		$host = Tools::getHttpHost(true);
 		$request_uri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
 		return $host.$request_uri;
-	}
-
-	/**
-	 * Registers a new config entry for key => value pair.
-	 *
-	 * @param string $key the key to store the value by in config.
-	 * @param mixed $value the value of the config entry.
-	 * @param bool $global
-	 * @return bool
-	 */
-	protected function setConfigValue($key, $value, $global = false)
-	{
-		$callback = array(
-			'Configuration',
-			$global ? 'updateGlobalValue' : 'updateValue'
-		);
-		return call_user_func($callback, (string)$key, $value);
 	}
 
 	/**
@@ -1091,7 +929,7 @@ class NostoTagging extends Module
 		// If we have been given a language id, then this account is only for that language.
 		if (!empty($language_id))
 			$account_name = array($language_id => $account_name);
-		$this->setAccountName($account_name);
+		NostoTaggingConfig::write(NostoTaggingConfig::ACCOUNT_NAME, $account_name);
 
 		if (!empty($result->sso_token))
 		{
@@ -1100,7 +938,7 @@ class NostoTagging extends Module
 				$sso_token = array($language_id => $result->sso_token);
 			else
 				$sso_token = $result->sso_token;
-			$this->setSSOToken($sso_token);
+			NostoTaggingApiToken::set('sso', $sso_token);
 		}
 
 		return true;
@@ -1113,27 +951,8 @@ class NostoTagging extends Module
 	 */
 	protected function initConfig()
 	{
-		$this->setAccountName('', true/* $global */);
-		$this->setSSOToken('', true/* $global */);
-		$this->setUseDefaultNostoElements(1, true/* $global */);
-		return true;
-	}
-
-	/**
-	 * Deletes config entries created by the module.
-	 *
-	 * @return bool
-	 */
-	protected function deleteConfig()
-	{
-		$config_keys = array(
-			self::NOSTOTAGGING_CONFIG_KEY_ACCOUNT_NAME,
-			self::NOSTOTAGGING_CONFIG_KEY_SSO_TOKEN,
-			self::NOSTOTAGGING_CONFIG_KEY_USE_DEFAULT_NOSTO_ELEMENTS,
-			self::NOSTOTAGGING_CONFIG_ADMIN_URL,
-		);
-		foreach ($config_keys as $config_key)
-			Configuration::deleteByName($config_key);
+		NostoTaggingConfig::write(NostoTaggingConfig::ACCOUNT_NAME, '', true/*global*/);
+		NostoTaggingConfig::write(NostoTaggingConfig::USE_DEFAULT_NOSTO_ELEMENTS, 1, true/*global*/);
 		return true;
 	}
 

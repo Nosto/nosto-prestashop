@@ -59,10 +59,11 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
 	 */
 	protected function redirectToModuleAdmin()
 	{
-		// The admin url is only returned if user is logged in as admin in back office,
-		// so that we do not expose it to outsiders.
+		// The admin url is only used if user is logged in as admin in back office, so that we do not expose it.
 		// The OAuth2 request cycle is initiated from the back office, so the user should still be logged in.
-		$admin_url = $this->module->getAdminUrl();
+		$admin_url = '';
+		if ($this->module->isUserAdmin())
+			$admin_url = NostoTaggingConfig::read(NostoTaggingConfig::ADMIN_URL, 0/*todo*/);
 		if (!empty($admin_url))
 		{
 			header('Location: '.$admin_url);
