@@ -31,14 +31,21 @@ class NostoTagging extends Module
 	const NOSTOTAGGING_API_SSOAUTH_PATH = '/users/{email}';
 	const NOSTOTAGGING_IFRAME_URL = '{l}?r=/hub/prestashop/{m}&language={lang}';
 
-	/**
-	 * Map of what config data we expect from the Nosto data exchange when authorizing the Nosto account.
-	 *
-	 * @var array
-	 */
-	protected static $authorized_data_exchange_config_key_map = array(
-		'sso' => 'api_sso'
-	);
+    /**
+     * List of scopes to request access for over oauht2.
+     */
+    public static $oauth_scope_list = array(
+        'sso',
+        'products'
+    );
+
+    /**
+     * List of api tokens to request when creating an account.
+     */
+    public static $api_token_list = array(
+        'api_sso',
+        'api_products'
+    );
 
 	/**
 	 * Custom hooks to add for this module.
@@ -184,6 +191,7 @@ class NostoTagging extends Module
 
 				$client = new NostoTaggingOAuth2Client();
 				$client->setRedirectUrl(urlencode($this->getOAuth2ControllerUrl($params)));
+				$client->setScopes(self::$oauth_scope_list);
 				header('Location: '.$client->getAuthorizationUrl());
 				die();
 			}
@@ -294,13 +302,14 @@ class NostoTagging extends Module
 			$merchant_name = $token->merchant_name;
 		NostoTaggingConfig::write(NostoTaggingConfig::ACCOUNT_NAME, $merchant_name);
 
-		foreach (self::$authorized_data_exchange_config_key_map as $config_key => $data_key)
-			if (isset($result[$data_key]))
+		foreach (self::$api_token_list as $token_name)
+			if (isset($result[$token_name]))
 			{
+                $config_key = str_replace('api_', '', $token_name);
 				if (!empty($language_id))
-					$config_value = array($language_id => $result[$data_key]);
+					$config_value = array($language_id => $result[$token_name]);
 				else
-					$config_value = $result[$data_key];
+					$config_value = $result[$token_name];
 				NostoTaggingApiToken::set($config_key, $config_value);
 			}
 
@@ -739,9 +748,9 @@ class NostoTagging extends Module
 	{
 		if (!NostoTaggingConfig::exists(NostoTaggingConfig::ACCOUNT_NAME, $lang_id))
 			return false;
-		foreach (self::$authorized_data_exchange_config_key_map as $config_key => $data_key)
+		foreach (self::$api_token_list as $token_name)
 		{
-			$token = NostoTaggingApiToken::get($config_key, $lang_id);
+			$token = NostoTaggingApiToken::get(str_replace('api_', '', $token_name), $lang_id);
 			if ($token === false || $token === null)
 				return false;
 		}
@@ -898,7 +907,8 @@ class NostoTagging extends Module
 			),
 			'billing_details' => array(
 				'country' => $this->context->country->iso_code
-			)
+			),
+			'api_tokens' => self::$api_token_list
 		);
 		$request = new NostoTaggingHttpRequest();
 		$url = self::NOSTOTAGGING_API_BASE_URL.self::NOSTOTAGGING_API_SIGNUP_PATH;
@@ -922,7 +932,7 @@ class NostoTagging extends Module
 			return false;
 		}
 
-		$result = $response->getJsonResult();
+		$result = $response->getJsonResult(true);
 
 		$account_name = self::NOSTOTAGGING_API_PLATFORM_NAME.'-'.$params['name'];
 		// If we have been given a language id, then this account is only for that language.
@@ -930,15 +940,16 @@ class NostoTagging extends Module
 			$account_name = array($language_id => $account_name);
 		NostoTaggingConfig::write(NostoTaggingConfig::ACCOUNT_NAME, $account_name);
 
-		if (!empty($result->sso_token))
-		{
-			// If we have been given a language id, then this sso token is only for that language.
-			if (!empty($language_id))
-				$sso_token = array($language_id => $result->sso_token);
-			else
-				$sso_token = $result->sso_token;
-			NostoTaggingApiToken::set('sso', $sso_token);
-		}
+		foreach (self::$api_token_list as $token_name)
+			if (isset($result[$token_name]))
+			{
+                $config_key = str_replace('api_', '', $token_name);
+				if (!empty($language_id))
+					$config_value = array($language_id => $result[$token_name]);
+				else
+					$config_value = $result[$token_name];
+				NostoTaggingApiToken::set($config_key, $config_value);
+			}
 
 		return true;
 	}

@@ -8,8 +8,9 @@ class NostoTaggingOAuth2Client
 {
 	const NOSTOTAGGING_OAUTH2_CLIENT_BASE_URL = 'https://my.nosto.com/oauth';
 	const NOSTOTAGGING_OAUTH2_CLIENT_ID = 'prestashop';
-	const NOSTOTAGGING_OAUTH2_CLIENT_AUTH_PATH = '/authorize?client_id={cid}&redirect_uri={uri}&response_type=code';
+	const NOSTOTAGGING_OAUTH2_CLIENT_AUTH_PATH = '/authorize?client_id={cid}&redirect_uri={uri}&response_type=code&scope={sco}';
 	const NOSTOTAGGING_OAUTH2_CLIENT_TOKEN_PATH = '/token?code={cod}&client_id={cid}&client_secret={sec}&redirect_uri={uri}&grant_type=authorization_code';
+    
 
 	/**
 	 * @var string the client id the identify this application to the oauth2 server.
@@ -25,6 +26,11 @@ class NostoTaggingOAuth2Client
 	 * @var string the redirect url that will be used by the oauth2 server when authenticating the client.
 	 */
 	protected $redirect_url;
+    
+    /**
+     * @var array list of scopes to request access for during "code" request.
+     */
+    protected $scopes = array();
 
 	/**
 	 * Setter for the client id to identify this application to the oauth2 server.
@@ -57,6 +63,16 @@ class NostoTaggingOAuth2Client
 	}
 
 	/**
+	 * Setter for the scopes to identify this application to the oauth2 server.
+	 *
+	 * @param array $scope_list the list of scopes.
+	 */
+	public function setScopes($scope_list)
+	{
+		$this->scopes = $scope_list;
+	}
+
+	/**
 	 * Returns the authentication url to the oauth2 server.
 	 *
 	 * @return string the url.
@@ -67,7 +83,8 @@ class NostoTaggingOAuth2Client
 			self::NOSTOTAGGING_OAUTH2_CLIENT_BASE_URL.self::NOSTOTAGGING_OAUTH2_CLIENT_AUTH_PATH,
 			array(
 				'{cid}' => $this->client_id,
-				'{uri}' => $this->redirect_url
+				'{uri}' => $this->redirect_url,
+                '{sco}' => implode(' ', $this->scopes)
 			)
 		);
 	}
