@@ -23,13 +23,7 @@ class NostoTagging extends Module
 	const NOSTOTAGGING_SERVER_ADDRESS = 'staging.nosto.com';
 	const NOSTOTAGGING_PRODUCT_IN_STOCK = 'InStock';
 	const NOSTOTAGGING_PRODUCT_OUT_OF_STOCK = 'OutOfStock';
-	const NOSTOTAGGING_API_BASE_URL = 'https://staging.nosto.com/api';
-	const NOSTOTAGGING_API_ORDER_TAGGING_PATH = '/visits/order/confirm/{m}/{cid}';
-	const NOSTOTAGGING_API_UNMATCHED_ORDER_TAGGING_PATH = '/visits/order/unmatched/{m}';
-	const NOSTOTAGGING_API_SIGNUP_PATH = '/accounts/create';
-	const NOSTOTAGGING_API_SIGNUP_TOKEN = 'JRtgvoZLMl4NPqO9XWhRdvxkTMtN82ITTJij8U7necieJPCvjtZjm5C4fpNrYJ81';
-	const NOSTOTAGGING_API_PLATFORM_NAME = 'prestashop';
-	const NOSTOTAGGING_API_SSOAUTH_PATH = '/users/{email}';
+	const NOSTOTAGGING_PLATFORM_NAME = 'prestashop';
 	const NOSTOTAGGING_IFRAME_URL = '{l}?r=/hub/prestashop/{m}&language={lang}';
 
     /**
@@ -889,7 +883,7 @@ class NostoTagging extends Module
 		$params = array(
 			'title' => Configuration::get('PS_SHOP_NAME'),
 			'name' => substr(sha1(rand()), 0, 8),
-			'platform' => self::NOSTOTAGGING_API_PLATFORM_NAME,
+			'platform' => self::NOSTOTAGGING_PLATFORM_NAME,
 			'front_page_url' => $this->getContextShopUrl(),
 			'currency_code' => $this->context->currency->iso_code,
 			'language_code' => $language->iso_code,
@@ -922,7 +916,7 @@ class NostoTagging extends Module
 
 		$result = $response->getJsonResult(true);
 
-		$account_name = self::NOSTOTAGGING_API_PLATFORM_NAME.'-'.$params['name'];
+		$account_name = self::NOSTOTAGGING_PLATFORM_NAME.'-'.$params['name'];
 		NostoTaggingConfig::write(NostoTaggingConfig::ACCOUNT_NAME, $account_name, false, $language_id);
 		$this->saveApiTokens($result, $language_id);
 
