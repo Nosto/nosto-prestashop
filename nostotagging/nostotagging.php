@@ -10,6 +10,7 @@ require_once(dirname(__FILE__).'/classes/nostotagging-oauth2-client.php');
 require_once(dirname(__FILE__).'/classes/nostotagging-oauth2-token.php');
 require_once(dirname(__FILE__).'/classes/nostotagging-config.php');
 require_once(dirname(__FILE__).'/classes/nostotagging-api-token.php');
+require_once(dirname(__FILE__).'/classes/nostotagging-customer-link.php');
 
 /**
  * NostoTagging module that integrates Nosto marketing automation service.
@@ -19,8 +20,6 @@ class NostoTagging extends Module
 	const NOSTOTAGGING_SERVER_ADDRESS = 'staging.nosto.com';
 	const NOSTOTAGGING_PRODUCT_IN_STOCK = 'InStock';
 	const NOSTOTAGGING_PRODUCT_OUT_OF_STOCK = 'OutOfStock';
-	const NOSTOTAGGING_CUSTOMER_ID_COOKIE = '2c_cId';
-	const NOSTOTAGGING_CUSTOMER_LINK_TABLE = 'nostotagging_customer_link';
 	const NOSTOTAGGING_API_BASE_URL = 'https://staging.nosto.com/api';
 	const NOSTOTAGGING_API_ORDER_TAGGING_PATH = '/visits/order/confirm/{m}/{cid}';
 	const NOSTOTAGGING_API_UNMATCHED_ORDER_TAGGING_PATH = '/visits/order/unmatched/{m}';
@@ -98,7 +97,7 @@ class NostoTagging extends Module
 	{
 		return parent::install()
 			&& $this->initConfig()
-			&& $this->createCustomerLinkTable()
+			&& NostoTaggingCustomerLink::createTable()
 			&& $this->initHooks()
 			&& $this->registerHook('displayHeader')
 			&& $this->registerHook('displayTop')
@@ -128,8 +127,8 @@ class NostoTagging extends Module
 	public function uninstall()
 	{
 		return parent::uninstall()
-			&& $this->removeCustomerLinkTable()
-			&& NostoTaggingConfig::purge();
+			&& NostoTaggingConfig::purge()
+			&& NostoTaggingCustomerLink::dropTable();
 	}
 
 	/**
@@ -459,6 +458,9 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayShoppingCartFooter()
 	{
+		// Update the link between nosto users and prestashop customers.
+		NostoTaggingCustomerLink::updateLink($this);
+
 		if (!NostoTaggingConfig::read(NostoTaggingConfig::USE_DEFAULT_NOSTO_ELEMENTS, $this->context->language->id))
 			return '';
 
@@ -570,30 +572,7 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayPaymentTop()
 	{
-		if (isset($this->context->customer->id, $_COOKIE[self::NOSTOTAGGING_CUSTOMER_ID_COOKIE]))
-		{
-			$table = _DB_PREFIX_.self::NOSTOTAGGING_CUSTOMER_LINK_TABLE;
-			$id_customer = (int)$this->context->customer->id;
-			$id_nosto_customer = pSQL($_COOKIE[self::NOSTOTAGGING_CUSTOMER_ID_COOKIE]);
-			$where = '`id_customer` = '.$id_customer.' AND `id_nosto_customer` = "'.$id_nosto_customer.'"';
-			$existing_link = Db::getInstance()->getRow('SELECT * FROM `'.$table.'` WHERE '.$where);
-			if (empty($existing_link))
-			{
-				$data = array(
-					'id_customer' => $id_customer,
-					'id_nosto_customer' => $id_nosto_customer,
-					'date_add' => date('Y-m-d H:i:s')
-				);
-				Db::getInstance()->insert($table, $data, false, true, Db::INSERT, false);
-			}
-			else
-			{
-				$data = array(
-					'date_upd' => date('Y-m-d H:i:s')
-				);
-				Db::getInstance()->update($table, $data, $where, 0, false, true, false);
-			}
-		}
+		NostoTaggingCustomerLink::updateLink($this);
 	}
 
 	/**
@@ -954,36 +933,6 @@ class NostoTagging extends Module
 		NostoTaggingConfig::write(NostoTaggingConfig::ACCOUNT_NAME, '', true/*global*/);
 		NostoTaggingConfig::write(NostoTaggingConfig::USE_DEFAULT_NOSTO_ELEMENTS, 1, true/*global*/);
 		return true;
-	}
-
-	/**
-	 * Creates the customer link table to be able to link between the Prestashop customer and the Nosto customer.
-	 * Note: this method cannot be changed or removed as it is explicitly used in upgrade script for 1.1.0.
-	 *
-	 * @return bool
-	 */
-	public function createCustomerLinkTable()
-	{
-		$table = _DB_PREFIX_.self::NOSTOTAGGING_CUSTOMER_LINK_TABLE;
-		$sql = 'CREATE TABLE IF NOT EXISTS `'.$table.'` (
-			`id_customer` INT(10) UNSIGNED NOT NULL,
-			`id_nosto_customer` VARCHAR(255) NOT NULL,
-			`date_add` DATETIME NOT NULL,
-			`date_upd` DATETIME NULL,
-			PRIMARY KEY (`id_customer`, `id_nosto_customer`)
-		) ENGINE '._MYSQL_ENGINE_;
-		return Db::getInstance()->execute($sql);
-	}
-
-	/**
-	 * Removes the customer link table.
-	 *
-	 * @return bool
-	 */
-	protected function removeCustomerLinkTable()
-	{
-		$table = _DB_PREFIX_.self::NOSTOTAGGING_CUSTOMER_LINK_TABLE;
-		return Db::getInstance()->execute('DROP TABLE IF EXISTS `'.$table.'`');
 	}
 
 	/**
