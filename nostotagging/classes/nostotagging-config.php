@@ -47,13 +47,15 @@ class NostoTaggingConfig
 
 	/**
 	 * @param string $name
-	 * @param int $lang_id
+	 * @param int|null $lang_id
+	 * @param int|null $id_shop_group
+	 * @param int|null $id_shop
 	 * @param bool $lang_fallback
 	 * @return bool
 	 */
-	public static function exists($name, $lang_id = 0, $lang_fallback = true)
+	public static function exists($name, $lang_id = null, $id_shop_group = null, $id_shop = null, $lang_fallback = true)
 	{
-		$value = self::read($name, $lang_id, $lang_fallback);
+		$value = self::read($name, $lang_id, $id_shop_group, $id_shop, $lang_fallback);
 		return ($value !== false && $value !== null);
 	}
 

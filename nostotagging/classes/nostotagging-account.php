@@ -64,7 +64,7 @@ class NostoTaggingAccount
 		$result = $response->getJsonResult(true);
 
 		$account_name = self::PLATFORM_NAME.'-'.$params['name'];
-		NostoTaggingConfig::write(NostoTaggingConfig::ACCOUNT_NAME, $account_name, false, $language_id);
+		self::setName($account_name, false, $language_id);
 		NostoTaggingApiToken::saveTokens($result, $language_id);
 
 		return true;
@@ -111,12 +111,14 @@ class NostoTaggingAccount
 	 * Checks if an account exists for given parameters.
 	 *
 	 * @param null|int $lang_id the ID of the language.
+	 * @param null|int $id_shop_group the ID of the shop context.
+	 * @param null|int $id_shop the ID of the shop.
 	 * @param bool $lang_fallback if account cannot be found for given language, fall back on global account.
 	 * @return string|bool|null
 	 */
-	public static function exists($lang_id = 0, $lang_fallback = true)
+	public static function exists($lang_id = null, $id_shop_group = null, $id_shop = null, $lang_fallback = true)
 	{
-		return NostoTaggingConfig::exists(NostoTaggingConfig::ACCOUNT_NAME, $lang_id, $lang_fallback);
+		return NostoTaggingConfig::exists(NostoTaggingConfig::ACCOUNT_NAME, $lang_id, $id_shop_group, $id_shop, $lang_fallback);
 	}
 
 	/**
@@ -128,7 +130,7 @@ class NostoTaggingAccount
 	 */
 	public static function isConnectedToNosto($language_id = 0)
 	{
-		if (!NostoTaggingConfig::exists(NostoTaggingConfig::ACCOUNT_NAME, $language_id))
+		if (!self::exists($language_id))
 			return false;
 		foreach (NostoTaggingApiToken::$api_token_names as $token_name)
 		{
