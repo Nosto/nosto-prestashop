@@ -97,13 +97,12 @@ class NostoTaggingAccount
 	 * Sets the account name for given parameters.
 	 *
 	 * @param mixed $value the account name.
-	 * @param bool $global if it should be set globally or for current context.
-	 * @param int $lang_id the ID of the language to set the account name for.
+	 * @param null|int $lang_id the ID of the language to set the account name for.
 	 * @return bool
 	 */
-	public static function setName($value, $global = false, $lang_id = 0)
+	public static function setName($value, $lang_id = null)
 	{
-		return NostoTaggingConfig::write(NostoTaggingConfig::ACCOUNT_NAME, $value, $global, $lang_id);
+		return NostoTaggingConfig::write(NostoTaggingConfig::ACCOUNT_NAME, $value, $lang_id);
 	}
 
 	/**
@@ -123,16 +122,16 @@ class NostoTaggingAccount
 	 * Checks if the account has been connected to Nosto.
 	 * This is determined by checking if we have all the data needed for make authorized requests to the Nosto API.
 	 *
-	 * @param int $language_id the ID of the language model to check if the account is connected to nosto with.
+	 * @param null|int $lang_id the ID of the language model to check if the account is connected to nosto with.
 	 * @return bool true if the account has been authorized, false otherwise.
 	 */
-	public static function isConnectedToNosto($language_id = 0)
+	public static function isConnectedToNosto($lang_id = null)
 	{
-		if (!self::exists($language_id))
+		if (!self::exists($lang_id))
 			return false;
 		foreach (NostoTaggingApiToken::$api_token_names as $token_name)
 		{
-			$token = NostoTaggingApiToken::get($token_name, $language_id);
+			$token = NostoTaggingApiToken::get($token_name, $lang_id);
 			if ($token === false || $token === null)
 				return false;
 		}

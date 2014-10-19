@@ -24,19 +24,19 @@ class NostoTaggingConfig
 	/**
 	 * @param string $name
 	 * @param mixed $value
+	 * @param null|int $lang_id
 	 * @param bool $global
-	 * @param int $language_id
 	 * @return bool
 	 */
-	public static function write($name, $value, $global = false, $language_id = 0)
+	public static function write($name, $value, $lang_id = null, $global = false)
 	{
 		$callback = array(
 			'Configuration',
 			$global ? 'updateGlobalValue' : 'updateValue'
 		);
 		// Store this value for given language only if specified.
-		if (!is_array($value) && !empty($language_id))
-			$value = array($language_id => $value);
+		if (!is_array($value) && !empty($lang_id))
+			$value = array($lang_id => $value);
 		return call_user_func($callback, (string)$name, $value);
 	}
 

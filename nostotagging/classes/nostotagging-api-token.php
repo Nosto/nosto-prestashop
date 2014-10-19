@@ -35,28 +35,27 @@ class NostoTaggingApiToken
 	 *
 	 * @param string $name
 	 * @param string $value
-	 * @param bool $global
-	 * @param int $language_id
+	 * @param null|int $lang_id
 	 * @return bool
 	 */
-	public static function set($name, $value, $global = false, $language_id = 0)
+	public static function set($name, $value, $lang_id = null)
 	{
-		return NostoTaggingConfig::write(self::createConfigKey($name), $value, $global, $language_id);
+		return NostoTaggingConfig::write(self::createConfigKey($name), $value, $lang_id);
 	}
 
 	/**
 	 * Saves API tokens in the config by given language.
 	 *
 	 * @param array $tokens list of tokens to save, indexed by token name, e.g. "api_sso".
-	 * @param int $language_id the ID of the language model to save the tokens for.
+	 * @param null|int $lang_id the ID of the language model to save the tokens for.
 	 */
-	public static function saveTokens($tokens, $language_id = 0)
+	public static function saveTokens($tokens, $lang_id = null)
 	{
 		foreach (self::$api_token_names as $token_name)
 		{
 			$key = 'api_'.$token_name;
 			if (isset($tokens[$key]))
-				self::set($token_name, $tokens[$key], false, $language_id);
+				self::set($token_name, $tokens[$key], false, $lang_id);
 		}
 	}
 
