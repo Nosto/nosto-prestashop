@@ -81,6 +81,45 @@ class NostoTaggingAccount
 	}
 
 	/**
+	 * Returns the account name for given parameters.
+	 *
+	 * @param null|int $lang_id the ID of the language.
+	 * @param null|int $id_shop_group the ID of the shop context.
+	 * @param null|int $id_shop the ID of the shop.
+	 * @param bool $lang_fallback if account cannot be found for given language, fall back on global account.
+	 * @return string|bool|null
+	 */
+	public static function getName($lang_id = null, $id_shop_group = null, $id_shop = null, $lang_fallback = true)
+	{
+		return NostoTaggingConfig::read(NostoTaggingConfig::ACCOUNT_NAME, $lang_id, $id_shop_group, $id_shop, $lang_fallback);
+	}
+
+	/**
+	 * Sets the account name for given parameters.
+	 *
+	 * @param mixed $value the account name.
+	 * @param bool $global if it should be set globally or for current context.
+	 * @param int $lang_id the ID of the language to set the account name for.
+	 * @return bool
+	 */
+	public static function setName($value, $global = false, $lang_id = 0)
+	{
+		return NostoTaggingConfig::write(NostoTaggingConfig::ACCOUNT_NAME, $value, $global, $lang_id);
+	}
+
+	/**
+	 * Checks if an account exists for given parameters.
+	 *
+	 * @param null|int $lang_id the ID of the language.
+	 * @param bool $lang_fallback if account cannot be found for given language, fall back on global account.
+	 * @return string|bool|null
+	 */
+	public static function exists($lang_id = 0, $lang_fallback = true)
+	{
+		return NostoTaggingConfig::exists(NostoTaggingConfig::ACCOUNT_NAME, $lang_id, $lang_fallback);
+	}
+
+	/**
 	 * Checks if the account has been connected to Nosto.
 	 * This is determined by checking if we have all the data needed for make authorized requests to the Nosto API.
 	 *

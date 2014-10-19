@@ -199,8 +199,8 @@ class NostoTagging extends Module
 		$this->context->controller->addJS($this->_path.'js/nostotagging-admin-config.js');
 
 		$this->context->smarty->assign(array(
-			$field_has_account => NostoTaggingConfig::exists(NostoTaggingConfig::ACCOUNT_NAME, $language_id),
-			$field_account_name => NostoTaggingConfig::read(NostoTaggingConfig::ACCOUNT_NAME, $language_id),
+			$field_has_account => NostoTaggingAccount::exists($language_id),
+			$field_account_name => NostoTaggingAccount::getName($language_id),
 			$field_account_email => $account_email,
 			$field_account_authorized => NostoTaggingAccount::isConnectedToNosto($language_id),
 			$field_languages => $languages,
@@ -216,7 +216,7 @@ class NostoTagging extends Module
 				$this->context->smarty->assign(array(
 					'iframe_url' => NostoTaggingHttpRequest::build_uri(self::NOSTOTAGGING_IFRAME_URL, array(
 						'{l}' => $iframe_url,
-						'{m}' => NostoTaggingConfig::read(NostoTaggingConfig::ACCOUNT_NAME, $language_id),
+						'{m}' => NostoTaggingAccount::getName($language_id),
 						'{lang}' => $this->context->language->iso_code
 					)),
 				));
@@ -276,7 +276,7 @@ class NostoTagging extends Module
 			return false;
 		}
 
-		NostoTaggingConfig::write(NostoTaggingConfig::ACCOUNT_NAME, $token->merchant_name, false, $language_id);
+		NostoTaggingAccount::setName($token->merchant_name, false, $language_id);
 		NostoTaggingApiToken::saveTokens($result, $language_id);
 
 		return NostoTaggingAccount::isConnectedToNosto($language_id);
@@ -292,7 +292,7 @@ class NostoTagging extends Module
 	public function hookDisplayHeader()
 	{
 		$server_address = self::NOSTOTAGGING_SERVER_ADDRESS;
-		$account_name = NostoTaggingConfig::read(NostoTaggingConfig::ACCOUNT_NAME, $this->context->language->id);
+		$account_name = NostoTaggingAccount::getName($this->context->language->id);
 
 		$this->smarty->assign(array(
 			'server_address' => $server_address,
@@ -563,7 +563,7 @@ class NostoTagging extends Module
 			$order = new Order($params['id_order']);
 			$nosto_order = $this->getOrderData($order);
 			// This is done out of context, so we need to specify the exact parameters to get the correct account.
-			$account_name = NostoTaggingConfig::read(NostoTaggingConfig::ACCOUNT_NAME, $order->id_lang, $order->id_shop_group, $order->id_shop);
+			$account_name = NostoTaggingAccount::getName($order->id_lang, $order->id_shop_group, $order->id_shop);
 			if (!empty($nosto_order) && !empty($account_name))
 			{
 				$id_nosto_customer = NostoTaggingCustomerLink::getNostoCustomerId($this);
