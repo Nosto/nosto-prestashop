@@ -14,16 +14,11 @@ class NostoTaggingConfig
 	 * @param int|null $lang_id
 	 * @param int|null $id_shop_group
 	 * @param int|null $id_shop
-	 * @param bool $lang_fallback
 	 * @return bool
 	 */
-	public static function read($name, $lang_id = null, $id_shop_group = null, $id_shop = null, $lang_fallback = true)
+	public static function read($name, $lang_id = null, $id_shop_group = null, $id_shop = null)
 	{
-		$value = Configuration::get($name, $lang_id, $id_shop_group, $id_shop);
-		if ($value === false || $value === null && $lang_fallback && $lang_id > 0)
-			return Configuration::get($name);
-		else
-			return $value;
+		return Configuration::get($name, $lang_id, $id_shop_group, $id_shop);
 	}
 
 	/**
@@ -50,12 +45,11 @@ class NostoTaggingConfig
 	 * @param int|null $lang_id
 	 * @param int|null $id_shop_group
 	 * @param int|null $id_shop
-	 * @param bool $lang_fallback
 	 * @return bool
 	 */
-	public static function exists($name, $lang_id = null, $id_shop_group = null, $id_shop = null, $lang_fallback = true)
+	public static function exists($name, $lang_id = null, $id_shop_group = null, $id_shop = null)
 	{
-		$value = self::read($name, $lang_id, $id_shop_group, $id_shop, $lang_fallback);
+		$value = self::read($name, $lang_id, $id_shop_group, $id_shop);
 		return ($value !== false && $value !== null);
 	}
 

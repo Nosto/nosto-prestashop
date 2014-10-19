@@ -86,12 +86,11 @@ class NostoTaggingAccount
 	 * @param null|int $lang_id the ID of the language.
 	 * @param null|int $id_shop_group the ID of the shop context.
 	 * @param null|int $id_shop the ID of the shop.
-	 * @param bool $lang_fallback if account cannot be found for given language, fall back on global account.
 	 * @return string|bool|null
 	 */
-	public static function getName($lang_id = null, $id_shop_group = null, $id_shop = null, $lang_fallback = true)
+	public static function getName($lang_id = null, $id_shop_group = null, $id_shop = null)
 	{
-		return NostoTaggingConfig::read(NostoTaggingConfig::ACCOUNT_NAME, $lang_id, $id_shop_group, $id_shop, $lang_fallback);
+		return NostoTaggingConfig::read(NostoTaggingConfig::ACCOUNT_NAME, $lang_id, $id_shop_group, $id_shop);
 	}
 
 	/**
@@ -113,12 +112,11 @@ class NostoTaggingAccount
 	 * @param null|int $lang_id the ID of the language.
 	 * @param null|int $id_shop_group the ID of the shop context.
 	 * @param null|int $id_shop the ID of the shop.
-	 * @param bool $lang_fallback if account cannot be found for given language, fall back on global account.
 	 * @return string|bool|null
 	 */
-	public static function exists($lang_id = null, $id_shop_group = null, $id_shop = null, $lang_fallback = true)
+	public static function exists($lang_id = null, $id_shop_group = null, $id_shop = null)
 	{
-		return NostoTaggingConfig::exists(NostoTaggingConfig::ACCOUNT_NAME, $lang_id, $id_shop_group, $id_shop, $lang_fallback);
+		return NostoTaggingConfig::exists(NostoTaggingConfig::ACCOUNT_NAME, $lang_id, $id_shop_group, $id_shop);
 	}
 
 	/**
