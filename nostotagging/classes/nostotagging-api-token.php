@@ -20,13 +20,15 @@ class NostoTaggingApiToken
 	 * Getter for an API token by name.
 	 *
 	 * @param string $name
-	 * @param int $lang_id
+	 * @param null|int $lang_id the ID of the language.
+	 * @param null|int $id_shop_group the ID of the shop context.
+	 * @param null|int $id_shop the ID of the shop.
 	 * @param bool $lang_fallback
 	 * @return string
 	 */
-	public static function get($name, $lang_id = 0, $lang_fallback = true)
+	public static function get($name, $lang_id = null, $id_shop_group = null, $id_shop = null, $lang_fallback = true)
 	{
-		return NostoTaggingConfig::read(self::createConfigKey($name), $lang_id, $lang_fallback);
+		return NostoTaggingConfig::read(self::createConfigKey($name), $lang_id, $id_shop_group, $id_shop, $lang_fallback);
 	}
 
 	/**
