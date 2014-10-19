@@ -9,6 +9,7 @@ require_once(dirname(__FILE__).'/classes/nostotagging-customer.php');
 require_once(dirname(__FILE__).'/classes/nostotagging-order.php');
 require_once(dirname(__FILE__).'/classes/nostotagging-product.php');
 
+require_once(dirname(__FILE__).'/classes/nostotagging-account.php');
 require_once(dirname(__FILE__).'/classes/nostotagging-formatter.php');
 require_once(dirname(__FILE__).'/classes/nostotagging-logger.php');
 require_once(dirname(__FILE__).'/classes/nostotagging-http-request.php');
