@@ -4,17 +4,16 @@
         <div class="panel">
             <div class="panel-heading">
                 <div class="form-group form-group-lg">
-                    <div class="col-xs-12 col-md-8">
-                        <label class="col-sm-2  control-label" for="nostotagging_language">{l s='Edit different shop language:' mod='nostotagging'}</label>
-                        <div class="col-sm-10">
-                            <select class="form-control" id="nostotagging_language">
+                    <div class="col-md-8">
+                        <label for="nostotagging_language" style="font-weight: normal;">{l s='Edit different shop language:' mod='nostotagging'}
+                            <select class="form-control" id="nostotagging_language" style="display: inline-block;">
                                 {foreach from=$nostotagging_languages item=language}
                                     <option value="{$language.id_lang}" {if $language.id_lang == $nostotagging_current_language.id_lang}selected="selected"{/if}>{$language.name}</option>
                                 {/foreach}
                             </select>
-                        </div>
+                        </label>
                     </div>
-                    <div class="col-xs-6 col-md-4">
+                    <div class="col-md-4" style="text-align: right;">
                         <a href="#" id="nostotagging_account_setup" style="color: #666;">{l s='Account setup' mod='nostotagging'} <i class="icon-cogs"></i></a>
                     </div>
                 </div>
