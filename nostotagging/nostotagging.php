@@ -147,6 +147,7 @@ class NostoTagging extends Module
 		$field_current_language = $this->name.'_current_language';
 
 		$languages = Language::getLanguages();
+		$current_language = array('id_lang' => 0, 'name' => '');
 		$language_id = 0;
 		$account_email = $this->context->employee->email;
 
@@ -156,7 +157,9 @@ class NostoTagging extends Module
 				if ($language['id_lang'] == $language_id)
 					$current_language = $language;
 
-			if (Tools::isSubmit('submit_nostotagging_new_account'))
+			if (empty($current_language['id_lang']))
+				$output .= $this->displayError($this->l('Language cannot be empty.'));
+			elseif (Tools::isSubmit('submit_nostotagging_new_account'))
 			{
 				$account_email = (string)Tools::getValue($field_account_email);
 				if (empty($account_email))
@@ -170,10 +173,7 @@ class NostoTagging extends Module
 			}
 			elseif(Tools::isSubmit('submit_nostotagging_authorize_account'))
 			{
-				$params = array();
-				if (!empty($language_id))
-					$params['language_id'] = $language_id;
-
+				$params = array('language_id' => $language_id);
 				$client = new NostoTaggingOAuth2Client();
 				$client->setRedirectUrl(urlencode($this->getOAuth2ControllerUrl($params)));
 				$client->setScopes(NostoTaggingApiToken::$api_token_names);
@@ -192,9 +192,10 @@ class NostoTagging extends Module
 		}
 
 		if (empty($language_id) && isset($languages[0]))
+		{
 			$current_language = $languages[0];
-		if (!isset($current_language))
-			$current_language = array('id_lang' => 0, 'name' => '');
+			$language_id = (int)$current_language['id_lang'];
+		}
 
 		$this->context->controller->addCSS($this->_path.'css/nostotagging-admin-config.css');
 		$this->context->controller->addJS($this->_path.'js/nostotagging-admin-config.js');
@@ -801,8 +802,8 @@ class NostoTagging extends Module
 	 */
 	protected function initConfig()
 	{
-		NostoTaggingConfig::write(NostoTaggingConfig::ACCOUNT_NAME, '', true/*global*/);
-		NostoTaggingConfig::write(NostoTaggingConfig::USE_DEFAULT_NOSTO_ELEMENTS, 1, true/*global*/);
+		// todo: we ned to remove this setting...
+		// NostoTaggingConfig::write(NostoTaggingConfig::USE_DEFAULT_NOSTO_ELEMENTS, 1, true/*global*/);
 		return true;
 	}
 

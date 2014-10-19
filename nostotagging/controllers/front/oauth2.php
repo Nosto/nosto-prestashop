@@ -17,6 +17,8 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
 			if (!empty($language_id))
 				$params['language_id'] = $language_id;
 
+			// todo: what if language not set, use context??
+
 			// The user accepted the authorization request.
 			// The authorization server responded with a code that can be used to exchange for the access token.
 			$client = new NostoTaggingOAuth2Client();
