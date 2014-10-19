@@ -29,16 +29,7 @@ require_once(dirname(__FILE__).'/classes/nostotagging-customer-link.php');
 class NostoTagging extends Module
 {
 	const NOSTOTAGGING_SERVER_ADDRESS = 'staging.nosto.com';
-	const NOSTOTAGGING_PLATFORM_NAME = 'prestashop';
 	const NOSTOTAGGING_IFRAME_URL = '{l}?r=/hub/prestashop/{m}&language={lang}';
-
-    /**
-     * @var array list of api tokens to request from Nosto, prefixed with "api_" when returned by Nosto.
-     */
-    public static $api_tokens = array(
-        'sso',
-        'products'
-    );
 
 	/**
 	 * Custom hooks to add for this module.
@@ -171,7 +162,7 @@ class NostoTagging extends Module
 					$output .= $this->displayError($this->l('Email cannot be empty.'));
 				elseif (!Validate::isEmail($account_email))
 					$output .= $this->displayError($this->l('Email is not a valid email address.'));
-				elseif (!$this->createAccount($account_email, $language_id))
+				elseif (!NostoTaggingAccount::create($this->context, $account_email, $language_id))
 					$output .= $this->displayError($this->l('Account could not be automatically created. Please visit nosto.com to create a new account.'));
 				else
 					$output .= $this->displayConfirmation($this->l('Account created.'));
@@ -184,12 +175,12 @@ class NostoTagging extends Module
 
 				$client = new NostoTaggingOAuth2Client();
 				$client->setRedirectUrl(urlencode($this->getOAuth2ControllerUrl($params)));
-				$client->setScopes(self::$api_tokens);
+				$client->setScopes(NostoTaggingApiToken::$api_token_names);
 				header('Location: '.$client->getAuthorizationUrl());
 				die();
 			}
 			elseif (Tools::isSubmit('submit_nostotagging_reset_account'))
-				NostoTaggingConfig::deleteAllFromContext($language_id);
+				NostoTaggingAccount::delete($language_id);
 		}
 		else
 		{
@@ -211,7 +202,7 @@ class NostoTagging extends Module
 			$field_has_account => NostoTaggingConfig::exists(NostoTaggingConfig::ACCOUNT_NAME, $language_id),
 			$field_account_name => NostoTaggingConfig::read(NostoTaggingConfig::ACCOUNT_NAME, $language_id),
 			$field_account_email => $account_email,
-			$field_account_authorized => $this->isAccountConnectedToNosto($language_id),
+			$field_account_authorized => NostoTaggingAccount::isConnectedToNosto($language_id),
 			$field_languages => $languages,
 			$field_current_language => $current_language,
 		));
@@ -221,7 +212,7 @@ class NostoTagging extends Module
 			// Try to login employee to Nosto in order to get a url to the internal setting pages,
 			// which are then shown in an iframe on the module config page.
 			$iframe_url = $this->doSSOLogin($language_id);
-			if (!empty($iframe_url) && $this->isAccountConnectedToNosto($language_id))
+			if (!empty($iframe_url) && NostoTaggingAccount::isConnectedToNosto($language_id))
 				$this->context->smarty->assign(array(
 					'iframe_url' => NostoTaggingHttpRequest::build_uri(self::NOSTOTAGGING_IFRAME_URL, array(
 						'{l}' => $iframe_url,
@@ -286,21 +277,9 @@ class NostoTagging extends Module
 		}
 
 		NostoTaggingConfig::write(NostoTaggingConfig::ACCOUNT_NAME, $token->merchant_name, false, $language_id);
-		$this->saveApiTokens($result, $language_id);
+		NostoTaggingApiToken::saveTokens($result, $language_id);
 
-		return $this->isAccountConnectedToNosto($language_id);
-	}
-
-	/**
-	 * Returns the current shop's url from the context.
-	 *
-	 * @return string the absolute url.
-	 */
-	public function getContextShopUrl()
-	{
-		$shop = $this->context->shop;
-		$uri = (!empty($shop->domain_ssl) ? $shop->domain_ssl : $shop->domain).__PS_BASE_URI__;
-		return (Configuration::get('PS_SSL_ENABLED') ? 'https://' : 'http://').$uri;
+		return NostoTaggingAccount::isConnectedToNosto($language_id);
 	}
 
 	/**
@@ -712,42 +691,6 @@ class NostoTagging extends Module
 	}
 
 	/**
-	 * Saves API tokens in the config by given language.
-	 *
-	 * @param array $tokens list of tokens to save, indexed by token name, e.g. "api_sso".
-	 * @param int $language_id the ID of the language model to save the tokens for.
-	 */
-	protected function saveApiTokens($tokens, $language_id = 0)
-	{
-		foreach (self::$api_tokens as $token_name)
-		{
-			$key = 'api_'.$token_name;
-			if (isset($tokens[$key]))
-				NostoTaggingApiToken::set($token_name, $tokens[$key], false, $language_id);
-		}
-	}
-
-	/**
-	 * Checks if the account has been authorized with Nosto.
-	 * This is determined by checking if we have all the data needed for make authorized requests to the Nosto API.
-	 *
-	 * @param int $language_id the ID of the language model to check if the account is connected to nosto with.
-	 * @return bool true if the account has been authorized, false otherwise.
-	 */
-	protected function isAccountConnectedToNosto($language_id = 0)
-	{
-		if (!NostoTaggingConfig::exists(NostoTaggingConfig::ACCOUNT_NAME, $language_id))
-			return false;
-		foreach (self::$api_tokens as $token_name)
-		{
-			$token = NostoTaggingApiToken::get($token_name, $language_id);
-			if ($token === false || $token === null)
-				return false;
-		}
-		return true;
-	}
-
-	/**
 	 * Checks if the given controller is the current one.
 	 *
 	 * @param string $name the controller name
@@ -846,68 +789,6 @@ class NostoTagging extends Module
 				}
 			}
 		}
-
-		return true;
-	}
-
-	/**
-	 * Calls the Nosto account creation API endpoint to create a new account.
-	 * It stores the account name and the SSO token to the global configuration.
-	 * If a account is already configured, it will be overwritten.
-	 *
-	 * @param string|null $email address to use when signing up (default is current employee's email).
-	 * @param int $language_id the ID of the language object to create the account for (defaults to context lang).
-	 * @return bool
-	 */
-	protected function createAccount($email = null, $language_id = 0)
-	{
-		$language = !empty($language_id) ? new Language($language_id) : $this->context->language;
-		if (!Validate::isLoadedObject($language))
-			return false;
-
-		$api_tokens = array();
-		foreach (self::$api_tokens as $token_name)
-			$api_tokens[] = 'api_'.$token_name;
-
-		$params = array(
-			'title' => Configuration::get('PS_SHOP_NAME'),
-			'name' => substr(sha1(rand()), 0, 8),
-			'platform' => self::NOSTOTAGGING_PLATFORM_NAME,
-			'front_page_url' => $this->getContextShopUrl(),
-			'currency_code' => $this->context->currency->iso_code,
-			'language_code' => $language->iso_code,
-			'owner' => array(
-				'first_name' => $this->context->employee->firstname,
-				'last_name' => $this->context->employee->lastname,
-				'email' => (!empty($email) ? $email : $this->context->employee->email),
-			),
-			'billing_details' => array(
-				'country' => $this->context->country->iso_code
-			),
-			'api_tokens' => $api_tokens
-		);
-		$request = new NostoTaggingApiRequest();
-		$request->setPath(NostoTaggingApiRequest::PATH_SIGN_UP);
-		$request->setContentType('application/json');
-		$request->setAuthBasic('', NostoTaggingApiRequest::TOKEN_SIGN_UP);
-		$response = $request->post(json_encode($params));
-
-		if ($response->getCode() !== 200)
-		{
-			NostoTaggingLogger::log(
-				__CLASS__.'::'.__FUNCTION__.' - Nosto account could not be created',
-				NostoTaggingLogger::LOG_SEVERITY_ERROR,
-				$response->getCode()
-
-			);
-			return false;
-		}
-
-		$result = $response->getJsonResult(true);
-
-		$account_name = self::NOSTOTAGGING_PLATFORM_NAME.'-'.$params['name'];
-		NostoTaggingConfig::write(NostoTaggingConfig::ACCOUNT_NAME, $account_name, false, $language_id);
-		$this->saveApiTokens($result, $language_id);
 
 		return true;
 	}

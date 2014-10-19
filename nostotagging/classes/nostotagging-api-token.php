@@ -9,6 +9,14 @@ class NostoTaggingApiToken
 	const NOSTOTAGGING_CONFIG_BASE = 'NOSTOTAGGING_API_TOKEN_';
 
 	/**
+	 * @var array list of api tokens to request from Nosto, prefixed with "api_" when returned by Nosto.
+	 */
+	public static $api_token_names = array(
+		'sso',
+		'products'
+	);
+
+	/**
 	 * Getter for an API token by name.
 	 *
 	 * @param string $name
@@ -33,6 +41,22 @@ class NostoTaggingApiToken
 	public static function set($name, $value, $global = false, $language_id = 0)
 	{
 		return NostoTaggingConfig::write(self::createConfigKey($name), $value, $global, $language_id);
+	}
+
+	/**
+	 * Saves API tokens in the config by given language.
+	 *
+	 * @param array $tokens list of tokens to save, indexed by token name, e.g. "api_sso".
+	 * @param int $language_id the ID of the language model to save the tokens for.
+	 */
+	public static function saveTokens($tokens, $language_id = 0)
+	{
+		foreach (self::$api_token_names as $token_name)
+		{
+			$key = 'api_'.$token_name;
+			if (isset($tokens[$key]))
+				self::set($token_name, $tokens[$key], false, $language_id);
+		}
 	}
 
 	/**
