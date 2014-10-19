@@ -812,9 +812,8 @@ class NostoTagging extends Module
 	 */
 	protected function getCustomerTagging()
 	{
-		$nosto_customer = new NostoTaggingCustomer($this);
-		$nosto_customer->populate($this->context->customer);
-		if ($nosto_customer->isEmpty())
+		$nosto_customer = new NostoTaggingCustomer($this->context, $this->context->customer);
+		if (!$nosto_customer->validate())
 			return '';
 
 		$this->smarty->assign(array(
@@ -831,9 +830,8 @@ class NostoTagging extends Module
 	 */
 	protected function getCartTagging()
 	{
-		$nosto_cart = new NostoTaggingCart($this);
-		$nosto_cart->populate($this->context->cart);
-		if ($nosto_cart->isEmpty())
+		$nosto_cart = new NostoTaggingCart($this->context, $this->context->cart);
+		if (!$nosto_cart->validate())
 			return '';
 
 		$this->smarty->assign(array(
@@ -860,9 +858,8 @@ class NostoTagging extends Module
 
 		if (Validate::isLoadedObject($category))
 		{
-			$nosto_category = new NostoTaggingCategory($this);
-			$nosto_category->populate($category);
-			if (!$nosto_category->isEmpty())
+			$nosto_category = new NostoTaggingCategory($this->context, $category);
+			if ($nosto_category->validate())
 				$params['nosto_category'] = $nosto_category;
 		}
 
@@ -878,9 +875,8 @@ class NostoTagging extends Module
 	 */
 	public function getProductData(Product $product)
 	{
-		$nosto_product = new NostoTaggingProduct($this);
-		$nosto_product->populate($product);
-		if ($nosto_product->isEmpty())
+		$nosto_product = new NostoTaggingProduct($this->context, $product);
+		if (!$nosto_product->validate())
 			return false;
 
 		return $nosto_product;
@@ -913,9 +909,8 @@ class NostoTagging extends Module
 	 */
 	public function getOrderData(Order $order)
 	{
-		$nosto_order = new NostoTaggingOrder($this);
-		$nosto_order->populate($order);
-		if ($nosto_order->isEmpty())
+		$nosto_order = new NostoTaggingOrder($this->context, $order);
+		if (!$nosto_order->validate())
 			return false;
 		return $nosto_order;
 	}
@@ -928,9 +923,8 @@ class NostoTagging extends Module
 	 */
 	protected function getCategoryTagging(Category $category)
 	{
-		$nosto_category = new NostoTaggingCategory($this);
-		$nosto_category->populate($category);
-		if ($nosto_category->isEmpty())
+		$nosto_category = new NostoTaggingCategory($this->context, $category);
+		if (!$nosto_category->validate())
 			return '';
 
 		$this->smarty->assign(array(

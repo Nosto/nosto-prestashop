@@ -6,18 +6,25 @@
 abstract class NostoTaggingBlock
 {
 	/**
-	 * @var NostoTagging the nosto module.
+	 * @var Context the context to create the tagging block for.
 	 */
-	protected $module;
+	protected $context;
+
+	/**
+	 * @var object the object used as data source for the tagging block.
+	 */
+	protected $object;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param NostoTagging $module the nosto module.
+	 * @param Context $context the context to create the tagging block for.
+	 * @param object $object the object used as data source for the tagging block.
 	 */
-	public function __construct(NostoTagging $module)
+	public function __construct(Context $context, $object)
 	{
-		$this->module = $module;
+		$this->context = $context;
+		$this->object = $object;
 	}
 
 	/**
@@ -28,15 +35,20 @@ abstract class NostoTaggingBlock
 	abstract public function getRequiredItems();
 
 	/**
-	 * Checks if this tagging block is empty, i.e. if all the required data is not set.
+	 * Populates the tagging block with data from the
+	 */
+	abstract public function populate();
+
+	/**
+	 * Validates the tagging block, i.e. if all the required data is set.
 	 *
 	 * @return bool
 	 */
-	public function isEmpty()
+	public function validate()
 	{
 		foreach ($this->getRequiredItems() as $item)
 			if (empty($this->{$item}))
-				return true;
-		return false;
+				return false;
+		return true;
 	}
 }

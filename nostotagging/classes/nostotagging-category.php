@@ -19,14 +19,13 @@ class NostoTaggingCategory extends NostoTaggingBlock
 	}
 
 	/**
-	 * Populates the block with data from the category.
-	 *
-	 * @param Category $category the category object.
+	 * @inheritdoc
 	 */
-	public function populate(Category $category)
+	public function populate()
 	{
+		$category = $this->object;
 		if (Validate::isLoadedObject($category))
-			$this->category_string = self::buildCategoryString($category->id, $this->module->context->language->id);
+			$this->category_string = self::buildCategoryString($category->id, $this->context->language->id);
 	}
 
 	/**

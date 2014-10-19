@@ -19,15 +19,14 @@ class NostoTaggingCart extends NostoTaggingBlock
 	}
 
 	/**
-	 * Populates this block with data from the shopping cart.
-	 *
-	 * @param Cart $cart the cart object.
+	 * @inheritdoc
 	 */
-	public function populate(Cart $cart)
+	public function populate()
 	{
+		$cart = $this->object;
 		if (Validate::isLoadedObject($cart) && ($products = $cart->getProducts()) !== array())
 		{
-			$currency = $this->module->context->currency;
+			$currency = $this->context->currency;
 			$cart_rules = (array)$cart->getCartRules(CartRule::FILTER_ACTION_GIFT);
 
 			$gift_products = array();

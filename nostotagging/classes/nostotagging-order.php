@@ -39,12 +39,11 @@ class NostoTaggingOrder extends NostoTaggingBlock
 	}
 
 	/**
-	 * Populates the block with data from the order.
-	 *
-	 * @param Order $order the order object.
+	 * @inheritdoc
 	 */
-	public function populate(Order $order)
+	public function populate()
 	{
+		$order = $this->object;
 		if (Validate::isLoadedObject($order))
 		{
 			$currency = new Currency($order->id_currency);

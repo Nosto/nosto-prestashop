@@ -90,17 +90,16 @@ class NostoTaggingProduct extends NostoTaggingBlock
 	}
 
 	/**
-	 * Populates the block with data form the product.
-	 *
-	 * @param Product $product the product object.
+	 * @inheritdoc
 	 */
-	public function populate(Product $product)
+	public function populate()
 	{
+		$product = $this->object;
 		if (Validate::isLoadedObject($product))
 		{
-			$language_id = $this->module->context->language->id;
-			$currency = $this->module->context->currency;
-			$link = $this->module->context->link;
+			$language_id = $this->context->language->id;
+			$currency = $this->context->currency;
+			$link = $this->context->link;
 
 			$this->url = (string)$product->getLink();
 			$this->product_id = (int)$product->id;

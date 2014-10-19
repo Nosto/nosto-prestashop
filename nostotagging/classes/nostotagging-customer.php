@@ -33,12 +33,11 @@ class NostoTaggingCustomer extends NostoTaggingBlock
 	}
 
 	/**
-	 * Populates the block with data from the customer.
-	 *
-	 * @param Customer $customer the customer object.
+	 * @inheritdoc
 	 */
-	public function populate(Customer $customer)
+	public function populate()
 	{
+		$customer = $this->object;
 		if (Validate::isLoadedObject($customer) && $customer->isLogged())
 		{
 			$this->first_name = $customer->firstname;
