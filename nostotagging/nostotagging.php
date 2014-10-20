@@ -90,7 +90,6 @@ class NostoTagging extends Module
 	public function install()
 	{
 		return parent::install()
-			&& $this->initConfig()
 			&& NostoTaggingCustomerLink::createTable()
 			&& $this->initHooks()
 			&& $this->registerHook('displayHeader')
@@ -799,16 +798,6 @@ class NostoTagging extends Module
 			}
 		}
 
-		return true;
-	}
-
-	/**
-	 * Adds initial config values for the module.
-	 *
-	 * @return bool
-	 */
-	protected function initConfig()
-	{
 		return true;
 	}
 
