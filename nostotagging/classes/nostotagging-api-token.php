@@ -44,6 +44,20 @@ class NostoTaggingApiToken
 	}
 
 	/**
+	 * Checks if an API token exists.
+	 *
+	 * @param string $name
+	 * @param int|null $lang_id
+	 * @param int|null $id_shop_group
+	 * @param int|null $id_shop
+	 * @return bool
+	 */
+	public static function exists($name, $lang_id = null, $id_shop_group = null, $id_shop = null)
+	{
+		return NostoTaggingConfig::exists(self::createConfigKey($name), $lang_id, $id_shop_group, $id_shop);
+	}
+
+	/**
 	 * Saves API tokens in the config by given language.
 	 *
 	 * @param array $tokens list of tokens to save, indexed by token name, e.g. "api_sso".
@@ -55,7 +69,7 @@ class NostoTaggingApiToken
 		{
 			$key = 'api_'.$token_name;
 			if (isset($tokens[$key]))
-				self::set($token_name, $tokens[$key], false, $lang_id);
+				self::set($token_name, $tokens[$key], $lang_id);
 		}
 	}
 

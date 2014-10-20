@@ -14,10 +14,10 @@ class NostoTaggingAccount
 	 *
 	 * @param Context $context the context the account is created for.
 	 * @param string|null $email address to use when signing up (default is current employee's email).
-	 * @param int $language_id the ID of the language object to create the account for (defaults to context lang).
+	 * @param int|null $language_id the ID of the language object to create the account for (defaults to context lang).
 	 * @return bool
 	 */
-	public static function create($context, $email = null, $language_id = 0)
+	public static function create($context, $email = null, $language_id = null)
 	{
 		$language = !empty($language_id) ? new Language($language_id) : $context->language;
 		if (!Validate::isLoadedObject($language))
@@ -31,7 +31,7 @@ class NostoTaggingAccount
 			'title' => Configuration::get('PS_SHOP_NAME'),
 			'name' => substr(sha1(rand()), 0, 8),
 			'platform' => self::PLATFORM_NAME,
-			'front_page_url' => self::getContextShopUrl($context),
+			'front_page_url' => self::getContextShopUrl($context, $language),
 			'currency_code' => $context->currency->iso_code,
 			'language_code' => $language->iso_code,
 			'owner' => array(
@@ -64,7 +64,7 @@ class NostoTaggingAccount
 		$result = $response->getJsonResult(true);
 
 		$account_name = self::PLATFORM_NAME.'-'.$params['name'];
-		self::setName($account_name, false, $language_id);
+		self::setName($account_name, $language_id);
 		NostoTaggingApiToken::saveTokens($result, $language_id);
 
 		return true;
@@ -130,24 +130,22 @@ class NostoTaggingAccount
 		if (!self::exists($lang_id))
 			return false;
 		foreach (NostoTaggingApiToken::$api_token_names as $token_name)
-		{
-			$token = NostoTaggingApiToken::get($token_name, $lang_id);
-			if ($token === false || $token === null)
+			if (!NostoTaggingApiToken::exists($token_name, $lang_id))
 				return false;
-		}
 		return true;
 	}
 
 	/**
-	 * Returns the current shop's url from the context.
+	 * Returns the current shop's url from the context and language.
 	 *
 	 * @param Context $context the context.
+	 * @param Language $language the language.
 	 * @return string the absolute url.
 	 */
-	public static function getContextShopUrl($context)
+	public static function getContextShopUrl($context, $language)
 	{
 		$shop = $context->shop;
 		$uri = (!empty($shop->domain_ssl) ? $shop->domain_ssl : $shop->domain).__PS_BASE_URI__;
-		return (Configuration::get('PS_SSL_ENABLED') ? 'https://' : 'http://').$uri;
+		return (Configuration::get('PS_SSL_ENABLED') ? 'https://' : 'http://').$uri.'/'.$language->iso_code;
 	}
 } 

@@ -30,7 +30,7 @@ require_once(dirname(__FILE__).'/classes/nostotagging-customer-link.php');
 class NostoTagging extends Module
 {
 	const NOSTOTAGGING_SERVER_ADDRESS = 'connect.nosto.com';
-	const NOSTOTAGGING_IFRAME_URL = '{l}?r=/hub/prestashop/{m}&language={lang}';
+	const NOSTOTAGGING_IFRAME_URL = '{l}?r=/hub/prestashop/{m}&language={lang}&ps_version={psv}&nt_version={ntv}';
 
 	/**
 	 * Custom hooks to add for this module.
@@ -96,8 +96,8 @@ class NostoTagging extends Module
 			&& $this->registerHook('displayHeader')
 			&& $this->registerHook('displayTop')
 			&& $this->registerHook('displayFooter')
-			&& $this->registerHook('displayLeftColumn')
-			&& $this->registerHook('displayRightColumn')
+			//&& $this->registerHook('displayLeftColumn') disabled for now.
+			//&& $this->registerHook('displayRightColumn') disabled for now.
 			&& $this->registerHook('displayFooterProduct')
 			&& $this->registerHook('displayShoppingCartFooter')
 			&& $this->registerHook('displayOrderConfirmation')
@@ -107,7 +107,8 @@ class NostoTagging extends Module
 			&& $this->registerHook('displaySearchFooter')
 			&& $this->registerHook('actionPaymentConfirmation')
 			&& $this->registerHook('displayPaymentTop')
-			&& $this->registerHook('displayHome');
+			&& $this->registerHook('displayHome')
+			&& $this->registerHook('actionObjectUpdateAfter');
 	}
 
 	/**
@@ -147,7 +148,7 @@ class NostoTagging extends Module
 		$field_current_language = $this->name.'_current_language';
 
 		$languages = Language::getLanguages();
-		$current_language = array('id_lang' => 0, 'name' => '');
+		$current_language = array('id_lang' => 0, 'name' => '', 'iso_code' => '');
 		$language_id = 0;
 		$account_email = $this->context->employee->email;
 
@@ -216,7 +217,9 @@ class NostoTagging extends Module
 				'iframe_url' => NostoTaggingHttpRequest::build_uri(self::NOSTOTAGGING_IFRAME_URL, array(
 					'{l}' => $iframe_url,
 					'{m}' => NostoTaggingAccount::getName($language_id),
-					'{lang}' => $this->context->language->iso_code
+					'{lang}' => $current_language['iso_code'],
+					'{psv}' => _PS_VERSION_,
+					'{ntv}' => $this->version,
 				)),
 			));
 
@@ -274,7 +277,7 @@ class NostoTagging extends Module
 			return false;
 		}
 
-		NostoTaggingAccount::setName($token->merchant_name, false, $language_id);
+		NostoTaggingAccount::setName($token->merchant_name, $language_id);
 		NostoTaggingApiToken::saveTokens($result, $language_id);
 
 		return NostoTaggingAccount::isConnectedToNosto($language_id);
@@ -586,6 +589,41 @@ class NostoTagging extends Module
 	public function hookDisplayHome()
 	{
 		return $this->display(__FILE__, 'home_nosto-elements.tpl');
+	}
+
+	/**
+	 * Hook that is fired after a object is updated in the db.
+	 *
+	 * @param array $params
+	 */
+	public function hookActionObjectUpdateAfter(Array $params)
+	{
+		if (isset($params['object']))
+		{
+			$object = $params['object'];
+			if ($object instanceof Product)
+			{
+				// Send a request to Nosto to re-crawl this product for every language that has a token set.
+				foreach (Language::getLanguages() as $language)
+					if (($token = NostoTaggingApiToken::get('products', (int)$language['id_lang'])) !== false)
+					{
+						$request = new NostoTaggingApiRequest();
+						$request->setPath(NostoTaggingApiRequest::PATH_PRODUCT_RE_CRAWL);
+						$request->setContentType('application/json');
+						$request->setAuthBasic('', $token);
+						$response = $request->post(json_encode(array('product_ids' => array($object->id))));
+
+						if ($response->getCode() !== 200)
+							NostoTaggingLogger::log(
+								__CLASS__.'::'.__FUNCTION__.' - Failed to send re-crawl instruction to Nosto.',
+								NostoTaggingLogger::LOG_SEVERITY_ERROR,
+								$response->getCode(),
+								get_class($object),
+								(int)$object->id
+							);
+					}
+			}
+		}
 	}
 
 	/**
