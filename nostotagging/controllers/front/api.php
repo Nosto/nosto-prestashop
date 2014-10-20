@@ -40,7 +40,7 @@ abstract class NostoTaggingApiModuleFrontController extends ModuleFrontControlle
 	public function encryptOutput($string)
 	{
 		// todo: change this once we have a real secret transferred from Nosto.
-		$token = $this->module->getSSOToken();
+		$token = NostoTaggingApiToken::get('sso');
 		if (!empty($token))
 		{
 			$secret = substr($token, 0, 16);

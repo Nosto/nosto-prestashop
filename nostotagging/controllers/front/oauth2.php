@@ -12,12 +12,19 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
 	{
 		if (($code = Tools::getValue('code')) !== false)
 		{
+			$params = array();
+			$language_id = (int)Tools::getValue('language_id');
+			if (!empty($language_id))
+				$params['language_id'] = $language_id;
+
+			// todo: what if language not set, use context??
+
 			// The user accepted the authorization request.
 			// The authorization server responded with a code that can be used to exchange for the access token.
 			$client = new NostoTaggingOAuth2Client();
-			$client->setRedirectUrl($this->module->getOAuth2ControllerUrl());
+			$client->setRedirectUrl($this->module->getOAuth2ControllerUrl($params));
 			if (($token = $client->authenticate($code)) !== false)
-				if($this->module->exchangeDataWithNosto($token))
+				if($this->module->exchangeDataWithNosto($token, $language_id))
 				{
 					$msg = $this->module->l('Account %s successfully connected to Nosto.');
 					$msg = sprintf($msg, $token->merchant_name);
@@ -54,10 +61,11 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
 	 */
 	protected function redirectToModuleAdmin()
 	{
-		// The admin url is only returned if user is logged in as admin in back office,
-		// so that we do not expose it to outsiders.
+		// The admin url is only used if user is logged in as admin in back office, so that we do not expose it.
 		// The OAuth2 request cycle is initiated from the back office, so the user should still be logged in.
-		$admin_url = $this->module->getAdminUrl();
+		$admin_url = '';
+		if ($this->module->isUserAdmin())
+			$admin_url = NostoTaggingConfig::read(NostoTaggingConfig::ADMIN_URL);
 		if (!empty($admin_url))
 		{
 			header('Location: '.$admin_url);
