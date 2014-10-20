@@ -8,6 +8,7 @@ require_once(dirname(__FILE__).'/classes/nostotagging-category.php');
 require_once(dirname(__FILE__).'/classes/nostotagging-customer.php');
 require_once(dirname(__FILE__).'/classes/nostotagging-order.php');
 require_once(dirname(__FILE__).'/classes/nostotagging-product.php');
+require_once(dirname(__FILE__).'/classes/nostotagging-brand.php');
 
 require_once(dirname(__FILE__).'/classes/nostotagging-account.php');
 require_once(dirname(__FILE__).'/classes/nostotagging-formatter.php');
@@ -93,7 +94,6 @@ class NostoTagging extends Module
 	public function install()
 	{
 		return parent::install()
-			&& $this->initConfig()
 			&& NostoTaggingCustomerLink::createTable()
 			&& $this->initHooks()
 			&& $this->registerHook('displayHeader')
@@ -284,7 +284,7 @@ class NostoTagging extends Module
 		}
 
 		NostoTaggingAccount::setName($token->merchant_name, $language_id);
-		NostoTaggingApiToken::saveTokens($result, $language_id);
+		NostoTaggingApiToken::saveTokens($result, $language_id, 'api_');
 
 		return NostoTaggingAccount::isConnectedToNosto($language_id);
 	}
@@ -334,6 +334,15 @@ class NostoTagging extends Module
 				$category = new Category((int)Tools::getValue('id_category'), $this->context->language->id);
 			$html .= $this->getCategoryTagging($category);
 		}
+		elseif ($this->isController('manufacturer'))
+		{
+			// The "getManufacturer" method is available from Prestashop 1.5.6.0 upwards.
+			if (method_exists($this->context->controller, 'getManufacturer'))
+				$manufacturer = $this->context->controller->getManufacturer();
+			else
+				$manufacturer = new Manufacturer((int)Tools::getValue('id_manufacturer'), $this->context->language->id);
+			$html .= $this->getBrandTagging($manufacturer);
+		}
 
 		$html .= $this->display(__FILE__, 'top_nosto-elements.tpl');
 
@@ -352,7 +361,7 @@ class NostoTagging extends Module
 		$html = '';
 		$html .= $this->display(__FILE__, 'footer_nosto-elements.tpl');
 
-		if ($this->isController('category'))
+		if ($this->isController('category') || $this->isController('manufacturer'))
 		{
 			$html .= '<div id="hidden_nosto_elements" style="display: none;">';
 			$html .= '<div class="append">';
@@ -827,16 +836,6 @@ class NostoTagging extends Module
 	}
 
 	/**
-	 * Adds initial config values for the module.
-	 *
-	 * @return bool
-	 */
-	protected function initConfig()
-	{
-		return true;
-	}
-
-	/**
 	 * Render meta-data (tagging) for the logged in customer.
 	 *
 	 * @return string The rendered HTML
@@ -963,5 +962,24 @@ class NostoTagging extends Module
 		));
 
 		return $this->display(__FILE__, 'category-footer_category-tagging.tpl');
+	}
+
+	/**
+	 * Render meta-data (tagging) for a manufacturer.
+	 *
+	 * @param Manufacturer $manufacturer
+	 * @return string The rendered HTML
+	 */
+	protected function getBrandTagging($manufacturer)
+	{
+		$nosto_brand = new NostoTaggingBrand($this->context, $manufacturer);
+		if (!$nosto_brand->validate())
+			return '';
+
+		$this->smarty->assign(array(
+			'nosto_brand' => $nosto_brand,
+		));
+
+		return $this->display(__FILE__, 'manufacturer-footer_brand-tagging.tpl');
 	}
 }
