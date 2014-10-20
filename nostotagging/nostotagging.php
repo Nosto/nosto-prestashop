@@ -99,6 +99,8 @@ class NostoTagging extends Module
 	 */
 	public function install()
 	{
+		// todo: find the equivalent to "actionObjectUpdateAfter" in prestashop 1.4
+
 		// Backward compatibility
 		if (_PS_VERSION_ < '1.5')
 			return parent::install()
