@@ -697,6 +697,15 @@ class NostoTagging extends Module
 	}
 
 	/**
+	 * Returns the current context.
+	 * @return Context
+	 */
+	public function getContext()
+	{
+		return $this->context;
+	}
+
+	/**
 	 * Checks if the given controller is the current one.
 	 *
 	 * @param string $name the controller name

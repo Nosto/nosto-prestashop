@@ -13,7 +13,7 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
 		if (($code = Tools::getValue('code')) !== false)
 		{
 			$params = array();
-			$params['language_id'] = (int)Tools::getValue('language_id', $this->module->context->language->id);
+			$params['language_id'] = (int)Tools::getValue('language_id', $this->module->getContext()->language->id);
 
 			// The user accepted the authorization request.
 			// The authorization server responded with a code that can be used to exchange for the access token.
