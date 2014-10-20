@@ -55,7 +55,7 @@ class NostoTaggingApiToken
 		{
 			$key = 'api_'.$token_name;
 			if (isset($tokens[$key]))
-				self::set($token_name, $tokens[$key], false, $lang_id);
+				self::set($token_name, $tokens[$key], $lang_id);
 		}
 	}
 
