@@ -16,11 +16,13 @@
         <div class="clear"></div>
 
         <div id="nostotagging_account_name_group" style="{if !$nostotagging_has_account}display:none;{/if}">
-            <label>{l s='Account name' mod='nostotagging'}</label>
             <div class="margin-form">
-                <input type="text" name="nostotagging_account_name" id="nostotagging_account_name" value="{$nostotagging_account_name}" size="40">
-                <sup>*</sup>
-                <p class="preference_description">{l s='Your Nosto marketing automation service account name.' mod='nostotagging'}</p>
+                {if $is_account_authorized === false}
+                    <button type="submit" value="1" class="btn btn-default" name="submit_nostotagging_authorize_account">{l s='Authorize account' mod='nostotagging'}</button>
+                    <p class="preference_description">{l s='You need to authorize your account in order to use all features provided by Nosto.' mod='nostotagging'}</p>
+                {else}
+                    <p class="preference_description">{l s='Your account is authorized.' mod='nostotagging'}</p>
+                {/if}
             </div>
             <div class="clear"></div>
         </div>
@@ -41,18 +43,20 @@
             <div class="clear"></div>
         </div>
 
-        <label>{l s='Use default nosto elements' mod='nostotagging'}</label>
-        <div class="margin-form">
-            <input type="radio" name="nostotagging_use_defaults" id="nostotagging_use_defaults_on" value="1" {if $nostotagging_use_defaults}checked="checked"{/if}>
-            <label class="t" for="nostotagging_use_defaults_on">
-                <img src="../img/admin/enabled.gif" alt="{l s='Yes' mod='nostotagging'}" title="{l s='Yes' mod='nostotagging'}">
-            </label>
-            <input type="radio" name="nostotagging_use_defaults" id="nostotagging_use_defaults_off" value="0" {if !$nostotagging_use_defaults}checked="checked"{/if}>
-            <label class="t" for="nostotagging_use_defaults_off">
-                <img src="../img/admin/disabled.gif" alt="{l s='No' mod='nostotagging'}" title="{l s='No' mod='nostotagging'}">
-            </label>
+        <div id="nostotagging_use_defaults_group" style="display:none;">
+            <label>{l s='Use default nosto elements' mod='nostotagging'}</label>
+            <div class="margin-form">
+                <input type="radio" name="nostotagging_use_defaults" id="nostotagging_use_defaults_on" value="1" {if $nostotagging_use_defaults}checked="checked"{/if}>
+                <label class="t" for="nostotagging_use_defaults_on">
+                    <img src="../img/admin/enabled.gif" alt="{l s='Yes' mod='nostotagging'}" title="{l s='Yes' mod='nostotagging'}">
+                </label>
+                <input type="radio" name="nostotagging_use_defaults" id="nostotagging_use_defaults_off" value="0" {if !$nostotagging_use_defaults}checked="checked"{/if}>
+                <label class="t" for="nostotagging_use_defaults_off">
+                    <img src="../img/admin/disabled.gif" alt="{l s='No' mod='nostotagging'}" title="{l s='No' mod='nostotagging'}">
+                </label>
+            </div>
+            <div class="clear"></div>
         </div>
-        <div class="clear"></div>
 
         <div class="margin-form">
             <input type="submit" id="configuration_form_submit_btn" value="{l s='Save' mod='nostotagging'}" name="submit_nostotagging_general_settings" class="button">
