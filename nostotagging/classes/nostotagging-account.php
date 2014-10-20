@@ -14,10 +14,10 @@ class NostoTaggingAccount
 	 *
 	 * @param Context $context the context the account is created for.
 	 * @param string|null $email address to use when signing up (default is current employee's email).
-	 * @param int $language_id the ID of the language object to create the account for (defaults to context lang).
+	 * @param int|null $language_id the ID of the language object to create the account for (defaults to context lang).
 	 * @return bool
 	 */
-	public static function create($context, $email = null, $language_id = 0)
+	public static function create($context, $email = null, $language_id = null)
 	{
 		$language = !empty($language_id) ? new Language($language_id) : $context->language;
 		if (!Validate::isLoadedObject($language))
