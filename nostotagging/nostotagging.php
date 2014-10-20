@@ -281,7 +281,7 @@ class NostoTagging extends Module
 		}
 
 		NostoTaggingAccount::setName($token->merchant_name, $language_id);
-		NostoTaggingApiToken::saveTokens($result, $language_id);
+		NostoTaggingApiToken::saveTokens($result, $language_id, 'api_');
 
 		return NostoTaggingAccount::isConnectedToNosto($language_id);
 	}

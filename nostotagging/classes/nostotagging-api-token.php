@@ -62,12 +62,14 @@ class NostoTaggingApiToken
 	 *
 	 * @param array $tokens list of tokens to save, indexed by token name, e.g. "api_sso".
 	 * @param null|int $lang_id the ID of the language model to save the tokens for.
+	 * @param string $prefix optional prefix to set for the token name when doing lookup in $result.
+	 * @param string $postfix optional postfix to set for the token name when doing lookup in $result.
 	 */
-	public static function saveTokens($tokens, $lang_id = null)
+	public static function saveTokens($tokens, $lang_id = null, $prefix = '', $postfix = '')
 	{
 		foreach (self::$api_token_names as $token_name)
 		{
-			$key = 'api_'.$token_name;
+			$key = $prefix.$token_name.$postfix;
 			if (isset($tokens[$key]))
 				self::set($token_name, $tokens[$key], $lang_id);
 		}

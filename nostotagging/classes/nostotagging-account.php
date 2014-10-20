@@ -65,7 +65,7 @@ class NostoTaggingAccount
 
 		$account_name = self::PLATFORM_NAME.'-'.$params['name'];
 		self::setName($account_name, $language_id);
-		NostoTaggingApiToken::saveTokens($result, $language_id);
+		NostoTaggingApiToken::saveTokens($result, $language_id, '', '_token');
 
 		return true;
 	}
