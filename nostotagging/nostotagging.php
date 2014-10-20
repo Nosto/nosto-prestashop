@@ -604,25 +604,25 @@ class NostoTagging extends Module
 			$object = $params['object'];
 			if ($object instanceof Product)
 			{
-				// todo: how to get the correct language so we can fetch the correct token??
-				if (($token = NostoTaggingApiToken::get('products', $this->context->language->id)) !== false)
-				{
-					// Send a request to Nosto to re-crawl this product.
-					$request = new NostoTaggingApiRequest();
-					$request->setPath(NostoTaggingApiRequest::PATH_PRODUCT_RE_CRAWL);
-					$request->setContentType('application/json');
-					$request->setAuthBasic('', $token);
-					$response = $request->post(json_encode(array('product_ids' => array($object->id))));
+				// Send a request to Nosto to re-crawl this product for every language that has a token set.
+				foreach (Language::getLanguages() as $language)
+					if (($token = NostoTaggingApiToken::get('products', (int)$language['id_lang'])) !== false)
+					{
+						$request = new NostoTaggingApiRequest();
+						$request->setPath(NostoTaggingApiRequest::PATH_PRODUCT_RE_CRAWL);
+						$request->setContentType('application/json');
+						$request->setAuthBasic('', $token);
+						$response = $request->post(json_encode(array('product_ids' => array($object->id))));
 
-					if ($response->getCode() !== 200)
-						NostoTaggingLogger::log(
-							__CLASS__.'::'.__FUNCTION__.' - Failed to send re-crawl instruction to Nosto.',
-							NostoTaggingLogger::LOG_SEVERITY_ERROR,
-							$response->getCode(),
-							get_class($object),
-							(int)$object->id
-						);
-				}
+						if ($response->getCode() !== 200)
+							NostoTaggingLogger::log(
+								__CLASS__.'::'.__FUNCTION__.' - Failed to send re-crawl instruction to Nosto.',
+								NostoTaggingLogger::LOG_SEVERITY_ERROR,
+								$response->getCode(),
+								get_class($object),
+								(int)$object->id
+							);
+					}
 			}
 		}
 	}
