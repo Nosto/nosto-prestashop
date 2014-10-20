@@ -30,7 +30,7 @@ require_once(dirname(__FILE__).'/classes/nostotagging-customer-link.php');
 class NostoTagging extends Module
 {
 	const NOSTOTAGGING_SERVER_ADDRESS = 'connect.nosto.com';
-	const NOSTOTAGGING_IFRAME_URL = '{l}?r=/hub/prestashop/{m}&language={lang}';
+	const NOSTOTAGGING_IFRAME_URL = '{l}?r=/hub/prestashop/{m}&language={lang}&ps_version={psv}&nt_version={ntv}';
 
 	/**
 	 * Custom hooks to add for this module.
@@ -218,7 +218,9 @@ class NostoTagging extends Module
 					'iframe_url' => NostoTaggingHttpRequest::build_uri(self::NOSTOTAGGING_IFRAME_URL, array(
 						'{l}' => $iframe_url,
 						'{m}' => NostoTaggingAccount::getName($language_id),
-						'{lang}' => $this->context->language->iso_code
+						'{lang}' => $this->context->language->iso_code,
+						'{psv}' => _PS_VERSION_,
+						'{ntv}' => $this->version,
 					)),
 				));
 		}
