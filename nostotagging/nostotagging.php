@@ -604,6 +604,7 @@ class NostoTagging extends Module
 			$object = $params['object'];
 			if ($object instanceof Product)
 			{
+				// todo: how to get the correct language so we can fetch the correct token??
 				if (($token = NostoTaggingApiToken::get('products', $this->context->language->id)) !== false)
 				{
 					// Send a request to Nosto to re-crawl this product.
