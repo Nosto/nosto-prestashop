@@ -115,7 +115,8 @@ class NostoTaggingConfig
 			.$context_restriction
 		);
 
-		Configuration::$_cache[Configuration::$definition['table']] = null;
+		// We cannot do this, it is protected.
+		// Configuration::$_cache[Configuration::$definition['table']] = null;
 
 		return true;
 	}
