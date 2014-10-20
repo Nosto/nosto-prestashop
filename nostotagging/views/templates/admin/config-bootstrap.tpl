@@ -15,9 +15,11 @@
                             </label>
                         </div>
                         <div class="col-md-4 text-right">
-                            <a href="#" id="nostotagging_account_setup">{l s='Account setup' mod='nostotagging'}
-                                <span class="glyphicon glyphicon-cog">&nbsp;</span>
-                            </a>
+                            {if $nostotagging_account_authorized}
+                                <a href="#" id="nostotagging_account_setup">{l s='Account setup' mod='nostotagging'}
+                                    <span class="glyphicon glyphicon-cog">&nbsp;</span>
+                                </a>
+                            {/if}
                         </div>
                     </div>
                     <div class="panel-body text-center">
