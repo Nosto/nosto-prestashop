@@ -130,11 +130,8 @@ class NostoTaggingAccount
 		if (!self::exists($lang_id))
 			return false;
 		foreach (NostoTaggingApiToken::$api_token_names as $token_name)
-		{
-			$token = NostoTaggingApiToken::get($token_name, $lang_id);
-			if ($token === false || $token === null)
+			if (!NostoTaggingApiToken::exists($token_name, $lang_id))
 				return false;
-		}
 		return true;
 	}
 
