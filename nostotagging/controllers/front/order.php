@@ -18,8 +18,7 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
 		foreach ($this->getOrderIds() as $id_order)
 		{
 			$order = new Order($id_order);
-			$currency = new Currency($order->id_currency);
-			$nosto_order = $this->module->getOrderData($order, $currency);
+			$nosto_order = $this->module->getOrderData($order);
 			if (!empty($nosto_order))
 				$nosto_orders[] = $nosto_order;
 			$order = null;
