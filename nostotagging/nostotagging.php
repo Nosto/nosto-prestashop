@@ -8,6 +8,7 @@ require_once(dirname(__FILE__).'/classes/nostotagging-category.php');
 require_once(dirname(__FILE__).'/classes/nostotagging-customer.php');
 require_once(dirname(__FILE__).'/classes/nostotagging-order.php');
 require_once(dirname(__FILE__).'/classes/nostotagging-product.php');
+require_once(dirname(__FILE__).'/classes/nostotagging-brand.php');
 
 require_once(dirname(__FILE__).'/classes/nostotagging-account.php');
 require_once(dirname(__FILE__).'/classes/nostotagging-formatter.php');
@@ -30,7 +31,7 @@ require_once(dirname(__FILE__).'/classes/nostotagging-customer-link.php');
 class NostoTagging extends Module
 {
 	const NOSTOTAGGING_SERVER_ADDRESS = 'connect.nosto.com';
-	const NOSTOTAGGING_IFRAME_URL = '{l}?r=/hub/prestashop/{m}&language={lang}';
+	const NOSTOTAGGING_IFRAME_URL = '{l}?r=/hub/prestashop/{m}&language={lang}&ps_version={psv}&nt_version={ntv}';
 
 	/**
 	 * Custom hooks to add for this module.
@@ -82,6 +83,11 @@ class NostoTagging extends Module
 		// Backward compatibility
 		if (_PS_VERSION_ < '1.5')
 			require(_PS_MODULE_DIR_.$this->name.'/backward_compatibility/backward.php');
+
+        // Invoking this method somehow forces the messaage to appear - caching related
+        $this->checkConfigState(); 
+		if (!$this->checkConfigState())
+			$this->warning = $this->l('A Nosto account is not set up for each shop and language.');
 	}
 
 	/**
@@ -106,8 +112,8 @@ class NostoTagging extends Module
 				&& $this->registerHook('header')
 				&& $this->registerHook('top')
 				&& $this->registerHook('footer')
-				&& $this->registerHook('leftColumn')
-				&& $this->registerHook('rightColumn')
+				//&& $this->registerHook('leftColumn')
+				//&& $this->registerHook('rightColumn')
 				&& $this->registerHook('productfooter')
 				&& $this->registerHook('shoppingCart')
 				&& $this->registerHook('orderConfirmation')
@@ -126,14 +132,15 @@ class NostoTagging extends Module
 				&& $this->registerHook('displayHeader')
 				&& $this->registerHook('displayTop')
 				&& $this->registerHook('displayFooter')
-				&& $this->registerHook('displayLeftColumn')
-				&& $this->registerHook('displayRightColumn')
+				//&& $this->registerHook('displayLeftColumn')
+				//&& $this->registerHook('displayRightColumn')
 				&& $this->registerHook('displayFooterProduct')
 				&& $this->registerHook('displayShoppingCartFooter')
 				&& $this->registerHook('displayOrderConfirmation')
 				&& $this->registerHook('actionPaymentConfirmation')
 				&& $this->registerHook('displayPaymentTop')
-				&& $this->registerHook('displayHome');
+				&& $this->registerHook('displayHome')
+    			&& $this->registerHook('actionObjectUpdateAfter');
 	}
 
 	/**
@@ -242,7 +249,9 @@ class NostoTagging extends Module
 					'iframe_url' => NostoTaggingHttpRequest::build_uri(self::NOSTOTAGGING_IFRAME_URL, array(
 						'{l}' => $iframe_url,
 						'{m}' => NostoTaggingAccount::getName($language_id),
-						'{lang}' => $this->context->language->iso_code
+						'{lang}' => $this->context->language->iso_code,
+						'{psv}' => _PS_VERSION_,
+						'{ntv}' => $this->version,
 					)),
 				));
 		}
@@ -302,8 +311,8 @@ class NostoTagging extends Module
 			return false;
 		}
 
-		NostoTaggingAccount::setName($token->merchant_name, false, $language_id);
-		NostoTaggingApiToken::saveTokens($result, $language_id);
+		NostoTaggingAccount::setName($token->merchant_name, $language_id);
+		NostoTaggingApiToken::saveTokens($result, $language_id, 'api_');
 
 		return NostoTaggingAccount::isConnectedToNosto($language_id);
 	}
@@ -364,6 +373,15 @@ class NostoTagging extends Module
 				$category = new Category((int)Tools::getValue('id_category'), $this->context->language->id);
 			$html .= $this->getCategoryTagging($category);
 		}
+		elseif ($this->isController('manufacturer'))
+		{
+			// The "getManufacturer" method is available from Prestashop 1.5.6.0 upwards.
+			if (method_exists($this->context->controller, 'getManufacturer'))
+				$manufacturer = $this->context->controller->getManufacturer();
+			else
+				$manufacturer = new Manufacturer((int)Tools::getValue('id_manufacturer'), $this->context->language->id);
+			$html .= $this->getBrandTagging($manufacturer);
+		}
 
 		$html .= $this->display(__FILE__, 'views/templates/hook/top_nosto-elements.tpl');
 
@@ -393,7 +411,7 @@ class NostoTagging extends Module
 		$html = '';
 		$html .= $this->display(__FILE__, 'views/templates/hook/footer_nosto-elements.tpl');
 
-		if ($this->isController('category'))
+		if ($this->isController('category') || $this->isController('manufacturer'))
 		{
 			$html .= '<div id="hidden_nosto_elements" style="display: none;">';
 			$html .= '<div class="append">';
@@ -739,6 +757,41 @@ class NostoTagging extends Module
 	}
 
 	/**
+	 * Hook that is fired after a object is updated in the db.
+	 *
+	 * @param array $params
+	 */
+	public function hookActionObjectUpdateAfter(Array $params)
+	{
+		if (isset($params['object']))
+		{
+			$object = $params['object'];
+			if ($object instanceof Product)
+			{
+				// Send a request to Nosto to re-crawl this product for every language that has a token set.
+				foreach (Language::getLanguages() as $language)
+					if (($token = NostoTaggingApiToken::get('products', (int)$language['id_lang'])) !== false)
+					{
+						$request = new NostoTaggingApiRequest();
+						$request->setPath(NostoTaggingApiRequest::PATH_PRODUCT_RE_CRAWL);
+						$request->setContentType('application/json');
+						$request->setAuthBasic('', $token);
+						$response = $request->post(json_encode(array('product_ids' => array($object->id))));
+
+						if ($response->getCode() !== 200)
+							NostoTaggingLogger::log(
+								__CLASS__.'::'.__FUNCTION__.' - Failed to send re-crawl instruction to Nosto.',
+								NostoTaggingLogger::LOG_SEVERITY_ERROR,
+								$response->getCode(),
+								get_class($object),
+								(int)$object->id
+							);
+					}
+			}
+		}
+	}
+
+	/**
 	 * Returns the url to the oauth2 controller.
 	 *
 	 * @param array $params optional GET params.
@@ -806,6 +859,27 @@ class NostoTagging extends Module
 			}
 		}
 		return $messages;
+	}
+
+	/**
+	 * Checks if a Nosto account is set up and connected for each shop and language combo.
+	 *
+	 * @return bool true if all shops have an account configured for every language.
+	 */
+	protected function checkConfigState()
+	{
+		foreach (Shop::getShops() as $shop)
+		{
+			foreach (LanguageCore::getLanguages(true, $shop['id_shop']) as $language)
+			{
+				if (isset($shop['id_shop_group'], $shop['id_shop']))
+					if (!NostoTaggingAccount::isConnectedToNosto($language['id_lang'], $shop['id_shop_group'], $shop['id_shop']))
+						return false;
+					elseif (!NostoTaggingAccount::isConnectedToNosto($language['id_lang']))
+						return false;
+			}
+		}
+		return true;
 	}
 
 	/**
@@ -917,16 +991,6 @@ class NostoTagging extends Module
 			}
 		}
 
-		return true;
-	}
-
-	/**
-	 * Adds initial config values for the module.
-	 *
-	 * @return bool
-	 */
-	protected function initConfig()
-	{
 		return true;
 	}
 
@@ -1058,5 +1122,24 @@ class NostoTagging extends Module
 		));
 
 		return $this->display(__FILE__, 'views/templates/hook/category-footer_category-tagging.tpl');
+	}
+
+	/**
+	 * Render meta-data (tagging) for a manufacturer.
+	 *
+	 * @param Manufacturer $manufacturer
+	 * @return string The rendered HTML
+	 */
+	protected function getBrandTagging($manufacturer)
+	{
+		$nosto_brand = new NostoTaggingBrand($this->context, $manufacturer);
+		if (!$nosto_brand->validate())
+			return '';
+
+		$this->smarty->assign(array(
+			'nosto_brand' => $nosto_brand,
+		));
+
+		return $this->display(__FILE__, 'manufacturer-footer_brand-tagging.tpl');
 	}
 }

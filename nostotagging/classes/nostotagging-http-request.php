@@ -111,7 +111,7 @@ class NostoTaggingHttpRequest
 	 */
 	public function setAuthBasic($username, $password)
 	{
-		$this->setAuth(self::AUTH_BASIC, array($username => $password));
+		$this->setAuth(self::AUTH_BASIC, array($username, $password));
 	}
 
 	/**
