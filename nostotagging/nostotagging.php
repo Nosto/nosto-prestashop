@@ -208,20 +208,17 @@ class NostoTagging extends Module
 			$field_current_language => $current_language,
 		));
 
-		if (version_compare(substr(_PS_VERSION_, 0, 3), '1.6', '>='))
-		{
-			// Try to login employee to Nosto in order to get a url to the internal setting pages,
-			// which are then shown in an iframe on the module config page.
-			$iframe_url = $this->doSSOLogin($language_id);
-			if (!empty($iframe_url) && NostoTaggingAccount::isConnectedToNosto($language_id))
-				$this->context->smarty->assign(array(
-					'iframe_url' => NostoTaggingHttpRequest::build_uri(self::NOSTOTAGGING_IFRAME_URL, array(
-						'{l}' => $iframe_url,
-						'{m}' => NostoTaggingAccount::getName($language_id),
-						'{lang}' => $this->context->language->iso_code
-					)),
-				));
-		}
+		// Try to login employee to Nosto in order to get a url to the internal setting pages,
+		// which are then shown in an iframe on the module config page.
+		$iframe_url = $this->doSSOLogin($language_id);
+		if (!empty($iframe_url) && NostoTaggingAccount::isConnectedToNosto($language_id))
+			$this->context->smarty->assign(array(
+				'iframe_url' => NostoTaggingHttpRequest::build_uri(self::NOSTOTAGGING_IFRAME_URL, array(
+					'{l}' => $iframe_url,
+					'{m}' => NostoTaggingAccount::getName($language_id),
+					'{lang}' => $this->context->language->iso_code
+				)),
+			));
 
 		$stylesheets = '<link rel="stylesheet" href="'.$this->_path.'css/tw-bs-v3.1.1.css">';
 		$stylesheets .= '<link rel="stylesheet" href="'.$this->_path.'css/nostotagging-admin-config.css">';
