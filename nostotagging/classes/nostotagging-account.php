@@ -65,7 +65,7 @@ class NostoTaggingAccount
 
 		$account_name = self::PLATFORM_NAME.'-'.$params['name'];
 		self::setName($account_name, $language_id);
-		NostoTaggingApiToken::saveTokens($result, $language_id);
+		NostoTaggingApiToken::saveTokens($result, $language_id, '', '_token');
 
 		return true;
 	}
@@ -123,14 +123,16 @@ class NostoTaggingAccount
 	 * This is determined by checking if we have all the data needed for make authorized requests to the Nosto API.
 	 *
 	 * @param null|int $lang_id the ID of the language model to check if the account is connected to nosto with.
+	 * @param int|null $id_shop_group
+	 * @param int|null $id_shop
 	 * @return bool true if the account has been authorized, false otherwise.
 	 */
-	public static function isConnectedToNosto($lang_id = null)
+	public static function isConnectedToNosto($lang_id = null, $id_shop_group = null, $id_shop = null)
 	{
 		if (!self::exists($lang_id))
 			return false;
 		foreach (NostoTaggingApiToken::$api_token_names as $token_name)
-			if (!NostoTaggingApiToken::exists($token_name, $lang_id))
+			if (!NostoTaggingApiToken::exists($token_name, $lang_id, $id_shop_group, $id_shop))
 				return false;
 		return true;
 	}

@@ -61,7 +61,7 @@ class NostoTaggingConfig
 		$config_lang_table = $config_table.'_lang';
 
 		Db::getInstance()->execute('
-			DELETE FROM `'.$config_lang_table.'`
+			DELETE `'.$config_lang_table.'` FROM `'.$config_lang_table.'`
 			LEFT JOIN `'.$config_table.'`
 			ON `'.$config_lang_table.'`.`id_configuration` = `'.$config_table.'`.`id_configuration`
 			WHERE `'.$config_table.'`.`name` LIKE "NOSTOTAGGING_%"'
@@ -71,7 +71,8 @@ class NostoTaggingConfig
 			WHERE `'.$config_table.'`.`name` LIKE "NOSTOTAGGING_%"'
 		);
 
-		Configuration::$_cache[Configuration::$definition['table']] = null;
+		// Reload the config.
+		Configuration::loadConfiguration();
 
 		return true;
 	}
@@ -115,7 +116,8 @@ class NostoTaggingConfig
 			.$context_restriction
 		);
 
-		Configuration::$_cache[Configuration::$definition['table']] = null;
+		// Reload the config.
+		Configuration::loadConfiguration();
 
 		return true;
 	}

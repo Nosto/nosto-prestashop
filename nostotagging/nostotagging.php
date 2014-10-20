@@ -8,6 +8,7 @@ require_once(dirname(__FILE__).'/classes/nostotagging-category.php');
 require_once(dirname(__FILE__).'/classes/nostotagging-customer.php');
 require_once(dirname(__FILE__).'/classes/nostotagging-order.php');
 require_once(dirname(__FILE__).'/classes/nostotagging-product.php');
+require_once(dirname(__FILE__).'/classes/nostotagging-brand.php');
 
 require_once(dirname(__FILE__).'/classes/nostotagging-account.php');
 require_once(dirname(__FILE__).'/classes/nostotagging-formatter.php');
@@ -78,6 +79,11 @@ class NostoTagging extends Module
 
 		$this->displayName = $this->l('Personalized Recommendations');
 		$this->description = $this->l('Integrates Nosto marketing automation service.');
+
+        // Invoking this method somehow forces the messaage to appear - caching related
+        $this->checkConfigState(); 
+		if (!$this->checkConfigState())
+			$this->warning = $this->l('A Nosto account is not set up for each shop and language.');
 	}
 
 	/**
@@ -90,7 +96,6 @@ class NostoTagging extends Module
 	public function install()
 	{
 		return parent::install()
-			&& $this->initConfig()
 			&& NostoTaggingCustomerLink::createTable()
 			&& $this->initHooks()
 			&& $this->registerHook('displayHeader')
@@ -148,8 +153,6 @@ class NostoTagging extends Module
 		$field_current_language = $this->name.'_current_language';
 
 		$languages = Language::getLanguages();
-		$current_language = array('id_lang' => 0, 'name' => '', 'iso_code' => '');
-		$language_id = 0;
 		$account_email = $this->context->employee->email;
 
 		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -186,16 +189,30 @@ class NostoTagging extends Module
 		}
 		else
 		{
+			$language_id = (int)Tools::getValue('language_id', 0);
 			foreach ($this->getAdminFlashMessages('error') as $error_message)
 				$output .= $this->displayError($this->l($error_message));
 			foreach ($this->getAdminFlashMessages('success') as $success_message)
 				$output .= $this->displayConfirmation($this->l($success_message));
 		}
 
-		if (empty($language_id) && isset($languages[0]))
+		// Choose current language if it has not been set.
+		if (!isset($current_language))
 		{
-			$current_language = $languages[0];
-			$language_id = (int)$current_language['id_lang'];
+			foreach ($languages as $language)
+				if ($language['id_lang'] == $language_id)
+					$current_language = $language;
+
+			if (!isset($current_language))
+			{
+				if (isset($languages[0]))
+				{
+					$current_language = $languages[0];
+					$language_id = (int)$current_language['id_lang'];
+				}
+				else
+					$current_language = array('id_lang' => 0, 'name' => '', 'iso_code' => '');
+			}
 		}
 
 		$this->context->controller->addJS($this->_path.'js/nostotagging-admin-config.js');
@@ -278,7 +295,7 @@ class NostoTagging extends Module
 		}
 
 		NostoTaggingAccount::setName($token->merchant_name, $language_id);
-		NostoTaggingApiToken::saveTokens($result, $language_id);
+		NostoTaggingApiToken::saveTokens($result, $language_id, 'api_');
 
 		return NostoTaggingAccount::isConnectedToNosto($language_id);
 	}
@@ -328,6 +345,15 @@ class NostoTagging extends Module
 				$category = new Category((int)Tools::getValue('id_category'), $this->context->language->id);
 			$html .= $this->getCategoryTagging($category);
 		}
+		elseif ($this->isController('manufacturer'))
+		{
+			// The "getManufacturer" method is available from Prestashop 1.5.6.0 upwards.
+			if (method_exists($this->context->controller, 'getManufacturer'))
+				$manufacturer = $this->context->controller->getManufacturer();
+			else
+				$manufacturer = new Manufacturer((int)Tools::getValue('id_manufacturer'), $this->context->language->id);
+			$html .= $this->getBrandTagging($manufacturer);
+		}
 
 		$html .= $this->display(__FILE__, 'top_nosto-elements.tpl');
 
@@ -346,7 +372,7 @@ class NostoTagging extends Module
 		$html = '';
 		$html .= $this->display(__FILE__, 'footer_nosto-elements.tpl');
 
-		if ($this->isController('category'))
+		if ($this->isController('category') || $this->isController('manufacturer'))
 		{
 			$html .= '<div id="hidden_nosto_elements" style="display: none;">';
 			$html .= '<div class="append">';
@@ -706,6 +732,27 @@ class NostoTagging extends Module
 	}
 
 	/**
+	 * Checks if a Nosto account is set up and connected for each shop and language combo.
+	 *
+	 * @return bool true if all shops have an account configured for every language.
+	 */
+	protected function checkConfigState()
+	{
+		foreach (Shop::getShops() as $shop)
+		{
+			foreach (LanguageCore::getLanguages(true, $shop['id_shop']) as $language)
+			{
+				if (isset($shop['id_shop_group'], $shop['id_shop']))
+					if (!NostoTaggingAccount::isConnectedToNosto($language['id_lang'], $shop['id_shop_group'], $shop['id_shop']))
+						return false;
+					elseif (!NostoTaggingAccount::isConnectedToNosto($language['id_lang']))
+						return false;
+			}
+		}
+		return true;
+	}
+
+	/**
 	 * Checks if the given controller is the current one.
 	 *
 	 * @param string $name the controller name
@@ -805,16 +852,6 @@ class NostoTagging extends Module
 			}
 		}
 
-		return true;
-	}
-
-	/**
-	 * Adds initial config values for the module.
-	 *
-	 * @return bool
-	 */
-	protected function initConfig()
-	{
 		return true;
 	}
 
@@ -945,5 +982,24 @@ class NostoTagging extends Module
 		));
 
 		return $this->display(__FILE__, 'category-footer_category-tagging.tpl');
+	}
+
+	/**
+	 * Render meta-data (tagging) for a manufacturer.
+	 *
+	 * @param Manufacturer $manufacturer
+	 * @return string The rendered HTML
+	 */
+	protected function getBrandTagging($manufacturer)
+	{
+		$nosto_brand = new NostoTaggingBrand($this->context, $manufacturer);
+		if (!$nosto_brand->validate())
+			return '';
+
+		$this->smarty->assign(array(
+			'nosto_brand' => $nosto_brand,
+		));
+
+		return $this->display(__FILE__, 'manufacturer-footer_brand-tagging.tpl');
 	}
 }
