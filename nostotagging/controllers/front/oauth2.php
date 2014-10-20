@@ -13,18 +13,14 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
 		if (($code = Tools::getValue('code')) !== false)
 		{
 			$params = array();
-			$language_id = (int)Tools::getValue('language_id');
-			if (!empty($language_id))
-				$params['language_id'] = $language_id;
-
-			// todo: what if language not set, use context??
+			$params['language_id'] = (int)Tools::getValue('language_id', $this->module->context->language->id);
 
 			// The user accepted the authorization request.
 			// The authorization server responded with a code that can be used to exchange for the access token.
 			$client = new NostoTaggingOAuth2Client();
 			$client->setRedirectUrl($this->module->getOAuth2ControllerUrl($params));
 			if (($token = $client->authenticate($code)) !== false)
-				if($this->module->exchangeDataWithNosto($token, $language_id))
+				if($this->module->exchangeDataWithNosto($token, $params['language_id']))
 				{
 					$msg = $this->module->l('Account %s successfully connected to Nosto.');
 					$msg = sprintf($msg, $token->merchant_name);
