@@ -5,7 +5,7 @@
  */
 class NostoTaggingApiRequest extends NostoTaggingHttpRequest
 {
-	const BASE_URL = 'https://staging.nosto.com/api';
+	const BASE_URL = 'https://api.nosto.com';
 
 	const PATH_ORDER_TAGGING = '/visits/order/confirm/{m}/{cid}';
 	const PATH_UNMATCHED_ORDER_TAGGING = '/visits/order/unmatched/{m}';

@@ -29,7 +29,7 @@ require_once(dirname(__FILE__).'/classes/nostotagging-customer-link.php');
  */
 class NostoTagging extends Module
 {
-	const NOSTOTAGGING_SERVER_ADDRESS = 'staging.nosto.com';
+	const NOSTOTAGGING_SERVER_ADDRESS = 'connect.nosto.com';
 	const NOSTOTAGGING_IFRAME_URL = '{l}?r=/hub/prestashop/{m}&language={lang}';
 
 	/**
@@ -197,7 +197,6 @@ class NostoTagging extends Module
 			$language_id = (int)$current_language['id_lang'];
 		}
 
-		$this->context->controller->addCSS($this->_path.'css/nostotagging-admin-config.css');
 		$this->context->controller->addJS($this->_path.'js/nostotagging-admin-config.js');
 
 		$this->context->smarty->assign(array(
