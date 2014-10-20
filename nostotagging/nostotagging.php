@@ -96,8 +96,8 @@ class NostoTagging extends Module
 			&& $this->registerHook('displayHeader')
 			&& $this->registerHook('displayTop')
 			&& $this->registerHook('displayFooter')
-			&& $this->registerHook('displayLeftColumn')
-			&& $this->registerHook('displayRightColumn')
+			//&& $this->registerHook('displayLeftColumn') disabled for now.
+			//&& $this->registerHook('displayRightColumn') disabled for now.
 			&& $this->registerHook('displayFooterProduct')
 			&& $this->registerHook('displayShoppingCartFooter')
 			&& $this->registerHook('displayOrderConfirmation')
