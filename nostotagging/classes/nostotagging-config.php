@@ -71,8 +71,8 @@ class NostoTaggingConfig
 			WHERE `'.$config_table.'`.`name` LIKE "NOSTOTAGGING_%"'
 		);
 
-		// We cannot do this, it is protected.
-		// Configuration::$_cache[Configuration::$definition['table']] = null;
+		// Reload the config.
+		Configuration::loadConfiguration();
 
 		return true;
 	}
@@ -116,8 +116,8 @@ class NostoTaggingConfig
 			.$context_restriction
 		);
 
-		// We cannot do this, it is protected.
-		// Configuration::$_cache[Configuration::$definition['table']] = null;
+		// Reload the config.
+		Configuration::loadConfiguration();
 
 		return true;
 	}
