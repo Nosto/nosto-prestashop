@@ -78,6 +78,9 @@ class NostoTagging extends Module
 
 		$this->displayName = $this->l('Personalized Recommendations');
 		$this->description = $this->l('Integrates Nosto marketing automation service.');
+
+		if (!$this->checkConfigState())
+			$this->warning = $this->l('A Nosto account is not set up for each shop and language.');
 	}
 
 	/**
@@ -697,6 +700,27 @@ class NostoTagging extends Module
 			}
 		}
 		return $messages;
+	}
+
+	/**
+	 * Checks if a Nosto account is set up and connected for each shop and language combo.
+	 *
+	 * @return bool true if all shops have an account configured for every language.
+	 */
+	protected function checkConfigState()
+	{
+		foreach (Shop::getShops() as $shop)
+		{
+			foreach (LanguageCore::getLanguages(true, $shop['id_shop']) as $language)
+			{
+				if (isset($shop['id_shop_group'], $shop['id_shop']))
+					if (!NostoTaggingAccount::isConnectedToNosto($language['id_lang'], $shop['id_shop_group'], $shop['id_shop']))
+						return false;
+					elseif (!NostoTaggingAccount::isConnectedToNosto($language['id_lang']))
+						return false;
+			}
+		}
+		return true;
 	}
 
 	/**
