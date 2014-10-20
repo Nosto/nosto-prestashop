@@ -25,6 +25,7 @@ abstract class NostoTaggingBlock
 	{
 		$this->context = $context;
 		$this->object = $object;
+		$this->populate();
 	}
 
 	/**

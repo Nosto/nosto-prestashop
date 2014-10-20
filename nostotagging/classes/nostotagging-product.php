@@ -136,7 +136,7 @@ class NostoTaggingProduct extends NostoTaggingBlock
 			if (!empty($product->manufacturer_name))
 				$this->brand = (string)$product->manufacturer_name;
 
-			$this->date_published = $this->formatDate($product->date_add);
+			$this->date_published = NostoTaggingFormatter::formatDate($product->date_add);
 		}
 	}
 }
