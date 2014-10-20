@@ -72,16 +72,10 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
 		{
 			if (!empty($language_id))
 			{
-				$parsed_url = parse_url($admin_url);
-				$scheme = isset($parsed_url['scheme']) ? $parsed_url['scheme'].'://' : '';
-				$host = isset($parsed_url['host']) ? $parsed_url['host'] : '';
-				$port = isset($parsed_url['port']) ? ':'.$parsed_url['port'] : '';
-				$path = isset($parsed_url['path']) ? $parsed_url['path'] : '';
-				if (isset($parsed_url['query']))
-					$query = '?'.$parsed_url['query'].'&language_id='.$language_id;
-				else
-					$query = '?language_id='.$language_id;
-				$admin_url = $scheme.$host.$port.$path.$query;
+				$parsed_url = NostoTaggingHttpRequest::parse_url($admin_url);
+				$query_string = isset($parsed_url['query']) ? $parsed_url['query'] : '';
+				$parsed_url['query'] = NostoTaggingHttpRequest::replace_query_param('language_id', $language_id, $query_string);
+				$admin_url = NostoTaggingHttpRequest::build_url($parsed_url);
 			}
 
 			header('Location: '.$admin_url);
