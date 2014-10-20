@@ -300,8 +300,7 @@ class NostoTagging extends Module
 			'account_name' => $account_name,
 		));
 
-		if (NostoTaggingConfig::read(NostoTaggingConfig::USE_DEFAULT_NOSTO_ELEMENTS, $this->context->language->id))
-			$this->context->controller->addJS($this->_path.'js/nostotagging-auto-slots.js');
+		$this->context->controller->addJS($this->_path.'js/nostotagging-auto-slots.js');
 
 		return $this->display(__FILE__, 'header_embed-script.tpl');
 	}
@@ -330,8 +329,7 @@ class NostoTagging extends Module
 			$html .= $this->getCategoryTagging($category);
 		}
 
-		if (NostoTaggingConfig::read(NostoTaggingConfig::USE_DEFAULT_NOSTO_ELEMENTS, $this->context->language->id))
-			$html .= $this->display(__FILE__, 'top_nosto-elements.tpl');
+		$html .= $this->display(__FILE__, 'top_nosto-elements.tpl');
 
 		return $html;
 	}
@@ -345,9 +343,6 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayFooter()
 	{
-		if (!NostoTaggingConfig::read(NostoTaggingConfig::USE_DEFAULT_NOSTO_ELEMENTS, $this->context->language->id))
-			return '';
-
 		$html = '';
 		$html .= $this->display(__FILE__, 'footer_nosto-elements.tpl');
 
@@ -380,9 +375,6 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayLeftColumn()
 	{
-		if (!NostoTaggingConfig::read(NostoTaggingConfig::USE_DEFAULT_NOSTO_ELEMENTS, $this->context->language->id))
-			return '';
-
 		return $this->display(__FILE__, 'left-column_nosto-elements.tpl');
 	}
 
@@ -395,9 +387,6 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayRightColumn()
 	{
-		if (!NostoTaggingConfig::read(NostoTaggingConfig::USE_DEFAULT_NOSTO_ELEMENTS, $this->context->language->id))
-			return '';
-
 		return $this->display(__FILE__, 'right-column_nosto-elements.tpl');
 	}
 
@@ -418,8 +407,7 @@ class NostoTagging extends Module
 		$category = isset($params['category']) ? $params['category'] : null;
 		$html .= $this->getProductTagging($product, $category);
 
-		if (NostoTaggingConfig::read(NostoTaggingConfig::USE_DEFAULT_NOSTO_ELEMENTS, $this->context->language->id))
-			$html .= $this->display(__FILE__, 'footer-product_nosto-elements.tpl');
+		$html .= $this->display(__FILE__, 'footer-product_nosto-elements.tpl');
 
 		return $html;
 	}
@@ -435,9 +423,6 @@ class NostoTagging extends Module
 	{
 		// Update the link between nosto users and prestashop customers.
 		NostoTaggingCustomerLink::updateLink($this);
-
-		if (!NostoTaggingConfig::read(NostoTaggingConfig::USE_DEFAULT_NOSTO_ELEMENTS, $this->context->language->id))
-			return '';
 
 		return $this->display(__FILE__, 'shopping-cart-footer_nosto-elements.tpl');
 	}
@@ -475,9 +460,6 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayCategoryTop()
 	{
-		if (!NostoTaggingConfig::read(NostoTaggingConfig::USE_DEFAULT_NOSTO_ELEMENTS, $this->context->language->id))
-			return '';
-
 		return $this->display(__FILE__, 'category-top_nosto-elements.tpl');
 	}
 
@@ -495,9 +477,6 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayCategoryFooter()
 	{
-		if (!NostoTaggingConfig::read(NostoTaggingConfig::USE_DEFAULT_NOSTO_ELEMENTS, $this->context->language->id))
-			return '';
-
 		return $this->display(__FILE__, 'category-footer_nosto-elements.tpl');
 	}
 
@@ -515,9 +494,6 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplaySearchTop()
 	{
-		if (!NostoTaggingConfig::read(NostoTaggingConfig::USE_DEFAULT_NOSTO_ELEMENTS, $this->context->language->id))
-			return '';
-
 		return $this->display(__FILE__, 'search-top_nosto-elements.tpl');
 	}
 
@@ -535,9 +511,6 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplaySearchFooter()
 	{
-		if (!NostoTaggingConfig::read(NostoTaggingConfig::USE_DEFAULT_NOSTO_ELEMENTS, $this->context->language->id))
-			return '';
-
 		return $this->display(__FILE__, 'search-footer_nosto-elements.tpl');
 	}
 
@@ -615,9 +588,6 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayHome()
 	{
-		if (!NostoTaggingConfig::read(NostoTaggingConfig::USE_DEFAULT_NOSTO_ELEMENTS, $this->context->language->id))
-			return '';
-
 		return $this->display(__FILE__, 'home_nosto-elements.tpl');
 	}
 
@@ -801,8 +771,6 @@ class NostoTagging extends Module
 	 */
 	protected function initConfig()
 	{
-		// todo: we ned to remove this setting...
-		// NostoTaggingConfig::write(NostoTaggingConfig::USE_DEFAULT_NOSTO_ELEMENTS, 1, true/*global*/);
 		return true;
 	}
 
