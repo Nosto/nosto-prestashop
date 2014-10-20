@@ -80,6 +80,8 @@ class NostoTagging extends Module
 		$this->displayName = $this->l('Personalized Recommendations');
 		$this->description = $this->l('Integrates Nosto marketing automation service.');
 
+        // Invoking this method somehow forces the messaage to appear - caching related
+        $this->checkConfigState(); 
 		if (!$this->checkConfigState())
 			$this->warning = $this->l('A Nosto account is not set up for each shop and language.');
 	}
