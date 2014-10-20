@@ -153,8 +153,6 @@ class NostoTagging extends Module
 		$field_current_language = $this->name.'_current_language';
 
 		$languages = Language::getLanguages();
-		$current_language = array('id_lang' => 0, 'name' => '');
-		$language_id = 0;
 		$account_email = $this->context->employee->email;
 
 		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -191,16 +189,30 @@ class NostoTagging extends Module
 		}
 		else
 		{
+			$language_id = (int)Tools::getValue('language_id', 0);
 			foreach ($this->getAdminFlashMessages('error') as $error_message)
 				$output .= $this->displayError($this->l($error_message));
 			foreach ($this->getAdminFlashMessages('success') as $success_message)
 				$output .= $this->displayConfirmation($this->l($success_message));
 		}
 
-		if (empty($language_id) && isset($languages[0]))
+		// Choose current language if it has not been set.
+		if (!isset($current_language))
 		{
-			$current_language = $languages[0];
-			$language_id = (int)$current_language['id_lang'];
+			foreach ($languages as $language)
+				if ($language['id_lang'] == $language_id)
+					$current_language = $language;
+
+			if (!isset($current_language))
+			{
+				if (isset($languages[0]))
+				{
+					$current_language = $languages[0];
+					$language_id = (int)$current_language['id_lang'];
+				}
+				else
+					$current_language = array('id_lang' => 0, 'name' => '', 'iso_code' => '');
+			}
 		}
 
 		$this->context->controller->addJS($this->_path.'js/nostotagging-admin-config.js');
