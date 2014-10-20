@@ -31,7 +31,7 @@ class NostoTaggingAccount
 			'title' => Configuration::get('PS_SHOP_NAME'),
 			'name' => substr(sha1(rand()), 0, 8),
 			'platform' => self::PLATFORM_NAME,
-			'front_page_url' => self::getContextShopUrl($context),
+			'front_page_url' => self::getContextShopUrl($context, $language),
 			'currency_code' => $context->currency->iso_code,
 			'language_code' => $language->iso_code,
 			'owner' => array(
@@ -139,15 +139,16 @@ class NostoTaggingAccount
 	}
 
 	/**
-	 * Returns the current shop's url from the context.
+	 * Returns the current shop's url from the context and language.
 	 *
 	 * @param Context $context the context.
+	 * @param Language $language the language.
 	 * @return string the absolute url.
 	 */
-	public static function getContextShopUrl($context)
+	public static function getContextShopUrl($context, $language)
 	{
 		$shop = $context->shop;
 		$uri = (!empty($shop->domain_ssl) ? $shop->domain_ssl : $shop->domain).__PS_BASE_URI__;
-		return (Configuration::get('PS_SSL_ENABLED') ? 'https://' : 'http://').$uri;
+		return (Configuration::get('PS_SSL_ENABLED') ? 'https://' : 'http://').$uri.'/'.$language->iso_code;
 	}
 } 
