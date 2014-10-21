@@ -148,6 +148,7 @@ class NostoTaggingAccount
 	{
 		$shop = $context->shop;
 		$uri = (!empty($shop->domain_ssl) ? $shop->domain_ssl : $shop->domain).__PS_BASE_URI__;
-		return (Configuration::get('PS_SSL_ENABLED') ? 'https://' : 'http://').$uri.'/'.$language->iso_code;
+		$uri = rtrim($uri, '/').'/'.$language->iso_code;
+		return (Configuration::get('PS_SSL_ENABLED') ? 'https://' : 'http://').$uri;
 	}
 } 
