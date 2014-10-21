@@ -137,6 +137,57 @@ class NostoTaggingHttpRequest
 	}
 
 	/**
+	 * Builds a url based on given parts.
+	 *
+	 * @see http://php.net/manual/en/function.parse-url.php
+	 * @param array $parts part(s) of an URL in form of a string or associative array like parse_url() returns.
+	 * @return string
+	 */
+	public static function build_url(array $parts)
+	{
+		$scheme = isset($parts['scheme']) ? $parts['scheme'].'://' : '';
+		$host = isset($parts['host']) ? $parts['host'] : '';
+		$port = isset($parts['port']) ? ':'.$parts['port'] : '';
+		$user = isset($parts['user']) ? $parts['user'] : '';
+		$pass = isset($parts['pass']) ? ':'.$parts['pass']  : '';
+		$pass = ($user || $pass) ? "$pass@" : '';
+		$path = isset($parts['path']) ? $parts['path'] : '';
+		$query = isset($parts['query']) ? '?'.$parts['query'] : '';
+		$fragment = isset($parts['fragment']) ? '#'.$parts['fragment'] : '';
+		return $scheme.$user.$pass.$host.$port.$path.$query.$fragment;
+	}
+
+	/**
+	 * Parses the given url and returns the parts as an array.
+	 *
+	 * @see http://php.net/manual/en/function.parse-url.php
+	 * @param string $url the url to parse.
+	 * @return array the parsed url as an array.
+	 */
+	public static function parse_url($url)
+	{
+		return parse_url($url);
+	}
+
+	/**
+	 * Replaces a parameter in a query string with given value.
+	 *
+	 * @param string $param the query param name to replace.
+	 * @param mixed $value the query param value to replace.
+	 * @param string $query_string the query string.
+	 * @return string the updated query string.
+	 */
+	public static function replace_query_param($param, $value, $query_string)
+	{
+		if (empty($query_string))
+			$parsed_query = array();
+		else
+			parse_str($query_string, $parsed_query);
+		$parsed_query[$param] = $value;
+		return http_build_query($parsed_query);
+	}
+
+	/**
 	 * Sends a POST request.
 	 *
 	 * @param string $content

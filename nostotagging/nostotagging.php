@@ -80,6 +80,10 @@ class NostoTagging extends Module
 		$this->displayName = $this->l('Personalized Recommendations');
 		$this->description = $this->l('Integrates Nosto marketing automation service.');
 
+		// Backward compatibility
+		if (_PS_VERSION_ < '1.5')
+			require(_PS_MODULE_DIR_.$this->name.'/backward_compatibility/backward.php');
+
         // Invoking this method somehow forces the messaage to appear - caching related
         $this->checkConfigState(); 
 		if (!$this->checkConfigState())
@@ -95,25 +99,53 @@ class NostoTagging extends Module
 	 */
 	public function install()
 	{
-		return parent::install()
-			&& NostoTaggingCustomerLink::createTable()
-			&& $this->initHooks()
-			&& $this->registerHook('displayHeader')
-			&& $this->registerHook('displayTop')
-			&& $this->registerHook('displayFooter')
-			//&& $this->registerHook('displayLeftColumn') disabled for now.
-			//&& $this->registerHook('displayRightColumn') disabled for now.
-			&& $this->registerHook('displayFooterProduct')
-			&& $this->registerHook('displayShoppingCartFooter')
-			&& $this->registerHook('displayOrderConfirmation')
-			&& $this->registerHook('displayCategoryTop')
-			&& $this->registerHook('displayCategoryFooter')
-			&& $this->registerHook('displaySearchTop')
-			&& $this->registerHook('displaySearchFooter')
-			&& $this->registerHook('actionPaymentConfirmation')
-			&& $this->registerHook('displayPaymentTop')
-			&& $this->registerHook('displayHome')
-			&& $this->registerHook('actionObjectUpdateAfter');
+		// todo: find the equivalent to "actionObjectUpdateAfter" in prestashop 1.4
+
+		// Backward compatibility
+		if (_PS_VERSION_ < '1.5')
+			return parent::install()
+				&& $this->initConfig()
+				&& NostoTaggingCustomerLink::createTable()
+				&& $this->initHooks()
+				&& $this->registerHook('displayCategoryTop')
+				&& $this->registerHook('displayCategoryFooter')
+				&& $this->registerHook('displaySearchTop')
+				&& $this->registerHook('displaySearchFooter')
+				&& $this->registerHook('header')
+				&& $this->registerHook('top')
+				&& $this->registerHook('footer')
+				//&& $this->registerHook('leftColumn')
+				//&& $this->registerHook('rightColumn')
+				&& $this->registerHook('productfooter')
+				&& $this->registerHook('shoppingCart')
+				&& $this->registerHook('orderConfirmation')
+				&& $this->registerHook('paymentConfirm')
+				&& $this->registerHook('paymentTop')
+				&& $this->registerHook('home')
+				&& $this->registerHook('updateproduct')
+				&& $this->registerHook('deleteproduct')
+				&& $this->registerHook('updateQuantity');
+		else
+			return parent::install()
+				&& $this->initConfig()
+				&& NostoTaggingCustomerLink::createTable()
+				&& $this->initHooks()
+				&& $this->registerHook('displayCategoryTop')
+				&& $this->registerHook('displayCategoryFooter')
+				&& $this->registerHook('displaySearchTop')
+				&& $this->registerHook('displaySearchFooter')
+				&& $this->registerHook('displayHeader')
+				&& $this->registerHook('displayTop')
+				&& $this->registerHook('displayFooter')
+				//&& $this->registerHook('displayLeftColumn')
+				//&& $this->registerHook('displayRightColumn')
+				&& $this->registerHook('displayFooterProduct')
+				&& $this->registerHook('displayShoppingCartFooter')
+				&& $this->registerHook('displayOrderConfirmation')
+				&& $this->registerHook('actionPaymentConfirmation')
+				&& $this->registerHook('displayPaymentTop')
+				&& $this->registerHook('displayHome')
+				&& $this->registerHook('actionObjectUpdateAfter');
 	}
 
 	/**
@@ -215,8 +247,6 @@ class NostoTagging extends Module
 			}
 		}
 
-		$this->context->controller->addJS($this->_path.'js/nostotagging-admin-config.js');
-
 		$this->context->smarty->assign(array(
 			$field_has_account => NostoTaggingAccount::exists($language_id),
 			$field_account_name => NostoTaggingAccount::getName($language_id),
@@ -242,9 +272,10 @@ class NostoTagging extends Module
 
 		$stylesheets = '<link rel="stylesheet" href="'.$this->_path.'css/tw-bs-v3.1.1.css">';
 		$stylesheets .= '<link rel="stylesheet" href="'.$this->_path.'css/nostotagging-admin-config.css">';
+		$scripts = '<script type="text/javascript" src="'.$this->_path.'js/nostotagging-admin-config.js"></script>';
 		$output .= $this->display(__FILE__, 'views/templates/admin/config-bootstrap.tpl');
 
-		return $stylesheets.$output;
+		return $stylesheets.$scripts.$output;
 	}
 
 	/**
@@ -319,7 +350,18 @@ class NostoTagging extends Module
 
 		$this->context->controller->addJS($this->_path.'js/nostotagging-auto-slots.js');
 
-		return $this->display(__FILE__, 'header_embed-script.tpl');
+		return $this->display(__FILE__, 'views/templates/hook/header_embed-script.tpl');
+	}
+
+	/**
+	 * Backwards compatibility hook.
+	 *
+	 * @see NostoTagging::hookDisplayHeader()
+	 * @return string The HTML to output
+	 */
+	public function hookHeader()
+	{
+		return $this->hookDisplayHeader();
 	}
 
 	/**
@@ -355,9 +397,20 @@ class NostoTagging extends Module
 			$html .= $this->getBrandTagging($manufacturer);
 		}
 
-		$html .= $this->display(__FILE__, 'top_nosto-elements.tpl');
+		$html .= $this->display(__FILE__, 'views/templates/hook/top_nosto-elements.tpl');
 
 		return $html;
+	}
+
+	/**
+	 * Backwards compatibility hook.
+	 *
+	 * @see NostoTagging::hookDisplayTop()
+	 * @return string The HTML to output
+	 */
+	public function hookTop()
+	{
+		return $this->hookDisplayTop();
 	}
 
 	/**
@@ -370,26 +423,37 @@ class NostoTagging extends Module
 	public function hookDisplayFooter()
 	{
 		$html = '';
-		$html .= $this->display(__FILE__, 'footer_nosto-elements.tpl');
+		$html .= $this->display(__FILE__, 'views/templates/hook/footer_nosto-elements.tpl');
 
 		if ($this->isController('category') || $this->isController('manufacturer'))
 		{
 			$html .= '<div id="hidden_nosto_elements" style="display: none;">';
 			$html .= '<div class="append">';
-			$html .= $this->display(__FILE__, 'category-top_nosto-elements.tpl');
-			$html .= $this->display(__FILE__, 'category-footer_nosto-elements.tpl');
+			$html .= $this->display(__FILE__, 'views/templates/hook/category-top_nosto-elements.tpl');
+			$html .= $this->display(__FILE__, 'views/templates/hook/category-footer_nosto-elements.tpl');
 			$html .= '</div>';
 			$html .= '</div>';
 		}
 		elseif ($this->isController('search'))
 		{
 			$html .= '<div id="hidden_nosto_elements" style="display: none;">';
-			$html .= '<div class="prepend">'.$this->display(__FILE__, 'search-top_nosto-elements.tpl').'</div>';
-			$html .= '<div class="append">'.$this->display(__FILE__, 'search-footer_nosto-elements.tpl').'</div>';
+			$html .= '<div class="prepend">'.$this->display(__FILE__, 'views/templates/hook/search-top_nosto-elements.tpl').'</div>';
+			$html .= '<div class="append">'.$this->display(__FILE__, 'views/templates/hook/search-footer_nosto-elements.tpl').'</div>';
 			$html .= '</div>';
 		}
 
 		return $html;
+	}
+
+	/**
+	 * Backwards compatibility hook.
+	 *
+	 * @see NostoTagging::hookDisplayFooter()
+	 * @return string The HTML to output
+	 */
+	public function hookFooter()
+	{
+		return $this->hookDisplayFooter();
 	}
 
 	/**
@@ -401,7 +465,18 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayLeftColumn()
 	{
-		return $this->display(__FILE__, 'left-column_nosto-elements.tpl');
+		return $this->display(__FILE__, 'views/templates/hook/left-column_nosto-elements.tpl');
+	}
+
+	/**
+	 * Backwards compatibility hook.
+	 *
+	 * @see NostoTagging::hookDisplayLeftColumn()
+	 * @return string The HTML to output
+	 */
+	public function hookLeftColumn()
+	{
+		return $this->hookDisplayLeftColumn();
 	}
 
 	/**
@@ -413,7 +488,18 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayRightColumn()
 	{
-		return $this->display(__FILE__, 'right-column_nosto-elements.tpl');
+		return $this->display(__FILE__, 'views/templates/hook/right-column_nosto-elements.tpl');
+	}
+
+	/**
+	 * Backwards compatibility hook.
+	 *
+	 * @see NostoTagging::hookDisplayRightColumn()
+	 * @return string The HTML to output
+	 */
+	public function hookRightColumn()
+	{
+		return $this->hookDisplayRightColumn();
 	}
 
 	/**
@@ -433,9 +519,21 @@ class NostoTagging extends Module
 		$category = isset($params['category']) ? $params['category'] : null;
 		$html .= $this->getProductTagging($product, $category);
 
-		$html .= $this->display(__FILE__, 'footer-product_nosto-elements.tpl');
+		$html .= $this->display(__FILE__, 'views/templates/hook/footer-product_nosto-elements.tpl');
 
 		return $html;
+	}
+
+	/**
+	 * Backwards compatibility hook.
+	 *
+	 * @see NostoTagging::hookDisplayFooterProduct()
+	 * @param array $params
+	 * @return string The HTML to output
+	 */
+	public function hookProductFooter(Array $params)
+	{
+		return $this->hookDisplayFooterProduct($params);
 	}
 
 	/**
@@ -450,7 +548,18 @@ class NostoTagging extends Module
 		// Update the link between nosto users and prestashop customers.
 		NostoTaggingCustomerLink::updateLink($this);
 
-		return $this->display(__FILE__, 'shopping-cart-footer_nosto-elements.tpl');
+		return $this->display(__FILE__, 'views/templates/hook/shopping-cart-footer_nosto-elements.tpl');
+	}
+
+	/**
+	 * Backwards compatibility hook.
+	 *
+	 * @see NostoTagging::hookDisplayShoppingCartFooter()
+	 * @return string The HTML to output
+	 */
+	public function hookShoppingCart()
+	{
+		return $this->hookDisplayShoppingCartFooter();
 	}
 
 	/**
@@ -473,6 +582,18 @@ class NostoTagging extends Module
 	}
 
 	/**
+	 * Backwards compatibility hook.
+	 *
+	 * @see NostoTagging::hookDisplayOrderConfirmation()
+	 * @param array $params
+	 * @return string The HTML to output
+	 */
+	public function hookOrderConfirmation(Array $params)
+	{
+		return $this->hookDisplayOrderConfirmation($params);
+	}
+
+	/**
 	 * Hook for adding content to category page above the product list.
 	 *
 	 * Adds nosto elements.
@@ -486,7 +607,7 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayCategoryTop()
 	{
-		return $this->display(__FILE__, 'category-top_nosto-elements.tpl');
+		return $this->display(__FILE__, 'views/templates/hook/category-top_nosto-elements.tpl');
 	}
 
 	/**
@@ -503,7 +624,7 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayCategoryFooter()
 	{
-		return $this->display(__FILE__, 'category-footer_nosto-elements.tpl');
+		return $this->display(__FILE__, 'views/templates/hook/category-footer_nosto-elements.tpl');
 	}
 
 	/**
@@ -520,7 +641,7 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplaySearchTop()
 	{
-		return $this->display(__FILE__, 'search-top_nosto-elements.tpl');
+		return $this->display(__FILE__, 'views/templates/hook/search-top_nosto-elements.tpl');
 	}
 
 	/**
@@ -537,7 +658,7 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplaySearchFooter()
 	{
-		return $this->display(__FILE__, 'search-footer_nosto-elements.tpl');
+		return $this->display(__FILE__, 'views/templates/hook/search-footer_nosto-elements.tpl');
 	}
 
 	/**
@@ -546,6 +667,16 @@ class NostoTagging extends Module
 	public function hookDisplayPaymentTop()
 	{
 		NostoTaggingCustomerLink::updateLink($this);
+	}
+
+	/**
+	 * Backwards compatibility hook.
+	 *
+	 * @see NostoTagging::hookDisplayPaymentTop()
+	 */
+	public function hookPaymentTop()
+	{
+		$this->hookDisplayPaymentTop();
 	}
 
 	/**
@@ -606,6 +737,17 @@ class NostoTagging extends Module
 	}
 
 	/**
+	 * Backwards compatibility hook.
+	 *
+	 * @see NostoTagging::hookActionPaymentConfirmation()
+	 * @param array $params
+	 */
+	public function hookPaymentConfirm(Array $params)
+	{
+		$this->hookActionPaymentConfirmation($params);
+	}
+
+	/**
 	 * Hook for adding content to the home page.
 	 *
 	 * Adds nosto elements.
@@ -614,7 +756,18 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayHome()
 	{
-		return $this->display(__FILE__, 'home_nosto-elements.tpl');
+		return $this->display(__FILE__, 'views/templates/hook/home_nosto-elements.tpl');
+	}
+
+	/**
+	 * Backwards compatibility hook.
+	 *
+	 * @see NostoTagging::hookDisplayHome()
+	 * @return string The HTML to output
+	 */
+	public function hookHome()
+	{
+		return $this->hookDisplayHome();
 	}
 
 	/**
@@ -653,6 +806,43 @@ class NostoTagging extends Module
 	}
 
 	/**
+	 * Hook called when a product is update with a new picture, right after said update. (Prestashop 1.4).
+	 *
+	 * @see NostoTagging::hookActionObjectUpdateAfter
+	 * @param array $params
+	 */
+	public function hookUpdateProduct (Array $params)
+	{
+		if (isset($params['product']))
+			$this->hookActionObjectUpdateAfter(array('object' => $params['product']));
+	}
+
+	/**
+	 * Hook called when a product is deleted, right before said deletion (Prestashop 1.4).
+	 *
+	 * @see NostoTagging::hookActionObjectUpdateAfter
+	 * @param array $params
+	 */
+	public function hookDeleteProduct (Array $params)
+	{
+		if (isset($params['product']))
+			$this->hookActionObjectUpdateAfter(array('object' => $params['product']));
+	}
+
+	/**
+	 * Hook called during an the validation of an order, the status of which being something other than
+	 * "canceled" or "Payment error", for each of the order's items (Prestashop 1.4).
+	 *
+	 * @see NostoTagging::hookActionObjectUpdateAfter
+	 * @param array $params
+	 */
+	public function hookUpdateQuantity (Array $params)
+	{
+		if (isset($params['product']))
+			$this->hookActionObjectUpdateAfter(array('object' => $params['product']));
+	}
+
+	/**
 	 * Returns the url to the oauth2 controller.
 	 *
 	 * @param array $params optional GET params.
@@ -660,7 +850,7 @@ class NostoTagging extends Module
 	 */
 	public function getOAuth2ControllerUrl(Array $params = array())
 	{
-		$link = new LinkCore();
+		$link = new Link();
 		return $link->getModuleLink($this->name, 'oauth2', $params);
 	}
 
@@ -760,7 +950,15 @@ class NostoTagging extends Module
 	 */
 	protected function isController($name)
 	{
-		return (!empty($this->context->controller->php_self) && $this->context->controller->php_self === $name);
+		// For prestashop 1.5 and 1.6 we can access the current controllers php_self property.
+		if (!empty($this->context->controller->php_self))
+			return $this->context->controller->php_self === $name;
+
+		// But for 1.4 we need to parse the current script name, as it uses different scripts per page.
+		// Version 1.4 does have a php_self property in the running controller, but there is no way to access the
+		// controller from modules.
+		$script_name = isset($_SERVER['SCRIPT_NAME']) ? $_SERVER['SCRIPT_NAME'] : '';
+		return basename($script_name) === ($name.'.php');
 	}
 
 	/**
@@ -837,8 +1035,9 @@ class NostoTagging extends Module
 		{
 			foreach ($this->custom_hooks as $hook)
 			{
-				$id_hook = Hook::getIdByName($hook['name']);
-				if (!$id_hook)
+				$callback = array('Hook', (method_exists('Hook', 'getIdByName')) ? 'getIdByName' : 'get');
+				$id_hook = call_user_func($callback, $hook['name']);
+				if (empty($id_hook))
 				{
 					$new_hook = new Hook();
 					$new_hook->name = pSQL($hook['name']);
@@ -870,7 +1069,7 @@ class NostoTagging extends Module
 			'customer' => $nosto_customer,
 		));
 
-		return $this->display(__FILE__, 'top_customer-tagging.tpl');
+		return $this->display(__FILE__, 'views/templates/hook/top_customer-tagging.tpl');
 	}
 
 	/**
@@ -888,7 +1087,7 @@ class NostoTagging extends Module
 			'nosto_cart' => $nosto_cart,
 		));
 
-		return $this->display(__FILE__, 'top_cart-tagging.tpl');
+		return $this->display(__FILE__, 'views/templates/hook/top_cart-tagging.tpl');
 	}
 
 	/**
@@ -914,7 +1113,7 @@ class NostoTagging extends Module
 		}
 
 		$this->smarty->assign($params);
-		return $this->display(__FILE__, 'footer-product_product-tagging.tpl');
+		return $this->display(__FILE__, 'views/templates/hook/footer-product_product-tagging.tpl');
 	}
 
 	/**
@@ -948,7 +1147,7 @@ class NostoTagging extends Module
 			'nosto_order' => $nosto_order,
 		));
 
-		return $this->display(__FILE__, 'order-confirmation_order-tagging.tpl');
+		return $this->display(__FILE__, 'views/templates/hook/order-confirmation_order-tagging.tpl');
 	}
 
 	/**
@@ -962,6 +1161,7 @@ class NostoTagging extends Module
 		$nosto_order = new NostoTaggingOrder($this->context, $order);
 		if (!$nosto_order->validate())
 			return false;
+
 		return $nosto_order;
 	}
 
@@ -981,7 +1181,7 @@ class NostoTagging extends Module
 			'nosto_category' => $nosto_category,
 		));
 
-		return $this->display(__FILE__, 'category-footer_category-tagging.tpl');
+		return $this->display(__FILE__, 'views/templates/hook/category-footer_category-tagging.tpl');
 	}
 
 	/**
@@ -1000,6 +1200,6 @@ class NostoTagging extends Module
 			'nosto_brand' => $nosto_brand,
 		));
 
-		return $this->display(__FILE__, 'manufacturer-footer_brand-tagging.tpl');
+		return $this->display(__FILE__, 'views/templates/hook/manufacturer-footer_brand-tagging.tpl');
 	}
 }
