@@ -72,7 +72,8 @@ class NostoTagging extends Module
 		$this->tab = 'advertising_marketing';
 		$this->version = '1.2.0';
 		$this->author = 'Nosto';
-		$this->need_instance = 0;
+		$this->need_instance = 1;
+		$this->ps_versions_compliancy = array('min' => '1.4', 'max' => '1.6');
 		$this->bootstrap = true;
 
 		parent::__construct();
@@ -84,8 +85,6 @@ class NostoTagging extends Module
 		if (_PS_VERSION_ < '1.5')
 			require(_PS_MODULE_DIR_.$this->name.'/backward_compatibility/backward.php');
 
-        // Invoking this method somehow forces the messaage to appear - caching related
-        $this->checkConfigState(); 
 		if (!$this->checkConfigState())
 			$this->warning = $this->l('A Nosto account is not set up for each shop and language.');
 	}
