@@ -1,3 +1,8 @@
+<script>
+function confirmUninstall(form) {
+    return confirm('{l s='Are you sure you want to uninstall Nosto?' mod='nostotagging'}');
+}
+</script>
 <div class="tw-bs">
     <div class="container-fluid">
         <div class="row">
@@ -32,7 +37,7 @@
                                 <div class="panes">
                                     <p>{l s='If you want to change the account, you need to uninstall first' mod='nostotagging'}</p>
                                     {if !empty($iframe_url)}<a id="nostotagging_back_to_iframe" class="btn btn-default" role="button">{l s='Back' mod='nostotagging'}</a>{/if}
-                                    <button type="submit" value="1" class="btn btn-red" name="submit_nostotagging_reset_account">{l s='Uninstall Nosto' mod='nostotagging'}</button>
+                                    <button type="submit" onClick="return confirmUninstall(this);" value="1" class="btn btn-red" name="submit_nostotagging_reset_account">{l s='Uninstall Nosto' mod='nostotagging'}</button>
                                 </div>
                             </div>
                             {if !empty($iframe_url)}
