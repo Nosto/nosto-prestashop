@@ -5,7 +5,6 @@
  */
 class NostoTaggingApiToken
 {
-	// API tokens are stored dynamically, with this as the config key base.
 	const NOSTOTAGGING_CONFIG_BASE = 'NOSTOTAGGING_API_TOKEN_';
 
 	/**

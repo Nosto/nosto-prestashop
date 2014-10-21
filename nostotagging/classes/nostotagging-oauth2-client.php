@@ -25,11 +25,11 @@ class NostoTaggingOAuth2Client
 	 * @var string the redirect url that will be used by the oauth2 server when authenticating the client.
 	 */
 	protected $redirect_url;
-    
-    /**
-     * @var array list of scopes to request access for during "code" request.
-     */
-    protected $scopes = array();
+
+	/**
+	 * @var array list of scopes to request access for during "code" request.
+	 */
+	protected $scopes = array();
 
 	/**
 	 * Setter for the client id to identify this application to the oauth2 server.
@@ -78,12 +78,12 @@ class NostoTaggingOAuth2Client
 	 */
 	public function getAuthorizationUrl()
 	{
-		return NostoTaggingHttpRequest::build_uri(
+		return NostoTaggingHttpRequest::buildUri(
 			self::BASE_URL.self::PATH_AUTH,
 			array(
 				'{cid}' => $this->client_id,
 				'{uri}' => $this->redirect_url,
-                '{sco}' => implode(' ', $this->scopes)
+				'{sco}' => implode(' ', $this->scopes)
 			)
 		);
 	}

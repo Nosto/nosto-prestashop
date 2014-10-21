@@ -18,7 +18,7 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
 			$client = new NostoTaggingOAuth2Client();
 			$client->setRedirectUrl($this->module->getOAuth2ControllerUrl(array('language_id' => $language_id)));
 			if (($token = $client->authenticate($code)) !== false)
-				if($this->module->exchangeDataWithNosto($token, $language_id))
+				if ($this->module->exchangeDataWithNosto($token, $language_id))
 				{
 					$msg = $this->module->l('Account %s successfully connected to Nosto.');
 					$msg = sprintf($msg, $token->merchant_name);
@@ -66,10 +66,10 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
 		{
 			if (!empty($language_id))
 			{
-				$parsed_url = NostoTaggingHttpRequest::parse_url($admin_url);
+				$parsed_url = NostoTaggingHttpRequest::parseUrl($admin_url);
 				$query_string = isset($parsed_url['query']) ? $parsed_url['query'] : '';
-				$parsed_url['query'] = NostoTaggingHttpRequest::replace_query_param('language_id', $language_id, $query_string);
-				$admin_url = NostoTaggingHttpRequest::build_url($parsed_url);
+				$parsed_url['query'] = NostoTaggingHttpRequest::replaceQueryParam('language_id', $language_id, $query_string);
+				$admin_url = NostoTaggingHttpRequest::buildUrl($parsed_url);
 			}
 
 			header('Location: '.$admin_url);

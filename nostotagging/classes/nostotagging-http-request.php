@@ -131,7 +131,7 @@ class NostoTaggingHttpRequest
 	 * @param array $replace_params
 	 * @return string
 	 */
-	public static function build_uri($uri, array $replace_params)
+	public static function buildUri($uri, array $replace_params)
 	{
 		return strtr($uri, $replace_params);
 	}
@@ -140,10 +140,10 @@ class NostoTaggingHttpRequest
 	 * Builds a url based on given parts.
 	 *
 	 * @see http://php.net/manual/en/function.parse-url.php
-	 * @param array $parts part(s) of an URL in form of a string or associative array like parse_url() returns.
+	 * @param array $parts part(s) of an URL in form of a string or associative array like parseUrl() returns.
 	 * @return string
 	 */
-	public static function build_url(array $parts)
+	public static function buildUrl(array $parts)
 	{
 		$scheme = isset($parts['scheme']) ? $parts['scheme'].'://' : '';
 		$host = isset($parts['host']) ? $parts['host'] : '';
@@ -164,7 +164,7 @@ class NostoTaggingHttpRequest
 	 * @param string $url the url to parse.
 	 * @return array the parsed url as an array.
 	 */
-	public static function parse_url($url)
+	public static function parseUrl($url)
 	{
 		return parse_url($url);
 	}
@@ -177,7 +177,7 @@ class NostoTaggingHttpRequest
 	 * @param string $query_string the query string.
 	 * @return string the updated query string.
 	 */
-	public static function replace_query_param($param, $value, $query_string)
+	public static function replaceQueryParam($param, $value, $query_string)
 	{
 		if (empty($query_string))
 			$parsed_query = array();
@@ -229,7 +229,7 @@ class NostoTaggingHttpRequest
 	protected function send($url, array $options = array())
 	{
 		if (!empty($this->replace_params))
-			$url = self::build_uri($url, $this->replace_params);
+			$url = self::buildUri($url, $this->replace_params);
 		if (!empty($this->query_params))
 			$url .= '?'.http_build_query($this->query_params);
 		$context = stream_context_create($options);

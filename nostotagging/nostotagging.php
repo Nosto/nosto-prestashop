@@ -182,7 +182,8 @@ class NostoTagging extends Module
 		$languages = Language::getLanguages();
 		$account_email = $this->context->employee->email;
 
-		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+		if ($_SERVER['REQUEST_METHOD'] === 'POST')
+		{
 			$language_id = (int)Tools::getValue($field_current_language);
 			foreach ($languages as $language)
 				if ($language['id_lang'] == $language_id)
@@ -202,7 +203,7 @@ class NostoTagging extends Module
 				else
 					$output .= $this->displayConfirmation($this->l('Account created.'));
 			}
-			elseif(Tools::isSubmit('submit_nostotagging_authorize_account'))
+			elseif (Tools::isSubmit('submit_nostotagging_authorize_account'))
 			{
 				$params = array('language_id' => $language_id);
 				$client = new NostoTaggingOAuth2Client();
@@ -256,7 +257,7 @@ class NostoTagging extends Module
 		$iframe_url = $this->doSSOLogin($language_id);
 		if (!empty($iframe_url) && NostoTaggingAccount::isConnectedToNosto($language_id))
 			$this->context->smarty->assign(array(
-				'iframe_url' => NostoTaggingHttpRequest::build_uri(self::NOSTOTAGGING_IFRAME_URL, array(
+				'iframe_url' => NostoTaggingHttpRequest::buildUri(self::NOSTOTAGGING_IFRAME_URL, array(
 					'{l}' => $iframe_url,
 					'{m}' => NostoTaggingAccount::getName($language_id),
 					'{lang}' => $current_language['iso_code'],
@@ -806,7 +807,7 @@ class NostoTagging extends Module
 	 * @see NostoTagging::hookActionObjectUpdateAfter
 	 * @param array $params
 	 */
-	public function hookUpdateProduct (Array $params)
+	public function hookUpdateProduct(Array $params)
 	{
 		if (isset($params['product']))
 			$this->hookActionObjectUpdateAfter(array('object' => $params['product']));
@@ -818,7 +819,7 @@ class NostoTagging extends Module
 	 * @see NostoTagging::hookActionObjectUpdateAfter
 	 * @param array $params
 	 */
-	public function hookDeleteProduct (Array $params)
+	public function hookDeleteProduct(Array $params)
 	{
 		if (isset($params['product']))
 			$this->hookActionObjectUpdateAfter(array('object' => $params['product']));
@@ -831,7 +832,7 @@ class NostoTagging extends Module
 	 * @see NostoTagging::hookActionObjectUpdateAfter
 	 * @param array $params
 	 */
-	public function hookUpdateQuantity (Array $params)
+	public function hookUpdateQuantity(Array $params)
 	{
 		if (isset($params['product']))
 			$this->hookActionObjectUpdateAfter(array('object' => $params['product']));
