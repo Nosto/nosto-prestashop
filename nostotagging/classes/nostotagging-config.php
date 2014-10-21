@@ -57,7 +57,7 @@ class NostoTaggingConfig
 	 */
 	public static function purge()
 	{
-		$config_table = _DB_PREFIX_.bqSQL(Configuration::$definition['table']);
+		$config_table = _DB_PREFIX_.'configuration';
 		$config_lang_table = $config_table.'_lang';
 
 		Db::getInstance()->execute('
@@ -95,7 +95,7 @@ class NostoTaggingConfig
 		else
 			$context_restriction = ' AND (`id_shop_group` IS NULL OR `id_shop_group` = 0) AND (`id_shop` IS NULL OR `id_shop` = 0)';
 
-		$config_table = _DB_PREFIX_.bqSQL(Configuration::$definition['table']);
+		$config_table = _DB_PREFIX_.'configuration';
 		$config_lang_table = $config_table.'_lang';
 
 		if (!empty($language_id))
