@@ -8,7 +8,7 @@ class NostoTaggingOAuth2Client
 {
 	const BASE_URL = 'https://my.nosto.com/oauth';
 	const CLIENT_ID = 'prestashop';
-	const PATH_AUTH = '/authorize?client_id={cid}&redirect_uri={uri}&response_type=code&scope={sco}';
+	const PATH_AUTH = '?client_id={cid}&redirect_uri={uri}&response_type=code&scope={sco}';
 	const PATH_TOKEN = '/token?code={cod}&client_id={cid}&client_secret={sec}&redirect_uri={uri}&grant_type=authorization_code';
 
 	/**
