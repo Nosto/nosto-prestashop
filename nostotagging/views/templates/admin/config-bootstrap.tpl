@@ -7,7 +7,7 @@
                     <div class="panel-heading">
                         <div class="col-md-8">
                             {if count($nostotagging_languages) > 1}
-                                <label for="nostotagging_language">{l s='Edit different shop language:' mod='nostotagging'}
+                                <label for="nostotagging_language">{l s='Manage accounts:' mod='nostotagging'}
                                     <select class="form-control" id="nostotagging_language">
                                         {foreach from=$nostotagging_languages item=language}
                                             <option value="{$language.id_lang}" {if $language.id_lang == $nostotagging_current_language.id_lang}selected="selected"{/if}>{$language.name}</option>
@@ -58,12 +58,10 @@
                                 <div id="nostotagging_existing_account_group">
                                     <button type="submit" value="1" class="btn btn-green" name="submit_nostotagging_authorize_account">{l s='Connect to Nosto' mod='nostotagging'}</button>
                                 </div>
-
                                 <div id="nostotagging_new_account_group" style="display:none;">
                                     <div class="form-group">
                                         <label for="nostotagging_account_email">{l s='Email' mod='nostotagging'}</label>
                                         <input type="text" name="nostotagging_account_email" class="form-control" id="nostotagging_account_email" value="{$nostotagging_account_email}">
-                                        <p class="help-block">{l s='This email address will be used to activate your account, so please make sure it is in use.' mod='nostotagging'}</p>
                                     </div>
                                     <button type="submit" value="1" class="btn btn-green" name="submit_nostotagging_new_account">{l s='Create new account' mod='nostotagging'}</button>
                                     <p class="help-block">
