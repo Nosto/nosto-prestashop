@@ -78,8 +78,8 @@ class NostoTagging extends Module
 
 		parent::__construct();
 
-		$this->displayName = $this->l('Personalized Recommendations');
-		$this->description = $this->l('Integrates Nosto marketing automation service.');
+		$this->displayName = $this->l('Personalization for PrestaShop');
+		$this->description = $this->l('Increase your conversion rate and average order value by delivering your customers personalized product recommendations throughout their shopping journey.');
 
 		// Backward compatibility
 		if (_PS_VERSION_ < '1.5')
