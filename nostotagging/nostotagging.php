@@ -1154,6 +1154,6 @@ class NostoTagging extends Module
 			'nosto_brand' => $nosto_brand,
 		));
 
-		return $this->display(__FILE__, 'manufacturer-footer_brand-tagging.tpl');
+		return $this->display(__FILE__, 'views/templates/hook/manufacturer-footer_brand-tagging.tpl');
 	}
 }
