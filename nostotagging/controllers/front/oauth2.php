@@ -60,6 +60,8 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
 		// The admin url is only used if user is logged in as admin in back office, so that we do not expose it.
 		// The OAuth2 request cycle is initiated from the back office, so the user should still be logged in.
 		$admin_url = '';
+
+		// todo: admin cookie not working.
 		if ($this->module->isUserAdmin())
 			$admin_url = NostoTaggingConfig::read(NostoTaggingConfig::ADMIN_URL);
 		if (!empty($admin_url))
@@ -83,6 +85,9 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
 	 */
 	protected function notFound()
 	{
-		Controller::getController('PageNotFoundController')->run();
+		if (_PS_VERSION_ < '1.5')
+			Tools::display404Error();
+		else
+			Controller::getController('PageNotFoundController')->run();
 	}
 }

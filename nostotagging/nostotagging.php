@@ -846,6 +846,15 @@ class NostoTagging extends Module
 	 */
 	public function getOAuth2ControllerUrl(Array $params = array())
 	{
+		// Backward compatibility
+		if (_PS_VERSION_ < '1.5')
+		{
+			$ssl = Configuration::get('PS_SSL_ENABLED');
+			$base = ($ssl ? _PS_BASE_URL_SSL_ : _PS_BASE_URL_);
+			$params['module'] = $this->name;
+			$params['controller'] = 'oauth2';
+			return $base.$this->_path.'ctrl.php?'.http_build_query($params);
+		}
 		$link = new Link();
 		return $link->getModuleLink($this->name, 'oauth2', $params);
 	}
@@ -858,7 +867,7 @@ class NostoTagging extends Module
 	public function isUserAdmin()
 	{
 		$cookie = new Cookie('psAdmin');
-		return (bool)$cookie->id_employee;
+		return $cookie->isLoggedBack();
 	}
 
 	/**
