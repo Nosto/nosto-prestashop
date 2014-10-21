@@ -1,31 +1,44 @@
 /* Nosto overrides */
-.tw-bs .nostotagging label {
-    padding: 0;
-    width: auto;
-    text-align: left;
-    float: none;
-}
 
 #content.bootstrap .nostotagging .panel {
     padding: 0;
+    font-family: inherit;
 }
 
 #content.bootstrap .nostotagging .panel-heading {
     margin: 0;
     font-size: 1.2em;
     line-height: 2.2em;
-    height: 2.2em;
+    height: 3.2em;
+    padding: 5px;
+    text-transform: none;
+    font-family: inherit;
+}
+
+.tw-bs .nostotagging label {
+    padding: 0;
+    margin: 0;
+    width: auto;
+    text-align: left;
+    float: none;
+}
+
+.tw-bs .nostotagging h2 {
+    color: #555;
 }
 
 .tw-bs .nostotagging .panel-default > .panel-heading {
     background-color: #fff;
     font-size: 1.2em;
     line-height: 2.2em;
-    height: 2.2em;
-    text-transform: uppercase;
-    padding: 0 0 0 5px;
+    height: 3.2em;
+    padding: 5px;
     color: #555;
     white-space: nowrap;
+}
+
+.tw-bs .nostotagging .help-block {
+    font-style: italic;
 }
 
 .tw-bs .nostotagging .form-control,
