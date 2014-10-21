@@ -147,8 +147,19 @@ class NostoTaggingAccount
 	public static function getContextShopUrl($context, $language)
 	{
 		$shop = $context->shop;
-		$uri = (!empty($shop->domain_ssl) ? $shop->domain_ssl : $shop->domain).__PS_BASE_URI__;
-		$uri = rtrim($uri, '/').'/'.$language->iso_code.'/';
-		return (Configuration::get('PS_SSL_ENABLED') ? 'https://' : 'http://').$uri;
+		$ssl = Configuration::get('PS_SSL_ENABLED');
+		$rewrite = (int)Configuration::get('PS_REWRITING_SETTINGS', null, null, $shop->id);
+		$multi_lang = (Language::countActiveLanguages($shop->id) > 1);
+		$base = $ssl ? 'https://'.$shop->domain_ssl : 'http://'.$shop->domain;
+		$base .= $shop->getBaseURI();
+		$lang = '';
+		if ($multi_lang)
+		{
+			if ($rewrite)
+				$lang = $language->iso_code.'/';
+			else
+				$lang = 'index.php?id_lang='.$language->id;
+		}
+		return $base.$lang;
 	}
 } 
