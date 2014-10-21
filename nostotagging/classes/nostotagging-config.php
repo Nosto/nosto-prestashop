@@ -85,15 +85,20 @@ class NostoTaggingConfig
 	 */
 	public static function deleteAllFromContext($language_id = null)
 	{
-		$id_shop = (int)Shop::getContextShopID(true);
-		$id_shop_group = (int)Shop::getContextShopGroupID(true);
+		if (_PS_VERSION_ >= '1.5')
+		{
+			$id_shop = (int)Shop::getContextShopID(true);
+			$id_shop_group = (int)Shop::getContextShopGroupID(true);
 
-		if ($id_shop)
-			$context_restriction = ' AND `id_shop` = '.$id_shop;
-		elseif ($id_shop_group)
-			$context_restriction = ' AND `id_shop_group` = '.$id_shop_group.' AND (`id_shop` IS NULL OR `id_shop` = 0)';
+			if ($id_shop)
+				$context_restriction = ' AND `id_shop` = '.$id_shop;
+			elseif ($id_shop_group)
+				$context_restriction = ' AND `id_shop_group` = '.$id_shop_group.' AND (`id_shop` IS NULL OR `id_shop` = 0)';
+			else
+				$context_restriction = ' AND (`id_shop_group` IS NULL OR `id_shop_group` = 0) AND (`id_shop` IS NULL OR `id_shop` = 0)';
+		}
 		else
-			$context_restriction = ' AND (`id_shop_group` IS NULL OR `id_shop_group` = 0) AND (`id_shop` IS NULL OR `id_shop` = 0)';
+			$context_restriction = '';
 
 		$config_table = _DB_PREFIX_.'configuration';
 		$config_lang_table = $config_table.'_lang';
