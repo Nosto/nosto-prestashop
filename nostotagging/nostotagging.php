@@ -101,7 +101,6 @@ class NostoTagging extends Module
 		// Backward compatibility
 		if (_PS_VERSION_ < '1.5')
 			return parent::install()
-				&& $this->initConfig()
 				&& NostoTaggingCustomerLink::createTable()
 				&& $this->initHooks()
 				&& $this->registerHook('displayCategoryTop')
@@ -124,7 +123,6 @@ class NostoTagging extends Module
 				&& $this->registerHook('updateQuantity');
 		else
 			return parent::install()
-				&& $this->initConfig()
 				&& NostoTaggingCustomerLink::createTable()
 				&& $this->initHooks()
 				&& $this->registerHook('displayCategoryTop')
