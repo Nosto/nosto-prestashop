@@ -31,7 +31,7 @@ class NostoTaggingConfig
 	{
 		$callback = array(
 			'Configuration',
-			$global ? 'updateGlobalValue' : 'updateValue'
+			($global && method_exists('Configuration', 'updateGlobalValue')) ? 'updateGlobalValue' : 'updateValue'
 		);
 		// Store this value for given language only if specified.
 		if (!is_array($value) && !empty($lang_id))
