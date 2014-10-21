@@ -70,6 +70,10 @@
     font-weight: normal;
 }
 
+.nostotagging .panes {
+    margin-bottom: 20px;
+}
+
 #nostotagging_language {
     display: inline-block;
 }

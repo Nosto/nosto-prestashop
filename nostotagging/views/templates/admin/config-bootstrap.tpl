@@ -29,9 +29,11 @@
                             <div id="nostotagging_installed" style="{if !empty($iframe_url)}display: none;{/if}">
                                 <h2>{l s='You have installed Nosto to your %1$s shop' mod='nostotagging' sprintf=[$nostotagging_current_language.name]}</h2>
                                 <p>{l s='Your account ID is %s' mod='nostotagging' sprintf=[$nostotagging_account_name]}</p>
-                                <p>{l s='If you want to change the account, you need to uninstall first' mod='nostotagging'}</p>
-                                {if !empty($iframe_url)}<a id="nostotagging_back_to_iframe" class="btn btn-default" role="button">{l s='Back' mod='nostotagging'}</a>{/if}
-                                <button type="submit" value="1" class="btn btn-red" name="submit_nostotagging_reset_account">{l s='Uninstall Nosto' mod='nostotagging'}</button>
+                                <div class="panes">
+                                    <p>{l s='If you want to change the account, you need to uninstall first' mod='nostotagging'}</p>
+                                    {if !empty($iframe_url)}<a id="nostotagging_back_to_iframe" class="btn btn-default" role="button">{l s='Back' mod='nostotagging'}</a>{/if}
+                                    <button type="submit" value="1" class="btn btn-red" name="submit_nostotagging_reset_account">{l s='Uninstall Nosto' mod='nostotagging'}</button>
+                                </div>
                             </div>
                             {if !empty($iframe_url)}
                                 <iframe id="nostotagging_iframe" frameborder="0" scrolling="no" src="{$iframe_url}"></iframe>
@@ -43,29 +45,31 @@
                             <div class="form-group">
                                 <div class="switch-container">
                                     <span class="switch prestashop-switch fixed-width-lg">
-                                        <input type="radio" name="nostotagging_has_account" id="nostotagging_has_account_on" value="1" {if $nostotagging_has_account}checked="checked"{/if}>
+                                        <input type="radio" name="nostotagging_has_account" id="nostotagging_has_account_on" value="1" checked="checked">
                                         <label for="nostotagging_has_account_on">{l s='Yes' mod='nostotagging'}</label>
-                                        <input type="radio" name="nostotagging_has_account" id="nostotagging_has_account_off" value="0" {if !$nostotagging_has_account}checked="checked"{/if}>
+                                        <input type="radio" name="nostotagging_has_account" id="nostotagging_has_account_off" value="0">
                                         <label for="nostotagging_has_account_off">{l s='No' mod='nostotagging'}</label>
                                         <a class="slide-button btn"></a>
                                     </span>
                                 </div>
                             </div>
 
-                            <div id="nostotagging_existing_account_group" style="{if !$nostotagging_has_account}display:none;{/if}">
-                                <button type="submit" value="1" class="btn btn-green" name="submit_nostotagging_authorize_account">{l s='Connect to Nosto' mod='nostotagging'}</button>
-                            </div>
-
-                            <div id="nostotagging_new_account_group" style="{if $nostotagging_has_account}display:none;{/if}">
-                                <div class="form-group">
-                                    <label for="nostotagging_account_email">{l s='Email' mod='nostotagging'}</label>
-                                    <input type="text" name="nostotagging_account_email" class="form-control" id="nostotagging_account_email" value="{$nostotagging_account_email}">
-                                    <p class="help-block">{l s='This email address will be used to activate your account, so please make sure it is in use.' mod='nostotagging'}</p>
+                            <div class="panes">
+                                <div id="nostotagging_existing_account_group">
+                                    <button type="submit" value="1" class="btn btn-green" name="submit_nostotagging_authorize_account">{l s='Connect to Nosto' mod='nostotagging'}</button>
                                 </div>
-                                <button type="submit" value="1" class="btn btn-green" name="submit_nostotagging_new_account">{l s='Create new account' mod='nostotagging'}</button>
-                                <p class="help-block">
-                                    {l s='By creating a new account you agree to Nosto\'s' mod='nostotagging'} <a href="http://www.nosto.com/terms" target="_blank">{l s='Terms and Conditions' mod='nostotagging'}</a>
-                                </p>
+
+                                <div id="nostotagging_new_account_group" style="display:none;">
+                                    <div class="form-group">
+                                        <label for="nostotagging_account_email">{l s='Email' mod='nostotagging'}</label>
+                                        <input type="text" name="nostotagging_account_email" class="form-control" id="nostotagging_account_email" value="{$nostotagging_account_email}">
+                                        <p class="help-block">{l s='This email address will be used to activate your account, so please make sure it is in use.' mod='nostotagging'}</p>
+                                    </div>
+                                    <button type="submit" value="1" class="btn btn-green" name="submit_nostotagging_new_account">{l s='Create new account' mod='nostotagging'}</button>
+                                    <p class="help-block">
+                                        {l s='By creating a new account you agree to Nosto\'s' mod='nostotagging'} <a href="http://www.nosto.com/terms" target="_blank">{l s='Terms and Conditions' mod='nostotagging'}</a>
+                                    </p>
+                                </div>
                             </div>
                         {/if}
                     </div>
