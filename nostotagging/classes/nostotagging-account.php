@@ -23,6 +23,11 @@ class NostoTaggingAccount
 		if (!Validate::isLoadedObject($language))
 			return false;
 
+		if (!Validate::isLoadedObject($context->currency))
+			$context->currency = new Currency((int)Configuration::get('PS_CURRENCY_DEFAULT'));
+		if (!Validate::isLoadedObject($context->country))
+			$context->country = new Country((int)Configuration::get('PS_COUNTRY_DEFAULT'));
+
 		$api_tokens = array();
 		foreach (NostoTaggingApiToken::$api_token_names as $token_name)
 			$api_tokens[] = 'api_'.$token_name;
@@ -150,8 +155,11 @@ class NostoTaggingAccount
 		$ssl = Configuration::get('PS_SSL_ENABLED');
 		$rewrite = (int)Configuration::get('PS_REWRITING_SETTINGS', null, null, $shop->id);
 		$multi_lang = (Language::countActiveLanguages($shop->id) > 1);
-		$base = $ssl ? 'https://'.$shop->domain_ssl : 'http://'.$shop->domain;
-		$base .= $shop->getBaseURI();
+		// Backward compatibility
+		if (_PS_VERSION_ < '1.5')
+			$base = ($ssl ? _PS_BASE_URL_SSL_ : _PS_BASE_URL_).__PS_BASE_URI__;
+		else
+			$base = ($ssl ? 'https://'.$shop->domain_ssl : 'http://'.$shop->domain).$shop->getBaseURI();
 		$lang = '';
 		if ($multi_lang)
 		{
