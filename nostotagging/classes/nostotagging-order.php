@@ -55,59 +55,72 @@ class NostoTaggingOrder extends NostoTaggingBlock
 				$total_wrapping_tax_incl = 0;
 				$total_gift_tax_incl = 0;
 
-				// One order can be split into multiple orders, so we need to combine their data.
-				$order_collection = Order::getByReference($order->reference);
-				foreach ($order_collection as $item)
+				// Cart rules and split orders are available from prestashop 1.5 onwards.
+				if (_PS_VERSION_ >= '1.5')
 				{
-					/** @var $item Order */
-					$products = array_merge($products, $item->getProducts());
-					$total_discounts_tax_incl = Tools::ps_round($total_discounts_tax_incl + $item->total_discounts_tax_incl, 2);
-					$total_shipping_tax_incl = Tools::ps_round($total_shipping_tax_incl + $item->total_shipping_tax_incl, 2);
-					$total_wrapping_tax_incl = Tools::ps_round($total_wrapping_tax_incl + $item->total_wrapping_tax_incl, 2);
-				}
-
-				// We need the cart rules used for the order to check for gift products and free shipping.
-				// The cart is the same even if the order is split into many objects.
-				$cart = new Cart($order->id_cart);
-				if (Validate::isLoadedObject($cart))
-					$cart_rules = (array)$cart->getCartRules();
-				else
-					$cart_rules = array();
-
-				$gift_products = array();
-				foreach ($cart_rules as $cart_rule)
-					if ((int)$cart_rule['gift_product'])
+					// One order can be split into multiple orders, so we need to combine their data.
+					$order_collection = Order::getByReference($order->reference);
+					foreach ($order_collection as $item)
 					{
-						foreach ($products as $key => &$product)
-							if (empty($product['gift'])
-								&& (int)$product['product_id'] === (int)$cart_rule['gift_product']
-								&& (int)$product['product_attribute_id'] === (int)$cart_rule['gift_product_attribute'])
-							{
-								$product['product_quantity'] = (int)$product['product_quantity'];
-								$product['product_quantity']--;
-
-								if (!($product['product_quantity'] > 0))
-									unset($products[$key]);
-
-								$total_gift_tax_incl = Tools::ps_round($total_gift_tax_incl + $product['product_price_wt'], 2);
-
-								$gift_product = $product;
-								$gift_product['product_quantity'] = 1;
-								$gift_product['product_price_wt'] = 0;
-								$gift_product['gift'] = true;
-
-								$gift_products[] = $gift_product;
-
-								break; // One gift product per cart rule
-							}
-						unset($product);
+						/** @var $item Order */
+						$products = array_merge($products, $item->getProducts());
+						$total_discounts_tax_incl = Tools::ps_round($total_discounts_tax_incl + $item->total_discounts_tax_incl, 2);
+						$total_shipping_tax_incl = Tools::ps_round($total_shipping_tax_incl + $item->total_shipping_tax_incl, 2);
+						$total_wrapping_tax_incl = Tools::ps_round($total_wrapping_tax_incl + $item->total_wrapping_tax_incl, 2);
 					}
 
-				$items = array_merge($products, $gift_products);
+					// We need the cart rules used for the order to check for gift products and free shipping.
+					// The cart is the same even if the order is split into many objects.
+					$cart = new Cart($order->id_cart);
+					if (Validate::isLoadedObject($cart))
+						$cart_rules = (array)$cart->getCartRules();
+					else
+						$cart_rules = array();
 
-				$customer = $order->getCustomer();
+					$gift_products = array();
+					foreach ($cart_rules as $cart_rule)
+						if ((int)$cart_rule['gift_product'])
+						{
+							foreach ($products as $key => &$product)
+								if (empty($product['gift'])
+									&& (int)$product['product_id'] === (int)$cart_rule['gift_product']
+									&& (int)$product['product_attribute_id'] === (int)$cart_rule['gift_product_attribute'])
+								{
+									$product['product_quantity'] = (int)$product['product_quantity'];
+									$product['product_quantity']--;
 
-				$this->order_number = (string)$order->reference;
+									if (!($product['product_quantity'] > 0))
+										unset($products[$key]);
+
+									$total_gift_tax_incl = Tools::ps_round($total_gift_tax_incl + $product['product_price_wt'], 2);
+
+									$gift_product = $product;
+									$gift_product['product_quantity'] = 1;
+									$gift_product['product_price_wt'] = 0;
+									$gift_product['gift'] = true;
+
+									$gift_products[] = $gift_product;
+
+									break; // One gift product per cart rule
+								}
+							unset($product);
+						}
+
+					$items = array_merge($products, $gift_products);
+				}
+				else
+				{
+					$products = $order->getProducts();
+					$total_discounts_tax_incl = $order->total_discounts;
+					$total_shipping_tax_incl = $order->total_shipping;
+					$total_wrapping_tax_incl = $order->total_wrapping;
+
+					$items = $products;
+				}
+
+				$customer = new Customer((int)$order->id_customer);
+				// The order reference was introduced in prestashop 1.5 where orders can be split into multiple ones.
+				$this->order_number = isset($order->reference) ? (string)$order->reference : $order->id;
 				$this->buyer = array(
 					'first_name' => $customer->firstname,
 					'last_name' => $customer->lastname,
@@ -148,12 +161,13 @@ class NostoTaggingOrder extends NostoTaggingBlock
 
 					// Check is free shipping applies to the cart.
 					$free_shipping = false;
-					foreach ($cart_rules as $cart_rule)
-						if ((int)$cart_rule['free_shipping'])
-						{
-							$free_shipping = true;
-							break;
-						}
+					if (isset($cart_rules))
+						foreach ($cart_rules as $cart_rule)
+							if ((int)$cart_rule['free_shipping'])
+							{
+								$free_shipping = true;
+								break;
+							}
 
 					if (!$free_shipping && $total_shipping_tax_incl > 0)
 						$this->purchased_items[] = array(
