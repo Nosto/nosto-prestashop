@@ -121,7 +121,10 @@ class NostoTagging extends Module
 				&& $this->registerHook('orderConfirmation')
 				&& $this->registerHook('paymentConfirm')
 				&& $this->registerHook('paymentTop')
-				&& $this->registerHook('home');
+				&& $this->registerHook('home')
+				&& $this->registerHook('updateproduct')
+				&& $this->registerHook('deleteproduct')
+				&& $this->registerHook('updateQuantity');
 		else
 			return parent::install()
 				&& $this->initConfig()
@@ -142,7 +145,7 @@ class NostoTagging extends Module
 				&& $this->registerHook('actionPaymentConfirmation')
 				&& $this->registerHook('displayPaymentTop')
 				&& $this->registerHook('displayHome')
-    			&& $this->registerHook('actionObjectUpdateAfter');
+				&& $this->registerHook('actionObjectUpdateAfter');
 	}
 
 	/**
@@ -803,6 +806,43 @@ class NostoTagging extends Module
 					}
 			}
 		}
+	}
+
+	/**
+	 * Hook called when a product is update with a new picture, right after said update. (Prestashop 1.4).
+	 *
+	 * @see NostoTagging::hookActionObjectUpdateAfter
+	 * @param array $params
+	 */
+	public function hookUpdateProduct (Array $params)
+	{
+		if (isset($params['product']))
+			$this->hookActionObjectUpdateAfter(array('object' => $params['product']));
+	}
+
+	/**
+	 * Hook called when a product is deleted, right before said deletion (Prestashop 1.4).
+	 *
+	 * @see NostoTagging::hookActionObjectUpdateAfter
+	 * @param array $params
+	 */
+	public function hookDeleteProduct (Array $params)
+	{
+		if (isset($params['product']))
+			$this->hookActionObjectUpdateAfter(array('object' => $params['product']));
+	}
+
+	/**
+	 * Hook called during an the validation of an order, the status of which being something other than
+	 * "canceled" or "Payment error", for each of the order's items (Prestashop 1.4).
+	 *
+	 * @see NostoTagging::hookActionObjectUpdateAfter
+	 * @param array $params
+	 */
+	public function hookUpdateQuantity (Array $params)
+	{
+		if (isset($params['product']))
+			$this->hookActionObjectUpdateAfter(array('object' => $params['product']));
 	}
 
 	/**
