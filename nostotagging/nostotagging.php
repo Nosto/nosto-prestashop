@@ -727,7 +727,7 @@ class NostoTagging extends Module
 					else
 						$module_version = 'unknown';
 
-					$nosto_order['payment_provider'] = $module_name.' ['.$module_version.']';
+					$nosto_order->payment_provider = $module_name.' ['.$module_version.']';
 				}
 
 				$request = new NostoTaggingApiRequest();
@@ -1132,7 +1132,7 @@ class NostoTagging extends Module
 	 * Returns data about the order in a format that can be sent to Nosto.
 	 *
 	 * @param Order $order
-	 * @return false|array the order data array or false.
+	 * @return false|NostoTaggingOrder the order data array or false.
 	 */
 	public function getOrderData(Order $order)
 	{
