@@ -15,7 +15,7 @@ if (!defined('_PS_VERSION_'))
  */
 function upgrade_module_1_1_0($object)
 {
-	return $object->createCustomerLinkTable()
+	return NostoTaggingCustomerLink::createTable()
 		&& $object->registerHook('actionPaymentConfirmation')
 		&& $object->registerHook('displayPaymentTop')
 		&& $object->registerHook('displayHome')

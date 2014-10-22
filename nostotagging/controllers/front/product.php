@@ -15,9 +15,10 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
 	public function initContent()
 	{
 		$nosto_products = array();
+		$context = $this->module->getContext();
 		foreach ($this->getProductIds() as $id_product)
 		{
-			$product = new Product($id_product, true, $this->context->language->id, $this->context->shop->id);
+			$product = new Product($id_product, true, $context->language->id, $context->shop->id);
 			$nosto_product = $this->module->getProductData($product);
 			if (!empty($nosto_product))
 				$nosto_products[] = $nosto_product;
@@ -40,7 +41,6 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
 			FROM `ps_product`
 			WHERE `active` = 1
 				AND `available_for_order` = 1
-				AND `visibility` != 'none'
 			LIMIT $this->limit
 			OFFSET $this->offset
 EOT;
