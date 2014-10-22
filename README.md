@@ -102,6 +102,9 @@ PrestaShop version 1.5.x - 1.6.x
 
 ## Changelog
 
+* 1.3.0
+    * coming soon...
+
 * 1.2.0
     * Added option to create a new Nosto account in module settings, or use an existing one
     * Added support for basic recommendation slot editor in module settings (Prestashop 1.6 only)
