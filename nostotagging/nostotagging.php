@@ -251,6 +251,21 @@ class NostoTagging extends Module
 			$field_account_authorized => NostoTaggingAccount::isConnectedToNosto($language_id),
 			$field_languages => $languages,
 			$field_current_language => $current_language,
+			// Hack a few translations for the view as PS 1.4 does not support sprintf syntax in smarty "l" function.
+			'translations' => array(
+				'nostotagging_installed_heading' => sprintf(
+					$this->l('You have installed Nosto to your %s shop'),
+					$current_language['name']
+				),
+				'nostotagging_installed_account_name' => sprintf(
+					$this->l('Your account ID is %s'),
+					NostoTaggingAccount::getName($language_id)
+				),
+				'nostotagging_not_installed_heading' => sprintf(
+					$this->l('Install Nosto to your %s shop'),
+					$current_language['name']
+				),
+			)
 		));
 
 		// Try to login employee to Nosto in order to get a url to the internal setting pages,
