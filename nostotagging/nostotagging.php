@@ -168,7 +168,7 @@ class NostoTagging extends Module
 	{
 		// Always update the url to the module admin page when we access it.
 		// This can then later be used by the oauth2 controller to redirect the user back.
-		NostoTaggingConfig::write(NostoTaggingConfig::ADMIN_URL, $this->getCurrentUrl());
+		NostoTaggingConfig::write(NostoTaggingConfig::ADMIN_URL, $this->getAdminUrl());
 
 		$output = '';
 
@@ -218,9 +218,9 @@ class NostoTagging extends Module
 		else
 		{
 			$language_id = (int)Tools::getValue('language_id', 0);
-			foreach ($this->getAdminFlashMessages('error') as $error_message)
+			if (($error_message = Tools::getValue('oauth_error')) !== false)
 				$output .= $this->displayError($this->l($error_message));
-			foreach ($this->getAdminFlashMessages('success') as $success_message)
+			if (($success_message = Tools::getValue('oauth_success')) !== false)
 				$output .= $this->displayConfirmation($this->l($success_message));
 		}
 
@@ -244,6 +244,7 @@ class NostoTagging extends Module
 		}
 
 		$this->context->smarty->assign(array(
+			'nostotagging_form_action' => $this->getAdminUrl(),
 			$field_has_account => NostoTaggingAccount::exists($language_id),
 			$field_account_name => NostoTaggingAccount::getName($language_id),
 			$field_account_email => $account_email,
@@ -860,64 +861,6 @@ class NostoTagging extends Module
 	}
 
 	/**
-	 * Checks if the current user is logged in the back office.
-	 *
-	 * @return bool true if user is admin, false otherwise.
-	 */
-	public function isUserAdmin()
-	{
-		$cookie = new Cookie('psAdmin');
-		return $cookie->isLoggedBack();
-	}
-
-	/**
-	 * Puts a "flash" message to the admin cookie that can be shown during the next request.
-	 *
-	 * @param string $category the message category, e.g. 'error', 'success'.
-	 * @param string $message the message to show.
-	 */
-	public function setAdminFlashMessage($category, $message)
-	{
-		if ($this->isUserAdmin())
-		{
-			$cookie = new Cookie('psAdmin');
-			if (!empty($cookie->nostotagging))
-				$data = json_decode($cookie->nostotagging, true);
-			else
-				$data = array();
-			$data['messages'][$category][] = $message;
-			$cookie->nostotagging = json_encode($data);
-		}
-	}
-
-	/**
-	 * Gets flash messages for the admin user with the given category.
-	 * The messages are removed from the cookie after they are extracted.
-	 *
-	 * @param string $category the message category, e.g. 'error', 'success'.
-	 * @return array the list of messages.
-	 */
-	public function getAdminFlashMessages($category)
-	{
-		$messages = array();
-		if ($this->isUserAdmin())
-		{
-			$cookie = new Cookie('psAdmin');
-			if (!empty($cookie->nostotagging))
-			{
-				$data = json_decode($cookie->nostotagging, true);
-				if (!empty($data['messages'][$category]))
-				{
-					$messages = $data['messages'][$category];
-					unset($data['messages'][$category]);
-				}
-				$cookie->nostotagging = json_encode($data);
-			}
-		}
-		return $messages;
-	}
-
-	/**
 	 * Returns the current context.
 	 * @return Context
 	 */
@@ -1016,15 +959,30 @@ class NostoTagging extends Module
 	}
 
 	/**
-	 * Returns the current requested url.
+	 * Returns the admin url.
+	 * Note the url is parsed from the current url, so this can only work if called when on the admin page.
 	 *
 	 * @return string the url.
 	 */
-	protected function getCurrentUrl()
+	protected function getAdminUrl()
 	{
-		$host = Tools::getHttpHost(true);
-		$request_uri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
-		return $host.$request_uri;
+		$current_url = Tools::getHttpHost(true).(isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '');
+		$parsed_url = NostoTaggingHttpRequest::parseUrl($current_url);
+		$parsed_query_string = NostoTaggingHttpRequest::parseQueryString($parsed_url['query']);
+		$valid_params = array(
+			'controller',
+			'token',
+			'configure',
+			'tab_module',
+			'module_name',
+			'tab',
+		);
+		$query_params = array();
+		foreach ($valid_params as $valid_param)
+			if (isset($parsed_query_string[$valid_param]))
+				$query_params[$valid_param] = $parsed_query_string[$valid_param];
+		$parsed_url['query'] = http_build_query($query_params);
+		return NostoTaggingHttpRequest::buildUrl($parsed_url);
 	}
 
 	/**

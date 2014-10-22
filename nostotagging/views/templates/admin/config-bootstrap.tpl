@@ -6,7 +6,7 @@ function confirmUninstall(form) {
 <div class="tw-bs">
     <div class="container-fluid">
         <div class="row">
-            <form class="nostotagging" role="form" action="{$smarty.server.REQUEST_URI|escape:'htmlall':'UTF-8'}" method="post" enctype="multipart/form-data" novalidate="">
+            <form class="nostotagging" role="form" action="{$nostotagging_form_action|escape:'htmlall':'UTF-8'}" method="post" enctype="multipart/form-data" novalidate="">
                 <input type="hidden" id="nostotagging_current_language" name="nostotagging_current_language" value="{$nostotagging_current_language.id_lang}">
                 <div class="panel panel-default">
                     <div class="panel-heading">

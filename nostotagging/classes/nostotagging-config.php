@@ -49,7 +49,7 @@ class NostoTaggingConfig
 	public static function exists($name, $lang_id = null, $id_shop_group = null, $id_shop = null)
 	{
 		$value = self::read($name, $lang_id, $id_shop_group, $id_shop);
-		return ($value !== false && $value !== null);
+		return ($value !== false && $value !== null && $value !== '');
 	}
 
 	/**
@@ -114,12 +114,13 @@ class NostoTaggingConfig
 			);
 		// We do not actually delete the main config entries, just set them to NULL, as there might me other language
 		// specific entries tied to them. The main entries are not used anyways if there are languages defined.
+		/* todo: this breaks PS 1.4, apparently you cannot update a value that is NULL in PS 1.4.
 		Db::getInstance()->execute('
 			UPDATE `'.$config_table.'`
 			SET `value` = NULL
 			WHERE `name` LIKE "NOSTOTAGGING_%"'
 			.$context_restriction
-		);
+		);*/
 
 		// Reload the config.
 		Configuration::loadConfiguration();
