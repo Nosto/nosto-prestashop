@@ -5,7 +5,7 @@ if (!defined('_PS_VERSION_'))
 /**
  * Upgrades the module to version 1.3.0.
  *
- * Move global config variables to language specific ones.
+ * Purges existing nosto configs.
  * Removes unused config variables.
  * Registers new hooks.
  *
@@ -14,25 +14,20 @@ if (!defined('_PS_VERSION_'))
  */
 function upgrade_module_1_3_0($object)
 {
-	// Move global configs to language specific ones.
-	$default_lang_id = (int)Configuration::get('PS_LANG_DEFAULT');
-	if (!empty($default_lang_id))
-	{
-		$account_name = Configuration::get('NOSTOTAGGING_ACCOUNT_NAME');
-		if (!empty($account_name))
-		{
-			NostoTaggingAccount::setName($account_name, $default_lang_id);
-			Configuration::set('NOSTOTAGGING_ACCOUNT_NAME', '');
-		}
-		$sso_token = Configuration::get('NOSTOTAGGING_SSO_TOKEN');
-		if (!empty($sso_token))
-		{
-			NostoTaggingApiToken::set('sso', $sso_token, $default_lang_id);
-			Configuration::set('NOSTOTAGGING_SSO_TOKEN', '');
-		}
-	}
-
-	Configuration::deleteByName('NOSTOTAGGING_DEFAULT_ELEMENTS');
+	// Purge the nosto configs the plugin have created so far and reload the config.
+	$config_table = _DB_PREFIX_.'configuration';
+	$config_lang_table = $config_table.'_lang';
+	Db::getInstance()->execute('
+			DELETE `'.$config_lang_table.'` FROM `'.$config_lang_table.'`
+			LEFT JOIN `'.$config_table.'`
+			ON `'.$config_lang_table.'`.`id_configuration` = `'.$config_table.'`.`id_configuration`
+			WHERE `'.$config_table.'`.`name` LIKE "NOSTOTAGGING_%"'
+	);
+	Db::getInstance()->execute('
+			DELETE FROM `'.$config_table.'`
+			WHERE `'.$config_table.'`.`name` LIKE "NOSTOTAGGING_%"'
+	);
+	Configuration::loadConfiguration();
 
 	// Backward compatibility
 	if (_PS_VERSION_ < '1.5')
