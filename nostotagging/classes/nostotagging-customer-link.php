@@ -56,16 +56,16 @@ class NostoTaggingCustomerLink
 	 */
 	public static function updateLink(NostoTagging $module)
 	{
-		// todo: can we use the id_cart instead of id_customer??
-
-		if (!isset($module->context->customer->id))
+		$context = $module->getContext();
+		if (empty($context->customer->id))
 			return false;
 
-		if (($id_nosto_customer = self::readCookieValue()) !== null)
+		$id_nosto_customer = self::readCookieValue();
+		if (empty($id_nosto_customer))
 			return false;
 
 		$table = self::getTableName();
-		$id_customer = (int)$module->context->customer->id;
+		$id_customer = (int)$context->customer->id;
 		$id_nosto_customer = pSQL($id_nosto_customer);
 		$where = '`id_customer` = '.$id_customer.' AND `id_nosto_customer` = "'.$id_nosto_customer.'"';
 		$existing_link = Db::getInstance()->getRow('SELECT * FROM `'.$table.'` WHERE '.$where);
@@ -95,11 +95,12 @@ class NostoTaggingCustomerLink
 	 */
 	public static function getNostoCustomerId(NostoTagging $module)
 	{
-		if (!isset($module->context->customer->id))
+		$context = $module->getContext();
+		if (empty($context->customer->id))
 			return false;
 
 		$table = self::getTableName();
-		$id_customer = (int)$module->context->customer->id;
+		$id_customer = (int)$context->customer->id;
 		$sql = 'SELECT `id_nosto_customer` FROM `'.$table.'` WHERE `id_customer` = '.$id_customer.' ORDER BY `date_add` ASC';
 		return Db::getInstance()->getValue($sql);
 	}

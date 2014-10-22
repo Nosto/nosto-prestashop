@@ -26,6 +26,11 @@ class NostoTaggingOrder extends NostoTaggingBlock
 	public $purchased_items = array();
 
 	/**
+	 * @var string the payment provider module and version used in the order (only used in API requests).
+	 */
+	public $payment_provider;
+
+	/**
 	 * @inheritdoc
 	 */
 	public function getRequiredItems()

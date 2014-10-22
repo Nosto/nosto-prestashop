@@ -30,6 +30,9 @@ By default the module creates the following nosto elements:
 * 2 elements for the product category page, top and bottom
 	* "Most Popular Products In This Category" ( nosto-page-category1 )
 	* "Your Recent History" ( nosto-page-category2 )
+* 2 elements for the brand page, top and bottom
+    * "Most Popular Products In This Category" ( nosto-page-category1 )
+    * "Your Recent History" ( nosto-page-category2 )
 * 2 elements for the search results page, top and bottom
 	* "Customers who searched '{search term}' viewed" ( nosto-page-search1 )
 	* "Your Recent History" ( nosto-page-search2 )
@@ -76,21 +79,7 @@ installation in order for the module to work properly.
 ## Configuration
 
 Once you have installed the module, you need to configure it. This is done by clicking the "Configure" link for the
-module in the modules listing. This will open a new page with the module configuration that includes three settings:
-
-* Server address
-	* This is the server address for the Nosto marketing automation service
-	* It will have the default value of "connect.nosto.com" and you do not need to change this
-* Account name
-	* This is your Nosto marketing automation service account name that you got when registering for the service
-* Use default nosto elements
-	* This setting controls if the module should create and output the default nosto elements for showing the product
-	recommendations
-	* You can disable the defaults if you want to use your own elements in your layout
-* Inject category and search page recommendations
-    * This setting controls if the module should automatically inject recommendation slots to the category and search
-    pages. These need to be managed separately as there are no Prestashop hooks on these pages.
-    * You can disable this setting if you need more control over how the recommendation slots are displayed.
+module in the modules listing. This will open a new page with the module configuration.
 
 ## License
 
@@ -98,9 +87,21 @@ Open Software License ("OSL") v. 3.0
 
 ## Dependencies
 
-PrestaShop version 1.5.x - 1.6.x
+PrestaShop version 1.4.x - 1.6.x
 
 ## Changelog
+
+* 1.3.0
+    * Added support for multi-shop installations
+    * Added support for multi-lingual installations
+    * Added OAuth2 authorization for connecting an existing Nosto account
+    * Added SSO support for logging in to Nosto
+    * Added support for tagging brand pages (manufacturer)
+    * Added PS 1.4 support
+    * Added support for re-crawling products
+    * Disabled the left/right column hooks
+    * Updated localizations for English, French, German and Spanish
+    * Updated module admin page UI
 
 * 1.2.0
     * Added option to create a new Nosto account in module settings, or use an existing one

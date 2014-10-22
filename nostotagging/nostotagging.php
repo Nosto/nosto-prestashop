@@ -70,7 +70,7 @@ class NostoTagging extends Module
 	{
 		$this->name = 'nostotagging';
 		$this->tab = 'advertising_marketing';
-		$this->version = '1.2.0';
+		$this->version = '1.3.0';
 		$this->author = 'Nosto';
 		$this->need_instance = 1;
 		$this->ps_versions_compliancy = array('min' => '1.4', 'max' => '1.6');
@@ -251,6 +251,21 @@ class NostoTagging extends Module
 			$field_account_authorized => NostoTaggingAccount::isConnectedToNosto($language_id),
 			$field_languages => $languages,
 			$field_current_language => $current_language,
+			// Hack a few translations for the view as PS 1.4 does not support sprintf syntax in smarty "l" function.
+			'translations' => array(
+				'nostotagging_installed_heading' => sprintf(
+					$this->l('You have installed Nosto to your %s shop'),
+					$current_language['name']
+				),
+				'nostotagging_installed_account_name' => sprintf(
+					$this->l('Your account ID is %s'),
+					NostoTaggingAccount::getName($language_id)
+				),
+				'nostotagging_not_installed_heading' => sprintf(
+					$this->l('Install Nosto to your %s shop'),
+					$current_language['name']
+				),
+			)
 		));
 
 		// Try to login employee to Nosto in order to get a url to the internal setting pages,
@@ -712,7 +727,7 @@ class NostoTagging extends Module
 					else
 						$module_version = 'unknown';
 
-					$nosto_order['payment_provider'] = $module_name.' ['.$module_version.']';
+					$nosto_order->payment_provider = $module_name.' ['.$module_version.']';
 				}
 
 				$request = new NostoTaggingApiRequest();
@@ -1117,7 +1132,7 @@ class NostoTagging extends Module
 	 * Returns data about the order in a format that can be sent to Nosto.
 	 *
 	 * @param Order $order
-	 * @return false|array the order data array or false.
+	 * @return false|NostoTaggingOrder the order data array or false.
 	 */
 	public function getOrderData(Order $order)
 	{

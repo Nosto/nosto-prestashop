@@ -32,8 +32,8 @@ function confirmUninstall(form) {
                     <div class="panel-body text-center">
                         {if $nostotagging_account_authorized}
                             <div id="nostotagging_installed" style="{if !empty($iframe_url)}display: none;{/if}">
-                                <h2>{l s='You have installed Nosto to your' mod='nostotagging'} {$nostotagging_current_language.name} {l s='shop' mod='nostotagging'}</h2>
-                                <p>{l s='Your account ID is ' mod='nostotagging'} {$nostotagging_account_name}</p>
+                                <h2>{$translations.nostotagging_installed_heading}</h2>
+                                <p>{$translations.nostotagging_installed_account_name}</p>
                                 <div class="panes">
                                     <p>{l s='If you want to change the account, you need to uninstall first' mod='nostotagging'}</p>
                                     {if !empty($iframe_url)}<a id="nostotagging_back_to_iframe" class="btn btn-default" role="button">{l s='Back' mod='nostotagging'}</a>{/if}
@@ -44,7 +44,7 @@ function confirmUninstall(form) {
                                 <iframe id="nostotagging_iframe" frameborder="0" scrolling="no" src="{$iframe_url}"></iframe>
                             {/if}
                         {else}
-                            <h2>{l s='Install Nosto to your' mod='nostotagging'} {$nostotagging_current_language.name} {l s='shop' mod='nostotagging'}</h2>
+                            <h2>{$translations.nostotagging_not_installed_heading}</h2>
                             <p>{l s='Do you have an existing Nosto account?' mod='nostotagging'}</p>
 
                             <div class="form-group">
