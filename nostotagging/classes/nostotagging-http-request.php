@@ -170,6 +170,21 @@ class NostoTaggingHttpRequest
 	}
 
 	/**
+	 * Parses the given query string and returns the parts as an assoc array.
+	 *
+	 * @see http://php.net/manual/en/function.parse-str.php
+	 * @param string $query_string the query string to parse.
+	 * @return array the parsed string as assoc array.
+	 */
+	public static function parseQueryString($query_string)
+	{
+		if (empty($query_string))
+			return array();
+		parse_str($query_string, $parsed_query_string);
+		return $parsed_query_string;
+	}
+
+	/**
 	 * Replaces a parameter in a query string with given value.
 	 *
 	 * @param string $param the query param name to replace.
@@ -179,10 +194,7 @@ class NostoTaggingHttpRequest
 	 */
 	public static function replaceQueryParam($param, $value, $query_string)
 	{
-		if (empty($query_string))
-			$parsed_query = array();
-		else
-			parse_str($query_string, $parsed_query);
+		$parsed_query = self::parseQueryString($query_string);
 		$parsed_query[$param] = $value;
 		return http_build_query($parsed_query);
 	}
