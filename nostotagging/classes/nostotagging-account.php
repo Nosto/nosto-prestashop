@@ -166,7 +166,7 @@ class NostoTaggingAccount
 			if ($rewrite)
 				$lang = $language->iso_code.'/';
 			else
-				$lang = 'index.php?id_lang='.$language->id;
+				$lang = '?id_lang='.$language->id;
 		}
 		return $base.$lang;
 	}
