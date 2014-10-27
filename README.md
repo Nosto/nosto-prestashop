@@ -91,6 +91,9 @@ PrestaShop version 1.4.x - 1.6.x
 
 ## Changelog
 
+* 1.3.1
+    * Fixed issue with front page url on account creation for shops without clean urls
+
 * 1.3.0
     * Added support for multi-shop installations
     * Added support for multi-lingual installations
