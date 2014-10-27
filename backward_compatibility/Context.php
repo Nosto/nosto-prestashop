@@ -25,7 +25,7 @@
 */
 
 if ((bool)Configuration::get('PS_MOBILE_DEVICE'))
-	require_once(_PS_MODULE_DIR_ . '/mobile_theme/Mobile_Detect.php');
+	require_once(_PS_MODULE_DIR_.'/mobile_theme/Mobile_Detect.php');
 
 // Retro 1.3, 'class_exists' cause problem with autoload...
 if (version_compare(_PS_VERSION_, '1.4', '<'))
