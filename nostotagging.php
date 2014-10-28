@@ -867,6 +867,7 @@ class NostoTagging extends Module
 		{
 			$ssl = Configuration::get('PS_SSL_ENABLED');
 			$base = ($ssl ? _PS_BASE_URL_SSL_ : _PS_BASE_URL_);
+			$params['id_lang'] = (int)$this->context->language->id;
 			$params['module'] = $this->name;
 			$params['controller'] = 'oauth2';
 			return $base.$this->_path.'ctrl.php?'.http_build_query($params);
