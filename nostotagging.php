@@ -284,7 +284,8 @@ class NostoTagging extends Module
 
 		$stylesheets = '<link rel="stylesheet" href="'.$this->_path.'css/tw-bs-v3.1.1.css">';
 		$stylesheets .= '<link rel="stylesheet" href="'.$this->_path.'css/nostotagging-admin-config.css">';
-		$scripts = '<script type="text/javascript" src="'.$this->_path.'js/nostotagging-admin-config.js"></script>';
+		$scripts = '<script type="text/javascript" src="'.$this->_path.'js/iframeresizer.min.js"></script>';
+		$scripts .= '<script type="text/javascript" src="'.$this->_path.'js/nostotagging-admin-config.js"></script>';
 		$output .= $this->display(__FILE__, 'views/templates/admin/config-bootstrap.tpl');
 
 		return $stylesheets.$scripts.$output;
