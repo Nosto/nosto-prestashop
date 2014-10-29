@@ -2,26 +2,33 @@
 if (!defined('_PS_VERSION_'))
 	exit;
 
-require_once(dirname(__FILE__).'/classes/nostotagging-block.php');
-require_once(dirname(__FILE__).'/classes/nostotagging-cart.php');
-require_once(dirname(__FILE__).'/classes/nostotagging-category.php');
-require_once(dirname(__FILE__).'/classes/nostotagging-customer.php');
-require_once(dirname(__FILE__).'/classes/nostotagging-order.php');
-require_once(dirname(__FILE__).'/classes/nostotagging-product.php');
-require_once(dirname(__FILE__).'/classes/nostotagging-brand.php');
-
-require_once(dirname(__FILE__).'/classes/nostotagging-account.php');
-require_once(dirname(__FILE__).'/classes/nostotagging-formatter.php');
-require_once(dirname(__FILE__).'/classes/nostotagging-logger.php');
-require_once(dirname(__FILE__).'/classes/nostotagging-http-request.php');
-require_once(dirname(__FILE__).'/classes/nostotagging-http-response.php');
-require_once(dirname(__FILE__).'/classes/nostotagging-cipher.php');
-require_once(dirname(__FILE__).'/classes/nostotagging-oauth2-client.php');
-require_once(dirname(__FILE__).'/classes/nostotagging-oauth2-token.php');
-require_once(dirname(__FILE__).'/classes/nostotagging-config.php');
-require_once(dirname(__FILE__).'/classes/nostotagging-api-request.php');
-require_once(dirname(__FILE__).'/classes/nostotagging-api-token.php');
-require_once(dirname(__FILE__).'/classes/nostotagging-customer-link.php');
+/*
+ * Only try to load class files if we can resolve the __FILE__ global to the current file.
+ * We need to do this as this module file is parsed with eval() on the modules page, and eval() messes up the __FILE__.
+ */
+if ((basename(__FILE__) === 'nostotagging.php'))
+{
+	$module_dir = dirname(__FILE__);
+	require_once($module_dir.'/classes/nostotagging-block.php');
+	require_once($module_dir.'/classes/nostotagging-cart.php');
+	require_once($module_dir.'/classes/nostotagging-category.php');
+	require_once($module_dir.'/classes/nostotagging-customer.php');
+	require_once($module_dir.'/classes/nostotagging-order.php');
+	require_once($module_dir.'/classes/nostotagging-product.php');
+	require_once($module_dir.'/classes/nostotagging-brand.php');
+	require_once($module_dir.'/classes/nostotagging-account.php');
+	require_once($module_dir.'/classes/nostotagging-formatter.php');
+	require_once($module_dir.'/classes/nostotagging-logger.php');
+	require_once($module_dir.'/classes/nostotagging-http-request.php');
+	require_once($module_dir.'/classes/nostotagging-http-response.php');
+	require_once($module_dir.'/classes/nostotagging-cipher.php');
+	require_once($module_dir.'/classes/nostotagging-oauth2-client.php');
+	require_once($module_dir.'/classes/nostotagging-oauth2-token.php');
+	require_once($module_dir.'/classes/nostotagging-config.php');
+	require_once($module_dir.'/classes/nostotagging-api-request.php');
+	require_once($module_dir.'/classes/nostotagging-api-token.php');
+	require_once($module_dir.'/classes/nostotagging-customer-link.php');
+}
 
 /**
  * NostoTagging module that integrates Nosto marketing automation service.
