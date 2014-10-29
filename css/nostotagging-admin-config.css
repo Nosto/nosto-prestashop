@@ -101,7 +101,7 @@
 
 .nostotagging iframe {
     width: 100%;
-    height: 1250px;
+    min-height: 1000px;
 }
 
 .nostotagging .switch-container {

@@ -41,7 +41,7 @@ function confirmUninstall(form) {
                                 </div>
                             </div>
                             {if !empty($iframe_url)}
-                                <iframe id="nostotagging_iframe" frameborder="0" scrolling="no" src="{$iframe_url}"></iframe>
+                                <iframe id="nostotagging_iframe" frameborder="0" width="100%" scrolling="no" src="{$iframe_url}"></iframe>
                             {/if}
                         {else}
                             <h2>{$translations.nostotagging_not_installed_heading}</h2>
