@@ -8,7 +8,7 @@ class NostoTaggingOAuth2Client
 {
 	const BASE_URL = 'https://my.nosto.com/oauth';
 	const CLIENT_ID = 'prestashop';
-	const PATH_AUTH = '?client_id={cid}&redirect_uri={uri}&response_type=code&scope={sco}';
+	const PATH_AUTH = '?client_id={cid}&redirect_uri={uri}&response_type=code&scope={sco}&lang={iso}';
 	const PATH_TOKEN = '/token?code={cod}&client_id={cid}&client_secret={sec}&redirect_uri={uri}&grant_type=authorization_code';
 
 	/**
@@ -78,12 +78,17 @@ class NostoTaggingOAuth2Client
 	 */
 	public function getAuthorizationUrl()
 	{
+		$context = Context::getContext();
+		if (!Validate::isLoadedObject($context->language))
+			$context->language = new Language((int)Configuration::get('PS_LANG_DEFAULT'));
+
 		return NostoTaggingHttpRequest::buildUri(
 			self::BASE_URL.self::PATH_AUTH,
 			array(
 				'{cid}' => $this->client_id,
 				'{uri}' => $this->redirect_url,
-				'{sco}' => implode(' ', $this->scopes)
+				'{sco}' => implode(' ', $this->scopes),
+				'{iso}' => $context->language->iso_code,
 			)
 		);
 	}
