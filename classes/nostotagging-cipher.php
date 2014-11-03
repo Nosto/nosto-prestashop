@@ -1,8 +1,8 @@
 <?php
 
-require_once(dirname(__FILE__).'/../vendor/phpseclib/crypt/base.php');
-require_once(dirname(__FILE__).'/../vendor/phpseclib/crypt/rijndael.php');
-require_once(dirname(__FILE__).'/../vendor/phpseclib/crypt/aes.php');
+require_once(dirname(__FILE__).'/../libs/phpseclib/crypt/base.php');
+require_once(dirname(__FILE__).'/../libs/phpseclib/crypt/rijndael.php');
+require_once(dirname(__FILE__).'/../libs/phpseclib/crypt/aes.php');
 require_once(dirname(__FILE__).'/nostotagging-security.php');
 
 /**
