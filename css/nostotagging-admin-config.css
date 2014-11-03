@@ -76,6 +76,7 @@
 
 #nostotagging_language {
     display: inline-block;
+    width: auto;
 }
 
 #nostotagging_account_setup {

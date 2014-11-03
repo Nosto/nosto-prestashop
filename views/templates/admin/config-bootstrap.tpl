@@ -10,7 +10,7 @@ function confirmUninstall(form) {
                 <input type="hidden" id="nostotagging_current_language" name="nostotagging_current_language" value="{$nostotagging_current_language.id_lang}">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <div class="col-md-8">
+                        <div class="col-xs-8">
                             {if count($nostotagging_languages) > 1}
                                 <label for="nostotagging_language">{l s='Manage accounts:' mod='nostotagging'}
                                     <select class="form-control" id="nostotagging_language">
@@ -21,7 +21,7 @@ function confirmUninstall(form) {
                                 </label>
                             {/if}
                         </div>
-                        <div class="col-md-4 text-right">
+                        <div class="col-xs-4 text-right">
                             {if $nostotagging_account_authorized}
                                 <a href="#" id="nostotagging_account_setup">{l s='Account setup' mod='nostotagging'}
                                     <span class="glyphicon glyphicon-cog">&nbsp;</span>
