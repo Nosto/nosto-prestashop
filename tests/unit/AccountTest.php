@@ -1,0 +1,38 @@
+<?php
+
+
+class AccountTest extends \Codeception\TestCase\Test
+{
+   /**
+    * @var \UnitTester
+    */
+    protected $tester;
+
+	/**
+	 * @inheritdoc
+	 */
+	protected function _before()
+	{
+		$this->tester->initPs();
+		$context = $this->tester->getContext();
+		$context->employee = $this->tester->createEmployee();
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	protected function _after()
+	{
+	}
+
+	/**
+	 * Tests creating a new account.
+	 */
+	public function testAccountCreation()
+    {
+		$id_lang = 1;
+		NostoTaggingApiRequest::$base_url = 'http://localhost';
+		$result = NostoTaggingAccount::create($this->tester->getContext(), null, $id_lang);
+		$this->assertFalse($result);
+    }
+}

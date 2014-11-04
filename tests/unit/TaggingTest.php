@@ -29,7 +29,7 @@ class TaggingTest extends \Codeception\TestCase\Test
 	public function testCartTagging()
     {
 		$context = $this->tester->getContext();
-		$context->cart = new \Cart(1); // todo
+		$context->cart = $this->tester->createCart();
 		$nosto_cart = new \NostoTaggingCart($context, $context->cart);
 		$this->assertTrue($nosto_cart->validate());
 	}
@@ -40,7 +40,7 @@ class TaggingTest extends \Codeception\TestCase\Test
 	public function testCategoryTagging()
 	{
 		$context = $this->tester->getContext();
-		$category = new \Category(3); // todo
+		$category = $this->tester->createCategory();
 		$nosto_category = new NostoTaggingCategory($context, $category);
 		$this->assertTrue($nosto_category->validate());
 	}
@@ -51,7 +51,7 @@ class TaggingTest extends \Codeception\TestCase\Test
 	public function testBrandTagging()
 	{
 		$context = $this->tester->getContext();
-		$manufacturer = new \Manufacturer(1); // todo
+		$manufacturer = $this->tester->createManufacturer();
 		$nosto_brand = new NostoTaggingBrand($context, $manufacturer);
 		$this->assertTrue($nosto_brand->validate());
 	}
@@ -62,8 +62,8 @@ class TaggingTest extends \Codeception\TestCase\Test
 	public function testProductTagging()
 	{
 		$context = $this->tester->getContext();
-		$product = new \Product(1, true, 1);
-		$context->currency = new \Currency(1); // todo
+		$product = $this->tester->createProduct();
+		$context->currency = $this->tester->createCurrency();
 		$nosto_product = new NostoTaggingProduct($context, $product);
 		$this->assertTrue($nosto_product->validate());
 	}
@@ -74,7 +74,7 @@ class TaggingTest extends \Codeception\TestCase\Test
 	public function testOrderTagging()
 	{
 		$context = $this->tester->getContext();
-		$order = new \Order(1); // todo
+		$order = $this->tester->createOrder();
 		$nosto_order = new NostoTaggingOrder($context, $order);
 		$this->assertTrue($nosto_order->validate());
 	}

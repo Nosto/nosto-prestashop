@@ -67,4 +67,43 @@ class UnitHelper extends \Codeception\Module
 	{
 		return isset($this->config['psDir']) ? rtrim($this->config['psDir'], '/') : '';
 	}
+
+	public function createEmployee()
+	{
+		$employee = new \EmployeeCore();
+		$employee->firstname = 'dev';
+		$employee->lastname = 'null';
+		$employee->email = 'devnull@nosto.com';
+		return $employee;
+	}
+
+	public function createProduct()
+	{
+		return new \Product(1, true, 1);
+	}
+
+	public function createCategory()
+	{
+		return new \Category(3);
+	}
+
+	public function createCart()
+	{
+		return new \Cart(1);
+	}
+
+	public function createCurrency()
+	{
+		return new \Currency(1);
+	}
+
+	public function createManufacturer()
+	{
+		return new \Manufacturer(1);
+	}
+
+	public function createOrder()
+	{
+		return new \Order(1);
+	}
 }
