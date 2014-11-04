@@ -410,6 +410,7 @@ class NostoTagging extends Module
 		}
 
 		$html .= $this->display(__FILE__, 'views/templates/hook/top_nosto-elements.tpl');
+		$html .= $this->getHiddenRecommendationElements();
 
 		return $html;
 	}
@@ -434,10 +435,7 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayFooter()
 	{
-		$html = '';
-		$html .= $this->display(__FILE__, 'views/templates/hook/footer_nosto-elements.tpl');
-		$html .= $this->getHiddenRecommendationElements();
-		return $html;
+		return $this->display(__FILE__, 'views/templates/hook/footer_nosto-elements.tpl');
 	}
 
 	/**
@@ -884,29 +882,36 @@ class NostoTagging extends Module
 		if ($this->isController('index'))
 		{
 			// The home page.
-			$append .= $this->display(__FILE__, 'views/templates/hook/home_nosto-elements.tpl');
+			$append .= '<div class="hidden_nosto_element" data-nosto-id="frontpage-nosto-1"></div>';
+			$append .= '<div class="hidden_nosto_element" data-nosto-id="frontpage-nosto-2"></div>';
+			$append .= '<div class="hidden_nosto_element" data-nosto-id="frontpage-nosto-3"></div>';
+			$append .= '<div class="hidden_nosto_element" data-nosto-id="frontpage-nosto-4"></div>';
 		}
 		elseif ($this->isController('product'))
 		{
 			// The product page.
-			$append .= $this->display(__FILE__, 'views/templates/hook/footer-product_nosto-elements.tpl');
+			$append .= '<div class="hidden_nosto_element" data-nosto-id="nosto-page-product1"></div>';
+			$append .= '<div class="hidden_nosto_element" data-nosto-id="nosto-page-product2"></div>';
+			$append .= '<div class="hidden_nosto_element" data-nosto-id="nosto-page-product3"></div>';
 		}
 		elseif ($this->isController('order'))
 		{
 			// The cart page.
-			$append .= $this->display(__FILE__, 'views/templates/hook/shopping-cart-footer_nosto-elements.tpl');
+			$append .= '<div class="hidden_nosto_element" data-nosto-id="nosto-page-cart1"></div>';
+			$append .= '<div class="hidden_nosto_element" data-nosto-id="nosto-page-cart3"></div>';
+			$append .= '<div class="hidden_nosto_element" data-nosto-id="nosto-page-cart2"></div>';
 		}
 		elseif ($this->isController('category') || $this->isController('manufacturer'))
 		{
 			// The category/manufacturer page.
-			$append .= $this->display(__FILE__, 'views/templates/hook/category-top_nosto-elements.tpl');
-			$append .= $this->display(__FILE__, 'views/templates/hook/category-footer_nosto-elements.tpl');
+			$append .= '<div class="hidden_nosto_element" data-nosto-id="nosto-page-category1"></div>';
+			$append .= '<div class="hidden_nosto_element" data-nosto-id="nosto-page-category2"></div>';
 		}
 		elseif ($this->isController('search'))
 		{
 			// The search page.
-			$prepend .= $this->display(__FILE__, 'views/templates/hook/search-top_nosto-elements.tpl');
-			$append .= $this->display(__FILE__, 'views/templates/hook/search-footer_nosto-elements.tpl');
+			$prepend .= '<div class="hidden_nosto_element" data-nosto-id="nosto-page-search1"></div>';
+			$append .= '<div class="hidden_nosto_element" data-nosto-id="nosto-page-search2"></div>';
 		}
 
 		if (!empty($prepend))
