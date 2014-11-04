@@ -40,4 +40,19 @@ class NostoTaggingCipher
 		$cipher_text = $this->crypt->encrypt($plain_text);
 		return $iv.$cipher_text;
 	}
+
+	/**
+	 * Decrypts the string and returns the plain text.
+	 *
+	 * @param string $cipher_text the encrypted cipher.
+	 * @return string the decrypted plain text string.
+	 */
+	public function decrypt($cipher_text)
+	{
+		// Assume the first 16 chars is the IV.
+		$iv = substr($cipher_text, 0, 16);
+		$this->crypt->setIV($iv);
+		$plain_text = $this->crypt->decrypt(substr($cipher_text, 16));
+		return $plain_text;
+	}
 }

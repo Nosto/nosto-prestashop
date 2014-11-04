@@ -14,6 +14,7 @@ class AccountTest extends \Codeception\TestCase\Test
 	protected function _before()
 	{
 		$this->tester->initPs();
+		NostoTaggingApiRequest::$base_url = 'http://localhost';
 		$context = $this->tester->getContext();
 		$context->employee = $this->tester->createEmployee();
 	}
@@ -31,7 +32,6 @@ class AccountTest extends \Codeception\TestCase\Test
 	public function testAccountCreation()
     {
 		$id_lang = 1;
-		NostoTaggingApiRequest::$base_url = 'http://localhost';
 		$result = NostoTaggingAccount::create($this->tester->getContext(), null, $id_lang);
 		$this->assertFalse($result);
     }
