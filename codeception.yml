@@ -10,6 +10,12 @@ settings:
     memory_limit: 1024M
 coverage:
   enabled: true
+  whitelist:
+          include:
+              - classes/*
+              - controllers/*
+              - nostotagging.php
+              - ctrl.php
 modules:
     config:
         Db:
