@@ -1,0 +1,14 @@
+# Codeception Test Suite Configuration
+
+# suite for unit (internal) tests.
+class_name: UnitTester
+modules:
+    enabled: [Asserts, UnitHelper]
+
+env:
+    PS16:
+         modules:
+            config:
+              UnitHelper:
+                  psVersion: 1.6.0.9
+                  psDir: '/media/sf_sites/prestashop/1.6.0.9/'
