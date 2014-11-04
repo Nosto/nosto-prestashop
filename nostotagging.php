@@ -28,6 +28,7 @@ if ((basename(__FILE__) === 'nostotagging.php'))
 	require_once($module_dir.'/classes/nostotagging-api-request.php');
 	require_once($module_dir.'/classes/nostotagging-api-token.php');
 	require_once($module_dir.'/classes/nostotagging-customer-link.php');
+	require_once($module_dir.'/classes/nostotagging-preview-link.php');
 }
 
 /**
@@ -38,7 +39,7 @@ if ((basename(__FILE__) === 'nostotagging.php'))
 class NostoTagging extends Module
 {
 	const NOSTOTAGGING_SERVER_ADDRESS = 'connect.nosto.com';
-	const NOSTOTAGGING_IFRAME_URL = '{l}?r=/hub/prestashop/{m}&language={lang}&ps_version={psv}&nt_version={ntv}';
+	const NOSTOTAGGING_IFRAME_URL = '{l}?r=/hub/prestashop/{m}&language={lang}&ps_version={psv}&nt_version={ntv}&preview_product={prp}&preview_category={prc}&preview_search={prs}&preview_cart={pra}&preview_home={prh}';
 
 	/**
 	 * Custom hooks to add for this module.
@@ -286,6 +287,11 @@ class NostoTagging extends Module
 					'{lang}' => $current_language['iso_code'],
 					'{psv}' => _PS_VERSION_,
 					'{ntv}' => $this->version,
+					'{prp}' => urlencode(NostoTaggingPreviewLink::getProductPageUrl(null, $language_id)),
+					'{prc}' => urlencode(NostoTaggingPreviewLink::getCategoryPageUrl(null, $language_id)),
+					'{prs}' => urlencode(NostoTaggingPreviewLink::getSearchPageUrl($language_id)),
+					'{pra}' => urlencode(NostoTaggingPreviewLink::getCartPageUrl($language_id)),
+					'{prh}' => urlencode(NostoTaggingPreviewLink::getHomePageUrl($language_id)),
 				)),
 			));
 
