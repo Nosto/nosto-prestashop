@@ -16,28 +16,36 @@ class NostoTaggingPreviewLink
 	 */
 	public static function getProductPageUrl($id_product = null, $id_lang = null)
 	{
-		if (!$id_product)
+		try
 		{
-			// Find a product that is active and available for order.
-			$sql = <<<EOT
+			if (!$id_product)
+			{
+				// Find a product that is active and available for order.
+				$sql = <<<EOT
 			SELECT `id_product`
 			FROM `ps_product`
 			WHERE `active` = 1
 			AND `available_for_order` = 1
 EOT;
-			$row = Db::getInstance()->getRow($sql);
-			$id_product = isset($row['id_product']) ? (int)$row['id_product'] : 0;
+				$row = Db::getInstance()->getRow($sql);
+				$id_product = isset($row['id_product']) ? (int)$row['id_product'] : 0;
+			}
+
+			if (!$id_lang)
+				$id_lang = Context::getContext()->language->id;
+
+			$product = new Product($id_product, $id_lang);
+			if (!ValidateCore::isLoadedObject($product))
+				return '';
+
+			$link = new Link();
+			return $link->getProductLink($product, null, null, null, $id_lang);
 		}
-
-		if (!$id_lang)
-			$id_lang = Context::getContext()->language->id;
-
-		$product = new Product($id_product, $id_lang);
-		if (!ValidateCore::isLoadedObject($product))
+		catch (Exception $e)
+		{
+			// Return empty on failure
 			return '';
-
-		$link = new Link();
-		return $link->getProductLink($product, null, null, null, $id_lang);
+		}
 	}
 
 	/**
@@ -49,31 +57,39 @@ EOT;
 	 */
 	public static function getCategoryPageUrl($id_category = null, $id_lang = null)
 	{
-		if (!$id_category)
+		try
 		{
-			// Find a category that is active, not the root category and has a parent category.
-			$sql = <<<EOT
-			SELECT `id_category`
-			FROM `ps_category`
-			WHERE `active` = 1
-			AND `id_parent` > 0
+			if (!$id_category)
+			{
+				// Find a category that is active, not the root category and has a parent category.
+				$sql = <<<EOT
+				SELECT `id_category`
+				FROM `ps_category`
+				WHERE `active` = 1
+				AND `id_parent` > 0
 EOT;
-			// There is not "is_root_category" in PS 1.4, but in >= 1.5 we want to skip the root.
-			if (_PS_VERSION_ >= '1.5')
-				$sql .= ' AND `is_root_category` = 0';
-			$row = Db::getInstance()->getRow($sql);
-			$id_category = isset($row['id_category']) ? (int)$row['id_category'] : 0;
+				// There is not "is_root_category" in PS 1.4, but in >= 1.5 we want to skip the root.
+				if (_PS_VERSION_ >= '1.5')
+					$sql .= ' AND `is_root_category` = 0';
+				$row = Db::getInstance()->getRow($sql);
+				$id_category = isset($row['id_category']) ? (int)$row['id_category'] : 0;
+			}
+
+			if (!$id_lang)
+				$id_lang = Context::getContext()->language->id;
+
+			$category = new Category($id_category, $id_lang);
+			if (!ValidateCore::isLoadedObject($category))
+				return '';
+
+			$link = new Link();
+			return $link->getCategoryLink($category, null, $id_lang);
 		}
-
-		if (!$id_lang)
-			$id_lang = Context::getContext()->language->id;
-
-		$category = new Category($id_category, $id_lang);
-		if (!ValidateCore::isLoadedObject($category))
+		catch (Exception $e)
+		{
+			// Return empty on failure
 			return '';
-
-		$link = new Link();
-		return $link->getCategoryLink($category, null, $id_lang);
+		}
 	}
 
 	/**
@@ -84,10 +100,18 @@ EOT;
 	 */
 	public static function getSearchPageUrl($id_lang = null)
 	{
-		if (!$id_lang)
-			$id_lang = Context::getContext()->language->id;
-		$link = new Link();
-		return $link->getPageLink('search.php', true, $id_lang).'?'.self::SEARCH_PAGE_QUERY;
+		try
+		{
+			if (!$id_lang)
+				$id_lang = Context::getContext()->language->id;
+			$link = new Link();
+			return $link->getPageLink('search.php', true, $id_lang).'?'.self::SEARCH_PAGE_QUERY;
+		}
+		catch (Exception $e)
+		{
+			// Return empty on failure
+			return '';
+		}
 	}
 
 	/**
@@ -98,10 +122,18 @@ EOT;
 	 */
 	public static function getCartPageUrl($id_lang = null)
 	{
-		if (!$id_lang)
-			$id_lang = Context::getContext()->language->id;
-		$link = new Link();
-		return $link->getPageLink('order.php', true, $id_lang);
+		try
+		{
+			if (!$id_lang)
+				$id_lang = Context::getContext()->language->id;
+			$link = new Link();
+			return $link->getPageLink('order.php', true, $id_lang);
+		}
+		catch (Exception $e)
+		{
+			// Return empty on failure
+			return '';
+		}
 	}
 
 	/**
@@ -112,9 +144,17 @@ EOT;
 	 */
 	public static function getHomePageUrl($id_lang = null)
 	{
-		if (!$id_lang)
-			$id_lang = Context::getContext()->language->id;
-		$link = new Link();
-		return $link->getPageLink('index.php', true, $id_lang);
+		try
+		{
+			if (!$id_lang)
+				$id_lang = Context::getContext()->language->id;
+			$link = new Link();
+			return $link->getPageLink('index.php', true, $id_lang);
+		}
+		catch (Exception $e)
+		{
+			// Return empty on failure
+			return '';
+		}
 	}
 }
