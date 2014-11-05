@@ -1,0 +1,5 @@
+vendor
+
+tests/_output/*
+tests/acceptance.suite.yml
+tests/unit.suite.yml

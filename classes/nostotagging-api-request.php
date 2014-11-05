@@ -5,8 +5,6 @@
  */
 class NostoTaggingApiRequest extends NostoTaggingHttpRequest
 {
-	const BASE_URL = 'https://api.nosto.com';
-
 	const PATH_ORDER_TAGGING = '/visits/order/confirm/{m}/{cid}';
 	const PATH_UNMATCHED_ORDER_TAGGING = '/visits/order/unmatched/{m}';
 	const PATH_SIGN_UP = '/accounts/create';
@@ -16,6 +14,11 @@ class NostoTaggingApiRequest extends NostoTaggingHttpRequest
 	const TOKEN_SIGN_UP = 'JRtgvoZLMl4NPqO9XWhRdvxkTMtN82ITTJij8U7necieJPCvjtZjm5C4fpNrYJ81';
 
 	/**
+	 * @var string base url for the nosto api.
+	 */
+	public static $base_url = 'https://api.nosto.com';
+
+	/**
 	 * Setter for the end point path, e.g. one of the PATH_ constants.
 	 * The API base url is always prepended.
 	 *
@@ -23,6 +26,6 @@ class NostoTaggingApiRequest extends NostoTaggingHttpRequest
 	 */
 	public function setPath($path)
 	{
-		$this->setUrl(self::BASE_URL.$path);
+		$this->setUrl(self::$base_url.$path);
 	}
 }

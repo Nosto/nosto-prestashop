@@ -330,7 +330,7 @@ class NostoTagging extends Module
 		$request = new NostoTaggingHttpRequest();
 		// The request is currently not made according the the OAuth2 spec with the access token in the
 		// Authorization header. This is due to the authentication server not implementing the full OAuth2 spec yet.
-		$request->setUrl(NostoTaggingOAuth2Client::BASE_URL.'/exchange');
+		$request->setUrl(NostoTaggingOAuth2Client::$base_url.'/exchange');
 		$request->setQueryParams(array('access_token' => $token->access_token));
 		$response = $request->get();
 		$result = $response->getJsonResult(true);
@@ -955,9 +955,8 @@ class NostoTagging extends Module
 			foreach (LanguageCore::getLanguages(true, $shop['id_shop']) as $language)
 			{
 				if (isset($shop['id_shop_group'], $shop['id_shop']))
-					if (!NostoTaggingAccount::isConnectedToNosto($language['id_lang'], $shop['id_shop_group'], $shop['id_shop']))
-						return false;
-					elseif (!NostoTaggingAccount::isConnectedToNosto($language['id_lang']))
+					if (!NostoTaggingAccount::isConnectedToNosto($language['id_lang'], $shop['id_shop_group'], $shop['id_shop'])
+						|| !NostoTaggingAccount::isConnectedToNosto($language['id_lang']))
 						return false;
 			}
 		}
