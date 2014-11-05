@@ -326,7 +326,7 @@ class NostoTagging extends Module
 		$request = new NostoTaggingHttpRequest();
 		// The request is currently not made according the the OAuth2 spec with the access token in the
 		// Authorization header. This is due to the authentication server not implementing the full OAuth2 spec yet.
-		$request->setUrl(NostoTaggingOAuth2Client::BASE_URL.'/exchange');
+		$request->setUrl(NostoTaggingOAuth2Client::$base_url.'/exchange');
 		$request->setQueryParams(array('access_token' => $token->access_token));
 		$response = $request->get();
 		$result = $response->getJsonResult(true);
