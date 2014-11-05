@@ -26,6 +26,7 @@ env:
 
     PS14:
          modules:
+            config:
               UnitHelper:
                   psVersion: 1.4.11.0
                   psDir: '/var/www/html/prestashop/1.4.11.0/'

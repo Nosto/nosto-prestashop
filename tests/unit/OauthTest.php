@@ -34,7 +34,9 @@ class OauthTest extends \Codeception\TestCase\Test
 		$client->setClientSecret('test');
 		$client->setRedirectUrl(urlencode('http://localhost'));
 		$client->setScopes(NostoTaggingApiToken::$api_token_names);
-		$this->assertEquals('http://localhost/oauth?client_id=test&redirect_uri=http%3A%2F%2Flocalhost&response_type=code&scope=sso products&lang=en', $client->getAuthorizationUrl());
+		$base_url = $this->tester->getOauthBaseUrl();
+		$query_params = 'client_id=test&redirect_uri=http%3A%2F%2Flocalhost&response_type=code&scope=sso products&lang=en';
+		$this->assertEquals($base_url.'?'.$query_params, $client->getAuthorizationUrl());
     }
 
 	/**

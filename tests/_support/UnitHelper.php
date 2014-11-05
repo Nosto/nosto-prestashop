@@ -17,11 +17,9 @@ class UnitHelper extends \Codeception\Module
 	 */
 	public function initPs()
 	{
-		if (defined('_PS_VERSION_'))
-			return;
 		$ps_dir = $this->getPsDir();
-		require($ps_dir.'/config/config.inc.php');
-		require($ps_dir.'/modules/nostotagging/nostotagging.php');
+		require_once($ps_dir.'/config/config.inc.php');
+		require_once($ps_dir.'/modules/nostotagging/nostotagging.php');
 	}
 
 	/**
@@ -55,7 +53,7 @@ class UnitHelper extends \Codeception\Module
 	 */
 	public function getPsVersion()
 	{
-		return isset($this->config['psVersion']) ? substr((string)$this->config['psVersion'], 0, 3): '';
+		return isset($this->config['psVersion']) ? substr((string)$this->config['psVersion'], 0, 3) : '';
 	}
 
 	/**
