@@ -25,6 +25,8 @@ class UnitHelper extends \Codeception\Module
 		if (!defined('_PS_BASE_URL_SSL_'))
 			define('_PS_BASE_URL_SSL_', \Tools::getShopDomainSsl(true));
 		$this->initContext();
+		\NostoTaggingApiRequest::$base_url = $this->getApiBaseUrl();
+		\NostoTaggingOAuth2Client::$base_url = $this->getOauthBaseUrl();
 	}
 
 	/**
