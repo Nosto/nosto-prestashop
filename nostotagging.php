@@ -39,7 +39,7 @@ if ((basename(__FILE__) === 'nostotagging.php'))
 class NostoTagging extends Module
 {
 	const NOSTOTAGGING_SERVER_ADDRESS = 'connect.nosto.com';
-	const NOSTOTAGGING_IFRAME_URL = '{l}?r=/hub/prestashop/{m}&lang={lang}&ps_version={psv}&nt_version={ntv}&preview_product={prp}&preview_category={prc}&preview_search={prs}&preview_cart={pra}&preview_home={prh}';
+	const NOSTOTAGGING_IFRAME_URI = '/hub/prestashop/{m}?lang={lang}&ps_version={psv}&nt_version={ntv}&productPage={prp}&categoryPage={prc}&searchPage={prs}&cartPage={pra}&frontPage={prh}';
 
 	/**
 	 * Custom hooks to add for this module.
@@ -278,21 +278,25 @@ class NostoTagging extends Module
 
 		// Try to login employee to Nosto in order to get a url to the internal setting pages,
 		// which are then shown in an iframe on the module config page.
-		$iframe_url = $this->doSSOLogin($language_id);
-		if (!empty($iframe_url) && NostoTaggingAccount::isConnectedToNosto($language_id))
+		$url = $this->doSSOLogin($language_id);
+		if (!empty($url) && NostoTaggingAccount::isConnectedToNosto($language_id))
 			$this->context->smarty->assign(array(
-				'iframe_url' => NostoTaggingHttpRequest::buildUri(self::NOSTOTAGGING_IFRAME_URL, array(
-					'{l}' => $iframe_url,
-					'{m}' => NostoTaggingAccount::getName($language_id),
-					'{lang}' => $current_language['iso_code'],
-					'{psv}' => _PS_VERSION_,
-					'{ntv}' => $this->version,
-					'{prp}' => urlencode(NostoTaggingPreviewLink::getProductPageUrl(null, $language_id)),
-					'{prc}' => urlencode(NostoTaggingPreviewLink::getCategoryPageUrl(null, $language_id)),
-					'{prs}' => urlencode(NostoTaggingPreviewLink::getSearchPageUrl($language_id)),
-					'{pra}' => urlencode(NostoTaggingPreviewLink::getCartPageUrl($language_id)),
-					'{prh}' => urlencode(NostoTaggingPreviewLink::getHomePageUrl($language_id)),
-				)),
+				'iframe_url' => $url.'?r='.urlencode(
+						NostoTaggingHttpRequest::buildUri(
+							self::NOSTOTAGGING_IFRAME_URI,
+							array(
+								'{m}' => NostoTaggingAccount::getName($language_id),
+								'{lang}' => $this->context->language->iso_code,
+								'{psv}' => _PS_VERSION_,
+								'{ntv}' => $this->version,
+								'{prp}' => urlencode(NostoTaggingPreviewLink::getProductPageUrl(null, $language_id)),
+								'{prc}' => urlencode(NostoTaggingPreviewLink::getCategoryPageUrl(null, $language_id)),
+								'{prs}' => urlencode(NostoTaggingPreviewLink::getSearchPageUrl($language_id)),
+								'{pra}' => urlencode(NostoTaggingPreviewLink::getCartPageUrl($language_id)),
+								'{prh}' => urlencode(NostoTaggingPreviewLink::getHomePageUrl($language_id)),
+							)
+						)
+					)
 			));
 
 		$stylesheets = '<link rel="stylesheet" href="'.$this->_path.'css/tw-bs-v3.1.1.css">';
