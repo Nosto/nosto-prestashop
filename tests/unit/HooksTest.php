@@ -15,8 +15,6 @@ class HooksTest extends \Codeception\TestCase\Test
 	{
 		$this->tester->initPs();
 		$context = $this->tester->getContext();
-		$context->controller = new FrontController();
-		$context->currency = $this->tester->createCurrency();
 		$context->cart = $this->tester->createCart();
 	}
 

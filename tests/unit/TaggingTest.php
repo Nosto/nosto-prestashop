@@ -63,7 +63,6 @@ class TaggingTest extends \Codeception\TestCase\Test
 	{
 		$context = $this->tester->getContext();
 		$product = $this->tester->createProduct();
-		$context->currency = $this->tester->createCurrency();
 		$nosto_product = new NostoTaggingProduct($context, $product);
 		$this->assertTrue($nosto_product->validate());
 	}

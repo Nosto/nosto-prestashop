@@ -20,6 +20,27 @@ class UnitHelper extends \Codeception\Module
 		$ps_dir = $this->getPsDir();
 		require_once($ps_dir.'/config/config.inc.php');
 		require_once($ps_dir.'/modules/nostotagging/nostotagging.php');
+		if (!defined('_PS_BASE_URL_'))
+			define('_PS_BASE_URL_', \Tools::getShopDomain(true));
+		if (!defined('_PS_BASE_URL_SSL_'))
+			define('_PS_BASE_URL_SSL_', \Tools::getShopDomainSsl(true));
+		$this->initContext();
+	}
+
+	/**
+	 * Initializes the context with required objects.
+	 */
+	public function initContext()
+	{
+		$context = $this->getContext();
+		if (empty($context->controller))
+			$context->controller = new \FrontController();
+		if (!\Validate::isLoadedObject($context->language))
+			$context->language = new \Language((int)\Configuration::get('PS_LANG_DEFAULT'));
+		if (!\Validate::isLoadedObject($context->currency))
+			$context->currency = new \Currency((int)\Configuration::get('PS_CURRENCY_DEFAULT'));
+		if (!\Validate::isLoadedObject($context->country))
+			$context->country = new \Country((int)\Configuration::get('PS_COUNTRY_DEFAULT'));
 	}
 
 	/**
@@ -41,9 +62,7 @@ class UnitHelper extends \Codeception\Module
 	 */
 	public function getContext()
 	{
-		/** @var \NostoTagging $module */
-		$module = $this->getNostoTagging();
-		return $module->getContext();
+		return $this->getNostoTagging()->getContext();
 	}
 
 	/**
@@ -128,16 +147,6 @@ class UnitHelper extends \Codeception\Module
 	public function createCart()
 	{
 		return new \Cart(1);
-	}
-
-	/**
-	 * Loads currency with id 1 from db and returns it.
-	 *
-	 * @return \Currency
-	 */
-	public function createCurrency()
-	{
-		return new \Currency(1);
 	}
 
 	/**
