@@ -220,6 +220,23 @@ class NostoTaggingHttpRequest
 	}
 
 	/**
+	 * Replaces or adds a query parameter to a url.
+	 *
+	 * @param string $param the query param name to replace.
+	 * @param mixed $value the query param value to replace.
+	 * @param string $url the url.
+	 * @return string the updated url.
+	 */
+	public static function replaceQueryParamInUrl($param, $value, $url)
+	{
+		$parsed_url = self::parseUrl($url);
+		$query_string = isset($parsed_url['query']) ? $parsed_url['query'] : '';
+		$query_string = NostoTaggingHttpRequest::replaceQueryParam($param, $value, $query_string);
+		$parsed_url['query'] = $query_string;
+		return NostoTaggingHttpRequest::buildUrl($parsed_url);
+	}
+
+	/**
 	 * Sends a POST request.
 	 *
 	 * @param string $content

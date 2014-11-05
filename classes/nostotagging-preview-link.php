@@ -39,7 +39,9 @@ EOT;
 				return '';
 
 			$link = new Link();
-			return $link->getProductLink($product, null, null, null, $id_lang);
+			$url = $link->getProductLink($product, null, null, null, $id_lang);
+			$url = NostoTaggingHttpRequest::replaceQueryParamInUrl('nostodebug', 'true', $url);
+			return $url;
 		}
 		catch (Exception $e)
 		{
@@ -83,7 +85,9 @@ EOT;
 				return '';
 
 			$link = new Link();
-			return $link->getCategoryLink($category, null, $id_lang);
+			$url = $link->getCategoryLink($category, null, $id_lang);
+			$url = NostoTaggingHttpRequest::replaceQueryParamInUrl('nostodebug', 'true', $url);
+			return $url;
 		}
 		catch (Exception $e)
 		{
@@ -105,7 +109,9 @@ EOT;
 			if (!$id_lang)
 				$id_lang = Context::getContext()->language->id;
 			$link = new Link();
-			return $link->getPageLink('search.php', true, $id_lang).'?'.self::SEARCH_PAGE_QUERY;
+			$url = $link->getPageLink('search.php', true, $id_lang).'?'.self::SEARCH_PAGE_QUERY;
+			$url = NostoTaggingHttpRequest::replaceQueryParamInUrl('nostodebug', 'true', $url);
+			return $url;
 		}
 		catch (Exception $e)
 		{
@@ -127,7 +133,9 @@ EOT;
 			if (!$id_lang)
 				$id_lang = Context::getContext()->language->id;
 			$link = new Link();
-			return $link->getPageLink('order.php', true, $id_lang);
+			$url = $link->getPageLink('order.php', true, $id_lang);
+			$url = NostoTaggingHttpRequest::replaceQueryParamInUrl('nostodebug', 'true', $url);
+			return $url;
 		}
 		catch (Exception $e)
 		{
@@ -149,7 +157,9 @@ EOT;
 			if (!$id_lang)
 				$id_lang = Context::getContext()->language->id;
 			$link = new Link();
-			return $link->getPageLink('index.php', true, $id_lang);
+			$url = $link->getPageLink('index.php', true, $id_lang);
+			$url = NostoTaggingHttpRequest::replaceQueryParamInUrl('nostodebug', 'true', $url);
+			return $url;
 		}
 		catch (Exception $e)
 		{
