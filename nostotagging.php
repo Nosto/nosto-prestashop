@@ -951,9 +951,8 @@ class NostoTagging extends Module
 			foreach (LanguageCore::getLanguages(true, $shop['id_shop']) as $language)
 			{
 				if (isset($shop['id_shop_group'], $shop['id_shop']))
-					if (!NostoTaggingAccount::isConnectedToNosto($language['id_lang'], $shop['id_shop_group'], $shop['id_shop']))
-						return false;
-					elseif (!NostoTaggingAccount::isConnectedToNosto($language['id_lang']))
+					if (!NostoTaggingAccount::isConnectedToNosto($language['id_lang'], $shop['id_shop_group'], $shop['id_shop'])
+						|| !NostoTaggingAccount::isConnectedToNosto($language['id_lang']))
 						return false;
 			}
 		}

@@ -201,7 +201,7 @@ class HooksTest extends \Codeception\TestCase\Test
 	 */
 	public function testPaymentConfirmationHook()
 	{
-		$params = array('id_order' => null);
+		$params = array('id_order' => $this->tester->createOrder()->id);
 		$module = $this->tester->getNostoTagging();
 		$result1 = $module->hookActionPaymentConfirmation($params);
 		$this->assertNull($result1);
@@ -233,7 +233,7 @@ class HooksTest extends \Codeception\TestCase\Test
 	 */
 	public function testObjectUpdateHook()
 	{
-		$params = array('object' => null);
+		$params = array('object' => $this->tester->createProduct());
 		$module = $this->tester->getNostoTagging();
 		$result1 = $module->hookActionObjectUpdateAfter($params);
 		$this->assertNull($result1);

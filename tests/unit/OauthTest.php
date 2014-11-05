@@ -28,13 +28,20 @@ class OauthTest extends \Codeception\TestCase\Test
 	 */
 	public function testAuthorizeUrl()
     {
+		$module = $this->tester->getNostoTagging();
+		$base_url = $this->tester->getOauthBaseUrl();
+		$redirect_url = urlencode($module->getOAuth2ControllerUrl());
+		$lang = $module->getContext()->language->iso_code;
+		$tokens = NostoTaggingApiToken::$api_token_names;
+		$scope = implode(' ', $tokens);
+
 		$client = new NostoTaggingOAuth2Client();
 		$client->setClientId('test');
 		$client->setClientSecret('test');
-		$client->setRedirectUrl(urlencode('http://localhost'));
-		$client->setScopes(NostoTaggingApiToken::$api_token_names);
-		$base_url = $this->tester->getOauthBaseUrl();
-		$query_params = 'client_id=test&redirect_uri=http%3A%2F%2Flocalhost&response_type=code&scope=sso products&lang=en';
+		$client->setRedirectUrl($redirect_url);
+		$client->setScopes($tokens);
+
+		$query_params = 'client_id=test&redirect_uri='.$redirect_url.'&response_type=code&scope='.$scope.'&lang='.$lang;
 		$this->assertEquals($base_url.'?'.$query_params, $client->getAuthorizationUrl());
     }
 
@@ -58,5 +65,16 @@ class OauthTest extends \Codeception\TestCase\Test
 		$this->assertInstanceOf('NostoTaggingOAuth2Token', $token);
 		$this->assertObjectHasAttribute('access_token', $token);
 		$this->assertEquals($token->access_token, 'dummy');
+	}
+
+	/**
+	 * Tests the exchange data with nosto method.
+	 */
+	public function testExchangeDataWithNosto()
+	{
+		$module = $this->tester->getNostoTagging();
+		$token = NostoTaggingOAuth2Token::create(array('access_token' => 'dummy'));
+		$result = $module->exchangeDataWithNosto($token);
+		$this->assertFalse($result);
 	}
 }

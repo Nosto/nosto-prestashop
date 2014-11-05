@@ -60,6 +60,16 @@ class NostoTaggingHttpRequest
 	}
 
 	/**
+	 * Returns the registered headers.
+	 *
+	 * @return array
+	 */
+	public function getHeaders()
+	{
+		return $this->headers;
+	}
+
+	/**
 	 * Setter for the request url query params.
 	 *
 	 * @param array $query_params the query params.
@@ -67,6 +77,16 @@ class NostoTaggingHttpRequest
 	public function setQueryParams($query_params)
 	{
 		$this->query_params = $query_params;
+	}
+
+	/**
+	 * Returns the registered query params.
+	 *
+	 * @return array
+	 */
+	public function getQueryParams()
+	{
+		return $this->query_params;
 	}
 
 	/**
