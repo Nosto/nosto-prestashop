@@ -15,7 +15,7 @@ env:
          modules:
             config:
               PhpBrowser:
-                  url: 'http://localhost/prestashop/1.6.0.9/'
+                  url: 'http://localhost:9000/1.6.0.9/'
               AcceptanceHelper:
                   prestashop: 1.6.0.9
 
@@ -23,7 +23,7 @@ env:
          modules:
             config:
               PhpBrowser:
-                  url: 'http://localhost/prestashop/1.5.6.2/'
+                  url: 'http://localhost:9000/1.5.6.2/'
               AcceptanceHelper:
                   prestashop: 1.5.6.2
 
@@ -31,6 +31,6 @@ env:
          modules:
             config:
               PhpBrowser:
-                  url: 'http://localhost/prestashop/1.4.11.0/'
+                  url: 'http://localhost:9000/1.4.11.0/'
               AcceptanceHelper:
                   prestashop: 1.4.11.0
