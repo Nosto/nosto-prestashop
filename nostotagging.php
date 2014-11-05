@@ -39,7 +39,7 @@ if ((basename(__FILE__) === 'nostotagging.php'))
 class NostoTagging extends Module
 {
 	const NOSTOTAGGING_SERVER_ADDRESS = 'connect.nosto.com';
-	const NOSTOTAGGING_IFRAME_URI = '/hub/prestashop/{m}?lang={lang}&ps_version={psv}&nt_version={ntv}&preview_product={prp}&preview_category={prc}&preview_search={prs}&preview_cart={pra}&preview_home={prh}';
+	const NOSTOTAGGING_IFRAME_URI = '/hub/prestashop/{m}?lang={lang}&ps_version={psv}&nt_version={ntv}&productPage={prp}&categoryPage={prc}&searchPage={prs}&cartPage={pra}&frontPage={prh}';
 
 	/**
 	 * Custom hooks to add for this module.
