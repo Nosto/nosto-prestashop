@@ -80,15 +80,19 @@ class NostoTaggingConfig
 	/**
 	 * Removes all "NOSTOTAGGING_" config entries for the current context and given language.
 	 *
-	 * @param int|null $language_id the ID of the language object to remove the config entries for.
+	 * @param int|null $id_lang the ID of the language object to remove the config entries for.
+	 * @param null|int $id_shop_group the ID of the shop context.
+	 * @param null|int $id_shop the ID of the shop.
 	 * @return bool
 	 */
-	public static function deleteAllFromContext($language_id = null)
+	public static function deleteAllFromContext($id_lang = null, $id_shop_group = null, $id_shop = null)
 	{
 		if (_PS_VERSION_ >= '1.5')
 		{
-			$id_shop = (int)Shop::getContextShopID(true);
-			$id_shop_group = (int)Shop::getContextShopGroupID(true);
+			if ($id_shop === null)
+				$id_shop = (int)Shop::getContextShopID(true);
+			if ($id_shop_group === null)
+				$id_shop_group = (int)Shop::getContextShopGroupID(true);
 
 			if ($id_shop)
 				$context_restriction = ' AND `id_shop` = '.$id_shop;
@@ -103,13 +107,13 @@ class NostoTaggingConfig
 		$config_table = _DB_PREFIX_.'configuration';
 		$config_lang_table = $config_table.'_lang';
 
-		if (!empty($language_id))
+		if (!empty($id_lang))
 			Db::getInstance()->execute('
 				DELETE `'.$config_lang_table.'` FROM `'.$config_lang_table.'`
 				INNER JOIN `'.$config_table.'`
 				ON `'.$config_lang_table.'`.`id_configuration` = `'.$config_table.'`.`id_configuration`
 				WHERE `'.$config_table.'`.`name` LIKE "NOSTOTAGGING_%"
-				AND `id_lang` = '.(int)$language_id
+				AND `id_lang` = '.(int)$id_lang
 				.$context_restriction
 			);
 		// We do not actually delete the main config entries, just set them to NULL, as there might me other language

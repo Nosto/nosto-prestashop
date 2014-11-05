@@ -76,13 +76,51 @@ class NostoTaggingAccount
 	}
 
 	/**
-	 * Deletes a nosto account for the given language.
+	 * Deletes a nosto account for the given language and notifies nosto that account has been deleted.
 	 *
-	 * @param int $language_id the ID of the language model to delete the account for.
+	 * @param int $id_lang the ID of the language model to delete the account for.
+	 * @param null|int $id_shop_group the ID of the shop context.
+	 * @param null|int $id_shop the ID of the shop.
 	 */
-	public static function delete($language_id)
+	public static function delete($id_lang, $id_shop_group = null, $id_shop = null)
 	{
-		NostoTaggingConfig::deleteAllFromContext($language_id);
+		$account_name = self::getName($id_lang, $id_shop_group, $id_shop);
+		if (empty($account_name))
+			return;
+		$token = NostoTaggingApiToken::get('', $id_lang, $id_shop_group, $id_shop); // todo
+		if (NostoTaggingConfig::deleteAllFromContext($id_lang, $id_shop_group, $id_shop) && !empty($token))
+		{
+			$request = new NostoTaggingApiRequest();
+			$request->setPath(NostoTaggingApiRequest::PATH_ACCOUNT_DELETED);
+			$request->setContentType('application/json');
+			$request->setAuthBasic('', $token);
+			$response = $request->post(json_encode(array('account_id' => $account_name)));
+
+			if ($response->getCode() !== 200)
+				NostoTaggingLogger::log(
+					__CLASS__.'::'.__FUNCTION__.' - Failed to notify Nosto about deleted account.',
+					NostoTaggingLogger::LOG_SEVERITY_ERROR,
+					$response->getCode()
+				);
+		}
+	}
+
+	/**
+	 * Deletes all nosto accounts from the system and notifies nosto that accounts are deleted.
+	 * @return bool
+	 */
+	public static function deleteAll()
+	{
+		foreach (Shop::getShops() as $shop)
+		{
+			$id_shop = isset($shop['id_shop']) ? $shop['id_shop'] : null;
+			foreach (Language::getLanguages(true, $id_shop) as $language)
+			{
+				$id_shop_group = isset($shop['id_shop_group']) ? $shop['id_shop_group'] : null;
+				self::delete($language['id_lang'], $id_shop_group, $id_shop);
+			}
+		}
+		return true;
 	}
 
 	/**
