@@ -12,6 +12,8 @@ env:
               UnitHelper:
                   psVersion: 1.6.0.9
                   psDir: '/media/sf_sites/prestashop/1.6.0.9/'
+                  apiBaseUrl: 'http://localhost:9000/api'
+                  oauthBaseUrl: 'http://localhost:9000/oauth'
 
     PS15:
          modules:
@@ -19,9 +21,13 @@ env:
               UnitHelper:
                   psVersion: 1.5.6.2
                   psDir: '/media/sf_sites/prestashop/1.5.6.2/'
+                  apiBaseUrl: 'http://localhost:9000/api'
+                  oauthBaseUrl: 'http://localhost:9000/oauth'
 
     PS14:
          modules:
               UnitHelper:
                   psVersion: 1.4.11.0
                   psDir: '/media/sf_sites/prestashop/1.4.11.0/'
+                  apiBaseUrl: 'http://localhost:9000/api'
+                  oauthBaseUrl: 'http://localhost:9000/oauth'

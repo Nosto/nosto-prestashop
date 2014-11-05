@@ -14,7 +14,7 @@ class OauthTest extends \Codeception\TestCase\Test
 	protected function _before()
 	{
 		$this->tester->initPs();
-		NostoTaggingOAuth2Client::$base_url = 'http://localhost/oauth';
+		NostoTaggingOAuth2Client::$base_url = $this->tester->getOauthBaseUrl();
 	}
 
 	/**

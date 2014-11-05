@@ -14,7 +14,7 @@ class AccountTest extends \Codeception\TestCase\Test
 	protected function _before()
 	{
 		$this->tester->initPs();
-		NostoTaggingApiRequest::$base_url = 'http://localhost';
+		NostoTaggingApiRequest::$base_url = $this->tester->getApiBaseUrl();
 		$context = $this->tester->getContext();
 		$context->employee = $this->tester->createEmployee();
 	}

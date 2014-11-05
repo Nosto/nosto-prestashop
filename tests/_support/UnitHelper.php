@@ -68,40 +68,95 @@ class UnitHelper extends \Codeception\Module
 		return isset($this->config['psDir']) ? rtrim($this->config['psDir'], '/') : '';
 	}
 
+	/**
+	 * Returns the nosto api base url that we can run test request against. defaults to localhost.
+	 *
+	 * @return string
+	 */
+	public function getApiBaseUrl()
+	{
+		return isset($this->config['apiBaseUrl']) ? $this->config['apiBaseUrl'] : 'http://localhost:9000/api';
+	}
+
+	/**
+	 * Returns the nosto oauth endpoint base url that we can run test request against. defaults to localhost.
+	 *
+	 * @return string
+	 */
+	public function getOauthBaseUrl()
+	{
+		return isset($this->config['oauthBaseUrl']) ? $this->config['oauthBaseUrl'] : 'http://localhost:9000/oauth';
+	}
+
+	/**
+	 * Creates a new employee and returns it.
+	 *
+	 * @return \Employee
+	 */
 	public function createEmployee()
 	{
-		$employee = new \EmployeeCore();
+		$employee = new \Employee();
 		$employee->firstname = 'dev';
 		$employee->lastname = 'null';
 		$employee->email = 'devnull@nosto.com';
 		return $employee;
 	}
 
+	/**
+	 * Loads product with id 1 and language id 1 form db and returns it.
+	 *
+	 * @return \Product
+	 */
 	public function createProduct()
 	{
 		return new \Product(1, true, 1);
 	}
 
+	/**
+	 * Loads category with id 3 from db and returns it.
+	 *
+	 * @return \Category
+	 */
 	public function createCategory()
 	{
 		return new \Category(3);
 	}
 
+	/**
+	 * Loads cart with id 1 from db and returns it.
+	 *
+	 * @return \Cart
+	 */
 	public function createCart()
 	{
 		return new \Cart(1);
 	}
 
+	/**
+	 * Loads currency with id 1 from db and returns it.
+	 *
+	 * @return \Currency
+	 */
 	public function createCurrency()
 	{
 		return new \Currency(1);
 	}
 
+	/**
+	 * Loads manufacturer with id 1 from db and returns it.
+	 *
+	 * @return \Manufacturer
+	 */
 	public function createManufacturer()
 	{
 		return new \Manufacturer(1);
 	}
 
+	/**
+	 * Loads order with id 1 from db and returns it.
+	 *
+	 * @return \Order
+	 */
 	public function createOrder()
 	{
 		return new \Order(1);
