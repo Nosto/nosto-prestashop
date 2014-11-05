@@ -34,6 +34,7 @@ class UnitHelper extends \Codeception\Module
 	 */
 	public function initContext()
 	{
+		global $smarty;
 		$context = $this->getContext();
 		if (empty($context->controller))
 			$context->controller = new \FrontController();
@@ -43,6 +44,7 @@ class UnitHelper extends \Codeception\Module
 			$context->currency = new \Currency((int)\Configuration::get('PS_CURRENCY_DEFAULT'));
 		if (!\Validate::isLoadedObject($context->country))
 			$context->country = new \Country((int)\Configuration::get('PS_COUNTRY_DEFAULT'));
+		$smarty = $context->smarty;
 	}
 
 	/**
