@@ -36,4 +36,6 @@ $(document).ready( function() {
         $iframe.show();
         $installedView.hide();
     });
+    // Init the iframe re-sizer.
+    $('#nostotagging_iframe').iFrameResize({heightCalculationMethod : 'bodyScroll'});
 });

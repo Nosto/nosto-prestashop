@@ -8,6 +8,7 @@ if (!defined('_PS_VERSION_'))
  * Purges existing nosto configs.
  * Removes unused config variables.
  * Registers new hooks.
+ * Un-register left/right column hooks.
  *
  * @param NostoTagging $object
  * @return bool
@@ -47,6 +48,9 @@ function upgrade_module_1_3_0($object)
 	}
 	else
 		$object->registerHook('actionObjectUpdateAfter');
+
+	$object->unregisterHook('displayLeftColumn');
+	$object->unregisterHook('displayRightColumn');
 
 	return true;
 }

@@ -2,26 +2,34 @@
 if (!defined('_PS_VERSION_'))
 	exit;
 
-require_once(dirname(__FILE__).'/classes/nostotagging-block.php');
-require_once(dirname(__FILE__).'/classes/nostotagging-cart.php');
-require_once(dirname(__FILE__).'/classes/nostotagging-category.php');
-require_once(dirname(__FILE__).'/classes/nostotagging-customer.php');
-require_once(dirname(__FILE__).'/classes/nostotagging-order.php');
-require_once(dirname(__FILE__).'/classes/nostotagging-product.php');
-require_once(dirname(__FILE__).'/classes/nostotagging-brand.php');
-
-require_once(dirname(__FILE__).'/classes/nostotagging-account.php');
-require_once(dirname(__FILE__).'/classes/nostotagging-formatter.php');
-require_once(dirname(__FILE__).'/classes/nostotagging-logger.php');
-require_once(dirname(__FILE__).'/classes/nostotagging-http-request.php');
-require_once(dirname(__FILE__).'/classes/nostotagging-http-response.php');
-require_once(dirname(__FILE__).'/classes/nostotagging-cipher.php');
-require_once(dirname(__FILE__).'/classes/nostotagging-oauth2-client.php');
-require_once(dirname(__FILE__).'/classes/nostotagging-oauth2-token.php');
-require_once(dirname(__FILE__).'/classes/nostotagging-config.php');
-require_once(dirname(__FILE__).'/classes/nostotagging-api-request.php');
-require_once(dirname(__FILE__).'/classes/nostotagging-api-token.php');
-require_once(dirname(__FILE__).'/classes/nostotagging-customer-link.php');
+/*
+ * Only try to load class files if we can resolve the __FILE__ global to the current file.
+ * We need to do this as this module file is parsed with eval() on the modules page, and eval() messes up the __FILE__.
+ */
+if ((basename(__FILE__) === 'nostotagging.php'))
+{
+	$module_dir = dirname(__FILE__);
+	require_once($module_dir.'/classes/nostotagging-block.php');
+	require_once($module_dir.'/classes/nostotagging-cart.php');
+	require_once($module_dir.'/classes/nostotagging-category.php');
+	require_once($module_dir.'/classes/nostotagging-customer.php');
+	require_once($module_dir.'/classes/nostotagging-order.php');
+	require_once($module_dir.'/classes/nostotagging-product.php');
+	require_once($module_dir.'/classes/nostotagging-brand.php');
+	require_once($module_dir.'/classes/nostotagging-account.php');
+	require_once($module_dir.'/classes/nostotagging-formatter.php');
+	require_once($module_dir.'/classes/nostotagging-logger.php');
+	require_once($module_dir.'/classes/nostotagging-http-request.php');
+	require_once($module_dir.'/classes/nostotagging-http-response.php');
+	require_once($module_dir.'/classes/nostotagging-cipher.php');
+	require_once($module_dir.'/classes/nostotagging-oauth2-client.php');
+	require_once($module_dir.'/classes/nostotagging-oauth2-token.php');
+	require_once($module_dir.'/classes/nostotagging-config.php');
+	require_once($module_dir.'/classes/nostotagging-api-request.php');
+	require_once($module_dir.'/classes/nostotagging-api-token.php');
+	require_once($module_dir.'/classes/nostotagging-customer-link.php');
+	require_once($module_dir.'/classes/nostotagging-preview-link.php');
+}
 
 /**
  * NostoTagging module that integrates Nosto marketing automation service.
@@ -31,7 +39,7 @@ require_once(dirname(__FILE__).'/classes/nostotagging-customer-link.php');
 class NostoTagging extends Module
 {
 	const NOSTOTAGGING_SERVER_ADDRESS = 'connect.nosto.com';
-	const NOSTOTAGGING_IFRAME_URL = '{l}?r=/hub/prestashop/{m}&language={lang}&ps_version={psv}&nt_version={ntv}';
+	const NOSTOTAGGING_IFRAME_URI = '/hub/prestashop/{m}?lang={lang}&ps_version={psv}&nt_version={ntv}&product_pu={prp}&category_pu={prc}&search_pu={prs}&cart_pu={pra}&front_pu={prh}';
 
 	/**
 	 * Custom hooks to add for this module.
@@ -70,7 +78,7 @@ class NostoTagging extends Module
 	{
 		$this->name = 'nostotagging';
 		$this->tab = 'advertising_marketing';
-		$this->version = '1.3.1';
+		$this->version = '1.3.2';
 		$this->author = 'Nosto';
 		$this->need_instance = 1;
 		$this->ps_versions_compliancy = array('min' => '1.4', 'max' => '1.6');
@@ -270,21 +278,31 @@ class NostoTagging extends Module
 
 		// Try to login employee to Nosto in order to get a url to the internal setting pages,
 		// which are then shown in an iframe on the module config page.
-		$iframe_url = $this->doSSOLogin($language_id);
-		if (!empty($iframe_url) && NostoTaggingAccount::isConnectedToNosto($language_id))
+		$url = $this->doSSOLogin($language_id);
+		if (!empty($url) && NostoTaggingAccount::isConnectedToNosto($language_id))
 			$this->context->smarty->assign(array(
-				'iframe_url' => NostoTaggingHttpRequest::buildUri(self::NOSTOTAGGING_IFRAME_URL, array(
-					'{l}' => $iframe_url,
-					'{m}' => NostoTaggingAccount::getName($language_id),
-					'{lang}' => $current_language['iso_code'],
-					'{psv}' => _PS_VERSION_,
-					'{ntv}' => $this->version,
-				)),
+				'iframe_url' => $url.'?r='.urlencode(
+						NostoTaggingHttpRequest::buildUri(
+							self::NOSTOTAGGING_IFRAME_URI,
+							array(
+								'{m}' => NostoTaggingAccount::getName($language_id),
+								'{lang}' => $this->context->language->iso_code,
+								'{psv}' => _PS_VERSION_,
+								'{ntv}' => $this->version,
+								'{prp}' => urlencode(NostoTaggingPreviewLink::getProductPageUrl(null, $language_id)),
+								'{prc}' => urlencode(NostoTaggingPreviewLink::getCategoryPageUrl(null, $language_id)),
+								'{prs}' => urlencode(NostoTaggingPreviewLink::getSearchPageUrl($language_id)),
+								'{pra}' => urlencode(NostoTaggingPreviewLink::getCartPageUrl($language_id)),
+								'{prh}' => urlencode(NostoTaggingPreviewLink::getHomePageUrl($language_id)),
+							)
+						)
+					)
 			));
 
 		$stylesheets = '<link rel="stylesheet" href="'.$this->_path.'css/tw-bs-v3.1.1.css">';
 		$stylesheets .= '<link rel="stylesheet" href="'.$this->_path.'css/nostotagging-admin-config.css">';
-		$scripts = '<script type="text/javascript" src="'.$this->_path.'js/nostotagging-admin-config.js"></script>';
+		$scripts = '<script type="text/javascript" src="'.$this->_path.'js/iframeresizer.min.js"></script>';
+		$scripts .= '<script type="text/javascript" src="'.$this->_path.'js/nostotagging-admin-config.js"></script>';
 		$output .= $this->display(__FILE__, 'views/templates/admin/config-bootstrap.tpl');
 
 		return $stylesheets.$scripts.$output;
@@ -312,7 +330,7 @@ class NostoTagging extends Module
 		$request = new NostoTaggingHttpRequest();
 		// The request is currently not made according the the OAuth2 spec with the access token in the
 		// Authorization header. This is due to the authentication server not implementing the full OAuth2 spec yet.
-		$request->setUrl(NostoTaggingOAuth2Client::BASE_URL.'/exchange');
+		$request->setUrl(NostoTaggingOAuth2Client::$base_url.'/exchange');
 		$request->setQueryParams(array('access_token' => $token->access_token));
 		$response = $request->get();
 		$result = $response->getJsonResult(true);
@@ -410,6 +428,7 @@ class NostoTagging extends Module
 		}
 
 		$html .= $this->display(__FILE__, 'views/templates/hook/top_nosto-elements.tpl');
+		$html .= $this->getHiddenRecommendationElements();
 
 		return $html;
 	}
@@ -434,27 +453,7 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayFooter()
 	{
-		$html = '';
-		$html .= $this->display(__FILE__, 'views/templates/hook/footer_nosto-elements.tpl');
-
-		if ($this->isController('category') || $this->isController('manufacturer'))
-		{
-			$html .= '<div id="hidden_nosto_elements" style="display: none;">';
-			$html .= '<div class="append">';
-			$html .= $this->display(__FILE__, 'views/templates/hook/category-top_nosto-elements.tpl');
-			$html .= $this->display(__FILE__, 'views/templates/hook/category-footer_nosto-elements.tpl');
-			$html .= '</div>';
-			$html .= '</div>';
-		}
-		elseif ($this->isController('search'))
-		{
-			$html .= '<div id="hidden_nosto_elements" style="display: none;">';
-			$html .= '<div class="prepend">'.$this->display(__FILE__, 'views/templates/hook/search-top_nosto-elements.tpl').'</div>';
-			$html .= '<div class="append">'.$this->display(__FILE__, 'views/templates/hook/search-footer_nosto-elements.tpl').'</div>';
-			$html .= '</div>';
-		}
-
-		return $html;
+		return $this->display(__FILE__, 'views/templates/hook/footer_nosto-elements.tpl');
 	}
 
 	/**
@@ -867,6 +866,7 @@ class NostoTagging extends Module
 		{
 			$ssl = Configuration::get('PS_SSL_ENABLED');
 			$base = ($ssl ? _PS_BASE_URL_SSL_ : _PS_BASE_URL_);
+			$params['id_lang'] = (int)$this->context->language->id;
 			$params['module'] = $this->name;
 			$params['controller'] = 'oauth2';
 			return $base.$this->_path.'ctrl.php?'.http_build_query($params);
@@ -885,6 +885,65 @@ class NostoTagging extends Module
 	}
 
 	/**
+	 * Returns hidden nosto recommendation elements for the current controller.
+	 * These are used as a fallback for showing recommendations if the appropriate hooks are not present in the theme.
+	 * The hidden elements are put into place and shown in the shop with JavaScript.
+	 *
+	 * @return string the html.
+	 */
+	protected function getHiddenRecommendationElements()
+	{
+		$html = '';
+		$prepend = '';
+		$append = '';
+
+		if ($this->isController('index'))
+		{
+			// The home page.
+			$append .= '<div class="hidden_nosto_element" data-nosto-id="frontpage-nosto-1"></div>';
+			$append .= '<div class="hidden_nosto_element" data-nosto-id="frontpage-nosto-2"></div>';
+			$append .= '<div class="hidden_nosto_element" data-nosto-id="frontpage-nosto-3"></div>';
+			$append .= '<div class="hidden_nosto_element" data-nosto-id="frontpage-nosto-4"></div>';
+		}
+		elseif ($this->isController('product'))
+		{
+			// The product page.
+			$append .= '<div class="hidden_nosto_element" data-nosto-id="nosto-page-product1"></div>';
+			$append .= '<div class="hidden_nosto_element" data-nosto-id="nosto-page-product2"></div>';
+			$append .= '<div class="hidden_nosto_element" data-nosto-id="nosto-page-product3"></div>';
+		}
+		elseif ($this->isController('order'))
+		{
+			// The cart page.
+			$append .= '<div class="hidden_nosto_element" data-nosto-id="nosto-page-cart1"></div>';
+			$append .= '<div class="hidden_nosto_element" data-nosto-id="nosto-page-cart3"></div>';
+			$append .= '<div class="hidden_nosto_element" data-nosto-id="nosto-page-cart2"></div>';
+		}
+		elseif ($this->isController('category') || $this->isController('manufacturer'))
+		{
+			// The category/manufacturer page.
+			$append .= '<div class="hidden_nosto_element" data-nosto-id="nosto-page-category1"></div>';
+			$append .= '<div class="hidden_nosto_element" data-nosto-id="nosto-page-category2"></div>';
+		}
+		elseif ($this->isController('search'))
+		{
+			// The search page.
+			$prepend .= '<div class="hidden_nosto_element" data-nosto-id="nosto-page-search1"></div>';
+			$append .= '<div class="hidden_nosto_element" data-nosto-id="nosto-page-search2"></div>';
+		}
+
+		if (!empty($prepend))
+			$prepend .= '<div class="prepend">'.$prepend.'</div>';
+		if (!empty($append))
+			$append .= '<div class="append">'.$append.'</div>';
+
+		if (!empty($prepend) || !empty($append))
+			$html .= '<div id="hidden_nosto_elements" style="display: none;">'.$prepend.$append.'</div>';
+
+		return $html;
+	}
+
+	/**
 	 * Checks if a Nosto account is set up and connected for each shop and language combo.
 	 *
 	 * @return bool true if all shops have an account configured for every language.
@@ -896,9 +955,8 @@ class NostoTagging extends Module
 			foreach (LanguageCore::getLanguages(true, $shop['id_shop']) as $language)
 			{
 				if (isset($shop['id_shop_group'], $shop['id_shop']))
-					if (!NostoTaggingAccount::isConnectedToNosto($language['id_lang'], $shop['id_shop_group'], $shop['id_shop']))
-						return false;
-					elseif (!NostoTaggingAccount::isConnectedToNosto($language['id_lang']))
+					if (!NostoTaggingAccount::isConnectedToNosto($language['id_lang'], $shop['id_shop_group'], $shop['id_shop'])
+						|| !NostoTaggingAccount::isConnectedToNosto($language['id_lang']))
 						return false;
 			}
 		}

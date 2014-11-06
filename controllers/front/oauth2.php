@@ -20,14 +20,14 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
 			if (($token = $client->authenticate($code)) !== false)
 				if ($this->module->exchangeDataWithNosto($token, $language_id))
 				{
-					$msg = $this->module->l('Account %s successfully connected to Nosto.');
+					$msg = $this->module->l('Account %s successfully connected to Nosto.', 'oauth2');
 					$msg = sprintf($msg, $token->merchant_name);
 					$this->redirectToModuleAdmin(array(
 						'language_id' => $language_id,
 						'oauth_success' => $msg,
 					));
 				}
-			$msg = $this->module->l('Account could not be connected to Nosto. Please contact Nosto support.');
+			$msg = $this->module->l('Account could not be connected to Nosto. Please contact Nosto support.', 'oauth2');
 			$this->redirectToModuleAdmin(array(
 				'language_id' => $language_id,
 				'oauth_error' => $msg,
@@ -46,7 +46,7 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
 				NostoTaggingLogger::LOG_SEVERITY_ERROR,
 				200
 			);
-			$msg = $this->module->l('Account could not be connected to Nosto. You rejected the connection request.');
+			$msg = $this->module->l('Account could not be connected to Nosto. You rejected the connection request.', 'oauth2');
 			$this->redirectToModuleAdmin(array(
 				'language_id' => $language_id,
 				'oauth_error' => $msg,

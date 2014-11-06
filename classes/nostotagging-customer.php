@@ -38,11 +38,11 @@ class NostoTaggingCustomer extends NostoTaggingBlock
 	public function populate()
 	{
 		$customer = $this->object;
-		if (Validate::isLoadedObject($customer) && $customer->isLogged())
-		{
-			$this->first_name = $customer->firstname;
-			$this->last_name = $customer->lastname;
-			$this->email = $customer->email;
-		}
+		if (!Validate::isLoadedObject($customer) || !$customer->isLogged())
+			return;
+
+		$this->first_name = $customer->firstname;
+		$this->last_name = $customer->lastname;
+		$this->email = $customer->email;
 	}
 }

@@ -76,14 +76,20 @@ class NostoTaggingCustomerLink
 				'id_nosto_customer' => $id_nosto_customer,
 				'date_add' => date('Y-m-d H:i:s')
 			);
-			return Db::getInstance()->insert($table, $data, false, true, Db::INSERT, false);
+			if (_PS_VERSION_ >= '1.5')
+				return Db::getInstance()->insert($table, $data, false, true, Db::INSERT, false);
+			else
+				return Db::getInstance()->autoExecute($table, $data, 'INSERT');
 		}
 		else
 		{
 			$data = array(
 				'date_upd' => date('Y-m-d H:i:s')
 			);
-			return Db::getInstance()->update($table, $data, $where, 0, false, true, false);
+			if (_PS_VERSION_ >= '1.5')
+				return Db::getInstance()->update($table, $data, $where, 0, false, true, false);
+			else
+				return Db::getInstance()->autoExecute($table, $data, 'UPDATE', $where);
 		}
 	}
 

@@ -60,6 +60,16 @@ class NostoTaggingHttpRequest
 	}
 
 	/**
+	 * Returns the registered headers.
+	 *
+	 * @return array
+	 */
+	public function getHeaders()
+	{
+		return $this->headers;
+	}
+
+	/**
 	 * Setter for the request url query params.
 	 *
 	 * @param array $query_params the query params.
@@ -67,6 +77,16 @@ class NostoTaggingHttpRequest
 	public function setQueryParams($query_params)
 	{
 		$this->query_params = $query_params;
+	}
+
+	/**
+	 * Returns the registered query params.
+	 *
+	 * @return array
+	 */
+	public function getQueryParams()
+	{
+		return $this->query_params;
 	}
 
 	/**
@@ -197,6 +217,23 @@ class NostoTaggingHttpRequest
 		$parsed_query = self::parseQueryString($query_string);
 		$parsed_query[$param] = $value;
 		return http_build_query($parsed_query);
+	}
+
+	/**
+	 * Replaces or adds a query parameter to a url.
+	 *
+	 * @param string $param the query param name to replace.
+	 * @param mixed $value the query param value to replace.
+	 * @param string $url the url.
+	 * @return string the updated url.
+	 */
+	public static function replaceQueryParamInUrl($param, $value, $url)
+	{
+		$parsed_url = self::parseUrl($url);
+		$query_string = isset($parsed_url['query']) ? $parsed_url['query'] : '';
+		$query_string = NostoTaggingHttpRequest::replaceQueryParam($param, $value, $query_string);
+		$parsed_url['query'] = $query_string;
+		return NostoTaggingHttpRequest::buildUrl($parsed_url);
 	}
 
 	/**
