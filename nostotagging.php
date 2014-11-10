@@ -78,7 +78,7 @@ class NostoTagging extends Module
 	{
 		$this->name = 'nostotagging';
 		$this->tab = 'advertising_marketing';
-		$this->version = '1.3.2';
+		$this->version = '1.3.3';
 		$this->author = 'Nosto';
 		$this->need_instance = 1;
 		$this->ps_versions_compliancy = array('min' => '1.4', 'max' => '1.6');
