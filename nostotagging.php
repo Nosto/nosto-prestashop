@@ -1102,7 +1102,7 @@ class NostoTagging extends Module
 			return '';
 
 		$this->smarty->assign(array(
-			'customer' => $nosto_customer,
+			'nosto_customer' => $nosto_customer,
 		));
 
 		return $this->display(__FILE__, 'views/templates/hook/top_customer-tagging.tpl');
