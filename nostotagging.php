@@ -29,6 +29,7 @@ if ((basename(__FILE__) === 'nostotagging.php'))
 	require_once($module_dir.'/classes/nostotagging-api-token.php');
 	require_once($module_dir.'/classes/nostotagging-customer-link.php');
 	require_once($module_dir.'/classes/nostotagging-preview-link.php');
+	require_once($module_dir.'/classes/nostotagging-flash-message.php');
 }
 
 /**
@@ -174,6 +175,11 @@ class NostoTagging extends Module
 	 */
 	public function getContent()
 	{
+		// We don't want the browser to cache the config page, as the iframe authentication won't work if cached.
+		header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+		header('Cache-Control: post-check=0, pre-check=0', false);
+		header('Pragma: no-cache');
+
 		// Always update the url to the module admin page when we access it.
 		// This can then later be used by the oauth2 controller to redirect the user back.
 		NostoTaggingConfig::write(NostoTaggingConfig::ADMIN_URL, $this->getAdminUrl());
@@ -186,30 +192,26 @@ class NostoTagging extends Module
 		$field_account_authorized = $this->name.'_account_authorized';
 		$field_languages = $this->name.'_languages';
 		$field_current_language = $this->name.'_current_language';
-
-		$languages = Language::getLanguages();
 		$account_email = $this->context->employee->email;
 
 		if ($_SERVER['REQUEST_METHOD'] === 'POST')
 		{
 			$language_id = (int)Tools::getValue($field_current_language);
-			foreach ($languages as $language)
-				if ($language['id_lang'] == $language_id)
-					$current_language = $language;
+			$current_language = $this->ensureAdminLanguage($language_id);
 
-			if (empty($current_language['id_lang']))
-				$output .= $this->displayError($this->l('Language cannot be empty.'));
+			if ($current_language['id_lang'] != $language_id)
+				$this->addFlashMessage('error', $this->l('Language cannot be empty.'));
 			elseif (Tools::isSubmit('submit_nostotagging_new_account'))
 			{
 				$account_email = (string)Tools::getValue($field_account_email);
 				if (empty($account_email))
-					$output .= $this->displayError($this->l('Email cannot be empty.'));
+					$this->addFlashMessage('error', $this->l('Email cannot be empty.'));
 				elseif (!Validate::isEmail($account_email))
-					$output .= $this->displayError($this->l('Email is not a valid email address.'));
+					$this->addFlashMessage('error', $this->l('Email is not a valid email address.'));
 				elseif (!NostoTaggingAccount::create($this->context, $account_email, $language_id))
-					$output .= $this->displayError($this->l('Account could not be automatically created. Please visit nosto.com to create a new account.'));
+					$this->addFlashMessage('error', $this->l('Account could not be automatically created. Please visit nosto.com to create a new account.'));
 				else
-					$output .= $this->displayConfirmation($this->l('Account created.'));
+					$this->addFlashMessage('success', $this->l('Account created.'));
 			}
 			elseif (Tools::isSubmit('submit_nostotagging_authorize_account'))
 			{
@@ -222,33 +224,30 @@ class NostoTagging extends Module
 			}
 			elseif (Tools::isSubmit('submit_nostotagging_reset_account'))
 				NostoTaggingAccount::delete($language_id);
+
+			// Refresh the page after every POST to get rid of form re-submission errors.
+			$this->refreshAdmin(array('language_id' => $language_id));
 		}
 		else
 		{
 			$language_id = (int)Tools::getValue('language_id', 0);
+
 			if (($error_message = Tools::getValue('oauth_error')) !== false)
 				$output .= $this->displayError($this->l($error_message));
 			if (($success_message = Tools::getValue('oauth_success')) !== false)
 				$output .= $this->displayConfirmation($this->l($success_message));
+
+			foreach ($this->getFlashMessages('success') as $flash_message)
+				$output .= $this->displayConfirmation($flash_message);
+			foreach ($this->getFlashMessages('error') as $flash_message)
+				$output .= $this->displayError($flash_message);
 		}
 
 		// Choose current language if it has not been set.
 		if (!isset($current_language))
 		{
-			foreach ($languages as $language)
-				if ($language['id_lang'] == $language_id)
-					$current_language = $language;
-
-			if (!isset($current_language))
-			{
-				if (isset($languages[0]))
-				{
-					$current_language = $languages[0];
-					$language_id = (int)$current_language['id_lang'];
-				}
-				else
-					$current_language = array('id_lang' => 0, 'name' => '', 'iso_code' => '');
-			}
+			$current_language = $this->ensureAdminLanguage($language_id);
+			$language_id = (int)$current_language['id_lang'];
 		}
 
 		$this->context->smarty->assign(array(
@@ -257,7 +256,7 @@ class NostoTagging extends Module
 			$field_account_name => NostoTaggingAccount::getName($language_id),
 			$field_account_email => $account_email,
 			$field_account_authorized => NostoTaggingAccount::isConnectedToNosto($language_id),
-			$field_languages => $languages,
+			$field_languages => Language::getLanguages(),
 			$field_current_language => $current_language,
 			// Hack a few translations for the view as PS 1.4 does not support sprintf syntax in smarty "l" function.
 			'translations' => array(
@@ -280,24 +279,7 @@ class NostoTagging extends Module
 		// which are then shown in an iframe on the module config page.
 		$url = $this->doSSOLogin($language_id);
 		if (!empty($url) && NostoTaggingAccount::isConnectedToNosto($language_id))
-			$this->context->smarty->assign(array(
-				'iframe_url' => $url.'?r='.urlencode(
-						NostoTaggingHttpRequest::buildUri(
-							self::NOSTOTAGGING_IFRAME_URI,
-							array(
-								'{m}' => NostoTaggingAccount::getName($language_id),
-								'{lang}' => $this->context->language->iso_code,
-								'{psv}' => _PS_VERSION_,
-								'{ntv}' => $this->version,
-								'{prp}' => urlencode(NostoTaggingPreviewLink::getProductPageUrl(null, $language_id)),
-								'{prc}' => urlencode(NostoTaggingPreviewLink::getCategoryPageUrl(null, $language_id)),
-								'{prs}' => urlencode(NostoTaggingPreviewLink::getSearchPageUrl($language_id)),
-								'{pra}' => urlencode(NostoTaggingPreviewLink::getCartPageUrl($language_id)),
-								'{prh}' => urlencode(NostoTaggingPreviewLink::getHomePageUrl($language_id)),
-							)
-						)
-					)
-			));
+			$this->context->smarty->assign(array('iframe_url' => $this->buildAdminIframeUrl($url, $language_id)));
 
 		$stylesheets = '<link rel="stylesheet" href="'.$this->_path.'css/tw-bs-v3.1.1.css">';
 		$stylesheets .= '<link rel="stylesheet" href="'.$this->_path.'css/nostotagging-admin-config.css">';
@@ -306,6 +288,28 @@ class NostoTagging extends Module
 		$output .= $this->display(__FILE__, 'views/templates/admin/config-bootstrap.tpl');
 
 		return $stylesheets.$scripts.$output;
+	}
+
+	/**
+	 * Wrapper method to add user flash messages.
+	 *
+	 * @param string $type the type of message (use class constants).
+	 * @param string $message the message.
+	 */
+	public function addFlashMessage($type, $message)
+	{
+		NostoTaggingFlashMessage::add($type, $message);
+	}
+
+	/**
+	 * Wrapper method for getting user flash message by type.
+	 *
+	 * @param string $type the type of messages (use class constants).
+	 * @return array the message array.
+	 */
+	public function getFlashMessages($type)
+	{
+		return NostoTaggingFlashMessage::get($type);
 	}
 
 	/**
@@ -882,6 +886,74 @@ class NostoTagging extends Module
 	public function getContext()
 	{
 		return $this->context;
+	}
+
+	/**
+	 * Redirects to the admin config page.
+	 * This is used after making POST requests on the admin page to get rid of the form re-submission errors.
+	 *
+	 * @param array $query_params additional query parameters.
+	 */
+	protected function refreshAdmin(array $query_params = array())
+	{
+		$admin_url = $this->getAdminUrl();
+		if (!empty($query_params))
+		{
+			$parsed_url = NostoTaggingHttpRequest::parseUrl($admin_url);
+			$query_string = isset($parsed_url['query']) ? $parsed_url['query'] : '';
+			foreach ($query_params as $param => $value)
+				$query_string = NostoTaggingHttpRequest::replaceQueryParam($param, $value, $query_string);
+			$parsed_url['query'] = $query_string;
+			$admin_url = NostoTaggingHttpRequest::buildUrl($parsed_url);
+		}
+		header('Location: '.$admin_url);
+		die;
+	}
+
+	/**
+	 * Gets the current admin config language data.
+	 *
+	 * @param int $id_lang if a specific language is required.
+	 * @return array the language data array.
+	 */
+	protected function ensureAdminLanguage($id_lang)
+	{
+		$languages = Language::getLanguages();
+		foreach ($languages as $language)
+			if ($language['id_lang'] == $id_lang)
+				return $language;
+
+		if (isset($languages[0]))
+			return $languages[0];
+		else
+			return array('id_lang' => 0, 'name' => '', 'iso_code' => '');
+	}
+
+	/**
+	 * Builds the iframe url for the admin page.
+	 *
+	 * @param string $url the base url for nosto.
+	 * @param int $id_lang the language ID for which to build the url.
+	 * @return string the url.
+	 */
+	protected function buildAdminIframeUrl($url, $id_lang)
+	{
+		return $url.'?r='.urlencode(
+			NostoTaggingHttpRequest::buildUri(
+				self::NOSTOTAGGING_IFRAME_URI,
+				array(
+					'{m}' => NostoTaggingAccount::getName($id_lang),
+					'{lang}' => $this->context->language->iso_code,
+					'{psv}' => _PS_VERSION_,
+					'{ntv}' => $this->version,
+					'{prp}' => urlencode(NostoTaggingPreviewLink::getProductPageUrl(null, $id_lang)),
+					'{prc}' => urlencode(NostoTaggingPreviewLink::getCategoryPageUrl(null, $id_lang)),
+					'{prs}' => urlencode(NostoTaggingPreviewLink::getSearchPageUrl($id_lang)),
+					'{pra}' => urlencode(NostoTaggingPreviewLink::getCartPageUrl($id_lang)),
+					'{prh}' => urlencode(NostoTaggingPreviewLink::getHomePageUrl($id_lang)),
+				)
+			)
+		);
 	}
 
 	/**
