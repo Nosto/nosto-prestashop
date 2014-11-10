@@ -897,15 +897,7 @@ class NostoTagging extends Module
 	protected function refreshAdmin(array $query_params = array())
 	{
 		$admin_url = $this->getAdminUrl();
-		if (!empty($query_params))
-		{
-			$parsed_url = NostoTaggingHttpRequest::parseUrl($admin_url);
-			$query_string = isset($parsed_url['query']) ? $parsed_url['query'] : '';
-			foreach ($query_params as $param => $value)
-				$query_string = NostoTaggingHttpRequest::replaceQueryParam($param, $value, $query_string);
-			$parsed_url['query'] = $query_string;
-			$admin_url = NostoTaggingHttpRequest::buildUrl($parsed_url);
-		}
+		$admin_url = NostoTaggingHttpRequest::replaceQueryParamsInUrl($query_params, $admin_url);
 		header('Location: '.$admin_url);
 		die;
 	}
