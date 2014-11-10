@@ -29,6 +29,7 @@ if ((basename(__FILE__) === 'nostotagging.php'))
 	require_once($module_dir.'/classes/nostotagging-api-token.php');
 	require_once($module_dir.'/classes/nostotagging-customer-link.php');
 	require_once($module_dir.'/classes/nostotagging-preview-link.php');
+	require_once($module_dir.'/classes/nostotagging-admin-tab.php');
 }
 
 /**
@@ -132,6 +133,7 @@ class NostoTagging extends Module
 		else
 			return parent::install()
 				&& NostoTaggingCustomerLink::createTable()
+				&& NostoTaggingAdminTab::install()
 				&& $this->initHooks()
 				&& $this->registerHook('displayCategoryTop')
 				&& $this->registerHook('displayCategoryFooter')
