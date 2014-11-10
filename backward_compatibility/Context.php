@@ -336,6 +336,12 @@ class CustomerBackwardModule extends Customer
 	 */
 	public function isLogged($with_guest = false)
 	{
+		global $cookie;
+		// If the cookie isset, then use it's isLogged method.
+		// Customer::isLogged does not work due to $this->logged is always set to false.
+		if (isset($cookie))
+			return $cookie->isLogged();
+
 		if (!$with_guest && $this->is_guest == 1)
 			return false;
 
