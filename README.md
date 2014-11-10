@@ -91,6 +91,9 @@ PrestaShop version 1.4.x - 1.6.x
 
 ## Changelog
 
+* 1.3.3
+    Fixed issue with logged in customer tagging
+
 * 1.3.2
     * Fixes
 
