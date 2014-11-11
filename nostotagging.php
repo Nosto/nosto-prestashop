@@ -199,7 +199,7 @@ class NostoTagging extends Module
 
 			if (empty($current_language['id_lang']))
 				$output .= $this->displayError($this->l('Language cannot be empty.'));
-			elseif (_PS_VERSION_ >= '1.5' && Shop::getContext() !== Shop::CONTEXT_SHOP)
+			if (_PS_VERSION_ >= '1.5' && Shop::getContext() !== Shop::CONTEXT_SHOP)
 				$output .= $this->displayError($this->l('Please choose a shop to configure Nosto for.'));
 			elseif (Tools::isSubmit('submit_nostotagging_new_account'))
 			{
