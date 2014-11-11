@@ -56,6 +56,7 @@ class NostoTaggingCustomerLink
 	 */
 	public static function updateLink(NostoTagging $module)
 	{
+		// todo: id_cart instead of id_customer??
 		$context = $module->getContext();
 		if (empty($context->customer->id))
 			return false;
@@ -96,17 +97,13 @@ class NostoTaggingCustomerLink
 	/**
 	 * Returns the nosto customer id if one exists in the link table.
 	 *
-	 * @param NostoTagging $module
-	 * @return bool|mixed
+	 * @param Order $order the order for which to get the nosto customer id.
+	 * @return bool|string
 	 */
-	public static function getNostoCustomerId(NostoTagging $module)
+	public static function getNostoCustomerId(Order $order)
 	{
-		$context = $module->getContext();
-		if (empty($context->customer->id))
-			return false;
-
 		$table = self::getTableName();
-		$id_customer = (int)$context->customer->id;
+		$id_customer = (int)$order->id_customer;
 		$sql = 'SELECT `id_nosto_customer` FROM `'.$table.'` WHERE `id_customer` = '.$id_customer.' ORDER BY `date_add` ASC';
 		return Db::getInstance()->getValue($sql);
 	}
