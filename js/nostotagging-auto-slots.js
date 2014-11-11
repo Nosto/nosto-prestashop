@@ -9,7 +9,7 @@ $(function() {
                     $hidden_elements.find('.prepend .hidden_nosto_element').each(function() {
                         var $slot = $(this),
                             nostoId = $slot.data('nosto-id');
-                        if (nostoId && !$center_column.find('#'+nostoId).length) {
+                        if (nostoId && !$('#'+nostoId).length) {
                             $slot.attr('id', nostoId);
                             $slot.attr('class', 'nosto_element');
                             $slot.prependTo($center_column);
@@ -19,7 +19,7 @@ $(function() {
                     $hidden_elements.find('.append .hidden_nosto_element').each(function() {
                         var $slot = $(this),
                             nostoId = $slot.data('nosto-id');
-                        if (nostoId && !$center_column.find('#'+nostoId).length) {
+                        if (nostoId && !$('#'+nostoId).length) {
                             $slot.attr('id', nostoId);
                             $slot.attr('class', 'nosto_element');
                             $slot.appendTo($center_column);

@@ -91,8 +91,12 @@ PrestaShop version 1.4.x - 1.6.x
 
 ## Changelog
 
+* 1.3.4
+    * Fixed issue with logged in customer tagging on PS 1.4
+    * Fixed recommendation slot logic to check the whole document and not only the center column before adding defaults
+
 * 1.3.3
-    Fixed issue with logged in customer tagging
+    * Fixed issue with logged in customer tagging
 
 * 1.3.2
     * Fixes
