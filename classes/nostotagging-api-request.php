@@ -7,7 +7,7 @@ class NostoTaggingApiRequest extends NostoTaggingHttpRequest
 {
 	const PATH_ORDER_TAGGING = '/visits/order/confirm/{m}/{cid}';
 	const PATH_UNMATCHED_ORDER_TAGGING = '/visits/order/unmatched/{m}';
-	const PATH_SIGN_UP = '/accounts/create/{language}';
+	const PATH_SIGN_UP = '/accounts/create/{lang}';
 	const PATH_SSO_AUTH = '/users/sso/{email}';
 	const PATH_PRODUCT_RE_CRAWL = '/products/recrawl';
 

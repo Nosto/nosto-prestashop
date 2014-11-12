@@ -13,13 +13,13 @@ class NostoTaggingAccount
 	 * If a account is already configured, it will be overwritten.
 	 *
 	 * @param Context $context the context the account is created for.
-	 * @param int $language_id the ID of the language object to create the account for.
+	 * @param int $id_lang the ID of the language object to create the account for.
 	 * @param string|null $email address to use when signing up (default is current employee's email).
 	 * @return bool
 	 */
-	public static function create($context, $language_id, $email = null)
+	public static function create($context, $id_lang, $email = null)
 	{
-        $language = new Language($language_id);
+		$language = new Language($id_lang);
 		if (!Validate::isLoadedObject($language))
 			return false;
         
@@ -53,7 +53,7 @@ class NostoTaggingAccount
 		);
 		$request = new NostoTaggingApiRequest();
 		$request->setPath(NostoTaggingApiRequest::PATH_SIGN_UP);
-        $request->setReplaceParams(array('{language}' => $language->iso_code));
+		$request->setReplaceParams(array('{lang}' => $language->iso_code));
 		$request->setContentType('application/json');
 		$request->setAuthBasic('', NostoTaggingApiRequest::TOKEN_SIGN_UP);
 		$response = $request->post(json_encode($params));
@@ -72,8 +72,8 @@ class NostoTaggingAccount
 		$result = $response->getJsonResult(true);
 
 		$account_name = self::PLATFORM_NAME.'-'.$params['name'];
-		self::setName($account_name, $language_id);
-		NostoTaggingApiToken::saveTokens($result, $language_id, '', '_token');
+		self::setName($account_name, $id_lang);
+		NostoTaggingApiToken::saveTokens($result, $id_lang, '', '_token');
 
 		return true;
 	}
