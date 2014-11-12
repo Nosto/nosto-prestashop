@@ -208,7 +208,7 @@ class NostoTagging extends Module
 					$output .= $this->displayError($this->l('Email cannot be empty.'));
 				elseif (!Validate::isEmail($account_email))
 					$output .= $this->displayError($this->l('Email is not a valid email address.'));
-				elseif (!NostoTaggingAccount::create($this->context, $account_email, $language_id))
+				elseif (!NostoTaggingAccount::create($this->context, $language_id, $account_email))
 					$output .= $this->displayError($this->l('Account could not be automatically created. Please visit nosto.com to create a new account.'));
 				else
 					$output .= $this->displayConfirmation($this->l('Account created.'));
