@@ -91,6 +91,9 @@ PrestaShop version 1.4.x - 1.6.x
 
 ## Changelog
 
+* 1.3.5
+    * Fixed check for current controller in some PS 1.5 versions
+
 * 1.3.4
     * Fixed issue with logged in customer tagging on PS 1.4
     * Fixed recommendation slot logic to check the whole document and not only the center column before adding defaults
