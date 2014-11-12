@@ -187,7 +187,7 @@ class NostoTagging extends Module
 		$field_languages = $this->name.'_languages';
 		$field_current_language = $this->name.'_current_language';
 
-		$languages = Language::getLanguages();
+		$languages = Language::getLanguages(true, $this->context->shop->id);
 		$account_email = $this->context->employee->email;
 
 		if ($_SERVER['REQUEST_METHOD'] === 'POST')
@@ -199,6 +199,8 @@ class NostoTagging extends Module
 
 			if (empty($current_language['id_lang']))
 				$output .= $this->displayError($this->l('Language cannot be empty.'));
+			if (_PS_VERSION_ >= '1.5' && Shop::getContext() !== Shop::CONTEXT_SHOP)
+				$output .= $this->displayError($this->l('Please choose a shop to configure Nosto for.'));
 			elseif (Tools::isSubmit('submit_nostotagging_new_account'))
 			{
 				$account_email = (string)Tools::getValue($field_account_email);
@@ -230,6 +232,8 @@ class NostoTagging extends Module
 				$output .= $this->displayError($this->l($error_message));
 			if (($success_message = Tools::getValue('oauth_success')) !== false)
 				$output .= $this->displayConfirmation($this->l($success_message));
+			if (_PS_VERSION_ >= '1.5' && Shop::getContext() !== Shop::CONTEXT_SHOP)
+				$output .= $this->displayError($this->l('Please choose a shop to configure Nosto for.'));
 		}
 
 		// Choose current language if it has not been set.
