@@ -78,7 +78,7 @@ class NostoTagging extends Module
 	{
 		$this->name = 'nostotagging';
 		$this->tab = 'advertising_marketing';
-		$this->version = '1.3.4';
+		$this->version = '1.3.5';
 		$this->author = 'Nosto';
 		$this->need_instance = 1;
 		$this->ps_versions_compliancy = array('min' => '1.4', 'max' => '1.6');
@@ -975,15 +975,27 @@ class NostoTagging extends Module
 	 */
 	protected function isController($name)
 	{
-		// For prestashop 1.5 and 1.6 we can access the current controllers php_self property.
-		if (!empty($this->context->controller->php_self))
-			return $this->context->controller->php_self === $name;
+		if (_PS_VERSION_ >= '1.5')
+		{
+			// For prestashop 1.5 and 1.6 we can in most cases access the current controllers php_self property.
+			if (!empty($this->context->controller->php_self))
+				return $this->context->controller->php_self === $name;
 
-		// But for 1.4 we need to parse the current script name, as it uses different scripts per page.
-		// Version 1.4 does have a php_self property in the running controller, but there is no way to access the
-		// controller from modules.
-		$script_name = isset($_SERVER['SCRIPT_NAME']) ? $_SERVER['SCRIPT_NAME'] : '';
-		return basename($script_name) === ($name.'.php');
+			// But some prestashop 1.5 controllers are missing the php_self property.
+			if (($controller = Tools::getValue('controller')) !== false)
+				return $controller === $name;
+		}
+		else
+		{
+			// For 1.4 we need to parse the current script name, as it uses different scripts per page.
+			// 1.4 does have a php_self property in the running controller, but there is no way to access the
+			// controller from modules.
+			$script_name = isset($_SERVER['SCRIPT_NAME']) ? $_SERVER['SCRIPT_NAME'] : '';
+			return basename($script_name) === ($name.'.php');
+		}
+
+		// Fallback when controller cannot be recognised.
+		return false;
 	}
 
 	/**
