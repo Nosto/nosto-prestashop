@@ -13,16 +13,18 @@ class NostoTaggingAccount
 	 * If a account is already configured, it will be overwritten.
 	 *
 	 * @param Context $context the context the account is created for.
+	 * @param int $id_lang the ID of the language object to create the account for.
 	 * @param string|null $email address to use when signing up (default is current employee's email).
-	 * @param int|null $language_id the ID of the language object to create the account for (defaults to context lang).
 	 * @return bool
 	 */
-	public static function create($context, $email = null, $language_id = null)
+	public static function create($context, $id_lang, $email = null)
 	{
-		$language = !empty($language_id) ? new Language($language_id) : $context->language;
+		$language = new Language($id_lang);
 		if (!Validate::isLoadedObject($language))
 			return false;
-
+        
+		if (!Validate::isLoadedObject($context->language))
+			$context->language = new Language((int)Configuration::get('PS_LANG_DEFAULT'));
 		if (!Validate::isLoadedObject($context->currency))
 			$context->currency = new Currency((int)Configuration::get('PS_CURRENCY_DEFAULT'));
 		if (!Validate::isLoadedObject($context->country))
@@ -38,7 +40,7 @@ class NostoTaggingAccount
 			'platform' => self::PLATFORM_NAME,
 			'front_page_url' => self::getContextShopUrl($context, $language),
 			'currency_code' => $context->currency->iso_code,
-			'language_code' => $language->iso_code,
+			'language_code' => $context->language->iso_code,
 			'owner' => array(
 				'first_name' => $context->employee->firstname,
 				'last_name' => $context->employee->lastname,
@@ -51,6 +53,7 @@ class NostoTaggingAccount
 		);
 		$request = new NostoTaggingApiRequest();
 		$request->setPath(NostoTaggingApiRequest::PATH_SIGN_UP);
+		$request->setReplaceParams(array('{lang}' => $language->iso_code));
 		$request->setContentType('application/json');
 		$request->setAuthBasic('', NostoTaggingApiRequest::TOKEN_SIGN_UP);
 		$response = $request->post(json_encode($params));
@@ -69,8 +72,8 @@ class NostoTaggingAccount
 		$result = $response->getJsonResult(true);
 
 		$account_name = self::PLATFORM_NAME.'-'.$params['name'];
-		self::setName($account_name, $language_id);
-		NostoTaggingApiToken::saveTokens($result, $language_id, '', '_token');
+		self::setName($account_name, $id_lang);
+		NostoTaggingApiToken::saveTokens($result, $id_lang, '', '_token');
 
 		return true;
 	}
