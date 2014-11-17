@@ -39,7 +39,7 @@ if ((basename(__FILE__) === 'nostotagging.php'))
 class NostoTagging extends Module
 {
 	const NOSTOTAGGING_SERVER_ADDRESS = 'connect.nosto.com';
-	const NOSTOTAGGING_IFRAME_URI = '/hub/prestashop/{m}?lang={lang}&ps_version={psv}&nt_version={ntv}&product_pu={prp}&category_pu={prc}&search_pu={prs}&cart_pu={pra}&front_pu={prh}';
+	const NOSTOTAGGING_IFRAME_URI = '/hub/prestashop/{m}?lang={lang}&ps_version={psv}&nt_version={ntv}&product_pu={prp}&category_pu={prc}&search_pu={prs}&cart_pu={pra}&front_pu={prh}&shop_lang={slang}&unique_id={uid}';
 
 	/**
 	 * Custom hooks to add for this module.
@@ -298,6 +298,8 @@ class NostoTagging extends Module
 								'{prs}' => urlencode(NostoTaggingPreviewLink::getSearchPageUrl($language_id)),
 								'{pra}' => urlencode(NostoTaggingPreviewLink::getCartPageUrl($language_id)),
 								'{prh}' => urlencode(NostoTaggingPreviewLink::getHomePageUrl($language_id)),
+								'{slang}' => $current_language['iso_code'],
+								'{uid}' => sha1($this->name._COOKIE_KEY_), // unique PS installation ID.
 							)
 						)
 					)
