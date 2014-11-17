@@ -105,6 +105,6 @@ class NostoTaggingApiToken
 	 */
 	protected static function createConfigKey($name)
 	{
-		return self::NOSTOTAGGING_CONFIG_BASE.strtoupper($name);
+		return self::NOSTOTAGGING_CONFIG_BASE.Tools::strtoupper($name);
 	}
 }

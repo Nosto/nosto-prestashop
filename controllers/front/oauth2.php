@@ -95,7 +95,7 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
 				$query_string = NostoTaggingHttpRequest::replaceQueryParam($param, $value, $query_string);
 			$parsed_url['query'] = $query_string;
 			$admin_url = NostoTaggingHttpRequest::buildUrl($parsed_url);
-			header('Location: '.$admin_url);
+			Tools::redirect($admin_url, '');
 			die;
 		}
 		$this->notFound();

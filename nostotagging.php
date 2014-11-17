@@ -63,7 +63,7 @@ if ((basename(__FILE__) === 'nostotagging.php'))
 class NostoTagging extends Module
 {
 	const NOSTOTAGGING_SERVER_ADDRESS = 'connect.nosto.com';
-	const NOSTOTAGGING_IFRAME_URI = '/hub/prestashop/{m}?lang={lang}&ps_version={psv}&nt_version={ntv}&product_pu={prp}&category_pu={prc}&search_pu={prs}&cart_pu={pra}&front_pu={prh}&shop_lang={slang}&unique_id={uid}';
+	const NOSTOTAGGING_IFRAME_URI = '/hub/prestashop/{m}';
 
 	/**
 	 * Custom hooks to add for this module.
@@ -243,7 +243,7 @@ class NostoTagging extends Module
 				$client = new NostoTaggingOAuth2Client();
 				$client->setRedirectUrl(urlencode($this->getOAuth2ControllerUrl($params)));
 				$client->setScopes(NostoTaggingApiToken::$api_token_names);
-				header('Location: '.$client->getAuthorizationUrl());
+				Tools::redirect($client->getAuthorizationUrl(), '');
 				die();
 			}
 			elseif (Tools::isSubmit('submit_nostotagging_reset_account'))
@@ -309,24 +309,23 @@ class NostoTagging extends Module
 		$url = $this->doSSOLogin($language_id);
 		if (!empty($url) && NostoTaggingAccount::isConnectedToNosto($language_id))
 			$this->context->smarty->assign(array(
-				'iframe_url' => $url.'?r='.urlencode(
-						NostoTaggingHttpRequest::buildUri(
-							self::NOSTOTAGGING_IFRAME_URI,
-							array(
-								'{m}' => NostoTaggingAccount::getName($language_id),
-								'{lang}' => $this->context->language->iso_code,
-								'{psv}' => _PS_VERSION_,
-								'{ntv}' => $this->version,
-								'{prp}' => urlencode(NostoTaggingPreviewLink::getProductPageUrl(null, $language_id)),
-								'{prc}' => urlencode(NostoTaggingPreviewLink::getCategoryPageUrl(null, $language_id)),
-								'{prs}' => urlencode(NostoTaggingPreviewLink::getSearchPageUrl($language_id)),
-								'{pra}' => urlencode(NostoTaggingPreviewLink::getCartPageUrl($language_id)),
-								'{prh}' => urlencode(NostoTaggingPreviewLink::getHomePageUrl($language_id)),
-								'{slang}' => $current_language['iso_code'],
-								'{uid}' => sha1($this->name._COOKIE_KEY_), // unique PS installation ID.
-							)
+				'iframe_url' => $url.'?r='.urlencode(NostoTaggingHttpRequest::buildUri(
+						self::NOSTOTAGGING_IFRAME_URI.'?'.http_build_query(array(
+							'lang' => $this->context->language->iso_code,
+							'ps_version' => _PS_VERSION_,
+							'nt_version' => $this->version,
+							'product_pu' => urlencode(NostoTaggingPreviewLink::getProductPageUrl(null, $language_id)),
+							'category_pu' => urlencode(NostoTaggingPreviewLink::getCategoryPageUrl(null, $language_id)),
+							'search_pu' => urlencode(NostoTaggingPreviewLink::getSearchPageUrl($language_id)),
+							'cart_pu' => urlencode(NostoTaggingPreviewLink::getCartPageUrl($language_id)),
+							'front_pu' => urlencode(NostoTaggingPreviewLink::getHomePageUrl($language_id)),
+							'shop_lang' => $current_language['iso_code'],
+							'unique_id' => sha1($this->name._COOKIE_KEY_), // unique PS installation ID.
+						)),
+						array(
+							'{m}' => NostoTaggingAccount::getName($language_id)
 						)
-					)
+				))
 			));
 
 		$stylesheets = '<link rel="stylesheet" href="'.$this->_path.'css/tw-bs-v3.1.1.css">';
