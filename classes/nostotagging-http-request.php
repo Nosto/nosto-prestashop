@@ -300,6 +300,7 @@ class NostoTaggingHttpRequest
 	 */
 	protected function send($url, array $options = array())
 	{
+		$http_response_header = array();
 		if (!empty($this->replace_params))
 			$url = self::buildUri($url, $this->replace_params);
 		if (!empty($this->query_params))
@@ -307,7 +308,7 @@ class NostoTaggingHttpRequest
 		$context = stream_context_create($options);
 		$result = @file_get_contents($url, false, $context);
 		$response = new NostoTaggingHttpResponse();
-		if (isset($http_response_header))
+		if (!empty($http_response_header))
 			$response->setHttpResponseHeader($http_response_header);
 		$response->setResult($result);
 		return $response;
