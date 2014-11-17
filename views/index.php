@@ -23,49 +23,12 @@
  *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-/**
- * Block for tagging customers.
- */
-class NostoTaggingCustomer extends NostoTaggingBlock
-{
-	/**
-	 * @var string the customer first name.
-	 */
-	public $first_name;
+header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+header("Last-Modified: ".gmdate("D, d M Y H:i:s")." GMT");
 
-	/**
-	 * @var string the customer last name.
-	 */
-	public $last_name;
+header("Cache-Control: no-store, no-cache, must-revalidate");
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Pragma: no-cache");
 
-	/**
-	 * @var string the customer email address.
-	 */
-	public $email;
-
-	/**
-	 * @inheritdoc
-	 */
-	public function getRequiredItems()
-	{
-		return array(
-			'first_name',
-			'last_name',
-			'email',
-		);
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function populate()
-	{
-		$customer = $this->object;
-		if (!Validate::isLoadedObject($customer) || !$customer->isLogged())
-			return;
-
-		$this->first_name = $customer->firstname;
-		$this->last_name = $customer->lastname;
-		$this->email = $customer->email;
-	}
-}
+header("Location: ../");
+exit;

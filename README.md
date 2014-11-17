@@ -83,7 +83,7 @@ module in the modules listing. This will open a new page with the module configu
 
 ## License
 
-Open Software License ("OSL") v. 3.0
+Academic Free License ("AFL") v. 3.0
 
 ## Dependencies
 
