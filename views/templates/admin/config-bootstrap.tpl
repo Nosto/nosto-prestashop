@@ -39,7 +39,9 @@ function confirmUninstall(form) {
                                 <label for="nostotagging_language">{l s='Manage accounts:' mod='nostotagging'}
                                     <select class="form-control" id="nostotagging_language">
                                         {foreach from=$nostotagging_languages item=language}
-                                            <option value="{$language.id_lang}" {if $language.id_lang == $nostotagging_current_language.id_lang}selected="selected"{/if}>{$language.name}</option>
+                                            <option value="{$language.id_lang|escape:'htmlall':'UTF-8'}" {if $language.id_lang == $nostotagging_current_language.id_lang}selected="selected"{/if}>
+                                                {$language.name|escape:'htmlall':'UTF-8'}
+                                            </option>
                                         {/foreach}
                                     </select>
                                 </label>
@@ -65,7 +67,7 @@ function confirmUninstall(form) {
                                 </div>
                             </div>
                             {if !empty($iframe_url)}
-                                <iframe id="nostotagging_iframe" frameborder="0" width="100%" scrolling="no" src="{$iframe_url}"></iframe>
+                                <iframe id="nostotagging_iframe" frameborder="0" width="100%" scrolling="no" src="{$iframe_url|escape:'htmlall':'UTF-8'}"></iframe>
                             {/if}
                         {else}
                             <h2>{$translations.nostotagging_not_installed_heading|escape:'htmlall':'UTF-8'}</h2>
