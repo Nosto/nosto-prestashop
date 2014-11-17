@@ -71,7 +71,7 @@ abstract class NostoTaggingApiModuleFrontController extends ModuleFrontControlle
 			{
 				$cipher = new NostoTaggingCipher($secret);
 				$cipher_text = $cipher->encrypt($string);
-				echo base64_encode($cipher_text);
+				echo $cipher_text;
 			}
 		}
 		die;
