@@ -24,7 +24,7 @@
 
 {if isset($nosto_order) && is_object($nosto_order)}
 	<div class="nosto_purchase_order" style="display:none">
-		<span class="order_number">{$nosto_order->order_number}</span>
+		<span class="order_number">{$nosto_order->order_number|escape:'htmlall':'UTF-8'}</span>
 		<div class="buyer">
 			<span class="first_name">{$nosto_order->buyer.first_name|escape:'htmlall':'UTF-8'}</span>
 			<span class="last_name">{$nosto_order->buyer.last_name|escape:'htmlall':'UTF-8'}</span>
@@ -33,11 +33,11 @@
 		<div class="purchased_items">
 			{foreach from=$nosto_order->purchased_items item=item}
 				<div class="line_item">
-					<span class="product_id">{$item.product_id}</span>
-					<span class="quantity">{$item.quantity}</span>
+					<span class="product_id">{$item.product_id|escape:'htmlall':'UTF-8'}</span>
+					<span class="quantity">{$item.quantity|escape:'htmlall':'UTF-8'}</span>
 					<span class="name">{$item.name|escape:'htmlall':'UTF-8'}</span>
-					<span class="unit_price">{$item.unit_price}</span>
-					<span class="price_currency_code">{$item.price_currency_code}</span>
+					<span class="unit_price">{$item.unit_price|escape:'htmlall':'UTF-8'}</span>
+					<span class="price_currency_code">{$item.price_currency_code|escape:'htmlall':'UTF-8'}</span>
 				</div>
 			{/foreach}
 		</div>

@@ -31,7 +31,7 @@ function confirmUninstall(form) {
     <div class="container-fluid">
         <div class="row">
             <form class="nostotagging" role="form" action="{$nostotagging_form_action|escape:'htmlall':'UTF-8'}" method="post" enctype="multipart/form-data" novalidate="">
-                <input type="hidden" id="nostotagging_current_language" name="nostotagging_current_language" value="{$nostotagging_current_language.id_lang}">
+                <input type="hidden" id="nostotagging_current_language" name="nostotagging_current_language" value="{$nostotagging_current_language.id_lang|escape:'htmlall':'UTF-8'}">
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <div class="col-xs-8">
@@ -56,8 +56,8 @@ function confirmUninstall(form) {
                     <div class="panel-body text-center">
                         {if $nostotagging_account_authorized}
                             <div id="nostotagging_installed" style="{if !empty($iframe_url)}display: none;{/if}">
-                                <h2>{$translations.nostotagging_installed_heading}</h2>
-                                <p>{$translations.nostotagging_installed_account_name}</p>
+                                <h2>{$translations.nostotagging_installed_heading|escape:'htmlall':'UTF-8'}</h2>
+                                <p>{$translations.nostotagging_installed_account_name|escape:'htmlall':'UTF-8'}</p>
                                 <div class="panes">
                                     <p>{l s='If you want to change the account, you need to uninstall first' mod='nostotagging'}</p>
                                     {if !empty($iframe_url)}<a id="nostotagging_back_to_iframe" class="btn btn-default" role="button">{l s='Back' mod='nostotagging'}</a>{/if}
@@ -68,7 +68,7 @@ function confirmUninstall(form) {
                                 <iframe id="nostotagging_iframe" frameborder="0" width="100%" scrolling="no" src="{$iframe_url}"></iframe>
                             {/if}
                         {else}
-                            <h2>{$translations.nostotagging_not_installed_heading}</h2>
+                            <h2>{$translations.nostotagging_not_installed_heading|escape:'htmlall':'UTF-8'}</h2>
                             <p>{l s='Do you have an existing Nosto account?' mod='nostotagging'}</p>
 
                             <div class="form-group">
@@ -90,7 +90,7 @@ function confirmUninstall(form) {
                                 <div id="nostotagging_new_account_group" style="display:none;">
                                     <div class="form-group">
                                         <label for="nostotagging_account_email">{l s='Email' mod='nostotagging'}</label>
-                                        <input type="text" name="nostotagging_account_email" class="form-control" id="nostotagging_account_email" value="{$nostotagging_account_email}">
+                                        <input type="text" name="nostotagging_account_email" class="form-control" id="nostotagging_account_email" value="{$nostotagging_account_email|escape:'htmlall':'UTF-8'}">
                                     </div>
                                     <button type="submit" value="1" class="btn btn-green" name="submit_nostotagging_new_account">{l s='Create new account' mod='nostotagging'}</button>
                                     <p class="help-block">
