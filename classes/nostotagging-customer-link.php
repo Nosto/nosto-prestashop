@@ -141,7 +141,6 @@ class NostoTaggingCustomerLink
 	 */
 	protected static function readCookieValue()
 	{
-		// todo: can we use Context::getContext()->cookie??
 		return isset($_COOKIE[self::NOSTOTAGGING_CUSTOMER_LINK_COOKIE])
 			? $_COOKIE[self::NOSTOTAGGING_CUSTOMER_LINK_COOKIE]
 			: null;
