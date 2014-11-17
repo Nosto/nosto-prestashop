@@ -306,7 +306,7 @@ class NostoTaggingHttpRequest
 		if (!empty($this->query_params))
 			$url .= '?'.http_build_query($this->query_params);
 		$context = stream_context_create($options);
-		$result = @file_get_contents($url, false, $context);
+		$result = Tools::file_get_contents($url, false, $context);
 		$response = new NostoTaggingHttpResponse();
 		if (!empty($http_response_header))
 			$response->setHttpResponseHeader($http_response_header);
