@@ -307,8 +307,13 @@ class NostoTaggingHttpRequest
 			$url = self::buildUri($url, $this->replace_params);
 		if (!empty($this->query_params))
 			$url .= '?'.http_build_query($this->query_params);
+		// Fetch the content even on failure status codes.
+		$options['http']['ignore_errors'] = true;
 		$context = stream_context_create($options);
-		$result = Tools::file_get_contents($url, false, $context);
+		// We use file_get_contents() directly here as we need the http response headers which are automatically
+		// populated into $http_response_header, which is only available in the local scope where file_get_contents()
+		// is executed (http://php.net/manual/en/reserved.variables.httpresponseheader.php).
+		$result = file_get_contents($url, false, $context);
 		$response = new NostoTaggingHttpResponse();
 		if (!empty($http_response_header))
 			$response->setHttpResponseHeader($http_response_header);
