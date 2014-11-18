@@ -962,9 +962,9 @@ class NostoTagging extends Module
 		}
 
 		if (!empty($prepend))
-			$prepend .= '<div class="prepend">'.$prepend.'</div>';
+			$prepend = '<div class="prepend">'.$prepend.'</div>';
 		if (!empty($append))
-			$append .= '<div class="append">'.$append.'</div>';
+			$append = '<div class="append">'.$append.'</div>';
 
 		if (!empty($prepend) || !empty($append))
 			$html .= '<div id="hidden_nosto_elements" style="display: none;">'.$prepend.$append.'</div>';
