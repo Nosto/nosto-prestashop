@@ -132,7 +132,7 @@ class NostoTaggingProduct extends NostoTaggingBlock
 		$image_id = $product->getCoverWs();
 		if (ctype_digit((string)$image_id))
 		{
-			$type = (_PS_VERSION_ >= '1.5') ? 'large_default' : 'large';
+			$type = (_PS_VERSION_ >= '1.5') ? ImageType::getFormatedName('large') : 'large';
 			$image_url = $link->getImageLink($product->link_rewrite, $product->id.'-'.$image_id, $type);
 		}
 		else

@@ -134,6 +134,8 @@ class NostoTaggingHttpRequest
 		switch ($type)
 		{
 			case self::AUTH_BASIC:
+				// The use of base64 encoding for authorization headers follow the RFC 2617 standard for http
+				// authentication (https://www.ietf.org/rfc/rfc2617.txt).
 				$this->addHeader('Authorization', 'Basic '.base64_encode(implode(':', $value)));
 				break;
 
