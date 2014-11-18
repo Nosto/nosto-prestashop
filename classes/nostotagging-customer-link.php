@@ -141,6 +141,10 @@ class NostoTaggingCustomerLink
 	 */
 	protected static function readCookieValue()
 	{
+		// We use the $_COOKIE global directly here, instead of the Prestashop cookie class, as we are accessing a
+		// nosto cookie that have been set by the JavaScript loaded from nosto.com. We read it to keep a mapping of
+		// the Nosto user ID and the Prestashop user ID so we can identify which user actually completed an order.
+		// We do this for tracking whether or not to send abandoned cart emails.
 		return isset($_COOKIE[self::NOSTOTAGGING_CUSTOMER_LINK_COOKIE])
 			? $_COOKIE[self::NOSTOTAGGING_CUSTOMER_LINK_COOKIE]
 			: null;
