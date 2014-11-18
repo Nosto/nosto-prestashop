@@ -57,21 +57,27 @@ abstract class NostoTaggingApiModuleFrontController extends ModuleFrontControlle
 
 	/**
 	 * Encrypts and outputs the string and ends the application flow.
+	 * Only send the response if we can encrypt it, i.e. we have an shared encryption secret with nosto.
 	 *
 	 * @param string $string the data to output as encrypted response.
 	 */
 	public function encryptOutput($string)
 	{
-		// todo: change this once we have a real secret transferred from Nosto.
+		// Use the first 16 chars of the SSO token as secret for encryption.
 		$token = NostoTaggingApiToken::get('sso', $this->module->getContext()->language->id);
 		if (!empty($token))
 		{
 			$secret = Tools::substr($token, 0, 16);
 			if (!empty($secret))
 			{
-				$cipher = new NostoTaggingCipher($secret);
+				$iv = NostoTaggingSecurity::rand(16);
+				$cipher = new NostoTaggingCipher();
+				$cipher->setSecret($secret);
+				$cipher->setIV($iv);
 				$cipher_text = $cipher->encrypt($string);
-				echo $cipher_text;
+				// Prepend the IV to the cipher string so that nosto can parse and use it.
+				// There is no security concern with sending the IV as plain text.
+				echo $iv.$cipher_text;
 			}
 		}
 		die;

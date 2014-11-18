@@ -40,15 +40,30 @@ class NostoTaggingCipher
 
 	/**
 	 * Constructor.
-	 *
-	 * @param string $secret the secret key to encrypt with.
 	 */
-	public function __construct($secret)
+	public function __construct()
 	{
 		$this->crypt = new CryptAES(CRYPT_AES_MODE_CBC);
+	}
+
+	/**
+	 * Sets the secret to use for encryption/decryption.
+	 *
+	 * @param string $secret the secret.
+	 */
+	public function setSecret($secret)
+	{
 		$this->crypt->setKey($secret);
-		// AES has a fixed block size of 128 bytes
-		$this->crypt->setIV(NostoTaggingSecurity::rand(16));
+	}
+
+	/**
+	 * Sets the initialization vector to use for encryption/decryption.
+	 *
+	 * @param string $iv the initialization vector.
+	 */
+	public function setIV($iv)
+	{
+		$this->crypt->setIV($iv);
 	}
 
 	/**
@@ -59,9 +74,7 @@ class NostoTaggingCipher
 	 */
 	public function encrypt($plain_text)
 	{
-		$iv = $this->crypt->getIV();
-		$cipher_text = $this->crypt->encrypt($plain_text);
-		return $iv.$cipher_text;
+		return $this->crypt->encrypt($plain_text);
 	}
 
 	/**
@@ -72,10 +85,6 @@ class NostoTaggingCipher
 	 */
 	public function decrypt($cipher_text)
 	{
-		// Assume the first 16 chars is the IV.
-		$iv = Tools::substr($cipher_text, 0, 16);
-		$this->crypt->setIV($iv);
-		$plain_text = $this->crypt->decrypt(Tools::substr($cipher_text, 16));
-		return $plain_text;
+		return $this->crypt->decrypt($cipher_text);
 	}
 }
