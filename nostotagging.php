@@ -722,12 +722,15 @@ class NostoTagging extends Module
 		if (isset($params['id_order']))
 		{
 			$order = new Order($params['id_order']);
+			// PS 1.4 does not have "id_shop_group" and "id_shop" properties in the order object.
+			$id_shop_group = isset($order->id_shop_group) ? $order->id_shop_group : null;
+			$id_shop = isset($order->id_shop) ? $order->id_shop : null;
 			$nosto_order = $this->getOrderData($order);
 			// This is done out of context, so we need to specify the exact parameters to get the correct account.
-			$account_name = NostoTaggingAccount::getName($order->id_lang, $order->id_shop_group, $order->id_shop);
+			$account_name = NostoTaggingAccount::getName($order->id_lang, $id_shop_group, $id_shop);
 			if (!empty($nosto_order) && !empty($account_name))
 			{
-				$id_nosto_customer = NostoTaggingCustomerLink::getNostoCustomerId($this);
+				$id_nosto_customer = NostoTaggingCustomerLink::getNostoCustomerId($order);
 				if (!empty($id_nosto_customer))
 				{
 					$path = NostoTaggingApiRequest::PATH_ORDER_TAGGING;
