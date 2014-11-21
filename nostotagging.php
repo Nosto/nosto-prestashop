@@ -105,7 +105,6 @@ class NostoTagging extends Module
 		$this->version = '1.3.5';
 		$this->author = 'Nosto';
 		$this->need_instance = 1;
-		$this->ps_versions_compliancy = array('min' => '1.4', 'max' => '1.6');
 		$this->bootstrap = true;
 
 		parent::__construct();
@@ -125,54 +124,45 @@ class NostoTagging extends Module
 	 * Installs the module.
 	 *
 	 * Initializes config, adds custom hooks and registers used hooks.
+	 * The hook names for PS 1.4 are used here as all superior versions have an hook alias table which they use as a
+	 * lookup to check which PS 1.4 names correspond to the newer names.
 	 *
 	 * @return bool
 	 */
 	public function install()
 	{
-		// Backward compatibility
-		if (_PS_VERSION_ < '1.5')
-			return parent::install()
-				&& NostoTaggingCustomerLink::createTable()
-				&& $this->initHooks()
-				&& $this->registerHook('displayCategoryTop')
-				&& $this->registerHook('displayCategoryFooter')
-				&& $this->registerHook('displaySearchTop')
-				&& $this->registerHook('displaySearchFooter')
-				&& $this->registerHook('header')
-				&& $this->registerHook('top')
-				&& $this->registerHook('footer')
-				//&& $this->registerHook('leftColumn')
-				//&& $this->registerHook('rightColumn')
-				&& $this->registerHook('productfooter')
-				&& $this->registerHook('shoppingCart')
-				&& $this->registerHook('orderConfirmation')
-				&& $this->registerHook('paymentConfirm')
-				&& $this->registerHook('paymentTop')
-				&& $this->registerHook('home')
-				&& $this->registerHook('updateproduct')
-				&& $this->registerHook('deleteproduct')
-				&& $this->registerHook('updateQuantity');
-		else
-			return parent::install()
-				&& NostoTaggingCustomerLink::createTable()
-				&& $this->initHooks()
-				&& $this->registerHook('displayCategoryTop')
-				&& $this->registerHook('displayCategoryFooter')
-				&& $this->registerHook('displaySearchTop')
-				&& $this->registerHook('displaySearchFooter')
-				&& $this->registerHook('displayHeader')
-				&& $this->registerHook('displayTop')
-				&& $this->registerHook('displayFooter')
-				//&& $this->registerHook('displayLeftColumn')
-				//&& $this->registerHook('displayRightColumn')
-				&& $this->registerHook('displayFooterProduct')
-				&& $this->registerHook('displayShoppingCartFooter')
-				&& $this->registerHook('displayOrderConfirmation')
-				&& $this->registerHook('actionPaymentConfirmation')
-				&& $this->registerHook('displayPaymentTop')
-				&& $this->registerHook('displayHome')
-				&& $this->registerHook('actionObjectUpdateAfter');
+		if (parent::install()
+			&& NostoTaggingCustomerLink::createTable()
+			&& $this->initHooks()
+			&& $this->registerHook('displayCategoryTop')
+			&& $this->registerHook('displayCategoryFooter')
+			&& $this->registerHook('displaySearchTop')
+			&& $this->registerHook('displaySearchFooter')
+			&& $this->registerHook('header')
+			&& $this->registerHook('top')
+			&& $this->registerHook('footer')
+			&& $this->registerHook('productfooter')
+			&& $this->registerHook('shoppingCart')
+			&& $this->registerHook('orderConfirmation')
+			&& $this->registerHook('paymentConfirm')
+			&& $this->registerHook('paymentTop')
+			&& $this->registerHook('home'))
+		{
+			if (_PS_VERSION_ < '1.5')
+			{
+				// For PS 1.4 we need to register some additional hooks for the product re-crawl.
+				return $this->registerHook('updateproduct')
+					&& $this->registerHook('deleteproduct')
+					&& $this->registerHook('updateQuantity');
+			}
+			else
+			{
+				// And for PS >= 1.5 we register the object update hook for the product re-crawl as we can get better
+				// precision using that then the separate hooks like in PS 1.4.
+				return $this->registerHook('actionObjectUpdateAfter');
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -922,54 +912,47 @@ class NostoTagging extends Module
 	 */
 	protected function getHiddenRecommendationElements()
 	{
-		$html = '';
 		$prepend = '';
 		$append = '';
 
 		if ($this->isController('index'))
 		{
 			// The home page.
-			$append .= '<div class="hidden_nosto_element" data-nosto-id="frontpage-nosto-1"></div>';
-			$append .= '<div class="hidden_nosto_element" data-nosto-id="frontpage-nosto-2"></div>';
-			$append .= '<div class="hidden_nosto_element" data-nosto-id="frontpage-nosto-3"></div>';
-			$append .= '<div class="hidden_nosto_element" data-nosto-id="frontpage-nosto-4"></div>';
+			$append .= $this->display(__FILE__, 'views/templates/hook/home_hidden-nosto-elements.tpl');
 		}
 		elseif ($this->isController('product'))
 		{
 			// The product page.
-			$append .= '<div class="hidden_nosto_element" data-nosto-id="nosto-page-product1"></div>';
-			$append .= '<div class="hidden_nosto_element" data-nosto-id="nosto-page-product2"></div>';
-			$append .= '<div class="hidden_nosto_element" data-nosto-id="nosto-page-product3"></div>';
+			$append .= $this->display(__FILE__, 'views/templates/hook/footer-product_hidden-nosto-elements.tpl');
 		}
 		elseif ($this->isController('order'))
 		{
 			// The cart page.
-			$append .= '<div class="hidden_nosto_element" data-nosto-id="nosto-page-cart1"></div>';
-			$append .= '<div class="hidden_nosto_element" data-nosto-id="nosto-page-cart3"></div>';
-			$append .= '<div class="hidden_nosto_element" data-nosto-id="nosto-page-cart2"></div>';
+			$append .= $this->display(__FILE__, 'views/templates/hook/shopping-cart-footer_hidden-nosto-elements.tpl');
 		}
 		elseif ($this->isController('category') || $this->isController('manufacturer'))
 		{
 			// The category/manufacturer page.
-			$append .= '<div class="hidden_nosto_element" data-nosto-id="nosto-page-category1"></div>';
-			$append .= '<div class="hidden_nosto_element" data-nosto-id="nosto-page-category2"></div>';
+			$append .= $this->display(__FILE__, 'views/templates/hook/category-footer_hidden-nosto-elements.tpl');
 		}
 		elseif ($this->isController('search'))
 		{
 			// The search page.
-			$prepend .= '<div class="hidden_nosto_element" data-nosto-id="nosto-page-search1"></div>';
-			$append .= '<div class="hidden_nosto_element" data-nosto-id="nosto-page-search2"></div>';
+			$prepend .= $this->display(__FILE__, 'views/templates/hook/search-top_hidden-nosto-elements.tpl');
+			$append .= $this->display(__FILE__, 'views/templates/hook/search-footer_hidden-nosto-elements.tpl');
+		}
+		else
+		{
+			// If the current page is not one of the ones we want to show recommendations on, just return empty.
+			return '';
 		}
 
-		if (!empty($prepend))
-			$prepend = '<div class="prepend">'.$prepend.'</div>';
-		if (!empty($append))
-			$append = '<div class="append">'.$append.'</div>';
+		$this->smarty->assign(array(
+			'hidden_nosto_elements_prepend' => $prepend,
+			'hidden_nosto_elements_append' => $append,
+		));
 
-		if (!empty($prepend) || !empty($append))
-			$html .= '<div id="hidden_nosto_elements" style="display: none;">'.$prepend.$append.'</div>';
-
-		return $html;
+		return $this->display(__FILE__, 'views/templates/hook/hidden-nosto-elements.tpl');
 	}
 
 	/**
