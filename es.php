@@ -9,7 +9,6 @@ $_MODULE['<{nostotagging}prestashop>nostotagging_0b69722d7a4da2541d7a4ddad2a8bca
 $_MODULE['<{nostotagging}prestashop>nostotagging_a6e1f0fc86df0685fdd5372d5b5d276c'] = 'La casilla email no puede estar vacía';
 $_MODULE['<{nostotagging}prestashop>nostotagging_db7229b90398e80ac93ae00da09160d0'] = 'Email no es una dirección de correo electrónico válida';
 $_MODULE['<{nostotagging}prestashop>nostotagging_6166fa61da55ccf501caa157acb7d291'] = 'La cuenta no ha podido ser creada automáticamente. Por favor visita nosto.com para crear una nueva cuenta';
-$_MODULE['<{nostotagging}prestashop>nostotagging_f7806783dc72a64ebe11b06cc78dcd27'] = 'La cuenta ha sido creada';
 $_MODULE['<{nostotagging}prestashop>nostotagging_3b647f26882587fa6027a2b9ef0720d4'] = 'El ID de tu cuenta es %s';
 $_MODULE['<{nostotagging}prestashop>oauth2_cccb6184039fe4752063d680e45e54d9'] = 'La cuenta %s se ha conectado exitosamente a Nosto.';
 $_MODULE['<{nostotagging}prestashop>oauth2_897ca8c00a599e39de66f9e9ce693872'] = 'La cuenta no se ha conectado exitosamente a Nosto. Por favor contacta Nosto Support.';

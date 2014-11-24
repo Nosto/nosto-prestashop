@@ -225,7 +225,7 @@ class NostoTagging extends Module
 				elseif (!NostoTaggingAccount::create($this->context, $language_id, $account_email))
 					$output .= $this->displayError($this->l('Account could not be automatically created. Please visit nosto.com to create a new account.'));
 				else
-					$output .= $this->displayConfirmation($this->l('Account created.'));
+					$output .= $this->displayConfirmation($this->l('Account created. Please check your email and follow the instructions to set a password for your new account within three days.'));
 			}
 			elseif (Tools::isSubmit('submit_nostotagging_authorize_account'))
 			{

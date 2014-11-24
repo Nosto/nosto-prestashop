@@ -9,7 +9,6 @@ $_MODULE['<{nostotagging}prestashop>nostotagging_0b69722d7a4da2541d7a4ddad2a8bca
 $_MODULE['<{nostotagging}prestashop>nostotagging_a6e1f0fc86df0685fdd5372d5b5d276c'] = 'Emailadresse darf nicht leer bleiben.';
 $_MODULE['<{nostotagging}prestashop>nostotagging_db7229b90398e80ac93ae00da09160d0'] = 'Die angegebene Email Adresse ist nicht korrekt.';
 $_MODULE['<{nostotagging}prestashop>nostotagging_6166fa61da55ccf501caa157acb7d291'] = 'Das Nosto Konto konnte nicht automatisch erstellt werden. Bitte besuchen Sie nosto.com um ein neues Konto anzulegen.';
-$_MODULE['<{nostotagging}prestashop>nostotagging_f7806783dc72a64ebe11b06cc78dcd27'] = 'Das Nosto Konto wurde erstellt.';
 $_MODULE['<{nostotagging}prestashop>nostotagging_3b647f26882587fa6027a2b9ef0720d4'] = 'Ihre Konto ID lautet %s';
 $_MODULE['<{nostotagging}prestashop>oauth2_cccb6184039fe4752063d680e45e54d9'] = ' Das Konto %s wurde erfolgreich mit Nosto angebunden.';
 $_MODULE['<{nostotagging}prestashop>oauth2_897ca8c00a599e39de66f9e9ce693872'] = 'Das Konto konnte nicht an Nosto angebunden werden. Bitte kontaktieren Sie den Nosto Support.';
