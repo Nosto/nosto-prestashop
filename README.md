@@ -83,7 +83,7 @@ module in the modules listing. This will open a new page with the module configu
 
 ## License
 
-Open Software License ("OSL") v. 3.0
+Academic Free License ("AFL") v. 3.0
 
 ## Dependencies
 
@@ -91,8 +91,15 @@ PrestaShop version 1.4.x - 1.6.x
 
 ## Changelog
 
+* 1.3.5
+    * Fixed check for current controller in some PS 1.5 versions
+
+* 1.3.4
+    * Fixed issue with logged in customer tagging on PS 1.4
+    * Fixed recommendation slot logic to check the whole document and not only the center column before adding defaults
+
 * 1.3.3
-    Fixed issue with logged in customer tagging
+    * Fixed issue with logged in customer tagging
 
 * 1.3.2
     * Fixes
