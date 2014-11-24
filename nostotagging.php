@@ -304,11 +304,11 @@ class NostoTagging extends Module
 							'lang' => $this->context->language->iso_code,
 							'ps_version' => _PS_VERSION_,
 							'nt_version' => $this->version,
-							'product_pu' => urlencode(NostoTaggingPreviewLink::getProductPageUrl(null, $language_id)),
-							'category_pu' => urlencode(NostoTaggingPreviewLink::getCategoryPageUrl(null, $language_id)),
-							'search_pu' => urlencode(NostoTaggingPreviewLink::getSearchPageUrl($language_id)),
-							'cart_pu' => urlencode(NostoTaggingPreviewLink::getCartPageUrl($language_id)),
-							'front_pu' => urlencode(NostoTaggingPreviewLink::getHomePageUrl($language_id)),
+							'product_pu' => NostoTaggingPreviewLink::getProductPageUrl(null, $language_id),
+							'category_pu' => NostoTaggingPreviewLink::getCategoryPageUrl(null, $language_id),
+							'search_pu' => NostoTaggingPreviewLink::getSearchPageUrl($language_id),
+							'cart_pu' => NostoTaggingPreviewLink::getCartPageUrl($language_id),
+							'front_pu' => NostoTaggingPreviewLink::getHomePageUrl($language_id),
 							'shop_lang' => $current_language['iso_code'],
 							'unique_id' => sha1($this->name._COOKIE_KEY_), // unique PS installation ID.
 						)),
@@ -722,12 +722,15 @@ class NostoTagging extends Module
 		if (isset($params['id_order']))
 		{
 			$order = new Order($params['id_order']);
+			// PS 1.4 does not have "id_shop_group" and "id_shop" properties in the order object.
+			$id_shop_group = isset($order->id_shop_group) ? $order->id_shop_group : null;
+			$id_shop = isset($order->id_shop) ? $order->id_shop : null;
 			$nosto_order = $this->getOrderData($order);
 			// This is done out of context, so we need to specify the exact parameters to get the correct account.
-			$account_name = NostoTaggingAccount::getName($order->id_lang, $order->id_shop_group, $order->id_shop);
+			$account_name = NostoTaggingAccount::getName($order->id_lang, $id_shop_group, $id_shop);
 			if (!empty($nosto_order) && !empty($account_name))
 			{
-				$id_nosto_customer = NostoTaggingCustomerLink::getNostoCustomerId($this);
+				$id_nosto_customer = NostoTaggingCustomerLink::getNostoCustomerId($order);
 				if (!empty($id_nosto_customer))
 				{
 					$path = NostoTaggingApiRequest::PATH_ORDER_TAGGING;
@@ -814,23 +817,26 @@ class NostoTagging extends Module
 			{
 				// Send a request to Nosto to re-crawl this product for every language that has a token set.
 				foreach (Language::getLanguages() as $language)
-					if (($token = NostoTaggingApiToken::get('products', (int)$language['id_lang'])) !== false)
-					{
-						$request = new NostoTaggingApiRequest();
-						$request->setPath(NostoTaggingApiRequest::PATH_PRODUCT_RE_CRAWL);
-						$request->setContentType('application/json');
-						$request->setAuthBasic('', $token);
-						$response = $request->post(Tools::jsonEncode(array('product_ids' => array($object->id))));
+				{
+					$token = NostoTaggingApiToken::get('products', (int)$language['id_lang']);
+					if (empty($token))
+						continue;
 
-						if ($response->getCode() !== 200)
-							NostoTaggingLogger::log(
-								__CLASS__.'::'.__FUNCTION__.' - Failed to send re-crawl instruction to Nosto.',
-								NostoTaggingLogger::LOG_SEVERITY_ERROR,
-								$response->getCode(),
-								get_class($object),
-								(int)$object->id
-							);
-					}
+					$request = new NostoTaggingApiRequest();
+					$request->setPath(NostoTaggingApiRequest::PATH_PRODUCT_RE_CRAWL);
+					$request->setContentType('application/json');
+					$request->setAuthBasic('', $token);
+					$response = $request->post(Tools::jsonEncode(array('product_ids' => array($object->id))));
+
+					if ($response->getCode() !== 200)
+						NostoTaggingLogger::log(
+							__CLASS__.'::'.__FUNCTION__.' - Failed to send re-crawl instruction to Nosto.',
+							NostoTaggingLogger::LOG_SEVERITY_ERROR,
+							$response->getCode(),
+							get_class($object),
+							(int)$object->id
+						);
+				}
 			}
 		}
 	}
@@ -1016,7 +1022,8 @@ class NostoTagging extends Module
 	 */
 	protected function doSSOLogin($language_id = 0)
 	{
-		if (($sso_token = NostoTaggingApiToken::get('sso', $language_id)) === false)
+		$sso_token = NostoTaggingApiToken::get('sso', $language_id);
+		if (empty($sso_token))
 			return false;
 
 		$employee = $this->context->employee;
