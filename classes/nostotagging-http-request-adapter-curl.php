@@ -41,7 +41,7 @@ class NostoTaggingHttpRequestAdapterCurl extends NostoTaggingHttpRequestAdapter
 			CURLOPT_FRESH_CONNECT => 1,
 			CURLOPT_RETURNTRANSFER => 1,
 			CURLOPT_FORBID_REUSE => 1,
-			CURLOPT_TIMEOUT => 4,
+			CURLOPT_TIMEOUT => 60,
 		));
 	}
 
@@ -59,7 +59,7 @@ class NostoTaggingHttpRequestAdapterCurl extends NostoTaggingHttpRequestAdapter
 			CURLOPT_FRESH_CONNECT => 1,
 			CURLOPT_RETURNTRANSFER => 1,
 			CURLOPT_FORBID_REUSE => 1,
-			CURLOPT_TIMEOUT => 4,
+			CURLOPT_TIMEOUT => 60,
 		));
 	}
 
