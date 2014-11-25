@@ -91,6 +91,9 @@ PrestaShop version 1.4.x - 1.6.x
 
 ## Changelog
 
+* 1.3.7
+    * Changed Nosto user matching to use the PS cart instead of the customer in order to improve order confirmations
+
 * 1.3.6
     * Added http request adapter for curl
     * Prestashop standards-compliant
