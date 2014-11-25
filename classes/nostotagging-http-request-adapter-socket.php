@@ -72,7 +72,7 @@ class NostoTaggingHttpRequestAdapterSocket extends NostoTaggingHttpRequestAdapte
 	 * @param array $stream_options options for stream_context_create().
 	 * @return NostoTaggingHttpResponse
 	 */
-	protected function send($url, array $stream_options = array())
+	protected function send($url, array $stream_options)
 	{
 		$context = stream_context_create($stream_options);
 		// We use file_get_contents() directly here as we need the http response headers which are automatically
