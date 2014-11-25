@@ -29,14 +29,19 @@
 class NostoTaggingHttpResponse
 {
 	/**
-	 * @var array
+	 * @var array the response headers if there are any.
 	 */
 	protected $http_response_header;
 
 	/**
-	 * @var mixed
+	 * @var mixed the request result raw body.
 	 */
 	protected $result;
+
+	/**
+	 * @var string possible request error message.
+	 */
+	protected $error_message;
 
 	/**
 	 * @param mixed $result
@@ -52,6 +57,22 @@ class NostoTaggingHttpResponse
 	public function getResult()
 	{
 		return $this->result;
+	}
+
+	/**
+	 * @param string $error_message
+	 */
+	public function setErrorMessage($error_message)
+	{
+		$this->error_message = $error_message;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getErrorMessage()
+	{
+		return $this->error_message;
 	}
 
 	/**
