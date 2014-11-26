@@ -79,13 +79,13 @@ class NostoTaggingCustomer extends NostoTaggingBlock
 	 */
 	protected function isCustomerLoggedIn($customer)
 	{
-		if (!($customer instanceof Customer) || !Validate::isLoadedObject($customer))
+		if (!Validate::isLoadedObject($customer))
 			return false;
 
 		if (_PS_VERSION_ >= '1.5')
 			return $customer->isLogged();
 
-		if (!isset($this->context) || !($this->context->cookie instanceof Cookie))
+		if (!isset($this->context, $this->context->cookie))
 			return false;
 
 		// Double check that the given customer object has the same id as the cookie's id_customer property,
