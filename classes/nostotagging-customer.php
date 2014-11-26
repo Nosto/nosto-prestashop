@@ -88,7 +88,11 @@ class NostoTaggingCustomer extends NostoTaggingBlock
 		if (!isset($this->context) || !($this->context->cookie instanceof Cookie))
 			return false;
 
-		// Double check that the given customer object jas the same id as the cookie id_customer.
-		return (($this->context->cookie->id_customer == $customer->id) && $this->context->cookie->isLogged());
+		// Double check that the given customer object has the same id as the cookie's id_customer property,
+		// before checking if the cookie is logged in.
+		return (!empty($this->context->cookie->id_customer)
+			&& !empty($customer->id)
+			&& ($this->context->cookie->id_customer == $customer->id)
+			&& $this->context->cookie->isLogged());
 	}
 }
