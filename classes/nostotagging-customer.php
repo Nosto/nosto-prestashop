@@ -60,12 +60,39 @@ class NostoTaggingCustomer extends NostoTaggingBlock
 	 */
 	public function populate()
 	{
+		/** @var Customer $customer */
 		$customer = $this->object;
-		if (!Validate::isLoadedObject($customer) || !$customer->isLogged())
+		if (!$this->isCustomerLoggedIn($customer))
 			return;
 
 		$this->first_name = $customer->firstname;
 		$this->last_name = $customer->lastname;
 		$this->email = $customer->email;
+	}
+
+	/**
+	 * Check if the customer is logged in or not.
+	 * We need to check the cookie if PS version is 1.4 as the CustomerBackwardModule::isLogged() method does not work.
+	 *
+	 * @param Customer $customer the customer object to check.
+	 * @return bool true if the customer is logged in, false otherwise.
+	 */
+	protected function isCustomerLoggedIn($customer)
+	{
+		if (!Validate::isLoadedObject($customer))
+			return false;
+
+		if (_PS_VERSION_ >= '1.5')
+			return $customer->isLogged();
+
+		if (!isset($this->context, $this->context->cookie))
+			return false;
+
+		// Double check that the given customer object has the same id as the cookie's id_customer property,
+		// before checking if the cookie is logged in.
+		return (!empty($this->context->cookie->id_customer)
+			&& !empty($customer->id)
+			&& ($this->context->cookie->id_customer == $customer->id)
+			&& $this->context->cookie->isLogged());
 	}
 }
