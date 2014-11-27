@@ -31,6 +31,10 @@
  */
 if (!defined('_PS_VERSION_'))
 {
+	/*
+	 * White-list of valid controllers that this script is allowed to run.
+	 */
+	$controller_white_list = array('oauth2', 'product', 'order');
 	$ps_dir = dirname(__FILE__).'/../..';
 	require_once($ps_dir.'/config/config.inc.php');
 	/*
@@ -39,7 +43,7 @@ if (!defined('_PS_VERSION_'))
 	if (_PS_VERSION_ < '1.5')
 		require_once($ps_dir.'/modules/nostotagging/backward_compatibility/ModuleFrontController.php');
 	$controller = Tools::strtolower((string)Tools::getValue('controller'));
-	if (!empty($controller))
+	if (!empty($controller) && in_array($controller, $controller_white_list))
 	{
 		require_once($ps_dir.'/modules/nostotagging/controllers/front/'.$controller.'.php');
 		ControllerFactory::getController('NostoTagging'.Tools::ucfirst($controller).'ModuleFrontController')->run();
