@@ -91,6 +91,9 @@ PrestaShop version 1.4.x - 1.6.x
 
 ## Changelog
 
+* 2.0.0
+    * Updated translations
+
 * 1.3.7
     * Fixed customer tagging for PS 1.4 versions
 
