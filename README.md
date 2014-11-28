@@ -91,6 +91,13 @@ PrestaShop version 1.4.x - 1.6.x
 
 ## Changelog
 
+* 1.3.7
+    * Fixed customer tagging for PS 1.4 versions
+
+* 1.3.6
+    * Added http request adapter for curl
+    * Prestashop standards-compliant
+
 * 1.3.5
     * Fixed check for current controller in some PS 1.5 versions
 

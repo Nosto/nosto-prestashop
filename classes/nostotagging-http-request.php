@@ -23,6 +23,10 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
+require_once(dirname(__FILE__).'/nostotagging-http-request-adapter.php');
+require_once(dirname(__FILE__).'/nostotagging-http-request-adapter-socket.php');
+require_once(dirname(__FILE__).'/nostotagging-http-request-adapter-curl.php');
+
 /**
  * Helper class for doing http requests and returning unified response including header info.
  */
@@ -50,6 +54,23 @@ class NostoTaggingHttpRequest
 	 * @var array list of optional replace params that can be injected into the url if it contains placeholders.
 	 */
 	protected $replace_params = array();
+
+	/**
+	 * @var NostoTaggingHttpRequestAdapter the adapter to use for making the request.
+	 */
+	private $_adapter;
+
+	/**
+	 * Constructor.
+	 * Chooses request adapter based on what available in the environment.
+	 */
+	public function __construct()
+	{
+		if (function_exists('curl_exec'))
+			$this->_adapter = new NostoTaggingHttpRequestAdapterCurl();
+		else
+			$this->_adapter = new NostoTaggingHttpRequestAdapterSocket();
+	}
 
 	/**
 	 * Setter for the request url.
@@ -269,12 +290,12 @@ class NostoTaggingHttpRequest
 	 */
 	public function post($content)
 	{
-		return $this->send($this->url, array(
-			'http' => array(
-				'method' => 'POST',
-				'header' => implode("\r\n", $this->headers),
-				'content' => $content
-			)
+		$url = $this->url;
+		if (!empty($this->replace_params))
+			$url = self::buildUri($url, $this->replace_params);
+		return $this->_adapter->post($url, array(
+			'headers' => $this->headers,
+			'content' => $content,
 		));
 	}
 
@@ -285,39 +306,13 @@ class NostoTaggingHttpRequest
 	 */
 	public function get()
 	{
-		return $this->send($this->url, array(
-			'http' => array(
-				'method' => 'GET',
-				'header' => implode("\r\n", $this->headers),
-			)
-		));
-	}
-
-	/**
-	 * Sends the request and returns a response instance.
-	 *
-	 * @param string $url
-	 * @param array $options
-	 * @return NostoTaggingHttpResponse
-	 */
-	protected function send($url, array $options = array())
-	{
-		$http_response_header = array();
+		$url = $this->url;
 		if (!empty($this->replace_params))
 			$url = self::buildUri($url, $this->replace_params);
 		if (!empty($this->query_params))
 			$url .= '?'.http_build_query($this->query_params);
-		// Fetch the content even on failure status codes.
-		$options['http']['ignore_errors'] = true;
-		$context = stream_context_create($options);
-		// We use file_get_contents() directly here as we need the http response headers which are automatically
-		// populated into $http_response_header, which is only available in the local scope where file_get_contents()
-		// is executed (http://php.net/manual/en/reserved.variables.httpresponseheader.php).
-		$result = file_get_contents($url, false, $context);
-		$response = new NostoTaggingHttpResponse();
-		if (!empty($http_response_header))
-			$response->setHttpResponseHeader($http_response_header);
-		$response->setResult($result);
-		return $response;
+		return $this->_adapter->get($url, array(
+			'headers' => $this->headers,
+		));
 	}
 }
