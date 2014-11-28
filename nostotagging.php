@@ -102,7 +102,7 @@ class NostoTagging extends Module
 	{
 		$this->name = 'nostotagging';
 		$this->tab = 'advertising_marketing';
-		$this->version = '1.3.7';
+		$this->version = '2.0.0';
 		$this->author = 'Nosto';
 		$this->need_instance = 1;
 		$this->bootstrap = true;
@@ -225,7 +225,7 @@ class NostoTagging extends Module
 				elseif (!NostoTaggingAccount::create($this->context, $language_id, $account_email))
 					$output .= $this->displayError($this->l('Account could not be automatically created. Please visit nosto.com to create a new account.'));
 				else
-					$output .= $this->displayConfirmation($this->l('Account created.'));
+					$output .= $this->displayConfirmation($this->l('Account created. Please check your email and follow the instructions to set a password for your new account within three days.'));
 			}
 			elseif (Tools::isSubmit('submit_nostotagging_authorize_account'))
 			{
@@ -280,7 +280,7 @@ class NostoTagging extends Module
 			// Hack a few translations for the view as PS 1.4 does not support sprintf syntax in smarty "l" function.
 			'translations' => array(
 				'nostotagging_installed_heading' => sprintf(
-					$this->l('You have installed Nosto to your %s shop'),
+					$this->l('You have added Nosto to your %s shop'),
 					$current_language['name']
 				),
 				'nostotagging_installed_account_name' => sprintf(
@@ -288,7 +288,7 @@ class NostoTagging extends Module
 					NostoTaggingAccount::getName($language_id)
 				),
 				'nostotagging_not_installed_heading' => sprintf(
-					$this->l('Install Nosto to your %s shop'),
+					$this->l('Add Nosto to your %s shop'),
 					$current_language['name']
 				),
 			)
