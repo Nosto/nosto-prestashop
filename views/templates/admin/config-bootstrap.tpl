@@ -61,9 +61,9 @@ function confirmUninstall(form) {
                                 <h2>{$translations.nostotagging_installed_heading|escape:'htmlall':'UTF-8'}</h2>
                                 <p>{$translations.nostotagging_installed_account_name|escape:'htmlall':'UTF-8'}</p>
                                 <div class="panes">
-                                    <p>{l s='If you want to change the account, you need to uninstall first' mod='nostotagging'}</p>
+                                    <p>{l s='If you want to change the account, you need to remove the existing one first' mod='nostotagging'}</p>
                                     {if !empty($iframe_url)}<a id="nostotagging_back_to_iframe" class="btn btn-default" role="button">{l s='Back' mod='nostotagging'}</a>{/if}
-                                    <button type="submit" onClick="return confirmUninstall(this);" value="1" class="btn btn-red" name="submit_nostotagging_reset_account">{l s='Uninstall Nosto' mod='nostotagging'}</button>
+                                    <button type="submit" onClick="return confirmUninstall(this);" value="1" class="btn btn-red" name="submit_nostotagging_reset_account">{l s='Remove Nosto' mod='nostotagging'}</button>
                                 </div>
                             </div>
                             {if !empty($iframe_url)}
@@ -87,7 +87,7 @@ function confirmUninstall(form) {
 
                             <div class="panes">
                                 <div id="nostotagging_existing_account_group">
-                                    <button type="submit" value="1" class="btn btn-green" name="submit_nostotagging_authorize_account">{l s='Connect to Nosto' mod='nostotagging'}</button>
+                                    <button type="submit" value="1" class="btn btn-green" name="submit_nostotagging_authorize_account">{l s='Add Nosto' mod='nostotagging'}</button>
                                 </div>
                                 <div id="nostotagging_new_account_group" style="display:none;">
                                     <div class="form-group">
