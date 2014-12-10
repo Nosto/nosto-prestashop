@@ -91,8 +91,8 @@ PrestaShop version 1.4.x - 1.6.x
 
 ## Changelog
 
-* 1.3.8
-    * Changed Nosto user matching to use PS cart object instead of customer object to improve order confirmations
+* 2.0.0
+    * Updated translations
 
 * 1.3.7
     * Fixed customer tagging for PS 1.4 versions
