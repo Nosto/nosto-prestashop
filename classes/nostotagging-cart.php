@@ -38,7 +38,8 @@ class NostoTaggingCart extends NostoTaggingBlock
 	 */
 	public function getRequiredItems()
 	{
-		return array('line_items');
+		// The line items are not required as we want to output an empty cart tagging div when we have no items.
+		return array();
 	}
 
 	/**
