@@ -91,6 +91,9 @@ PrestaShop version 1.4.x - 1.6.x
 
 ## Changelog
 
+* 2.0.1
+    * Fixed cart tagging to show also when cart is empty
+
 * 2.0.0
     * Updated translations
 
