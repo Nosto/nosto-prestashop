@@ -27,13 +27,13 @@ if (!defined('_PS_VERSION_'))
 	exit;
 
 /**
- * Upgrades the module to version 2.0.1.
+ * Upgrades the module to version 2.1.0.
  *
  * Updates the customer link table to link the nosto customer id to the PS id_cart instead of id_customer.
  *
  * @return bool
  */
-function upgrade_module_2_0_1()
+function upgrade_module_2_1_0()
 {
 	// We just drop the table and re-create as it's easier and we don't want the data we loose.
 	NostoTaggingCustomerLink::dropTable();
