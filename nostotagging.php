@@ -53,6 +53,7 @@ if ((basename(__FILE__) === 'nostotagging.php'))
 	require_once($module_dir.'/classes/nostotagging-api-token.php');
 	require_once($module_dir.'/classes/nostotagging-customer-link.php');
 	require_once($module_dir.'/classes/nostotagging-preview-link.php');
+	require_once($module_dir.'/classes/nostotagging-updater.php');
 }
 
 /**
@@ -118,6 +119,9 @@ class NostoTagging extends Module
 
 		if (!$this->checkConfigState())
 			$this->warning = $this->l('A Nosto account is not set up for each shop and language.');
+
+		// Check for module updates for PS < 1.5.4.0.
+		NostoTaggingUpdater::checkForUpdates($this);
 	}
 
 	/**
