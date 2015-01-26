@@ -53,6 +53,7 @@ if ((basename(__FILE__) === 'nostotagging.php'))
 	require_once($module_dir.'/classes/nostotagging-api-token.php');
 	require_once($module_dir.'/classes/nostotagging-customer-link.php');
 	require_once($module_dir.'/classes/nostotagging-preview-link.php');
+	require_once($module_dir.'/classes/nostotagging-updater.php');
 }
 
 /**
@@ -102,7 +103,7 @@ class NostoTagging extends Module
 	{
 		$this->name = 'nostotagging';
 		$this->tab = 'advertising_marketing';
-		$this->version = '2.0.1';
+		$this->version = '2.1.0';
 		$this->author = 'Nosto';
 		$this->need_instance = 1;
 		$this->bootstrap = true;
@@ -118,6 +119,9 @@ class NostoTagging extends Module
 
 		if (!$this->checkConfigState())
 			$this->warning = $this->l('A Nosto account is not set up for each shop and language.');
+
+		// Check for module updates for PS < 1.5.4.0.
+		NostoTaggingUpdater::checkForUpdates($this);
 	}
 
 	/**
@@ -148,6 +152,12 @@ class NostoTagging extends Module
 			&& $this->registerHook('paymentTop')
 			&& $this->registerHook('home'))
 		{
+			// For versions 1.4.0.1 - 1.5.3.1 we need to keep track of the currently installed version.
+			// This is to enable auto-update of the module by running its upgrade scripts.
+			// This config value is updated in the NostoTaggingUpdater helper every time the module is updated.
+			if (version_compare(_PS_VERSION_, '1.5.4.0', '<'))
+				NostoTaggingConfig::write(NostoTaggingConfig::INSTALLED_VERSION, $this->version, null, true);
+
 			if (_PS_VERSION_ < '1.5')
 			{
 				// For PS 1.4 we need to register some additional hooks for the product re-crawl.
@@ -576,7 +586,7 @@ class NostoTagging extends Module
 	public function hookDisplayShoppingCartFooter()
 	{
 		// Update the link between nosto users and prestashop customers.
-		NostoTaggingCustomerLink::updateLink($this);
+		NostoTaggingCustomerLink::updateLink();
 
 		return $this->display(__FILE__, 'views/templates/hook/shopping-cart-footer_nosto-elements.tpl');
 	}
@@ -696,7 +706,7 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayPaymentTop()
 	{
-		NostoTaggingCustomerLink::updateLink($this);
+		NostoTaggingCustomerLink::updateLink();
 	}
 
 	/**
