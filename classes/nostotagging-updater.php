@@ -89,13 +89,13 @@ class NostoTaggingUpdater
 						&& !empty($script_version)
 						&& version_compare($script_version, self::$from_version, '>=')
 						&& version_compare($script_version, $new_version, '<=')
-						&& version_compare($script_version, $installed_version, '>')
-					)
+						&& version_compare($script_version, $installed_version, '>'))
 					{
 						$scripts[] = array(
 							'file' => $path.$file,
 							'version' => $script_version,
-							'upgrade_function' => 'upgrade_module_'.str_replace('.', '_', $script_version));
+							'upgrade_function' => 'upgrade_module_'.str_replace('.', '_', $script_version)
+						);
 					}
 				}
 
