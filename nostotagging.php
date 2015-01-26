@@ -152,6 +152,12 @@ class NostoTagging extends Module
 			&& $this->registerHook('paymentTop')
 			&& $this->registerHook('home'))
 		{
+			// For versions 1.4.0.1 - 1.5.3.1 we need to keep track of the currently installed version.
+			// This is to enable auto-update of the module by running its upgrade scripts.
+			// This config value is updated in the NostoTaggingUpdater helper every time the module is updated.
+			if (version_compare(_PS_VERSION_, '1.5.4.0', '<'))
+				NostoTaggingConfig::write(NostoTaggingConfig::INSTALLED_VERSION, $this->version, null, true);
+
 			if (_PS_VERSION_ < '1.5')
 			{
 				// For PS 1.4 we need to register some additional hooks for the product re-crawl.

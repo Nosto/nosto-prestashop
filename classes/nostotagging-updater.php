@@ -26,7 +26,7 @@
 /**
  * Helper class for upgrading the module by running new upgrade scripts.
  * Prestashop 1.4. does not have any mechanism for auto-upgrade of modules and Prestashop < 1.5.4.0 has a bug that
- * causes the upgrade files to never be ran.
+ * causes the upgrade scripts to never run.
  * The upgrade scripts are ran 'silently' and does not output anything to the user.
  */
 class NostoTaggingUpdater
@@ -34,95 +34,83 @@ class NostoTaggingUpdater
 	/**
 	 * @var string the updater only runs upgrade scripts >= to this version.
 	 *
-	 * This is needed as otherwise the updater would run all found upgrade script the first time as there would be no
-	 * `installed version` written to the config yet.
+	 * This is needed as otherwise the updater would run all found upgrade scripts the first time the module is updated,
+	 * as there would be no `installed version` written to the config yet.
 	 */
 	protected static $from_version = '2.1.0';
 
 	/**
-	 * Checks if the currently attached module has upgrade scripts and applies them.
+	 * Checks if the module has new upgrade scripts and applies them.
 	 * These scripts located in the modules `upgrade` directory, with versions above the current installed version.
 	 *
 	 * @param Module $module the module to check and apply the updates for.
-	 * @return bool true if updates are found, false otherwise.
-	 * @throws Exception
 	 */
 	public static function checkForUpdates($module)
 	{
 		if (!Module::isInstalled($module->name))
-			return false;
+			return;
 
 		// Prestashop 1.4 does not have any auto-update mechanism.
 		// Prestashop < 1.5.4.0 has a bug that causes the auto-update mechanism fail.
 		if (version_compare(_PS_VERSION_, '1.5.4.0', '<'))
-		{
-			$upgrade_files = self::findUpgradeFiles($module);
-			foreach ($upgrade_files as $upgrade_file) {
-				if (file_exists($upgrade_file['file']) && is_readable($upgrade_file['file']))
+			foreach (self::findUpgradeScripts($module) as $script)
+				if (file_exists($script['file']) && is_readable($script['file']))
 				{
-					include_once $upgrade_file['file'];
-					if (call_user_func($upgrade_file['upgrade_function'], $module))
-					{
-						// We store our own version of the modules `database_version` number which tells us which
-						// version is currently installed.
-						NostoTaggingConfig::write(
-							NostoTaggingConfig::INSTALLED_VERSION, $upgrade_file['version'], null, true
-						);
-					}
+					// Run the script and update the currently installed module version so future updates can work.
+					include_once $script['file'];
+					if (call_user_func($script['upgrade_function'], $module))
+						NostoTaggingConfig::write(NostoTaggingConfig::INSTALLED_VERSION, $script['version'], null, true);
 				}
-			}
-		}
+
 		// Prestashop >= 1.5.4.0 handles the auto-update mechanism.
-		return false;
 	}
 
 	/**
-	 * Reads the file system and finds any upgrade scripts that can be applied for the module.
+	 * Reads the file system and finds any new upgrade scripts that can be applied for the module.
 	 * These scripts located in the modules `upgrade` directory, with versions above the current installed version.
 	 *
 	 * @param Module $module the module to find the upgrade files for.
-	 * @return array the list of upgrade file info.
+	 * @return array the list of upgrade scripts.
 	 */
-	protected static function findUpgradeFiles($module)
+	protected static function findUpgradeScripts($module)
 	{
-		$upgrade_files = array();
-		$upgrade_path = _PS_MODULE_DIR_.$module->name.'/upgrade/';
-		// We store our own version of the modules `database_version` number which tells us which version
-		// is currently installed.
+		$scripts = array();
+		$path = _PS_MODULE_DIR_.$module->name.'/upgrade/';
 		$installed_version = (string)NostoTaggingConfig::read(NostoTaggingConfig::INSTALLED_VERSION);
+		$new_version = $module->version;
 
-		if (file_exists($upgrade_path) && ($files = scandir($upgrade_path)))
+		if (file_exists($path) && ($files = scandir($path)))
 			foreach ($files as $file)
 				if (!in_array($file, array('.', '..', 'index.php')))
 				{
-					$tab = explode('-', $file);
-					$file_version = isset($tab[1]) ? basename($tab[1], '.php') : '';
-					if (count($tab) == 2
-						&& !empty($file_version)
-						&& version_compare($file_version, self::$from_version, '>=')
-						&& (version_compare($file_version, $module->version, '<=')
-							&& version_compare($file_version, $installed_version, '>')))
+					$parts = explode('-', $file);
+					$script_version = isset($parts[1]) ? basename($parts[1], '.php') : '';
+					if (count($parts) == 2
+						&& !empty($script_version)
+						&& version_compare($script_version, self::$from_version, '>=')
+						&& version_compare($script_version, $new_version, '<=')
+						&& version_compare($script_version, $installed_version, '>')
+					)
 					{
-						$upgrade_files[] = array(
-							'file' => $upgrade_path.$file,
-							'version' => $file_version,
-							'upgrade_function' => 'upgrade_module_'.str_replace('.', '_', $file_version));
+						$scripts[] = array(
+							'file' => $path.$file,
+							'version' => $script_version,
+							'upgrade_function' => 'upgrade_module_'.str_replace('.', '_', $script_version));
 					}
 				}
 
-		usort($upgrade_files, array('NostoTaggingUpdater', 'sortUpgradeFilesByVersion'));
-
-		return $upgrade_files;
+		usort($scripts, array('NostoTaggingUpdater', 'sortUpgradeScriptsByVersion'));
+		return $scripts;
 	}
 
 	/**
-	 * Sorts the found upgrade file info versions in asc order.
+	 * Sorts the found upgrade scripts by their versions in asc order.
 	 *
 	 * @param array $a first version.
 	 * @param array $b second version.
 	 * @return mixed -1 if first version is lower than second, 0 if equal, and 1 if second is lower.
 	 */
-	public static function sortUpgradeFilesByVersion($a, $b)
+	public static function sortUpgradeScriptsByVersion($a, $b)
 	{
 		return version_compare($a['version'], $b['version']);
 	}
