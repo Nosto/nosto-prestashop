@@ -30,13 +30,18 @@ if (!defined('_PS_VERSION_'))
  * Upgrades the module to version 2.1.0.
  *
  * Updates the customer link table to link the nosto customer id to the PS id_cart instead of id_customer.
+ * Un-registers payment confirmation hooks.
+ * Registers order status post update hooks.
  *
+ * @param NostoTagging $object
  * @return bool
  */
-function upgrade_module_2_1_0()
+function upgrade_module_2_1_0($object)
 {
 	// We just drop the table and re-create as it's easier and we don't want the data we loose.
-	NostoTaggingCustomerLink::dropTable();
-	NostoTaggingCustomerLink::createTable();
-	return true;
+	return NostoTaggingCustomerLink::dropTable()
+        && NostoTaggingCustomerLink::createTable()
+        && $object->unregisterHook('paymentConfirm')
+        && $object->unregisterHook('actionPaymentConfirmation')
+        && $object->registerHook('postUpdateOrderStatus');
 }
