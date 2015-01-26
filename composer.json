@@ -1,8 +1,0 @@
-{
-    "name": "nosto/nosto-prestashop-module",
-    "description": "Prestashop module that integrates Nosto marketing automation",
-    "license": "Open Software License (OSL 3.0)",
-    "require-dev": {
-        "codeception/codeception": "@stable"
-    }
-}
