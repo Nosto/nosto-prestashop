@@ -40,8 +40,8 @@ function upgrade_module_2_1_0($object)
 {
 	// We just drop the table and re-create as it's easier and we don't want the data we loose.
 	return NostoTaggingCustomerLink::dropTable()
-        && NostoTaggingCustomerLink::createTable()
-        && $object->unregisterHook('paymentConfirm')
-        && $object->unregisterHook('actionPaymentConfirmation')
-        && $object->registerHook('postUpdateOrderStatus');
+		&& NostoTaggingCustomerLink::createTable()
+		&& $object->unregisterHook('paymentConfirm')
+		&& $object->unregisterHook('actionPaymentConfirmation')
+		&& $object->registerHook('postUpdateOrderStatus');
 }

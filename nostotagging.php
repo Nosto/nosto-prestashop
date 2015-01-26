@@ -148,7 +148,7 @@ class NostoTagging extends Module
 			&& $this->registerHook('productfooter')
 			&& $this->registerHook('shoppingCart')
 			&& $this->registerHook('orderConfirmation')
-            && $this->registerHook('postUpdateOrderStatus')
+			&& $this->registerHook('postUpdateOrderStatus')
 			&& $this->registerHook('paymentTop')
 			&& $this->registerHook('home'))
 		{
@@ -719,76 +719,76 @@ class NostoTagging extends Module
 		$this->hookDisplayPaymentTop();
 	}
 
-    /**
-     * Hook for sending order confirmations to Nosto via the API.
-     *
-     * This is a fallback for the regular order tagging on the "order confirmation page", as there are cases when
-     * the customer does not get redirected back to the shop after the payment is completed.
-     *
-     * @param array $params
-     */
-    public function hookActionOrderStatusPostUpdate(Array $params)
-    {
-        if (isset($params['id_order']))
-        {
-            $order = new Order($params['id_order']);
-            // PS 1.4 does not have "id_shop_group" and "id_shop" properties in the order object.
-            $id_shop_group = isset($order->id_shop_group) ? $order->id_shop_group : null;
-            $id_shop = isset($order->id_shop) ? $order->id_shop : null;
-            $nosto_order = $this->getOrderData($order);
-            // This is done out of context, so we need to specify the exact parameters to get the correct account.
-            $account_name = NostoTaggingAccount::getName($order->id_lang, $id_shop_group, $id_shop);
-            if (!empty($nosto_order) && !empty($account_name))
-            {
-                $id_nosto_customer = NostoTaggingCustomerLink::getNostoCustomerId($order);
-                if (!empty($id_nosto_customer))
-                {
-                    $path = NostoTaggingApiRequest::PATH_ORDER_TAGGING;
-                    $replace_params = array('{m}' => $account_name, '{cid}' => $id_nosto_customer);
-                }
-                else
-                {
-                    $path = NostoTaggingApiRequest::PATH_UNMATCHED_ORDER_TAGGING;
-                    $replace_params = array('{m}' => $account_name);
+	/**
+	* Hook for sending order confirmations to Nosto via the API.
+	*
+	* This is a fallback for the regular order tagging on the "order confirmation page", as there are cases when
+	* the customer does not get redirected back to the shop after the payment is completed.
+	*
+	* @param array $params
+	*/
+	public function hookActionOrderStatusPostUpdate(Array $params)
+	{
+		if (isset($params['id_order']))
+		{
+			$order = new Order($params['id_order']);
+			// PS 1.4 does not have "id_shop_group" and "id_shop" properties in the order object.
+			$id_shop_group = isset($order->id_shop_group) ? $order->id_shop_group : null;
+			$id_shop = isset($order->id_shop) ? $order->id_shop : null;
+			$nosto_order = $this->getOrderData($order);
+			// This is done out of context, so we need to specify the exact parameters to get the correct account.
+			$account_name = NostoTaggingAccount::getName($order->id_lang, $id_shop_group, $id_shop);
+			if (!empty($nosto_order) && !empty($account_name))
+			{
+				$id_nosto_customer = NostoTaggingCustomerLink::getNostoCustomerId($order);
+				if (!empty($id_nosto_customer))
+				{
+					$path = NostoTaggingApiRequest::PATH_ORDER_TAGGING;
+					$replace_params = array('{m}' => $account_name, '{cid}' => $id_nosto_customer);
+				}
+				else
+				{
+					$path = NostoTaggingApiRequest::PATH_UNMATCHED_ORDER_TAGGING;
+					$replace_params = array('{m}' => $account_name);
 
-                    $module_name = $order->module;
-                    $module = Module::getInstanceByName($module_name);
-                    if ($module !== false && isset($module->version))
-                        $module_version = $module->version;
-                    else
-                        $module_version = 'unknown';
+					$module_name = $order->module;
+					$module = Module::getInstanceByName($module_name);
+					if ($module !== false && isset($module->version))
+						$module_version = $module->version;
+					else
+						$module_version = 'unknown';
 
-                    $nosto_order->payment_provider = $module_name.' ['.$module_version.']';
-                }
+					$nosto_order->payment_provider = $module_name.' ['.$module_version.']';
+				}
 
-                $request = new NostoTaggingApiRequest();
-                $request->setPath($path);
-                $request->setContentType('application/json');
-                $request->setReplaceParams($replace_params);
-                $response = $request->post(Tools::jsonEncode($nosto_order));
+				$request = new NostoTaggingApiRequest();
+				$request->setPath($path);
+				$request->setContentType('application/json');
+				$request->setReplaceParams($replace_params);
+				$response = $request->post(Tools::jsonEncode($nosto_order));
 
-                if ($response->getCode() !== 200)
-                    NostoTaggingLogger::log(
-                        __CLASS__.'::'.__FUNCTION__.' - Order was not sent to Nosto',
-                        NostoTaggingLogger::LOG_SEVERITY_ERROR,
-                        $response->getCode(),
-                        'Order',
-                        (int)$params['id_order']
-                    );
-            }
-        }
-    }
+				if ($response->getCode() !== 200)
+					NostoTaggingLogger::log(
+						__CLASS__.'::'.__FUNCTION__.' - Order was not sent to Nosto',
+						NostoTaggingLogger::LOG_SEVERITY_ERROR,
+						$response->getCode(),
+						'Order',
+						(int)$params['id_order']
+					);
+			}
+		}
+	}
 
-    /**
-     * Backwards compatibility hook.
-     *
-     * @see NostoTagging::hookActionOrderStatusPostUpdate()
-     * @param array $params
-     */
-    public function hookPostUpdateOrderStatus(Array $params)
-    {
-        $this->hookActionOrderStatusPostUpdate($params);
-    }
+	/**
+	 * Backwards compatibility hook.
+	 *
+	 * @see NostoTagging::hookActionOrderStatusPostUpdate()
+	 * @param array $params
+	 */
+	public function hookPostUpdateOrderStatus(Array $params)
+	{
+		$this->hookActionOrderStatusPostUpdate($params);
+	}
 
 	/**
 	 * Hook for adding content to the home page.
