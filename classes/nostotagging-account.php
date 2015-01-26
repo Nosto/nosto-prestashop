@@ -110,17 +110,19 @@ class NostoTaggingAccount
 	 */
 	public static function delete($id_lang, $id_shop_group = null, $id_shop = null)
 	{
-		$account_name = self::getName($id_lang, $id_shop_group, $id_shop);
-		if (empty($account_name))
+		// We must have an account with specified criteria to continue.
+		if (!self::exists($id_lang, $id_shop_group, $id_shop))
 			return;
-		$token = NostoTaggingApiToken::get('', $id_lang, $id_shop_group, $id_shop); // todo
-		if (NostoTaggingConfig::deleteAllFromContext($id_lang, $id_shop_group, $id_shop) && !empty($token))
+		// Get the SSO token before deleting everything account related from PS.
+		$token = NostoTaggingApiToken::get('sso', $id_lang, $id_shop_group, $id_shop);
+		NostoTaggingConfig::deleteAllFromContext($id_lang, $id_shop_group, $id_shop);
+		if (!empty($token))
 		{
 			$request = new NostoTaggingApiRequest();
 			$request->setPath(NostoTaggingApiRequest::PATH_ACCOUNT_DELETED);
 			$request->setContentType('application/json');
 			$request->setAuthBasic('', $token);
-			$response = $request->post(json_encode(array('account_id' => $account_name)));
+			$response = $request->post('');
 
 			if ($response->getCode() !== 200)
 				NostoTaggingLogger::log(
@@ -133,6 +135,7 @@ class NostoTaggingAccount
 
 	/**
 	 * Deletes all nosto accounts from the system and notifies nosto that accounts are deleted.
+	 *
 	 * @return bool
 	 */
 	public static function deleteAll()
