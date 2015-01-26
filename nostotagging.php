@@ -720,13 +720,13 @@ class NostoTagging extends Module
 	}
 
 	/**
-	* Hook for sending order confirmations to Nosto via the API.
-	*
-	* This is a fallback for the regular order tagging on the "order confirmation page", as there are cases when
-	* the customer does not get redirected back to the shop after the payment is completed.
-	*
-	* @param array $params
-	*/
+	 * Hook for sending order confirmations to Nosto via the API.
+	 *
+	 * This is a fallback for the regular order tagging on the "order confirmation page", as there are cases when
+	 * the customer does not get redirected back to the shop after the payment is completed.
+	 *
+	 * @param array $params
+	 */
 	public function hookActionOrderStatusPostUpdate(Array $params)
 	{
 		if (isset($params['id_order']))
