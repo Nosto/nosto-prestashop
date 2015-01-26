@@ -1,4 +1,27 @@
 <?php
+/**
+ * 2013-2014 Nosto Solutions Ltd
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to contact@nosto.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
+ * versions in the future. If you wish to customize PrestaShop for your
+ * needs please refer to http://www.prestashop.com for more information.
+ *
+ * @author    Nosto Solutions Ltd <contact@nosto.com>
+ * @copyright 2013-2014 Nosto Solutions Ltd
+ * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
 
 /**
  * Helper class for generating preview links for the front end slots.
@@ -40,8 +63,7 @@ EOT;
 
 			$link = new Link();
 			$url = $link->getProductLink($product, null, null, null, $id_lang);
-			$url = NostoTaggingHttpRequest::replaceQueryParamInUrl('nostodebug', 'true', $url);
-			return $url;
+			return self::addQueryParams($url, $id_lang);
 		}
 		catch (Exception $e)
 		{
@@ -86,8 +108,7 @@ EOT;
 
 			$link = new Link();
 			$url = $link->getCategoryLink($category, null, $id_lang);
-			$url = NostoTaggingHttpRequest::replaceQueryParamInUrl('nostodebug', 'true', $url);
-			return $url;
+			return self::addQueryParams($url, $id_lang);
 		}
 		catch (Exception $e)
 		{
@@ -110,8 +131,7 @@ EOT;
 				$id_lang = Context::getContext()->language->id;
 			$link = new Link();
 			$url = $link->getPageLink('search.php', true, $id_lang).'?'.self::SEARCH_PAGE_QUERY;
-			$url = NostoTaggingHttpRequest::replaceQueryParamInUrl('nostodebug', 'true', $url);
-			return $url;
+			return self::addQueryParams($url, $id_lang);
 		}
 		catch (Exception $e)
 		{
@@ -134,8 +154,7 @@ EOT;
 				$id_lang = Context::getContext()->language->id;
 			$link = new Link();
 			$url = $link->getPageLink('order.php', true, $id_lang);
-			$url = NostoTaggingHttpRequest::replaceQueryParamInUrl('nostodebug', 'true', $url);
-			return $url;
+			return self::addQueryParams($url, $id_lang);
 		}
 		catch (Exception $e)
 		{
@@ -158,13 +177,30 @@ EOT;
 				$id_lang = Context::getContext()->language->id;
 			$link = new Link();
 			$url = $link->getPageLink('index.php', true, $id_lang);
-			$url = NostoTaggingHttpRequest::replaceQueryParamInUrl('nostodebug', 'true', $url);
-			return $url;
+			return self::addQueryParams($url, $id_lang);
 		}
 		catch (Exception $e)
 		{
 			// Return empty on failure
 			return '';
 		}
+	}
+
+	/**
+	 * Adds any additional query params to the preview url, namely the "nostodebug" flag.
+	 * Also adds the id_lang param if url rewriting is not on as it seems that it is left out in some cases.
+	 *
+	 * @param string $url the preview url to add the query param to.
+	 * @param int $id_lang the language ID for which the url is created.
+	 * @return string the preview url with added params.
+	 */
+	protected static function addQueryParams($url, $id_lang)
+	{
+		// If url rewriting is of, then make sure the id_lang is set.
+		if ((int)Configuration::get('PS_REWRITING_SETTINGS') === 0)
+			$url = NostoTaggingHttpRequest::replaceQueryParamInUrl('id_lang', $id_lang, $url);
+		// Always add the "nostodebug" flag.
+		$url = NostoTaggingHttpRequest::replaceQueryParamInUrl('nostodebug', 'true', $url);
+		return $url;
 	}
 }
