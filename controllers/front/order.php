@@ -43,7 +43,15 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
 			$order = new Order($id_order);
 			$nosto_order = $this->module->getOrderData($order);
 			if (!empty($nosto_order))
+			{
+				// Remove all "special" items with product ID of -1 (discounts, shipping costs etc.).
+				foreach ($nosto_order->purchased_items as $i => $item) {
+					if (isset($item['product_id']) && $item['product_id'] === -1) {
+						unset($nosto_order->purchased_items[$i]);
+					}
+				}
 				$nosto_orders[] = $nosto_order;
+			}
 			$order = null;
 		}
 
