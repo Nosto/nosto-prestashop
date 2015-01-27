@@ -83,13 +83,29 @@ module in the modules listing. This will open a new page with the module configu
 
 ## License
 
-Open Software License ("OSL") v. 3.0
+Academic Free License ("AFL") v. 3.0
 
 ## Dependencies
 
 PrestaShop version 1.4.x - 1.6.x
 
 ## Changelog
+
+* 2.0.1
+    * Fixed cart tagging to show also when cart is empty
+
+* 2.0.0
+    * Updated translations
+
+* 1.3.7
+    * Fixed customer tagging for PS 1.4 versions
+
+* 1.3.6
+    * Added http request adapter for curl
+    * Prestashop standards-compliant
+
+* 1.3.5
+    * Fixed check for current controller in some PS 1.5 versions
 
 * 1.3.4
     * Fixed issue with logged in customer tagging on PS 1.4

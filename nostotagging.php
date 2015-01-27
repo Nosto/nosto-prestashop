@@ -1,4 +1,28 @@
 <?php
+/**
+ * 2013-2014 Nosto Solutions Ltd
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to contact@nosto.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
+ * versions in the future. If you wish to customize PrestaShop for your
+ * needs please refer to http://www.prestashop.com for more information.
+ *
+ * @author    Nosto Solutions Ltd <contact@nosto.com>
+ * @copyright 2013-2014 Nosto Solutions Ltd
+ * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+
 if (!defined('_PS_VERSION_'))
 	exit;
 
@@ -40,7 +64,7 @@ if ((basename(__FILE__) === 'nostotagging.php'))
 class NostoTagging extends Module
 {
 	const NOSTOTAGGING_SERVER_ADDRESS = 'connect.nosto.com';
-	const NOSTOTAGGING_IFRAME_URI = '/hub/prestashop/{m}?lang={lang}&ps_version={psv}&nt_version={ntv}&product_pu={prp}&category_pu={prc}&search_pu={prs}&cart_pu={pra}&front_pu={prh}';
+	const NOSTOTAGGING_IFRAME_URI = '/hub/prestashop/{m}';
 
 	/**
 	 * Custom hooks to add for this module.
@@ -79,10 +103,9 @@ class NostoTagging extends Module
 	{
 		$this->name = 'nostotagging';
 		$this->tab = 'advertising_marketing';
-		$this->version = '1.3.4';
+		$this->version = '2.0.1';
 		$this->author = 'Nosto';
 		$this->need_instance = 1;
-		$this->ps_versions_compliancy = array('min' => '1.4', 'max' => '1.6');
 		$this->bootstrap = true;
 
 		parent::__construct();
@@ -102,54 +125,45 @@ class NostoTagging extends Module
 	 * Installs the module.
 	 *
 	 * Initializes config, adds custom hooks and registers used hooks.
+	 * The hook names for PS 1.4 are used here as all superior versions have an hook alias table which they use as a
+	 * lookup to check which PS 1.4 names correspond to the newer names.
 	 *
 	 * @return bool
 	 */
 	public function install()
 	{
-		// Backward compatibility
-		if (_PS_VERSION_ < '1.5')
-			return parent::install()
-				&& NostoTaggingCustomerLink::createTable()
-				&& $this->initHooks()
-				&& $this->registerHook('displayCategoryTop')
-				&& $this->registerHook('displayCategoryFooter')
-				&& $this->registerHook('displaySearchTop')
-				&& $this->registerHook('displaySearchFooter')
-				&& $this->registerHook('header')
-				&& $this->registerHook('top')
-				&& $this->registerHook('footer')
-				//&& $this->registerHook('leftColumn')
-				//&& $this->registerHook('rightColumn')
-				&& $this->registerHook('productfooter')
-				&& $this->registerHook('shoppingCart')
-				&& $this->registerHook('orderConfirmation')
-				&& $this->registerHook('paymentConfirm')
-				&& $this->registerHook('paymentTop')
-				&& $this->registerHook('home')
-				&& $this->registerHook('updateproduct')
-				&& $this->registerHook('deleteproduct')
-				&& $this->registerHook('updateQuantity');
-		else
-			return parent::install()
-				&& NostoTaggingCustomerLink::createTable()
-				&& $this->initHooks()
-				&& $this->registerHook('displayCategoryTop')
-				&& $this->registerHook('displayCategoryFooter')
-				&& $this->registerHook('displaySearchTop')
-				&& $this->registerHook('displaySearchFooter')
-				&& $this->registerHook('displayHeader')
-				&& $this->registerHook('displayTop')
-				&& $this->registerHook('displayFooter')
-				//&& $this->registerHook('displayLeftColumn')
-				//&& $this->registerHook('displayRightColumn')
-				&& $this->registerHook('displayFooterProduct')
-				&& $this->registerHook('displayShoppingCartFooter')
-				&& $this->registerHook('displayOrderConfirmation')
-				&& $this->registerHook('actionPaymentConfirmation')
-				&& $this->registerHook('displayPaymentTop')
-				&& $this->registerHook('displayHome')
-				&& $this->registerHook('actionObjectUpdateAfter');
+		if (parent::install()
+			&& NostoTaggingCustomerLink::createTable()
+			&& $this->initHooks()
+			&& $this->registerHook('displayCategoryTop')
+			&& $this->registerHook('displayCategoryFooter')
+			&& $this->registerHook('displaySearchTop')
+			&& $this->registerHook('displaySearchFooter')
+			&& $this->registerHook('header')
+			&& $this->registerHook('top')
+			&& $this->registerHook('footer')
+			&& $this->registerHook('productfooter')
+			&& $this->registerHook('shoppingCart')
+			&& $this->registerHook('orderConfirmation')
+			&& $this->registerHook('paymentConfirm')
+			&& $this->registerHook('paymentTop')
+			&& $this->registerHook('home'))
+		{
+			if (_PS_VERSION_ < '1.5')
+			{
+				// For PS 1.4 we need to register some additional hooks for the product re-crawl.
+				return $this->registerHook('updateproduct')
+					&& $this->registerHook('deleteproduct')
+					&& $this->registerHook('updateQuantity');
+			}
+			else
+			{
+				// And for PS >= 1.5 we register the object update hook for the product re-crawl as we can get better
+				// precision using that then the separate hooks like in PS 1.4.
+				return $this->registerHook('actionObjectUpdateAfter');
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -192,12 +206,17 @@ class NostoTagging extends Module
 		$field_account_authorized = $this->name.'_account_authorized';
 		$field_languages = $this->name.'_languages';
 		$field_current_language = $this->name.'_current_language';
+
+		$languages = Language::getLanguages(true, $this->context->shop->id);
 		$account_email = $this->context->employee->email;
 
 		if ($_SERVER['REQUEST_METHOD'] === 'POST')
 		{
 			$language_id = (int)Tools::getValue($field_current_language);
 			$current_language = $this->ensureAdminLanguage($language_id);
+
+			if (_PS_VERSION_ >= '1.5' && Shop::getContext() !== Shop::CONTEXT_SHOP)
+				$this->addFlashMessage('error', $this->l('Please choose a shop to configure Nosto for.'));
 
 			if ($current_language['id_lang'] != $language_id)
 				$this->addFlashMessage('error', $this->l('Language cannot be empty.'));
@@ -208,10 +227,10 @@ class NostoTagging extends Module
 					$this->addFlashMessage('error', $this->l('Email cannot be empty.'));
 				elseif (!Validate::isEmail($account_email))
 					$this->addFlashMessage('error', $this->l('Email is not a valid email address.'));
-				elseif (!NostoTaggingAccount::create($this->context, $account_email, $language_id))
+				elseif (!NostoTaggingAccount::create($this->context, $language_id, $account_email))
 					$this->addFlashMessage('error', $this->l('Account could not be automatically created. Please visit nosto.com to create a new account.'));
 				else
-					$this->addFlashMessage('success', $this->l('Account created.'));
+					$this->addFlashMessage('success', $this->l('Account created. Please check your email and follow the instructions to set a password for your new account within three days.'));
 			}
 			elseif (Tools::isSubmit('submit_nostotagging_authorize_account'))
 			{
@@ -219,7 +238,7 @@ class NostoTagging extends Module
 				$client = new NostoTaggingOAuth2Client();
 				$client->setRedirectUrl(urlencode($this->getOAuth2ControllerUrl($params)));
 				$client->setScopes(NostoTaggingApiToken::$api_token_names);
-				header('Location: '.$client->getAuthorizationUrl());
+				Tools::redirect($client->getAuthorizationUrl(), '');
 				die();
 			}
 			elseif (Tools::isSubmit('submit_nostotagging_reset_account'))
@@ -241,6 +260,9 @@ class NostoTagging extends Module
 				$output .= $this->displayConfirmation($flash_message);
 			foreach ($this->getFlashMessages('error') as $flash_message)
 				$output .= $this->displayError($flash_message);
+
+			if (_PS_VERSION_ >= '1.5' && Shop::getContext() !== Shop::CONTEXT_SHOP)
+				$output .= $this->displayError($this->l('Please choose a shop to configure Nosto for.'));
 		}
 
 		// Choose current language if it has not been set.
@@ -261,7 +283,7 @@ class NostoTagging extends Module
 			// Hack a few translations for the view as PS 1.4 does not support sprintf syntax in smarty "l" function.
 			'translations' => array(
 				'nostotagging_installed_heading' => sprintf(
-					$this->l('You have installed Nosto to your %s shop'),
+					$this->l('You have added Nosto to your %s shop'),
 					$current_language['name']
 				),
 				'nostotagging_installed_account_name' => sprintf(
@@ -269,7 +291,7 @@ class NostoTagging extends Module
 					NostoTaggingAccount::getName($language_id)
 				),
 				'nostotagging_not_installed_heading' => sprintf(
-					$this->l('Install Nosto to your %s shop'),
+					$this->l('Add Nosto to your %s shop'),
 					$current_language['name']
 				),
 			)
@@ -279,7 +301,25 @@ class NostoTagging extends Module
 		// which are then shown in an iframe on the module config page.
 		$url = $this->doSSOLogin($language_id);
 		if (!empty($url) && NostoTaggingAccount::isConnectedToNosto($language_id))
-			$this->context->smarty->assign(array('iframe_url' => $this->buildAdminIframeUrl($url, $language_id)));
+			$this->context->smarty->assign(array(
+				'iframe_url' => $url.'?r='.urlencode(NostoTaggingHttpRequest::buildUri(
+						self::NOSTOTAGGING_IFRAME_URI.'?'.http_build_query(array(
+							'lang' => $this->context->language->iso_code,
+							'ps_version' => _PS_VERSION_,
+							'nt_version' => $this->version,
+							'product_pu' => NostoTaggingPreviewLink::getProductPageUrl(null, $language_id),
+							'category_pu' => NostoTaggingPreviewLink::getCategoryPageUrl(null, $language_id),
+							'search_pu' => NostoTaggingPreviewLink::getSearchPageUrl($language_id),
+							'cart_pu' => NostoTaggingPreviewLink::getCartPageUrl($language_id),
+							'front_pu' => NostoTaggingPreviewLink::getHomePageUrl($language_id),
+							'shop_lang' => $current_language['iso_code'],
+							'unique_id' => sha1($this->name._COOKIE_KEY_), // unique PS installation ID.
+						)),
+						array(
+							'{m}' => NostoTaggingAccount::getName($language_id)
+						)
+				))
+			));
 
 		$stylesheets = '<link rel="stylesheet" href="'.$this->_path.'css/tw-bs-v3.1.1.css">';
 		$stylesheets .= '<link rel="stylesheet" href="'.$this->_path.'css/nostotagging-admin-config.css">';
@@ -707,12 +747,15 @@ class NostoTagging extends Module
 		if (isset($params['id_order']))
 		{
 			$order = new Order($params['id_order']);
+			// PS 1.4 does not have "id_shop_group" and "id_shop" properties in the order object.
+			$id_shop_group = isset($order->id_shop_group) ? $order->id_shop_group : null;
+			$id_shop = isset($order->id_shop) ? $order->id_shop : null;
 			$nosto_order = $this->getOrderData($order);
 			// This is done out of context, so we need to specify the exact parameters to get the correct account.
-			$account_name = NostoTaggingAccount::getName($order->id_lang, $order->id_shop_group, $order->id_shop);
+			$account_name = NostoTaggingAccount::getName($order->id_lang, $id_shop_group, $id_shop);
 			if (!empty($nosto_order) && !empty($account_name))
 			{
-				$id_nosto_customer = NostoTaggingCustomerLink::getNostoCustomerId($this);
+				$id_nosto_customer = NostoTaggingCustomerLink::getNostoCustomerId($order);
 				if (!empty($id_nosto_customer))
 				{
 					$path = NostoTaggingApiRequest::PATH_ORDER_TAGGING;
@@ -737,7 +780,7 @@ class NostoTagging extends Module
 				$request->setPath($path);
 				$request->setContentType('application/json');
 				$request->setReplaceParams($replace_params);
-				$response = $request->post(json_encode($nosto_order));
+				$response = $request->post(Tools::jsonEncode($nosto_order));
 
 				if ($response->getCode() !== 200)
 					NostoTaggingLogger::log(
@@ -808,7 +851,7 @@ class NostoTagging extends Module
 					$request->setPath(NostoTaggingApiRequest::PATH_PRODUCT_RE_CRAWL);
 					$request->setContentType('application/json');
 					$request->setAuthBasic('', $token);
-					$response = $request->post(json_encode(array('product_ids' => array($object->id))));
+					$response = $request->post(Tools::jsonEncode(array('product_ids' => array($object->id))));
 
 					if ($response->getCode() !== 200)
 						NostoTaggingLogger::log(
@@ -925,33 +968,6 @@ class NostoTagging extends Module
 	}
 
 	/**
-	 * Builds the iframe url for the admin page.
-	 *
-	 * @param string $url the base url for nosto.
-	 * @param int $id_lang the language ID for which to build the url.
-	 * @return string the url.
-	 */
-	protected function buildAdminIframeUrl($url, $id_lang)
-	{
-		return $url.'?r='.urlencode(
-			NostoTaggingHttpRequest::buildUri(
-				self::NOSTOTAGGING_IFRAME_URI,
-				array(
-					'{m}' => NostoTaggingAccount::getName($id_lang),
-					'{lang}' => $this->context->language->iso_code,
-					'{psv}' => _PS_VERSION_,
-					'{ntv}' => $this->version,
-					'{prp}' => urlencode(NostoTaggingPreviewLink::getProductPageUrl(null, $id_lang)),
-					'{prc}' => urlencode(NostoTaggingPreviewLink::getCategoryPageUrl(null, $id_lang)),
-					'{prs}' => urlencode(NostoTaggingPreviewLink::getSearchPageUrl($id_lang)),
-					'{pra}' => urlencode(NostoTaggingPreviewLink::getCartPageUrl($id_lang)),
-					'{prh}' => urlencode(NostoTaggingPreviewLink::getHomePageUrl($id_lang)),
-				)
-			)
-		);
-	}
-
-	/**
 	 * Returns hidden nosto recommendation elements for the current controller.
 	 * These are used as a fallback for showing recommendations if the appropriate hooks are not present in the theme.
 	 * The hidden elements are put into place and shown in the shop with JavaScript.
@@ -960,54 +976,47 @@ class NostoTagging extends Module
 	 */
 	protected function getHiddenRecommendationElements()
 	{
-		$html = '';
 		$prepend = '';
 		$append = '';
 
 		if ($this->isController('index'))
 		{
 			// The home page.
-			$append .= '<div class="hidden_nosto_element" data-nosto-id="frontpage-nosto-1"></div>';
-			$append .= '<div class="hidden_nosto_element" data-nosto-id="frontpage-nosto-2"></div>';
-			$append .= '<div class="hidden_nosto_element" data-nosto-id="frontpage-nosto-3"></div>';
-			$append .= '<div class="hidden_nosto_element" data-nosto-id="frontpage-nosto-4"></div>';
+			$append .= $this->display(__FILE__, 'views/templates/hook/home_hidden-nosto-elements.tpl');
 		}
 		elseif ($this->isController('product'))
 		{
 			// The product page.
-			$append .= '<div class="hidden_nosto_element" data-nosto-id="nosto-page-product1"></div>';
-			$append .= '<div class="hidden_nosto_element" data-nosto-id="nosto-page-product2"></div>';
-			$append .= '<div class="hidden_nosto_element" data-nosto-id="nosto-page-product3"></div>';
+			$append .= $this->display(__FILE__, 'views/templates/hook/footer-product_hidden-nosto-elements.tpl');
 		}
 		elseif ($this->isController('order'))
 		{
 			// The cart page.
-			$append .= '<div class="hidden_nosto_element" data-nosto-id="nosto-page-cart1"></div>';
-			$append .= '<div class="hidden_nosto_element" data-nosto-id="nosto-page-cart3"></div>';
-			$append .= '<div class="hidden_nosto_element" data-nosto-id="nosto-page-cart2"></div>';
+			$append .= $this->display(__FILE__, 'views/templates/hook/shopping-cart-footer_hidden-nosto-elements.tpl');
 		}
 		elseif ($this->isController('category') || $this->isController('manufacturer'))
 		{
 			// The category/manufacturer page.
-			$append .= '<div class="hidden_nosto_element" data-nosto-id="nosto-page-category1"></div>';
-			$append .= '<div class="hidden_nosto_element" data-nosto-id="nosto-page-category2"></div>';
+			$append .= $this->display(__FILE__, 'views/templates/hook/category-footer_hidden-nosto-elements.tpl');
 		}
 		elseif ($this->isController('search'))
 		{
 			// The search page.
-			$prepend .= '<div class="hidden_nosto_element" data-nosto-id="nosto-page-search1"></div>';
-			$append .= '<div class="hidden_nosto_element" data-nosto-id="nosto-page-search2"></div>';
+			$prepend .= $this->display(__FILE__, 'views/templates/hook/search-top_hidden-nosto-elements.tpl');
+			$append .= $this->display(__FILE__, 'views/templates/hook/search-footer_hidden-nosto-elements.tpl');
+		}
+		else
+		{
+			// If the current page is not one of the ones we want to show recommendations on, just return empty.
+			return '';
 		}
 
-		if (!empty($prepend))
-			$prepend .= '<div class="prepend">'.$prepend.'</div>';
-		if (!empty($append))
-			$append .= '<div class="append">'.$append.'</div>';
+		$this->smarty->assign(array(
+			'hidden_nosto_elements_prepend' => $prepend,
+			'hidden_nosto_elements_append' => $append,
+		));
 
-		if (!empty($prepend) || !empty($append))
-			$html .= '<div id="hidden_nosto_elements" style="display: none;">'.$prepend.$append.'</div>';
-
-		return $html;
+		return $this->display(__FILE__, 'views/templates/hook/hidden-nosto-elements.tpl');
 	}
 
 	/**
@@ -1038,15 +1047,27 @@ class NostoTagging extends Module
 	 */
 	protected function isController($name)
 	{
-		// For prestashop 1.5 and 1.6 we can access the current controllers php_self property.
-		if (!empty($this->context->controller->php_self))
-			return $this->context->controller->php_self === $name;
+		if (_PS_VERSION_ >= '1.5')
+		{
+			// For prestashop 1.5 and 1.6 we can in most cases access the current controllers php_self property.
+			if (!empty($this->context->controller->php_self))
+				return $this->context->controller->php_self === $name;
 
-		// But for 1.4 we need to parse the current script name, as it uses different scripts per page.
-		// Version 1.4 does have a php_self property in the running controller, but there is no way to access the
-		// controller from modules.
-		$script_name = isset($_SERVER['SCRIPT_NAME']) ? $_SERVER['SCRIPT_NAME'] : '';
-		return basename($script_name) === ($name.'.php');
+			// But some prestashop 1.5 controllers are missing the php_self property.
+			if (($controller = Tools::getValue('controller')) !== false)
+				return $controller === $name;
+		}
+		else
+		{
+			// For 1.4 we need to parse the current script name, as it uses different scripts per page.
+			// 1.4 does have a php_self property in the running controller, but there is no way to access the
+			// controller from modules.
+			$script_name = isset($_SERVER['SCRIPT_NAME']) ? $_SERVER['SCRIPT_NAME'] : '';
+			return basename($script_name) === ($name.'.php');
+		}
+
+		// Fallback when controller cannot be recognised.
+		return false;
 	}
 
 	/**
@@ -1070,7 +1091,7 @@ class NostoTagging extends Module
 		$request->setReplaceParams(array('{email}' => $employee->email));
 		$request->setContentType('application/json');
 		$request->setAuthBasic('', $sso_token);
-		$response = $request->post(json_encode(array(
+		$response = $request->post(Tools::jsonEncode(array(
 			'first_name' => $employee->firstname,
 			'last_name' => $employee->lastname
 		)));

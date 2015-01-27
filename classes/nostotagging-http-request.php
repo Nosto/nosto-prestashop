@@ -1,4 +1,31 @@
 <?php
+/**
+ * 2013-2014 Nosto Solutions Ltd
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to contact@nosto.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
+ * versions in the future. If you wish to customize PrestaShop for your
+ * needs please refer to http://www.prestashop.com for more information.
+ *
+ * @author    Nosto Solutions Ltd <contact@nosto.com>
+ * @copyright 2013-2014 Nosto Solutions Ltd
+ * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+
+require_once(dirname(__FILE__).'/nostotagging-http-request-adapter.php');
+require_once(dirname(__FILE__).'/nostotagging-http-request-adapter-socket.php');
+require_once(dirname(__FILE__).'/nostotagging-http-request-adapter-curl.php');
 
 /**
  * Helper class for doing http requests and returning unified response including header info.
@@ -27,6 +54,23 @@ class NostoTaggingHttpRequest
 	 * @var array list of optional replace params that can be injected into the url if it contains placeholders.
 	 */
 	protected $replace_params = array();
+
+	/**
+	 * @var NostoTaggingHttpRequestAdapter the adapter to use for making the request.
+	 */
+	private $_adapter;
+
+	/**
+	 * Constructor.
+	 * Chooses request adapter based on what available in the environment.
+	 */
+	public function __construct()
+	{
+		if (function_exists('curl_exec'))
+			$this->_adapter = new NostoTaggingHttpRequestAdapterCurl();
+		else
+			$this->_adapter = new NostoTaggingHttpRequestAdapterSocket();
+	}
 
 	/**
 	 * Setter for the request url.
@@ -111,6 +155,8 @@ class NostoTaggingHttpRequest
 		switch ($type)
 		{
 			case self::AUTH_BASIC:
+				// The use of base64 encoding for authorization headers follow the RFC 2617 standard for http
+				// authentication (https://www.ietf.org/rfc/rfc2617.txt).
 				$this->addHeader('Authorization', 'Basic '.base64_encode(implode(':', $value)));
 				break;
 
@@ -263,12 +309,12 @@ class NostoTaggingHttpRequest
 	 */
 	public function post($content)
 	{
-		return $this->send($this->url, array(
-			'http' => array(
-				'method' => 'POST',
-				'header' => implode("\r\n", $this->headers),
-				'content' => $content
-			)
+		$url = $this->url;
+		if (!empty($this->replace_params))
+			$url = self::buildUri($url, $this->replace_params);
+		return $this->_adapter->post($url, array(
+			'headers' => $this->headers,
+			'content' => $content,
 		));
 	}
 
@@ -279,33 +325,13 @@ class NostoTaggingHttpRequest
 	 */
 	public function get()
 	{
-		return $this->send($this->url, array(
-			'http' => array(
-				'method' => 'GET',
-				'header' => implode("\r\n", $this->headers),
-			)
-		));
-	}
-
-	/**
-	 * Sends the request and returns a response instance.
-	 *
-	 * @param string $url
-	 * @param array $options
-	 * @return NostoTaggingHttpResponse
-	 */
-	protected function send($url, array $options = array())
-	{
+		$url = $this->url;
 		if (!empty($this->replace_params))
 			$url = self::buildUri($url, $this->replace_params);
 		if (!empty($this->query_params))
 			$url .= '?'.http_build_query($this->query_params);
-		$context = stream_context_create($options);
-		$result = @file_get_contents($url, false, $context);
-		$response = new NostoTaggingHttpResponse();
-		if (isset($http_response_header))
-			$response->setHttpResponseHeader($http_response_header);
-		$response->setResult($result);
-		return $response;
+		return $this->_adapter->get($url, array(
+			'headers' => $this->headers,
+		));
 	}
 }
