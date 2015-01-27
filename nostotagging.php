@@ -213,7 +213,7 @@ class NostoTagging extends Module
 		if ($_SERVER['REQUEST_METHOD'] === 'POST')
 		{
 			$language_id = (int)Tools::getValue($field_current_language);
-			$current_language = $this->ensureAdminLanguage($language_id);
+			$current_language = $this->ensureAdminLanguage($languages, $language_id);
 
 			if (_PS_VERSION_ >= '1.5' && Shop::getContext() !== Shop::CONTEXT_SHOP)
 			{
@@ -221,19 +221,19 @@ class NostoTagging extends Module
 			}
 			elseif ($current_language['id_lang'] != $language_id)
 			{
-				$this->addFlashMessage('error', $this->l('Language cannot be empty.'));
+				NostoTaggingFlashMessage::add('error', $this->l('Language cannot be empty.'));
 			}
 			elseif (Tools::isSubmit('submit_nostotagging_new_account'))
 			{
 				$account_email = (string)Tools::getValue($field_account_email);
 				if (empty($account_email))
-					$this->addFlashMessage('error', $this->l('Email cannot be empty.'));
+					NostoTaggingFlashMessage::add('error', $this->l('Email cannot be empty.'));
 				elseif (!Validate::isEmail($account_email))
-					$this->addFlashMessage('error', $this->l('Email is not a valid email address.'));
+					NostoTaggingFlashMessage::add('error', $this->l('Email is not a valid email address.'));
 				elseif (!NostoTaggingAccount::create($this->context, $language_id, $account_email))
-					$this->addFlashMessage('error', $this->l('Account could not be automatically created. Please visit nosto.com to create a new account.'));
+					NostoTaggingFlashMessage::add('error', $this->l('Account could not be automatically created. Please visit nosto.com to create a new account.'));
 				else
-					$this->addFlashMessage('success', $this->l('Account created. Please check your email and follow the instructions to set a password for your new account within three days.'));
+					NostoTaggingFlashMessage::add('success', $this->l('Account created. Please check your email and follow the instructions to set a password for your new account within three days.'));
 			}
 			elseif (Tools::isSubmit('submit_nostotagging_authorize_account'))
 			{
@@ -261,9 +261,9 @@ class NostoTagging extends Module
 			if (($success_message = Tools::getValue('oauth_success')) !== false)
 				$output .= $this->displayConfirmation($this->l($success_message));
 
-			foreach ($this->getFlashMessages('success') as $flash_message)
+			foreach (NostoTaggingFlashMessage::get('success') as $flash_message)
 				$output .= $this->displayConfirmation($flash_message);
-			foreach ($this->getFlashMessages('error') as $flash_message)
+			foreach (NostoTaggingFlashMessage::get('error') as $flash_message)
 				$output .= $this->displayError($flash_message);
 
 			if (_PS_VERSION_ >= '1.5' && Shop::getContext() !== Shop::CONTEXT_SHOP)
@@ -273,7 +273,7 @@ class NostoTagging extends Module
 		// Choose current language if it has not been set.
 		if (!isset($current_language))
 		{
-			$current_language = $this->ensureAdminLanguage($language_id);
+			$current_language = $this->ensureAdminLanguage($languages, $language_id);
 			$language_id = (int)$current_language['id_lang'];
 		}
 
@@ -333,28 +333,6 @@ class NostoTagging extends Module
 		$output .= $this->display(__FILE__, 'views/templates/admin/config-bootstrap.tpl');
 
 		return $stylesheets.$scripts.$output;
-	}
-
-	/**
-	 * Wrapper method to add user flash messages.
-	 *
-	 * @param string $type the type of message (use class constants).
-	 * @param string $message the message.
-	 */
-	public function addFlashMessage($type, $message)
-	{
-		NostoTaggingFlashMessage::add($type, $message);
-	}
-
-	/**
-	 * Wrapper method for getting user flash message by type.
-	 *
-	 * @param string $type the type of messages (use class constants).
-	 * @return array the message array.
-	 */
-	public function getFlashMessages($type)
-	{
-		return NostoTaggingFlashMessage::get($type);
 	}
 
 	/**
@@ -956,12 +934,12 @@ class NostoTagging extends Module
 	/**
 	 * Gets the current admin config language data.
 	 *
+	 * @param array $languages list of valid languages.
 	 * @param int $id_lang if a specific language is required.
 	 * @return array the language data array.
 	 */
-	protected function ensureAdminLanguage($id_lang)
+	protected function ensureAdminLanguage(array $languages, $id_lang)
 	{
-		$languages = Language::getLanguages();
 		foreach ($languages as $language)
 			if ($language['id_lang'] == $id_lang)
 				return $language;
