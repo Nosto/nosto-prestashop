@@ -216,10 +216,13 @@ class NostoTagging extends Module
 			$current_language = $this->ensureAdminLanguage($language_id);
 
 			if (_PS_VERSION_ >= '1.5' && Shop::getContext() !== Shop::CONTEXT_SHOP)
-				$this->addFlashMessage('error', $this->l('Please choose a shop to configure Nosto for.'));
-
-			if ($current_language['id_lang'] != $language_id)
+			{
+				// Do nothing; after the redirect this will be checked again and an error message is outputted.
+			}
+			elseif ($current_language['id_lang'] != $language_id)
+			{
 				$this->addFlashMessage('error', $this->l('Language cannot be empty.'));
+			}
 			elseif (Tools::isSubmit('submit_nostotagging_new_account'))
 			{
 				$account_email = (string)Tools::getValue($field_account_email);
@@ -242,7 +245,9 @@ class NostoTagging extends Module
 				die();
 			}
 			elseif (Tools::isSubmit('submit_nostotagging_reset_account'))
+			{
 				NostoTaggingAccount::delete($language_id);
+			}
 
 			// Refresh the page after every POST to get rid of form re-submission errors.
 			$this->refreshAdmin(array('language_id' => $language_id));
