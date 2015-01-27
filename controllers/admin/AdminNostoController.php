@@ -33,18 +33,15 @@ class AdminNostoController extends ModuleAdminController
 	 */
 	public function initContent()
 	{
-		// todo: access control?
-		// todo: clean this up.
-
 		if (!$this->viewAccess())
 		{
 			$this->errors[] = Tools::displayError('You do not have permission to view this.');
 			return;
 		}
 
-		$token = Tools::getAdminToken(
-			'AdminModules'.intval(Tab::getIdFromClassName('AdminModules')).intval($this->context->cookie->id_employee)
-		);
+		$id_tab = (int)Tab::getIdFromClassName('AdminModules');
+		$id_employee = (int)$this->context->cookie->id_employee;
+		$token = Tools::getAdminToken('AdminModules'.$id_tab.$id_employee);
 		Tools::redirectAdmin('index.php?controller=AdminModules&configure=nostotagging&token='.$token);
 	}
 }

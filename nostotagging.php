@@ -179,7 +179,8 @@ class NostoTagging extends Module
 	{
 		return parent::uninstall()
 			&& NostoTaggingConfig::purge()
-			&& NostoTaggingCustomerLink::dropTable();
+			&& NostoTaggingCustomerLink::dropTable()
+			&& NostoTaggingAdminTab::uninstall();
 	}
 
 	/**

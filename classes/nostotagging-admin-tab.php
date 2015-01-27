@@ -41,14 +41,66 @@ class NostoTaggingAdminTab
 
 		$tab = new Tab();
 		$tab->active = 1;
-		$tab->class_name = 'AdminNosto';
+		$tab->class_name = 'AdminParentNosto';
 		$tab->name = array();
-		// todo: figure out the language support
 		foreach (Language::getLanguages(true) as $lang)
-			$tab->name[$lang['id_lang']] = 'Test #' . $lang['id_lang'];
-		//$tab->id_parent = (int)Tab::getIdFromClassName('AdminAdmin');
+		{
+			switch ($lang['iso_code'])
+			{
+				case 'de':
+					$tab->name[$lang['id_lang']] = 'Personalisierung';
+					break;
+
+				case 'fr':
+					$tab->name[$lang['id_lang']] = 'Personnalisation';
+					break;
+
+				case 'es':
+					$tab->name[$lang['id_lang']] = 'Personalización';
+					break;
+
+				default:
+					$tab->name[$lang['id_lang']] = 'Personalization';
+					break;
+			}
+		}
+		$tab->id_parent = 0;
 		$tab->module = 'nostotagging';
-		return $tab->add();
+		$added = $tab->add();
+
+		if ($added)
+		{
+			$tab = new Tab();
+			$tab->active = 1;
+			$tab->class_name = 'AdminNosto';
+			$tab->name = array();
+			foreach (Language::getLanguages(true) as $lang)
+			{
+				switch ($lang['iso_code'])
+				{
+					case 'de':
+						$tab->name[$lang['id_lang']] = 'Home';
+						break;
+
+					case 'fr':
+						$tab->name[$lang['id_lang']] = 'Home';
+						break;
+
+					case 'es':
+						$tab->name[$lang['id_lang']] = 'Home';
+						break;
+
+					default:
+						$tab->name[$lang['id_lang']] = 'Home';
+						break;
+				}
+			}
+			$tab->id_parent = (int)Tab::getIdFromClassName('AdminParentNosto');
+			$tab->module = 'nostotagging';
+			$added = $tab->add();
+		}
+
+		return $added;
 	}
 
 	/**
@@ -62,11 +114,15 @@ class NostoTaggingAdminTab
 		if (_PS_VERSION_ < '1.5')
 			return true;
 
-		$id_tab = (int)Tab::getIdFromClassName('AdminNosto');
-		if (!$id_tab)
-			return false;
+		foreach (array('AdminParentNosto', 'AdminNosto') as $tab_name) {
+			$id_tab = (int)Tab::getIdFromClassName($tab_name);
+			if ($id_tab)
+			{
+				$tab = new Tab($id_tab);
+				$tab->delete();
+			}
+		}
 
-		$tab = new Tab($id_tab);
-		return $tab->delete();
+		return true;
 	}
 } 
