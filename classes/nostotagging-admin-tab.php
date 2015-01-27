@@ -29,6 +29,9 @@
 class NostoTaggingAdminTab
 {
 	/**
+	 * Installs the Admin Tab in PS backend.
+	 * Only for PS >= 1.5.
+	 *
 	 * @return bool
 	 */
 	public static function install()
@@ -40,14 +43,18 @@ class NostoTaggingAdminTab
 		$tab->active = 1;
 		$tab->class_name = 'AdminNosto';
 		$tab->name = array();
+		// todo: figure out the language support
 		foreach (Language::getLanguages(true) as $lang)
-			$tab->name[$lang['id_lang']] = 'Test';
-		$tab->id_parent = (int)Tab::getIdFromClassName('AdminAdmin');
+			$tab->name[$lang['id_lang']] = 'Test #' . $lang['id_lang'];
+		//$tab->id_parent = (int)Tab::getIdFromClassName('AdminAdmin');
 		$tab->module = 'nostotagging';
 		return $tab->add();
 	}
 
 	/**
+	 * Uninstalls the Admin Tab from PS backend.
+	 * Only for PS >= 1.5.
+	 *
 	 * @return bool
 	 */
 	public static function uninstall()
