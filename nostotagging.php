@@ -278,7 +278,7 @@ class NostoTagging extends Module
 			$field_account_name => NostoTaggingAccount::getName($language_id),
 			$field_account_email => $account_email,
 			$field_account_authorized => NostoTaggingAccount::isConnectedToNosto($language_id),
-			$field_languages => Language::getLanguages(),
+			$field_languages => $languages,
 			$field_current_language => $current_language,
 			// Hack a few translations for the view as PS 1.4 does not support sprintf syntax in smarty "l" function.
 			'translations' => array(
@@ -944,7 +944,7 @@ class NostoTagging extends Module
 	{
 		$admin_url = $this->getAdminUrl();
 		$admin_url = NostoTaggingHttpRequest::replaceQueryParamsInUrl($query_params, $admin_url);
-		header('Location: '.$admin_url);
+		Tools::redirect($admin_url, '');
 		die;
 	}
 
