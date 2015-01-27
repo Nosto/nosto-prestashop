@@ -196,7 +196,8 @@ class NostoTagging extends Module
 
 		// Always update the url to the module admin page when we access it.
 		// This can then later be used by the oauth2 controller to redirect the user back.
-		NostoTaggingConfig::write(NostoTaggingConfig::ADMIN_URL, $this->getAdminUrl());
+		$admin_url = $this->getAdminUrl();
+		NostoTaggingConfig::write(NostoTaggingConfig::ADMIN_URL, $admin_url);
 
 		$output = '';
 
@@ -250,7 +251,11 @@ class NostoTagging extends Module
 			}
 
 			// Refresh the page after every POST to get rid of form re-submission errors.
-			$this->refreshAdmin(array('language_id' => $language_id));
+			Tools::redirect(
+				NostoTaggingHttpRequest::replaceQueryParamInUrl('language_id', $language_id, $admin_url),
+				''
+			);
+			die;
 		}
 		else
 		{
@@ -915,20 +920,6 @@ class NostoTagging extends Module
 	public function getContext()
 	{
 		return $this->context;
-	}
-
-	/**
-	 * Redirects to the admin config page.
-	 * This is used after making POST requests on the admin page to get rid of the form re-submission errors.
-	 *
-	 * @param array $query_params additional query parameters.
-	 */
-	protected function refreshAdmin(array $query_params = array())
-	{
-		$admin_url = $this->getAdminUrl();
-		$admin_url = NostoTaggingHttpRequest::replaceQueryParamsInUrl($query_params, $admin_url);
-		Tools::redirect($admin_url, '');
-		die;
 	}
 
 	/**
