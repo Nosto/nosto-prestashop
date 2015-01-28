@@ -31,6 +31,8 @@ class NostoTaggingProduct extends NostoTaggingBlock
 	const IN_STOCK = 'InStock';
 	const OUT_OF_STOCK = 'OutOfStock';
 
+	const ADD_TO_CART = 'add-to-cart';
+
 	/**
 	 * @var string absolute url to the product page.
 	 */
@@ -150,6 +152,12 @@ class NostoTaggingProduct extends NostoTaggingBlock
 		if (($tags = $product->getTags($language_id)) !== '')
 			$this->tags = explode(', ', $tags);
 
+		// If the product has no attributes (color, size etc.), then we mark it as possible to add directly to cart.
+		$product_attributes = $product->getAttributesGroups($language_id);
+		if (empty($product_attributes)) {
+			$this->tags[] = self::ADD_TO_CART;
+		}
+
 		foreach ($product->getCategories() as $category_id)
 		{
 			$category = NostoTaggingCategory::buildCategoryString($category_id, $language_id);
@@ -157,7 +165,7 @@ class NostoTaggingProduct extends NostoTaggingBlock
 				$this->categories[] = (string)$category;
 		}
 
-		$this->description = (string)$product->description_short;
+		$this->description = (string)$product->description;
 		$this->list_price = NostoTaggingFormatter::formatPrice($product->getPriceWithoutReduct(false, null));
 
 		if (!empty($product->manufacturer_name))
