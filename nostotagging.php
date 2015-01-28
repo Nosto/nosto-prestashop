@@ -392,6 +392,8 @@ class NostoTagging extends Module
 	{
 		$server_address = self::NOSTOTAGGING_SERVER_ADDRESS;
 		$account_name = NostoTaggingAccount::getName($this->context->language->id);
+		if (empty($account_name))
+			return '';
 
 		$this->smarty->assign(array(
 			'server_address' => $server_address,
@@ -424,6 +426,9 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayTop()
 	{
+		if (!NostoTaggingAccount::exists($this->context->language->id))
+			return '';
+
 		$html = '';
 		$html .= $this->getCustomerTagging();
 		$html .= $this->getCartTagging();
@@ -473,6 +478,9 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayFooter()
 	{
+		if (!NostoTaggingAccount::exists($this->context->language->id))
+			return '';
+
 		return $this->display(__FILE__, 'views/templates/hook/footer_nosto-elements.tpl');
 	}
 
@@ -496,6 +504,9 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayLeftColumn()
 	{
+		if (!NostoTaggingAccount::exists($this->context->language->id))
+			return '';
+
 		return $this->display(__FILE__, 'views/templates/hook/left-column_nosto-elements.tpl');
 	}
 
@@ -519,6 +530,9 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayRightColumn()
 	{
+		if (!NostoTaggingAccount::exists($this->context->language->id))
+			return '';
+
 		return $this->display(__FILE__, 'views/templates/hook/right-column_nosto-elements.tpl');
 	}
 
@@ -544,6 +558,9 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayFooterProduct(Array $params)
 	{
+		if (!NostoTaggingAccount::exists($this->context->language->id))
+			return '';
+
 		$html = '';
 
 		$product = isset($params['product']) ? $params['product'] : null;
@@ -579,6 +596,9 @@ class NostoTagging extends Module
 		// Update the link between nosto users and prestashop customers.
 		NostoTaggingCustomerLink::updateLink($this);
 
+		if (!NostoTaggingAccount::exists($this->context->language->id))
+			return '';
+
 		return $this->display(__FILE__, 'views/templates/hook/shopping-cart-footer_nosto-elements.tpl');
 	}
 
@@ -604,6 +624,9 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayOrderConfirmation(Array $params)
 	{
+		if (!NostoTaggingAccount::exists($this->context->language->id))
+			return '';
+
 		$html = '';
 
 		$order = isset($params['objOrder']) ? $params['objOrder'] : null;
@@ -638,6 +661,9 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayCategoryTop()
 	{
+		if (!NostoTaggingAccount::exists($this->context->language->id))
+			return '';
+
 		return $this->display(__FILE__, 'views/templates/hook/category-top_nosto-elements.tpl');
 	}
 
@@ -655,6 +681,9 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayCategoryFooter()
 	{
+		if (!NostoTaggingAccount::exists($this->context->language->id))
+			return '';
+
 		return $this->display(__FILE__, 'views/templates/hook/category-footer_nosto-elements.tpl');
 	}
 
@@ -672,6 +701,9 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplaySearchTop()
 	{
+		if (!NostoTaggingAccount::exists($this->context->language->id))
+			return '';
+
 		return $this->display(__FILE__, 'views/templates/hook/search-top_nosto-elements.tpl');
 	}
 
@@ -689,6 +721,9 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplaySearchFooter()
 	{
+		if (!NostoTaggingAccount::exists($this->context->language->id))
+			return '';
+
 		return $this->display(__FILE__, 'views/templates/hook/search-footer_nosto-elements.tpl');
 	}
 
@@ -790,6 +825,9 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayHome()
 	{
+		if (!NostoTaggingAccount::exists($this->context->language->id))
+			return '';
+
 		return $this->display(__FILE__, 'views/templates/hook/home_nosto-elements.tpl');
 	}
 
