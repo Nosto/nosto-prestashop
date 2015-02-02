@@ -88,9 +88,8 @@ class NostoTaggingHttpRequestAdapterCurl extends NostoTaggingHttpRequestAdapter
 			$response->setResult($body);
 		}
 		else
-		{
 			$response->setErrorMessage(curl_error($ch));
-		}
+
 		curl_close($ch);
 		return $response;
 	}

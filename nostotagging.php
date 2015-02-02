@@ -237,12 +237,11 @@ class NostoTagging extends Module
 
 			if (_PS_VERSION_ >= '1.5' && Shop::getContext() !== Shop::CONTEXT_SHOP)
 			{
-				// Do nothing; after the redirect this will be checked again and an error message is outputted.
+				// Do nothing.
+				// After the redirect this will be checked again and an error message is outputted.
 			}
 			elseif ($current_language['id_lang'] != $language_id)
-			{
 				NostoTaggingFlashMessage::add('error', $this->l('Language cannot be empty.'));
-			}
 			elseif (Tools::isSubmit('submit_nostotagging_new_account'))
 			{
 				$account_email = (string)Tools::getValue($field_account_email);
@@ -265,9 +264,7 @@ class NostoTagging extends Module
 				die();
 			}
 			elseif (Tools::isSubmit('submit_nostotagging_reset_account'))
-			{
 				NostoTaggingAccount::delete($language_id);
-			}
 
 			// Refresh the page after every POST to get rid of form re-submission errors.
 			Tools::redirect(
@@ -444,7 +441,7 @@ class NostoTagging extends Module
 			'account_name' => $account_name,
 			'nosto_version' => $this->version,
 			'nosto_unique_id' => $this->getUniqueInstallationId(),
-			'nosto_language' => strtolower($this->context->language->iso_code),
+			'nosto_language' => Tools::strtolower($this->context->language->iso_code),
 		));
 
 		$this->context->controller->addJS($this->_path.'js/nostotagging-auto-slots.js');

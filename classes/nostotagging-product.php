@@ -154,9 +154,8 @@ class NostoTaggingProduct extends NostoTaggingBlock
 
 		// If the product has no attributes (color, size etc.), then we mark it as possible to add directly to cart.
 		$product_attributes = $product->getAttributesGroups($language_id);
-		if (empty($product_attributes)) {
+		if (empty($product_attributes))
 			$this->tags[] = self::ADD_TO_CART;
-		}
 
 		foreach ($product->getCategories() as $category_id)
 		{
