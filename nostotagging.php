@@ -311,7 +311,7 @@ class NostoTagging extends Module
 							'cart_pu' => NostoTaggingPreviewLink::getCartPageUrl($language_id),
 							'front_pu' => NostoTaggingPreviewLink::getHomePageUrl($language_id),
 							'shop_lang' => $current_language['iso_code'],
-							'unique_id' => sha1($this->name._COOKIE_KEY_), // unique PS installation ID.
+							'unique_id' => $this->getUniqueInstallationId(),
 						)),
 						array(
 							'{m}' => NostoTaggingAccount::getName($language_id)
@@ -326,6 +326,16 @@ class NostoTagging extends Module
 		$output .= $this->display(__FILE__, 'views/templates/admin/config-bootstrap.tpl');
 
 		return $stylesheets.$scripts.$output;
+	}
+
+	/**
+	 * Returns a unique ID that identifies this PS installation.
+	 *
+	 * @return string the unique ID.
+	 */
+	public function getUniqueInstallationId()
+	{
+		return sha1($this->name._COOKIE_KEY_);
 	}
 
 	/**
@@ -398,11 +408,17 @@ class NostoTagging extends Module
 		$this->smarty->assign(array(
 			'server_address' => $server_address,
 			'account_name' => $account_name,
+			'nosto_version' => $this->version,
+			'nosto_unique_id' => $this->getUniqueInstallationId(),
+			'nosto_language' => strtolower($this->context->language->iso_code),
 		));
 
 		$this->context->controller->addJS($this->_path.'js/nostotagging-auto-slots.js');
 
-		return $this->display(__FILE__, 'views/templates/hook/header_embed-script.tpl');
+		$html = $this->display(__FILE__, 'views/templates/hook/header_meta-tags.tpl');
+		$html .= $this->display(__FILE__, 'views/templates/hook/header_embed-script.tpl');
+
+		return $html;
 	}
 
 	/**
