@@ -91,6 +91,9 @@ PrestaShop version 1.4.x - 1.6.x
 
 ## Changelog
 
+* 2.1.0
+    * Improve server-to-server order confirmations
+
 * 2.0.1
     * Fixed cart tagging to show also when cart is empty
 

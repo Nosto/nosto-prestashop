@@ -54,6 +54,7 @@ if ((basename(__FILE__) === 'nostotagging.php'))
 	require_once($module_dir.'/classes/nostotagging-customer-link.php');
 	require_once($module_dir.'/classes/nostotagging-preview-link.php');
 	require_once($module_dir.'/classes/nostotagging-flash-message.php');
+	require_once($module_dir.'/classes/nostotagging-updater.php');
 }
 
 /**
@@ -103,7 +104,7 @@ class NostoTagging extends Module
 	{
 		$this->name = 'nostotagging';
 		$this->tab = 'advertising_marketing';
-		$this->version = '2.0.1';
+		$this->version = '2.1.0';
 		$this->author = 'Nosto';
 		$this->need_instance = 1;
 		$this->bootstrap = true;
@@ -119,6 +120,9 @@ class NostoTagging extends Module
 
 		if (!$this->checkConfigState())
 			$this->warning = $this->l('A Nosto account is not set up for each shop and language.');
+
+		// Check for module updates for PS < 1.5.4.0.
+		NostoTaggingUpdater::checkForUpdates($this);
 	}
 
 	/**
@@ -145,10 +149,16 @@ class NostoTagging extends Module
 			&& $this->registerHook('productfooter')
 			&& $this->registerHook('shoppingCart')
 			&& $this->registerHook('orderConfirmation')
-			&& $this->registerHook('paymentConfirm')
+			&& $this->registerHook('postUpdateOrderStatus')
 			&& $this->registerHook('paymentTop')
 			&& $this->registerHook('home'))
 		{
+			// For versions 1.4.0.1 - 1.5.3.1 we need to keep track of the currently installed version.
+			// This is to enable auto-update of the module by running its upgrade scripts.
+			// This config value is updated in the NostoTaggingUpdater helper every time the module is updated.
+			if (version_compare(_PS_VERSION_, '1.5.4.0', '<'))
+				NostoTaggingConfig::write(NostoTaggingConfig::INSTALLED_VERSION, $this->version, null, true);
+
 			if (_PS_VERSION_ < '1.5')
 			{
 				// For PS 1.4 we need to register some additional hooks for the product re-crawl.
@@ -628,7 +638,7 @@ class NostoTagging extends Module
 	public function hookDisplayShoppingCartFooter()
 	{
 		// Update the link between nosto users and prestashop customers.
-		NostoTaggingCustomerLink::updateLink($this);
+		NostoTaggingCustomerLink::updateLink();
 
 		if (!NostoTaggingAccount::exists($this->context->language->id))
 			return '';
@@ -766,7 +776,7 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayPaymentTop()
 	{
-		NostoTaggingCustomerLink::updateLink($this);
+		NostoTaggingCustomerLink::updateLink();
 	}
 
 	/**
@@ -780,14 +790,14 @@ class NostoTagging extends Module
 	}
 
 	/**
-	 * Hook for sending order tagging information to Nosto via their API.
+	 * Hook for sending order confirmations to Nosto via the API.
 	 *
 	 * This is a fallback for the regular order tagging on the "order confirmation page", as there are cases when
 	 * the customer does not get redirected back to the shop after the payment is completed.
 	 *
 	 * @param array $params
 	 */
-	public function hookActionPaymentConfirmation(Array $params)
+	public function hookActionOrderStatusPostUpdate(Array $params)
 	{
 		if (isset($params['id_order']))
 		{
@@ -842,12 +852,12 @@ class NostoTagging extends Module
 	/**
 	 * Backwards compatibility hook.
 	 *
-	 * @see NostoTagging::hookActionPaymentConfirmation()
+	 * @see NostoTagging::hookActionOrderStatusPostUpdate()
 	 * @param array $params
 	 */
-	public function hookPaymentConfirm(Array $params)
+	public function hookPostUpdateOrderStatus(Array $params)
 	{
-		$this->hookActionPaymentConfirmation($params);
+		$this->hookActionOrderStatusPostUpdate($params);
 	}
 
 	/**

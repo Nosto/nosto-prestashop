@@ -30,6 +30,7 @@ class NostoTaggingConfig
 {
 	const ACCOUNT_NAME = 'NOSTOTAGGING_ACCOUNT_NAME';
 	const ADMIN_URL = 'NOSTOTAGGING_ADMIN_URL';
+	const INSTALLED_VERSION = 'NOSTOTAGGING_INSTALLED_VERSION';
 
 	/**
 	 * @param string $name
