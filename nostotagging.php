@@ -210,7 +210,9 @@ class NostoTagging extends Module
 		$field_current_language = $this->name.'_current_language';
 
 		$languages = Language::getLanguages(true, $this->context->shop->id);
-		$account_email = $this->context->employee->email;
+		/** @var EmployeeCore $employee */
+		$employee = $this->context->employee;
+		$account_email = $employee->email;
 
 		if ($_SERVER['REQUEST_METHOD'] === 'POST')
 		{
@@ -325,6 +327,9 @@ class NostoTagging extends Module
 							'front_pu' => NostoTaggingPreviewLink::getHomePageUrl($language_id),
 							'shop_lang' => $current_language['iso_code'],
 							'unique_id' => $this->getUniqueInstallationId(),
+							'fname' => $employee->firstname,
+							'lname' => $employee->lastname,
+							'email' => $employee->email,
 						)),
 						array(
 							'{m}' => NostoTaggingAccount::getName($language_id)
