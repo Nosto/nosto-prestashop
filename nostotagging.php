@@ -118,11 +118,17 @@ class NostoTagging extends Module
 		if (_PS_VERSION_ < '1.5')
 			require(_PS_MODULE_DIR_.$this->name.'/backward_compatibility/backward.php');
 
-		if (!$this->checkConfigState())
-			$this->warning = $this->l('A Nosto account is not set up for each shop and language.');
+		// Only try to use class files if we can resolve the __FILE__ global to the current file.
+		// We need to do this as this module file is parsed with eval() on the modules page,
+		// and eval() messes up the __FILE__ global, which means that class files have not been included.
+		if ((basename(__FILE__) === 'nostotagging.php'))
+		{
+			if (!$this->checkConfigState())
+				$this->warning = $this->l('A Nosto account is not set up for each shop and language.');
 
-		// Check for module updates for PS < 1.5.4.0.
-		NostoTaggingUpdater::checkForUpdates($this);
+			// Check for module updates for PS < 1.5.4.0.
+			NostoTaggingUpdater::checkForUpdates($this);
+		}
 	}
 
 	/**
