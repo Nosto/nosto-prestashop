@@ -30,8 +30,8 @@ class NostoTaggingProduct extends NostoTaggingBlock
 {
 	const IN_STOCK = 'InStock';
 	const OUT_OF_STOCK = 'OutOfStock';
-
 	const ADD_TO_CART = 'add-to-cart';
+	const OPTIMAL_IMAGE_WIDTH = 450;
 
 	/**
 	 * @var string absolute url to the product page.
@@ -132,14 +132,10 @@ class NostoTaggingProduct extends NostoTaggingBlock
 		$this->name = (string)$product->name;
 
 		$image_id = $product->getCoverWs();
-		if (ctype_digit((string)$image_id))
-		{
-			$type = (_PS_VERSION_ >= '1.5') ? ImageType::getFormatedName('large') : 'large';
-			$image_url = $link->getImageLink($product->link_rewrite, $product->id.'-'.$image_id, $type);
-		}
-		else
-			$image_url = '';
-		$this->image_url = (string)$image_url;
+		$image_type = $this->chooseOptimalImageType();
+		$this->image_url = (ctype_digit((string)$image_id) && !empty($image_type))
+			? (string)$link->getImageLink($product->link_rewrite, $product->id.'-'.$image_id, $image_type)
+			: '';
 
 		$this->price = NostoTaggingFormatter::formatPrice($product->getPrice(true, null));
 		$this->price_currency_code = (string)$currency->iso_code;
@@ -171,5 +167,29 @@ class NostoTaggingProduct extends NostoTaggingBlock
 			$this->brand = (string)$product->manufacturer_name;
 
 		$this->date_published = NostoTaggingFormatter::formatDate($product->date_add);
+	}
+
+	/**
+	 * Chooses the "optimal" image type to use for product image urls.
+	 *
+	 * The type is chosen based on which image type has a width closest to `self::OPTIMAL_IMAGE_WIDTH`.
+	 *
+	 * @return string|false the image type name or false if not found.
+	 */
+	protected function chooseOptimalImageType()
+	{
+		$definition = (_PS_VERSION_ >= '1.5') ? ObjectModel::getDefinition('ImageType') : array();
+		$table_name = isset($definition['table']) ? $definition['table'] : 'image_type';
+		$available_image_types = Db::getInstance()->executeS('
+			SELECT * FROM `'._DB_PREFIX_.pSQL($table_name).'`
+			WHERE `products` = 1
+			ORDER BY `width` ASC
+		');
+		$optimal = self::OPTIMAL_IMAGE_WIDTH;
+		$found = array();
+		foreach ($available_image_types as $available)
+			if (empty($found) || abs($optimal - (int)$found['width']) > abs((int)$available['width'] - $optimal))
+				$found = $available;
+		return isset($found['name']) ? $found['name'] : false;
 	}
 }
