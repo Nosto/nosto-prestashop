@@ -65,7 +65,7 @@ class NostoTaggingHttpRequest
 	/**
 	 * @var NostoTaggingHttpRequestAdapter the adapter to use for making the request.
 	 */
-	private $_adapter;
+	private $adapter;
 
 	/**
 	 * Constructor.
@@ -74,9 +74,9 @@ class NostoTaggingHttpRequest
 	public function __construct()
 	{
 		if (function_exists('curl_exec'))
-			$this->_adapter = new NostoTaggingHttpRequestAdapterCurl();
+			$this->adapter = new NostoTaggingHttpRequestAdapterCurl();
 		else
-			$this->_adapter = new NostoTaggingHttpRequestAdapterSocket();
+			$this->adapter = new NostoTaggingHttpRequestAdapterSocket();
 	}
 
 	/**
@@ -319,7 +319,7 @@ class NostoTaggingHttpRequest
 		$url = $this->url;
 		if (!empty($this->replace_params))
 			$url = self::buildUri($url, $this->replace_params);
-		return $this->_adapter->post($url, array(
+		return $this->adapter->post($url, array(
 			'headers' => $this->headers,
 			'content' => $content,
 		));
@@ -337,7 +337,7 @@ class NostoTaggingHttpRequest
 			$url = self::buildUri($url, $this->replace_params);
 		if (!empty($this->query_params))
 			$url .= '?'.http_build_query($this->query_params);
-		return $this->_adapter->get($url, array(
+		return $this->adapter->get($url, array(
 			'headers' => $this->headers,
 		));
 	}
