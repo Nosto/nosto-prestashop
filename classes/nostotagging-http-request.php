@@ -35,6 +35,13 @@ class NostoTaggingHttpRequest
 	const AUTH_BASIC = 'basic';
 	const AUTH_BEARER = 'bearer';
 
+	const PATH_ACCOUNT_DELETED = '/hub/uninstall';
+
+	/**
+	 * @var string base url for the nosto web hook requests.
+	 */
+	public static $base_url = 'https://my.nosto.com';
+
 	/**
 	 * @var string the request url.
 	 */

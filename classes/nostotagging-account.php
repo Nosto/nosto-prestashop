@@ -118,9 +118,8 @@ class NostoTaggingAccount
 		NostoTaggingConfig::deleteAllFromContext($id_lang, $id_shop_group, $id_shop);
 		if (!empty($token))
 		{
-			$request = new NostoTaggingApiRequest();
-			$request->setPath(NostoTaggingApiRequest::PATH_ACCOUNT_DELETED);
-			$request->setContentType('application/json');
+			$request = new NostoTaggingHttpRequest();
+			$request->setUrl(NostoTaggingHttpRequest::$base_url.NostoTaggingHttpRequest::PATH_ACCOUNT_DELETED);
 			$request->setAuthBasic('', $token);
 			$response = $request->post('');
 
