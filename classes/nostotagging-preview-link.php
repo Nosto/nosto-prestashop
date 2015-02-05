@@ -198,9 +198,9 @@ EOT;
 	{
 		// If url rewriting is of, then make sure the id_lang is set.
 		if ((int)Configuration::get('PS_REWRITING_SETTINGS') === 0)
-			$url = NostoTaggingHttpRequest::replaceQueryParamInUrl('id_lang', $id_lang, $url);
+			$url = NostoHttpRequest::replaceQueryParamInUrl('id_lang', $id_lang, $url);
 		// Always add the "nostodebug" flag.
-		$url = NostoTaggingHttpRequest::replaceQueryParamInUrl('nostodebug', 'true', $url);
+		$url = NostoHttpRequest::replaceQueryParamInUrl('nostodebug', 'true', $url);
 		return $url;
 	}
 }

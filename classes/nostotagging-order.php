@@ -26,7 +26,7 @@
 /**
  * Block for tagging orders.
  */
-class NostoTaggingOrder extends NostoTaggingBlock
+class NostoTaggingOrder extends NostoTaggingBlock implements NostoOrderInterface
 {
 	/**
 	 * @var string the order number.

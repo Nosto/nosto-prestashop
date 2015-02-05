@@ -38,23 +38,37 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
 		{
 			// The user accepted the authorization request.
 			// The authorization server responded with a code that can be used to exchange for the access token.
-			$client = new NostoTaggingOAuth2Client();
-			$client->setRedirectUrl($this->module->getOAuth2ControllerUrl(array('language_id' => $language_id)));
-			if (($token = $client->authenticate($code)) !== false)
-				if ($this->module->exchangeDataWithNosto($token, $language_id))
-				{
-					$msg = $this->module->l('Account %s successfully connected to Nosto.', 'oauth2');
-					$msg = sprintf($msg, $token->merchant_name);
-					$this->redirectToModuleAdmin(array(
-						'language_id' => $language_id,
-						'oauth_success' => $msg,
-					));
-				}
-			$msg = $this->module->l('Account could not be connected to Nosto. Please contact Nosto support.', 'oauth2');
-			$this->redirectToModuleAdmin(array(
-				'language_id' => $language_id,
-				'oauth_error' => $msg,
-			));
+			try
+			{
+				$meta = new NostoTaggingMetaOauth();
+				$meta->setModuleName($this->module->name);
+				$meta->setModulePath($this->module->_path); // todo: create getter
+				$meta->loadData($this->module->getContext(), $language_id); // todo: check language
+				$account = NostoAccount::syncFromNosto($meta, $code);
+
+				if (!Nosto::helper('account')->save($account))
+					throw new NostoException('Failed to save account.');
+
+				$msg = $this->module->l('Account %s successfully connected to Nosto.', 'oauth2');
+				$this->redirectToModuleAdmin(array(
+					'language_id' => $language_id,
+					'oauth_success' => sprintf($msg, $account->name),
+				));
+			}
+			catch (NostoException $e)
+			{
+				NostoTaggingLogger::log(
+					__CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(),
+					NostoTaggingLogger::LOG_SEVERITY_ERROR,
+					$e->getCode()
+				);
+
+				$msg = $this->module->l('Account could not be connected to Nosto. Please contact Nosto support.', 'oauth2');
+				$this->redirectToModuleAdmin(array(
+					'language_id' => $language_id,
+					'oauth_error' => $msg,
+				));
+			}
 		}
 		elseif (($error = Tools::getValue('error')) !== false)
 		{
@@ -89,7 +103,7 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
 		$admin_url = NostoTaggingConfig::read(NostoTaggingConfig::ADMIN_URL);
 		if (!empty($admin_url))
 		{
-			$admin_url = NostoTaggingHttpRequest::replaceQueryParamsInUrl($query_params, $admin_url);
+			$admin_url = NostoHttpRequest::replaceQueryParamsInUrl($query_params, $admin_url);
 			Tools::redirect($admin_url, '');
 			die;
 		}

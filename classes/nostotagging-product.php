@@ -26,7 +26,7 @@
 /**
  * Block for tagging products.
  */
-class NostoTaggingProduct extends NostoTaggingBlock
+class NostoTaggingProduct extends NostoTaggingBlock implements NostoProductInterface
 {
 	const IN_STOCK = 'InStock';
 	const OUT_OF_STOCK = 'OutOfStock';
