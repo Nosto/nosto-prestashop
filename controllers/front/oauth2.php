@@ -33,7 +33,7 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
 	 */
 	public function initContent()
 	{
-		$language_id = (int)Tools::getValue('language_id', $this->module->getContext()->language->id);
+		$id_lang = (int)Tools::getValue('language_id', $this->module->getContext()->language->id);
 		if (($code = Tools::getValue('code')) !== false)
 		{
 			// The user accepted the authorization request.
@@ -42,8 +42,8 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
 			{
 				$meta = new NostoTaggingMetaOauth();
 				$meta->setModuleName($this->module->name);
-				$meta->setModulePath($this->module->_path); // todo: create getter
-				$meta->loadData($this->module->getContext(), $language_id); // todo: check language
+				$meta->setModulePath($this->module->getPath());
+				$meta->loadData($this->module->getContext(), $id_lang); // todo: check language
 				$account = NostoAccount::syncFromNosto($meta, $code);
 
 				if (!Nosto::helper('account')->save($account))
@@ -51,21 +51,20 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
 
 				$msg = $this->module->l('Account %s successfully connected to Nosto.', 'oauth2');
 				$this->redirectToModuleAdmin(array(
-					'language_id' => $language_id,
+					'language_id' => $id_lang,
 					'oauth_success' => sprintf($msg, $account->name),
 				));
 			}
 			catch (NostoException $e)
 			{
-				NostoTaggingLogger::log(
+				Nosto::helper('nosto_tagging/logger')->error(
 					__CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(),
-					NostoTaggingLogger::LOG_SEVERITY_ERROR,
 					$e->getCode()
 				);
 
 				$msg = $this->module->l('Account could not be connected to Nosto. Please contact Nosto support.', 'oauth2');
 				$this->redirectToModuleAdmin(array(
-					'language_id' => $language_id,
+					'language_id' => $id_lang,
 					'oauth_error' => $msg,
 				));
 			}
@@ -78,14 +77,13 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
 				$message_parts[] = $error_reason;
 			if (($error_description = Tools::getValue('error')) !== false)
 				$message_parts[] = $error_description;
-			NostoTaggingLogger::log(
+			Nosto::helper('nosto_tagging/logger')->error(
 				__CLASS__.'::'.__FUNCTION__.' - '.implode(' - ', $message_parts),
-				NostoTaggingLogger::LOG_SEVERITY_ERROR,
 				200
 			);
 			$msg = $this->module->l('Account could not be connected to Nosto. You rejected the connection request.', 'oauth2');
 			$this->redirectToModuleAdmin(array(
-				'language_id' => $language_id,
+				'language_id' => $id_lang,
 				'oauth_error' => $msg,
 			));
 		}
@@ -100,7 +98,7 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
 	 */
 	protected function redirectToModuleAdmin(array $query_params)
 	{
-		$admin_url = NostoTaggingConfig::read(NostoTaggingConfig::ADMIN_URL);
+		$admin_url = Nosto::helper('nosto_tagging/config')->getAdminUrl();
 		if (!empty($admin_url))
 		{
 			$admin_url = NostoHttpRequest::replaceQueryParamsInUrl($query_params, $admin_url);

@@ -29,7 +29,7 @@
  * causes the upgrade scripts to never run.
  * The upgrade scripts are ran 'silently' and does not output anything to the user.
  */
-class NostoTaggingUpdater
+class NostoTaggingHelperUpdater
 {
 	/**
 	 * @var string the updater only runs upgrade scripts >= to this version.
@@ -45,7 +45,7 @@ class NostoTaggingUpdater
 	 *
 	 * @param Module $module the module to check and apply the updates for.
 	 */
-	public static function checkForUpdates($module)
+	public function checkForUpdates($module)
 	{
 		if (!Module::isInstalled($module->name))
 			return;
@@ -53,13 +53,13 @@ class NostoTaggingUpdater
 		// Prestashop 1.4 does not have any auto-update mechanism.
 		// Prestashop < 1.5.4.0 has a bug that causes the auto-update mechanism fail.
 		if (version_compare(_PS_VERSION_, '1.5.4.0', '<'))
-			foreach (self::findUpgradeScripts($module) as $script)
+			foreach ($this->findUpgradeScripts($module) as $script)
 				if (file_exists($script['file']) && is_readable($script['file']))
 				{
 					// Run the script and update the currently installed module version so future updates can work.
 					include_once $script['file'];
 					if (call_user_func($script['upgrade_function'], $module))
-						NostoTaggingConfig::write(NostoTaggingConfig::INSTALLED_VERSION, $script['version'], null, true);
+						Nosto::helper('nosto_tagging/config')->saveInstalledVersion($script['version']);
 				}
 
 		// Prestashop >= 1.5.4.0 handles the auto-update mechanism.
@@ -72,11 +72,11 @@ class NostoTaggingUpdater
 	 * @param Module $module the module to find the upgrade files for.
 	 * @return array the list of upgrade scripts.
 	 */
-	protected static function findUpgradeScripts($module)
+	protected function findUpgradeScripts($module)
 	{
 		$scripts = array();
 		$path = _PS_MODULE_DIR_.$module->name.'/upgrade/';
-		$installed_version = (string)NostoTaggingConfig::read(NostoTaggingConfig::INSTALLED_VERSION);
+		$installed_version = (string)Nosto::helper('nosto_tagging/config')->getInstalledVersion();
 		$new_version = $module->version;
 
 		if (file_exists($path) && ($files = scandir($path)))

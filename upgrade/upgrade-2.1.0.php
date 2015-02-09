@@ -38,9 +38,18 @@ if (!defined('_PS_VERSION_'))
  */
 function upgrade_module_2_1_0($object)
 {
+	$drop_table = 'DROP TABLE IF EXISTS `nostotagging_customer_link`';
+	$create_table = 'CREATE TABLE IF NOT EXISTS `nostotagging_customer_link` (
+						`id_cart` INT(10) UNSIGNED NOT NULL,
+						`id_nosto_customer` VARCHAR(255) NOT NULL,
+						`date_add` DATETIME NOT NULL,
+						`date_upd` DATETIME NULL,
+						PRIMARY KEY (`id_cart`, `id_nosto_customer`)
+					) ENGINE '._MYSQL_ENGINE_;
+
 	// We just drop the table and re-create as it's easier and we don't want the data we loose.
-	return NostoTaggingCustomerLink::dropTable()
-		&& NostoTaggingCustomerLink::createTable()
+	return Db::getInstance()->execute($drop_table)
+		&& Db::getInstance()->execute($create_table)
 		&& $object->unregisterHook('paymentConfirm')
 		&& $object->unregisterHook('actionPaymentConfirmation')
 		&& $object->registerHook('postUpdateOrderStatus');

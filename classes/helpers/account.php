@@ -2,8 +2,6 @@
 
 class NostoTaggingHelperAccount
 {
-	const NOSTOTAGGING_CONFIG_BASE = 'NOSTOTAGGING_API_TOKEN_';
-
 	/**
 	 * @param NostoAccount $account
 	 * @param null|int $id_lang the ID of the language to set the account name for.
@@ -11,10 +9,12 @@ class NostoTaggingHelperAccount
 	 */
 	public function save(NostoAccount $account, $id_lang)
 	{
-		$success = NostoTaggingConfig::write(NostoTaggingConfig::ACCOUNT_NAME, $account->getName(), $id_lang);
+		/** @var NostoTaggingHelperConfig $helper_config */
+		$helper_config = Nosto::helper('nosto_tagging/config');
+		$success = $helper_config->saveAccountName($account->getName(), $id_lang);
 		if ($success)
 			foreach ($account->tokens as $token)
-				$success = $success && $this->saveToken($token, $id_lang);
+				$success = $success && $helper_config->saveToken($token->name, $token->value, $id_lang);
 		return $success;
 	}
 
@@ -27,7 +27,9 @@ class NostoTaggingHelperAccount
 	 */
 	public function delete(NostoAccount $account, $id_lang, $id_shop_group = null, $id_shop = null)
 	{
-		$success = NostoTaggingConfig::deleteAllFromContext($id_lang, $id_shop_group, $id_shop);
+		/** @var NostoTaggingHelperConfig $helper_config */
+		$helper_config = Nosto::helper('nosto_tagging/config');
+		$success = $helper_config->deleteAllFromContext($id_lang, $id_shop_group, $id_shop);
 		if ($success)
 		{
 			$token = $account->getApiToken('sso');
@@ -38,9 +40,8 @@ class NostoTaggingHelperAccount
 				}
 				catch (NostoException $e)
 				{
-					NostoTaggingLogger::log(
+					Nosto::helper('nosto_tagging/logger')->error(
 						__CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(),
-						NostoTaggingLogger::LOG_SEVERITY_ERROR,
 						$e->getCode()
 					);
 				}
@@ -56,7 +57,9 @@ class NostoTaggingHelperAccount
 	 */
 	public function find($lang_id = null, $id_shop_group = null, $id_shop = null)
 	{
-		$account_name = NostoTaggingConfig::read(NostoTaggingConfig::ACCOUNT_NAME, $lang_id, $id_shop_group, $id_shop);
+		/** @var NostoTaggingHelperConfig $helper_config */
+		$helper_config = Nosto::helper('nosto_tagging/config');
+		$account_name = $helper_config->getAccountName($lang_id, $id_shop_group, $id_shop);
 		if (!empty($account_name))
 		{
 			$account = new NostoAccount();
@@ -65,9 +68,7 @@ class NostoTaggingHelperAccount
 			$tokens = array();
 			foreach (NostoApiToken::$tokenNames as $token_name)
 			{
-				$token_value = NostoTaggingConfig::read(
-					self::getTokenConfigKey($token_name), $lang_id, $id_shop_group, $id_shop
-				);
+				$token_value = $helper_config->getToken($token_name, $lang_id, $id_shop_group, $id_shop);
 				if (!empty($token_value))
 					$tokens[$token_name] = $token_value;
 			}
@@ -95,15 +96,5 @@ class NostoTaggingHelperAccount
 	{
 		$account = $this->find($lang_id, $id_shop_group, $id_shop);
 		return ($account !== null && $account->isConnectedToNosto());
-	}
-
-	protected function saveToken(NostoApiToken $token, $id_lang)
-	{
-		return NostoTaggingConfig::write($this->getTokenConfigKey($token->name), $token->value, $id_lang);
-	}
-
-	protected function getTokenConfigKey($name)
-	{
-		return self::NOSTOTAGGING_CONFIG_BASE.Tools::strtoupper($name);
 	}
 }

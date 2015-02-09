@@ -1,39 +1,16 @@
 <?php
-/**
- * 2013-2014 Nosto Solutions Ltd
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Academic Free License (AFL 3.0)
- * that is bundled with this package in the file LICENSE.txt.
- * It is also available through the world-wide-web at this URL:
- * http://opensource.org/licenses/afl-3.0.php
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to contact@nosto.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
- *
- * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2014 Nosto Solutions Ltd
- * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
- */
 
 /**
  * Helper class for managing the link between Prestashop shopping carts and Nosto users.
  * This link is used to create server side order confirmations through the Nosto REST API.
  */
-class NostoTaggingCustomerLink
+class NostoTaggingHelperCustomer
 {
 	const TABLE_NAME = 'nostotagging_customer_link';
 	const COOKIE_NAME = '2c_cId';
 
 	/**
-	 * Returns the table name.
+	 * Returns the reference table name.
 	 *
 	 * @return string
 	 */
@@ -43,7 +20,7 @@ class NostoTaggingCustomerLink
 	}
 
 	/**
-	 * Creates the customer link table in db if it does not exist.
+	 * Creates the reference table in db if it does not exist.
 	 *
 	 * @return bool
 	 */
@@ -61,7 +38,7 @@ class NostoTaggingCustomerLink
 	}
 
 	/**
-	 * Drops the customer link table from db if it exists.
+	 * Drops the reference table from db if it exists.
 	 *
 	 * @return bool
 	 */
@@ -72,11 +49,11 @@ class NostoTaggingCustomerLink
 	}
 
 	/**
-	 * Updates a customer link in the table.
+	 * Updates the current customers Nosto ID in the reference table.
 	 *
-	 * @return bool
+	 * @return bool true if updated correctly and false otherwise.
 	 */
-	public static function updateLink()
+	public static function updateNostoId()
 	{
 		$context = Context::getContext();
 		if (empty($context->cart->id))
@@ -116,12 +93,12 @@ class NostoTaggingCustomerLink
 	}
 
 	/**
-	 * Returns the nosto customer id if one exists in the link table.
+	 * Returns the customers Nosto ID.
 	 *
-	 * @param Order $order the order for which to get the nosto customer id.
-	 * @return bool|string
+	 * @param Order $order the order to get the customer from.
+	 * @return bool|string the customers Nosto ID or false if not found.
 	 */
-	public static function getNostoCustomerId(Order $order)
+	public static function getNostoId(Order $order)
 	{
 		$table = self::getTableName();
 		$id_cart = (int)$order->id_cart;

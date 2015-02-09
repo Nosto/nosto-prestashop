@@ -26,11 +26,13 @@
 /**
  * Helper class for managing config values.
  */
-class NostoTaggingConfig
+class NostoTaggingHelperConfig
 {
 	const ACCOUNT_NAME = 'NOSTOTAGGING_ACCOUNT_NAME';
 	const ADMIN_URL = 'NOSTOTAGGING_ADMIN_URL';
 	const INSTALLED_VERSION = 'NOSTOTAGGING_INSTALLED_VERSION';
+
+	const TOKEN_CONFIG_PREFIX = 'NOSTOTAGGING_API_TOKEN_';
 
 	/**
 	 * @param string $name
@@ -39,7 +41,7 @@ class NostoTaggingConfig
 	 * @param int|null $id_shop
 	 * @return bool
 	 */
-	public static function read($name, $lang_id = null, $id_shop_group = null, $id_shop = null)
+	public function read($name, $lang_id = null, $id_shop_group = null, $id_shop = null)
 	{
 		return Configuration::get($name, $lang_id, $id_shop_group, $id_shop);
 	}
@@ -51,7 +53,7 @@ class NostoTaggingConfig
 	 * @param bool $global
 	 * @return bool
 	 */
-	public static function write($name, $value, $lang_id = null, $global = false)
+	public function write($name, $value, $lang_id = null, $global = false)
 	{
 		$callback = array(
 			'Configuration',
@@ -70,7 +72,7 @@ class NostoTaggingConfig
 	 * @param int|null $id_shop
 	 * @return bool
 	 */
-	public static function exists($name, $lang_id = null, $id_shop_group = null, $id_shop = null)
+	public function exists($name, $lang_id = null, $id_shop_group = null, $id_shop = null)
 	{
 		$value = self::read($name, $lang_id, $id_shop_group, $id_shop);
 		return ($value !== false && $value !== null && $value !== '');
@@ -79,7 +81,7 @@ class NostoTaggingConfig
 	/**
 	 * Removes all "NOSTOTAGGING_" config entries.
 	 */
-	public static function purge()
+	public function purge()
 	{
 		$config_table = _DB_PREFIX_.'configuration';
 		$config_lang_table = $config_table.'_lang';
@@ -109,7 +111,7 @@ class NostoTaggingConfig
 	 * @param null|int $id_shop the ID of the shop.
 	 * @return bool
 	 */
-	public static function deleteAllFromContext($id_lang = null, $id_shop_group = null, $id_shop = null)
+	public function deleteAllFromContext($id_lang = null, $id_shop_group = null, $id_shop = null)
 	{
 		if (_PS_VERSION_ >= '1.5')
 		{
@@ -154,5 +156,112 @@ class NostoTaggingConfig
 		Configuration::loadConfiguration();
 
 		return true;
+	}
+
+	/**
+	 * Saves the account name to the config for given language.
+	 *
+	 * @param string $account_name the account name to save.
+	 * @param int $id_lang the language to save the account nam for.
+	 * @return bool true if saved correctly, false otherwise.
+	 */
+	public function saveAccountName($account_name, $id_lang)
+	{
+		return $this->write(self::ACCOUNT_NAME, $account_name, $id_lang);
+	}
+
+	/**
+	 * Gets a account name from the config.
+	 *
+	 * @param int $id_lang the language to get the account for.
+	 * @param null|int $id_shop_group the shop group to get the account for (defaults to current context).
+	 * @param null|int $id_shop the shop to get the account for (defaults to current context).
+	 * @return mixed
+	 */
+	public function getAccountName($id_lang, $id_shop_group = null, $id_shop = null)
+	{
+		return $this->read(self::ACCOUNT_NAME, $id_lang, $id_shop_group, $id_shop);
+	}
+
+	/**
+	 * Save the token to the config for given language.
+	 *
+	 * @param string $token_name the name of the token.
+	 * @param string $token_value the value of the token.
+	 * @param int $id_lang the language to save the token for.
+	 * @return bool true if saved correctly, false otherwise.
+	 */
+	public function saveToken($token_name, $token_value, $id_lang)
+	{
+		return $this->write($this->getTokenConfigKey($token_name), $token_value, $id_lang);
+	}
+
+	/**
+	 * Gets a token from the config by name.
+	 *
+	 * @param string $token_name the name of the token to get.
+	 * @param int $id_lang the language to get the token for.
+	 * @param null|int $id_shop_group the shop group to get the token for (defaults to current context).
+	 * @param null|int $id_shop the shop to get the token for (defaults to current context).
+	 * @return mixed
+	 */
+	public function getToken($token_name, $id_lang, $id_shop_group = null, $id_shop = null)
+	{
+		return $this->read(self::getTokenConfigKey($token_name), $id_lang, $id_shop_group, $id_shop);
+	}
+
+	/**
+	 * Saves the admin url to the config.
+	 *
+	 * @param string $url the url.
+	 * @return bool true if saved successfully, false otherwise.
+	 */
+	public function saveAdminUrl($url)
+	{
+		return $this->write(self::ADMIN_URL, $url);
+	}
+
+	/**
+	 * Get the admin url from the config.
+	 *
+	 * @return mixed
+	 */
+	public function getAdminUrl()
+	{
+		return $this->read(self::ADMIN_URL);
+	}
+
+	/**
+	 * Saves the installed module version to the config.
+	 * Used for PS <= 1.5.4.0 only.
+	 *
+	 * @param string $version the version.
+	 * @return bool true if saved successfully, false otherwise.
+	 */
+	public function saveInstalledVersion($version)
+	{
+		return $this->write(self::INSTALLED_VERSION, $version, null, true);
+	}
+
+	/**
+	 * Get the installed module version.
+	 * Used for PS <= 1.5.4.0 only.
+	 *
+	 * @return mixed
+	 */
+	public function getInstalledVersion()
+	{
+		return $this->read(self::INSTALLED_VERSION);
+	}
+
+	/**
+	 * Gets the fully qualified config key for a token name.
+	 *
+	 * @param string $name the name of the token.
+	 * @return string the fully qualified config key.
+	 */
+	protected function getTokenConfigKey($name)
+	{
+		return self::TOKEN_CONFIG_PREFIX.Tools::strtoupper($name);
 	}
 }

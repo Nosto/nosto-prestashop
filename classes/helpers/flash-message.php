@@ -27,7 +27,7 @@
  * Helper class for setting and retrieving persistent user flash messages.
  * Uses the Prestashop core cookie class as storage.
  */
-class NostoTaggingFlashMessage
+class NostoTaggingHelperFlashMessage
 {
 	const TYPE_SUCCESS = 'success';
 	const TYPE_ERROR = 'error';
@@ -38,7 +38,7 @@ class NostoTaggingFlashMessage
 	 * @param string $type the type of message (use class constants).
 	 * @param string $message the message.
 	 */
-	public static function add($type, $message)
+	public function add($type, $message)
 	{
 		$cookie = Context::getContext()->cookie;
 		$cookie_data = isset($cookie->nostotagging) ? Tools::jsonDecode($cookie->nostotagging, true) : array();
@@ -56,7 +56,7 @@ class NostoTaggingFlashMessage
 	 * @param string $type the type of messages (use class constants).
 	 * @return array the message array.
 	 */
-	public static function get($type)
+	public function getList($type)
 	{
 		$flash_messages = array();
 		$cookie = Context::getContext()->cookie;
