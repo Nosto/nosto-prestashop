@@ -53,14 +53,24 @@ class NostoTaggingHelperUpdater
 		// Prestashop 1.4 does not have any auto-update mechanism.
 		// Prestashop < 1.5.4.0 has a bug that causes the auto-update mechanism fail.
 		if (version_compare(_PS_VERSION_, '1.5.4.0', '<'))
+		{
+			// If the module is already updated to the latest version, don't continue.
+			$installed_version = (string)Nosto::helper('nosto_tagging/config')->getInstalledVersion();
+			if (version_compare($installed_version, $module->version, '='))
+				return;
+
 			foreach ($this->findUpgradeScripts($module) as $script)
 				if (file_exists($script['file']) && is_readable($script['file']))
 				{
 					// Run the script and update the currently installed module version so future updates can work.
 					include_once $script['file'];
-					if (call_user_func($script['upgrade_function'], $module))
-						Nosto::helper('nosto_tagging/config')->saveInstalledVersion($script['version']);
+					call_user_func($script['upgrade_function'], $module);
 				}
+
+			// Always update the installed version so that we can check it during the next requests in order
+			// to avoid reading the file system for upgrade script all the time.
+			Nosto::helper('nosto_tagging/config')->saveInstalledVersion($module->version);
+		}
 
 		// Prestashop >= 1.5.4.0 handles the auto-update mechanism.
 	}

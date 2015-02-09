@@ -43,10 +43,10 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
 				$meta = new NostoTaggingMetaOauth();
 				$meta->setModuleName($this->module->name);
 				$meta->setModulePath($this->module->getPath());
-				$meta->loadData($this->module->getContext(), $id_lang); // todo: check language
+				$meta->loadData($this->module->getContext(), $id_lang);
 				$account = NostoAccount::syncFromNosto($meta, $code);
 
-				if (!Nosto::helper('account')->save($account))
+				if (!Nosto::helper('nosto_tagging/account')->save($account, $id_lang))
 					throw new NostoException('Failed to save account.');
 
 				$msg = $this->module->l('Account %s successfully connected to Nosto.', 'oauth2');
@@ -73,15 +73,18 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
 		{
 			// The user rejected the authorization request.
 			$message_parts = array($error);
-			if (($error_reason = Tools::getValue('error')) !== false)
+			if (($error_reason = Tools::getValue('error_reason')) !== false)
 				$message_parts[] = $error_reason;
-			if (($error_description = Tools::getValue('error')) !== false)
+			if (($error_description = Tools::getValue('error_description')) !== false)
 				$message_parts[] = $error_description;
 			Nosto::helper('nosto_tagging/logger')->error(
 				__CLASS__.'::'.__FUNCTION__.' - '.implode(' - ', $message_parts),
 				200
 			);
-			$msg = $this->module->l('Account could not be connected to Nosto. You rejected the connection request.', 'oauth2');
+			if (!empty($error_reason) && $error_reason === 'user_denied')
+				$msg = $this->module->l('Account could not be connected to Nosto. You rejected the connection request.', 'oauth2');
+			else
+				$msg = $this->module->l('Account could not be connected to Nosto. Please contact Nosto support.', 'oauth2');
 			$this->redirectToModuleAdmin(array(
 				'language_id' => $id_lang,
 				'oauth_error' => $msg,

@@ -76,7 +76,7 @@ class NostoTaggingMetaOauth implements NostoOAuthClientMetaDataInterface
 		else
 		{
 			$link = new Link();
-			$this->redirect_url = $link->getModuleLink($this->name, 'oauth2', $params);
+			$this->redirect_url = $link->getModuleLink($this->module_name, 'oauth2', $params);
 		}
 
 		$this->language_iso_code = $language->iso_code;
