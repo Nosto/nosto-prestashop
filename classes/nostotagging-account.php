@@ -23,6 +23,8 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
+// TODO: REMOVE ONCE NOT NEEDED ANYMORE
+
 /**
  * Helper class for managing Nosto accounts.
  */

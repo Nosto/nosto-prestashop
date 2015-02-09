@@ -54,7 +54,6 @@ if ((basename(__FILE__) === 'nostotagging.php'))
 	require_once($module_dir.'/classes/nostotagging-formatter.php');
 	require_once($module_dir.'/classes/nostotagging-logger.php');
 	require_once($module_dir.'/classes/nostotagging-config.php');
-	// require_once($module_dir.'/classes/nostotagging-api-token.php');
 	require_once($module_dir.'/classes/nostotagging-customer-link.php');
 	require_once($module_dir.'/classes/nostotagging-preview-link.php');
 	require_once($module_dir.'/classes/nostotagging-flash-message.php');
@@ -785,6 +784,7 @@ class NostoTagging extends Module
 						(int)$params['id_order']
 					);
 				}
+				// todo: do the request
 				/*
 				$id_nosto_customer = NostoTaggingCustomerLink::getNostoCustomerId($order);
 				if (!empty($id_nosto_customer))

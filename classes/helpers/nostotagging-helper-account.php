@@ -2,6 +2,8 @@
 
 class NostoTaggingHelperAccount
 {
+	const NOSTOTAGGING_CONFIG_BASE = 'NOSTOTAGGING_API_TOKEN_';
+
 	/**
 	 * @param NostoAccount $account
 	 * @param null|int $id_lang the ID of the language to set the account name for.
@@ -12,7 +14,7 @@ class NostoTaggingHelperAccount
 		$success = NostoTaggingConfig::write(NostoTaggingConfig::ACCOUNT_NAME, $account->getName(), $id_lang);
 		if ($success)
 			foreach ($account->tokens as $token)
-				$success = $success && NostoTaggingApiToken::set($token->name, $token->value, $id_lang);
+				$success = $success && $this->saveToken($token, $id_lang);
 		return $success;
 	}
 
@@ -83,5 +85,15 @@ class NostoTaggingHelperAccount
 	{
 		$account = $this->find($lang_id, $id_shop_group, $id_shop);
 		return ($account !== null && $account->isConnectedToNosto());
+	}
+
+	protected function saveToken(NostoApiToken $token, $id_lang)
+	{
+		return NostoTaggingConfig::write($this->getTokenConfigKey($token->name), $token->value, $id_lang);
+	}
+
+	protected function getTokenConfigKey($name)
+	{
+		return self::NOSTOTAGGING_CONFIG_BASE.Tools::strtoupper($name);
 	}
 }
