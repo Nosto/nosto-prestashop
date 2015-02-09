@@ -840,16 +840,21 @@ class NostoTagging extends Module
 			$object = $params['object'];
 			if ($object instanceof Product)
 			{
-				$nosto_product = $this->getProductData($object);
-				// Send a request to Nosto to re-crawl this product for every language that has a token set.
+				// Send a request to Nosto to re-crawl this product for every language that has an account.
 				foreach (Language::getLanguages() as $language)
 				{
+					/** @var NostoAccount $account */
 					$account = Nosto::helper('nosto_tagging/account')->find((int)$language['id_lang']);
 					if ($account === null || !$account->isConnectedToNosto())
 						continue;
 
+					$product = new Product($object->id, false, (int)$language['id_lang']);
+					if (!Validate::isLoadedObject($product))
+						continue;
+
 					try
 					{
+						$nosto_product = new NostoTaggingProduct($this->context, $product);
 						NostoProductReCrawl::send($nosto_product, $account);
 					}
 					catch (NostoException $e)
