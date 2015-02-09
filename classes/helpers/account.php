@@ -100,7 +100,7 @@ class NostoTaggingHelperAccount
 			$account->name = $account_name;
 
 			$tokens = array();
-			foreach (NostoApiToken::$tokenNames as $token_name)
+			foreach (NostoApiToken::getApiTokenNames() as $token_name)
 			{
 				$token_value = $helper_config->getToken($token_name, $lang_id, $id_shop_group, $id_shop);
 				if (!empty($token_value))

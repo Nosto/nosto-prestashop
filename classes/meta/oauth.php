@@ -107,14 +107,14 @@ class NostoTaggingMetaOauth implements NostoOAuthClientMetaDataInterface
 	/**
 	 * The scopes for the OAuth2 request.
 	 * These are used to request specific API tokens from Nosto and should
-	 * almost always be the ones defined in NostoApiToken::$tokenNames.
+	 * almost always be the ones defined in NostoApiToken::getApiTokenNames().
 	 *
 	 * @return array the scopes.
 	 */
 	public function getScopes()
 	{
 		// We want all the available Nosto API tokens.
-		return NostoApiToken::$tokenNames;
+		return NostoApiToken::getApiTokenNames();
 	}
 
 	/**
