@@ -82,6 +82,28 @@ class NostoTaggingHelperAccount
 	}
 
 	/**
+	 * Deletes all Nosto accounts from the system and notifies nosto that accounts are deleted.
+	 *
+	 * @return bool
+	 */
+	public function deleteAll()
+	{
+		foreach (Shop::getShops() as $shop)
+		{
+			$id_shop = isset($shop['id_shop']) ? $shop['id_shop'] : null;
+			foreach (Language::getLanguages(true, $id_shop) as $language)
+			{
+				$id_shop_group = isset($shop['id_shop_group']) ? $shop['id_shop_group'] : null;
+				$account = $this->find($language['id_lang'], $id_shop_group, $id_shop);
+				if ($account === null)
+					continue;
+				$this->delete($account, $language['id_lang'], $id_shop_group, $id_shop);
+			}
+		}
+		return true;
+	}
+
+	/**
 	 * Finds and returns an account for given criteria.
 	 *
 	 * @param null|int $lang_id the ID of the language.
