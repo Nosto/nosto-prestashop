@@ -33,9 +33,7 @@ if (!defined('_PS_VERSION_'))
 if ((basename(__FILE__) === 'nostotagging.php'))
 {
 	$module_dir = dirname(__FILE__);
-	// Nosto SDK.
 	require_once($module_dir.'/libs/nosto/php-sdk/src/config.inc.php');
-	// Helpers.
 	require_once($module_dir.'/classes/helpers/account.php');
 	require_once($module_dir.'/classes/helpers/config.php');
 	require_once($module_dir.'/classes/helpers/customer.php');
@@ -43,13 +41,11 @@ if ((basename(__FILE__) === 'nostotagging.php'))
 	require_once($module_dir.'/classes/helpers/logger.php');
 	require_once($module_dir.'/classes/helpers/updater.php');
 	require_once($module_dir.'/classes/helpers/url.php');
-	// Meta Data.
 	require_once($module_dir.'/classes/meta/account.php');
 	require_once($module_dir.'/classes/meta/account-billing.php');
 	require_once($module_dir.'/classes/meta/account-iframe.php');
 	require_once($module_dir.'/classes/meta/account-owner.php');
 	require_once($module_dir.'/classes/meta/oauth.php');
-	// Models.
 	require_once($module_dir.'/classes/models/base.php');
 	require_once($module_dir.'/classes/models/cart.php');
 	require_once($module_dir.'/classes/models/category.php');

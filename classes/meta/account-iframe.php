@@ -100,19 +100,19 @@ class NostoTaggingMetaAccountIframe implements NostoAccountMetaDataIframeInterfa
 		if (!Validate::isLoadedObject($shop_language))
 			return;
 
-		/** @var NostoTaggingHelperUrl $urlHelper */
-		$urlHelper = Nosto::helper('nosto_tagging/url');
+		/** @var NostoTaggingHelperUrl $url_helper */
+		$url_helper = Nosto::helper('nosto_tagging/url');
 
 		$this->first_name = $context->employee->firstname;
 		$this->last_name = $context->employee->lastname;
 		$this->email = $context->employee->email;
 		$this->language_iso_code = $context->language->iso_code;
 		$this->language_iso_code_shop = $shop_language->iso_code;
-		$this->preview_url_product = $urlHelper->getPreviewUrlProduct(null, $id_lang);
-		$this->preview_url_category = $urlHelper->getPreviewUrlCategory(null, $id_lang);
-		$this->preview_url_search = $urlHelper->getPreviewUrlSearch($id_lang);
-		$this->preview_url_cart = $urlHelper->getPreviewUrlCart($id_lang);
-		$this->preview_url_front = $urlHelper->getPreviewUrlHome($id_lang);
+		$this->preview_url_product = $url_helper->getPreviewUrlProduct(null, $id_lang);
+		$this->preview_url_category = $url_helper->getPreviewUrlCategory(null, $id_lang);
+		$this->preview_url_search = $url_helper->getPreviewUrlSearch($id_lang);
+		$this->preview_url_cart = $url_helper->getPreviewUrlCart($id_lang);
+		$this->preview_url_front = $url_helper->getPreviewUrlHome($id_lang);
 	}
 
 	/**
@@ -129,11 +129,11 @@ class NostoTaggingMetaAccountIframe implements NostoAccountMetaDataIframeInterfa
 	/**
 	 * Sets the first name of the admin user.
 	 *
-	 * @param string $firstName the first name.
+	 * @param string $first_name the first name.
 	 */
-	public function setFirstName($firstName)
+	public function setFirstName($first_name)
 	{
-		$this->first_name = $firstName;
+		$this->first_name = $first_name;
 	}
 
 	/**
@@ -149,11 +149,11 @@ class NostoTaggingMetaAccountIframe implements NostoAccountMetaDataIframeInterfa
 	/**
 	 * Sets the last name of the admin user.
 	 *
-	 * @param string $lastName the last name.
+	 * @param string $last_name the last name.
 	 */
-	public function setLastName($lastName)
+	public function setLastName($last_name)
 	{
-		$this->last_name = $lastName;
+		$this->last_name = $last_name;
 	}
 
 	/**

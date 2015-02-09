@@ -202,11 +202,11 @@ class NostoTaggingMetaAccount implements NostoAccountMetaDataInterface
 	/**
 	 * Sets the store language ISO (ISO 639-1) code.
 	 *
-	 * @param string $languageCode the language ISO code.
+	 * @param string $language_code the language ISO code.
 	 */
-	public function setLanguageCode($languageCode)
+	public function setLanguageCode($language_code)
 	{
-		$this->language_code = $languageCode;
+		$this->language_code = $language_code;
 	}
 
 	/**
@@ -223,11 +223,11 @@ class NostoTaggingMetaAccount implements NostoAccountMetaDataInterface
 	/**
 	 * Sets the owner language ISO (ISO 639-1) code.
 	 *
-	 * @param string $languageCode the language ISO code.
+	 * @param string $language_code the language ISO code.
 	 */
-	public function setOwnerLanguageCode($languageCode)
+	public function setOwnerLanguageCode($language_code)
 	{
-		$this->owner_language_code = $languageCode;
+		$this->owner_language_code = $language_code;
 	}
 
 	/**

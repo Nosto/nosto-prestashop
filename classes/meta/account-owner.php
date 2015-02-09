@@ -58,11 +58,11 @@ class NostoTaggingMetaAccountOwner implements NostoAccountMetaDataOwnerInterface
 	/**
 	 * Sets the first name of the account owner.
 	 *
-	 * @param string $firstName the first name.
+	 * @param string $first_name the first name.
 	 */
-	public function setFirstName($firstName)
+	public function setFirstName($first_name)
 	{
-		$this->first_name = $firstName;
+		$this->first_name = $first_name;
 	}
 
 	/**
@@ -78,11 +78,11 @@ class NostoTaggingMetaAccountOwner implements NostoAccountMetaDataOwnerInterface
 	/**
 	 * Sets the last name of the account owner.
 	 *
-	 * @param string $lastName the last name.
+	 * @param string $last_name the last name.
 	 */
-	public function setLastName($lastName)
+	public function setLastName($last_name)
 	{
-		$this->last_name = $lastName;
+		$this->last_name = $last_name;
 	}
 
 	/**

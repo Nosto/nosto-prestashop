@@ -120,7 +120,7 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 		$this->order_number = isset($order->reference) ? (string)$order->reference : $order->id;
 		$this->buyer = new NostoTaggingOrderBuyer();
 		$this->buyer->loadData($customer);
-		$this->created_at =  Nosto::helper('date')->format($order->date_add);
+		$this->created_at = Nosto::helper('date')->format($order->date_add);
 		$this->purchased_items = $this->findPurchasedItems($order);
 
 		$payment_module = Module::getInstanceByName($order->module);
