@@ -26,7 +26,7 @@
 /**
  * Block for tagging customers.
  */
-class NostoTaggingCustomer extends NostoTaggingBlock
+class NostoTaggingCustomer extends NostoTaggingModel
 {
 	/**
 	 * @var string the customer first name.

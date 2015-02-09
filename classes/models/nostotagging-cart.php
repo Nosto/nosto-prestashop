@@ -26,7 +26,7 @@
 /**
  * Block for tagging carts.
  */
-class NostoTaggingCart extends NostoTaggingBlock
+class NostoTaggingCart extends NostoTaggingModel
 {
 	/**
 	 * @var array line items in the cart.
@@ -97,7 +97,7 @@ class NostoTaggingCart extends NostoTaggingBlock
 				'product_id' => (int)$item['id_product'],
 				'quantity' => (int)$item['cart_quantity'],
 				'name' => (string)$item['name'],
-				'unit_price' => NostoTaggingFormatter::formatPrice($item['price_wt']),
+				'unit_price' =>  Nosto::helper('price')->format($item['price_wt']),
 				'price_currency_code' => (string)$currency->iso_code,
 			);
 	}

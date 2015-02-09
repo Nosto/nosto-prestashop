@@ -26,7 +26,7 @@
 /**
  * Base class for all tagging block classes.
  */
-abstract class NostoTaggingBlock
+abstract class NostoTaggingModel
 {
 	/**
 	 * @var Context the context to create the tagging block for.

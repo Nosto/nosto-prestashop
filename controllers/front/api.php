@@ -56,30 +56,22 @@ abstract class NostoTaggingApiModuleFrontController extends ModuleFrontControlle
 	}
 
 	/**
-	 * Encrypts and outputs the string and ends the application flow.
+	 * Encrypts and outputs the data and ends the application flow.
 	 * Only send the response if we can encrypt it, i.e. we have an shared encryption secret with nosto.
 	 *
-	 * @param string $string the data to output as encrypted response.
+	 * @param NostoExportCollection $collection the data collection to output as encrypted response.
 	 */
-	public function encryptOutput($string)
+	public function encryptOutput(NostoExportCollection $collection)
 	{
-		// Use the first 16 chars of the SSO token as secret for encryption.
-		$token = NostoTaggingApiToken::get('sso', $this->module->getContext()->language->id);
-		if (!empty($token))
+		/** @var NostoAccount $account */
+		$account = Nosto::helper('nosto_tagging/account')->find($this->module->getContext()->language->id);
+		if ($account && $account->isConnectedToNosto())
 		{
-			$secret = Tools::substr($token, 0, 16);
-			if (!empty($secret))
-			{
-				$iv = NostoTaggingSecurity::rand(16);
-				$cipher = new NostoTaggingCipher();
-				$cipher->setSecret($secret);
-				$cipher->setIV($iv);
-				$cipher_text = $cipher->encrypt($string);
-				// Prepend the IV to the cipher string so that nosto can parse and use it.
-				// There is no security concern with sending the IV as plain text.
-				echo $iv.$cipher_text;
-			}
+			$cipher_text = NostoExporter::export($account, $collection);
+			echo $cipher_text;
 		}
-		die;
+		// It is important to stop the script execution after the export,
+		// in order to avoid any additional data being outputted.
+		die();
 	}
 } 

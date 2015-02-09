@@ -37,18 +37,18 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
 	 */
 	public function initContent()
 	{
-		$nosto_products = array();
+		$collection = new NostoExportProductCollection();
 		$context = $this->module->getContext();
 		foreach ($this->getProductIds() as $id_product)
 		{
 			$product = new Product($id_product, true, $context->language->id, $context->shop->id);
 			$nosto_product = $this->module->getProductData($product);
 			if (!empty($nosto_product))
-				$nosto_products[] = $nosto_product;
+				$collection[] = $nosto_product;
 			$product = null;
 		}
 
-		$this->encryptOutput(Tools::jsonEncode($nosto_products));
+		$this->encryptOutput($collection);
 	}
 
 	/**

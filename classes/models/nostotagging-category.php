@@ -26,7 +26,7 @@
 /**
  * Block for tagging categories.
  */
-class NostoTaggingCategory extends NostoTaggingBlock
+class NostoTaggingCategory extends NostoTaggingModel
 {
 	/**
 	 * @var string the built category string.

@@ -26,7 +26,7 @@
 /**
  * Block for tagging products.
  */
-class NostoTaggingProduct extends NostoTaggingBlock implements NostoProductInterface
+class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInterface
 {
 	const IN_STOCK = 'InStock';
 	const OUT_OF_STOCK = 'OutOfStock';
@@ -137,7 +137,7 @@ class NostoTaggingProduct extends NostoTaggingBlock implements NostoProductInter
 			? (string)$link->getImageLink($product->link_rewrite, $product->id.'-'.$image_id, $image_type)
 			: '';
 
-		$this->price = NostoTaggingFormatter::formatPrice($product->getPrice(true, null));
+		$this->price =  Nosto::helper('price')->format($product->getPrice(true, null));
 		$this->price_currency_code = (string)$currency->iso_code;
 
 		if ($product->checkQty(1))
@@ -161,12 +161,12 @@ class NostoTaggingProduct extends NostoTaggingBlock implements NostoProductInter
 		}
 
 		$this->description = (string)$product->description;
-		$this->list_price = NostoTaggingFormatter::formatPrice($product->getPriceWithoutReduct(false, null));
+		$this->list_price =  Nosto::helper('price')->format($product->getPriceWithoutReduct(false, null));
 
 		if (!empty($product->manufacturer_name))
 			$this->brand = (string)$product->manufacturer_name;
 
-		$this->date_published = NostoTaggingFormatter::formatDate($product->date_add);
+		$this->date_published =  Nosto::helper('date')->format($product->date_add);
 	}
 
 	/**

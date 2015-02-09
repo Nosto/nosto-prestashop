@@ -26,7 +26,7 @@
 /**
  * Block for tagging orders.
  */
-class NostoTaggingOrder extends NostoTaggingBlock implements NostoOrderInterface
+class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 {
 	/**
 	 * @var string the order number.
@@ -155,7 +155,7 @@ class NostoTaggingOrder extends NostoTaggingBlock implements NostoOrderInterface
 			'last_name' => $customer->lastname,
 			'email' => $customer->email,
 		);
-		$this->created_at = NostoTaggingFormatter::formatDate($order->date_add);
+		$this->created_at =  Nosto::helper('date')->format($order->date_add);
 
 		foreach ($items as $item)
 		{
@@ -165,7 +165,7 @@ class NostoTaggingOrder extends NostoTaggingBlock implements NostoOrderInterface
 					'product_id' => (int)$p->id,
 					'quantity' => (int)$item['product_quantity'],
 					'name' => (string)$p->name,
-					'unit_price' => NostoTaggingFormatter::formatPrice($item['product_price_wt']),
+					'unit_price' =>  Nosto::helper('price')->format($item['product_price_wt']),
 					'price_currency_code' => (string)$currency->iso_code,
 				);
 		}
@@ -183,7 +183,7 @@ class NostoTaggingOrder extends NostoTaggingBlock implements NostoOrderInterface
 						'product_id' => -1,
 						'quantity' => 1,
 						'name' => 'Discount',
-						'unit_price' => NostoTaggingFormatter::formatPrice(-$total_discounts_tax_incl), // Note the negative value.
+						'unit_price' =>  Nosto::helper('price')->format(-$total_discounts_tax_incl), // Note the negative value.
 						'price_currency_code' => (string)$currency->iso_code,
 					);
 			}
@@ -203,7 +203,7 @@ class NostoTaggingOrder extends NostoTaggingBlock implements NostoOrderInterface
 					'product_id' => -1,
 					'quantity' => 1,
 					'name' => 'Shipping',
-					'unit_price' => NostoTaggingFormatter::formatPrice($total_shipping_tax_incl),
+					'unit_price' =>  Nosto::helper('price')->format($total_shipping_tax_incl),
 					'price_currency_code' => (string)$currency->iso_code,
 				);
 
@@ -212,7 +212,7 @@ class NostoTaggingOrder extends NostoTaggingBlock implements NostoOrderInterface
 					'product_id' => -1,
 					'quantity' => 1,
 					'name' => 'Gift Wrapping',
-					'unit_price' => NostoTaggingFormatter::formatPrice($total_wrapping_tax_incl),
+					'unit_price' =>  Nosto::helper('price')->format($total_wrapping_tax_incl),
 					'price_currency_code' => (string)$currency->iso_code,
 				);
 		}

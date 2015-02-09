@@ -37,7 +37,7 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
 	 */
 	public function initContent()
 	{
-		$nosto_orders = array();
+		$collection = new NostoExportOrderCollection();
 		foreach ($this->getOrderIds() as $id_order)
 		{
 			$order = new Order($id_order);
@@ -49,12 +49,12 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
 					if (isset($item['product_id']) && $item['product_id'] === -1)
 						unset($nosto_order->purchased_items[$i]);
 
-				$nosto_orders[] = $nosto_order;
+				$collection[] = $nosto_order;
 			}
 			$order = null;
 		}
 
-		$this->encryptOutput(Tools::jsonEncode($nosto_orders));
+		$this->encryptOutput($collection);
 	}
 
 	/**

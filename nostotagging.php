@@ -37,21 +37,21 @@ if ((basename(__FILE__) === 'nostotagging.php'))
 	require_once($module_dir.'/libs/nosto/php-sdk/src/config.inc.php');
 
 	require_once($module_dir.'/classes/helpers/nostotagging-helper-account.php');
+
 	require_once($module_dir.'/classes/meta/nostotagging-meta-account.php');
 	require_once($module_dir.'/classes/meta/nostotagging-meta-account-billing.php');
 	require_once($module_dir.'/classes/meta/nostotagging-meta-account-iframe.php');
 	require_once($module_dir.'/classes/meta/nostotagging-meta-account-owner.php');
 	require_once($module_dir.'/classes/meta/nostotagging-meta-oauth.php');
 
-	require_once($module_dir.'/classes/nostotagging-block.php');
-	require_once($module_dir.'/classes/nostotagging-cart.php');
-	require_once($module_dir.'/classes/nostotagging-category.php');
-	require_once($module_dir.'/classes/nostotagging-customer.php');
-	require_once($module_dir.'/classes/nostotagging-order.php');
-	require_once($module_dir.'/classes/nostotagging-product.php');
-	require_once($module_dir.'/classes/nostotagging-brand.php');
+	require_once($module_dir.'/classes/models/nostotagging-model.php');
+	require_once($module_dir.'/classes/models/nostotagging-cart.php');
+	require_once($module_dir.'/classes/models/nostotagging-category.php');
+	require_once($module_dir.'/classes/models/nostotagging-customer.php');
+	require_once($module_dir.'/classes/models/nostotagging-order.php');
+	require_once($module_dir.'/classes/models/nostotagging-product.php');
+	require_once($module_dir.'/classes/models/nostotagging-brand.php');
 
-	require_once($module_dir.'/classes/nostotagging-formatter.php');
 	require_once($module_dir.'/classes/nostotagging-logger.php');
 	require_once($module_dir.'/classes/nostotagging-config.php');
 	require_once($module_dir.'/classes/nostotagging-customer-link.php');

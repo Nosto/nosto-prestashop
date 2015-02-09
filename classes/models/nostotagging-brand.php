@@ -24,29 +24,30 @@
  */
 
 /**
- * Helper class for formatting data.
+ * Block for tagging manufacturers (brands).
  */
-class NostoTaggingFormatter
+class NostoTaggingBrand extends NostoTaggingModel
 {
 	/**
-	 * Formats price into Nosto format (e.g. 1000.99).
-	 *
-	 * @param string|int|float $price
-	 * @return string
+	 * @var string the built brand string.
 	 */
-	public static function formatPrice($price)
+	public $brand_string;
+
+	/**
+	 * @inheritdoc
+	 */
+	public function getRequiredItems()
 	{
-		return number_format((float)$price, 2, '.', '');
+		return array('brand_string');
 	}
 
 	/**
-	 * Formats date into Nosto format, i.e. Y-m-d.
-	 *
-	 * @param string $date
-	 * @return string
+	 * @inheritdoc
 	 */
-	public static function formatDate($date)
+	public function populate()
 	{
-		return date('Y-m-d', strtotime((string)$date));
+		$manufacturer = $this->object;
+		if (Validate::isLoadedObject($manufacturer))
+			$this->brand_string = DS.$manufacturer->name;
 	}
-}
+} 
