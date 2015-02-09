@@ -298,7 +298,8 @@ class NostoTagging extends Module
 			$language_id = (int)$current_language['id_lang'];
 		}
 
-		$account = Nosto::helper('nosto_tagging/helper')->find($language_id);
+		/** @var NostoAccount $account */
+		$account = Nosto::helper('nosto_tagging/account')->find($language_id);
 
 		$this->context->smarty->assign(array(
 			$this->name.'_form_action' => $this->getAdminUrl(),
@@ -355,7 +356,7 @@ class NostoTagging extends Module
 			$meta->getOwner()->setEmail($email);
 			/** @var NostoAccount $account */
 			$account = NostoAccount::create($meta);
-			return Nosto::helper('account')->save($account);
+			return Nosto::helper('nosto_tagging/account')->save($account);
 		}
 		catch (NostoException $e)
 		{
