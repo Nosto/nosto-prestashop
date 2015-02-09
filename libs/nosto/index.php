@@ -23,31 +23,12 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-/**
- * Model for tagging manufacturers (brands).
- */
-class NostoTaggingBrand extends NostoTaggingModel
-{
-	/**
-	 * @var string the built brand string.
-	 */
-	public $brand_string;
+header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+header("Last-Modified: ".gmdate("D, d M Y H:i:s")." GMT");
 
-	/**
-	 * @inheritdoc
-	 */
-	public function getRequiredItems()
-	{
-		return array('brand_string');
-	}
+header("Cache-Control: no-store, no-cache, must-revalidate");
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Pragma: no-cache");
 
-	/**
-	 * @inheritdoc
-	 */
-	public function populate()
-	{
-		$manufacturer = $this->object;
-		if (Validate::isLoadedObject($manufacturer))
-			$this->brand_string = DS.$manufacturer->name;
-	}
-}
+header("Location: ../");
+exit;

@@ -24,7 +24,7 @@
  */
 
 /**
- * Block for tagging carts.
+ * Model for tagging carts.
  */
 class NostoTaggingCart extends NostoTaggingModel
 {

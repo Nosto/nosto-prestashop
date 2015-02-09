@@ -24,7 +24,7 @@
  */
 
 /**
- * Base class for all tagging block classes.
+ * Base model for all tagging model classes.
  */
 abstract class NostoTaggingModel
 {

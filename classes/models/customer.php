@@ -24,7 +24,7 @@
  */
 
 /**
- * Block for tagging customers.
+ * Model for tagging customers.
  */
 class NostoTaggingCustomer extends NostoTaggingModel
 {

@@ -24,7 +24,7 @@
  */
 
 /**
- * Block for tagging categories.
+ * Model for tagging categories.
  */
 class NostoTaggingCategory extends NostoTaggingModel
 {

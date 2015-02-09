@@ -24,7 +24,7 @@
  */
 
 /**
- * Block for tagging orders.
+ * Model for tagging orders.
  */
 class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 {

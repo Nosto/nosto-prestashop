@@ -24,7 +24,7 @@
  */
 
 /**
- * Block for tagging products.
+ * Model for tagging products.
  */
 class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInterface
 {

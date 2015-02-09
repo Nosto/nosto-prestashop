@@ -35,11 +35,13 @@ class NostoTaggingHelperConfig
 	const TOKEN_CONFIG_PREFIX = 'NOSTOTAGGING_API_TOKEN_';
 
 	/**
-	 * @param string $name
-	 * @param int|null $lang_id
-	 * @param int|null $id_shop_group
-	 * @param int|null $id_shop
-	 * @return bool
+	 * Reads and returns a config entry value.
+	 *
+	 * @param string $name the name of the config entry in the db.
+	 * @param int|null $lang_id the language the config entry is saved for.
+	 * @param int|null $id_shop_group the shop group id the config entry is saved for.
+	 * @param int|null $id_shop the shop id the config entry is saved for.
+	 * @return mixed
 	 */
 	public function read($name, $lang_id = null, $id_shop_group = null, $id_shop = null)
 	{
@@ -47,11 +49,13 @@ class NostoTaggingHelperConfig
 	}
 
 	/**
-	 * @param string $name
-	 * @param mixed $value
-	 * @param null|int $lang_id
-	 * @param bool $global
-	 * @return bool
+	 * Writes a config entry value to the db.
+	 *
+	 * @param string $name the name of the config entry to save.
+	 * @param mixed $value the value to save.
+	 * @param null|int $lang_id the language id to save it for.
+	 * @param bool $global if it should be saved for all shops or in current context.
+	 * @return bool true is saved, false otherwise.
 	 */
 	public function write($name, $value, $lang_id = null, $global = false)
 	{
@@ -66,11 +70,13 @@ class NostoTaggingHelperConfig
 	}
 
 	/**
-	 * @param string $name
-	 * @param int|null $lang_id
-	 * @param int|null $id_shop_group
-	 * @param int|null $id_shop
-	 * @return bool
+	 * Checks if a config entry exists for the given criteria.
+	 *
+	 * @param string $name the name of the config entry.
+	 * @param int|null $lang_id the language id it should be saved for.
+	 * @param int|null $id_shop_group the shop group id it should be saved for.
+	 * @param int|null $id_shop the shop id it should be saved for.
+	 * @return bool true if it exists and false otherwise.
 	 */
 	public function exists($name, $lang_id = null, $id_shop_group = null, $id_shop = null)
 	{
@@ -80,6 +86,8 @@ class NostoTaggingHelperConfig
 
 	/**
 	 * Removes all "NOSTOTAGGING_" config entries.
+	 *
+	 * @return bool always true.
 	 */
 	public function purge()
 	{

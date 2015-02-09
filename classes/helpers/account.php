@@ -1,11 +1,40 @@
 <?php
+/**
+ * 2013-2014 Nosto Solutions Ltd
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to contact@nosto.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
+ * versions in the future. If you wish to customize PrestaShop for your
+ * needs please refer to http://www.prestashop.com for more information.
+ *
+ * @author    Nosto Solutions Ltd <contact@nosto.com>
+ * @copyright 2013-2014 Nosto Solutions Ltd
+ * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
 
+/**
+ * Helper class for managing Nosto accounts.
+ */
 class NostoTaggingHelperAccount
 {
 	/**
-	 * @param NostoAccount $account
+	 * Saves a Nosto account to PS config.
+	 * Also handles any attached API tokens.
+	 *
+	 * @param NostoAccount $account the account to save.
 	 * @param null|int $id_lang the ID of the language to set the account name for.
-	 * @return bool
+	 * @return bool true if the save was successful, false otherwise.
 	 */
 	public function save(NostoAccount $account, $id_lang)
 	{
@@ -19,11 +48,14 @@ class NostoTaggingHelperAccount
 	}
 
 	/**
-	 * @param NostoAccount $account
+	 * Deletes a Nosto account from the PS config.
+	 * Also sends a notification to Nosto that the account has been deleted.
+	 *
+	 * @param NostoAccount $account the account to delete.
 	 * @param int $id_lang the ID of the language model to delete the account for.
 	 * @param null|int $id_shop_group the ID of the shop context.
 	 * @param null|int $id_shop the ID of the shop.
-	 * @return bool
+	 * @return bool true if successful, false otherwise.
 	 */
 	public function delete(NostoAccount $account, $id_lang, $id_shop_group = null, $id_shop = null)
 	{
@@ -50,10 +82,12 @@ class NostoTaggingHelperAccount
 	}
 
 	/**
+	 * Finds and returns an account for given criteria.
+	 *
 	 * @param null|int $lang_id the ID of the language.
 	 * @param null|int $id_shop_group the ID of the shop context.
 	 * @param null|int $id_shop the ID of the shop.
-	 * @return NostoAccount|null
+	 * @return NostoAccount|null the account with loaded API tokens, or null if not found.
 	 */
 	public function find($lang_id = null, $id_shop_group = null, $id_shop = null)
 	{
@@ -87,10 +121,12 @@ class NostoTaggingHelperAccount
 	}
 
 	/**
+	 * Checks if an account exists and is "connected to Nosto" for given criteria.
+	 *
 	 * @param null|int $lang_id the ID of the language.
 	 * @param null|int $id_shop_group the ID of the shop context.
 	 * @param null|int $id_shop the ID of the shop.
-	 * @return bool
+	 * @return bool true if it does, false otherwise.
 	 */
 	public function existsAndIsConnected($lang_id = null, $id_shop_group = null, $id_shop = null)
 	{

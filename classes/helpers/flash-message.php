@@ -69,4 +69,4 @@ class NostoTaggingHelperFlashMessage
 		}
 		return $flash_messages;
 	}
-} 
+}

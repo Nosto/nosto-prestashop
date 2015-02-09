@@ -74,4 +74,4 @@ abstract class NostoTaggingApiModuleFrontController extends ModuleFrontControlle
 		// in order to avoid any additional data being outputted.
 		die();
 	}
-} 
+}
