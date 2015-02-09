@@ -33,6 +33,11 @@ class NostoTaggingMetaAccountIframe implements NostoAccountMetaDataIframeInterfa
 	protected $unique_id;
 
 	/**
+	 * @var string the version number of the Nosto module/extension running on the e-commerce installation.
+	 */
+	protected $version_module;
+
+	/**
 	 * @var string preview url for the product page in the active store scope.
 	 */
 	protected $preview_url_product;
@@ -58,8 +63,10 @@ class NostoTaggingMetaAccountIframe implements NostoAccountMetaDataIframeInterfa
 	protected $preview_url_front;
 
 	/**
-	 * @param Context $context
-	 * @param int $id_lang
+	 * Loads the meta-data from context.
+	 *
+	 * @param Context $context the context to get the meta-data from.
+	 * @param int $id_lang the language ID of the shop for which to get the meta-data.
 	 */
 	public function loadData($context, $id_lang)
 	{
@@ -72,7 +79,6 @@ class NostoTaggingMetaAccountIframe implements NostoAccountMetaDataIframeInterfa
 		$this->email = $context->employee->email;
 		$this->language_iso_code = $context->language->iso_code;
 		$this->language_iso_code_shop = $shop_language->iso_code;
-		$this->unique_id = $this->getUniqueInstallationId(); // todo
 		$this->preview_url_product = NostoTaggingPreviewLink::getProductPageUrl(null, $id_lang);
 		$this->preview_url_category = NostoTaggingPreviewLink::getCategoryPageUrl(null, $id_lang);
 		$this->preview_url_search = NostoTaggingPreviewLink::getSearchPageUrl($id_lang);
@@ -184,6 +190,18 @@ class NostoTaggingMetaAccountIframe implements NostoAccountMetaDataIframeInterfa
 	}
 
 	/**
+	 * Sets the unique identifier for the e-commerce installation.
+	 * This identifier is used to link accounts together that are created on
+	 * the same installation.
+	 *
+	 * @param string $unique_id the unique ID.
+	 */
+	public function setUniqueId($unique_id)
+	{
+		$this->unique_id = $unique_id;
+	}
+
+	/**
 	 * Unique identifier for the e-commerce installation.
 	 * This identifier is used to link accounts together that are created on
 	 * the same installation.
@@ -207,6 +225,17 @@ class NostoTaggingMetaAccountIframe implements NostoAccountMetaDataIframeInterfa
 	}
 
 	/**
+	 * Sets the version number of the Nosto module/extension running on the
+	 * e-commerce installation.
+	 *
+	 * @param string $version the version number.
+	 */
+	public function setVersionModule($version)
+	{
+		$this->version_module = $version;
+	}
+
+	/**
 	 * The version number of the Nosto module/extension running on the
 	 * e-commerce installation.
 	 *
@@ -214,7 +243,7 @@ class NostoTaggingMetaAccountIframe implements NostoAccountMetaDataIframeInterfa
 	 */
 	public function getVersionModule()
 	{
-		return 'todo'; // todo
+		return $this->version_module;
 	}
 
 	/**

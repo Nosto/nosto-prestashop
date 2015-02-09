@@ -31,27 +31,27 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 	/**
 	 * @var string the order number.
 	 */
-	public $order_number;
+	protected $order_number;
 
 	/**
-	 * @var array buyer info, including, first_name, last_name, email.
+	 * @var NostoOrderBuyerInterface buyer info.
 	 */
-	public $buyer = array();
+	protected $buyer = array();
 
 	/**
 	 * @var string the order creation date.
 	 */
-	public $created_at;
+	protected $created_at;
 
 	/**
-	 * @var array list of purchased items in the order, including product_id, quantity, name, unit_price, price_currency_code.
+	 * @var NostoOrderPurchasedItemInterface purchased items in the order.
 	 */
-	public $purchased_items = array();
+	protected $purchased_items = array();
 
 	/**
 	 * @var string the payment provider module and version used in the order (only used in API requests).
 	 */
-	public $payment_provider;
+	protected $payment_provider;
 
 	/**
 	 * @inheritdoc
@@ -69,14 +69,80 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 	/**
 	 * @inheritdoc
 	 */
+	public function getOrderNumber()
+	{
+		return $this->order_number;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function getCreatedDate()
+	{
+		return $this->created_at;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function getPaymentProvider()
+	{
+		return $this->payment_provider;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function getBuyerInfo()
+	{
+		return $this->buyer;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function getPurchasedItems()
+	{
+		return $this->purchased_items;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
 	public function populate()
 	{
 		$order = $this->object;
 		if (!Validate::isLoadedObject($order))
 			return;
+
+		$customer = new Customer((int)$order->id_customer);
+		// The order reference was introduced in prestashop 1.5 where orders can be split into multiple ones.
+		$this->order_number = isset($order->reference) ? (string)$order->reference : $order->id;
+		$this->buyer = new NostoTaggingOrderBuyer();
+		$this->buyer->loadData($customer);
+		$this->created_at =  Nosto::helper('date')->format($order->date_add);
+		$this->purchased_items = $this->findPurchasedItems($order);
+
+		$payment_module = Module::getInstanceByName($order->module);
+		if ($payment_module !== false && isset($payment_module->version))
+			$this->payment_provider = $order->module.' ['.$payment_module->version.']';
+		else
+			$this->payment_provider = $order->module.' [unknown]';
+	}
+
+	/**
+	 * Finds purchased items for the order.
+	 *
+	 * @param Order $order the order object.
+	 * @return NostoTaggingOrderPurchasedItem[] the purchased items.
+	 */
+	protected function findPurchasedItems(Order $order)
+	{
+		$purchased_items = array();
+
 		$currency = new Currency($order->id_currency);
 		if (!Validate::isLoadedObject($currency))
-			return;
+			return $purchased_items;
 
 		$products = array();
 		$total_discounts_tax_incl = 0;
@@ -147,30 +213,22 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 			$items = $products;
 		}
 
-		$customer = new Customer((int)$order->id_customer);
-		// The order reference was introduced in prestashop 1.5 where orders can be split into multiple ones.
-		$this->order_number = isset($order->reference) ? (string)$order->reference : $order->id;
-		$this->buyer = array(
-			'first_name' => $customer->firstname,
-			'last_name' => $customer->lastname,
-			'email' => $customer->email,
-		);
-		$this->created_at =  Nosto::helper('date')->format($order->date_add);
-
 		foreach ($items as $item)
 		{
 			$p = new Product($item['product_id'], false, $this->context->language->id);
 			if (Validate::isLoadedObject($p))
-				$this->purchased_items[] = array(
-					'product_id' => (int)$p->id,
-					'quantity' => (int)$item['product_quantity'],
-					'name' => (string)$p->name,
-					'unit_price' =>  Nosto::helper('price')->format($item['product_price_wt']),
-					'price_currency_code' => (string)$currency->iso_code,
-				);
+			{
+				$purchased_item = new NostoTaggingOrderPurchasedItem();
+				$purchased_item->setProductId((int)$p->id);
+				$purchased_item->setQuantity((int)$item['product_quantity']);
+				$purchased_item->setName((string)$p->name);
+				$purchased_item->setUnitPrice(Nosto::helper('price')->format($item['product_price_wt']));
+				$purchased_item->setCurrencyCode((string)$currency->iso_code);
+				$purchased_items[] = $purchased_item;
+			}
 		}
 
-		if (!empty($this->purchased_items))
+		if (!empty($purchased_items))
 		{
 			// Add special items for discounts, shipping and gift wrapping.
 
@@ -179,13 +237,16 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 				// Subtract possible gift product price from total as gifts are tagged with price zero (0).
 				$total_discounts_tax_incl = Tools::ps_round($total_discounts_tax_incl - $total_gift_tax_incl, 2);
 				if ($total_discounts_tax_incl > 0)
-					$this->purchased_items[] = array(
-						'product_id' => -1,
-						'quantity' => 1,
-						'name' => 'Discount',
-						'unit_price' =>  Nosto::helper('price')->format(-$total_discounts_tax_incl), // Note the negative value.
-						'price_currency_code' => (string)$currency->iso_code,
-					);
+				{
+					$purchased_item = new NostoTaggingOrderPurchasedItem();
+					$purchased_item->setProductId(-1);
+					$purchased_item->setQuantity(1);
+					$purchased_item->setName('Discount');
+					// Note the negative value.
+					$purchased_item->setUnitPrice(Nosto::helper('price')->format(-$total_discounts_tax_incl));
+					$purchased_item->setCurrencyCode((string)$currency->iso_code);
+					$purchased_items[] = $purchased_item;
+				}
 			}
 
 			// Check is free shipping applies to the cart.
@@ -199,22 +260,28 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 					}
 
 			if (!$free_shipping && $total_shipping_tax_incl > 0)
-				$this->purchased_items[] = array(
-					'product_id' => -1,
-					'quantity' => 1,
-					'name' => 'Shipping',
-					'unit_price' =>  Nosto::helper('price')->format($total_shipping_tax_incl),
-					'price_currency_code' => (string)$currency->iso_code,
-				);
+			{
+				$purchased_item = new NostoTaggingOrderPurchasedItem();
+				$purchased_item->setProductId(-1);
+				$purchased_item->setQuantity(1);
+				$purchased_item->setName('Shipping');
+				$purchased_item->setUnitPrice(Nosto::helper('price')->format($total_shipping_tax_incl));
+				$purchased_item->setCurrencyCode((string)$currency->iso_code);
+				$purchased_items[] = $purchased_item;
+			}
 
 			if ($total_wrapping_tax_incl > 0)
-				$this->purchased_items[] = array(
-					'product_id' => -1,
-					'quantity' => 1,
-					'name' => 'Gift Wrapping',
-					'unit_price' =>  Nosto::helper('price')->format($total_wrapping_tax_incl),
-					'price_currency_code' => (string)$currency->iso_code,
-				);
+			{
+				$purchased_item = new NostoTaggingOrderPurchasedItem();
+				$purchased_item->setProductId(-1);
+				$purchased_item->setQuantity(1);
+				$purchased_item->setName('Gift Wrapping');
+				$purchased_item->setUnitPrice(Nosto::helper('price')->format($total_wrapping_tax_incl));
+				$purchased_item->setCurrencyCode((string)$currency->iso_code);
+				$purchased_items[] = $purchased_item;
+			}
 		}
+
+		return $purchased_items;
 	}
 }

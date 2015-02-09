@@ -30,7 +30,7 @@ class NostoTaggingHelperAccount
 		$success = NostoTaggingConfig::deleteAllFromContext($id_lang, $id_shop_group, $id_shop);
 		if ($success)
 		{
-			$token = $account->getToken('sso');
+			$token = $account->getApiToken('sso');
 			if ($token)
 				try
 				{
@@ -61,8 +61,18 @@ class NostoTaggingHelperAccount
 		{
 			$account = new NostoAccount();
 			$account->name = $account_name;
-			$tokens = array(); // todo: load tokens from config.
-			if (is_array($tokens) && !empty($tokens))
+
+			$tokens = array();
+			foreach (NostoApiToken::$tokenNames as $token_name)
+			{
+				$token_value = NostoTaggingConfig::read(
+					self::getTokenConfigKey($token_name), $lang_id, $id_shop_group, $id_shop
+				);
+				if (!empty($token_value))
+					$tokens[$token_name] = $token_value;
+			}
+
+			if (!empty($tokens))
 				foreach ($tokens as $name => $value)
 				{
 					$token = new NostoApiToken();

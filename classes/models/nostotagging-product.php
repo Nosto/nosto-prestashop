@@ -36,67 +36,72 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	/**
 	 * @var string absolute url to the product page.
 	 */
-	public $url;
+	protected $url;
 
 	/**
 	 * @var string product object id.
 	 */
-	public $product_id;
+	protected $product_id;
 
 	/**
 	 * @var string product name.
 	 */
-	public $name;
+	protected $name;
 
 	/**
 	 * @var string absolute url to the product image.
 	 */
-	public $image_url;
+	protected $image_url;
 
 	/**
 	 * @var string product price, discounted including vat.
 	 */
-	public $price;
+	protected $price;
 
 	/**
 	 * @var string product list price, including vat.
 	 */
-	public $list_price;
+	protected $list_price;
 
 	/**
 	 * @var string the currency iso code.
 	 */
-	public $price_currency_code;
+	protected $price_currency_code;
 
 	/**
 	 * @var string product availability (use constants).
 	 */
-	public $availability;
+	protected $availability;
 
 	/**
 	 * @var array list of product tags.
 	 */
-	public $tags = array();
+	protected $tags = array();
 
 	/**
 	 * @var array list of product category strings.
 	 */
-	public $categories = array();
+	protected $categories = array();
+
+	/**
+	 * @var string the product short description.
+	 */
+	protected $short_description;
 
 	/**
 	 * @var string the product description.
 	 */
-	public $description;
+	protected $description;
 
 	/**
 	 * @var string the product brand name.
 	 */
-	public $brand;
+	protected $brand;
 
 	/**
 	 * @var string the product publish date.
 	 */
-	public $date_published;
+	protected $date_published;
 
 	/**
 	 * @inheritdoc
@@ -112,6 +117,118 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 			'price_currency_code',
 			'availability',
 		);
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function getUrl()
+	{
+		return $this->url;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function getProductId()
+	{
+		return $this->product_id;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function getName()
+	{
+		return $this->name;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function getImageUrl()
+	{
+		return $this->image_url;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function getPrice()
+	{
+		return $this->price;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function getListPrice()
+	{
+		return $this->list_price;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function getCurrencyCode()
+	{
+		return $this->price_currency_code;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function getAvailability()
+	{
+		return $this->availability;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function getTags()
+	{
+		return $this->tags;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function getCategories()
+	{
+		return $this->categories;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function getShortDescription()
+	{
+		return $this->short_description;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function getDescription()
+	{
+		return $this->description;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function getBrand()
+	{
+		return $this->brand;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function getDatePublished()
+	{
+		return $this->date_published;
 	}
 
 	/**
@@ -160,6 +277,7 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 				$this->categories[] = (string)$category;
 		}
 
+		$this->short_description = (string)$product->description_short;
 		$this->description = (string)$product->description;
 		$this->list_price =  Nosto::helper('price')->format($product->getPriceWithoutReduct(false, null));
 

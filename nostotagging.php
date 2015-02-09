@@ -49,6 +49,8 @@ if ((basename(__FILE__) === 'nostotagging.php'))
 	require_once($module_dir.'/classes/models/nostotagging-category.php');
 	require_once($module_dir.'/classes/models/nostotagging-customer.php');
 	require_once($module_dir.'/classes/models/nostotagging-order.php');
+	require_once($module_dir.'/classes/models/nostotagging-order-buyer.php');
+	require_once($module_dir.'/classes/models/nostotagging-order-purchased-item.php');
 	require_once($module_dir.'/classes/models/nostotagging-product.php');
 	require_once($module_dir.'/classes/models/nostotagging-brand.php');
 
@@ -331,6 +333,8 @@ class NostoTagging extends Module
 		if ($account && $account->isConnectedToNosto())
 		{
 			$meta = new NostoTaggingMetaAccountIframe();
+			$meta->setUniqueId($this->getUniqueInstallationId());
+			$meta->setVersionModule($this->version);
 			$meta->loadData($this->context, $language_id);
 			$url = $account->getIframeUrl($meta);
 			if (!empty($url))
@@ -346,7 +350,13 @@ class NostoTagging extends Module
 		return $stylesheets.$scripts.$output;
 	}
 
-
+	/**
+	 * Creates a new Nosto account for given shop language.
+	 *
+	 * @param int $id_lang the language ID for which to create the account.
+	 * @param string $email the account owner email address.
+	 * @return bool true if account was created, false otherwise.
+	 */
 	protected function createAccount($id_lang, $email)
 	{
 		try
@@ -356,7 +366,7 @@ class NostoTagging extends Module
 			$meta->getOwner()->setEmail($email);
 			/** @var NostoAccount $account */
 			$account = NostoAccount::create($meta);
-			return Nosto::helper('nosto_tagging/account')->save($account);
+			return Nosto::helper('nosto_tagging/account')->save($account, $id_lang);
 		}
 		catch (NostoException $e)
 		{
@@ -785,29 +795,6 @@ class NostoTagging extends Module
 						(int)$params['id_order']
 					);
 				}
-				// todo: do the request
-				/*
-				$id_nosto_customer = NostoTaggingCustomerLink::getNostoCustomerId($order);
-				if (!empty($id_nosto_customer))
-				{
-					$path = NostoTaggingApiRequest::PATH_ORDER_TAGGING;
-					$replace_params = array('{m}' => $account->name, '{cid}' => $id_nosto_customer);
-				}
-				else
-				{
-					$path = NostoTaggingApiRequest::PATH_UNMATCHED_ORDER_TAGGING;
-					$replace_params = array('{m}' => $account->name);
-
-					$module_name = $order->module;
-					$module = Module::getInstanceByName($module_name);
-					if ($module !== false && isset($module->version))
-						$module_version = $module->version;
-					else
-						$module_version = 'unknown';
-
-					$nosto_order->payment_provider = $module_name.' ['.$module_version.']';
-				}
-				*/
 			}
 		}
 	}
