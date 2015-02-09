@@ -68,15 +68,12 @@ if ((basename(__FILE__) === 'nostotagging.php'))
  */
 class NostoTagging extends Module
 {
-	// todo: move to helper and respect .env
-	const NOSTOTAGGING_SERVER_ADDRESS = 'connect.nosto.com';
-
 	/**
 	 * Custom hooks to add for this module.
 	 *
 	 * @var array
 	 */
-	protected $custom_hooks = array(
+	protected static $custom_hooks = array(
 		array(
 			'name' => 'displayCategoryTop',
 			'title' => 'Category top',
@@ -398,7 +395,7 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayHeader()
 	{
-		$server_address = self::NOSTOTAGGING_SERVER_ADDRESS;
+		$server_address = Nosto::helper('nosto_tagging/url')->getServerAddress();
 		$account = Nosto::helper('nosto_tagging/account')->find($this->context->language->id);
 		if ($account === null)
 			return '';
@@ -1088,9 +1085,9 @@ class NostoTagging extends Module
 	 */
 	protected function initHooks()
 	{
-		if (!empty($this->custom_hooks))
+		if (!empty(self::$custom_hooks))
 		{
-			foreach ($this->custom_hooks as $hook)
+			foreach (self::$custom_hooks as $hook)
 			{
 				$callback = array('Hook', (method_exists('Hook', 'getIdByName')) ? 'getIdByName' : 'get');
 				$id_hook = call_user_func($callback, $hook['name']);

@@ -3,6 +3,7 @@
 class NostoTaggingHelperUrl
 {
 	const SEARCH_PAGE_QUERY = 'controller=search&search_query=nosto';
+	const DEFAULT_SERVER_ADDRESS = 'connect.nosto.com';
 
 	/**
 	 * Returns a preview url to a product page.
@@ -158,6 +159,16 @@ EOT;
 			// Return empty on failure
 			return '';
 		}
+	}
+
+	/**
+	 * Get the Nosto server address for the shop frontend JavaScripts.
+	 *
+	 * @return string the url.
+	 */
+	public function getServerAddress()
+	{
+		return isset($_ENV['NOSTO_SERVER_URL']) ? $_ENV['NOSTO_SERVER_URL'] : self::DEFAULT_SERVER_ADDRESS;
 	}
 
 	/**
