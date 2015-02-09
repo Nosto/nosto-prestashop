@@ -33,6 +33,9 @@ if (!defined('_PS_VERSION_'))
 if ((basename(__FILE__) === 'nostotagging.php'))
 {
 	$module_dir = dirname(__FILE__);
+
+	require_once($module_dir.'/libs/nosto/php-sdk/src/config.inc.php');
+
 	require_once($module_dir.'/classes/helpers/nostotagging-helper-account.php');
 	require_once($module_dir.'/classes/meta/nostotagging-meta-account.php');
 	require_once($module_dir.'/classes/meta/nostotagging-meta-account-billing.php');
@@ -47,6 +50,7 @@ if ((basename(__FILE__) === 'nostotagging.php'))
 	require_once($module_dir.'/classes/nostotagging-order.php');
 	require_once($module_dir.'/classes/nostotagging-product.php');
 	require_once($module_dir.'/classes/nostotagging-brand.php');
+
 	require_once($module_dir.'/classes/nostotagging-formatter.php');
 	require_once($module_dir.'/classes/nostotagging-logger.php');
 	require_once($module_dir.'/classes/nostotagging-config.php');
@@ -64,6 +68,7 @@ if ((basename(__FILE__) === 'nostotagging.php'))
  */
 class NostoTagging extends Module
 {
+	// todo: move to helper and respect .env
 	const NOSTOTAGGING_SERVER_ADDRESS = 'connect.nosto.com';
 
 	/**
@@ -217,13 +222,6 @@ class NostoTagging extends Module
 
 		$output = '';
 
-		$field_has_account = $this->name.'_has_account';
-		$field_account_name = $this->name.'_account_name';
-		$field_account_email = $this->name.'_account_email';
-		$field_account_authorized = $this->name.'_account_authorized';
-		$field_languages = $this->name.'_languages';
-		$field_current_language = $this->name.'_current_language';
-
 		$languages = Language::getLanguages(true, $this->context->shop->id);
 		/** @var EmployeeCore $employee */
 		$employee = $this->context->employee;
@@ -231,7 +229,7 @@ class NostoTagging extends Module
 
 		if ($_SERVER['REQUEST_METHOD'] === 'POST')
 		{
-			$language_id = (int)Tools::getValue($field_current_language);
+			$language_id = (int)Tools::getValue($this->name.'_current_language');
 			$current_language = $this->ensureAdminLanguage($languages, $language_id);
 
 			if (_PS_VERSION_ >= '1.5' && Shop::getContext() !== Shop::CONTEXT_SHOP)
@@ -243,7 +241,7 @@ class NostoTagging extends Module
 				NostoTaggingFlashMessage::add('error', $this->l('Language cannot be empty.'));
 			elseif (Tools::isSubmit('submit_nostotagging_new_account'))
 			{
-				$account_email = (string)Tools::getValue($field_account_email);
+				$account_email = (string)Tools::getValue($this->name.'_account_email');
 				if (empty($account_email))
 					NostoTaggingFlashMessage::add('error', $this->l('Email cannot be empty.'));
 				elseif (!Validate::isEmail($account_email))
@@ -304,13 +302,13 @@ class NostoTagging extends Module
 		$account = Nosto::helper('nosto_tagging/helper')->find($language_id);
 
 		$this->context->smarty->assign(array(
-			'nostotagging_form_action' => $this->getAdminUrl(),
-			$field_has_account => ($account !== null),
-			$field_account_name => ($account !== null) ? $account->name : null,
-			$field_account_email => $account_email,
-			$field_account_authorized =>  ($account !== null) ? $account->isConnectedToNosto() : false,
-			$field_languages => $languages,
-			$field_current_language => $current_language,
+			$this->name.'_form_action' => $this->getAdminUrl(),
+			$this->name.'_has_account' => ($account !== null),
+			$this->name.'_account_name' => ($account !== null) ? $account->name : null,
+			$this->name.'_account_email' => $account_email,
+			$this->name.'_account_authorized' =>  ($account !== null) ? $account->isConnectedToNosto() : false,
+			$this->name.'_languages' => $languages,
+			$this->name.'_current_language' => $current_language,
 			// Hack a few translations for the view as PS 1.4 does not support sprintf syntax in smarty "l" function.
 			'translations' => array(
 				'nostotagging_installed_heading' => sprintf(
