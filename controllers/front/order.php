@@ -41,9 +41,15 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
 		foreach ($this->getOrderIds() as $id_order)
 		{
 			$order = new Order($id_order);
-			$nosto_order = $this->module->getOrderData($order, array('includeSpecialItems' => false));
-			if (!empty($nosto_order))
+			if (!Validate::isLoadedObject($order))
+				continue;
+
+			$nosto_order = new NostoTaggingOrder();
+			$nosto_order->includeSpecialItems = false;
+			$nosto_order->loadData($this->context, $order);
+			if ($nosto_order->validate())
 				$collection[] = $nosto_order;
+
 			$order = null;
 		}
 

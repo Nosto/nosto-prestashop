@@ -29,6 +29,11 @@
 class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 {
 	/**
+	 * @var bool if we should include special line items such as discounts and shipping costs.
+	 */
+	public $includeSpecialItems = true;
+
+	/**
 	 * @var string the order number.
 	 */
 	protected $order_number;
@@ -107,11 +112,13 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 	}
 
 	/**
-	 * @inheritdoc
+	 * Loads the order data from supplied context and order objects.
+	 *
+	 * @param Context $context the context object.
+	 * @param Order $order the order object.
 	 */
-	public function populate()
+	public function loadData(Context $context, Order $order)
 	{
-		$order = $this->object;
 		if (!Validate::isLoadedObject($order))
 			return;
 
@@ -121,7 +128,7 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 		$this->buyer = new NostoTaggingOrderBuyer();
 		$this->buyer->loadData($customer);
 		$this->created_at = Nosto::helper('date')->format($order->date_add);
-		$this->purchased_items = $this->findPurchasedItems($order);
+		$this->purchased_items = $this->findPurchasedItems($context, $order);
 
 		$payment_module = Module::getInstanceByName($order->module);
 		if ($payment_module !== false && isset($payment_module->version))
@@ -133,10 +140,11 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 	/**
 	 * Finds purchased items for the order.
 	 *
+	 * @param Context $context the context.
 	 * @param Order $order the order object.
 	 * @return NostoTaggingOrderPurchasedItem[] the purchased items.
 	 */
-	protected function findPurchasedItems(Order $order)
+	protected function findPurchasedItems(Context $context, Order $order)
 	{
 		$purchased_items = array();
 
@@ -215,7 +223,7 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 
 		foreach ($items as $item)
 		{
-			$p = new Product($item['product_id'], false, $this->context->language->id);
+			$p = new Product($item['product_id'], false, $context->language->id);
 			if (Validate::isLoadedObject($p))
 			{
 				$purchased_item = new NostoTaggingOrderPurchasedItem();
@@ -228,7 +236,7 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 			}
 		}
 
-		if (!empty($purchased_items))
+		if ($this->includeSpecialItems && !empty($purchased_items))
 		{
 			// Add special items for discounts, shipping and gift wrapping.
 

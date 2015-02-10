@@ -765,13 +765,21 @@ class NostoTagging extends Module
 		if (isset($params['id_order']))
 		{
 			$order = new Order($params['id_order']);
+			if (!Validate::isLoadedObject($order))
+				return;
+
+			$nosto_order = new NostoTaggingOrder();
+			$nosto_order->loadData($this->context, $order);
+			if (!$nosto_order->validate())
+				return;
+
 			// PS 1.4 does not have "id_shop_group" and "id_shop" properties in the order object.
 			$id_shop_group = isset($order->id_shop_group) ? $order->id_shop_group : null;
 			$id_shop = isset($order->id_shop) ? $order->id_shop : null;
-			$nosto_order = $this->getOrderData($order);
 			// This is done out of context, so we need to specify the exact parameters to get the correct account.
+			/** @var NostoAccount $account */
 			$account = Nosto::helper('nosto_tagging/account')->find($order->id_lang, $id_shop_group, $id_shop);
-			if (!empty($nosto_order) && $account !== null)
+			if ($account !== null && $account->isConnectedToNosto())
 			{
 				try
 				{
@@ -854,8 +862,10 @@ class NostoTagging extends Module
 
 					try
 					{
-						$nosto_product = new NostoTaggingProduct($this->context, $product);
-						NostoProductReCrawl::send($nosto_product, $account);
+						$nosto_product = new NostoTaggingProduct();
+						$nosto_product->loadData($this->context, $product);
+						if ($nosto_product->validate(array('product_id')))
+							NostoProductReCrawl::send($nosto_product, $account);
 					}
 					catch (NostoException $e)
 					{
@@ -1116,7 +1126,8 @@ class NostoTagging extends Module
 	 */
 	protected function getCustomerTagging()
 	{
-		$nosto_customer = new NostoTaggingCustomer($this->context, $this->context->customer);
+		$nosto_customer = new NostoTaggingCustomer();
+		$nosto_customer->loadData($this->context, $this->context->customer);
 		if (!$nosto_customer->validate())
 			return '';
 
@@ -1134,7 +1145,8 @@ class NostoTagging extends Module
 	 */
 	protected function getCartTagging()
 	{
-		$nosto_cart = new NostoTaggingCart($this->context, $this->context->cart);
+		$nosto_cart = new NostoTaggingCart();
+		$nosto_cart->loadData($this->context, $this->context->cart);
 		if (!$nosto_cart->validate())
 			return '';
 
@@ -1154,36 +1166,23 @@ class NostoTagging extends Module
 	 */
 	protected function getProductTagging(Product $product, Category $category = null)
 	{
-		$nosto_product = $this->getProductData($product);
-		if (empty($nosto_product))
+		$nosto_product = new NostoTaggingProduct();
+		$nosto_product->loadData($this->context, $product);
+		if (!$nosto_product->validate())
 			return '';
 
 		$params = array('nosto_product' => $nosto_product);
 
 		if (Validate::isLoadedObject($category))
 		{
-			$nosto_category = new NostoTaggingCategory($this->context, $category);
+			$nosto_category = new NostoTaggingCategory();
+			$nosto_category->loadData($this->context, $category);
 			if ($nosto_category->validate())
 				$params['nosto_category'] = $nosto_category;
 		}
 
 		$this->smarty->assign($params);
 		return $this->display(__FILE__, 'views/templates/hook/footer-product_product-tagging.tpl');
-	}
-
-	/**
-	 * Returns data about the product in a format that can be sent to Nosto.
-	 *
-	 * @param Product $product
-	 * @return false|NostoTaggingProduct the product data array or false.
-	 */
-	public function getProductData(Product $product)
-	{
-		$nosto_product = new NostoTaggingProduct($this->context, $product);
-		if (!$nosto_product->validate())
-			return false;
-
-		return $nosto_product;
 	}
 
 	/**
@@ -1194,8 +1193,9 @@ class NostoTagging extends Module
 	 */
 	protected function getOrderTagging(Order $order)
 	{
-		$nosto_order = $this->getOrderData($order);
-		if (empty($nosto_order))
+		$nosto_order = new NostoTaggingOrder();
+		$nosto_order->loadData($this->context, $order);
+		if (!$nosto_order->validate())
 			return '';
 
 		$this->smarty->assign(array(
@@ -1206,21 +1206,6 @@ class NostoTagging extends Module
 	}
 
 	/**
-	 * Returns data about the order in a format that can be sent to Nosto.
-	 *
-	 * @param Order $order
-	 * @return false|NostoTaggingOrder the order data array or false.
-	 */
-	public function getOrderData(Order $order)
-	{
-		$nosto_order = new NostoTaggingOrder($this->context, $order);
-		if (!$nosto_order->validate())
-			return false;
-
-		return $nosto_order;
-	}
-
-	/**
 	 * Render meta-data (tagging) for a category.
 	 *
 	 * @param Category $category
@@ -1228,7 +1213,8 @@ class NostoTagging extends Module
 	 */
 	protected function getCategoryTagging(Category $category)
 	{
-		$nosto_category = new NostoTaggingCategory($this->context, $category);
+		$nosto_category = new NostoTaggingCategory();
+		$nosto_category->loadData($this->context, $category);
 		if (!$nosto_category->validate())
 			return '';
 
@@ -1247,7 +1233,8 @@ class NostoTagging extends Module
 	 */
 	protected function getBrandTagging($manufacturer)
 	{
-		$nosto_brand = new NostoTaggingBrand($this->context, $manufacturer);
+		$nosto_brand = new NostoTaggingBrand();
+		$nosto_brand->loadData($this->context, $manufacturer);
 		if (!$nosto_brand->validate())
 			return '';
 

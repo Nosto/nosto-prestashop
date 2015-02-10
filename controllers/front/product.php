@@ -42,9 +42,14 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
 		foreach ($this->getProductIds() as $id_product)
 		{
 			$product = new Product($id_product, true, $context->language->id, $context->shop->id);
-			$nosto_product = $this->module->getProductData($product);
-			if (!empty($nosto_product))
+			if (!Validate::isLoadedObject($product))
+				continue;
+
+			$nosto_product = new NostoTaggingProduct();
+			$nosto_product->loadData($this->context, $product);
+			if ($nosto_product->validate())
 				$collection[] = $nosto_product;
+
 			$product = null;
 		}
 

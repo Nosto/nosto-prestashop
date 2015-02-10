@@ -232,17 +232,19 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	}
 
 	/**
-	 * @inheritdoc
+	 * Loads the product data from supplied context and product objects.
+	 *
+	 * @param Context $context the context object.
+	 * @param Product $product the product object.
 	 */
-	public function populate()
+	public function loadData(Context $context, Product $product)
 	{
-		$product = $this->object;
 		if (!Validate::isLoadedObject($product))
 			return;
 
-		$language_id = $this->context->language->id;
-		$currency = $this->context->currency;
-		$link = $this->context->link;
+		$language_id = $context->language->id;
+		$currency = $context->currency;
+		$link = $context->link;
 
 		$this->url = (string)$product->getLink();
 		$this->product_id = (int)$product->id;

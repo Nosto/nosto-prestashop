@@ -29,29 +29,6 @@
 abstract class NostoTaggingModel
 {
 	/**
-	 * @var Context the context to create the tagging block for.
-	 */
-	protected $context;
-
-	/**
-	 * @var object the object used as data source for the tagging block.
-	 */
-	protected $object;
-
-	/**
-	 * Constructor.
-	 *
-	 * @param Context $context the context to create the tagging block for.
-	 * @param object $object the object used as data source for the tagging block.
-	 */
-	public function __construct(Context $context, $object)
-	{
-		$this->context = $context;
-		$this->object = $object;
-		$this->populate();
-	}
-
-	/**
 	 * Returns an array of required items in the block.
 	 *
 	 * @return array the list of required items.
@@ -59,19 +36,15 @@ abstract class NostoTaggingModel
 	abstract public function getRequiredItems();
 
 	/**
-	 * Populates the tagging block with data from the
-	 */
-	abstract public function populate();
-
-	/**
 	 * Validates the tagging block, i.e. if all the required data is set.
 	 *
+	 * @param array $attributes optional list of attributes to validate (used to validate only specific attributes).
 	 * @return bool
 	 */
-	public function validate()
+	public function validate(array $attributes = array())
 	{
-		foreach ($this->getRequiredItems() as $item)
-			if (empty($this->{$item}))
+		foreach ($this->getRequiredItems() as $attribute)
+			if ((empty($attributes) || in_array($attribute, $attributes)) && empty($this->{$attribute}))
 				return false;
 		return true;
 	}

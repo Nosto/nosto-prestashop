@@ -42,12 +42,16 @@ class NostoTaggingBrand extends NostoTaggingModel
 	}
 
 	/**
-	 * @inheritdoc
+	 * Loads the brand data from supplied context and manufacturer objects.
+	 *
+	 * @param Context $context the context object.
+	 * @param Manufacturer $manufacturer the manufacturer object.
 	 */
-	public function populate()
+	public function loadData(Context $context, Manufacturer $manufacturer)
 	{
-		$manufacturer = $this->object;
-		if (Validate::isLoadedObject($manufacturer))
-			$this->brand_string = DS.$manufacturer->name;
+		if (!Validate::isLoadedObject($manufacturer))
+			return;
+
+		$this->brand_string = DS.$manufacturer->name;
 	}
 }
