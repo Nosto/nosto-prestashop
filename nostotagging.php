@@ -326,13 +326,25 @@ class NostoTagging extends Module
 		// which are then shown in an iframe on the module config page.
 		if ($account && $account->isConnectedToNosto())
 		{
-			$meta = new NostoTaggingMetaAccountIframe();
-			$meta->setUniqueId($this->getUniqueInstallationId());
-			$meta->setVersionModule($this->version);
-			$meta->loadData($this->context, $language_id);
-			$url = $account->getIframeUrl($meta);
-			if (!empty($url))
-				$this->context->smarty->assign(array('iframe_url' => $url));
+			try
+			{
+				$meta = new NostoTaggingMetaAccountIframe();
+				$meta->setUniqueId($this->getUniqueInstallationId());
+				$meta->setVersionModule($this->version);
+				$meta->loadData($this->context, $language_id);
+				$url = $account->getIframeUrl($meta);
+				if (!empty($url))
+					$this->context->smarty->assign(array('iframe_url' => $url));
+			}
+			catch (NostoException $e)
+			{
+				Nosto::helper('nosto_tagging/logger')->error(
+					__CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(),
+					$e->getCode(),
+					'Employee',
+					(int)$employee->id
+				);
+			}
 		}
 
 		$stylesheets = '<link rel="stylesheet" href="'.$this->_path.'css/tw-bs-v3.1.1.css">';
