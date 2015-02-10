@@ -24,29 +24,58 @@
  */
 
 /**
- * Front controller base class for modules. This is a drop in replacement in prestashop 1.4 where this does not exist.
+ * Buyer info model used bu the order model.
  */
-abstract class ModuleFrontController extends FrontController
+class NostoTaggingOrderBuyer implements NostoOrderBuyerInterface
 {
 	/**
-	 * @var Module the module instance.
+	 * @var string the first name of the one who placed the order.
 	 */
-	public $module;
+	protected $first_name;
+
+	/**
+	 * @var string the last name of the one who placed the order.
+	 */
+	protected $last_name;
+
+	/**
+	 * @var string the email address of the one who placed the order.
+	 */
+	protected $email;
 
 	/**
 	 * @inheritdoc
 	 */
-	public function init()
+	public function getFirstName()
 	{
-		parent::init();
-		$this->module = Module::getInstanceByName(Tools::getValue('module'));
-		if (!$this->module->active)
-			Tools::redirect('index.php');
-		$this->initContent();
+		return $this->first_name;
 	}
 
 	/**
-	 * Initializes the content.
+	 * @inheritdoc
 	 */
-	abstract public function initContent();
+	public function getLastName()
+	{
+		return $this->last_name;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function getEmail()
+	{
+		return $this->email;
+	}
+
+	/**
+	 * Loads the buyer data from the customer object.
+	 *
+	 * @param Customer $customer the customer object.
+	 */
+	public function loadData(Customer $customer)
+	{
+		$this->first_name = $customer->firstname;
+		$this->last_name = $customer->lastname;
+		$this->email = $customer->email;
+	}
 }

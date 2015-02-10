@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2014 Nosto Solutions Ltd
+ * 2013-2015 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,7 +19,7 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2014 Nosto Solutions Ltd
+ * @copyright 2013-2015 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
@@ -27,7 +27,7 @@
  * Helper class for setting and retrieving persistent user flash messages.
  * Uses the Prestashop core cookie class as storage.
  */
-class NostoTaggingFlashMessage
+class NostoTaggingHelperFlashMessage
 {
 	const TYPE_SUCCESS = 'success';
 	const TYPE_ERROR = 'error';
@@ -38,7 +38,7 @@ class NostoTaggingFlashMessage
 	 * @param string $type the type of message (use class constants).
 	 * @param string $message the message.
 	 */
-	public static function add($type, $message)
+	public function add($type, $message)
 	{
 		$cookie = Context::getContext()->cookie;
 		$cookie_data = isset($cookie->nostotagging) ? Tools::jsonDecode($cookie->nostotagging, true) : array();
@@ -56,7 +56,7 @@ class NostoTaggingFlashMessage
 	 * @param string $type the type of messages (use class constants).
 	 * @return array the message array.
 	 */
-	public static function get($type)
+	public function getList($type)
 	{
 		$flash_messages = array();
 		$cookie = Context::getContext()->cookie;
@@ -69,4 +69,4 @@ class NostoTaggingFlashMessage
 		}
 		return $flash_messages;
 	}
-} 
+}

@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2014 Nosto Solutions Ltd
+ * 2013-2015 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,7 +19,7 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2014 Nosto Solutions Ltd
+ * @copyright 2013-2015 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
@@ -37,18 +37,23 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
 	 */
 	public function initContent()
 	{
-		$nosto_products = array();
+		$collection = new NostoExportProductCollection();
 		$context = $this->module->getContext();
 		foreach ($this->getProductIds() as $id_product)
 		{
 			$product = new Product($id_product, true, $context->language->id, $context->shop->id);
-			$nosto_product = $this->module->getProductData($product);
-			if (!empty($nosto_product))
-				$nosto_products[] = $nosto_product;
+			if (!Validate::isLoadedObject($product))
+				continue;
+
+			$nosto_product = new NostoTaggingProduct();
+			$nosto_product->loadData($this->module->getContext(), $product);
+			if ($nosto_product->validate())
+				$collection[] = $nosto_product;
+
 			$product = null;
 		}
 
-		$this->encryptOutput(Tools::jsonEncode($nosto_products));
+		$this->encryptOutput($collection);
 	}
 
 	/**
@@ -62,8 +67,7 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
 		$sql = <<<EOT
 			SELECT `id_product`
 			FROM `ps_product`
-			WHERE `active` = 1
-				AND `available_for_order` = 1
+			WHERE `active` = 1 AND `available_for_order` = 1
 			LIMIT $this->limit
 			OFFSET $this->offset
 EOT;

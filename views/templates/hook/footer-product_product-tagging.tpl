@@ -1,5 +1,5 @@
 {*
-* 2013-2014 Nosto Solutions Ltd
+* 2013-2015 Nosto Solutions Ltd
 *
 * NOTICE OF LICENSE
 *
@@ -18,38 +18,38 @@
 * needs please refer to http://www.prestashop.com for more information.
 *
 * @author    Nosto Solutions Ltd <contact@nosto.com>
-* @copyright 2013-2014 Nosto Solutions Ltd
+* @copyright 2013-2015 Nosto Solutions Ltd
 * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *}
 
 {if isset($nosto_product) && is_object($nosto_product)}
 	<div class="nosto_product" style="display:none">
-		<span class="url">{$nosto_product->url|escape:'htmlall':'UTF-8'}</span>
-		<span class="product_id">{$nosto_product->product_id|escape:'htmlall':'UTF-8'}</span>
-		<span class="name">{$nosto_product->name|escape:'htmlall':'UTF-8'}</span>
-		{if $nosto_product->image_url}
-			<span class="image_url">{$nosto_product->image_url|escape:'htmlall':'UTF-8'}</span>
+		<span class="url">{$nosto_product->getUrl()|escape:'htmlall':'UTF-8'}</span>
+		<span class="product_id">{$nosto_product->getProductId()|escape:'htmlall':'UTF-8'}</span>
+		<span class="name">{$nosto_product->getName()|escape:'htmlall':'UTF-8'}</span>
+		{if $nosto_product->getImageUrl() neq ''}
+			<span class="image_url">{$nosto_product->getImageUrl()|escape:'htmlall':'UTF-8'}</span>
 		{/if}
-		<span class="price">{$nosto_product->price|escape:'htmlall':'UTF-8'}</span>
-        <span class="list_price">{$nosto_product->list_price|escape:'htmlall':'UTF-8'}</span>
-		<span class="price_currency_code">{$nosto_product->price_currency_code|escape:'htmlall':'UTF-8'}</span>
-		<span class="availability">{$nosto_product->availability|escape:'htmlall':'UTF-8'}</span>
-		{foreach from=$nosto_product->categories item=category}
+		<span class="price">{$nosto_product->getPrice()|escape:'htmlall':'UTF-8'}</span>
+        <span class="list_price">{$nosto_product->getListPrice()|escape:'htmlall':'UTF-8'}</span>
+		<span class="price_currency_code">{$nosto_product->getCurrencyCode()|escape:'htmlall':'UTF-8'}</span>
+		<span class="availability">{$nosto_product->getAvailability()|escape:'htmlall':'UTF-8'}</span>
+		{foreach from=$nosto_product->getCategories() item=category}
 			<span class="category">{$category|escape:'htmlall':'UTF-8'}</span>
 		{/foreach}
-		{if $nosto_product->description}
-			<span class="description">{$nosto_product->description|escape:'htmlall':'UTF-8'}</span>
+		{if $nosto_product->getDescription() neq ''}
+			<span class="description">{$nosto_product->getDescription()|escape:'htmlall':'UTF-8'}</span>
 		{/if}
-		{if $nosto_product->brand}
-			<span class="brand">{$nosto_product->brand|escape:'htmlall':'UTF-8'}</span>
+		{if $nosto_product->getBrand() neq ''}
+			<span class="brand">{$nosto_product->getBrand()|escape:'htmlall':'UTF-8'}</span>
 		{/if}
-		{if $nosto_product->date_published}
-			<span class="date_published">{$nosto_product->date_published|escape:'htmlall':'UTF-8'}</span>
+		{if $nosto_product->getDatePublished() neq ''}
+			<span class="date_published">{$nosto_product->getDatePublished()|escape:'htmlall':'UTF-8'}</span>
 		{/if}
-		{foreach from=$nosto_product->tags item=tag}
-		{if $tag neq ''}
-		<span class="tag1">{$tag|escape:'htmlall':'UTF-8'}</span>
-		{/if}
+		{foreach from=$nosto_product->getTags() item=tag}
+            {if $tag neq ''}
+            <span class="tag1">{$tag|escape:'htmlall':'UTF-8'}</span>
+            {/if}
 		{/foreach}
 	</div>
     {if isset($nosto_category) && is_object($nosto_category)}

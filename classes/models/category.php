@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2014 Nosto Solutions Ltd
+ * 2013-2015 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,14 +19,14 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2014 Nosto Solutions Ltd
+ * @copyright 2013-2015 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
 /**
- * Block for tagging categories.
+ * Model for tagging categories.
  */
-class NostoTaggingCategory extends NostoTaggingBlock
+class NostoTaggingCategory extends NostoTaggingModel
 {
 	/**
 	 * @var string the built category string.
@@ -42,30 +42,34 @@ class NostoTaggingCategory extends NostoTaggingBlock
 	}
 
 	/**
-	 * @inheritdoc
+	 * Loads the category data from supplied context and category objects.
+	 *
+	 * @param Context $context the context object.
+	 * @param Category $category the category object.
 	 */
-	public function populate()
+	public function loadData(Context $context, Category $category)
 	{
-		$category = $this->object;
-		if (Validate::isLoadedObject($category))
-			$this->category_string = self::buildCategoryString($category->id, $this->context->language->id);
+		if (!Validate::isLoadedObject($category))
+			return;
+
+		$this->category_string = self::buildCategoryString($category->id, $context->language->id);
 	}
 
 	/**
 	 * Builds a tagging string of the given category including all its parent categories.
 	 *
-	 * @param int $category_id
-	 * @param int $lang_id
+	 * @param int $id_category
+	 * @param int $id_lang
 	 * @return string
 	 */
-	public static function buildCategoryString($category_id, $lang_id)
+	public static function buildCategoryString($id_category, $id_lang)
 	{
 		$category_list = array();
 
-		$category = new Category((int)$category_id, $lang_id);
+		$category = new Category((int)$id_category, $id_lang);
 
 		if (Validate::isLoadedObject($category) && (int)$category->active === 1)
-			foreach ($category->getParentsCategories($lang_id) as $parent_category)
+			foreach ($category->getParentsCategories($id_lang) as $parent_category)
 				if (isset($parent_category['name'], $parent_category['active']) && (int)$parent_category['active'] === 1)
 					$category_list[] = (string)$parent_category['name'];
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2014 Nosto Solutions Ltd
+ * 2013-2015 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,35 +19,16 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2014 Nosto Solutions Ltd
+ * @copyright 2013-2015 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-/**
- * Block for tagging manufacturers (brands).
- */
-class NostoTaggingBrand extends NostoTaggingBlock
-{
-	/**
-	 * @var string the built brand string.
-	 */
-	public $brand_string;
+header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+header("Last-Modified: ".gmdate("D, d M Y H:i:s")." GMT");
 
-	/**
-	 * @inheritdoc
-	 */
-	public function getRequiredItems()
-	{
-		return array('brand_string');
-	}
+header("Cache-Control: no-store, no-cache, must-revalidate");
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Pragma: no-cache");
 
-	/**
-	 * @inheritdoc
-	 */
-	public function populate()
-	{
-		$manufacturer = $this->object;
-		if (Validate::isLoadedObject($manufacturer))
-			$this->brand_string = DS.$manufacturer->name;
-	}
-} 
+header("Location: ../");
+exit;

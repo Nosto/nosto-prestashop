@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2014 Nosto Solutions Ltd
+ * 2013-2015 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,14 +19,14 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2014 Nosto Solutions Ltd
+ * @copyright 2013-2015 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
 /**
- * Block for tagging products.
+ * Model for tagging products.
  */
-class NostoTaggingProduct extends NostoTaggingBlock
+class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInterface
 {
 	const IN_STOCK = 'InStock';
 	const OUT_OF_STOCK = 'OutOfStock';
@@ -36,67 +36,72 @@ class NostoTaggingProduct extends NostoTaggingBlock
 	/**
 	 * @var string absolute url to the product page.
 	 */
-	public $url;
+	protected $url;
 
 	/**
 	 * @var string product object id.
 	 */
-	public $product_id;
+	protected $product_id;
 
 	/**
 	 * @var string product name.
 	 */
-	public $name;
+	protected $name;
 
 	/**
 	 * @var string absolute url to the product image.
 	 */
-	public $image_url;
+	protected $image_url;
 
 	/**
 	 * @var string product price, discounted including vat.
 	 */
-	public $price;
+	protected $price;
 
 	/**
 	 * @var string product list price, including vat.
 	 */
-	public $list_price;
+	protected $list_price;
 
 	/**
 	 * @var string the currency iso code.
 	 */
-	public $price_currency_code;
+	protected $price_currency_code;
 
 	/**
 	 * @var string product availability (use constants).
 	 */
-	public $availability;
+	protected $availability;
 
 	/**
 	 * @var array list of product tags.
 	 */
-	public $tags = array();
+	protected $tags = array();
 
 	/**
 	 * @var array list of product category strings.
 	 */
-	public $categories = array();
+	protected $categories = array();
+
+	/**
+	 * @var string the product short description.
+	 */
+	protected $short_description;
 
 	/**
 	 * @var string the product description.
 	 */
-	public $description;
+	protected $description;
 
 	/**
 	 * @var string the product brand name.
 	 */
-	public $brand;
+	protected $brand;
 
 	/**
 	 * @var string the product publish date.
 	 */
-	public $date_published;
+	protected $date_published;
 
 	/**
 	 * @inheritdoc
@@ -117,15 +122,129 @@ class NostoTaggingProduct extends NostoTaggingBlock
 	/**
 	 * @inheritdoc
 	 */
-	public function populate()
+	public function getUrl()
 	{
-		$product = $this->object;
+		return $this->url;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function getProductId()
+	{
+		return $this->product_id;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function getName()
+	{
+		return $this->name;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function getImageUrl()
+	{
+		return $this->image_url;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function getPrice()
+	{
+		return $this->price;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function getListPrice()
+	{
+		return $this->list_price;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function getCurrencyCode()
+	{
+		return $this->price_currency_code;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function getAvailability()
+	{
+		return $this->availability;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function getTags()
+	{
+		return $this->tags;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function getCategories()
+	{
+		return $this->categories;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function getShortDescription()
+	{
+		return $this->short_description;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function getDescription()
+	{
+		return $this->description;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function getBrand()
+	{
+		return $this->brand;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function getDatePublished()
+	{
+		return $this->date_published;
+	}
+
+	/**
+	 * Loads the product data from supplied context and product objects.
+	 *
+	 * @param Context $context the context object.
+	 * @param Product $product the product object.
+	 */
+	public function loadData(Context $context, Product $product)
+	{
 		if (!Validate::isLoadedObject($product))
 			return;
 
-		$language_id = $this->context->language->id;
-		$currency = $this->context->currency;
-		$link = $this->context->link;
+		$language_id = $context->language->id;
+		$currency = $context->currency;
+		$link = $context->link;
 
 		$this->url = (string)$product->getLink();
 		$this->product_id = (int)$product->id;
@@ -137,7 +256,7 @@ class NostoTaggingProduct extends NostoTaggingBlock
 			? (string)$link->getImageLink($product->link_rewrite, $product->id.'-'.$image_id, $image_type)
 			: '';
 
-		$this->price = NostoTaggingFormatter::formatPrice($product->getPrice(true, null));
+		$this->price = Nosto::helper('price')->format($product->getPrice(true, null));
 		$this->price_currency_code = (string)$currency->iso_code;
 
 		if ($product->checkQty(1))
@@ -160,13 +279,14 @@ class NostoTaggingProduct extends NostoTaggingBlock
 				$this->categories[] = (string)$category;
 		}
 
+		$this->short_description = (string)$product->description_short;
 		$this->description = (string)$product->description;
-		$this->list_price = NostoTaggingFormatter::formatPrice($product->getPriceWithoutReduct(false, null));
+		$this->list_price = Nosto::helper('price')->format($product->getPriceWithoutReduct(false, null));
 
 		if (!empty($product->manufacturer_name))
 			$this->brand = (string)$product->manufacturer_name;
 
-		$this->date_published = NostoTaggingFormatter::formatDate($product->date_add);
+		$this->date_published = Nosto::helper('date')->format($product->date_add);
 	}
 
 	/**

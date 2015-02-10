@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2014 Nosto Solutions Ltd
+ * 2013-2015 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,14 +19,14 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2014 Nosto Solutions Ltd
+ * @copyright 2013-2015 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
 /**
- * Block for tagging carts.
+ * Model for tagging carts.
  */
-class NostoTaggingCart extends NostoTaggingBlock
+class NostoTaggingCart extends NostoTaggingModel
 {
 	/**
 	 * @var array line items in the cart.
@@ -43,11 +43,12 @@ class NostoTaggingCart extends NostoTaggingBlock
 	}
 
 	/**
-	 * @inheritdoc
+	 * Loads the cart data from supplied cart object.
+	 *
+	 * @param Cart $cart the cart object.
 	 */
-	public function populate()
+	public function loadData(Cart $cart)
 	{
-		$cart = $this->object;
 		if (!Validate::isLoadedObject($cart) || ($products = $cart->getProducts()) === array())
 			return;
 
@@ -97,7 +98,7 @@ class NostoTaggingCart extends NostoTaggingBlock
 				'product_id' => (int)$item['id_product'],
 				'quantity' => (int)$item['cart_quantity'],
 				'name' => (string)$item['name'],
-				'unit_price' => NostoTaggingFormatter::formatPrice($item['price_wt']),
+				'unit_price' =>  Nosto::helper('price')->format($item['price_wt']),
 				'price_currency_code' => (string)$currency->iso_code,
 			);
 	}
