@@ -46,7 +46,7 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
 				continue;
 
 			$nosto_product = new NostoTaggingProduct();
-			$nosto_product->loadData($this->context, $product);
+			$nosto_product->loadData($this->module->getContext(), $product);
 			if ($nosto_product->validate())
 				$collection[] = $nosto_product;
 
