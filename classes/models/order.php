@@ -31,7 +31,7 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 	/**
 	 * @var bool if we should include special line items such as discounts and shipping costs.
 	 */
-	public $includeSpecialItems = true;
+	public $include_special_items = true;
 
 	/**
 	 * @var string the order number.
@@ -236,7 +236,7 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 			}
 		}
 
-		if ($this->includeSpecialItems && !empty($purchased_items))
+		if ($this->include_special_items && !empty($purchased_items))
 		{
 			// Add special items for discounts, shipping and gift wrapping.
 

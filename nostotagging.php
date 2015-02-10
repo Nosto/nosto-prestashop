@@ -1146,7 +1146,7 @@ class NostoTagging extends Module
 	protected function getCartTagging()
 	{
 		$nosto_cart = new NostoTaggingCart();
-		$nosto_cart->loadData($this->context, $this->context->cart);
+		$nosto_cart->loadData($this->context->cart);
 		if (!$nosto_cart->validate())
 			return '';
 
@@ -1234,7 +1234,7 @@ class NostoTagging extends Module
 	protected function getBrandTagging($manufacturer)
 	{
 		$nosto_brand = new NostoTaggingBrand();
-		$nosto_brand->loadData($this->context, $manufacturer);
+		$nosto_brand->loadData($manufacturer);
 		if (!$nosto_brand->validate())
 			return '';
 

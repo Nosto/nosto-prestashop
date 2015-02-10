@@ -43,12 +43,11 @@ class NostoTaggingCart extends NostoTaggingModel
 	}
 
 	/**
-	 * Loads the cart data from supplied context and cart objects.
+	 * Loads the cart data from supplied cart object.
 	 *
-	 * @param Context $context the context object.
 	 * @param Cart $cart the cart object.
 	 */
-	public function loadData(Context $context, Cart $cart)
+	public function loadData(Cart $cart)
 	{
 		if (!Validate::isLoadedObject($cart) || ($products = $cart->getProducts()) === array())
 			return;
