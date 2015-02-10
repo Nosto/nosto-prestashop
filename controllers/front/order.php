@@ -41,16 +41,9 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
 		foreach ($this->getOrderIds() as $id_order)
 		{
 			$order = new Order($id_order);
-			$nosto_order = $this->module->getOrderData($order);
+			$nosto_order = $this->module->getOrderData($order, array('includeSpecialItems' => false));
 			if (!empty($nosto_order))
-			{
-				// Remove all "special" items with product ID of -1 (discounts, shipping costs etc.).
-				foreach ($nosto_order->purchased_items as $i => $item)
-					if (isset($item['product_id']) && $item['product_id'] === -1)
-						unset($nosto_order->purchased_items[$i]);
-
 				$collection[] = $nosto_order;
-			}
 			$order = null;
 		}
 
@@ -64,14 +57,33 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
 	 */
 	protected function getOrderIds()
 	{
-		$order_ids = array();
+		$context = $this->module->getContext();
+		if (_PS_VERSION_ > '1.5')
+			$where = strtr(
+				'`id_shop_group` = {g} AND `id_shop` = {s} AND `id_lang` = {l}',
+				array(
+					'{g}' => pSQL($context->shop->id_shop_group),
+					'{s}' => pSQL($context->shop->id),
+					'{l}' => pSQL($context->language->id),
+				)
+			);
+		else
+			$where = strtr(
+				'`id_lang` = {l}',
+				array(
+					'{l}' => pSQL($context->language->id),
+				)
+			);
+
 		$sql = <<<EOT
 			SELECT `id_order`
 			FROM `ps_orders`
+			WHERE $where
 			LIMIT $this->limit
 			OFFSET $this->offset
 EOT;
 		$rows = Db::getInstance()->executeS($sql);
+		$order_ids = array();
 		foreach ($rows as $row)
 			$order_ids[] = (int)$row['id_order'];
 		return $order_ids;

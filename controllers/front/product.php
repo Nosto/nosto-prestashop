@@ -62,8 +62,7 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
 		$sql = <<<EOT
 			SELECT `id_product`
 			FROM `ps_product`
-			WHERE `active` = 1
-				AND `available_for_order` = 1
+			WHERE `active` = 1 AND `available_for_order` = 1
 			LIMIT $this->limit
 			OFFSET $this->offset
 EOT;

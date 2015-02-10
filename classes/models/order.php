@@ -34,7 +34,7 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 	protected $order_number;
 
 	/**
-	 * @var NostoOrderBuyerInterface buyer info.
+	 * @var NostoTaggingOrderBuyer buyer info.
 	 */
 	protected $buyer = array();
 
@@ -44,7 +44,7 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 	protected $created_at;
 
 	/**
-	 * @var NostoOrderPurchasedItemInterface purchased items in the order.
+	 * @var NostoTaggingOrderPurchasedItem[] purchased items in the order.
 	 */
 	protected $purchased_items = array();
 
