@@ -128,6 +128,16 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	}
 
 	/**
+	 * Setter for the unique product id.
+	 *
+	 * @param int $product_id the product id.
+	 */
+	public function setProductId($product_id)
+	{
+		$this->product_id = $product_id;
+	}
+
+	/**
 	 * @inheritdoc
 	 */
 	public function getProductId()

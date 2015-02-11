@@ -1236,7 +1236,7 @@ class NostoTagging extends Module
 
 	/**
 	 * Sends a API notification to Nosto that a product needs re-crawling.
-	 * This is done for every shop language that has a Nosto account connected to it.
+	 * This is done for every shop language in this context that has a Nosto account connected to it.
 	 *
 	 * @param Product $product the product object.
 	 */
@@ -1249,14 +1249,13 @@ class NostoTagging extends Module
 			if ($account === null || !$account->isConnectedToNosto())
 				continue;
 
-			$product = new Product($product->id, false, (int)$language['id_lang']);
 			if (!Validate::isLoadedObject($product))
 				continue;
 
 			try
 			{
 				$nosto_product = new NostoTaggingProduct();
-				$nosto_product->loadData($this->context, $product);
+				$nosto_product->setProductId((int)$product->id);
 				if ($nosto_product->validate(array('product_id')))
 					NostoProductReCrawl::send($nosto_product, $account);
 			}
