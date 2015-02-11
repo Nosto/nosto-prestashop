@@ -35,14 +35,34 @@ if (!defined('_PS_VERSION_'))
 	 * White-list of valid controllers that this script is allowed to run.
 	 */
 	$controller_white_list = array('oauth2', 'product', 'order');
-	$ps_dir = dirname(__FILE__).'/../..';
+
+	/*
+	 * If this file is symlinked, then we need to parse the `SCRIPT_FILENAME` to get the path of the PS root dir.
+	 * This is because __FILE__ resolves the symlink source path.
+	 * We cannot use `/../..` on dirname() of `SCRIPT_FILENAME` as that will also resolve the symlink source path.
+	 * So combining as many dirname() calls as needed to step up the tree to the second parent, which should be the
+	 * PS root dir, is a solution.
+	 */
+	if (!empty($_SERVER['SCRIPT_FILENAME']))
+		$ps_dir = dirname(dirname(dirname($_SERVER['SCRIPT_FILENAME'])));
+
+	/*
+	 * If the PS dir is not set, or we cannot resolve the config file, try to to get the path relative to this file.
+	 * This only works if this file is NOT symlinked.
+	 */
+	if (!isset($ps_dir) || !file_exists($ps_dir.'/config/config.inc.php'))
+		$ps_dir = dirname(__FILE__).'/../..';
+
 	$controller_dir = $ps_dir.'/modules/nostotagging/controllers/front';
+
 	require_once($ps_dir.'/config/config.inc.php');
+
 	/*
 	 * The "ModuleFrontController" class won't be defined in prestashop 1.4, so define it.
 	 */
 	if (_PS_VERSION_ < '1.5')
 		require_once($controller_dir.'/module.php');
+
 	$controller = Tools::strtolower((string)Tools::getValue('controller'));
 	if (!empty($controller) && in_array($controller, $controller_white_list))
 	{
