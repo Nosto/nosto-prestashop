@@ -1242,14 +1242,14 @@ class NostoTagging extends Module
 	 */
 	protected function recrawlProduct(Product $product)
 	{
+		if (!Validate::isLoadedObject($product))
+			return;
+
 		foreach (Language::getLanguages() as $language)
 		{
 			/** @var NostoAccount $account */
 			$account = Nosto::helper('nosto_tagging/account')->find((int)$language['id_lang']);
 			if ($account === null || !$account->isConnectedToNosto())
-				continue;
-
-			if (!Validate::isLoadedObject($product))
 				continue;
 
 			try
