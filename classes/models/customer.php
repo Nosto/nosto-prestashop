@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2014 Nosto Solutions Ltd
+ * 2013-2015 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,14 +19,14 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2014 Nosto Solutions Ltd
+ * @copyright 2013-2015 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
 /**
- * Block for tagging customers.
+ * Model for tagging customers.
  */
-class NostoTaggingCustomer extends NostoTaggingBlock
+class NostoTaggingCustomer extends NostoTaggingModel
 {
 	/**
 	 * @var string the customer first name.
@@ -56,13 +56,14 @@ class NostoTaggingCustomer extends NostoTaggingBlock
 	}
 
 	/**
-	 * @inheritdoc
+	 * Loads the customer data from supplied context and customer objects.
+	 *
+	 * @param Context $context the context object.
+	 * @param Customer $customer the customer object.
 	 */
-	public function populate()
+	public function loadData(Context $context, Customer $customer)
 	{
-		/** @var Customer $customer */
-		$customer = $this->object;
-		if (!$this->isCustomerLoggedIn($customer))
+		if (!$this->isCustomerLoggedIn($context, $customer))
 			return;
 
 		$this->first_name = $customer->firstname;
@@ -74,10 +75,11 @@ class NostoTaggingCustomer extends NostoTaggingBlock
 	 * Check if the customer is logged in or not.
 	 * We need to check the cookie if PS version is 1.4 as the CustomerBackwardModule::isLogged() method does not work.
 	 *
+	 * @param Context $context the context object.
 	 * @param Customer $customer the customer object to check.
 	 * @return bool true if the customer is logged in, false otherwise.
 	 */
-	protected function isCustomerLoggedIn($customer)
+	protected function isCustomerLoggedIn(Context $context, Customer $customer)
 	{
 		if (!Validate::isLoadedObject($customer))
 			return false;
@@ -85,14 +87,14 @@ class NostoTaggingCustomer extends NostoTaggingBlock
 		if (_PS_VERSION_ >= '1.5')
 			return $customer->isLogged();
 
-		if (!isset($this->context, $this->context->cookie))
+		if (!isset($context->cookie))
 			return false;
 
 		// Double check that the given customer object has the same id as the cookie's id_customer property,
 		// before checking if the cookie is logged in.
-		return (!empty($this->context->cookie->id_customer)
+		return (!empty($context->cookie->id_customer)
 			&& !empty($customer->id)
-			&& ($this->context->cookie->id_customer == $customer->id)
-			&& $this->context->cookie->isLogged());
+			&& ($context->cookie->id_customer == $customer->id)
+			&& $context->cookie->isLogged());
 	}
 }

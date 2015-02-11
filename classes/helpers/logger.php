@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2014 Nosto Solutions Ltd
+ * 2013-2015 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,33 +19,46 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2014 Nosto Solutions Ltd
+ * @copyright 2013-2015 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
 /**
  * Helper class for logging events to the Prestashop log.
  */
-class NostoTaggingLogger
+class NostoTaggingHelperLogger
 {
-	const LOG_SEVERITY_INFO = 1;
-	const LOG_SEVERITY_WARNING = 2;
-	const LOG_SEVERITY_ERROR = 3;
-	const LOG_SEVERITY_FATAL = 4;
+	const SEVERITY_INFO = 1;
+	const SEVERITY_WARNING = 2;
+	const SEVERITY_ERROR = 3;
+	const SEVERITY_FATAL = 4;
 
 	/**
-	 * Logs an event to the Prestashop log.
+	 * Logs a message to the PS log.
 	 *
-	 * @param string $message the message to log.
-	 * @param int $severity the log severity (use class constants).
-	 * @param null|int $error_code the error code if any.
-	 * @param null|string $object_type the object type if any.
-	 * @param null|int $object_id the object id if any.
+	 * @param string $message the message.
+	 * @param int $severity what kind of log to create (use class constants).
+	 * @param null|int $error_code the error code.
+	 * @param null|string $object_type the object type affected.
+	 * @param null|int $object_id the object id affected.
 	 */
-	public static function log($message, $severity = self::LOG_SEVERITY_INFO, $error_code = null, $object_type = null, $object_id = null)
+	public function log($message, $severity = self::SEVERITY_INFO, $error_code = null, $object_type = null, $object_id = null)
 	{
 		$logger = (class_exists('PrestaShopLogger') ? 'PrestaShopLogger' : (class_exists('Logger') ? 'Logger' : null));
 		if (!empty($logger))
 			call_user_func(array($logger, 'addLog'), $message, $severity, $error_code, $object_type, $object_id, true);
+	}
+
+	/**
+	 * Logs an error to the PS log.
+	 *
+	 * @param string $message the message.
+	 * @param null|int $error_code the error code.
+	 * @param null|string $object_type the object type affected.
+	 * @param null|int $object_id the object id affected.
+	 */
+	public function error($message, $error_code = null, $object_type = null, $object_id = null)
+	{
+		$this->log($message, self::SEVERITY_ERROR, $error_code, $object_type, $object_id);
 	}
 }
