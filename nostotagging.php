@@ -264,10 +264,7 @@ class NostoTagging extends Module
 			}
 
 			// Refresh the page after every POST to get rid of form re-submission errors.
-			Tools::redirect(
-				NostoHttpRequest::replaceQueryParamInUrl('language_id', $language_id, $admin_url),
-				''
-			);
+			Tools::redirect(NostoHttpRequest::replaceQueryParamInUrl('language_id', $language_id, $admin_url), '');
 			die;
 		}
 		else
