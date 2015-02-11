@@ -47,10 +47,16 @@ function upgrade_module_2_1_0($object)
 						PRIMARY KEY (`id_cart`, `id_nosto_customer`)
 					) ENGINE '._MYSQL_ENGINE_;
 
+	if (_PS_VERSION_ > '1.5')
+		$hooks = $object->registerHook('actionObjectDeleteAfter')
+			&& $object->unregisterHook('actionPaymentConfirmation');
+	else
+		$hooks = true;
+
 	// We just drop the table and re-create as it's easier and we don't want the data we loose.
 	return Db::getInstance()->execute($drop_table)
 		&& Db::getInstance()->execute($create_table)
 		&& $object->unregisterHook('paymentConfirm')
-		&& $object->unregisterHook('actionPaymentConfirmation')
-		&& $object->registerHook('postUpdateOrderStatus');
+		&& $object->registerHook('postUpdateOrderStatus')
+		&& $hooks;
 }

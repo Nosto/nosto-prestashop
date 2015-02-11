@@ -171,9 +171,10 @@ class NostoTagging extends Module
 			}
 			else
 			{
-				// And for PS >= 1.5 we register the object update hook for the product re-crawl as we can get better
-				// precision using that then the separate hooks like in PS 1.4.
-				return $this->registerHook('actionObjectUpdateAfter');
+				// And for PS >= 1.5 we register the object update/delete hooks for the product re-crawl as we can get
+				// better precision using that then the separate hooks like in PS 1.4.
+				return $this->registerHook('actionObjectUpdateAfter')
+					&& $this->registerHook('actionObjectDeleteAfter');
 			}
 		}
 		return false;
@@ -856,41 +857,20 @@ class NostoTagging extends Module
 	public function hookActionObjectUpdateAfter(Array $params)
 	{
 		if (isset($params['object']))
-		{
-			$object = $params['object'];
-			if ($object instanceof Product)
-			{
-				// Send a request to Nosto to re-crawl this product for every language that has an account.
-				foreach (Language::getLanguages() as $language)
-				{
-					/** @var NostoAccount $account */
-					$account = Nosto::helper('nosto_tagging/account')->find((int)$language['id_lang']);
-					if ($account === null || !$account->isConnectedToNosto())
-						continue;
+			if ($params['object'] instanceof Product)
+				$this->recrawlProduct($params['object']);
+	}
 
-					$product = new Product($object->id, false, (int)$language['id_lang']);
-					if (!Validate::isLoadedObject($product))
-						continue;
-
-					try
-					{
-						$nosto_product = new NostoTaggingProduct();
-						$nosto_product->loadData($this->context, $product);
-						if ($nosto_product->validate(array('product_id')))
-							NostoProductReCrawl::send($nosto_product, $account);
-					}
-					catch (NostoException $e)
-					{
-						Nosto::helper('nosto_tagging/logger')->error(
-							__CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(),
-							$e->getCode(),
-							get_class($object),
-							(int)$object->id
-						);
-					}
-				}
-			}
-		}
+	/**
+	 * Hook that is fired after a object is deleted from the db.
+	 *
+	 * @param array $params
+	 */
+	public function hookActionObjectDeleteAfter(Array $params)
+	{
+		if (isset($params['object']))
+			if ($params['object'] instanceof Product)
+				$this->recrawlProduct($params['object']);
 	}
 
 	/**
@@ -908,13 +888,13 @@ class NostoTagging extends Module
 	/**
 	 * Hook called when a product is deleted, right before said deletion (Prestashop 1.4).
 	 *
-	 * @see NostoTagging::hookActionObjectUpdateAfter
+	 * @see NostoTagging::hookActionObjectDeleteAfter
 	 * @param array $params
 	 */
 	public function hookDeleteProduct(Array $params)
 	{
 		if (isset($params['product']))
-			$this->hookActionObjectUpdateAfter(array('object' => $params['product']));
+			$this->hookActionObjectDeleteAfter(array('object' => $params['product']));
 	}
 
 	/**
@@ -1255,5 +1235,43 @@ class NostoTagging extends Module
 		));
 
 		return $this->display(__FILE__, 'views/templates/hook/manufacturer-footer_brand-tagging.tpl');
+	}
+
+	/**
+	 * Sends a API notification to Nosto that a product needs re-crawling.
+	 * This is done for every shop language that has a Nosto account connected to it.
+	 *
+	 * @param Product $product the product object.
+	 */
+	protected function recrawlProduct(Product $product)
+	{
+		foreach (Language::getLanguages() as $language)
+		{
+			/** @var NostoAccount $account */
+			$account = Nosto::helper('nosto_tagging/account')->find((int)$language['id_lang']);
+			if ($account === null || !$account->isConnectedToNosto())
+				continue;
+
+			$product = new Product($product->id, false, (int)$language['id_lang']);
+			if (!Validate::isLoadedObject($product))
+				continue;
+
+			try
+			{
+				$nosto_product = new NostoTaggingProduct();
+				$nosto_product->loadData($this->context, $product);
+				if ($nosto_product->validate(array('product_id')))
+					NostoProductReCrawl::send($nosto_product, $account);
+			}
+			catch (NostoException $e)
+			{
+				Nosto::helper('nosto_tagging/logger')->error(
+					__CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(),
+					$e->getCode(),
+					get_class($product),
+					(int)$product->id
+				);
+			}
+		}
 	}
 }
