@@ -968,9 +968,9 @@ class NostoTagging extends Module
 			// The product page.
 			$append .= $this->display(__FILE__, 'views/templates/hook/footer-product_hidden-nosto-elements.tpl');
 		}
-		elseif ($this->isController('order'))
+		elseif ($this->isController('order') && (int)Tools::getValue('step', 0) === 0)
 		{
-			// The cart page.
+			// The cart summary page.
 			$append .= $this->display(__FILE__, 'views/templates/hook/shopping-cart-footer_hidden-nosto-elements.tpl');
 		}
 		elseif ($this->isController('category') || $this->isController('manufacturer'))
