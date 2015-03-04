@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2014 Nosto Solutions Ltd
+ * 2013-2015 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,16 +19,17 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2014 Nosto Solutions Ltd
+ * @copyright 2013-2015 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
 /**
- * Helper class for generating preview links for the front end slots.
+ * Helper class for managing urls.
  */
-class NostoTaggingPreviewLink
+class NostoTaggingHelperUrl
 {
 	const SEARCH_PAGE_QUERY = 'controller=search&search_query=nosto';
+	const DEFAULT_SERVER_ADDRESS = 'connect.nosto.com';
 
 	/**
 	 * Returns a preview url to a product page.
@@ -37,7 +38,7 @@ class NostoTaggingPreviewLink
 	 * @param int|null $id_lang optional language ID if a specific language is needed.
 	 * @return string the url.
 	 */
-	public static function getProductPageUrl($id_product = null, $id_lang = null)
+	public function getPreviewUrlProduct($id_product = null, $id_lang = null)
 	{
 		try
 		{
@@ -63,7 +64,7 @@ EOT;
 
 			$link = new Link();
 			$url = $link->getProductLink($product, null, null, null, $id_lang);
-			return self::addQueryParams($url, $id_lang);
+			return $this->addPreviewQueryParams($url, $id_lang);
 		}
 		catch (Exception $e)
 		{
@@ -79,7 +80,7 @@ EOT;
 	 * @param int|null $id_lang optional language ID if a specific language is needed.
 	 * @return string the url.
 	 */
-	public static function getCategoryPageUrl($id_category = null, $id_lang = null)
+	public function getPreviewUrlCategory($id_category = null, $id_lang = null)
 	{
 		try
 		{
@@ -108,7 +109,7 @@ EOT;
 
 			$link = new Link();
 			$url = $link->getCategoryLink($category, null, $id_lang);
-			return self::addQueryParams($url, $id_lang);
+			return $this->addPreviewQueryParams($url, $id_lang);
 		}
 		catch (Exception $e)
 		{
@@ -123,7 +124,7 @@ EOT;
 	 * @param int|null $id_lang optional language ID if a specific language is needed.
 	 * @return string the url.
 	 */
-	public static function getSearchPageUrl($id_lang = null)
+	public function getPreviewUrlSearch($id_lang = null)
 	{
 		try
 		{
@@ -131,7 +132,7 @@ EOT;
 				$id_lang = Context::getContext()->language->id;
 			$link = new Link();
 			$url = $link->getPageLink('search.php', true, $id_lang).'?'.self::SEARCH_PAGE_QUERY;
-			return self::addQueryParams($url, $id_lang);
+			return $this->addPreviewQueryParams($url, $id_lang);
 		}
 		catch (Exception $e)
 		{
@@ -146,7 +147,7 @@ EOT;
 	 * @param int|null $id_lang optional language ID if a specific language is needed.
 	 * @return string the url.
 	 */
-	public static function getCartPageUrl($id_lang = null)
+	public function getPreviewUrlCart($id_lang = null)
 	{
 		try
 		{
@@ -154,7 +155,7 @@ EOT;
 				$id_lang = Context::getContext()->language->id;
 			$link = new Link();
 			$url = $link->getPageLink('order.php', true, $id_lang);
-			return self::addQueryParams($url, $id_lang);
+			return $this->addPreviewQueryParams($url, $id_lang);
 		}
 		catch (Exception $e)
 		{
@@ -169,7 +170,7 @@ EOT;
 	 * @param int|null $id_lang optional language ID if a specific language is needed.
 	 * @return string the url.
 	 */
-	public static function getHomePageUrl($id_lang = null)
+	public function getPreviewUrlHome($id_lang = null)
 	{
 		try
 		{
@@ -177,13 +178,23 @@ EOT;
 				$id_lang = Context::getContext()->language->id;
 			$link = new Link();
 			$url = $link->getPageLink('index.php', true, $id_lang);
-			return self::addQueryParams($url, $id_lang);
+			return $this->addPreviewQueryParams($url, $id_lang);
 		}
 		catch (Exception $e)
 		{
 			// Return empty on failure
 			return '';
 		}
+	}
+
+	/**
+	 * Get the Nosto server address for the shop frontend JavaScripts.
+	 *
+	 * @return string the url.
+	 */
+	public function getServerAddress()
+	{
+		return isset($_ENV['NOSTO_SERVER_URL']) ? $_ENV['NOSTO_SERVER_URL'] : self::DEFAULT_SERVER_ADDRESS;
 	}
 
 	/**
@@ -194,13 +205,13 @@ EOT;
 	 * @param int $id_lang the language ID for which the url is created.
 	 * @return string the preview url with added params.
 	 */
-	protected static function addQueryParams($url, $id_lang)
+	protected function addPreviewQueryParams($url, $id_lang)
 	{
 		// If url rewriting is of, then make sure the id_lang is set.
 		if ((int)Configuration::get('PS_REWRITING_SETTINGS') === 0)
-			$url = NostoTaggingHttpRequest::replaceQueryParamInUrl('id_lang', $id_lang, $url);
+			$url = NostoHttpRequest::replaceQueryParamInUrl('id_lang', $id_lang, $url);
 		// Always add the "nostodebug" flag.
-		$url = NostoTaggingHttpRequest::replaceQueryParamInUrl('nostodebug', 'true', $url);
+		$url = NostoHttpRequest::replaceQueryParamInUrl('nostodebug', 'true', $url);
 		return $url;
 	}
 }

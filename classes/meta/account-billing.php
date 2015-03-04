@@ -24,29 +24,42 @@
  */
 
 /**
- * Front controller base class for modules. This is a drop in replacement in prestashop 1.4 where this does not exist.
+ * Meta data class for account billing related information needed when creating new accounts.
  */
-abstract class ModuleFrontController extends FrontController
+class NostoTaggingMetaAccountBilling implements NostoAccountMetaDataBillingDetailsInterface
 {
 	/**
-	 * @var Module the module instance.
+	 * @var string country ISO (ISO 3166-1 alpha-2) code for billing details.
 	 */
-	public $module;
+	protected $country;
 
 	/**
-	 * @inheritdoc
+	 * Loads the meta data from the given context.
+	 *
+	 * @param Context $context the context to use as data source.
 	 */
-	public function init()
+	public function loadData($context)
 	{
-		parent::init();
-		$this->module = Module::getInstanceByName(Tools::getValue('module'));
-		if (!$this->module->active)
-			Tools::redirect('index.php');
-		$this->initContent();
+		$this->country = $context->country->iso_code;
 	}
 
 	/**
-	 * Initializes the content.
+	 * Sets the account billing details country ISO (ISO 3166-1 alpha-2) code.
+	 *
+	 * @param string $country the country ISO code.
 	 */
-	abstract public function initContent();
+	public function setCountry($country)
+	{
+		$this->country = $country;
+	}
+
+	/**
+	 * The 2-letter ISO code (ISO 3166-1 alpha-2) for billing details country.
+	 *
+	 * @return string the country ISO code.
+	 */
+	public function getCountry()
+	{
+		return $this->country;
+	}
 }

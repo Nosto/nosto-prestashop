@@ -40,6 +40,10 @@
     text-transform: uppercase;
 }
 
+.tw-bs .nostotagging .panel-body {
+    padding: 0;
+}
+
 .tw-bs .nostotagging .help-block {
     font-style: italic;
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2014 Nosto Solutions Ltd
+ * 2013-2015 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,16 +19,33 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2014 Nosto Solutions Ltd
+ * @copyright 2013-2015 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
-header("Last-Modified: ".gmdate("D, d M Y H:i:s")." GMT");
+/**
+ * Base model for all tagging model classes.
+ */
+abstract class NostoTaggingModel
+{
+	/**
+	 * Returns an array of required items in the block.
+	 *
+	 * @return array the list of required items.
+	 */
+	abstract public function getRequiredItems();
 
-header("Cache-Control: no-store, no-cache, must-revalidate");
-header("Cache-Control: post-check=0, pre-check=0", false);
-header("Pragma: no-cache");
-
-header("Location: ../");
-exit;
+	/**
+	 * Validates the tagging block, i.e. if all the required data is set.
+	 *
+	 * @param array $attributes optional list of attributes to validate (used to validate only specific attributes).
+	 * @return bool
+	 */
+	public function validate(array $attributes = array())
+	{
+		foreach ($this->getRequiredItems() as $attribute)
+			if ((empty($attributes) || in_array($attribute, $attributes)) && empty($this->{$attribute}))
+				return false;
+		return true;
+	}
+}

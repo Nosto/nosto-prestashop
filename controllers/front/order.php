@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2014 Nosto Solutions Ltd
+ * 2013-2015 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,7 +19,7 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2014 Nosto Solutions Ltd
+ * @copyright 2013-2015 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
@@ -37,17 +37,23 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
 	 */
 	public function initContent()
 	{
-		$nosto_orders = array();
+		$collection = new NostoExportOrderCollection();
 		foreach ($this->getOrderIds() as $id_order)
 		{
 			$order = new Order($id_order);
-			$nosto_order = $this->module->getOrderData($order);
-			if (!empty($nosto_order))
-				$nosto_orders[] = $nosto_order;
+			if (!Validate::isLoadedObject($order))
+				continue;
+
+			$nosto_order = new NostoTaggingOrder();
+			$nosto_order->include_special_items = false;
+			$nosto_order->loadData($this->module->getContext(), $order);
+			if ($nosto_order->validate())
+				$collection[] = $nosto_order;
+
 			$order = null;
 		}
 
-		$this->encryptOutput(Tools::jsonEncode($nosto_orders));
+		$this->encryptOutput($collection);
 	}
 
 	/**
@@ -57,14 +63,33 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
 	 */
 	protected function getOrderIds()
 	{
-		$order_ids = array();
+		$context = $this->module->getContext();
+		if (_PS_VERSION_ > '1.5')
+			$where = strtr(
+				'`id_shop_group` = {g} AND `id_shop` = {s} AND `id_lang` = {l}',
+				array(
+					'{g}' => pSQL($context->shop->id_shop_group),
+					'{s}' => pSQL($context->shop->id),
+					'{l}' => pSQL($context->language->id),
+				)
+			);
+		else
+			$where = strtr(
+				'`id_lang` = {l}',
+				array(
+					'{l}' => pSQL($context->language->id),
+				)
+			);
+
 		$sql = <<<EOT
 			SELECT `id_order`
 			FROM `ps_orders`
+			WHERE $where
 			LIMIT $this->limit
 			OFFSET $this->offset
 EOT;
 		$rows = Db::getInstance()->executeS($sql);
+		$order_ids = array();
 		foreach ($rows as $row)
 			$order_ids[] = (int)$row['id_order'];
 		return $order_ids;
