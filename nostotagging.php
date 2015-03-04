@@ -204,11 +204,6 @@ class NostoTagging extends Module
 	 */
 	public function getContent()
 	{
-		// We don't want the browser to cache the config page, as the iframe authentication won't work if cached.
-		header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
-		header('Cache-Control: post-check=0, pre-check=0', false);
-		header('Pragma: no-cache');
-
 		// Always update the url to the module admin page when we access it.
 		// This can then later be used by the oauth2 controller to redirect the user back.
 		$admin_url = $this->getAdminUrl();
