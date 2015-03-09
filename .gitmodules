@@ -3,4 +3,4 @@
 	url = https://github.com/PrestaShop/PrestaShop-backward_compatibility.git
 [submodule "libs/nosto/php-sdk"]
 	path = libs/nosto/php-sdk
-	url = git@github.com:Nosto/php-sdk.git
+	url = https://github.com/Nosto/php-sdk.git
