@@ -91,6 +91,9 @@ PrestaShop version 1.4.x - 1.6.x
 
 ## Changelog
 
+* 2.1.1
+    * Fix SDK sub-repository to use https instead of ssh
+
 * 2.1.0
     * Improve server-to-server order confirmations
     * Implement all communication with Nosto through the Nosto SDK library
