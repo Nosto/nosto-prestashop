@@ -301,15 +301,15 @@ class NostoTagging extends Module
 			// Hack a few translations for the view as PS 1.4 does not support sprintf syntax in smarty "l" function.
 			'translations' => array(
 				'nostotagging_installed_heading' => sprintf(
-					$this->l('You have added Nosto to your %s shop'),
+					$this->l('You have installed Nosto to your %s shop'),
 					$current_language['name']
 				),
-				'nostotagging_installed_account_name' => sprintf(
+				'nostotagging_installed_subheading' => sprintf(
 					$this->l('Your account ID is %s'),
 					($account !== null) ? $account->name : ''
 				),
-				'nostotagging_not_installed_heading' => sprintf(
-					$this->l('Add Nosto to your %s shop'),
+				'nostotagging_not_installed_subheading' => sprintf(
+					$this->l('Install Nosto to your %s shop'),
 					$current_language['name']
 				),
 			)
