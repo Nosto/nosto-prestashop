@@ -174,7 +174,8 @@ class NostoTagging extends Module
 				// And for PS >= 1.5 we register the object update/delete hooks for the product re-crawl as we can get
 				// better precision using that then the separate hooks like in PS 1.4.
 				return $this->registerHook('actionObjectUpdateAfter')
-					&& $this->registerHook('actionObjectDeleteAfter');
+					&& $this->registerHook('actionObjectDeleteAfter')
+					&& $this->registerHook('actionObjectAddAfter');
 			}
 		}
 		return false;
@@ -866,6 +867,18 @@ class NostoTagging extends Module
 	}
 
 	/**
+	 * Hook that is fired after a object has been created in the db.
+	 *
+	 * @param array $params
+	 */
+	public function hookActionObjectAddAfter(Array $params)
+	{
+		if (isset($params['object']))
+			if ($params['object'] instanceof Product)
+				$this->recrawlProduct($params['object']);
+	}
+
+	/**
 	 * Hook called when a product is update with a new picture, right after said update. (Prestashop 1.4).
 	 *
 	 * @see NostoTagging::hookActionObjectUpdateAfter
@@ -1240,10 +1253,12 @@ class NostoTagging extends Module
 		if (!Validate::isLoadedObject($product))
 			return;
 
+		$link = new Link();
 		foreach (Language::getLanguages() as $language)
 		{
+			$id_lang = (int)$language['id_lang'];
 			/** @var NostoAccount $account */
-			$account = Nosto::helper('nosto_tagging/account')->find((int)$language['id_lang']);
+			$account = Nosto::helper('nosto_tagging/account')->find($id_lang);
 			if ($account === null || !$account->isConnectedToNosto())
 				continue;
 
@@ -1251,7 +1266,8 @@ class NostoTagging extends Module
 			{
 				$nosto_product = new NostoTaggingProduct();
 				$nosto_product->setProductId((int)$product->id);
-				if ($nosto_product->validate(array('product_id')))
+				$nosto_product->setUrl($link->getProductLink($product, null, null, null, $id_lang));
+				if ($nosto_product->validate(array('product_id', 'url')))
 					NostoProductReCrawl::send($nosto_product, $account);
 			}
 			catch (NostoException $e)

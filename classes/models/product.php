@@ -120,6 +120,16 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	}
 
 	/**
+	 * Setter for the product url.
+	 *
+	 * @param string $url the url.
+	 */
+	public function setUrl($url)
+	{
+		$this->url = $url;
+	}
+
+	/**
 	 * @inheritdoc
 	 */
 	public function getUrl()
