@@ -22,7 +22,7 @@
 * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *}
 
-<div class="tw-bs">
+<div class="tw-bs {$nostotagging_ps_version_class|escape:'htmlall':'UTF-8'}">
     <div class="container-fluid">
         <div class="row">
             <form class="nostotagging" role="form" action="{$nostotagging_form_action|escape:'htmlall':'UTF-8'}" method="post" enctype="multipart/form-data" novalidate="">

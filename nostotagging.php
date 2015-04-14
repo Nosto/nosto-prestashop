@@ -313,7 +313,8 @@ class NostoTagging extends Module
 					$this->l('Install Nosto to your %s shop'),
 					$current_language['name']
 				),
-			)
+			),
+			$this->name.'_ps_version_class' => 'ps-'.str_replace('.', '', substr(_PS_VERSION_, 0, 3))
 		));
 
 		// Try to login employee to Nosto in order to get a url to the internal setting pages,

@@ -164,6 +164,9 @@
     .tw-bs .content-panel {
         width: 66.6666666667%;
     }
+    .tw-bs.ps-14 .content-panel {
+        width: 80%;
+    }
 }
 
 .tw-bs .content-header {
