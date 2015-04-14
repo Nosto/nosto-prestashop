@@ -1,7 +1,5 @@
 /* Nosto overrides */
 
-@import url(http://fonts.googleapis.com/css?family=Montserrat);
-
 #content.bootstrap .nostotagging .panel {
     padding: 0 0 5px 0;
     font-family: inherit;
@@ -21,7 +19,6 @@
 }
 
 .tw-bs .nostotagging {
-    font-family: "Montserrat", Helvetica, Arial, sans-serif;
     font-weight: 400;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
@@ -85,13 +82,13 @@
 
 .tw-bs .nostotagging .panel-heading label {
     text-align: left;
-    font-family: "Montserrat", Helvetica, Arial, sans-serif;
     font-weight: 400;
+    font-size: 14px;
+    color: #555;
 }
 
 .tw-bs .nostotagging .panel-heading a {
     color: #666;
-    font-family: "Montserrat", Helvetica, Arial, sans-serif;
     font-weight: 400;
 }
 
