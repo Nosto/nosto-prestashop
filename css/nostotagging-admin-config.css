@@ -95,6 +95,16 @@
     font-weight: 400;
 }
 
+.tw-bs .nostotagging .panel-body:before,
+.tw-bs .nostotagging .panel-body:after {
+    content: " ";
+    display: table;
+}
+
+.tw-bs .nostotagging .panel-body:after {
+    clear: both;
+}
+
 .tw-bs .nostotagging .panel-body {
     padding: 0;
 }
