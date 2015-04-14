@@ -3,8 +3,13 @@
 @import url(http://fonts.googleapis.com/css?family=Montserrat);
 
 #content.bootstrap .nostotagging .panel {
-    padding: 0;
+    padding: 0 0 5px 0;
     font-family: inherit;
+}
+
+#content.bootstrap .nostotagging .panel-install {
+    padding: 0;
+    margin-bottom: 42px;
 }
 
 #content.bootstrap .nostotagging .panel-heading {
@@ -99,6 +104,10 @@
     color: #555;
 }
 
+.tw-bs .nostotagging .login-block .panes {
+    margin-bottom: 0;
+}
+
 .tw-bs .nostotagging .btn.btn-blue {
     color: white;
     background-color: #429BD1;
@@ -117,7 +126,6 @@
 .tw-bs .nostotagging .terms-block {
     color: white;
     width: 75%;
-    text-align: center;
     margin: 0 auto;
 }
 
@@ -130,65 +138,59 @@
     background: #364156 url("https://my.nosto.com/public/platform/img/install-bg.png") no-repeat top left;
     background-size: cover;
     color: #fff;
-    height: 580px;
+    height: 677px;
 }
 
-.content-block {
-    padding: 4em 2em;
+.tw-bs .content-block {
+    padding: 4rem 0;
     margin: 0 auto;
     text-align: center;
     width: 100%;
+    max-width: 52.5rem;
+}
 
+.tw-bs .content-panel {
+    margin: 0 auto;
 }
 
 @media (min-width: 768px) {
-    .content-block {
-        padding: 4em 4em;
-        width: 500px;
+    .tw-bs .content-panel {
+        width: 66.6666666667%;
     }
 }
 
-.content-header {
+.tw-bs .content-header {
     padding-top: 20px;
     color: #333 !important;
 }
 
-.content-subheader {
+.tw-bs .content-subheader {
     color: #666;
     font-size: 14px;
     font-style: italic;
 }
 
-.content-text {
+.tw-bs .content-text {
     color: #9097a3;
     font-size: 1.2em;
 }
 
-.login-block {
+.tw-bs .login-block {
     padding: 2em 2em;
     margin: 0 auto;
     text-align: center;
     background-color: #fff;
 }
 
-.form-control-02 {
-    font-size: 1rem;
-    height: 3.25rem;
-    padding-left: 1rem;
-    background-color: #fff;
-    font-family: inherit;
-    border: 1px solid #cccccc;
-}
-
-.img-logo {
+.tw-bs .img-logo {
     width: 180px;
 }
 
-.btn-link {
+.tw-bs .btn-link {
     padding: 0 !important;
 
 }
 
-.link-wrap {
+.tw-bs .link-wrap {
     margin-top: 2em;
 }

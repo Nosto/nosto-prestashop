@@ -73,41 +73,45 @@
                             <div class="row-fluid">
                                 <div class="col-md-6 col-md-push-6 right-block">
                                     <div class="content-block">
-                                        <div class="panel panel-default ">
-                                            <div class="panel-body">
-                                                <div class="login-block">
-                                                    <img src="https://my.nosto.com/public/images/nosto/logoslogan.svg" class="img-logo">
-                                                    <h2 class="h4 content-header">{l s='Unlock Your 14-Day Free Trial' mod='nostotagging'}</h2>
-                                                    <p class="content-subheader">{$translations.nostotagging_not_installed_subheading|escape:'htmlall':'UTF-8'}</p>
-                                                    <div class="panes">
-                                                        <div id="nostotagging_new_account_group">
-                                                            <div class="form-group">
-                                                                <input type="text" name="nostotagging_account_email" class="form-control-02"
-                                                                       placeholder="{l s='Your email address' mod='nostotagging'}" value="{$nostotagging_account_email|escape:'htmlall':'UTF-8'}">
+                                        <div class="content-panel">
+                                            <div class="panel panel-default panel-install">
+                                                <div class="panel-body">
+                                                    <div class="login-block">
+                                                        <img src="https://my.nosto.com/public/images/nosto/logoslogan.svg" class="img-logo">
+                                                        <h2 class="h4 content-header">{l s='Unlock Your 14-Day Free Trial' mod='nostotagging'}</h2>
+                                                        <p class="content-subheader">{$translations.nostotagging_not_installed_subheading|escape:'htmlall':'UTF-8'}</p>
+                                                        <div class="panes">
+                                                            <div id="nostotagging_new_account_group">
+                                                                <div class="form-group">
+                                                                    <input type="text" name="nostotagging_account_email" placeholder="{l s='Your email address' mod='nostotagging'}"
+                                                                           value="{$nostotagging_account_email|escape:'htmlall':'UTF-8'}">
+                                                                </div>
+                                                                <button type="submit" value="1" class="btn btn-blue" name="submit_nostotagging_new_account">{l s='Install' mod='nostotagging'}</button>
                                                             </div>
-                                                            <button type="submit" value="1" class="btn btn-blue" name="submit_nostotagging_new_account">{l s='Install' mod='nostotagging'}</button>
-                                                        </div>
-                                                        <div id="nostotagging_existing_account_group" class="link-wrap">
-                                                            {l s='If you already have a Nosto account,' mod='nostotagging'}
-                                                            <button type="submit" value="1" class="btn-link" name="submit_nostotagging_authorize_account">{l s='click here' mod='nostotagging'}</button>
+                                                            <div id="nostotagging_existing_account_group" class="link-wrap">
+                                                                {l s='If you already have a Nosto account,' mod='nostotagging'}
+                                                                <button type="submit" value="1" class="btn-link" name="submit_nostotagging_authorize_account">{l s='click here' mod='nostotagging'}</button>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
+                                            <p class="terms-block">
+                                                {l s='By installing you agree to Nosto\'s' mod='nostotagging'} <a href="http://www.nosto.com/terms" target="_blank">{l s='Terms and Conditions' mod='nostotagging'}</a>
+                                            </p>
                                         </div>
                                     </div>
-                                    <p class="terms-block">
-                                        {l s='By installing you agree to Nosto\'s' mod='nostotagging'} <a href="http://www.nosto.com/terms" target="_blank">{l s='Terms and Conditions' mod='nostotagging'}</a>
-                                    </p>
                                 </div>
                                 <div class="col-md-6 col-md-pull-6">
                                     <div class="content-block">
-                                        <h2>{l s='Welcome to Nosto' mod='nostotagging'}</h2>
-                                        <p class="content-text">
-                                            {l s='Nosto helps you increase sales by delivering your customers personalized shopping experiences.' mod='nostotagging'}<br/>
-                                            {l s='Join over 4,500 online retailers in over 100 countries using Nosto to delight their customers and grow their business!' mod='nostotagging'}
-                                        </p>
-                                        <img src="https://my.nosto.com/public/platform/img/install-recommendations.png" class="img-responsive center">
+                                        <div class="content-panel">
+                                            <h2>{l s='Welcome to Nosto' mod='nostotagging'}</h2>
+                                            <p class="content-text">
+                                                {l s='Nosto helps you increase sales by delivering your customers personalized shopping experiences.' mod='nostotagging'}<br/>
+                                                {l s='Join over 4,500 online retailers in over 100 countries using Nosto to delight their customers and grow their business!' mod='nostotagging'}
+                                            </p>
+                                            <img src="https://my.nosto.com/public/platform/img/install-recommendations.png" class="img-responsive center">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
