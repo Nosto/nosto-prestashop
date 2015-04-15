@@ -167,6 +167,7 @@ class NostoTagging extends Module
 				// For PS 1.4 we need to register some additional hooks for the product re-crawl.
 				return $this->registerHook('updateproduct')
 					&& $this->registerHook('deleteproduct')
+					&& $this->registerHook('addproduct')
 					&& $this->registerHook('updateQuantity');
 			}
 			else
@@ -902,6 +903,18 @@ class NostoTagging extends Module
 		if (isset($params['product']))
 			$this->hookActionObjectDeleteAfter(array('object' => $params['product']));
 	}
+
+    /**
+     * Hook called when a product is added, right after said addition (Prestashop 1.4).
+     *
+     * @see NostoTagging::hookActionObjectAddAfter
+     * @param array $params
+     */
+    public function hookAddProduct(Array $params)
+    {
+        if (isset($params['product']))
+            $this->hookActionObjectAddAfter(array('object' => $params['product']));
+    }
 
 	/**
 	 * Hook called during an the validation of an order, the status of which being something other than
