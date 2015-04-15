@@ -34,7 +34,8 @@
 }
 
 .tw-bs .nostotagging h2 {
-    color: #555;
+    color: #2e3b51;
+    font-weight: 700;
 }
 
 .tw-bs .nostotagging iframe {
@@ -51,7 +52,7 @@
     width: 100%;
     padding: 4px 8px;
     line-height: 1.42857;
-    color: #555;
+    color: #2e3b51;
     background: #fff none;
     border: 1px solid #ccc;
     border-radius: 6px;
@@ -68,7 +69,7 @@
     line-height: 2.0em;
     height: 3.2em;
     padding: 5px;
-    color: #555;
+    color: #2e3b51;
     white-space: nowrap;
     text-transform: uppercase;
 }
@@ -84,11 +85,11 @@
     text-align: left;
     font-weight: 400;
     font-size: 14px;
-    color: #555;
+    color: #2e3b51;
 }
 
 .tw-bs .nostotagging .panel-heading a {
-    color: #666;
+    color: #2e3b51;
     font-weight: 400;
 }
 
@@ -108,7 +109,7 @@
 
 .tw-bs .nostotagging .panes {
     margin-bottom: 20px;
-    color: #555;
+    color: #2e3b51;
 }
 
 .tw-bs .nostotagging .login-block .panes {
@@ -122,12 +123,14 @@
     width: 100%;
     padding: 1em 0;
     border-radius: 6px;
+    font-weight: 700;
 }
 
 .tw-bs .nostotagging .btn.btn-red {
     color: white;
     background-color: rgb(217, 83, 79);
     border-color: rgb(217, 83, 79);
+    font-weight: 700;
 }
 
 .tw-bs .nostotagging .terms-block {
@@ -171,11 +174,10 @@
 
 .tw-bs .content-header {
     padding-top: 20px;
-    color: #333 !important;
 }
 
 .tw-bs .content-subheader {
-    color: #666;
+    color: #333;
     font-size: 14px;
     font-style: italic;
 }
@@ -197,10 +199,10 @@
 }
 
 .tw-bs .btn-link {
-    padding: 0 !important;
-
+    padding: 0;
 }
 
 .tw-bs .link-wrap {
     margin-top: 2em;
+    color: #333;
 }
