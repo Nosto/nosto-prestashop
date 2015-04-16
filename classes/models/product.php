@@ -288,7 +288,8 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 		$this->price = Nosto::helper('price')->format($price);
 		$this->price_currency_code = (string)$currency->iso_code;
 
-		if ($product->checkQty(1))
+		$is_visible = (_PS_VERSION_ >= '1.5') ? ($product->visibility !== 'none') : true;
+		if ($product->checkQty(1) && $is_visible)
 			$this->availability = self::IN_STOCK;
 		else
 			$this->availability = self::OUT_OF_STOCK;
