@@ -55,6 +55,7 @@ if ((basename(__FILE__) === 'nostotagging.php'))
 	require_once($module_dir.'/classes/models/order-purchased-item.php');
 	require_once($module_dir.'/classes/models/product.php');
 	require_once($module_dir.'/classes/models/brand.php');
+	require_once($module_dir.'/classes/models/search.php');
 }
 
 /**
@@ -465,6 +466,12 @@ class NostoTagging extends Module
 			else
 				$manufacturer = new Manufacturer((int)Tools::getValue('id_manufacturer'), $this->context->language->id);
 			$html .= $this->getBrandTagging($manufacturer);
+		}
+		elseif ($this->isController('search'))
+		{
+			$search_term = Tools::getValue('search_query', null);
+			if (!is_null($search_term))
+				$html .= $this->getSearchTagging($search_term);
 		}
 
 		$html .= $this->display(__FILE__, 'views/templates/hook/top_nosto-elements.tpl');
@@ -1254,6 +1261,26 @@ class NostoTagging extends Module
 		));
 
 		return $this->display(__FILE__, 'views/templates/hook/manufacturer-footer_brand-tagging.tpl');
+	}
+
+	/**
+	 * Render meta-data (tagging) for a search term.
+	 *
+	 * @param string $search_term the search term to tag.
+	 * @return string the rendered HTML
+	 */
+	protected function getSearchTagging($search_term)
+	{
+		$nosto_search = new NostoTaggingSearch();
+		$nosto_search->setSearchTerm($search_term);
+		if (!$nosto_search->validate())
+			return '';
+
+		$this->smarty->assign(array(
+			'nosto_search' => $nosto_search,
+		));
+
+		return $this->display(__FILE__, 'views/templates/hook/top_search-tagging.tpl');
 	}
 
 	/**
