@@ -71,7 +71,6 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
 		}
 		elseif (($error = Tools::getValue('error')) !== false)
 		{
-			// The user rejected the authorization request.
 			$message_parts = array($error);
 			if (($error_reason = Tools::getValue('error_reason')) !== false)
 				$message_parts[] = $error_reason;
@@ -81,7 +80,11 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
 				__CLASS__.'::'.__FUNCTION__.' - '.implode(' - ', $message_parts),
 				200
 			);
-			if (!empty($error_reason) && $error_reason === 'user_denied')
+			// Prefer to show the error description sent from Nosto to the user when something is wrong.
+			// These messages are localized to users current back office language.
+			if (!empty($error_description))
+				$msg = $error_description;
+			elseif (!empty($error_reason) && $error_reason === 'user_denied')
 				$msg = $this->module->l('Account could not be connected to Nosto. You rejected the connection request.', 'oauth2');
 			else
 				$msg = $this->module->l('Account could not be connected to Nosto. Please contact Nosto support.', 'oauth2');
