@@ -102,7 +102,7 @@ class NostoTagging extends Module
 	{
 		$this->name = 'nostotagging';
 		$this->tab = 'advertising_marketing';
-		$this->version = '2.1.0';
+		$this->version = '2.2.0';
 		$this->author = 'Nosto';
 		$this->need_instance = 1;
 		$this->bootstrap = true;

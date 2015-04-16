@@ -91,6 +91,14 @@ PrestaShop version 1.4.x - 1.6.x
 
 ## Changelog
 
+* 2.2.0
+    * New module admin UI
+    * Added hook for sending new product data to Nosto right after product has been created
+    * Added tagging for search terms
+    * Improved OAuth error messages
+    * Fixed product price tagging tax display to depend on user active group
+    * Fixed product availability tagging to also depend on the products visibility in PS 1.5+
+
 * 2.1.1
     * Fix SDK sub-repository to use https instead of ssh
 
