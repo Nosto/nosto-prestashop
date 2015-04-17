@@ -55,6 +55,7 @@ if ((basename(__FILE__) === 'nostotagging.php'))
 	require_once($module_dir.'/classes/models/order-purchased-item.php');
 	require_once($module_dir.'/classes/models/product.php');
 	require_once($module_dir.'/classes/models/brand.php');
+	require_once($module_dir.'/classes/models/search.php');
 }
 
 /**
@@ -101,7 +102,7 @@ class NostoTagging extends Module
 	{
 		$this->name = 'nostotagging';
 		$this->tab = 'advertising_marketing';
-		$this->version = '2.1.1';
+		$this->version = '2.2.0';
 		$this->author = 'Nosto';
 		$this->need_instance = 1;
 		$this->bootstrap = true;
@@ -167,6 +168,7 @@ class NostoTagging extends Module
 				// For PS 1.4 we need to register some additional hooks for the product re-crawl.
 				return $this->registerHook('updateproduct')
 					&& $this->registerHook('deleteproduct')
+					&& $this->registerHook('addproduct')
 					&& $this->registerHook('updateQuantity');
 			}
 			else
@@ -174,7 +176,8 @@ class NostoTagging extends Module
 				// And for PS >= 1.5 we register the object update/delete hooks for the product re-crawl as we can get
 				// better precision using that then the separate hooks like in PS 1.4.
 				return $this->registerHook('actionObjectUpdateAfter')
-					&& $this->registerHook('actionObjectDeleteAfter');
+					&& $this->registerHook('actionObjectDeleteAfter')
+					&& $this->registerHook('actionObjectAddAfter');
 			}
 		}
 		return false;
@@ -301,18 +304,19 @@ class NostoTagging extends Module
 			// Hack a few translations for the view as PS 1.4 does not support sprintf syntax in smarty "l" function.
 			'translations' => array(
 				'nostotagging_installed_heading' => sprintf(
-					$this->l('You have added Nosto to your %s shop'),
+					$this->l('You have installed Nosto to your %s shop'),
 					$current_language['name']
 				),
-				'nostotagging_installed_account_name' => sprintf(
+				'nostotagging_installed_subheading' => sprintf(
 					$this->l('Your account ID is %s'),
 					($account !== null) ? $account->name : ''
 				),
-				'nostotagging_not_installed_heading' => sprintf(
-					$this->l('Add Nosto to your %s shop'),
+				'nostotagging_not_installed_subheading' => sprintf(
+					$this->l('Install Nosto to your %s shop'),
 					$current_language['name']
 				),
-			)
+			),
+			$this->name.'_ps_version_class' => 'ps-'.str_replace('.', '', substr(_PS_VERSION_, 0, 3))
 		));
 
 		// Try to login employee to Nosto in order to get a url to the internal setting pages,
@@ -462,6 +466,12 @@ class NostoTagging extends Module
 			else
 				$manufacturer = new Manufacturer((int)Tools::getValue('id_manufacturer'), $this->context->language->id);
 			$html .= $this->getBrandTagging($manufacturer);
+		}
+		elseif ($this->isController('search'))
+		{
+			$search_term = Tools::getValue('search_query', null);
+			if (!is_null($search_term))
+				$html .= $this->getSearchTagging($search_term);
 		}
 
 		$html .= $this->display(__FILE__, 'views/templates/hook/top_nosto-elements.tpl');
@@ -866,6 +876,18 @@ class NostoTagging extends Module
 	}
 
 	/**
+	 * Hook that is fired after a object has been created in the db.
+	 *
+	 * @param array $params
+	 */
+	public function hookActionObjectAddAfter(Array $params)
+	{
+		if (isset($params['object']))
+			if ($params['object'] instanceof Product)
+				$this->recrawlProduct($params['object']);
+	}
+
+	/**
 	 * Hook called when a product is update with a new picture, right after said update. (Prestashop 1.4).
 	 *
 	 * @see NostoTagging::hookActionObjectUpdateAfter
@@ -888,6 +910,18 @@ class NostoTagging extends Module
 		if (isset($params['product']))
 			$this->hookActionObjectDeleteAfter(array('object' => $params['product']));
 	}
+
+    /**
+     * Hook called when a product is added, right after said addition (Prestashop 1.4).
+     *
+     * @see NostoTagging::hookActionObjectAddAfter
+     * @param array $params
+     */
+    public function hookAddProduct(Array $params)
+    {
+        if (isset($params['product']))
+            $this->hookActionObjectAddAfter(array('object' => $params['product']));
+    }
 
 	/**
 	 * Hook called during an the validation of an order, the status of which being something other than
@@ -1230,6 +1264,26 @@ class NostoTagging extends Module
 	}
 
 	/**
+	 * Render meta-data (tagging) for a search term.
+	 *
+	 * @param string $search_term the search term to tag.
+	 * @return string the rendered HTML
+	 */
+	protected function getSearchTagging($search_term)
+	{
+		$nosto_search = new NostoTaggingSearch();
+		$nosto_search->setSearchTerm($search_term);
+		if (!$nosto_search->validate())
+			return '';
+
+		$this->smarty->assign(array(
+			'nosto_search' => $nosto_search,
+		));
+
+		return $this->display(__FILE__, 'views/templates/hook/top_search-tagging.tpl');
+	}
+
+	/**
 	 * Sends a API notification to Nosto that a product needs re-crawling.
 	 * This is done for every shop language in this context that has a Nosto account connected to it.
 	 *
@@ -1240,10 +1294,12 @@ class NostoTagging extends Module
 		if (!Validate::isLoadedObject($product))
 			return;
 
+		$link = new Link();
 		foreach (Language::getLanguages() as $language)
 		{
+			$id_lang = (int)$language['id_lang'];
 			/** @var NostoAccount $account */
-			$account = Nosto::helper('nosto_tagging/account')->find((int)$language['id_lang']);
+			$account = Nosto::helper('nosto_tagging/account')->find($id_lang);
 			if ($account === null || !$account->isConnectedToNosto())
 				continue;
 
@@ -1251,7 +1307,8 @@ class NostoTagging extends Module
 			{
 				$nosto_product = new NostoTaggingProduct();
 				$nosto_product->setProductId((int)$product->id);
-				if ($nosto_product->validate(array('product_id')))
+				$nosto_product->setUrl($link->getProductLink($product, null, null, null, $id_lang));
+				if ($nosto_product->validate(array('product_id', 'url')))
 					NostoProductReCrawl::send($nosto_product, $account);
 			}
 			catch (NostoException $e)

@@ -120,6 +120,16 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	}
 
 	/**
+	 * Setter for the product url.
+	 *
+	 * @param string $url the url.
+	 */
+	public function setUrl($url)
+	{
+		$this->url = $url;
+	}
+
+	/**
 	 * @inheritdoc
 	 */
 	public function getUrl()
@@ -255,6 +265,7 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 		$language_id = $context->language->id;
 		$currency = $context->currency;
 		$link = $context->link;
+		$cookie = $context->cookie;
 
 		$this->url = (string)$product->getLink();
 		$this->product_id = (int)$product->id;
@@ -266,10 +277,19 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 			? (string)$link->getImageLink($product->link_rewrite, $product->id.'-'.$image_id, $image_type)
 			: '';
 
-		$this->price = Nosto::helper('price')->format($product->getPrice(true, null));
+
+		// We need to check if taxes are to be included in the prices, given that they are configured.
+		// This is determined by the "Price display method" setting of the active user group.
+		// Possible values are 1, tax excluded, and 0, tax included.
+		$price_display_method = Product::getTaxCalculationMethod((int)$cookie->id_customer);
+		$price = $product->getPrice((bool)!$price_display_method, null);
+		$list_price = $product->getPriceWithoutReduct((bool)$price_display_method, null);
+
+		$this->price = Nosto::helper('price')->format($price);
 		$this->price_currency_code = (string)$currency->iso_code;
 
-		if ($product->checkQty(1))
+		$is_visible = (_PS_VERSION_ >= '1.5') ? ($product->visibility !== 'none') : true;
+		if ($product->checkQty(1) && $is_visible)
 			$this->availability = self::IN_STOCK;
 		else
 			$this->availability = self::OUT_OF_STOCK;
@@ -291,7 +311,7 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 
 		$this->short_description = (string)$product->description_short;
 		$this->description = (string)$product->description;
-		$this->list_price = Nosto::helper('price')->format($product->getPriceWithoutReduct(false, null));
+		$this->list_price = Nosto::helper('price')->format($list_price);
 
 		if (!empty($product->manufacturer_name))
 			$this->brand = (string)$product->manufacturer_name;

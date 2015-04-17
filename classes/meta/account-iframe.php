@@ -89,6 +89,11 @@ class NostoTaggingMetaAccountIframe implements NostoAccountMetaDataIframeInterfa
 	protected $preview_url_front;
 
 	/**
+	 * @var string the name of the shop context where nosto is installed or is about to be installed.
+	 */
+	protected $shop_name;
+
+	/**
 	 * Loads the meta-data from context.
 	 *
 	 * @param Context $context the context to get the meta-data from.
@@ -113,6 +118,7 @@ class NostoTaggingMetaAccountIframe implements NostoAccountMetaDataIframeInterfa
 		$this->preview_url_search = $url_helper->getPreviewUrlSearch($id_lang);
 		$this->preview_url_cart = $url_helper->getPreviewUrlCart($id_lang);
 		$this->preview_url_front = $url_helper->getPreviewUrlHome($id_lang);
+		$this->shop_name = $shop_language->name;
 	}
 
 	/**
@@ -343,5 +349,15 @@ class NostoTaggingMetaAccountIframe implements NostoAccountMetaDataIframeInterfa
 	public function getPreviewUrlFront()
 	{
 		return $this->preview_url_front;
+	}
+
+	/**
+	 * Returns the name of the shop context where nosto is installed or about to be installed.
+	 *
+	 * @return string the name.
+	 */
+	public function getShopName()
+	{
+		return $this->shop_name;
 	}
 }
