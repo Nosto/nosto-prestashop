@@ -61,24 +61,13 @@ class NostoTaggingMetaOauth implements NostoOAuthClientMetaDataInterface
 		if (!Validate::isLoadedObject($language))
 			return;
 
-		$params = array('language_id' => $id_lang);
+		$id_lang = (int)$context->language->id;
+		$id_shop = (int)$context->shop->id;
+		$params = array('language_id' => (int)$language->id);
+		/** @var NostoTaggingHelperUrl $url_helper */
+		$url_helper = Nosto::helper('nosto_tagging/url');
 
-		// Backward compatibility
-		if (_PS_VERSION_ < '1.5')
-		{
-			$ssl = Configuration::get('PS_SSL_ENABLED');
-			$base = ($ssl ? _PS_BASE_URL_SSL_ : _PS_BASE_URL_);
-			$params['id_lang'] = (int)$context->language->id;
-			$params['module'] = $this->module_name;
-			$params['controller'] = 'oauth2';
-			$this->redirect_url = $base.$this->module_path.'ctrl.php?'.http_build_query($params);
-		}
-		else
-		{
-			$link = new Link();
-			$this->redirect_url = $link->getModuleLink($this->module_name, 'oauth2', $params);
-		}
-
+		$this->redirect_url = $url_helper->getModuleUrl($this->module_name, $this->module_path, 'oauth2', $id_lang, $id_shop, $params);
 		$this->language_iso_code = $language->iso_code;
 	}
 

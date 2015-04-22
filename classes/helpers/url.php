@@ -198,6 +198,87 @@ EOT;
 	}
 
 	/**
+	 * Builds a module controller url for the language and shop.
+	 *
+	 * We created our own method due to the existing one in `LinkCore` working differently depending on PS version.
+	 *
+	 * @param string $module_name the name of the module to create an url for.
+	 * @param string $module_path the path of the module to create an url for (PS 1.4 only).
+	 * @param string $controller the name of the controller.
+	 * @param int|null $id_lang the language ID (falls back on current context if not set).
+	 * @param int|null $id_shop the shop ID (falls back on current context if not set).
+	 * @param array $params additional params to pass to the controller.
+	 * @return string the url.
+	 */
+	public function getModuleUrl($module_name, $module_path, $controller, $id_lang = null, $id_shop = null, array $params = array())
+	{
+		if (is_null($id_lang))
+			$id_lang = (int)Context::getContext()->language->id;
+		if (is_null($id_shop))
+			$id_shop = (int)Context::getContext()->shop->id;
+
+		$base = $this->getBaseUrl($id_shop);
+		$params['module'] = $module_name;
+		$params['controller'] = $controller;
+
+		if (_PS_VERSION_ < '1.5')
+		{
+			$params['id_lang'] = $id_lang;
+			return $base.$module_path.'ctrl.php?'.http_build_query($params);
+		}
+		else
+		{
+			$lang = $this->getLangUriPath($id_lang, $id_shop);
+			/** @var DispatcherCore $dispatcher */
+			$dispatcher = Dispatcher::getInstance();
+			$allow_url_rewrite = (int)Configuration::get('PS_REWRITING_SETTINGS');
+			return $base.$lang.$dispatcher->createUrl('module', $id_lang, $params, $allow_url_rewrite, '', $id_shop);
+		}
+	}
+
+	/**
+	 * Returns the base url for given shop.
+	 *
+	 * @param null $id_shop the shop ID (falls back on current context if not set).
+	 * @return string the base url.
+	 */
+	public function getBaseUrl($id_shop = null)
+	{
+		$ssl = Configuration::get('PS_SSL_ENABLED');
+		if (_PS_VERSION_ < '1.5')
+			return ($ssl ? _PS_BASE_URL_SSL_ : _PS_BASE_URL_);
+
+		if (Configuration::get('PS_MULTISHOP_FEATURE_ACTIVE') && !is_null($id_shop))
+			$shop = new Shop($id_shop);
+		else
+			$shop = Context::getContext()->shop;
+
+		$base = ($ssl ? 'https://'.$shop->domain_ssl : 'http://'.$shop->domain);
+		return $base.$shop->getBaseURI();
+	}
+
+	/**
+	 * Returns the language part of the url if "friendly urls" are enabled.
+	 *
+	 * @param int|null $id_lang the language ID (falls back on current context if not set).
+	 * @param int|null $id_shop the shop ID (falls back on current context if not set).
+	 * @return string the language part of the url or empty string.
+	 */
+	public function getLangUriPath($id_lang = null, $id_shop = null)
+	{
+		if (is_null($id_lang))
+			$id_lang = (int)Context::getContext()->language->id;
+		if (is_null($id_shop))
+			$id_shop = (int)Context::getContext()->shop->id;
+
+		$allow_url_rewrite = (int)Configuration::get('PS_REWRITING_SETTINGS', null, null, $id_shop);
+		if (!Language::isMultiLanguageActivated($id_shop) || !$allow_url_rewrite)
+			return '';
+
+		return Language::getIsoById($id_lang).'/';
+	}
+
+	/**
 	 * Adds any additional query params to the preview url, namely the "nostodebug" flag.
 	 * Also adds the id_lang param if url rewriting is not on as it seems that it is left out in some cases.
 	 *
