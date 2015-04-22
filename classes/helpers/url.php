@@ -28,7 +28,6 @@
  */
 class NostoTaggingHelperUrl
 {
-	const SEARCH_PAGE_QUERY = 'controller=search&search_query=nosto';
 	const DEFAULT_SERVER_ADDRESS = 'connect.nosto.com';
 
 	/**
@@ -55,16 +54,15 @@ EOT;
 				$id_product = isset($row['id_product']) ? (int)$row['id_product'] : 0;
 			}
 
-			if (!$id_lang)
-				$id_lang = Context::getContext()->language->id;
+			if (is_null($id_lang))
+				$id_lang = (int)Context::getContext()->language->id;
 
 			$product = new Product($id_product, $id_lang);
 			if (!ValidateCore::isLoadedObject($product))
 				return '';
 
-			$link = new Link();
-			$url = $link->getProductLink($product, null, null, null, $id_lang);
-			return $this->addPreviewQueryParams($url, $id_lang);
+			$params = array('nostodebug' => 'true');
+			return $this->getProductUrl($product, $id_lang, null, $params);
 		}
 		catch (Exception $e)
 		{
@@ -100,16 +98,15 @@ EOT;
 				$id_category = isset($row['id_category']) ? (int)$row['id_category'] : 0;
 			}
 
-			if (!$id_lang)
-				$id_lang = Context::getContext()->language->id;
+			if (is_null($id_lang))
+				$id_lang = (int)Context::getContext()->language->id;
 
 			$category = new Category($id_category, $id_lang);
 			if (!ValidateCore::isLoadedObject($category))
 				return '';
 
-			$link = new Link();
-			$url = $link->getCategoryLink($category, null, $id_lang);
-			return $this->addPreviewQueryParams($url, $id_lang);
+			$params = array('nostodebug' => 'true');
+			return $this->getCategoryUrl($category, $id_lang, null, $params);
 		}
 		catch (Exception $e)
 		{
@@ -128,11 +125,12 @@ EOT;
 	{
 		try
 		{
-			if (!$id_lang)
-				$id_lang = Context::getContext()->language->id;
-			$link = new Link();
-			$url = $link->getPageLink('search.php', true, $id_lang).'?'.self::SEARCH_PAGE_QUERY;
-			return $this->addPreviewQueryParams($url, $id_lang);
+			$params = array(
+				'controller' => 'search',
+				'search_query' => 'nosto',
+				'nostodebug' => 'true',
+			);
+			return $this->getPageUrl('search.php', $id_lang, null, $params);
 		}
 		catch (Exception $e)
 		{
@@ -151,11 +149,8 @@ EOT;
 	{
 		try
 		{
-			if (!$id_lang)
-				$id_lang = Context::getContext()->language->id;
-			$link = new Link();
-			$url = $link->getPageLink('order.php', true, $id_lang);
-			return $this->addPreviewQueryParams($url, $id_lang);
+			$params = array('nostodebug' => 'true');
+			return $this->getPageUrl('order.php', $id_lang, null, $params);
 		}
 		catch (Exception $e)
 		{
@@ -174,11 +169,8 @@ EOT;
 	{
 		try
 		{
-			if (!$id_lang)
-				$id_lang = Context::getContext()->language->id;
-			$link = new Link();
-			$url = $link->getPageLink('index.php', true, $id_lang);
-			return $this->addPreviewQueryParams($url, $id_lang);
+			$params = array('nostodebug' => 'true');
+			return $this->getPageUrl('index.php', $id_lang, null, $params);
 		}
 		catch (Exception $e)
 		{
@@ -198,41 +190,177 @@ EOT;
 	}
 
 	/**
-	 * Builds a module controller url for the language and shop.
+	 * Builds a product page url for the language and shop.
 	 *
-	 * We created our own method due to the existing one in `LinkCore` working differently depending on PS version.
+	 * We created our own method due to the existing one in `LinkCore` behaving differently across PS versions.
 	 *
-	 * @param string $module_name the name of the module to create an url for.
-	 * @param string $module_path the path of the module to create an url for (PS 1.4 only).
-	 * @param string $controller the name of the controller.
+	 * @param Product|ProductCore $product
 	 * @param int|null $id_lang the language ID (falls back on current context if not set).
 	 * @param int|null $id_shop the shop ID (falls back on current context if not set).
-	 * @param array $params additional params to pass to the controller.
-	 * @return string the url.
+	 * @param array $params additional params to add to the url.
+	 * @return string the product page url.
 	 */
-	public function getModuleUrl($module_name, $module_path, $controller, $id_lang = null, $id_shop = null, array $params = array())
+	public function getProductUrl($product, $id_lang = null, $id_shop = null, array $params = array())
 	{
 		if (is_null($id_lang))
 			$id_lang = (int)Context::getContext()->language->id;
 		if (is_null($id_shop))
 			$id_shop = (int)Context::getContext()->shop->id;
 
-		$base = $this->getBaseUrl($id_shop);
-		$params['module'] = $module_name;
-		$params['controller'] = $controller;
-
-		if (_PS_VERSION_ < '1.5')
+		if (Tools::version_compare(_PS_VERSION_, '1.5.0.0', '<') || Tools::version_compare(_PS_VERSION_, '1.5.5.0', '>='))
 		{
-			$params['id_lang'] = $id_lang;
-			return $base.$module_path.'ctrl.php?'.http_build_query($params);
+			/** @var LinkCore $link */
+			$link = new Link();
+			$url = $link->getProductLink($product, null, null, null, $id_lang, $id_shop);
 		}
 		else
 		{
-			$lang = $this->getLangUriPath($id_lang, $id_shop);
-			/** @var DispatcherCore $dispatcher */
-			$dispatcher = Dispatcher::getInstance();
-			$allow_url_rewrite = (int)Configuration::get('PS_REWRITING_SETTINGS');
-			return $base.$lang.$dispatcher->createUrl('module', $id_lang, $params, $allow_url_rewrite, '', $id_shop);
+			// For PS versions 1.5.0.0 - 1.5.4.1 we always hard-code the urls to be in non-friendly format and fetch
+			// the shops base url ourselves. This is a workaround to all the bugs related to url building in these
+			// PS versions.
+			$query_params = array(
+				'id_product' => (int)$product->id,
+				'controller' => 'product',
+				'id_lang' => $id_lang,
+			);
+			$url = $this->getBaseUrl($id_shop).'index.php?'.http_build_query($query_params);
+		}
+
+		if ((int)Configuration::get('PS_REWRITING_SETTINGS') === 0)
+			$params['id_lang'] = $id_lang;
+
+		return NostoHttpRequest::replaceQueryParamsInUrl($params, $url);
+	}
+
+	/**
+	 * Builds a category page url for the language and shop.
+	 *
+	 * We created our own method due to the existing one in `LinkCore` behaving differently across PS versions.
+	 *
+	 * @param Category|CategoryCore $category the category model.
+	 * @param int|null $id_lang the language ID (falls back on current context if not set).
+	 * @param int|null $id_shop the shop ID (falls back on current context if not set).
+	 * @param array $params additional params to add to the url.
+	 * @return string the category page url.
+	 */
+	public function getCategoryUrl($category, $id_lang = null, $id_shop = null, array $params = array())
+	{
+		if (is_null($id_lang))
+			$id_lang = (int)Context::getContext()->language->id;
+		if (is_null($id_shop))
+			$id_shop = (int)Context::getContext()->shop->id;
+
+		if (Tools::version_compare(_PS_VERSION_, '1.5.0.0', '<') || Tools::version_compare(_PS_VERSION_, '1.5.5.0', '>='))
+		{
+			/** @var LinkCore $link */
+			$link = new Link();
+			$url = $link->getCategoryLink($category, null, $id_lang, null, $id_shop);
+		}
+		else
+		{
+			// For PS versions 1.5.0.0 - 1.5.4.1 we always hard-code the urls to be in non-friendly format and fetch
+			// the shops base url ourselves. This is a workaround to all the bugs related to url building in these
+			// PS versions.
+			$query_params = array(
+				'id_category' => (int)$category->id,
+				'controller' => 'category',
+				'id_lang' => $id_lang,
+			);
+			$url = $this->getBaseUrl($id_shop).'index.php?'.http_build_query($query_params);
+		}
+
+		if ((int)Configuration::get('PS_REWRITING_SETTINGS') === 0)
+			$params['id_lang'] = $id_lang;
+
+		return NostoHttpRequest::replaceQueryParamsInUrl($params, $url);
+	}
+
+	/**
+	 * Builds a page url for the language and shop.
+	 *
+	 * We created our own method due to the existing one in `LinkCore` behaving differently across PS versions.
+	 *
+	 * @param string $controller the controller name.
+	 * @param int|null $id_lang the language ID (falls back on current context if not set).
+	 * @param int|null $id_shop the shop ID (falls back on current context if not set).
+	 * @param array $params additional params to add to the url.
+	 * @return string the page url.
+	 */
+	public function getPageUrl($controller, $id_lang = null, $id_shop = null, array $params = array())
+	{
+		if (is_null($id_lang))
+			$id_lang = (int)Context::getContext()->language->id;
+		if (is_null($id_shop))
+			$id_shop = (int)Context::getContext()->shop->id;
+
+		if (Tools::version_compare(_PS_VERSION_, '1.5.0.0', '<') || Tools::version_compare(_PS_VERSION_, '1.5.5.0', '>='))
+		{
+			/** @var LinkCore $link */
+			$link = new Link();
+			$url = $link->getPageLink($controller, true, $id_lang, null, false, $id_shop);
+		}
+		else
+		{
+			// For PS versions 1.5.0.0 - 1.5.4.1 we always hard-code the urls to be in non-friendly format and fetch
+			// the shops base url ourselves. This is a workaround to all the bugs related to url building in these
+			// PS versions.
+			$query_params = array(
+				'controller' => Tools::strReplaceFirst('.php', '', $controller),
+				'id_lang' => $id_lang,
+			);
+			$url = $this->getBaseUrl($id_shop).'index.php?'.http_build_query($query_params);
+		}
+
+		if ((int)Configuration::get('PS_REWRITING_SETTINGS') === 0)
+			$params['id_lang'] = $id_lang;
+
+		return NostoHttpRequest::replaceQueryParamsInUrl($params, $url);
+	}
+
+	/**
+	 * Builds a module controller url for the language and shop.
+	 *
+	 * We created our own method due to the existing one in `LinkCore` behaving differently across PS versions.
+	 *
+	 * @param string $name the name of the module to create an url for.
+	 * @param string $path the path of the module to create an url for (PS 1.4 only).
+	 * @param string $controller the name of the controller.
+	 * @param int|null $id_lang the language ID (falls back on current context if not set).
+	 * @param int|null $id_shop the shop ID (falls back on current context if not set).
+	 * @param array $params additional params to add to the url.
+	 * @return string the url.
+	 */
+	public function getModuleUrl($name, $path, $controller, $id_lang = null, $id_shop = null, array $params = array())
+	{
+		if (is_null($id_lang))
+			$id_lang = (int)Context::getContext()->language->id;
+		if (is_null($id_shop))
+			$id_shop = (int)Context::getContext()->shop->id;
+
+		$params['module'] = $name;
+		$params['controller'] = $controller;
+
+		if (Tools::version_compare(_PS_VERSION_, '1.5.0.0', '<'))
+		{
+			$params['id_lang'] = $id_lang;
+			return $this->getBaseUrl($id_shop).$path.'ctrl.php?'.http_build_query($params);
+		}
+		elseif (Tools::version_compare(_PS_VERSION_, '1.5.5.0', '<'))
+		{
+			// For PS versions 1.5.0.0 - 1.5.4.1 we always hard-code the urls to be in non-friendly format and fetch
+			// the shops base url ourselves. This is a workaround to all the bugs related to url building in these
+			// PS versions.
+			$params['fc'] = 'module';
+			$params['module'] = $name;
+			$params['controller'] = $controller;
+			$params['id_lang'] = $id_lang;
+			return $this->getBaseUrl($id_shop).'index.php?'.http_build_query($params);
+		}
+		else
+		{
+			/** @var LinkCore $link */
+			$link = new Link();
+			return $link->getModuleLink($name, 'oauth2', $params, null, $id_lang, $id_shop);
 		}
 	}
 
@@ -253,46 +381,8 @@ EOT;
 		else
 			$shop = Context::getContext()->shop;
 
+		/** @var Shop|ShopCore $shop */
 		$base = ($ssl ? 'https://'.$shop->domain_ssl : 'http://'.$shop->domain);
 		return $base.$shop->getBaseURI();
-	}
-
-	/**
-	 * Returns the language part of the url if "friendly urls" are enabled.
-	 *
-	 * @param int|null $id_lang the language ID (falls back on current context if not set).
-	 * @param int|null $id_shop the shop ID (falls back on current context if not set).
-	 * @return string the language part of the url or empty string.
-	 */
-	public function getLangUriPath($id_lang = null, $id_shop = null)
-	{
-		if (is_null($id_lang))
-			$id_lang = (int)Context::getContext()->language->id;
-		if (is_null($id_shop))
-			$id_shop = (int)Context::getContext()->shop->id;
-
-		$allow_url_rewrite = (int)Configuration::get('PS_REWRITING_SETTINGS', null, null, $id_shop);
-		if (!Language::isMultiLanguageActivated($id_shop) || !$allow_url_rewrite)
-			return '';
-
-		return Language::getIsoById($id_lang).'/';
-	}
-
-	/**
-	 * Adds any additional query params to the preview url, namely the "nostodebug" flag.
-	 * Also adds the id_lang param if url rewriting is not on as it seems that it is left out in some cases.
-	 *
-	 * @param string $url the preview url to add the query param to.
-	 * @param int $id_lang the language ID for which the url is created.
-	 * @return string the preview url with added params.
-	 */
-	protected function addPreviewQueryParams($url, $id_lang)
-	{
-		// If url rewriting is of, then make sure the id_lang is set.
-		if ((int)Configuration::get('PS_REWRITING_SETTINGS') === 0)
-			$url = NostoHttpRequest::replaceQueryParamInUrl('id_lang', $id_lang, $url);
-		// Always add the "nostodebug" flag.
-		$url = NostoHttpRequest::replaceQueryParamInUrl('nostodebug', 'true', $url);
-		return $url;
 	}
 }
