@@ -277,7 +277,6 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 			? (string)$link->getImageLink($product->link_rewrite, $product->id.'-'.$image_id, $image_type)
 			: '';
 
-
 		// We need to check if taxes are to be included in the prices, given that they are configured.
 		// This is determined by the "Price display method" setting of the active user group.
 		// Possible values are 1, tax excluded, and 0, tax included.

@@ -102,7 +102,7 @@ class NostoTagging extends Module
 	{
 		$this->name = 'nostotagging';
 		$this->tab = 'advertising_marketing';
-		$this->version = '2.2.0';
+		$this->version = '2.2.1';
 		$this->author = 'Nosto';
 		$this->need_instance = 1;
 		$this->bootstrap = true;
@@ -316,7 +316,7 @@ class NostoTagging extends Module
 					$current_language['name']
 				),
 			),
-			$this->name.'_ps_version_class' => 'ps-'.str_replace('.', '', substr(_PS_VERSION_, 0, 3))
+			$this->name.'_ps_version_class' => 'ps-'.str_replace('.', '', Tools::substr(_PS_VERSION_, 0, 3))
 		));
 
 		// Try to login employee to Nosto in order to get a url to the internal setting pages,
@@ -911,17 +911,17 @@ class NostoTagging extends Module
 			$this->hookActionObjectDeleteAfter(array('object' => $params['product']));
 	}
 
-    /**
-     * Hook called when a product is added, right after said addition (Prestashop 1.4).
-     *
-     * @see NostoTagging::hookActionObjectAddAfter
-     * @param array $params
-     */
-    public function hookAddProduct(Array $params)
-    {
-        if (isset($params['product']))
-            $this->hookActionObjectAddAfter(array('object' => $params['product']));
-    }
+	/**
+	 * Hook called when a product is added, right after said addition (Prestashop 1.4).
+	 *
+	 * @see NostoTagging::hookActionObjectAddAfter
+	 * @param array $params
+	 */
+	public function hookAddProduct(Array $params)
+	{
+		if (isset($params['product']))
+			$this->hookActionObjectAddAfter(array('object' => $params['product']));
+	}
 
 	/**
 	 * Hook called during an the validation of an order, the status of which being something other than
