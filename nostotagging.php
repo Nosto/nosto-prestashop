@@ -316,7 +316,7 @@ class NostoTagging extends Module
 					$current_language['name']
 				),
 			),
-			$this->name.'_ps_version_class' => 'ps-'.str_replace('.', '', substr(_PS_VERSION_, 0, 3))
+			$this->name.'_ps_version_class' => 'ps-'.str_replace('.', '', Tools::substr(_PS_VERSION_, 0, 3))
 		));
 
 		// Try to login employee to Nosto in order to get a url to the internal setting pages,
