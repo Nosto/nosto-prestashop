@@ -911,17 +911,17 @@ class NostoTagging extends Module
 			$this->hookActionObjectDeleteAfter(array('object' => $params['product']));
 	}
 
-    /**
-     * Hook called when a product is added, right after said addition (Prestashop 1.4).
-     *
-     * @see NostoTagging::hookActionObjectAddAfter
-     * @param array $params
-     */
-    public function hookAddProduct(Array $params)
-    {
-        if (isset($params['product']))
-            $this->hookActionObjectAddAfter(array('object' => $params['product']));
-    }
+	/**
+	 * Hook called when a product is added, right after said addition (Prestashop 1.4).
+	 *
+	 * @see NostoTagging::hookActionObjectAddAfter
+	 * @param array $params
+	 */
+	public function hookAddProduct(Array $params)
+	{
+		if (isset($params['product']))
+			$this->hookActionObjectAddAfter(array('object' => $params['product']));
+	}
 
 	/**
 	 * Hook called during an the validation of an order, the status of which being something other than
