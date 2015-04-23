@@ -91,6 +91,10 @@ PrestaShop version 1.4.x - 1.6.x
 
 ## Changelog
 
+* 2.2.1
+    * Fixed connecting existing Nosto account using OAuth for multi-shop setups in Prestashop 1.5.0.0 - 1.5.5.0
+    * Fixed preview urls on module admin page for multi-shop setups in Prestashop 1.5.0.0 - 1.5.5.0
+
 * 2.2.0
     * New module admin UI
     * Added hook for sending new product data to Nosto right after product has been created
