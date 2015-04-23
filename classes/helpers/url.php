@@ -207,7 +207,7 @@ EOT;
 		if (is_null($id_shop))
 			$id_shop = (int)Context::getContext()->shop->id;
 
-		if (Tools::version_compare(_PS_VERSION_, '1.5.0.0', '<') || Tools::version_compare(_PS_VERSION_, '1.5.5.0', '>='))
+		if (version_compare(_PS_VERSION_, '1.5.0.0') === -1 || version_compare(_PS_VERSION_, '1.5.5.0') >= 0)
 		{
 			/** @var LinkCore $link */
 			$link = new Link();
@@ -250,7 +250,7 @@ EOT;
 		if (is_null($id_shop))
 			$id_shop = (int)Context::getContext()->shop->id;
 
-		if (Tools::version_compare(_PS_VERSION_, '1.5.0.0', '<') || Tools::version_compare(_PS_VERSION_, '1.5.5.0', '>='))
+		if (version_compare(_PS_VERSION_, '1.5.0.0') === -1 || version_compare(_PS_VERSION_, '1.5.5.0') >= 0)
 		{
 			/** @var LinkCore $link */
 			$link = new Link();
@@ -293,7 +293,7 @@ EOT;
 		if (is_null($id_shop))
 			$id_shop = (int)Context::getContext()->shop->id;
 
-		if (Tools::version_compare(_PS_VERSION_, '1.5.0.0', '<') || Tools::version_compare(_PS_VERSION_, '1.5.5.0', '>='))
+		if (version_compare(_PS_VERSION_, '1.5.0.0') === -1 || version_compare(_PS_VERSION_, '1.5.5.0') >= 0)
 		{
 			/** @var LinkCore $link */
 			$link = new Link();
@@ -340,12 +340,12 @@ EOT;
 		$params['module'] = $name;
 		$params['controller'] = $controller;
 
-		if (Tools::version_compare(_PS_VERSION_, '1.5.0.0', '<'))
+		if (version_compare(_PS_VERSION_, '1.5.0.0') === -1)
 		{
 			$params['id_lang'] = $id_lang;
 			return $this->getBaseUrl($id_shop).$path.'ctrl.php?'.http_build_query($params);
 		}
-		elseif (Tools::version_compare(_PS_VERSION_, '1.5.5.0', '<'))
+		elseif (version_compare(_PS_VERSION_, '1.5.5.0') === -1)
 		{
 			// For PS versions 1.5.0.0 - 1.5.4.1 we always hard-code the urls to be in non-friendly format and fetch
 			// the shops base url ourselves. This is a workaround to all the bugs related to url building in these
