@@ -59,6 +59,11 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 	protected $payment_provider;
 
 	/**
+	 * @var string the orders payment status.
+	 */
+	protected $payment_status;
+
+	/**
 	 * @inheritdoc
 	 */
 	public function getRequiredItems()
@@ -93,6 +98,14 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 	public function getPaymentProvider()
 	{
 		return $this->payment_provider;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function getPaymentStatus()
+	{
+		return $this->payment_status;
 	}
 
 	/**
@@ -135,6 +148,10 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 			$this->payment_provider = $order->module.' ['.$payment_module->version.']';
 		else
 			$this->payment_provider = $order->module.' [unknown]';
+
+		$current_state = $order->getCurrentStateFull($order->id_lang);
+		if (!empty($current_state['name']))
+			$this->payment_status = $current_state['name'];
 	}
 
 	/**
