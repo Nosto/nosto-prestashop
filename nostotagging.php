@@ -456,7 +456,9 @@ class NostoTagging extends Module
 				$category = $this->context->controller->getCategory();
 			else
 				$category = new Category((int)Tools::getValue('id_category'), $this->context->language->id);
-			$html .= $this->getCategoryTagging($category);
+
+			if (Validate::isLoadedObject($category))
+				$html .= $this->getCategoryTagging($category);
 		}
 		elseif ($this->isController('manufacturer'))
 		{
@@ -465,7 +467,9 @@ class NostoTagging extends Module
 				$manufacturer = $this->context->controller->getManufacturer();
 			else
 				$manufacturer = new Manufacturer((int)Tools::getValue('id_manufacturer'), $this->context->language->id);
-			$html .= $this->getBrandTagging($manufacturer);
+
+			if (Validate::isLoadedObject($manufacturer))
+				$html .= $this->getBrandTagging($manufacturer);
 		}
 		elseif ($this->isController('search'))
 		{
