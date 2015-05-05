@@ -149,7 +149,13 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 		else
 			$this->payment_provider = $order->module.' [unknown]';
 
-		$current_state = $order->getCurrentStateFull($order->id_lang);
+		// Try to find the English language ID, but fall back on the order's language ID.
+		// We prefer the English one as we use it to fetch the order state name below, which can be localized.
+		$id_lang = (int)Language::getIdByIso('en');
+		if (empty($id_lang))
+			$id_lang = (int)$order->id_lang;
+
+		$current_state = $order->getCurrentStateFull($id_lang);
 		if (!empty($current_state['name']))
 			$this->payment_status = $current_state['name'];
 	}
