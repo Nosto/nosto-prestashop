@@ -34,14 +34,6 @@ class NostoTaggingSearch extends NostoTaggingModel
 	protected $search_term;
 
 	/**
-	 * @inheritdoc
-	 */
-	public function getRequiredItems()
-	{
-		return array('search_term');
-	}
-
-	/**
 	 * Setter for the search term.
 	 *
 	 * @param string $search_term the term.

@@ -29,23 +29,20 @@
 abstract class NostoTaggingModel
 {
 	/**
-	 * Returns an array of required items in the block.
+	 * Returns a protected/private property value by invoking it's public getter.
 	 *
-	 * @return array the list of required items.
-	 */
-	abstract public function getRequiredItems();
-
-	/**
-	 * Validates the tagging block, i.e. if all the required data is set.
+	 * The getter names are assumed to be the property name in camel case with preceding word "get".
 	 *
-	 * @param array $attributes optional list of attributes to validate (used to validate only specific attributes).
-	 * @return bool
+	 * @param string $name the property name.
+	 * @return mixed the property value.
+	 * @throws Exception if public getter does not exist.
 	 */
-	public function validate(array $attributes = array())
+	public function __get($name)
 	{
-		foreach ($this->getRequiredItems() as $attribute)
-			if ((empty($attributes) || in_array($attribute, $attributes)) && empty($this->{$attribute}))
-				return false;
-		return true;
+		$getter = 'get'.str_replace('_', '', $name);
+		if (method_exists($this, $getter)) {
+			return $this->{$getter}();
+		}
+		throw new Exception(sprintf('Property `%s.%s` is not defined.', get_class($this), $name));
 	}
 }

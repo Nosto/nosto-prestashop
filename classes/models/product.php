@@ -26,7 +26,7 @@
 /**
  * Model for tagging products.
  */
-class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInterface
+class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInterface, NostoValidatableModelInterface
 {
 	const IN_STOCK = 'InStock';
 	const OUT_OF_STOCK = 'OutOfStock';
@@ -66,7 +66,7 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	/**
 	 * @var string the currency iso code.
 	 */
-	protected $price_currency_code;
+	protected $currency_code;
 
 	/**
 	 * @var string product availability (use constants).
@@ -106,27 +106,23 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	/**
 	 * @inheritdoc
 	 */
-	public function getRequiredItems()
+	public function getValidationRules()
 	{
 		return array(
-			'url',
-			'product_id',
-			'name',
-			'price',
-			'list_price',
-			'price_currency_code',
-			'availability',
+			array(
+				array(
+					'url',
+					'product_id',
+					'name',
+					'image_url',
+					'price',
+					'list_price',
+					'currency_code',
+					'availability',
+				),
+				'required',
+			)
 		);
-	}
-
-	/**
-	 * Setter for the product url.
-	 *
-	 * @param string $url the url.
-	 */
-	public function setUrl($url)
-	{
-		$this->url = $url;
 	}
 
 	/**
@@ -192,7 +188,7 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	 */
 	public function getCurrencyCode()
 	{
-		return $this->price_currency_code;
+		return $this->currency_code;
 	}
 
 	/**
@@ -285,7 +281,7 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 		$list_price = $product->getPriceWithoutReduct((bool)$price_display_method, null);
 
 		$this->price = Nosto::helper('price')->format($price);
-		$this->price_currency_code = (string)$currency->iso_code;
+		$this->currency_code = (string)$currency->iso_code;
 
 		$is_visible = (_PS_VERSION_ >= '1.5') ? ($product->visibility !== 'none') : true;
 		if ($product->checkQty(1) && $is_visible)

@@ -34,15 +34,6 @@ class NostoTaggingCart extends NostoTaggingModel
 	public $line_items = array();
 
 	/**
-	 * @inheritdoc
-	 */
-	public function getRequiredItems()
-	{
-		// The line items are not required as we want to output an empty cart tagging div when we have no items.
-		return array();
-	}
-
-	/**
 	 * Loads the cart data from supplied cart object.
 	 *
 	 * @param Cart $cart the cart object.

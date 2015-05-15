@@ -44,18 +44,6 @@ class NostoTaggingCustomer extends NostoTaggingModel
 	public $email;
 
 	/**
-	 * @inheritdoc
-	 */
-	public function getRequiredItems()
-	{
-		return array(
-			'first_name',
-			'last_name',
-			'email',
-		);
-	}
-
-	/**
 	 * Loads the customer data from supplied context and customer objects.
 	 *
 	 * @param Context $context the context object.
@@ -79,7 +67,7 @@ class NostoTaggingCustomer extends NostoTaggingModel
 	 * @param Customer $customer the customer object to check.
 	 * @return bool true if the customer is logged in, false otherwise.
 	 */
-	protected function isCustomerLoggedIn(Context $context, Customer $customer)
+	public function isCustomerLoggedIn(Context $context, Customer $customer)
 	{
 		if (!Validate::isLoadedObject($customer))
 			return false;

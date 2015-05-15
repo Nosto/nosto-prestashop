@@ -66,19 +66,6 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 	/**
 	 * @inheritdoc
 	 */
-	public function getRequiredItems()
-	{
-		return array(
-			'order_number',
-			'buyer',
-			'created_at',
-			'purchased_items',
-		);
-	}
-
-	/**
-	 * @inheritdoc
-	 */
 	public function getOrderNumber()
 	{
 		return $this->order_number;

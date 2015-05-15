@@ -790,8 +790,6 @@ class NostoTagging extends Module
 
 			$nosto_order = new NostoTaggingOrder();
 			$nosto_order->loadData($this->context, $order);
-			if (!$nosto_order->validate())
-				return;
 
 			// PS 1.4 does not have "id_shop_group" and "id_shop" properties in the order object.
 			$id_shop_group = isset($order->id_shop_group) ? $order->id_shop_group : null;
@@ -865,7 +863,7 @@ class NostoTagging extends Module
 	{
 		if (isset($params['object']))
 			if ($params['object'] instanceof Product)
-				$this->recrawlProduct($params['object']);
+				$this->sendProductUpdate($params['object']);
 	}
 
 	/**
@@ -877,7 +875,7 @@ class NostoTagging extends Module
 	{
 		if (isset($params['object']))
 			if ($params['object'] instanceof Product)
-				$this->recrawlProduct($params['object']);
+				$this->sendProductDelete($params['object']);
 	}
 
 	/**
@@ -889,7 +887,7 @@ class NostoTagging extends Module
 	{
 		if (isset($params['object']))
 			if ($params['object'] instanceof Product)
-				$this->recrawlProduct($params['object']);
+				$this->sendProductCreate($params['object']);
 	}
 
 	/**
@@ -1150,9 +1148,10 @@ class NostoTagging extends Module
 	protected function getCustomerTagging()
 	{
 		$nosto_customer = new NostoTaggingCustomer();
-		$nosto_customer->loadData($this->context, $this->context->customer);
-		if (!$nosto_customer->validate())
+		if (!$nosto_customer->isCustomerLoggedIn($this->context, $this->context->customer))
 			return '';
+
+		$nosto_customer->loadData($this->context, $this->context->customer);
 
 		$this->smarty->assign(array(
 			'nosto_customer' => $nosto_customer,
@@ -1170,8 +1169,6 @@ class NostoTagging extends Module
 	{
 		$nosto_cart = new NostoTaggingCart();
 		$nosto_cart->loadData($this->context->cart);
-		if (!$nosto_cart->validate())
-			return '';
 
 		$this->smarty->assign(array(
 			'nosto_cart' => $nosto_cart,
@@ -1191,8 +1188,6 @@ class NostoTagging extends Module
 	{
 		$nosto_product = new NostoTaggingProduct();
 		$nosto_product->loadData($this->context, $product);
-		if (!$nosto_product->validate())
-			return '';
 
 		$params = array('nosto_product' => $nosto_product);
 
@@ -1200,8 +1195,7 @@ class NostoTagging extends Module
 		{
 			$nosto_category = new NostoTaggingCategory();
 			$nosto_category->loadData($this->context, $category);
-			if ($nosto_category->validate())
-				$params['nosto_category'] = $nosto_category;
+			$params['nosto_category'] = $nosto_category;
 		}
 
 		$this->smarty->assign($params);
@@ -1218,8 +1212,6 @@ class NostoTagging extends Module
 	{
 		$nosto_order = new NostoTaggingOrder();
 		$nosto_order->loadData($this->context, $order);
-		if (!$nosto_order->validate())
-			return '';
 
 		$this->smarty->assign(array(
 			'nosto_order' => $nosto_order,
@@ -1238,8 +1230,6 @@ class NostoTagging extends Module
 	{
 		$nosto_category = new NostoTaggingCategory();
 		$nosto_category->loadData($this->context, $category);
-		if (!$nosto_category->validate())
-			return '';
 
 		$this->smarty->assign(array(
 			'nosto_category' => $nosto_category,
@@ -1258,8 +1248,6 @@ class NostoTagging extends Module
 	{
 		$nosto_brand = new NostoTaggingBrand();
 		$nosto_brand->loadData($manufacturer);
-		if (!$nosto_brand->validate())
-			return '';
 
 		$this->smarty->assign(array(
 			'nosto_brand' => $nosto_brand,
@@ -1278,8 +1266,6 @@ class NostoTagging extends Module
 	{
 		$nosto_search = new NostoTaggingSearch();
 		$nosto_search->setSearchTerm($search_term);
-		if (!$nosto_search->validate())
-			return '';
 
 		$this->smarty->assign(array(
 			'nosto_search' => $nosto_search,
@@ -1289,34 +1275,36 @@ class NostoTagging extends Module
 	}
 
 	/**
-	 * Sends a API notification to Nosto that a product needs re-crawling.
-	 * This is done for every shop language in this context that has a Nosto account connected to it.
+	 * Sends a product create API request to Nosto.
 	 *
-	 * @param Product $product the product object.
+	 * @param Product $product the product that has been created.
 	 */
-	protected function recrawlProduct(Product $product)
+	protected function sendProductCreate(Product $product)
 	{
-		// todo: implement using product update API
-		return;
 		if (!Validate::isLoadedObject($product))
 			return;
 
-		$link = new Link();
-		foreach (Language::getLanguages() as $language)
+		$id_product = (int)$product->id;
+		$validator = new NostoModelValidator();
+
+		/** @var NostoAccount $account */
+		foreach ($this->getAccountsPerLanguage() as $id_lang => $account)
 		{
-			$id_lang = (int)$language['id_lang'];
-			/** @var NostoAccount $account */
-			$account = Nosto::helper('nosto_tagging/account')->find($id_lang);
-			if ($account === null || !$account->isConnectedToNosto())
+			// We need to load the product for the correct language.
+			$product = new Product($id_product, true, $id_lang);
+			if (!Validate::isLoadedObject($product))
+				continue;
+
+			$nosto_product = new NostoTaggingProduct();
+			$nosto_product->loadData($this->context, $product);
+			if (!$validator->validate($nosto_product))
 				continue;
 
 			try
 			{
-				$nosto_product = new NostoTaggingProduct();
-				$nosto_product->setProductId((int)$product->id);
-				$nosto_product->setUrl($link->getProductLink($product, null, null, null, $id_lang));
-				if ($nosto_product->validate(array('product_id', 'url')))
-					NostoProductReCrawl::send($nosto_product, $account);
+				$op = new NostoOperationProduct($account);
+				$op->addProduct($nosto_product);
+				$op->create();
 			}
 			catch (NostoException $e)
 			{
@@ -1328,5 +1316,104 @@ class NostoTagging extends Module
 				);
 			}
 		}
+	}
+
+	/**
+	 * Sends a product update API request to Nosto.
+	 *
+	 * @param Product $product the product that has been updated.
+	 */
+	protected function sendProductUpdate(Product $product)
+	{
+		if (!Validate::isLoadedObject($product))
+			return;
+
+		$id_product = (int)$product->id;
+		$validator = new NostoModelValidator();
+
+		/** @var NostoAccount $account */
+		foreach ($this->getAccountsPerLanguage() as $id_lang => $account)
+		{
+			// We need to load the product for the correct language.
+			$product = new Product($id_product, true, $id_lang);
+			if (!Validate::isLoadedObject($product))
+				continue;
+
+			$nosto_product = new NostoTaggingProduct();
+			$nosto_product->loadData($this->context, $product);
+			if (!$validator->validate($nosto_product))
+				continue;
+
+			try
+			{
+				$op = new NostoOperationProduct($account);
+				$op->addProduct($nosto_product);
+				$op->update();
+			}
+			catch (NostoException $e)
+			{
+				Nosto::helper('nosto_tagging/logger')->error(
+					__CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(),
+					$e->getCode(),
+					get_class($product),
+					(int)$product->id
+				);
+			}
+		}
+	}
+
+	/**
+	 * Sends a product delete API request to Nosto.
+	 *
+	 * @param Product $product the product that has been deleted.
+	 */
+	protected function sendProductDelete(Product $product)
+	{
+		if (!Validate::isLoadedObject($product))
+			return;
+
+		/** @var NostoAccount $account */
+		foreach ($this->getAccountsPerLanguage() as $account)
+		{
+			try
+			{
+				$nosto_product = new NostoTaggingProduct();
+				$nosto_product->setProductId((int)$product->id);
+
+				$op = new NostoOperationProduct($account);
+				$op->addProduct($nosto_product);
+				$op->update();
+			}
+			catch (NostoException $e)
+			{
+				Nosto::helper('nosto_tagging/logger')->error(
+					__CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(),
+					$e->getCode(),
+					get_class($product),
+					(int)$product->id
+				);
+			}
+		}
+	}
+
+	/**
+	 * Returns Nosto accounts mapped by their language ID for current shop.
+	 *
+	 * @return array the map.
+	 */
+	protected function getAccountsPerLanguage()
+	{
+		$accounts = array();
+		foreach (Language::getLanguages() as $language)
+		{
+			$id_lang = (int)$language['id_lang'];
+			/** @var NostoAccount $account */
+			$account = Nosto::helper('nosto_tagging/account')->find($id_lang);
+			if ($account === null || !$account->isConnectedToNosto())
+				continue;
+
+			$accounts[$id_lang] = $account;
+		}
+		return $accounts;
 	}
 }
