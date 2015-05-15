@@ -414,7 +414,7 @@ class NostoTagging extends Module
 			'nosto_version' => $this->version,
 			'nosto_unique_id' => $this->getUniqueInstallationId(),
 			'nosto_language' => Tools::strtolower($this->context->language->iso_code),
-			'add_to_cart_url' => $link->getPageLink('cart'),
+			'add_to_cart_url' => $link->getPageLink('cart.php'),
 		));
 
 		$this->context->controller->addJS($this->_path.'js/nostotagging-auto-slots.js');
