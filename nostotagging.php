@@ -1295,6 +1295,9 @@ class NostoTagging extends Module
 			if (!Validate::isLoadedObject($product))
 				continue;
 
+			if ($product->visibility === 'none')
+				continue;
+
 			$nosto_product = new NostoTaggingProduct();
 			$nosto_product->loadData($this->context, $product);
 			if (!$validator->validate($nosto_product))
@@ -1337,6 +1340,9 @@ class NostoTagging extends Module
 			// We need to load the product for the correct language.
 			$product = new Product($id_product, true, $id_lang);
 			if (!Validate::isLoadedObject($product))
+				continue;
+
+			if ($product->visibility === 'none')
 				continue;
 
 			$nosto_product = new NostoTaggingProduct();
