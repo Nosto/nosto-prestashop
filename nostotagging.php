@@ -406,18 +406,22 @@ class NostoTagging extends Module
 		if ($account === null)
 			return '';
 
+		/** @var LinkCore $link */
+		$link = new Link();
 		$this->smarty->assign(array(
 			'server_address' => $server_address,
 			'account_name' => $account->name,
 			'nosto_version' => $this->version,
 			'nosto_unique_id' => $this->getUniqueInstallationId(),
 			'nosto_language' => Tools::strtolower($this->context->language->iso_code),
+			'add_to_cart_url' => $link->getPageLink('cart'),
 		));
 
 		$this->context->controller->addJS($this->_path.'js/nostotagging-auto-slots.js');
 
 		$html = $this->display(__FILE__, 'views/templates/hook/header_meta-tags.tpl');
 		$html .= $this->display(__FILE__, 'views/templates/hook/header_embed-script.tpl');
+		$html .= $this->display(__FILE__, 'views/templates/hook/header_add-to-cart.tpl');
 
 		return $html;
 	}
