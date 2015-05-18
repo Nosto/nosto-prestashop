@@ -47,12 +47,8 @@ class NostoTaggingHelperLogger
 		$logger = (class_exists('PrestaShopLogger') ? 'PrestaShopLogger' : (class_exists('Logger') ? 'Logger' : null));
 		if (!empty($logger))
 		{
-			if (_PS_VERSION_ < '1.5')
-			{
-				// PS 1.4 log save will crash on "{" and "}" chars, so we replace them with "||";
-				$message = str_replace('{', '||', $message);
-				$message = str_replace('}', '||', $message);
-			}
+			// The log message is not allowed to contain certain characters, so we url encode them before saving.
+			$message = str_replace(array('{', '}', '<', '>'), array('%7B', '%7D', '%3C', '%3E'), $message);
 			call_user_func(array($logger, 'addLog'), $message, $severity, $error_code, $object_type, $object_id, true);
 		}
 	}
