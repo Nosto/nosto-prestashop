@@ -134,16 +134,6 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	}
 
 	/**
-	 * Setter for the unique product id.
-	 *
-	 * @param int $product_id the product id.
-	 */
-	public function setProductId($product_id)
-	{
-		$this->product_id = $product_id;
-	}
-
-	/**
 	 * @inheritdoc
 	 */
 	public function getProductId()
@@ -312,6 +302,16 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 			$this->brand = (string)$product->manufacturer_name;
 
 		$this->date_published = Nosto::helper('date')->format($product->date_add);
+	}
+
+	/**
+	 * Assigns the product ID from given product.
+	 *
+	 * @param Product $product the product object.
+	 */
+	public function assignId(Product $product)
+	{
+		$this->product_id = (int)$product->id;
 	}
 
 	/**

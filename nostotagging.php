@@ -39,6 +39,7 @@ if ((basename(__FILE__) === 'nostotagging.php'))
 	require_once($module_dir.'/classes/helpers/customer.php');
 	require_once($module_dir.'/classes/helpers/flash-message.php');
 	require_once($module_dir.'/classes/helpers/logger.php');
+	require_once($module_dir.'/classes/helpers/product-operation.php');
 	require_once($module_dir.'/classes/helpers/updater.php');
 	require_once($module_dir.'/classes/helpers/url.php');
 	require_once($module_dir.'/classes/meta/account.php');
@@ -867,7 +868,7 @@ class NostoTagging extends Module
 	{
 		if (isset($params['object']))
 			if ($params['object'] instanceof Product)
-				$this->sendProductUpdate($params['object']);
+				Nosto::helper('nosto_tagging/product_operation')->update($params['object']);
 	}
 
 	/**
@@ -879,7 +880,7 @@ class NostoTagging extends Module
 	{
 		if (isset($params['object']))
 			if ($params['object'] instanceof Product)
-				$this->sendProductDelete($params['object']);
+				Nosto::helper('nosto_tagging/product_operation')->delete($params['object']);
 	}
 
 	/**
@@ -891,7 +892,7 @@ class NostoTagging extends Module
 	{
 		if (isset($params['object']))
 			if ($params['object'] instanceof Product)
-				$this->sendProductCreate($params['object']);
+				Nosto::helper('nosto_tagging/product_operation')->create($params['object']);
 	}
 
 	/**
@@ -1276,154 +1277,5 @@ class NostoTagging extends Module
 		));
 
 		return $this->display(__FILE__, 'views/templates/hook/top_search-tagging.tpl');
-	}
-
-	/**
-	 * Sends a product create API request to Nosto.
-	 *
-	 * @param Product $product the product that has been created.
-	 */
-	protected function sendProductCreate(Product $product)
-	{
-		if (!Validate::isLoadedObject($product))
-			return;
-
-		$id_product = (int)$product->id;
-		$validator = new NostoModelValidator();
-
-		/** @var NostoAccount $account */
-		foreach ($this->getAccountsPerLanguage() as $id_lang => $account)
-		{
-			// We need to load the product for the correct language.
-			$product = new Product($id_product, true, $id_lang);
-			if (!Validate::isLoadedObject($product))
-				continue;
-
-			if ($product->visibility === 'none')
-				continue;
-
-			$nosto_product = new NostoTaggingProduct();
-			$nosto_product->loadData($this->context, $product);
-			if (!$validator->validate($nosto_product))
-				continue;
-
-			try
-			{
-				$op = new NostoOperationProduct($account);
-				$op->addProduct($nosto_product);
-				$op->create();
-			}
-			catch (NostoException $e)
-			{
-				Nosto::helper('nosto_tagging/logger')->error(
-					__CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(),
-					$e->getCode(),
-					get_class($product),
-					(int)$product->id
-				);
-			}
-		}
-	}
-
-	/**
-	 * Sends a product update API request to Nosto.
-	 *
-	 * @param Product $product the product that has been updated.
-	 */
-	protected function sendProductUpdate(Product $product)
-	{
-		if (!Validate::isLoadedObject($product))
-			return;
-
-		$id_product = (int)$product->id;
-		$validator = new NostoModelValidator();
-
-		/** @var NostoAccount $account */
-		foreach ($this->getAccountsPerLanguage() as $id_lang => $account)
-		{
-			// We need to load the product for the correct language.
-			$product = new Product($id_product, true, $id_lang);
-			if (!Validate::isLoadedObject($product))
-				continue;
-
-			if ($product->visibility === 'none')
-				continue;
-
-			$nosto_product = new NostoTaggingProduct();
-			$nosto_product->loadData($this->context, $product);
-			if (!$validator->validate($nosto_product))
-				continue;
-
-			try
-			{
-				$op = new NostoOperationProduct($account);
-				$op->addProduct($nosto_product);
-				$op->update();
-			}
-			catch (NostoException $e)
-			{
-				Nosto::helper('nosto_tagging/logger')->error(
-					__CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(),
-					$e->getCode(),
-					get_class($product),
-					(int)$product->id
-				);
-			}
-		}
-	}
-
-	/**
-	 * Sends a product delete API request to Nosto.
-	 *
-	 * @param Product $product the product that has been deleted.
-	 */
-	protected function sendProductDelete(Product $product)
-	{
-		if (!Validate::isLoadedObject($product))
-			return;
-
-		/** @var NostoAccount $account */
-		foreach ($this->getAccountsPerLanguage() as $account)
-		{
-			try
-			{
-				$nosto_product = new NostoTaggingProduct();
-				$nosto_product->setProductId((int)$product->id);
-
-				$op = new NostoOperationProduct($account);
-				$op->addProduct($nosto_product);
-				$op->update();
-			}
-			catch (NostoException $e)
-			{
-				Nosto::helper('nosto_tagging/logger')->error(
-					__CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(),
-					$e->getCode(),
-					get_class($product),
-					(int)$product->id
-				);
-			}
-		}
-	}
-
-	/**
-	 * Returns Nosto accounts mapped by their language ID for current shop.
-	 *
-	 * @return array the map.
-	 */
-	protected function getAccountsPerLanguage()
-	{
-		$accounts = array();
-		foreach (Language::getLanguages() as $language)
-		{
-			$id_lang = (int)$language['id_lang'];
-			/** @var NostoAccount $account */
-			$account = Nosto::helper('nosto_tagging/account')->find($id_lang);
-			if ($account === null || !$account->isConnectedToNosto())
-				continue;
-
-			$accounts[$id_lang] = $account;
-		}
-		return $accounts;
 	}
 }
