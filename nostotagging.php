@@ -167,7 +167,7 @@ class NostoTagging extends Module
 
 			if (_PS_VERSION_ < '1.5')
 			{
-				// For PS 1.4 we need to register some additional hooks for the product re-crawl.
+				// For PS 1.4 we need to register some additional hooks for the product create/update/delete.
 				return $this->registerHook('updateproduct')
 					&& $this->registerHook('deleteproduct')
 					&& $this->registerHook('addproduct')
@@ -175,8 +175,7 @@ class NostoTagging extends Module
 			}
 			else
 			{
-				// And for PS >= 1.5 we register the object update/delete hooks for the product re-crawl as we can get
-				// better precision using that then the separate hooks like in PS 1.4.
+				// And for PS >= 1.5 we register the object specific hooks for the product create/update/delete.
 				return $this->registerHook('actionObjectUpdateAfter')
 					&& $this->registerHook('actionObjectDeleteAfter')
 					&& $this->registerHook('actionObjectAddAfter');
