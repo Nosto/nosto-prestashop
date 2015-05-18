@@ -115,7 +115,7 @@ class NostoTaggingHelperProductOperation
 			{
 				$op = new NostoOperationProduct($account);
 				$op->addProduct($nosto_product);
-				$op->update();
+				$op->delete();
 			}
 			catch (NostoException $e)
 			{
