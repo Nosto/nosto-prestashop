@@ -25,31 +25,6 @@
 
 /**
  * Helper class for sending product create/update/delete events to Nosto.
- *
- * @todo there are a couple of issues with "multi-shop" installation URL generations:
- *
- * 1. The product page urls will not respect the "friendly urls" if one shop has it enabled and the other one does not.
- * This will cause all urls to be either friendly or not, depending on what setting the first seen shop has. This seems
- * to be caused by the `Dispatcher`.`use_routes` property that is set upon instance construction and cached due to the
- * use of the Singleton pattern.
- *
- * 2. The product image urls will always point to the first seen shops url.
- * This is due to the internal shop url cache handling and the fact the context cannot be overridden when populating it.
- * The image urls also have an issue with the "friendly urls", which is due to the internal handling of the
- * `Link`.`allow` property that is tied to the current context and cannot be overridden.
- *
- * The "friendly urls" issue SHOULD NOT be a real issue, as it is very unlikely the "friendly urls" setting would be
- * enabled in one shop and disabled in another.
- *
- * The image url issue IS a real issue IF the product images are different in the shops. The image url will always point
- * to an existing image, but that image may or may not be visible on the product page for the shop in question.
- *
- * How all this affects Nosto:
- *
- * 1. The "friendly url" issue can cause the products displayed in the recommendations to be broken if the shop does not
- * have the setting enabled.
- *
- * 2. The product image displayed in the recommendation may not be visible on the product page it that shop.
  */
 class NostoTaggingHelperProductOperation
 {
@@ -59,6 +34,13 @@ class NostoTaggingHelperProductOperation
 	 * the hook callback methods multiple times when saving a product.
 	 */
 	private static $_processed_products = array();
+
+	/**
+	 * @var array stores a snapshot of the context object and shop context so it can be restored between processing all
+	 * accounts. This is important as the accounts belong to different shops and languages and the context, that
+	 * contains this information, is used internally in PrestaShop when generating urls.
+	 */
+	private $_context_snapshot;
 
 	/**
 	 * Sends a product create API request to Nosto.
@@ -186,7 +168,7 @@ class NostoTaggingHelperProductOperation
 		$data = array();
 		/** @var NostoTaggingHelperAccount $account_helper */
 		$account_helper = Nosto::helper('nosto_tagging/account');
-		foreach ($this->getShops() as $shop) {
+		foreach ($this->getContextShops() as $shop) {
 			$id_shop = (int)$shop['id_shop'];
 			$id_shop_group = (int)$shop['id_shop_group'];
 			foreach (LanguageCore::getLanguages(true, $id_shop) as $language)
@@ -207,7 +189,7 @@ class NostoTaggingHelperProductOperation
 	 *
 	 * @return array list of shop data.
 	 */
-	protected function getShops()
+	protected function getContextShops()
 	{
 		if (_PS_VERSION_ >= '1.5' && Shop::isFeatureActive() && Shop::getContext() !== Shop::CONTEXT_SHOP) {
 			if (Shop::getContext() === Shop::CONTEXT_GROUP)
@@ -242,8 +224,12 @@ class NostoTaggingHelperProductOperation
 		if (isset($product->visibility) && $product->visibility === 'none')
 			return null;
 
+		$this->makeContextSnapshot();
+
 		$nosto_product = new NostoTaggingProduct();
 		$nosto_product->loadData($this->makeContext($id_lang, $id_shop), $product);
+
+		$this->restoreContextSnapshot();
 
 		$validator = new NostoModelValidator();
 		if (!$validator->validate($nosto_product))
@@ -253,7 +239,46 @@ class NostoTaggingHelperProductOperation
 	}
 
 	/**
-	 * Clones the current context and replace the info related to shop, language and currency.
+	 * Stores a snapshot of the current context.
+	 */
+	protected function makeContextSnapshot()
+	{
+		$this->_context_snapshot = array(
+			'shop_context' => (_PS_VERSION_ >= '1.5') ? Shop::getContext() : null,
+			'context_object' => Context::getContext()->cloneContext()
+		);
+	}
+
+	/**
+	 * Restore the context snapshot to the current context.
+	 */
+	protected function restoreContextSnapshot()
+	{
+		if (!empty($this->_context_snapshot))
+		{
+			$original_context = $this->_context_snapshot['context_object'];
+			$shop_context = $this->_context_snapshot['shop_context'];
+			$this->_context_snapshot = null;
+
+			$current_context = Context::getContext();
+			$current_context->language = $original_context->language;
+			$current_context->shop = $original_context->shop;
+			$current_context->link = $original_context->link;
+			$current_context->currency = $original_context->currency;
+
+			if (_PS_VERSION_ >= '1.5')
+			{
+				Shop::setContext($shop_context, $current_context->shop->id);
+				Dispatcher::$instance = null;
+				if (method_exists('ShopUrl', 'resetMainDomainCache')) {
+					ShopUrl::resetMainDomainCache();
+				}
+			}
+		}
+	}
+
+	/**
+	 * Modifies the current context and replaces the info related to shop, link, language and currency.
 	 *
 	 * We need this when generating the product data for the different shops and languages.
 	 * The currency will be the first found for the shop, but it defaults to the PS default currency
@@ -265,20 +290,36 @@ class NostoTaggingHelperProductOperation
 	 */
 	protected function makeContext($id_lang, $id_shop)
 	{
-		$ctx = Context::getContext()->cloneContext();
-		$ctx->language = new Language($id_lang);
-		$ctx->shop = new Shop($id_shop);
-		$currency = null;
 		if (_PS_VERSION_ >= '1.5')
+		{
+			// Reset the dispatcher singleton instance so that the url rewrite setting is check on a shop basis when
+			// generating product urls. This will fix the issue of incorrectly formatted urls when one shop has the
+			// rewrite setting enabled and another does not.
+			Dispatcher::$instance = null;
+			if (method_exists('ShopUrl', 'resetMainDomainCache')) {
+				// Reset the shop url domain cache so that it is re-initialized on a shop basis when generating product
+				// image urls. This will fix the issue of the image urls having an incorrect shop base url when the
+				// shops are configured to use different domains.
+				ShopUrl::resetMainDomainCache();
+			}
+			// Reset the shop context to be the current processed shop. This will fix the "friendly url" format of urls
+			// generated through the Link class.
+			Shop::setContext(Shop::CONTEXT_SHOP, $id_shop);
+
 			foreach (Currency::getCurrenciesByIdShop($id_shop) as $row)
 				if ($row['deleted'] === '0' && $row['active'] === '1')
 				{
 					$currency = new Currency($row['id_currency']);
 					break;
 				}
-		if (is_null($currency))
-			$currency = Currency::getDefaultCurrency();
-		$ctx->currency = $currency;
-		return $ctx;
+		}
+
+		$context = Context::getContext();
+		$context->language = new Language($id_lang);
+		$context->shop = new Shop($id_shop);
+		$context->link = new Link('http://', 'http://');
+		$context->currency = isset($currency) ? $currency : Currency::getDefaultCurrency();
+
+		return $context;
 	}
 }
