@@ -56,7 +56,8 @@ class NostoTaggingOrderStatus implements NostoOrderStatusInterface
 		{
 			$state_name = $state['name'];
 			$this->code = $this->convertNameToCode($state_name);
-			if ($id_lang !== (int)$order->id_lang) {
+			if ($id_lang !== (int)$order->id_lang)
+			{
 				$state = $order->getCurrentStateFull((int)$order->id_lang);
 				if (!empty($state['name']))
 					$state_name = $state['name'];

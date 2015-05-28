@@ -168,7 +168,8 @@ class NostoTaggingHelperProductOperation
 		$data = array();
 		/** @var NostoTaggingHelperAccount $account_helper */
 		$account_helper = Nosto::helper('nosto_tagging/account');
-		foreach ($this->getContextShops() as $shop) {
+		foreach ($this->getContextShops() as $shop)
+		{
 			$id_shop = (int)$shop['id_shop'];
 			$id_shop_group = (int)$shop['id_shop_group'];
 			foreach (LanguageCore::getLanguages(true, $id_shop) as $language)
@@ -191,12 +192,15 @@ class NostoTaggingHelperProductOperation
 	 */
 	protected function getContextShops()
 	{
-		if (_PS_VERSION_ >= '1.5' && Shop::isFeatureActive() && Shop::getContext() !== Shop::CONTEXT_SHOP) {
+		if (_PS_VERSION_ >= '1.5' && Shop::isFeatureActive() && Shop::getContext() !== Shop::CONTEXT_SHOP)
+		{
 			if (Shop::getContext() === Shop::CONTEXT_GROUP)
 				return Shop::getShops(true, Shop::getContextShopGroupID());
 			else
 				return Shop::getShops(true);
-		} else {
+		}
+		else
+		{
 			$ctx = Context::getContext();
 			return array(
 				(int)$ctx->shop->id => array(
@@ -291,14 +295,15 @@ class NostoTaggingHelperProductOperation
 	{
 		if (_PS_VERSION_ >= '1.5')
 		{
-            // Reset the shop context to be the current processed shop. This will fix the "friendly url" format of urls
-            // generated through the Link class.
-            Shop::setContext(Shop::CONTEXT_SHOP, $id_shop);
+			// Reset the shop context to be the current processed shop. This will fix the "friendly url" format of urls
+			// generated through the Link class.
+			Shop::setContext(Shop::CONTEXT_SHOP, $id_shop);
 			// Reset the dispatcher singleton instance so that the url rewrite setting is check on a shop basis when
 			// generating product urls. This will fix the issue of incorrectly formatted urls when one shop has the
 			// rewrite setting enabled and another does not.
 			Dispatcher::$instance = null;
-			if (method_exists('ShopUrl', 'resetMainDomainCache')) {
+			if (method_exists('ShopUrl', 'resetMainDomainCache'))
+			{
 				// Reset the shop url domain cache so that it is re-initialized on a shop basis when generating product
 				// image urls. This will fix the issue of the image urls having an incorrect shop base url when the
 				// shops are configured to use different domains.

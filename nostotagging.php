@@ -299,7 +299,7 @@ class NostoTagging extends Module
 			$this->name.'_has_account' => ($account !== null),
 			$this->name.'_account_name' => ($account !== null) ? $account->getName() : null,
 			$this->name.'_account_email' => $account_email,
-			$this->name.'_account_authorized' =>  ($account !== null) ? $account->isConnectedToNosto() : false,
+			$this->name.'_account_authorized' => ($account !== null) ? $account->isConnectedToNosto() : false,
 			$this->name.'_languages' => $languages,
 			$this->name.'_current_language' => $current_language,
 			// Hack a few translations for the view as PS 1.4 does not support sprintf syntax in smarty "l" function.
@@ -402,7 +402,7 @@ class NostoTagging extends Module
 	public function hookDisplayHeader()
 	{
 		$server_address = Nosto::helper('nosto_tagging/url')->getServerAddress();
-        /** @var NostoAccount $account */
+		/** @var NostoAccount $account */
 		$account = Nosto::helper('nosto_tagging/account')->find($this->context->language->id);
 		if ($account === null)
 			return '';
