@@ -41,9 +41,7 @@ abstract class NostoTaggingModel
 	{
 		$getter = 'get'.str_replace('_', '', $name);
 		if (method_exists($this, $getter))
-		{
 			return $this->{$getter}();
-		}
 		throw new Exception(sprintf('Property `%s.%s` is not defined.', get_class($this), $name));
 	}
 }
