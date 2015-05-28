@@ -26,7 +26,7 @@
 /**
  * Model for tagging orders.
  */
-class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface, NostoValidatableModelInterface
+class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface, NostoValidatableInterface
 {
 	/**
 	 * @var bool if we should include special line items such as discounts and shipping costs.

@@ -26,7 +26,7 @@
 /**
  * Model for tagging products.
  */
-class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInterface, NostoValidatableModelInterface
+class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInterface, NostoValidatableInterface
 {
 	const IN_STOCK = 'InStock';
 	const OUT_OF_STOCK = 'OutOfStock';

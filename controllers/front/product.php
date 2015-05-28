@@ -37,9 +37,8 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
 	 */
 	public function initContent()
 	{
+        $context = $this->module->getContext();
 		$collection = new NostoExportProductCollection();
-		$context = $this->module->getContext();
-		$validator = new NostoModelValidator();
 		foreach ($this->getProductIds() as $id_product)
 		{
 			$product = new Product($id_product, true, $context->language->id, $context->shop->id);
@@ -48,7 +47,9 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
 
 			$nosto_product = new NostoTaggingProduct();
 			$nosto_product->loadData($context, $product);
-			if ($validator->validate($nosto_product))
+
+            $validator = new NostoValidator($nosto_product);
+			if ($validator->validate())
 				$collection[] = $nosto_product;
 
 			$product = null;
