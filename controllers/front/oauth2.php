@@ -52,7 +52,7 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
 				$msg = $this->module->l('Account %s successfully connected to Nosto.', 'oauth2');
 				$this->redirectToModuleAdmin(array(
 					'language_id' => $id_lang,
-					'oauth_success' => sprintf($msg, $account->name),
+					'oauth_success' => sprintf($msg, $account->getName()),
 				));
 			}
 			catch (NostoException $e)

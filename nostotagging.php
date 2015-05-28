@@ -297,7 +297,7 @@ class NostoTagging extends Module
 		$this->context->smarty->assign(array(
 			$this->name.'_form_action' => $this->getAdminUrl(),
 			$this->name.'_has_account' => ($account !== null),
-			$this->name.'_account_name' => ($account !== null) ? $account->name : null,
+			$this->name.'_account_name' => ($account !== null) ? $account->getName() : null,
 			$this->name.'_account_email' => $account_email,
 			$this->name.'_account_authorized' =>  ($account !== null) ? $account->isConnectedToNosto() : false,
 			$this->name.'_languages' => $languages,
@@ -310,7 +310,7 @@ class NostoTagging extends Module
 				),
 				'nostotagging_installed_subheading' => sprintf(
 					$this->l('Your account ID is %s'),
-					($account !== null) ? $account->name : ''
+					($account !== null) ? $account->getName() : ''
 				),
 				'nostotagging_not_installed_subheading' => sprintf(
 					$this->l('Install Nosto to your %s shop'),
@@ -402,6 +402,7 @@ class NostoTagging extends Module
 	public function hookDisplayHeader()
 	{
 		$server_address = Nosto::helper('nosto_tagging/url')->getServerAddress();
+        /** @var NostoAccount $account */
 		$account = Nosto::helper('nosto_tagging/account')->find($this->context->language->id);
 		if ($account === null)
 			return '';
@@ -410,7 +411,7 @@ class NostoTagging extends Module
 		$link = new Link();
 		$this->smarty->assign(array(
 			'server_address' => $server_address,
-			'account_name' => $account->name,
+			'account_name' => $account->getName(),
 			'nosto_version' => $this->version,
 			'nosto_unique_id' => $this->getUniqueInstallationId(),
 			'nosto_language' => Tools::strtolower($this->context->language->iso_code),

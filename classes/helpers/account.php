@@ -42,8 +42,8 @@ class NostoTaggingHelperAccount
 		$helper_config = Nosto::helper('nosto_tagging/config');
 		$success = $helper_config->saveAccountName($account->getName(), $id_lang);
 		if ($success)
-			foreach ($account->tokens as $token)
-				$success = $success && $helper_config->saveToken($token->name, $token->value, $id_lang);
+			foreach ($account->getTokens() as $token)
+				$success = $success && $helper_config->saveToken($token->getName(), $token->getValue(), $id_lang);
 		return $success;
 	}
 
@@ -118,9 +118,7 @@ class NostoTaggingHelperAccount
 		$account_name = $helper_config->getAccountName($lang_id, $id_shop_group, $id_shop);
 		if (!empty($account_name))
 		{
-			$account = new NostoAccount();
-			$account->name = $account_name;
-
+			$account = new NostoAccount($account_name);
 			$tokens = array();
 			foreach (NostoApiToken::getApiTokenNames() as $token_name)
 			{
@@ -131,12 +129,8 @@ class NostoTaggingHelperAccount
 
 			if (!empty($tokens))
 				foreach ($tokens as $name => $value)
-				{
-					$token = new NostoApiToken();
-					$token->name = $name;
-					$token->value = $value;
-					$account->tokens[] = $token;
-				}
+					$account->addApiToken(new NostoApiToken($name, $value));
+
 			return $account;
 		}
 		return null;

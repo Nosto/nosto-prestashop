@@ -270,9 +270,8 @@ class NostoTaggingHelperProductOperation
 			{
 				Shop::setContext($shop_context, $current_context->shop->id);
 				Dispatcher::$instance = null;
-				if (method_exists('ShopUrl', 'resetMainDomainCache')) {
+				if (method_exists('ShopUrl', 'resetMainDomainCache'))
 					ShopUrl::resetMainDomainCache();
-				}
 			}
 		}
 	}
@@ -292,6 +291,9 @@ class NostoTaggingHelperProductOperation
 	{
 		if (_PS_VERSION_ >= '1.5')
 		{
+            // Reset the shop context to be the current processed shop. This will fix the "friendly url" format of urls
+            // generated through the Link class.
+            Shop::setContext(Shop::CONTEXT_SHOP, $id_shop);
 			// Reset the dispatcher singleton instance so that the url rewrite setting is check on a shop basis when
 			// generating product urls. This will fix the issue of incorrectly formatted urls when one shop has the
 			// rewrite setting enabled and another does not.
@@ -302,9 +304,6 @@ class NostoTaggingHelperProductOperation
 				// shops are configured to use different domains.
 				ShopUrl::resetMainDomainCache();
 			}
-			// Reset the shop context to be the current processed shop. This will fix the "friendly url" format of urls
-			// generated through the Link class.
-			Shop::setContext(Shop::CONTEXT_SHOP, $id_shop);
 
 			foreach (Currency::getCurrenciesByIdShop($id_shop) as $row)
 				if ($row['deleted'] === '0' && $row['active'] === '1')
