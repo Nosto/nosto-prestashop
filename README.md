@@ -91,6 +91,13 @@ PrestaShop version 1.4.x - 1.6.x
 
 ## Changelog
 
+* 2.3.0
+    * Added the new product update API and removed deprecated product re-crawl
+    * Added order status information to the order confirmation API
+    * Added feature to add product to cart directly from recommendations
+    * Refactored data model validation and allow incomplete data to be tagged in frontend
+    * Updated Nosto SDK
+
 * 2.2.1
     * Fixed connecting existing Nosto account using OAuth for multi-shop setups in Prestashop 1.5.0.0 - 1.5.4.1
     * Fixed preview urls on module admin page for multi-shop setups in Prestashop 1.5.0.0 - 1.5.4.1
