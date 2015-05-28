@@ -34,14 +34,6 @@ class NostoTaggingBrand extends NostoTaggingModel
 	public $brand_string;
 
 	/**
-	 * @inheritdoc
-	 */
-	public function getRequiredItems()
-	{
-		return array('brand_string');
-	}
-
-	/**
 	 * Loads the brand data from supplied manufacturer object.
 	 *
 	 * @param Manufacturer $manufacturer the manufacturer object.

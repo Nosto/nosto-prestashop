@@ -34,14 +34,6 @@ class NostoTaggingCategory extends NostoTaggingModel
 	public $category_string;
 
 	/**
-	 * @inheritdoc
-	 */
-	public function getRequiredItems()
-	{
-		return array('category_string');
-	}
-
-	/**
 	 * Loads the category data from supplied context and category objects.
 	 *
 	 * @param Context $context the context object.

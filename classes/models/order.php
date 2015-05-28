@@ -26,7 +26,7 @@
 /**
  * Model for tagging orders.
  */
-class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
+class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface, NostoValidatableInterface
 {
 	/**
 	 * @var bool if we should include special line items such as discounts and shipping costs.
@@ -41,12 +41,12 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 	/**
 	 * @var NostoTaggingOrderBuyer buyer info.
 	 */
-	protected $buyer = array();
+	protected $buyer_info = array();
 
 	/**
 	 * @var string the order creation date.
 	 */
-	protected $created_at;
+	protected $created_date;
 
 	/**
 	 * @var NostoTaggingOrderPurchasedItem[] purchased items in the order.
@@ -59,17 +59,9 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 	protected $payment_provider;
 
 	/**
-	 * @inheritdoc
+	 * @var NostoTaggingOrderStatus the order status (only used in API requests).
 	 */
-	public function getRequiredItems()
-	{
-		return array(
-			'order_number',
-			'buyer',
-			'created_at',
-			'purchased_items',
-		);
-	}
+	protected $order_status;
 
 	/**
 	 * @inheritdoc
@@ -84,7 +76,7 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 	 */
 	public function getCreatedDate()
 	{
-		return $this->created_at;
+		return $this->created_date;
 	}
 
 	/**
@@ -100,7 +92,7 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 	 */
 	public function getBuyerInfo()
 	{
-		return $this->buyer;
+		return $this->buyer_info;
 	}
 
 	/**
@@ -109,6 +101,32 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 	public function getPurchasedItems()
 	{
 		return $this->purchased_items;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function getOrderStatus()
+	{
+		return $this->order_status;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function getValidationRules()
+	{
+		return array(
+			array(
+				array(
+					'order_number',
+					'created_date',
+					'buyer_info',
+					'purchased_items',
+				),
+				'required'
+			)
+		);
 	}
 
 	/**
@@ -125,9 +143,9 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 		$customer = new Customer((int)$order->id_customer);
 		// The order reference was introduced in prestashop 1.5 where orders can be split into multiple ones.
 		$this->order_number = isset($order->reference) ? (string)$order->reference : $order->id;
-		$this->buyer = new NostoTaggingOrderBuyer();
-		$this->buyer->loadData($customer);
-		$this->created_at = Nosto::helper('date')->format($order->date_add);
+		$this->buyer_info = new NostoTaggingOrderBuyer();
+		$this->buyer_info->loadData($customer);
+		$this->created_date = Nosto::helper('date')->format($order->date_add);
 		$this->purchased_items = $this->findPurchasedItems($context, $order);
 
 		$payment_module = Module::getInstanceByName($order->module);
@@ -135,6 +153,9 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 			$this->payment_provider = $order->module.' ['.$payment_module->version.']';
 		else
 			$this->payment_provider = $order->module.' [unknown]';
+
+		$this->order_status = new NostoTaggingOrderStatus();
+		$this->order_status->loadData($order);
 	}
 
 	/**

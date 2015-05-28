@@ -39,6 +39,7 @@ if ((basename(__FILE__) === 'nostotagging.php'))
 	require_once($module_dir.'/classes/helpers/customer.php');
 	require_once($module_dir.'/classes/helpers/flash-message.php');
 	require_once($module_dir.'/classes/helpers/logger.php');
+	require_once($module_dir.'/classes/helpers/product-operation.php');
 	require_once($module_dir.'/classes/helpers/updater.php');
 	require_once($module_dir.'/classes/helpers/url.php');
 	require_once($module_dir.'/classes/meta/account.php');
@@ -53,6 +54,7 @@ if ((basename(__FILE__) === 'nostotagging.php'))
 	require_once($module_dir.'/classes/models/order.php');
 	require_once($module_dir.'/classes/models/order-buyer.php');
 	require_once($module_dir.'/classes/models/order-purchased-item.php');
+	require_once($module_dir.'/classes/models/order-status.php');
 	require_once($module_dir.'/classes/models/product.php');
 	require_once($module_dir.'/classes/models/brand.php');
 	require_once($module_dir.'/classes/models/search.php');
@@ -102,7 +104,7 @@ class NostoTagging extends Module
 	{
 		$this->name = 'nostotagging';
 		$this->tab = 'advertising_marketing';
-		$this->version = '2.2.1';
+		$this->version = '2.3.0';
 		$this->author = 'Nosto';
 		$this->need_instance = 1;
 		$this->bootstrap = true;
@@ -165,7 +167,7 @@ class NostoTagging extends Module
 
 			if (_PS_VERSION_ < '1.5')
 			{
-				// For PS 1.4 we need to register some additional hooks for the product re-crawl.
+				// For PS 1.4 we need to register some additional hooks for the product create/update/delete.
 				return $this->registerHook('updateproduct')
 					&& $this->registerHook('deleteproduct')
 					&& $this->registerHook('addproduct')
@@ -173,8 +175,7 @@ class NostoTagging extends Module
 			}
 			else
 			{
-				// And for PS >= 1.5 we register the object update/delete hooks for the product re-crawl as we can get
-				// better precision using that then the separate hooks like in PS 1.4.
+				// And for PS >= 1.5 we register the object specific hooks for the product create/update/delete.
 				return $this->registerHook('actionObjectUpdateAfter')
 					&& $this->registerHook('actionObjectDeleteAfter')
 					&& $this->registerHook('actionObjectAddAfter');
@@ -296,9 +297,9 @@ class NostoTagging extends Module
 		$this->context->smarty->assign(array(
 			$this->name.'_form_action' => $this->getAdminUrl(),
 			$this->name.'_has_account' => ($account !== null),
-			$this->name.'_account_name' => ($account !== null) ? $account->name : null,
+			$this->name.'_account_name' => ($account !== null) ? $account->getName() : null,
 			$this->name.'_account_email' => $account_email,
-			$this->name.'_account_authorized' =>  ($account !== null) ? $account->isConnectedToNosto() : false,
+			$this->name.'_account_authorized' => ($account !== null) ? $account->isConnectedToNosto() : false,
 			$this->name.'_languages' => $languages,
 			$this->name.'_current_language' => $current_language,
 			// Hack a few translations for the view as PS 1.4 does not support sprintf syntax in smarty "l" function.
@@ -309,7 +310,7 @@ class NostoTagging extends Module
 				),
 				'nostotagging_installed_subheading' => sprintf(
 					$this->l('Your account ID is %s'),
-					($account !== null) ? $account->name : ''
+					($account !== null) ? $account->getName() : ''
 				),
 				'nostotagging_not_installed_subheading' => sprintf(
 					$this->l('Install Nosto to your %s shop'),
@@ -401,22 +402,27 @@ class NostoTagging extends Module
 	public function hookDisplayHeader()
 	{
 		$server_address = Nosto::helper('nosto_tagging/url')->getServerAddress();
+		/** @var NostoAccount $account */
 		$account = Nosto::helper('nosto_tagging/account')->find($this->context->language->id);
 		if ($account === null)
 			return '';
 
+		/** @var LinkCore $link */
+		$link = new Link();
 		$this->smarty->assign(array(
 			'server_address' => $server_address,
-			'account_name' => $account->name,
+			'account_name' => $account->getName(),
 			'nosto_version' => $this->version,
 			'nosto_unique_id' => $this->getUniqueInstallationId(),
 			'nosto_language' => Tools::strtolower($this->context->language->iso_code),
+			'add_to_cart_url' => $link->getPageLink('cart.php'),
 		));
 
 		$this->context->controller->addJS($this->_path.'js/nostotagging-auto-slots.js');
 
 		$html = $this->display(__FILE__, 'views/templates/hook/header_meta-tags.tpl');
 		$html .= $this->display(__FILE__, 'views/templates/hook/header_embed-script.tpl');
+		$html .= $this->display(__FILE__, 'views/templates/hook/header_add-to-cart.tpl');
 
 		return $html;
 	}
@@ -456,7 +462,9 @@ class NostoTagging extends Module
 				$category = $this->context->controller->getCategory();
 			else
 				$category = new Category((int)Tools::getValue('id_category'), $this->context->language->id);
-			$html .= $this->getCategoryTagging($category);
+
+			if (Validate::isLoadedObject($category))
+				$html .= $this->getCategoryTagging($category);
 		}
 		elseif ($this->isController('manufacturer'))
 		{
@@ -465,7 +473,9 @@ class NostoTagging extends Module
 				$manufacturer = $this->context->controller->getManufacturer();
 			else
 				$manufacturer = new Manufacturer((int)Tools::getValue('id_manufacturer'), $this->context->language->id);
-			$html .= $this->getBrandTagging($manufacturer);
+
+			if (Validate::isLoadedObject($manufacturer))
+				$html .= $this->getBrandTagging($manufacturer);
 		}
 		elseif ($this->isController('search'))
 		{
@@ -785,7 +795,8 @@ class NostoTagging extends Module
 
 			$nosto_order = new NostoTaggingOrder();
 			$nosto_order->loadData($this->context, $order);
-			if (!$nosto_order->validate())
+			$validator = new NostoValidator($nosto_order);
+			if (!$validator->validate())
 				return;
 
 			// PS 1.4 does not have "id_shop_group" and "id_shop" properties in the order object.
@@ -860,7 +871,7 @@ class NostoTagging extends Module
 	{
 		if (isset($params['object']))
 			if ($params['object'] instanceof Product)
-				$this->recrawlProduct($params['object']);
+				Nosto::helper('nosto_tagging/product_operation')->update($params['object']);
 	}
 
 	/**
@@ -872,7 +883,7 @@ class NostoTagging extends Module
 	{
 		if (isset($params['object']))
 			if ($params['object'] instanceof Product)
-				$this->recrawlProduct($params['object']);
+				Nosto::helper('nosto_tagging/product_operation')->delete($params['object']);
 	}
 
 	/**
@@ -884,7 +895,7 @@ class NostoTagging extends Module
 	{
 		if (isset($params['object']))
 			if ($params['object'] instanceof Product)
-				$this->recrawlProduct($params['object']);
+				Nosto::helper('nosto_tagging/product_operation')->create($params['object']);
 	}
 
 	/**
@@ -1145,9 +1156,10 @@ class NostoTagging extends Module
 	protected function getCustomerTagging()
 	{
 		$nosto_customer = new NostoTaggingCustomer();
-		$nosto_customer->loadData($this->context, $this->context->customer);
-		if (!$nosto_customer->validate())
+		if (!$nosto_customer->isCustomerLoggedIn($this->context, $this->context->customer))
 			return '';
+
+		$nosto_customer->loadData($this->context, $this->context->customer);
 
 		$this->smarty->assign(array(
 			'nosto_customer' => $nosto_customer,
@@ -1165,8 +1177,6 @@ class NostoTagging extends Module
 	{
 		$nosto_cart = new NostoTaggingCart();
 		$nosto_cart->loadData($this->context->cart);
-		if (!$nosto_cart->validate())
-			return '';
 
 		$this->smarty->assign(array(
 			'nosto_cart' => $nosto_cart,
@@ -1186,8 +1196,6 @@ class NostoTagging extends Module
 	{
 		$nosto_product = new NostoTaggingProduct();
 		$nosto_product->loadData($this->context, $product);
-		if (!$nosto_product->validate())
-			return '';
 
 		$params = array('nosto_product' => $nosto_product);
 
@@ -1195,8 +1203,7 @@ class NostoTagging extends Module
 		{
 			$nosto_category = new NostoTaggingCategory();
 			$nosto_category->loadData($this->context, $category);
-			if ($nosto_category->validate())
-				$params['nosto_category'] = $nosto_category;
+			$params['nosto_category'] = $nosto_category;
 		}
 
 		$this->smarty->assign($params);
@@ -1213,8 +1220,6 @@ class NostoTagging extends Module
 	{
 		$nosto_order = new NostoTaggingOrder();
 		$nosto_order->loadData($this->context, $order);
-		if (!$nosto_order->validate())
-			return '';
 
 		$this->smarty->assign(array(
 			'nosto_order' => $nosto_order,
@@ -1233,8 +1238,6 @@ class NostoTagging extends Module
 	{
 		$nosto_category = new NostoTaggingCategory();
 		$nosto_category->loadData($this->context, $category);
-		if (!$nosto_category->validate())
-			return '';
 
 		$this->smarty->assign(array(
 			'nosto_category' => $nosto_category,
@@ -1253,8 +1256,6 @@ class NostoTagging extends Module
 	{
 		$nosto_brand = new NostoTaggingBrand();
 		$nosto_brand->loadData($manufacturer);
-		if (!$nosto_brand->validate())
-			return '';
 
 		$this->smarty->assign(array(
 			'nosto_brand' => $nosto_brand,
@@ -1273,53 +1274,11 @@ class NostoTagging extends Module
 	{
 		$nosto_search = new NostoTaggingSearch();
 		$nosto_search->setSearchTerm($search_term);
-		if (!$nosto_search->validate())
-			return '';
 
 		$this->smarty->assign(array(
 			'nosto_search' => $nosto_search,
 		));
 
 		return $this->display(__FILE__, 'views/templates/hook/top_search-tagging.tpl');
-	}
-
-	/**
-	 * Sends a API notification to Nosto that a product needs re-crawling.
-	 * This is done for every shop language in this context that has a Nosto account connected to it.
-	 *
-	 * @param Product $product the product object.
-	 */
-	protected function recrawlProduct(Product $product)
-	{
-		if (!Validate::isLoadedObject($product))
-			return;
-
-		$link = new Link();
-		foreach (Language::getLanguages() as $language)
-		{
-			$id_lang = (int)$language['id_lang'];
-			/** @var NostoAccount $account */
-			$account = Nosto::helper('nosto_tagging/account')->find($id_lang);
-			if ($account === null || !$account->isConnectedToNosto())
-				continue;
-
-			try
-			{
-				$nosto_product = new NostoTaggingProduct();
-				$nosto_product->setProductId((int)$product->id);
-				$nosto_product->setUrl($link->getProductLink($product, null, null, null, $id_lang));
-				if ($nosto_product->validate(array('product_id', 'url')))
-					NostoProductReCrawl::send($nosto_product, $account);
-			}
-			catch (NostoException $e)
-			{
-				Nosto::helper('nosto_tagging/logger')->error(
-					__CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(),
-					$e->getCode(),
-					get_class($product),
-					(int)$product->id
-				);
-			}
-		}
 	}
 }

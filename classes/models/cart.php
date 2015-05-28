@@ -34,15 +34,6 @@ class NostoTaggingCart extends NostoTaggingModel
 	public $line_items = array();
 
 	/**
-	 * @inheritdoc
-	 */
-	public function getRequiredItems()
-	{
-		// The line items are not required as we want to output an empty cart tagging div when we have no items.
-		return array();
-	}
-
-	/**
 	 * Loads the cart data from supplied cart object.
 	 *
 	 * @param Cart $cart the cart object.
@@ -98,7 +89,7 @@ class NostoTaggingCart extends NostoTaggingModel
 				'product_id' => (int)$item['id_product'],
 				'quantity' => (int)$item['cart_quantity'],
 				'name' => (string)$item['name'],
-				'unit_price' =>  Nosto::helper('price')->format($item['price_wt']),
+				'unit_price' => Nosto::helper('price')->format($item['price_wt']),
 				'price_currency_code' => (string)$currency->iso_code,
 			);
 	}
