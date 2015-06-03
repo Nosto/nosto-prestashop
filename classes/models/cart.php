@@ -85,12 +85,18 @@ class NostoTaggingCart extends NostoTaggingModel
 			$items = $products;
 
 		foreach ($items as $item)
+		{
+			$name = $item['name'];
+			if (isset($item['attributes_small']))
+				$name .= ' ('.$item['attributes_small'].')';
+
 			$this->line_items[] = array(
 				'product_id' => (int)$item['id_product'],
 				'quantity' => (int)$item['cart_quantity'],
-				'name' => (string)$item['name'],
+				'name' => (string)$name,
 				'unit_price' => Nosto::helper('price')->format($item['price_wt']),
 				'price_currency_code' => (string)$currency->iso_code,
 			);
+		}
 	}
 }
