@@ -1,18 +1,28 @@
 /* Nosto overrides */
 
-@import url(http://fonts.googleapis.com/css?family=Ubuntu+Condensed);
-
 #content.bootstrap .nostotagging .panel {
     padding: 0;
     font-family: inherit;
 }
 
+#content.bootstrap .nostotagging .panel-install {
+    padding: 0;
+    margin-bottom: 42px;
+}
+
 #content.bootstrap .nostotagging .panel-heading {
     margin: 0;
-    font-size: 1.2em;
-    line-height: 2.2em;
-    height: 3.2em;
+    font-size: .8rem;
+    line-height: 1.8rem;
+    height: 3.0em;
     padding: 5px;
+}
+
+.tw-bs .nostotagging {
+    font-weight: 400;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 .tw-bs .nostotagging label {
@@ -24,43 +34,28 @@
 }
 
 .tw-bs .nostotagging h2 {
-    color: #555;
+    color: #2e3b51;
+    font-weight: 700;
 }
 
-.tw-bs .nostotagging .panel-default > .panel-heading {
-    font-family: "Ubuntu Condensed", Helvetica, Arial, sans-serif;
-    font-weight: 400;
-    background-color: #fff;
-    font-size: 1.2em;
-    line-height: 2.2em;
-    height: 3.2em;
-    padding: 5px;
-    color: #555;
-    white-space: nowrap;
-    text-transform: uppercase;
-}
-
-.tw-bs .nostotagging .help-block {
-    font-style: italic;
+.tw-bs .nostotagging iframe {
+    width: 100%;
+    min-height: 1000px;
 }
 
 .tw-bs .nostotagging .form-control,
 .tw-bs .nostotagging input[type="text"],
-.tw-bs .nostotagging input[type="search"],
-.tw-bs .nostotagging input[type="password"],
-.tw-bs .nostotagging textarea,
 .tw-bs .nostotagging select {
+    font-size: 1rem;
+    height: 3.25rem;
     display: block;
     width: 100%;
-    height: 27px;
     padding: 4px 8px;
-    font-size: 12px;
     line-height: 1.42857;
-    color: #555;
-    background-color: #fff;
-    background-image: none;
+    color: #2e3b51;
+    background: #fff none;
     border: 1px solid #ccc;
-    border-radius: 3px;
+    border-radius: 6px;
     -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
     box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
     -webkit-transition: border-color ease-in-out 0.15s,box-shadow ease-in-out 0.15s;
@@ -68,143 +63,146 @@
     transition: border-color ease-in-out 0.15s,box-shadow ease-in-out 0.15s;
 }
 
-.nostotagging .panel-heading label {
-    text-align: left;
-    font-family: "Ubuntu Condensed", Helvetica, Arial, sans-serif;
-    font-weight: 400;
+.tw-bs .nostotagging .panel-default > .panel-heading {
+    background-color: #fff;
+    font-size: 1.0em;
+    line-height: 2.0em;
+    height: 3.2em;
+    padding: 5px;
+    color: #2e3b51;
+    white-space: nowrap;
+    text-transform: uppercase;
 }
 
-.nostotagging .panel-heading a {
-    font-family: "Ubuntu Condensed", Helvetica, Arial, sans-serif;
-    font-weight: 400;
-}
-
-.nostotagging .panes {
-    margin-bottom: 20px;
-}
-
-#nostotagging_language {
+.tw-bs .nostotagging .panel-heading select {
+    font-size: .8rem;
     display: inline-block;
+    height: auto;
     width: auto;
 }
 
-#nostotagging_account_setup {
-    color: #666;
+.tw-bs .nostotagging .panel-heading label {
+    text-align: left;
+    font-weight: 400;
+    font-size: 14px;
+    color: #2e3b51;
 }
 
-#nostotagging_account_email {
-    margin: auto;
-    width: 250px;
+.tw-bs .nostotagging .panel-heading a {
+    color: #2e3b51;
+    font-weight: 400;
 }
 
-.nostotagging .btn.btn-green {
+.tw-bs .nostotagging .panel-body:before,
+.tw-bs .nostotagging .panel-body:after {
+    content: " ";
+    display: table;
+}
+
+.tw-bs .nostotagging .panel-body:after {
+    clear: both;
+}
+
+.tw-bs .nostotagging .panel-body {
+    padding: 0;
+}
+
+.tw-bs .nostotagging .panes {
+    margin-bottom: 20px;
+    color: #2e3b51;
+}
+
+.tw-bs .nostotagging .login-block .panes {
+    margin-bottom: 0;
+}
+
+.tw-bs .nostotagging .btn.btn-blue {
     color: white;
-    background-color: rgb(121, 189, 60);
-    border-color: rgb(121, 189, 60);
+    background-color: #429BD1;
+    border-color: #3795ce;
+    width: 100%;
+    padding: 1em 0;
+    border-radius: 6px;
+    font-weight: 700;
 }
 
-.nostotagging .btn.btn-red {
+.tw-bs .nostotagging .btn.btn-red {
     color: white;
     background-color: rgb(217, 83, 79);
     border-color: rgb(217, 83, 79);
+    font-weight: 700;
 }
 
-.nostotagging iframe {
+.tw-bs .nostotagging .terms-block {
+    color: white;
+    width: 75%;
+    margin: 0 auto;
+}
+
+.tw-bs .center {
+    text-align: center;
+    margin: 0 auto;
+}
+
+.tw-bs .right-block {
+    background: #364156 url("https://my.nosto.com/public/platform/img/install-bg.png") no-repeat top left;
+    background-size: cover;
+    color: #fff;
+    height: 677px;
+}
+
+.tw-bs .content-block {
+    padding: 4rem 0;
+    margin: 0 auto;
+    text-align: center;
     width: 100%;
-    min-height: 1000px;
+    max-width: 52.5rem;
 }
 
-.nostotagging .switch-container {
-    width: 160px;
-    margin: auto;
+.tw-bs .content-panel {
+    margin: 0 auto;
 }
 
-/* switch control */
-.tw-bs .switch {
-    display: block;
-    height: 26px;
-    position: relative;
+@media (min-width: 768px) {
+    .tw-bs .content-panel {
+        width: 66.6666666667%;
+    }
+    .tw-bs.ps-14 .content-panel {
+        width: 80%;
+    }
 }
 
-.tw-bs .switch * {
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
+.tw-bs .content-header {
+    padding-top: 20px;
 }
 
-.tw-bs .switch input {
-    position: absolute;
-    opacity: 0;
-}
-
-.tw-bs .switch label {
-    position: relative;
-    z-index: 2;
-    width: 50%;
-    height: 100%;
-    margin: 0;
-    text-align: center;
-    float: left;
-}
-
-.tw-bs .switch label, .bootstrap .switch>span {
-    line-height: 26px;
-    vertical-align: middle;
-}
-
-.tw-bs .switch input:last-of-type:checked ~ a {
-    border: solid 1px rgb(217, 83, 79);
-    background-color: rgb(217, 83, 79);
-    left: 50%;
-    -webkit-box-shadow: rgb(217, 83, 79) 0 -1px 0 inset;
-    box-shadow: rgb(217, 83, 79) 0 -1px 0 inset;
-}
-
-.tw-bs .switch a {
-    position: absolute;
-    top: 0;
-    padding: 0;
-    z-index: 1;
-    width: 50%;
-    height: 100%;
-    color: #fff;
-    border: solid 1px rgb(121, 189, 60);;
-    background-color: rgb(121, 189, 60);;
-    left: 0;
-    -webkit-box-shadow: rgb(121, 189, 60) 0 -1px 0 inset;
-    box-shadow: rgb(121, 189, 60) 0 -1px 0 inset;
-}
-
-.tw-bs .switch a {
-    display: block;
-    -webkit-transition: all 0.3s ease-out;
-    -o-transition: all 0.3s ease-out;
-    transition: all 0.3s ease-out;
-}
-
-.tw-bs .prestashop-switch {
-    background-color: #eee;
-    border-radius: 3px;
+.tw-bs .content-subheader {
     color: #333;
+    font-size: 14px;
+    font-style: italic;
+}
+
+.tw-bs .content-text {
+    color: #9097a3;
+    font-size: 1.2em;
+}
+
+.tw-bs .login-block {
+    padding: 2em 2em;
+    margin: 0 auto;
     text-align: center;
-    -webkit-box-shadow: rgba(0,0,0,0.15) 0 1px 4px 1px inset;
-    box-shadow: rgba(0,0,0,0.15) 0 1px 4px 1px inset;
+    background-color: #fff;
 }
 
-.tw-bs .prestashop-switch * {
-    outline: 0 !important;
+.tw-bs .img-logo {
+    width: 180px;
 }
 
-.tw-bs .prestashop-switch label {
-    text-transform: uppercase;
-    color: #bbb;
-    font-weight: 400;
-    cursor: pointer;
-    -webkit-transition: color 0.2s ease-out;
-    -o-transition: color 0.2s ease-out;
-    transition: color 0.2s ease-out;
+.tw-bs .btn-link {
+    padding: 0;
 }
 
-.tw-bs .prestashop-switch input:checked+label {
-    color: #fff;
+.tw-bs .link-wrap {
+    margin-top: 2em;
+    color: #333;
 }

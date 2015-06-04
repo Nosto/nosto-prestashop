@@ -1,5 +1,5 @@
 {*
-* 2013-2014 Nosto Solutions Ltd
+* 2013-2015 Nosto Solutions Ltd
 *
 * NOTICE OF LICENSE
 *
@@ -18,26 +18,26 @@
 * needs please refer to http://www.prestashop.com for more information.
 *
 * @author    Nosto Solutions Ltd <contact@nosto.com>
-* @copyright 2013-2014 Nosto Solutions Ltd
+* @copyright 2013-2015 Nosto Solutions Ltd
 * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *}
 
 {if isset($nosto_order) && is_object($nosto_order)}
 	<div class="nosto_purchase_order" style="display:none">
-		<span class="order_number">{$nosto_order->order_number|escape:'htmlall':'UTF-8'}</span>
+		<span class="order_number">{$nosto_order->getOrderNumber()|escape:'htmlall':'UTF-8'}</span>
 		<div class="buyer">
-			<span class="first_name">{$nosto_order->buyer.first_name|escape:'htmlall':'UTF-8'}</span>
-			<span class="last_name">{$nosto_order->buyer.last_name|escape:'htmlall':'UTF-8'}</span>
-			<span class="email">{$nosto_order->buyer.email|escape:'htmlall':'UTF-8'}</span>
+			<span class="first_name">{$nosto_order->getBuyerInfo()->getFirstName()|escape:'htmlall':'UTF-8'}</span>
+			<span class="last_name">{$nosto_order->getBuyerInfo()->getLastName()|escape:'htmlall':'UTF-8'}</span>
+			<span class="email">{$nosto_order->getBuyerInfo()->getEmail()|escape:'htmlall':'UTF-8'}</span>
 		</div>
 		<div class="purchased_items">
-			{foreach from=$nosto_order->purchased_items item=item}
+			{foreach from=$nosto_order->getPurchasedItems() item=item}
 				<div class="line_item">
-					<span class="product_id">{$item.product_id|escape:'htmlall':'UTF-8'}</span>
-					<span class="quantity">{$item.quantity|escape:'htmlall':'UTF-8'}</span>
-					<span class="name">{$item.name|escape:'htmlall':'UTF-8'}</span>
-					<span class="unit_price">{$item.unit_price|escape:'htmlall':'UTF-8'}</span>
-					<span class="price_currency_code">{$item.price_currency_code|escape:'htmlall':'UTF-8'}</span>
+					<span class="product_id">{$item->getProductId()|escape:'htmlall':'UTF-8'}</span>
+					<span class="quantity">{$item->getQuantity()|escape:'htmlall':'UTF-8'}</span>
+					<span class="name">{$item->getName()|escape:'htmlall':'UTF-8'}</span>
+					<span class="unit_price">{$item->getUnitPrice()|escape:'htmlall':'UTF-8'}</span>
+					<span class="price_currency_code">{$item->getCurrencyCode()|escape:'htmlall':'UTF-8'}</span>
 				</div>
 			{/foreach}
 		</div>

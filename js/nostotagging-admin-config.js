@@ -1,5 +1,5 @@
 /**
- * 2013-2014 Nosto Solutions Ltd
+ * 2013-2015 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -18,25 +18,12 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2014 Nosto Solutions Ltd
+ * @copyright 2013-2015 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
 $(document).ready( function() {
-    // Change event handler for "Do you have a Nosto account?".
-    $(".nostotagging input[name='nostotagging_has_account']").change(function() {
-        var val = parseInt($(this).val()),
-            $existingAccount = $("#nostotagging_existing_account_group"),
-            $newAccount = $("#nostotagging_new_account_group");
-        if (val === 1) {
-            $existingAccount.show();
-            $newAccount.hide();
-        } else {
-            $existingAccount.hide();
-            $newAccount.show();
-        }
-    });
-    // Change event handler for "Edit different shop language:".
+    // Change event handler for "Manage Accounts:".
     $("#nostotagging_language").change(function() {
         var langId = parseInt($(this).val()),
             $currentLanguage = $('#nostotagging_current_language'),
