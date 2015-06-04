@@ -23,25 +23,23 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-/**
- * PS 1.6 admin controller for the Nosto admin tab.
- */
-class AdminNostoController extends ModuleAdminController
-{
-	/**
-	 * @inheritdoc
-	 */
-	public function initContent()
-	{
-		if (!$this->viewAccess())
-		{
-			$this->errors[] = Tools::displayError('You do not have permission to view this.');
-			return;
-		}
+if (!defined('_PS_VERSION_'))
+	exit;
 
-		$id_tab = (int)Tab::getIdFromClassName('AdminModules');
-		$id_employee = (int)$this->context->cookie->id_employee;
-		$token = Tools::getAdminToken('AdminModules'.$id_tab.$id_employee);
-		Tools::redirectAdmin('index.php?controller=AdminModules&configure=nostotagging&token='.$token);
-	}
+/**
+ * Upgrades the module to version 2.4.0.
+ *
+ * Adds admin tab for PS 1.5+.
+ * Registers hook `displayBackOfficeHeader`.
+ *
+ * @param NostoTagging $object
+ * @return bool
+ */
+function upgrade_module_2_4_0($object)
+{
+	if (_PS_VERSION_ < '1.5')
+		return true;
+
+	return Nosto::helper('nosto_tagging/admin_tab')->install()
+		&& $object->registerHook('displayBackOfficeHeader');
 }

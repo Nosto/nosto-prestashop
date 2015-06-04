@@ -23,25 +23,12 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-/**
- * PS 1.6 admin controller for the Nosto admin tab.
- */
-class AdminNostoController extends ModuleAdminController
-{
-	/**
-	 * @inheritdoc
-	 */
-	public function initContent()
-	{
-		if (!$this->viewAccess())
-		{
-			$this->errors[] = Tools::displayError('You do not have permission to view this.');
-			return;
-		}
+header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+header("Last-Modified: ".gmdate("D, d M Y H:i:s")." GMT");
 
-		$id_tab = (int)Tab::getIdFromClassName('AdminModules');
-		$id_employee = (int)$this->context->cookie->id_employee;
-		$token = Tools::getAdminToken('AdminModules'.$id_tab.$id_employee);
-		Tools::redirectAdmin('index.php?controller=AdminModules&configure=nostotagging&token='.$token);
-	}
-}
+header("Cache-Control: no-store, no-cache, must-revalidate");
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Pragma: no-cache");
+
+header("Location: ../");
+exit;

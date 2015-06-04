@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2014 Nosto Solutions Ltd
+ * 2013-2015 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,83 +19,66 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2014 Nosto Solutions Ltd
+ * @copyright 2013-2015 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
 /**
  * Helper class for managing the tab added to the admin section.
  */
-class NostoTaggingAdminTab
+class NostoTaggingHelperAdminTab
 {
+	/**
+	 * @var array translations for the Nosto `Personalization` menu item in PS 1.5.
+	 */
+	protected static $item_translations = array(
+		'de' => 'Personalisierung',
+		'fr' => 'Personnalisation',
+		'es' => 'Personalización',
+	);
+
 	/**
 	 * Installs the Admin Tab in PS backend.
 	 * Only for PS >= 1.5.
 	 *
-	 * @return bool
+	 * @return bool true on success, false otherwise.
 	 */
-	public static function install()
+	public function install()
 	{
 		if (_PS_VERSION_ < '1.5')
 			return true;
 
+		$languages = Language::getLanguages(true);
+		if (empty($languages))
+			return false;
+
+		/** @var TabCore $tab */
 		$tab = new Tab();
 		$tab->active = 1;
-		$tab->class_name = 'AdminParentNosto';
+		$tab->class_name = 'AdminNosto';
 		$tab->name = array();
-		foreach (Language::getLanguages(true) as $lang)
-		{
-			switch ($lang['iso_code'])
-			{
-				case 'de':
-					$tab->name[$lang['id_lang']] = 'Personalisierung';
-					break;
+		foreach ($languages as $lang)
+			$tab->name[$lang['id_lang']] = 'Nosto';
 
-				case 'fr':
-					$tab->name[$lang['id_lang']] = 'Personnalisation';
-					break;
-
-				case 'es':
-					$tab->name[$lang['id_lang']] = 'Personalización';
-					break;
-
-				default:
-					$tab->name[$lang['id_lang']] = 'Personalization';
-					break;
-			}
-		}
 		$tab->id_parent = 0;
 		$tab->module = 'nostotagging';
 		$added = $tab->add();
 
-		if ($added)
+		// For PS 1.6 it is enough to have the main menu, for PS 1.5 we need a sub-menu.
+		if ($added && _PS_VERSION_ < '1.6')
 		{
 			$tab = new Tab();
 			$tab->active = 1;
-			$tab->class_name = 'AdminNosto';
+			$tab->class_name = 'AdminNostoPersonalization';
 			$tab->name = array();
-			foreach (Language::getLanguages(true) as $lang)
+			foreach ($languages as $lang)
 			{
-				switch ($lang['iso_code'])
-				{
-					case 'de':
-						$tab->name[$lang['id_lang']] = 'Home';
-						break;
-
-					case 'fr':
-						$tab->name[$lang['id_lang']] = 'Home';
-						break;
-
-					case 'es':
-						$tab->name[$lang['id_lang']] = 'Home';
-						break;
-
-					default:
-						$tab->name[$lang['id_lang']] = 'Home';
-						break;
-				}
+				if (isset(self::$item_translations[$lang['iso_code']]))
+					$tab->name[$lang['id_lang']] = self::$item_translations[$lang['iso_code']];
+				else
+					$tab->name[$lang['id_lang']] = 'Personalization';
 			}
-			$tab->id_parent = (int)Tab::getIdFromClassName('AdminParentNosto');
+			$tab->id_parent = (int)Tab::getIdFromClassName('AdminNosto');
 			$tab->module = 'nostotagging';
 			$added = $tab->add();
 		}
@@ -107,17 +90,19 @@ class NostoTaggingAdminTab
 	 * Uninstalls the Admin Tab from PS backend.
 	 * Only for PS >= 1.5.
 	 *
-	 * @return bool
+	 * @return bool true on success false otherwise.
 	 */
-	public static function uninstall()
+	public function uninstall()
 	{
 		if (_PS_VERSION_ < '1.5')
 			return true;
 
-		foreach (array('AdminParentNosto', 'AdminNosto') as $tab_name) {
+		foreach (array('AdminNosto', 'AdminNostoPersonalization') as $tab_name)
+		{
 			$id_tab = (int)Tab::getIdFromClassName($tab_name);
 			if ($id_tab)
 			{
+				/** @var TabCore $tab */
 				$tab = new Tab($id_tab);
 				$tab->delete();
 			}
