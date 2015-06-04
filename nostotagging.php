@@ -35,6 +35,7 @@ if ((basename(__FILE__) === 'nostotagging.php'))
 	$module_dir = dirname(__FILE__);
 	require_once($module_dir.'/libs/nosto/php-sdk/src/config.inc.php');
 	require_once($module_dir.'/classes/helpers/account.php');
+	require_once($module_dir.'/classes/helpers/admin-tab.php');
 	require_once($module_dir.'/classes/helpers/config.php');
 	require_once($module_dir.'/classes/helpers/customer.php');
 	require_once($module_dir.'/classes/helpers/flash-message.php');
@@ -144,6 +145,7 @@ class NostoTagging extends Module
 	{
 		if (parent::install()
 			&& Nosto::helper('nosto_tagging/customer')->createTable()
+			&& Nosto::helper('nosto_tagging/admin_tab')->install()
 			&& $this->initHooks()
 			&& $this->registerHook('displayCategoryTop')
 			&& $this->registerHook('displayCategoryFooter')
@@ -176,9 +178,11 @@ class NostoTagging extends Module
 			else
 			{
 				// And for PS >= 1.5 we register the object specific hooks for the product create/update/delete.
+				// Also register the back office header hook to add some CSS to the entire back office.
 				return $this->registerHook('actionObjectUpdateAfter')
 					&& $this->registerHook('actionObjectDeleteAfter')
-					&& $this->registerHook('actionObjectAddAfter');
+					&& $this->registerHook('actionObjectAddAfter')
+					&& $this->registerHook('displayBackOfficeHeader');
 			}
 		}
 		return false;
@@ -197,7 +201,8 @@ class NostoTagging extends Module
 		return parent::uninstall()
 			&& Nosto::helper('nosto_tagging/account')->deleteAll()
 			&& Nosto::helper('nosto_tagging/config')->purge()
-			&& Nosto::helper('nosto_tagging/customer')->dropTable();
+			&& Nosto::helper('nosto_tagging/customer')->dropTable()
+			&& Nosto::helper('nosto_tagging/admin_tab')->uninstall();
 	}
 
 	/**
@@ -436,6 +441,18 @@ class NostoTagging extends Module
 	public function hookHeader()
 	{
 		return $this->hookDisplayHeader();
+	}
+
+	/**
+	 * Hook for adding content to the <head> section of the back office HTML pages.
+	 *
+	 * Note: PS 1.5+ only.
+	 *
+	 * Adds Nosto admin tab CSS.
+	 */
+	public function hookDisplayBackOfficeHeader()
+	{
+		$this->context->controller->addCss($this->_path.'css/nostotagging-back-office.css');
 	}
 
 	/**
