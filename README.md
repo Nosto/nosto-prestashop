@@ -1,85 +1,101 @@
-# Nosto Tagging for PrestaShop
+# Personalization for PrestaShop
 
-## Description
+Increase your conversion rate and average order value by delivering your customers personalized product recommendations
+throughout their shopping journey.
 
-The module integrates the Nosto marketing automation service, that can produce personalized product recommendations on
-the site.
+Nosto allows you to deliver every customer a personalized shopping experience through recommendations based on their
+unique user behavior - increasing conversion, average order value and customer retention as a result.
 
-The module adds the needed data to the site through PrestaShop's hook system. There are two types of data added by the
-module; tagging blocks and nosto elements.
+[http://nosto.com](http://nosto.com/)
 
-Tagging blocks are used to hold meta-data about products, categories, orders, shopping cart and customers on your site.
-These types of blocks do not hold any visual elements, only meta-data. The meta-data is sent to the Nosto marketing
-automation service when customers are browsing the site. The service then produces product recommendations based on the
-information that is sent and displays the recommendations in the nosto elements.
+## Getting started
 
-Nosto elements are placeholders for the product recommendations coming from the Nosto marketing automation service. The
-elements consist of only an empty div element that is populated with content from the Nosto marketing automation
-service.
+### How it works
 
-By default the module creates the following nosto elements:
+The extension automatically adds product recommendation elements to the shop when installed. Basically, empty "div"
+placeholder elements. These elements will appear on the home page, product pages, category pages, search result pages
+and the shopping cart page. These elements are automatically populated with product recommendations from your shop.
 
-* 3 elements for the product page
-	* "Other Customers Were Interested In" ( nosto-page-product1 )
-	* "You Might Also Like"  ( nosto-page-product2 )
-	* "Most Popular Products In This Category"  ( nosto-page-product3 )
-* 3 elements for the shopping cart page
-	* "Customers Who Bought These Also Bought" ( nosto-page-cart1 )
-	* "Products You Recently Viewed" ( nosto-page-cart2 )
-	* "Most Popular Right Now" ( nosto-page-cart3 )
-* 2 elements for the product category page, top and bottom
-	* "Most Popular Products In This Category" ( nosto-page-category1 )
-	* "Your Recent History" ( nosto-page-category2 )
-* 2 elements for the brand page, top and bottom
-    * "Most Popular Products In This Category" ( nosto-page-category1 )
-    * "Your Recent History" ( nosto-page-category2 )
-* 2 elements for the search results page, top and bottom
-	* "Customers who searched '{search term}' viewed" ( nosto-page-search1 )
-	* "Your Recent History" ( nosto-page-search2 )
-* 2 elements for the sidebars, 1 left and 1 right
-	* "Popular Products" ( nosto-column-left )
-	* "Products You Recently Viewed" ( nosto-column-right )
-* 2 elements for all pages, top and bottom
-	* "Products containing '{keywords}'" ( nosto-page-top )
-	* "Products You Recently Viewed" ( nosto-page-footer )
-	
+This is possible by mining data from the shop when the user visits the pages. For example, when the user is browsing a
+product page, the product information is asynchronously sent to Nosto, that in turn delivers product recommendations
+based on that product to the shop and displays them to the user.
 
-Note that you can change what recommendations are shown in which nosto elements. You can also add additional elements
-to the site by simply dropping in div elements of the following format:
-'`<div class="nosto_element" id="{id of your choice}"></div>`'
+The more users that are visiting the site, and the more page views they create, the better and more accurate the
+recommendations become.
 
-## Installation
+In addition to the recommendation elements and the real time data gathering, the extension also includes some behind the
+scenes features for keeping the product information up to date and keeping track of orders in the shop.
 
-Please refer to the PrestaShop documentation on how to get the module to appear in your installation admin section.
+Every time a product is updated in the shop, e.g. the price is changed, the information is sent to Nosto over an API.
+This will sync the data across all the users visiting the shop that will see up to date recommendations.
 
-Once the module appears in your installation, you must install it into the store. Navigate to the "Modules" section and
-locate the module, it will show up under the "Advertising & Marketing" section. The installation is done simply by
-clicking the "install" button on the right by the module in the list.
+All orders that are placed in the shop are also sent to Nosto. This is done to keep track of the orders that were a
+direct result of the product recommendations, i.e. when a user clicks a product in the recommendation, adds it to the
+shopping cart and places the order.
 
-During the install the module also creates some new hooks for PrestaShop, namely "displayCategoryTop",
-"displayCategoryFooter", "displaySearchTop" and "displaySearchFooter". You will need to implement these in your
-installation in order for the module to work properly.
+Nosto also keeps track of the order statuses, i.e. when an order is changed to "payed" or "canceled" the order is
+updated over an API.
+
+All you need to take Nosto into use in your shop, is to install the extension and create a Nosto account for your
+shop. This is as easy as clicking a button, so read on.
+
+### Installing
+
+The module comes bundled with PrestaShop 1.5 and 1.6. For PrestaShop 1.4 you wll need to fetch the module archive from
+the [addons page](http://addons.prestashop.com/en/advertising-marketing-newsletter-modules/18349-nostotagging.html) and
+upload the archive in the backend of your PrestaShop installation.
+
+To install the module in PrestaShop, navigate to the "Modules" section in the backend and locate the module under the
+"Advertising & Marketing" section. Then just click the "Install" button next to the module in the list. That's it.
+
+### Configuration
+
+By clicking the modules "Configure" link in the modules listing, you will be redirected to the Nosto account
+configuration page were you can create and manage your Nosto accounts. You will need a Nosto account for each shop
+(multi-shop) and language in the installation.
+
+Creating the account is as easy as clicking the install button on the page. Note the email field above it. You will need
+to enter your own email to be able to activate your account. After clicking install, the window will refresh and show
+the account configuration.
+
+You can also connect and existing Nosto account to a shop, by using the link below the install button. This will take
+you to Nosto where you choose the account to connect, and you will then be redirected back where you will see the same
+configuration screen as when having created a new account.
+
+This concludes the needed configurations in PrestaShop. Now you should be able to view the default recommendations in
+your shops frontend by clicking the preview button on the page.
+
+You can read more about how to modify Nosto to suit your needs in our [support center](https://support.nosto.com/),
+where you will find PrestaShop related documentation and guides.
+
+### Extending
+
+#### Change position of recommendation elements
+
+All recommendations are added through the PrestaShop hook system, which means that their position is dependent on the
+hooks position in the theme.
+
+In order to change the position of any recommendation element added by Nosto, you can either move the PrestaShop hook
+position in your theme or unlink the Nosto module from the hook and add the elements directly into your theme. Please
+refer to the PrestaShop documentation on how to re-position hooks.
+
+During the module installation, some new hooks are also created. These are:
 
 * displayCategoryTop
-	* This hook should be placed above the product list on category pages
-	* You need to add "`{hook h='displayCategoryTop'}`" in your themes category.tpl file
-
 * displayCategoryFooter
-	* This hook should be placed below the product list on category pages
-	* You need to add "`{hook h='displayCategoryFooter'}`" in your themes category.tpl file
-
 * displaySearchTop
-	* This hook should be placed above the search result list on search pages
-	* You need to add "`{hook h='displaySearchTop'}`" in your themes search.tpl file
-
 * displaySearchFooter
-	* This hook should be placed below the search result list on search pages
-	* You need to add "`{hook h='displaySearchFooter'}`" in your themes search.tpl file
 
-## Configuration
+These can be used to position the recommendations on the product category and search result pages, as PrestaShop does
+not include any hooks out-of-the-box for these pages. The module will automatically add the recommendations without
+these hooks as well, but for more precise positioning we recommend to include them in your theme. This is as easy as
+adding a line like `{hook h='displayCategoryTop'}` to your theme layout file.
 
-Once you have installed the module, you need to configure it. This is done by clicking the "Configure" link for the
-module in the modules listing. This will open a new page with the module configuration.
+#### Adding new recommendation elements
+
+The easiest way to add your own recommendation elements is to simply add the placeholder "div" in your theme layout,
+e.g. `<div class="nosto_element" id="{id-of-your-choice}"></div>`. Note that you need to register this new element in
+your [Nosto account settings](https://my.nosto.com/), so that Nosto can start using it.
 
 ## License
 
@@ -90,6 +106,12 @@ Academic Free License ("AFL") v. 3.0
 PrestaShop version 1.4.x - 1.6.x
 
 ## Changelog
+
+* 2.4.0
+    * Added Nosto admin tab to PS 1.5 and 1.6 versions for easy access to the Nosto admin pages
+    * Added product attribute combinations to the product name in cart and order tagging to easily recognise them
+    * Added order status and payment provider info to order tagging
+    * Added support for account specific sub-domains when configuring Nosto
 
 * 2.3.0
     * Added the new product update API and removed deprecated product re-crawl
