@@ -54,12 +54,12 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 	protected $purchased_items = array();
 
 	/**
-	 * @var string the payment provider module and version used in the order (only used in API requests).
+	 * @var string the payment provider module and version used in the order.
 	 */
 	protected $payment_provider;
 
 	/**
-	 * @var NostoTaggingOrderStatus the order status (only used in API requests).
+	 * @var NostoTaggingOrderStatus the order status.
 	 */
 	protected $order_status;
 
