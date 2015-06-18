@@ -54,12 +54,12 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 	protected $purchased_items = array();
 
 	/**
-	 * @var string the payment provider module and version used in the order (only used in API requests).
+	 * @var string the payment provider module and version used in the order.
 	 */
 	protected $payment_provider;
 
 	/**
-	 * @var NostoTaggingOrderStatus the order status (only used in API requests).
+	 * @var NostoTaggingOrderStatus the order status.
 	 */
 	protected $order_status;
 
@@ -242,15 +242,28 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 			$items = $products;
 		}
 
+		$id_lang = (int)$context->language->id;
 		foreach ($items as $item)
 		{
 			$p = new Product($item['product_id'], false, $context->language->id);
 			if (Validate::isLoadedObject($p))
 			{
+				$product_name = $p->name;
+				$id_attribute = (int)$item['product_attribute_id'];
+				$attribute_combinations = $this->getProductAttributeCombinationsById($p, $id_attribute, $id_lang);
+				if (!empty($attribute_combinations))
+				{
+					$attribute_combination_names = array();
+					foreach ($attribute_combinations as $attribute_combination)
+						$attribute_combination_names[] = $attribute_combination['attribute_name'];
+					if (!empty($attribute_combination_names))
+						$product_name .= ' ('.implode(', ', $attribute_combination_names).')';
+				}
+
 				$purchased_item = new NostoTaggingOrderPurchasedItem();
 				$purchased_item->setProductId((int)$p->id);
 				$purchased_item->setQuantity((int)$item['product_quantity']);
-				$purchased_item->setName((string)$p->name);
+				$purchased_item->setName((string)$product_name);
 				$purchased_item->setUnitPrice(Nosto::helper('price')->format($item['product_price_wt']));
 				$purchased_item->setCurrencyCode((string)$currency->iso_code);
 				$purchased_items[] = $purchased_item;
@@ -312,5 +325,35 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 		}
 
 		return $purchased_items;
+	}
+
+	/**
+	 * Returns the product attribute combination by id_product_attribute.
+	 *
+	 * For PS 1.4 we need to query the combinations manually, while newer version of PS provide a handy getter.
+	 *
+	 * @param Product|ProductCore $product the product model.
+	 * @param int $id_product_attribute the product attribute ID.
+	 * @param int $id_lang the language ID.
+	 * @return array the attribute combinations.
+	 */
+	protected function getProductAttributeCombinationsById($product, $id_product_attribute, $id_lang)
+	{
+		if (_PS_VERSION_ >= '1.5')
+			return $product->getAttributeCombinationsById($id_product_attribute, $id_lang);
+
+		return Db::getInstance()->ExecuteS('
+			SELECT pa.*, ag.`id_attribute_group`, ag.`is_color_group`, agl.`name` group_name, al.`name` attribute_name, a.`id_attribute`, pa.`unit_price_impact`
+			FROM `'._DB_PREFIX_.'product_attribute` pa
+			LEFT JOIN `'._DB_PREFIX_.'product_attribute_combination` pac ON pac.`id_product_attribute` = pa.`id_product_attribute`
+			LEFT JOIN `'._DB_PREFIX_.'attribute` a ON a.`id_attribute` = pac.`id_attribute`
+			LEFT JOIN `'._DB_PREFIX_.'attribute_group` ag ON ag.`id_attribute_group` = a.`id_attribute_group`
+			LEFT JOIN `'._DB_PREFIX_.'attribute_lang` al ON (a.`id_attribute` = al.`id_attribute` AND al.`id_lang` = '.(int)($id_lang).')
+			LEFT JOIN `'._DB_PREFIX_.'attribute_group_lang` agl ON (ag.`id_attribute_group` = agl.`id_attribute_group` AND agl.`id_lang` = '.(int)($id_lang).')
+			WHERE pa.`id_product` = '.(int)($product->id).'
+			AND pa.`id_product_attribute` = '.(int)$id_product_attribute.'
+			GROUP BY pa.`id_product_attribute`, ag.`id_attribute_group`
+			ORDER BY pa.`id_product_attribute`'
+		);
 	}
 }
