@@ -148,7 +148,7 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 		$this->name = $product->name;
 		$this->price = $this->calcPrice($product, $context);
 		$this->list_price = $this->calcPrice($product, $context, false /*no discounts*/);
-		$this->currency_code = strtoupper($currency_iso_code);
+		$this->currency_code = Tools::strtoupper($currency_iso_code);
 		$this->availability = $this->checkAvailability($product);
 		$this->tags = $this->buildTags($product, $id_lang);
 		$this->categories = $this->buildCategories($product, $id_lang);

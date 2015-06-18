@@ -33,14 +33,14 @@ class NostoTaggingHelperProductOperation
 	 * info to Nosto many times during the same request. This will otherwise happen as PrestaShop will sometime invoke
 	 * the hook callback methods multiple times when saving a product.
 	 */
-	private static $_processed_products = array();
+	private static $processed_products = array();
 
 	/**
 	 * @var array stores a snapshot of the context object and shop context so it can be restored between processing all
 	 * accounts. This is important as the accounts belong to different shops and languages and the context, that
 	 * contains this information, is used internally in PrestaShop when generating urls.
 	 */
-	private $_context_snapshot;
+	private $context_snapshot;
 
 	/**
 	 * Sends a product create API request to Nosto.
@@ -49,10 +49,10 @@ class NostoTaggingHelperProductOperation
 	 */
 	public function create(Product $product)
 	{
-		if (!Validate::isLoadedObject($product) || in_array($product->id, self::$_processed_products))
+		if (!Validate::isLoadedObject($product) || in_array($product->id, self::$processed_products))
 			return;
 
-		self::$_processed_products[] = $product->id;
+		self::$processed_products[] = $product->id;
 		foreach ($this->getAccountData() as $data)
 		{
 			list($account, $id_shop, $id_lang) = $data;
@@ -86,10 +86,10 @@ class NostoTaggingHelperProductOperation
 	 */
 	public function update(Product $product)
 	{
-		if (!Validate::isLoadedObject($product) || in_array($product->id, self::$_processed_products))
+		if (!Validate::isLoadedObject($product) || in_array($product->id, self::$processed_products))
 			return;
 
-		self::$_processed_products[] = $product->id;
+		self::$processed_products[] = $product->id;
 		foreach ($this->getAccountData() as $data)
 		{
 			list($account, $id_shop, $id_lang) = $data;
@@ -123,10 +123,10 @@ class NostoTaggingHelperProductOperation
 	 */
 	public function delete(Product $product)
 	{
-		if (!Validate::isLoadedObject($product) || in_array($product->id, self::$_processed_products))
+		if (!Validate::isLoadedObject($product) || in_array($product->id, self::$processed_products))
 			return;
 
-		self::$_processed_products[] = $product->id;
+		self::$processed_products[] = $product->id;
 		foreach ($this->getAccountData() as $data)
 		{
 			list($account) = $data;
@@ -247,7 +247,7 @@ class NostoTaggingHelperProductOperation
 	 */
 	protected function makeContextSnapshot()
 	{
-		$this->_context_snapshot = array(
+		$this->context_snapshot = array(
 			'shop_context' => (_PS_VERSION_ >= '1.5') ? Shop::getContext() : null,
 			'context_object' => Context::getContext()->cloneContext()
 		);
@@ -258,11 +258,11 @@ class NostoTaggingHelperProductOperation
 	 */
 	protected function restoreContextSnapshot()
 	{
-		if (!empty($this->_context_snapshot))
+		if (!empty($this->context_snapshot))
 		{
-			$original_context = $this->_context_snapshot['context_object'];
-			$shop_context = $this->_context_snapshot['shop_context'];
-			$this->_context_snapshot = null;
+			$original_context = $this->context_snapshot['context_object'];
+			$shop_context = $this->context_snapshot['shop_context'];
+			$this->context_snapshot = null;
 
 			$current_context = Context::getContext();
 			$current_context->language = $original_context->language;
