@@ -107,6 +107,9 @@ PrestaShop version 1.4.x - 1.6.x
 
 ## Changelog
 
+* 2.4.1
+    * Fixed bad release package
+
 * 2.4.0
     * Added Nosto admin tab to PS 1.5 and 1.6 versions for easy access to the Nosto admin pages
     * Added product attribute combinations to the product name in cart and order tagging to easily recognise them
