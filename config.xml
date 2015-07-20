@@ -2,7 +2,7 @@
 <module>
 	<name>nostotagging</name>
 	<displayName><![CDATA[Personalization for PrestaShop]]></displayName>
-	<version><![CDATA[2.4.1]]></version>
+	<version><![CDATA[2.4.2]]></version>
 	<description><![CDATA[Increase your conversion rate and average order value by delivering your customers personalized product recommendations throughout their shopping journey.]]></description>
 	<author><![CDATA[Nosto]]></author>
 	<tab><![CDATA[advertising_marketing]]></tab>

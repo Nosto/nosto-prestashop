@@ -107,6 +107,10 @@ PrestaShop version 1.4.x - 1.6.x
 
 ## Changelog
 
+* 2.4.2
+    * Fixed issue with missing "addCss" method in hook "displayBackOfficeHeader", when controller in context inherits
+    from "AdminTab" instead of "AdminController" in PS 1.5+
+
 * 2.4.1
     * Fixed bad release package
 
