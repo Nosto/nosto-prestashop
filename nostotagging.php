@@ -452,7 +452,13 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayBackOfficeHeader()
 	{
-		$this->context->controller->addCss($this->_path.'css/nostotagging-back-office.css');
+		// In some cases, the controller in the context is actually not an instance of `AdminController`,
+		// but of `AdminTab`. This class does not have an `addCss` method.
+		// In these cases, we skip adding the CSS which will only cause the logo to be missing for the
+		// Nosto menu item in PS >= 1.6.
+		$ctrl = $this->context->controller;
+		if ($ctrl instanceof AdminController && method_exists($ctrl, 'addCss'))
+			$ctrl->addCss($this->_path.'css/nostotagging-back-office.css');
 	}
 
 	/**
