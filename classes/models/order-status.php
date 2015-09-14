@@ -67,7 +67,9 @@ class NostoTaggingOrderStatus implements NostoOrderStatusInterface
 	}
 
 	/**
-	 * @inheritdoc
+	 * Returns the order status code.
+	 *
+	 * @return string the code.
 	 */
 	public function getCode()
 	{
@@ -75,7 +77,9 @@ class NostoTaggingOrderStatus implements NostoOrderStatusInterface
 	}
 
 	/**
-	 * @inheritdoc
+	 * Returns the order status label.
+	 *
+	 * @return string the label.
 	 */
 	public function getLabel()
 	{

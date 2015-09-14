@@ -40,19 +40,34 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
 			// The authorization server responded with a code that can be used to exchange for the access token.
 			try
 			{
+				/** @var NostoTaggingHelperAccount $account_helper */
+				$account_helper = Nosto::helper('nosto_tagging/account');
+
+				$context = $this->module->getContext();
+				$old_account = $account_helper->find($id_lang);
+
 				$meta = new NostoTaggingMetaOauth();
 				$meta->setModuleName($this->module->name);
 				$meta->setModulePath($this->module->getPath());
-				$meta->loadData($this->module->getContext(), $id_lang);
-				$account = NostoAccount::syncFromNosto($meta, $code);
+				$meta->loadData($context, $id_lang);
+				$service = new NostoServiceAccount();
+				$new_account = $service->sync($meta, $code);
 
-				if (!Nosto::helper('nosto_tagging/account')->save($account, $id_lang))
+				// If we are updating an existing account, double check that we
+				// got the same account back from Nosto.
+				if (!is_null($old_account) && !$new_account->equals($old_account))
+					throw new NostoException('Failed to sync account details, account mismatch.');
+
+				if (!$account_helper->save($new_account, $id_lang))
 					throw new NostoException('Failed to save account.');
+
+				$account_helper->updateAccount($new_account, $context, $id_lang);
+				$account_helper->updateCurrencyExchangeRates($new_account, $context, $id_lang);
 
 				$msg = $this->module->l('Account %s successfully connected to Nosto.', 'oauth2');
 				$this->redirectToModuleAdmin(array(
 					'language_id' => $id_lang,
-					'oauth_success' => sprintf($msg, $account->getName()),
+					'oauth_success' => sprintf($msg, $new_account->getName()),
 				));
 			}
 			catch (NostoException $e)

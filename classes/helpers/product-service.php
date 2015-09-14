@@ -26,7 +26,7 @@
 /**
  * Helper class for sending product create/update/delete events to Nosto.
  */
-class NostoTaggingHelperProductOperation
+class NostoTaggingHelperProductService
 {
 	/**
 	 * @var array runtime cache for products that have already been processed during this request to avoid sending the
@@ -63,9 +63,9 @@ class NostoTaggingHelperProductOperation
 
 			try
 			{
-				$op = new NostoOperationProduct($account);
-				$op->addProduct($nosto_product);
-				$op->create();
+				$service = new NostoServiceProduct($account);
+				$service->addProduct($nosto_product);
+				$service->create();
 			}
 			catch (NostoException $e)
 			{
@@ -100,9 +100,9 @@ class NostoTaggingHelperProductOperation
 
 			try
 			{
-				$op = new NostoOperationProduct($account);
-				$op->addProduct($nosto_product);
-				$op->update();
+				$service = new NostoServiceProduct($account);
+				$service->addProduct($nosto_product);
+				$service->update();
 			}
 			catch (NostoException $e)
 			{
@@ -136,9 +136,9 @@ class NostoTaggingHelperProductOperation
 
 			try
 			{
-				$op = new NostoOperationProduct($account);
-				$op->addProduct($nosto_product);
-				$op->delete();
+				$service = new NostoServiceProduct($account);
+				$service->addProduct($nosto_product);
+				$service->delete();
 			}
 			catch (NostoException $e)
 			{
@@ -176,7 +176,7 @@ class NostoTaggingHelperProductOperation
 			{
 				$id_lang = (int)$language['id_lang'];
 				$account = $account_helper->find($id_lang, $id_shop_group, $id_shop);
-				if ($account === null || !$account->isConnectedToNosto())
+				if ($account === null)
 					continue;
 
 				$data[] = array($account, $id_shop, $id_lang);
@@ -230,14 +230,14 @@ class NostoTaggingHelperProductOperation
 
 		$this->makeContextSnapshot();
 
-		$nosto_product = new NostoTaggingProduct();
-		$nosto_product->loadData($this->makeContext($id_lang, $id_shop), $product);
+		try {
+			$nosto_product = new NostoTaggingProduct();
+			$nosto_product->loadData($this->makeContext($id_lang, $id_shop), $product);
+		} catch (NostoException $e) {
+			$nosto_product = null;
+		}
 
 		$this->restoreContextSnapshot();
-
-		$validator = new NostoValidator($nosto_product);
-		if (!$validator->validate())
-			return null;
 
 		return $nosto_product;
 	}

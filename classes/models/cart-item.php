@@ -24,9 +24,9 @@
  */
 
 /**
- * Base model for all tagging model classes.
+ * Model for tagging cart items.
  */
-abstract class NostoTaggingModel
+class NostoTaggingCartItem extends NostoTaggingLineItem
 {
 
 }

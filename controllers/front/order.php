@@ -37,7 +37,7 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
 	 */
 	public function initContent()
 	{
-		$collection = new NostoExportOrderCollection();
+		$collection = new NostoExportCollectionOrder();
 		foreach ($this->getOrderIds() as $id_order)
 		{
 			$order = new Order($id_order);
@@ -46,11 +46,12 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
 
 			$nosto_order = new NostoTaggingOrder();
 			$nosto_order->include_special_items = false;
-			$nosto_order->loadData($this->module->getContext(), $order);
-
-			$validator = new NostoValidator($nosto_order);
-			if ($validator->validate())
+			try {
+				$nosto_order->loadData($this->module->getContext(), $order);
 				$collection[] = $nosto_order;
+			} catch (NostoException $e) {
+				continue;
+			}
 
 			$order = null;
 		}

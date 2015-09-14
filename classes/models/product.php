@@ -26,10 +26,8 @@
 /**
  * Model for tagging products.
  */
-class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInterface, NostoValidatableInterface
+class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInterface
 {
-	const IN_STOCK = 'InStock';
-	const OUT_OF_STOCK = 'OutOfStock';
 	const ADD_TO_CART = 'add-to-cart';
 
 	/**
@@ -53,29 +51,33 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	protected $image_url;
 
 	/**
-	 * @var string product price, discounted including vat.
+	 * @var NostoPrice product price, discounted including vat.
 	 */
 	protected $price;
 
 	/**
-	 * @var string product list price, including vat.
+	 * @var NostoPrice product list price, including vat.
 	 */
 	protected $list_price;
 
 	/**
-	 * @var string the currency iso code.
+	 * @var NostoCurrencyCode the currency iso code.
 	 */
 	protected $currency_code;
 
 	/**
-	 * @var string product availability (use constants).
+	 * @var NostoProductAvailability product availability (use constants).
 	 */
 	protected $availability;
 
 	/**
 	 * @var array list of product tags.
 	 */
-	protected $tags = array();
+	protected $tags = array(
+		'tag1' => array(),
+		'tag2' => array(),
+		'tag3' => array(),
+	);
 
 	/**
 	 * @var array list of product category strings.
@@ -98,64 +100,76 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	protected $brand;
 
 	/**
-	 * @var string the product publish date.
+	 * @var NostoDate the product publish date.
 	 */
 	protected $date_published;
 
 	/**
-	 * @inheritdoc
+	 * @var NostoPriceVariation the price variation that is currently in use.
 	 */
-	public function getValidationRules()
-	{
-		return array(
-			array(
-				array(
-					'url',
-					'product_id',
-					'name',
-					'image_url',
-					'price',
-					'list_price',
-					'currency_code',
-					'availability',
-				),
-				'required',
-			)
-		);
-	}
+	protected $price_variation;
+
+	/**
+	 * @var NostoProductPriceVariationInterface[] all price variations.
+	 */
+	protected $price_variations;
 
 	/**
 	 * Loads the product data from supplied context and product objects.
 	 *
 	 * @param Context $context the context object.
-	 * @param Product $product the product object.
+	 * @param Product|ProductCore $product the product object.
 	 */
 	public function loadData(Context $context, Product $product)
 	{
 		if (!Validate::isLoadedObject($product))
 			return;
 
+		/** @var Language|LanguageCore $lang */
+		$lang = $context->language;
+		/** @var Shop|ShopCore $shop */
+		$shop = $context->shop;
+
+		/** @var NostoTaggingHelperCurrency $currency_helper */
+		$currency_helper = Nosto::helper('nosto_tagging/currency');
+		/** @var NostoTaggingHelperPrice $price_helper */
+		$price_helper = Nosto::helper('nosto_tagging/price');
 		/** @var NostoTaggingHelperUrl $url_helper */
 		$url_helper = Nosto::helper('nosto_tagging/url');
+		/** @var NostoTaggingHelperConfig $config_helper */
+		$config_helper = Nosto::helper('nosto_tagging/config');
 
-		$id_lang = $context->language->id;
-		$id_shop = $context->shop->id;
-		$currency_iso_code = $context->currency->iso_code;
+		$base_currency = $currency_helper->getBaseCurrency($context);
+		$currencies = $currency_helper->getCurrencies($context);
 
-		$this->url = $url_helper->getProductUrl($product, $id_lang, $id_shop);
+		$this->url = $url_helper->getProductUrl($product, $lang->id, $shop->id);
 		$this->image_url = $url_helper->getProductImageUrl($product);
 		$this->product_id = (int)$product->id;
 		$this->name = $product->name;
-		$this->price = $this->calcPrice($product, $context);
-		$this->list_price = $this->calcPrice($product, $context, false /*no discounts*/);
-		$this->currency_code = Tools::strtoupper($currency_iso_code);
+		$this->price = $price_helper->getProductPriceInclTax($product, $context, $base_currency);
+		$this->list_price = $price_helper->getProductListPriceInclTax($product, $context, $base_currency);
+		$this->currency_code = new NostoCurrencyCode($base_currency->iso_code);
 		$this->availability = $this->checkAvailability($product);
-		$this->tags = $this->buildTags($product, $id_lang);
-		$this->categories = $this->buildCategories($product, $id_lang);
+		$this->tags = $this->buildTags($product, $lang->id);
+		$this->categories = $this->buildCategories($product, $lang->id);
 		$this->short_description = $product->description_short;
 		$this->description = $product->description;
 		$this->brand = (!empty($product->manufacturer_name)) ? $product->manufacturer_name : null;
-		$this->date_published = Nosto::helper('date')->format($product->date_add);
+		$this->date_published = new NostoDate(strtotime($product->date_add));
+
+		if (count($currencies) > 1)
+		{
+			$this->price_variation = new NostoPriceVariation($base_currency->iso_code);
+			if ($config_helper->isMultiCurrencyMethodPriceVariation($lang->id, $shop->id_shop_group, $shop->id))
+			{
+				$this->price_variations = $this->buildPriceVariations(
+					$product,
+					$context,
+					$base_currency,
+					$currencies
+				);
+			}
+		}
 	}
 
 	/**
@@ -163,7 +177,7 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	 *
 	 * This method exists in order to expose a public API to change the ID.
 	 *
-	 * @param Product $product the product object.
+	 * @param Product|ProductCore $product the product object.
 	 */
 	public function assignId(Product $product)
 	{
@@ -171,55 +185,20 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	}
 
 	/**
-	 * Calculates the price (including tax if applicable) and returns it.
-	 *
-	 * We need to check if taxes are to be included in the prices, given that they are configured.
-	 * This is determined by the "Price display method" setting of the active user group.
-	 * Possible values are 1, tax excluded, and 0, tax included.
-	 *
-	 * @param Product $product the product model.
-	 * @param Context $context the context to calculate the price on (currency conversion).
-	 * @param bool $discounted_price if discounts should be applied.
-	 * @return string the calculated price.
-	 */
-	protected function calcPrice(Product $product, Context $context, $discounted_price = true)
-	{
-		$incl_tax = (bool)!Product::getTaxCalculationMethod((int)$context->cookie->id_customer);
-		$specific_price_output = null;
-		$value = Product::getPriceStatic(
-			(int)$product->id,
-			$incl_tax,
-			null, // $id_product_attribute
-			6, // $decimals
-			null, // $divisor
-			false, // $only_reduction
-			$discounted_price, // $user_reduction
-			1, // $quantity
-			false, // $force_associated_tax
-			null, // $id_customer
-			null, // $id_cart
-			null, // $id_address
-			$specific_price_output, // $specific_price_output
-			true, // $with_eco_tax
-			true, // $use_group_reduction
-			$context,
-			true // $use_customer_price
-		);
-		return Nosto::helper('price')->format($value);
-	}
-
-	/**
 	 * Checks the availability of the product and returns the "availability constant".
 	 *
 	 * The product is considered available if it is visible in the shop and is in stock.
 	 *
-	 * @param Product $product the product model.
+	 * @param Product|ProductCore $product the product model.
 	 * @return string the value, i.e. self::IN_STOCK or self::OUT_OF_STOCK.
 	 */
 	protected function checkAvailability(Product $product)
 	{
 		$is_visible = (_PS_VERSION_ >= '1.5') ? ($product->visibility !== 'none') : true;
-		return ($product->checkQty(1) && $is_visible) ? self::IN_STOCK : self::OUT_OF_STOCK;
+		$value = ($product->checkQty(1) && $is_visible)
+			? NostoProductAvailability::IN_STOCK
+			: NostoProductAvailability::OUT_OF_STOCK;
+		return new NostoProductAvailability($value);
 	}
 
 	/**
@@ -229,7 +208,7 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	 * any action from the user, e.g. the product cannot have any variations or choices. This tag is then used in the
 	 * recommendations to render the "Add to cart" button for the product when it is recommended to a user.
 	 *
-	 * @param Product $product the product model.
+	 * @param Product|ProductCore $product the product model.
 	 * @param int $id_lang for which language ID to fetch the product tags.
 	 * @return array the built tags.
 	 */
@@ -252,7 +231,7 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	 *
 	 * By "path" we mean the full tree path of the products categories and sub-categories.
 	 *
-	 * @param Product $product the product model.
+	 * @param Product|ProductCore $product the product model.
 	 * @param int $id_lang for which language ID to fetch the categories.
 	 * @return array the built category paths.
 	 */
@@ -269,7 +248,34 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	}
 
 	/**
-	 * @inheritdoc
+	 * Builds all product price variations for the currencies.
+	 *
+	 * @param Product|ProductCore $product the product model.
+	 * @param Context|ContextCore $context the context model.
+	 * @param Currency|CurrencyCore $base_currency the base currency model.
+	 * @param array $currencies
+	 * @return NostoProductPriceVariationInterface[] all price variations.
+	 */
+	protected function buildPriceVariations(Product $product, Context $context, Currency $base_currency, array $currencies)
+	{
+		$variations = array();
+		foreach ($currencies as $currency)
+		{
+			if ($base_currency->iso_code === $currency['iso_code'])
+				continue;
+
+			$currency_model = new Currency($currency['id_currency']);
+			$variation = new NostoTaggingProductVariation();
+			$variation->loadData($product, $context, $currency_model, $this->availability);
+			$variations[] = $variation;
+		}
+		return $variations;
+	}
+
+	/**
+	 * Returns the absolute url to the product page in the shop frontend.
+	 *
+	 * @return string the url.
 	 */
 	public function getUrl()
 	{
@@ -277,7 +283,9 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	}
 
 	/**
-	 * @inheritdoc
+	 * Returns the product's unique identifier.
+	 *
+	 * @return int|string the ID.
 	 */
 	public function getProductId()
 	{
@@ -285,7 +293,9 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	}
 
 	/**
-	 * @inheritdoc
+	 * Returns the name of the product.
+	 *
+	 * @return string the name.
 	 */
 	public function getName()
 	{
@@ -293,7 +303,9 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	}
 
 	/**
-	 * @inheritdoc
+	 * Returns the absolute url the one of the product images in the shop frontend.
+	 *
+	 * @return string the url.
 	 */
 	public function getImageUrl()
 	{
@@ -301,7 +313,19 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	}
 
 	/**
-	 * @inheritdoc
+	 * Returns the absolute url to one of the product image thumbnails in the shop frontend.
+	 *
+	 * @return string the url.
+	 */
+	public function getThumbUrl()
+	{
+		return null;
+	}
+
+	/**
+	 * Returns the price of the product including possible discounts and taxes.
+	 *
+	 * @return NostoPrice the price.
 	 */
 	public function getPrice()
 	{
@@ -309,7 +333,9 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	}
 
 	/**
-	 * @inheritdoc
+	 * Returns the list price of the product without discounts but including possible taxes.
+	 *
+	 * @return NostoPrice the price.
 	 */
 	public function getListPrice()
 	{
@@ -317,15 +343,31 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	}
 
 	/**
-	 * @inheritdoc
+	 * Returns the currency code (ISO 4217) the product is sold in.
+	 *
+	 * @return NostoCurrencyCode the currency code.
 	 */
-	public function getCurrencyCode()
+	public function getCurrency()
 	{
 		return $this->currency_code;
 	}
 
 	/**
-	 * @inheritdoc
+	 * Returns the ID of the price variation that is currently in use.
+	 *
+	 * @return string the price variation ID.
+	 */
+	public function getPriceVariationId()
+	{
+		return (!is_null($this->price_variation))
+			? $this->price_variation->getId()
+			: null;
+	}
+
+	/**
+	 * Returns the availability of the product, i.e. if it is in stock or not.
+	 *
+	 * @return NostoProductAvailability the availability.
 	 */
 	public function getAvailability()
 	{
@@ -333,7 +375,9 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	}
 
 	/**
-	 * @inheritdoc
+	 * Returns the tags for the product.
+	 *
+	 * @return array the tags array, e.g. array('tag1' => array("winter", "shoe")).
 	 */
 	public function getTags()
 	{
@@ -341,7 +385,9 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	}
 
 	/**
-	 * @inheritdoc
+	 * Returns the categories the product is located in.
+	 *
+	 * @return array list of category strings, e.g. array("/shoes/winter", "shoes/boots").
 	 */
 	public function getCategories()
 	{
@@ -349,7 +395,9 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	}
 
 	/**
-	 * @inheritdoc
+	 * Returns the product short description.
+	 *
+	 * @return string the short description.
 	 */
 	public function getShortDescription()
 	{
@@ -357,7 +405,9 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	}
 
 	/**
-	 * @inheritdoc
+	 * Returns the product description.
+	 *
+	 * @return string the description.
 	 */
 	public function getDescription()
 	{
@@ -365,7 +415,27 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	}
 
 	/**
-	 * @inheritdoc
+	 * Returns the full product description,
+	 * i.e. both the "short" and "normal" descriptions concatenated.
+	 *
+	 * @return string the full descriptions.
+	 */
+	public function getFullDescription()
+	{
+		$descriptions = array();
+		if (!empty($this->short_description)) {
+			$descriptions[] = $this->short_description;
+		}
+		if (!empty($this->description)) {
+			$descriptions[] = $this->description;
+		}
+		return implode(' ', $descriptions);
+	}
+
+	/**
+	 * Returns the product brand name.
+	 *
+	 * @return string the brand name.
 	 */
 	public function getBrand()
 	{
@@ -373,10 +443,22 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	}
 
 	/**
-	 * @inheritdoc
+	 * Returns the product publication date in the shop.
+	 *
+	 * @return NostoDate the date.
 	 */
 	public function getDatePublished()
 	{
 		return $this->date_published;
+	}
+
+	/**
+	 * Returns the product price variations if any exist.
+	 *
+	 * @return NostoProductPriceVariationInterface[] the price variations.
+	 */
+	public function getPriceVariations()
+	{
+		return $this->price_variations;
 	}
 }

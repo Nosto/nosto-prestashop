@@ -26,10 +26,10 @@
 /**
  * Meta data class for account billing related information needed when creating new accounts.
  */
-class NostoTaggingMetaAccountBilling implements NostoAccountMetaDataBillingDetailsInterface
+class NostoTaggingMetaAccountBilling implements NostoAccountMetaBillingInterface
 {
 	/**
-	 * @var string country ISO (ISO 3166-1 alpha-2) code for billing details.
+	 * @var NostoCountryCode country ISO (ISO 3166-1 alpha-2) code for billing details.
 	 */
 	protected $country;
 
@@ -40,23 +40,13 @@ class NostoTaggingMetaAccountBilling implements NostoAccountMetaDataBillingDetai
 	 */
 	public function loadData($context)
 	{
-		$this->country = $context->country->iso_code;
+		$this->country = new NostoCountryCode($context->country->iso_code);
 	}
 
 	/**
-	 * Sets the account billing details country ISO (ISO 3166-1 alpha-2) code.
+	 * The 2-letter ISO code (ISO 3166-1 alpha-2) for the country used in account's billing details.
 	 *
-	 * @param string $country the country ISO code.
-	 */
-	public function setCountry($country)
-	{
-		$this->country = $country;
-	}
-
-	/**
-	 * The 2-letter ISO code (ISO 3166-1 alpha-2) for billing details country.
-	 *
-	 * @return string the country ISO code.
+	 * @return NostoCountryCode the country code.
 	 */
 	public function getCountry()
 	{

@@ -44,30 +44,6 @@ class NostoTaggingOrderBuyer implements NostoOrderBuyerInterface
 	protected $email;
 
 	/**
-	 * @inheritdoc
-	 */
-	public function getFirstName()
-	{
-		return $this->first_name;
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function getLastName()
-	{
-		return $this->last_name;
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function getEmail()
-	{
-		return $this->email;
-	}
-
-	/**
 	 * Loads the buyer data from the customer object.
 	 *
 	 * @param Customer $customer the customer object.
@@ -77,5 +53,35 @@ class NostoTaggingOrderBuyer implements NostoOrderBuyerInterface
 		$this->first_name = $customer->firstname;
 		$this->last_name = $customer->lastname;
 		$this->email = $customer->email;
+	}
+
+	/**
+	 * Gets the first name of the user who placed the order.
+	 *
+	 * @return string the first name.
+	 */
+	public function getFirstName()
+	{
+		return $this->first_name;
+	}
+
+	/**
+	 * Gets the last name of the user who placed the order.
+	 *
+	 * @return string the last name.
+	 */
+	public function getLastName()
+	{
+		return $this->last_name;
+	}
+
+	/**
+	 * Gets the email address of the user who placed the order.
+	 *
+	 * @return string the email address.
+	 */
+	public function getEmail()
+	{
+		return $this->email;
 	}
 }

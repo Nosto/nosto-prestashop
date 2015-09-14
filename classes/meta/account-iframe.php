@@ -26,32 +26,17 @@
 /**
  * Meta data class for account iframe related information needed when showing the admin iframe on module settings page.
  */
-class NostoTaggingMetaAccountIframe implements NostoAccountMetaDataIframeInterface
+class NostoTaggingMetaAccountIframe implements NostoAccountMetaIframeInterface
 {
 	/**
-	 * @var string the admin user first name.
+	 * @var NostoLanguageCode the language ISO (ISO 639-1) code for oauth server locale.
 	 */
-	protected $first_name;
+	protected $language;
 
 	/**
-	 * @var string the admin user last name.
+	 * @var NostoLanguageCode the language ISO (ISO 639-1) for the store view scope.
 	 */
-	protected $last_name;
-
-	/**
-	 * @var    string the admin user email address.
-	 */
-	protected $email;
-
-	/**
-	 * @var string the language ISO (ISO 639-1) code for oauth server locale.
-	 */
-	protected $language_iso_code;
-
-	/**
-	 * @var string the language ISO (ISO 639-1) for the store view scope.
-	 */
-	protected $language_iso_code_shop;
+	protected $shop_language;
 
 	/**
 	 * @var string unique ID that identifies the Magento installation.
@@ -61,7 +46,7 @@ class NostoTaggingMetaAccountIframe implements NostoAccountMetaDataIframeInterfa
 	/**
 	 * @var string the version number of the Nosto module/extension running on the e-commerce installation.
 	 */
-	protected $version_module;
+	protected $module_version;
 
 	/**
 	 * @var string preview url for the product page in the active store scope.
@@ -94,12 +79,12 @@ class NostoTaggingMetaAccountIframe implements NostoAccountMetaDataIframeInterfa
 	protected $shop_name;
 
 	/**
-	 * Loads the meta-data from context.
+	 * Loads the meta-data from plugin context.
 	 *
-	 * @param Context $context the context to get the meta-data from.
+	 * @param NostoTagging $plugin the plugin.
 	 * @param int $id_lang the language ID of the shop for which to get the meta-data.
 	 */
-	public function loadData($context, $id_lang)
+	public function loadData(NostoTagging $plugin, $id_lang)
 	{
 		$shop_language = new Language($id_lang);
 		if (!Validate::isLoadedObject($shop_language))
@@ -107,12 +92,12 @@ class NostoTaggingMetaAccountIframe implements NostoAccountMetaDataIframeInterfa
 
 		/** @var NostoTaggingHelperUrl $url_helper */
 		$url_helper = Nosto::helper('nosto_tagging/url');
+		$context = $plugin->getContext();
 
-		$this->first_name = $context->employee->firstname;
-		$this->last_name = $context->employee->lastname;
-		$this->email = $context->employee->email;
-		$this->language_iso_code = $context->language->iso_code;
-		$this->language_iso_code_shop = $shop_language->iso_code;
+		$this->language = new NostoLanguageCode($context->language->iso_code);
+		$this->shop_language = new NostoLanguageCode($shop_language->iso_code);
+		$this->unique_id = $plugin->getUniqueInstallationId();
+		$this->module_version = $plugin->version;
 		$this->preview_url_product = $url_helper->getPreviewUrlProduct(null, $id_lang);
 		$this->preview_url_category = $url_helper->getPreviewUrlCategory(null, $id_lang);
 		$this->preview_url_search = $url_helper->getPreviewUrlSearch($id_lang);
@@ -122,118 +107,25 @@ class NostoTaggingMetaAccountIframe implements NostoAccountMetaDataIframeInterfa
 	}
 
 	/**
-	 * The name of the platform the iframe is used on.
-	 * A list of valid platform names is issued by Nosto.
-	 *
-	 * @return string the platform name.
-	 */
-	public function getPlatform()
-	{
-		return 'prestashop';
-	}
-
-	/**
-	 * Sets the first name of the admin user.
-	 *
-	 * @param string $first_name the first name.
-	 */
-	public function setFirstName($first_name)
-	{
-		$this->first_name = $first_name;
-	}
-
-	/**
-	 * The first name of the user who is loading the config iframe.
-	 *
-	 * @return string the first name.
-	 */
-	public function getFirstName()
-	{
-		return $this->first_name;
-	}
-
-	/**
-	 * Sets the last name of the admin user.
-	 *
-	 * @param string $last_name the last name.
-	 */
-	public function setLastName($last_name)
-	{
-		$this->last_name = $last_name;
-	}
-
-	/**
-	 * The last name of the user who is loading the config iframe.
-	 *
-	 * @return string the last name.
-	 */
-	public function getLastName()
-	{
-		return $this->last_name;
-	}
-
-	/**
-	 * Sets the email address of the admin user.
-	 *
-	 * @param string $email the email address.
-	 */
-	public function setEmail($email)
-	{
-		$this->email = $email;
-	}
-
-	/**
-	 * The email address of the user who is loading the config iframe.
-	 *
-	 * @return string the email address.
-	 */
-	public function getEmail()
-	{
-		return $this->email;
-	}
-
-	/**
-	 * Sets the language ISO code.
-	 *
-	 * @param string $code the ISO code.
-	 */
-	public function setLanguageIsoCode($code)
-	{
-		$this->language_iso_code = $code;
-	}
-
-	/**
 	 * The 2-letter ISO code (ISO 639-1) for the language of the user who is
 	 * loading the config iframe.
 	 *
-	 * @return string the language ISO code.
+	 * @return NostoLanguageCode the language code.
 	 */
-	public function getLanguageIsoCode()
+	public function getLanguage()
 	{
-		return $this->language_iso_code;
+		return $this->language;
 	}
 
 	/**
 	 * The 2-letter ISO code (ISO 639-1) for the language of the shop the
 	 * account belongs to.
 	 *
-	 * @return string the language ISO code.
+	 * @return NostoLanguageCode the language code.
 	 */
-	public function getLanguageIsoCodeShop()
+	public function getShopLanguage()
 	{
-		return $this->language_iso_code_shop;
-	}
-
-	/**
-	 * Sets the unique identifier for the e-commerce installation.
-	 * This identifier is used to link accounts together that are created on
-	 * the same installation.
-	 *
-	 * @param string $unique_id the unique ID.
-	 */
-	public function setUniqueId($unique_id)
-	{
-		$this->unique_id = $unique_id;
+		return $this->shop_language;
 	}
 
 	/**
@@ -260,17 +152,6 @@ class NostoTaggingMetaAccountIframe implements NostoAccountMetaDataIframeInterfa
 	}
 
 	/**
-	 * Sets the version number of the Nosto module/extension running on the
-	 * e-commerce installation.
-	 *
-	 * @param string $version the version number.
-	 */
-	public function setVersionModule($version)
-	{
-		$this->version_module = $version;
-	}
-
-	/**
 	 * The version number of the Nosto module/extension running on the
 	 * e-commerce installation.
 	 *
@@ -278,7 +159,7 @@ class NostoTaggingMetaAccountIframe implements NostoAccountMetaDataIframeInterfa
 	 */
 	public function getVersionModule()
 	{
-		return $this->version_module;
+		return $this->module_version;
 	}
 
 	/**

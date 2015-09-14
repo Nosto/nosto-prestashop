@@ -26,7 +26,7 @@
 /**
  * Meta data class for oauth related information needed when connecting accounts to Nosto.
  */
-class NostoTaggingMetaOauth implements NostoOAuthClientMetaDataInterface
+class NostoTaggingMetaOauth implements NostoOAuthClientMetaInterface
 {
 	/**
 	 * @var string the url where the oauth2 server should redirect after
@@ -35,9 +35,9 @@ class NostoTaggingMetaOauth implements NostoOAuthClientMetaDataInterface
 	protected $redirect_url;
 
 	/**
-	 * @var string the language ISO code for localization on oauth2 server.
+	 * @var NostoLanguageCode the language ISO code for localization on oauth2 server.
 	 */
-	protected $language_iso_code;
+	protected $language;
 
 	/**
 	 * @var string the name of the module.
@@ -50,12 +50,18 @@ class NostoTaggingMetaOauth implements NostoOAuthClientMetaDataInterface
 	protected $module_path;
 
 	/**
+	 * @var NostoAccount the Nosto account if we are to sync account details from Nosto.
+	 */
+	protected $account;
+
+	/**
 	 * Loads meta data from the given context and language.
 	 *
 	 * @param Context $context the context to use as data source.
 	 * @param int $id_lang the language to use as data source.
+	 * @param NostoAccount|null $account the Nosto account if we are to sync account details from Nosto.
 	 */
-	public function loadData($context, $id_lang)
+	public function loadData($context, $id_lang, NostoAccount $account = null)
 	{
 		$language = new Language($id_lang);
 		if (!Validate::isLoadedObject($language))
@@ -68,7 +74,8 @@ class NostoTaggingMetaOauth implements NostoOAuthClientMetaDataInterface
 		$url_helper = Nosto::helper('nosto_tagging/url');
 
 		$this->redirect_url = $url_helper->getModuleUrl($this->module_name, $this->module_path, 'oauth2', $id_lang, $id_shop, $params);
-		$this->language_iso_code = $language->iso_code;
+		$this->language = new NostoLanguageCode($language->iso_code);
+		$this->account = $account;
 	}
 
 	/**
@@ -120,34 +127,23 @@ class NostoTaggingMetaOauth implements NostoOAuthClientMetaDataInterface
 	}
 
 	/**
-	 * Sets the redirect url.
+	 * The 2-letter ISO code (ISO 639-1) for the language the OAuth2 server uses for UI localization.
 	 *
-	 * @param string $url the url.
+	 * @return NostoLanguageCode the language code.
 	 */
-	public function setRedirectUrl($url)
+	public function getLanguage()
 	{
-		$this->redirect_url = $url;
+		return $this->language;
 	}
 
 	/**
-	 * The 2-letter ISO code (ISO 639-1) for the language the OAuth2 server
-	 * uses for UI localization.
+	 * The Nosto account if we are to sync account details from Nosto.
 	 *
-	 * @return string the ISO code.
+	 * @return NostoAccount the account.
 	 */
-	public function getLanguageIsoCode()
+	public function getAccount()
 	{
-		return $this->language_iso_code;
-	}
-
-	/**
-	 * Sets the language ISO code.
-	 *
-	 * @param string $code the ISO code.
-	 */
-	public function setLanguageIsoCode($code)
-	{
-		$this->language_iso_code = $code;
+		return $this->account;
 	}
 
 	/**

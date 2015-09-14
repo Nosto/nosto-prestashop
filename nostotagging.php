@@ -33,30 +33,36 @@ if (!defined('_PS_VERSION_'))
 if ((basename(__FILE__) === 'nostotagging.php'))
 {
 	$module_dir = dirname(__FILE__);
-	require_once($module_dir.'/libs/nosto/php-sdk/src/config.inc.php');
+	require_once($module_dir.'/libs/nosto/php-sdk/autoload.php');
 	require_once($module_dir.'/classes/helpers/account.php');
 	require_once($module_dir.'/classes/helpers/admin-tab.php');
 	require_once($module_dir.'/classes/helpers/config.php');
+	require_once($module_dir.'/classes/helpers/currency.php');
 	require_once($module_dir.'/classes/helpers/customer.php');
 	require_once($module_dir.'/classes/helpers/flash-message.php');
 	require_once($module_dir.'/classes/helpers/logger.php');
-	require_once($module_dir.'/classes/helpers/product-operation.php');
+	require_once($module_dir.'/classes/helpers/price.php');
+	require_once($module_dir.'/classes/helpers/product-service.php');
 	require_once($module_dir.'/classes/helpers/updater.php');
 	require_once($module_dir.'/classes/helpers/url.php');
 	require_once($module_dir.'/classes/meta/account.php');
 	require_once($module_dir.'/classes/meta/account-billing.php');
 	require_once($module_dir.'/classes/meta/account-iframe.php');
 	require_once($module_dir.'/classes/meta/account-owner.php');
+	require_once($module_dir.'/classes/meta/account-sso.php');
 	require_once($module_dir.'/classes/meta/oauth.php');
 	require_once($module_dir.'/classes/models/base.php');
+	require_once($module_dir.'/classes/models/line-item.php');
 	require_once($module_dir.'/classes/models/cart.php');
+	require_once($module_dir.'/classes/models/cart-item.php');
 	require_once($module_dir.'/classes/models/category.php');
 	require_once($module_dir.'/classes/models/customer.php');
 	require_once($module_dir.'/classes/models/order.php');
 	require_once($module_dir.'/classes/models/order-buyer.php');
-	require_once($module_dir.'/classes/models/order-purchased-item.php');
+	require_once($module_dir.'/classes/models/order-item.php');
 	require_once($module_dir.'/classes/models/order-status.php');
 	require_once($module_dir.'/classes/models/product.php');
+	require_once($module_dir.'/classes/models/product-variation.php');
 	require_once($module_dir.'/classes/models/brand.php');
 	require_once($module_dir.'/classes/models/search.php');
 }
@@ -304,7 +310,7 @@ class NostoTagging extends Module
 			$this->name.'_has_account' => ($account !== null),
 			$this->name.'_account_name' => ($account !== null) ? $account->getName() : null,
 			$this->name.'_account_email' => $account_email,
-			$this->name.'_account_authorized' => ($account !== null) ? $account->isConnectedToNosto() : false,
+			$this->name.'_account_authorized' => ($account !== null),
 			$this->name.'_languages' => $languages,
 			$this->name.'_current_language' => $current_language,
 			// Hack a few translations for the view as PS 1.4 does not support sprintf syntax in smarty "l" function.
@@ -327,15 +333,16 @@ class NostoTagging extends Module
 
 		// Try to login employee to Nosto in order to get a url to the internal setting pages,
 		// which are then shown in an iframe on the module config page.
-		if ($account && $account->isConnectedToNosto())
+		if ($account)
 		{
 			try
 			{
-				$meta = new NostoTaggingMetaAccountIframe();
-				$meta->setUniqueId($this->getUniqueInstallationId());
-				$meta->setVersionModule($this->version);
-				$meta->loadData($this->context, $language_id);
-				$url = $account->getIframeUrl($meta);
+				$metaSso = new NostoTaggingMetaAccountSso();
+				$metaSso->loadData($this->context->employee);
+				$metaIframe = new NostoTaggingMetaAccountIframe();
+				$metaIframe->loadData($this, $language_id);
+				$url = Nosto::helper('iframe')->getUrl($metaSso, $metaIframe, $account);
+
 				if (!empty($url))
 					$this->context->smarty->assign(array('iframe_url' => $url));
 			}
@@ -368,14 +375,19 @@ class NostoTagging extends Module
 	 */
 	protected function createAccount($id_lang, $email)
 	{
+		/** @var NostoTaggingHelperAccount $account_helper */
+		$account_helper = Nosto::helper('nosto_tagging/account');
+
 		try
 		{
 			$meta = new NostoTaggingMetaAccount();
 			$meta->loadData($this->context, $id_lang);
 			$meta->getOwner()->setEmail($email);
-			/** @var NostoAccount $account */
-			$account = NostoAccount::create($meta);
-			return Nosto::helper('nosto_tagging/account')->save($account, $id_lang);
+			$service = new NostoServiceAccount();
+			$account = $service->create($meta);
+
+			if ($account_helper->save($account, $id_lang))
+				$account_helper->updateCurrencyExchangeRates($account, $this->context, $id_lang);
 		}
 		catch (NostoException $e)
 		{
@@ -384,6 +396,7 @@ class NostoTagging extends Module
 				$e->getCode()
 			);
 		}
+
 		return false;
 	}
 
@@ -471,7 +484,7 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayTop()
 	{
-		if (!Nosto::helper('nosto_tagging/account')->existsAndIsConnected($this->context->language->id))
+		if (!Nosto::helper('nosto_tagging/account')->exists($this->context->language->id))
 			return '';
 
 		$html = '';
@@ -533,7 +546,7 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayFooter()
 	{
-		if (!Nosto::helper('nosto_tagging/account')->existsAndIsConnected($this->context->language->id))
+		if (!Nosto::helper('nosto_tagging/account')->exists($this->context->language->id))
 			return '';
 
 		return $this->display(__FILE__, 'views/templates/hook/footer_nosto-elements.tpl');
@@ -559,7 +572,7 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayLeftColumn()
 	{
-		if (!Nosto::helper('nosto_tagging/account')->existsAndIsConnected($this->context->language->id))
+		if (!Nosto::helper('nosto_tagging/account')->exists($this->context->language->id))
 			return '';
 
 		return $this->display(__FILE__, 'views/templates/hook/left-column_nosto-elements.tpl');
@@ -585,7 +598,7 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayRightColumn()
 	{
-		if (!Nosto::helper('nosto_tagging/account')->existsAndIsConnected($this->context->language->id))
+		if (!Nosto::helper('nosto_tagging/account')->exists($this->context->language->id))
 			return '';
 
 		return $this->display(__FILE__, 'views/templates/hook/right-column_nosto-elements.tpl');
@@ -613,7 +626,7 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayFooterProduct(Array $params)
 	{
-		if (!Nosto::helper('nosto_tagging/account')->existsAndIsConnected($this->context->language->id))
+		if (!Nosto::helper('nosto_tagging/account')->exists($this->context->language->id))
 			return '';
 
 		$html = '';
@@ -651,7 +664,7 @@ class NostoTagging extends Module
 		// Update the link between nosto users and prestashop customers.
 		Nosto::helper('nosto_tagging/customer')->updateNostoId();
 
-		if (!Nosto::helper('nosto_tagging/account')->existsAndIsConnected($this->context->language->id))
+		if (!Nosto::helper('nosto_tagging/account')->exists($this->context->language->id))
 			return '';
 
 		return $this->display(__FILE__, 'views/templates/hook/shopping-cart-footer_nosto-elements.tpl');
@@ -679,7 +692,7 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayOrderConfirmation(Array $params)
 	{
-		if (!Nosto::helper('nosto_tagging/account')->existsAndIsConnected($this->context->language->id))
+		if (!Nosto::helper('nosto_tagging/account')->exists($this->context->language->id))
 			return '';
 
 		$html = '';
@@ -716,7 +729,7 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayCategoryTop()
 	{
-		if (!Nosto::helper('nosto_tagging/account')->existsAndIsConnected($this->context->language->id))
+		if (!Nosto::helper('nosto_tagging/account')->exists($this->context->language->id))
 			return '';
 
 		return $this->display(__FILE__, 'views/templates/hook/category-top_nosto-elements.tpl');
@@ -736,7 +749,7 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayCategoryFooter()
 	{
-		if (!Nosto::helper('nosto_tagging/account')->existsAndIsConnected($this->context->language->id))
+		if (!Nosto::helper('nosto_tagging/account')->exists($this->context->language->id))
 			return '';
 
 		return $this->display(__FILE__, 'views/templates/hook/category-footer_nosto-elements.tpl');
@@ -756,7 +769,7 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplaySearchTop()
 	{
-		if (!Nosto::helper('nosto_tagging/account')->existsAndIsConnected($this->context->language->id))
+		if (!Nosto::helper('nosto_tagging/account')->exists($this->context->language->id))
 			return '';
 
 		return $this->display(__FILE__, 'views/templates/hook/search-top_nosto-elements.tpl');
@@ -776,7 +789,7 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplaySearchFooter()
 	{
-		if (!Nosto::helper('nosto_tagging/account')->existsAndIsConnected($this->context->language->id))
+		if (!Nosto::helper('nosto_tagging/account')->exists($this->context->language->id))
 			return '';
 
 		return $this->display(__FILE__, 'views/templates/hook/search-footer_nosto-elements.tpl');
@@ -816,11 +829,18 @@ class NostoTagging extends Module
 			if (!Validate::isLoadedObject($order))
 				return;
 
-			$nosto_order = new NostoTaggingOrder();
-			$nosto_order->loadData($this->context, $order);
-			$validator = new NostoValidator($nosto_order);
-			if (!$validator->validate())
+			try {
+				$nosto_order = new NostoTaggingOrder();
+				$nosto_order->loadData($this->context, $order);
+			} catch (NostoException $e) {
+				Nosto::helper('nosto_tagging/logger')->error(
+					__CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(),
+					$e->getCode(),
+					'Order',
+					(int)$params['id_order']
+				);
 				return;
+			}
 
 			// PS 1.4 does not have "id_shop_group" and "id_shop" properties in the order object.
 			$id_shop_group = isset($order->id_shop_group) ? $order->id_shop_group : null;
@@ -828,12 +848,13 @@ class NostoTagging extends Module
 			// This is done out of context, so we need to specify the exact parameters to get the correct account.
 			/** @var NostoAccount $account */
 			$account = Nosto::helper('nosto_tagging/account')->find($order->id_lang, $id_shop_group, $id_shop);
-			if ($account !== null && $account->isConnectedToNosto())
+			if ($account !== null)
 			{
 				try
 				{
 					$customer_id = Nosto::helper('nosto_tagging/customer')->getNostoId($order);
-					NostoOrderConfirmation::send($nosto_order, $account, $customer_id);
+					$service = new NostoServiceOrder($account);
+					$service->confirm($nosto_order, $customer_id);
 				}
 				catch (NostoException $e)
 				{
@@ -868,7 +889,7 @@ class NostoTagging extends Module
 	 */
 	public function hookDisplayHome()
 	{
-		if (!Nosto::helper('nosto_tagging/account')->existsAndIsConnected($this->context->language->id))
+		if (!Nosto::helper('nosto_tagging/account')->exists($this->context->language->id))
 			return '';
 
 		return $this->display(__FILE__, 'views/templates/hook/home_nosto-elements.tpl');
@@ -894,7 +915,7 @@ class NostoTagging extends Module
 	{
 		if (isset($params['object']))
 			if ($params['object'] instanceof Product)
-				Nosto::helper('nosto_tagging/product_operation')->update($params['object']);
+				Nosto::helper('nosto_tagging/product_service')->update($params['object']);
 	}
 
 	/**
@@ -906,7 +927,7 @@ class NostoTagging extends Module
 	{
 		if (isset($params['object']))
 			if ($params['object'] instanceof Product)
-				Nosto::helper('nosto_tagging/product_operation')->delete($params['object']);
+				Nosto::helper('nosto_tagging/product_service')->delete($params['object']);
 	}
 
 	/**
@@ -918,7 +939,7 @@ class NostoTagging extends Module
 	{
 		if (isset($params['object']))
 			if ($params['object'] instanceof Product)
-				Nosto::helper('nosto_tagging/product_operation')->create($params['object']);
+				Nosto::helper('nosto_tagging/product_service')->create($params['object']);
 	}
 
 	/**
@@ -1074,7 +1095,7 @@ class NostoTagging extends Module
 			foreach (Language::getLanguages(true, $id_shop) as $language)
 			{
 				$id_shop_group = isset($shop['id_shop_group']) ? $shop['id_shop_group'] : null;
-				if (!Nosto::helper('nosto_tagging/account')->existsAndIsConnected($language['id_lang'], $id_shop_group, $id_shop))
+				if (!Nosto::helper('nosto_tagging/account')->exists($language['id_lang'], $id_shop_group, $id_shop))
 					return false;
 			}
 		}
@@ -1199,7 +1220,14 @@ class NostoTagging extends Module
 	protected function getCartTagging()
 	{
 		$nosto_cart = new NostoTaggingCart();
-		$nosto_cart->loadData($this->context->cart);
+		try {
+			$nosto_cart->loadData($this->context->cart);
+		} catch (NostoException $e) {
+			Nosto::helper('nosto_tagging/logger')->error(
+				__CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(),
+				$e->getCode()
+			);
+		}
 
 		$this->smarty->assign(array(
 			'nosto_cart' => $nosto_cart,
@@ -1218,7 +1246,14 @@ class NostoTagging extends Module
 	protected function getProductTagging(Product $product, Category $category = null)
 	{
 		$nosto_product = new NostoTaggingProduct();
-		$nosto_product->loadData($this->context, $product);
+		try {
+			$nosto_product->loadData($this->context, $product);
+		} catch (NostoException $e) {
+			Nosto::helper('nosto_tagging/logger')->error(
+				__CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(),
+				$e->getCode()
+			);
+		}
 
 		$params = array('nosto_product' => $nosto_product);
 
@@ -1242,7 +1277,14 @@ class NostoTagging extends Module
 	protected function getOrderTagging(Order $order)
 	{
 		$nosto_order = new NostoTaggingOrder();
-		$nosto_order->loadData($this->context, $order);
+		try {
+			$nosto_order->loadData($this->context, $order);
+		} catch (NostoException $e) {
+			Nosto::helper('nosto_tagging/logger')->error(
+				__CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(),
+				$e->getCode()
+			);
+		}
 
 		$this->smarty->assign(array(
 			'nosto_order' => $nosto_order,

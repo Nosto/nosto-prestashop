@@ -24,9 +24,9 @@
  */
 
 /**
- * Base model for all tagging model classes.
+ * Model for tagging order items.
  */
-abstract class NostoTaggingModel
+class NostoTaggingOrderItem extends NostoTaggingLineItem implements NostoOrderItemInterface
 {
 
 }
