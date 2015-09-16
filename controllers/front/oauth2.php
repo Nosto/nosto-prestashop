@@ -49,7 +49,7 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
 				$meta = new NostoTaggingMetaOauth();
 				$meta->setModuleName($this->module->name);
 				$meta->setModulePath($this->module->getPath());
-				$meta->loadData($context, $id_lang);
+				$meta->loadData($context, $id_lang, $old_account);
 				$service = new NostoServiceAccount();
 				$new_account = $service->sync($meta, $code);
 

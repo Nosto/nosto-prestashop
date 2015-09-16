@@ -150,10 +150,14 @@ class AdminNostoConfigController
 	 */
 	protected function actionConnectAccount()
 	{
+		/** @var NostoTaggingHelperAccount $helper_account */
+		$helper_account = Nosto::helper('nosto_tagging/account');
+		$account = $helper_account->find($this->language['id_lang']);
+
 		$meta = new NostoTaggingMetaOauth();
 		$meta->setModuleName($this->module->name);
 		$meta->setModulePath($this->module->getPath());
-		$meta->loadData($this->context, $this->language['id_lang']);
+		$meta->loadData($this->context, $this->language['id_lang'], $account);
 
 		$client = new NostoOAuthClient($meta);
 		$this->redirect_url = $client->getAuthorizationUrl();
