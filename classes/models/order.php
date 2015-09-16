@@ -170,7 +170,8 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 	 */
 	protected function buildLineItem(array $item, Context $context, Currency $currency)
 	{
-		if (isset($item['product_id'])) {
+		if (isset($item['product_id']))
+		{
 			$id_lang = (int)$context->language->id;
 
 			/** @var Product|ProductCore $product */
@@ -196,32 +197,23 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 			$item['price'] = $item['product_price_wt'];
 		}
 
-		/** @var NostoTaggingHelperCurrency $currency_helper */
-		$currency_helper = Nosto::helper('nosto_tagging/currency');
+		/** @var NostoTaggingHelperCurrency $helper_currency */
+		$helper_currency = Nosto::helper('nosto_tagging/currency');
 
-		$base_currency = $currency_helper->getBaseCurrency($context);
+		$base_currency = $helper_currency->getBaseCurrency($context);
 		$nosto_base_currency = new NostoCurrencyCode($base_currency->iso_code);
 		$nosto_currency = new NostoCurrencyCode($currency->iso_code);
 
 		$nosto_price = NostoPrice::fromString($item['price'], $nosto_currency);
 		if ($currency->iso_code !== $base_currency->iso_code)
 		{
-			$currencyExchange = new NostoCurrencyExchange();
-			$rate = new NostoCurrencyExchangeRate(
-				$nosto_currency,
-				1 / $currency->conversion_rate
-			);
-			$nosto_price = $currencyExchange->convert($nosto_price, $rate);
+			$currency_exchange = new NostoCurrencyExchange();
+			$rate = new NostoCurrencyExchangeRate($nosto_currency, 1 / $currency->conversion_rate);
+			$nosto_price = $currency_exchange->convert($nosto_price, $rate);
 		}
 
 		$line_item = new NostoTaggingOrderItem();
-		$line_item->loadData(
-			$item['id'],
-			$item['name'],
-			$item['quantity'],
-			$nosto_price,
-			$nosto_base_currency
-		);
+		$line_item->loadData($item['id'], $item['name'], $item['quantity'], $nosto_price, $nosto_base_currency);
 
 		return $line_item;
 	}
@@ -365,9 +357,9 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 			LEFT JOIN `'._DB_PREFIX_.'product_attribute_combination` pac ON pac.`id_product_attribute` = pa.`id_product_attribute`
 			LEFT JOIN `'._DB_PREFIX_.'attribute` a ON a.`id_attribute` = pac.`id_attribute`
 			LEFT JOIN `'._DB_PREFIX_.'attribute_group` ag ON ag.`id_attribute_group` = a.`id_attribute_group`
-			LEFT JOIN `'._DB_PREFIX_.'attribute_lang` al ON (a.`id_attribute` = al.`id_attribute` AND al.`id_lang` = '.(int)($id_lang).')
-			LEFT JOIN `'._DB_PREFIX_.'attribute_group_lang` agl ON (ag.`id_attribute_group` = agl.`id_attribute_group` AND agl.`id_lang` = '.(int)($id_lang).')
-			WHERE pa.`id_product` = '.(int)($product->id).'
+			LEFT JOIN `'._DB_PREFIX_.'attribute_lang` al ON (a.`id_attribute` = al.`id_attribute` AND al.`id_lang` = '.(int)$id_lang.')
+			LEFT JOIN `'._DB_PREFIX_.'attribute_group_lang` agl ON (ag.`id_attribute_group` = agl.`id_attribute_group` AND agl.`id_lang` = '.(int)$id_lang.')
+			WHERE pa.`id_product` = '.(int)$product->id.'
 			AND pa.`id_product_attribute` = '.(int)$id_product_attribute.'
 			GROUP BY pa.`id_product_attribute`, ag.`id_attribute_group`
 			ORDER BY pa.`id_product_attribute`'

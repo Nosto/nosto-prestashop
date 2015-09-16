@@ -41,31 +41,14 @@ class NostoTaggingHelperCurrency
 		$id_lang = $context->language->id;
 		$id_shop = $context->shop->id;
 		$id_shop_group = $context->shop->id_shop_group;
-		$base_id_currency = (int)Configuration::get(
-			'PS_CURRENCY_DEFAULT',
-			$id_lang,
-			$id_shop_group,
-			$id_shop
-		);
+		$base_id_currency = (int)Configuration::get('PS_CURRENCY_DEFAULT', $id_lang, $id_shop_group, $id_shop);
 		if ($base_id_currency === 0)
-		{
-			$base_id_currency = (int)Configuration::get(
-				'PS_CURRENCY_DEFAULT',
-				null,
-				$id_shop_group,
-				$id_shop
-			);
-		}
+			$base_id_currency = (int)Configuration::get('PS_CURRENCY_DEFAULT', null, $id_shop_group, $id_shop);
 
 		$base_currency = new Currency($base_id_currency);
 		if (!Validate::isLoadedObject($base_currency))
-			throw new NostoException(
-				sprintf(
-					'Failed to find base currency for shop #%s and lang #%s.',
-					$id_shop,
-					$id_lang
-				)
-			);
+			throw new NostoException(sprintf('Failed to find base currency for shop #%s and lang #%s.', $id_shop,
+					$id_lang));
 
 		return $base_currency;
 	}
@@ -139,11 +122,9 @@ class NostoTaggingHelperCurrency
 				throw new NostoException(sprintf('Unsupported PrestaShop currency format %d.', $currency['format']));
 		}
 
-		return new NostoCurrency(
-			new NostoCurrencyCode($currency['iso_code']),
+		return new NostoCurrency(new NostoCurrencyCode($currency['iso_code']),
 			new NostoCurrencySymbol($currency['sign'], $symbol_position),
-			new NostoCurrencyFormat($group_symbol, $group_length, $decimal_symbol, $precision)
-		);
+			new NostoCurrencyFormat($group_symbol, $group_length, $decimal_symbol, $precision));
 	}
 
 	/**
@@ -158,15 +139,14 @@ class NostoTaggingHelperCurrency
 		$currencies = $this->getCurrencies($context);
 
 		$collection = new NostoCurrencyExchangeRateCollection();
-		foreach ($currencies as $currency) {
+		foreach ($currencies as $currency)
+		{
 			// Skip base currency.
-			if ($currency['iso_code'] === $base_currency->iso_code) {
+			if ($currency['iso_code'] === $base_currency->iso_code)
 				continue;
-			}
-			$collection[] = new NostoCurrencyExchangeRate(
-				new NostoCurrencyCode($currency['iso_code']),
-				$currency['conversion_rate']
-			);
+
+			$collection[] = new NostoCurrencyExchangeRate(new NostoCurrencyCode($currency['iso_code']),
+				$currency['conversion_rate']);
 		}
 		return $collection;
 	}

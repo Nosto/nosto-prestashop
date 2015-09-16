@@ -52,9 +52,14 @@
                             </div>
                         </div>
                     {/if}
-                    <div class="panel-body text-center">
-                        {if $nostotagging_account_authorized}
-                            <div id="nostotagging_installed" style="{if !empty($iframe_url)}display: none;{/if}">
+                    {if $nostotagging_account_authorized}
+                        <div id="nostotagging_view_iframe" class="panel-body text-center nosto-view-iframe" style="{if empty($iframe_url)}display: none;{/if}">
+                            {if !empty($iframe_url)}
+                                <iframe id="nostotagging_iframe" frameborder="0" width="100%" scrolling="no" src="{$iframe_url|escape:'htmlall':'UTF-8'}"></iframe>
+                            {/if}
+                        </div>
+                        <div id="nostotagging_view_settings" class="panel-body text-center" style="{if !empty($iframe_url)}display: none;{/if}">
+                            <div class="row-fluid">
                                 <h2>{$translations.nostotagging_installed_heading|escape:'htmlall':'UTF-8'}</h2>
                                 <p>{$translations.nostotagging_installed_subheading|escape:'htmlall':'UTF-8'}</p>
                                 <div class="panes">
@@ -66,10 +71,56 @@
                                             value="1" class="btn btn-red" name="submit_nostotagging_reset_account">{l s='Remove Nosto' mod='nostotagging'}</button>
                                 </div>
                             </div>
-                            {if !empty($iframe_url)}
-                                <iframe id="nostotagging_iframe" frameborder="0" width="100%" scrolling="no" src="{$iframe_url|escape:'htmlall':'UTF-8'}"></iframe>
-                            {/if}
-                        {else}
+                            <hr>
+                            <div class="row-fluid">
+                                <div class="col-xs-6">
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">{l s='Update account settings' mod='nostotagging'}</div>
+                                        <div class="panel-body">
+                                            <p class="help-block">{l s='Synchronise shop settings with Nosto by clicking the button below. This will send information like currency settings to Nosto.' mod='nostotagging'}</p>
+                                            <div class="form-group">
+                                                <button name="submit_nostotagging_update_account" class="btn btn-blue" type="submit" value="1">
+                                                    {l s='Update account' mod='nostotagging'}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">{l s='Update exchange rates' mod='nostotagging'}</div>
+                                        <div class="panel-body">
+                                            <p class="help-block">{l s='Synchronise currency exchange rates with Nosto by clicking the button below. Note that there is also a cron job available for periodically updating the rates.' mod='nostotagging'}</p>
+                                            <div class="form-group">
+                                                <button name="submit_nostotagging_update_exchange_rates" class="btn btn-blue" type="submit" value="1">
+                                                    {l s='Update exchange rates' mod='nostotagging'}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-6">
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">{l s='Advanced settings' mod='nostotagging'}</div>
+                                        <div class="panel-body">
+                                            <div class="form-group">
+                                                <label for="nostotagging_multi_currency_method">Multi Currency Method</label>
+                                                <select id="nostotagging_multi_currency_method" name="nostotagging_multi_currency_method" class="form-control input-sm">
+                                                    <option value="exchangeRates" {if $nostotagging_multi_currency_method==="exchangeRates"}selected="selected"{/if}>Exchange Rates</option>
+                                                    <option value="productVariations" {if $nostotagging_multi_currency_method==="productVariations"}selected="selected"{/if}>Product Variations</option>
+                                                </select>
+                                                <p class="help-block">{l s='By default Nosto uses the currency exchange rates from the shop to display recommendations in the correct currency. Changing this setting to "Product Variations" allows you to tag all the different prices on the product page. This can be useful when having specialized price rules configured that do not depend on the exchange rates for the currencies.' mod='nostotagging'}</p>
+                                            </div>
+                                        </div>
+                                        <div class="panel-footer">
+                                            <button name="submit_nostotagging_advanced_settings" class="btn btn-default pull-right" type="submit"  value="1">
+                                                <i class="process-icon-save"></i> {l s='Save' mod='nostotagging'}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {else}
+                        <div class="panel-body text-center nosto-view-install">
                             <div class="row-fluid">
                                 <div class="col-md-6 col-md-push-6 right-block">
                                     <div class="content-block">
@@ -115,8 +166,8 @@
                                     </div>
                                 </div>
                             </div>
-                        {/if}
-                    </div>
+                        </div>
+                    {/if}
                 </div>
             </form>
         </div>

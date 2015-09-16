@@ -108,13 +108,13 @@ class NostoTaggingMetaAccount implements NostoAccountMetaInterface
 		if (!Validate::isLoadedObject($context->country))
 			$context->country = new Country((int)Configuration::get('PS_COUNTRY_DEFAULT'));
 
-		/** @var NostoTaggingHelperCurrency $currency_helper */
-		$currency_helper = Nosto::helper('nosto_tagging/currency');
-		/** @var NostoTaggingHelperConfig $config_helper */
-		$config_helper = Nosto::helper('nosto_tagging/config');
+		/** @var NostoTaggingHelperCurrency $helper_currency */
+		$helper_currency = Nosto::helper('nosto_tagging/currency');
+		/** @var NostoTaggingHelperConfig $helper_config */
+		$helper_config = Nosto::helper('nosto_tagging/config');
 
-		$base_currency = $currency_helper->getBaseCurrency($context);
-		$currencies = $currency_helper->getCurrencies($context);
+		$base_currency = $helper_currency->getBaseCurrency($context);
+		$currencies = $helper_currency->getCurrencies($context);
 
 		/** @var Shop|ShopCore $shop */
 		$shop = $context->shop;
@@ -135,13 +135,13 @@ class NostoTaggingMetaAccount implements NostoAccountMetaInterface
 		if (count($currencies) > 0)
 		{
 			foreach ($currencies as $currency)
-				$this->currencies[$currency['iso_code']] = $currency_helper->getNostoCurrency($currency);
+				$this->currencies[$currency['iso_code']] = $helper_currency->getNostoCurrency($currency);
 
 			if (count($currencies) > 1)
 			{
 				$this->price_variation = new NostoPriceVariation($base_currency->iso_code);
-				$this->use_exchange_rates = $config_helper
-					->isMultiCurrencyMethodExchangeRate($shop_lang->id, $shop->id_shop_group, $shop->id);
+				$this->use_exchange_rates = $helper_config->isMultiCurrencyMethodExchangeRate($shop_lang->id,
+					$shop->id_shop_group, $shop->id);
 			}
 		}
 	}

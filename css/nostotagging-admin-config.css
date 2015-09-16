@@ -1,13 +1,16 @@
 /* Nosto overrides */
 
 #content.bootstrap .nostotagging .panel {
-    padding: 0;
+    padding: 0 !important;
     font-family: inherit;
 }
 
 #content.bootstrap .nostotagging .panel-install {
-    padding: 0;
     margin-bottom: 42px;
+}
+
+#content.bootstrap .nostotagging .panel-install .panel-body {
+    padding: 2em 2em;
 }
 
 #content.bootstrap .nostotagging .panel-heading {
@@ -27,7 +30,6 @@
 
 .tw-bs .nostotagging label {
     padding: 0;
-    margin: 0;
     width: auto;
     text-align: left;
     float: none;
@@ -46,8 +48,6 @@
 .tw-bs .nostotagging .form-control,
 .tw-bs .nostotagging input[type="text"],
 .tw-bs .nostotagging select {
-    font-size: 1rem;
-    height: 3.25rem;
     display: block;
     width: 100%;
     padding: 4px 8px;
@@ -61,6 +61,11 @@
     -webkit-transition: border-color ease-in-out 0.15s,box-shadow ease-in-out 0.15s;
     -o-transition: border-color ease-in-out 0.15s,box-shadow ease-in-out 0.15s;
     transition: border-color ease-in-out 0.15s,box-shadow ease-in-out 0.15s;
+}
+
+.tw-bs .nostotagging input[type="text"] {
+    font-size: 1rem;
+    height: 3.25rem;
 }
 
 .tw-bs .nostotagging .panel-default > .panel-heading {
@@ -103,8 +108,14 @@
     clear: both;
 }
 
-.tw-bs .nostotagging .panel-body {
+.tw-bs .nostotagging .panel-body.nosto-view-iframe,
+.tw-bs .nostotagging .panel-body.nosto-view-install {
     padding: 0;
+}
+
+.tw-bs .nostotagging .panel-footer {
+    height: 78px;
+    margin: auto;
 }
 
 .tw-bs .nostotagging .panes {
@@ -188,7 +199,6 @@
 }
 
 .tw-bs .login-block {
-    padding: 2em 2em;
     margin: 0 auto;
     text-align: center;
     background-color: #fff;

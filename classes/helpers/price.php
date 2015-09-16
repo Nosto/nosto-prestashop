@@ -75,25 +75,11 @@ class NostoTaggingHelperPrice
 		$id_customer = (int)$context->cookie->id_customer;
 		$incl_tax = (bool)!Product::getTaxCalculationMethod($id_customer);
 		$specific_price_output = null;
-		$value = Product::getPriceStatic(
-			(int)$product->id,
-			$incl_tax,
-			null, // $id_product_attribute
-			6, // $decimals
-			null, // $divisor
-			false, // $only_reduction
-			$discounted_price, // $user_reduction
-			1, // $quantity
-			false, // $force_associated_tax
-			null, // $id_customer
-			null, // $id_cart
-			null, // $id_address
-			$specific_price_output, // $specific_price_output
-			true, // $with_eco_tax
-			true, // $use_group_reduction
-			$context,
-			true // $use_customer_price
-		);
+		$value = Product::getPriceStatic((int)$product->id, $incl_tax, null, /* $id_product_attribute */ 6,
+			/* $decimals */ null, /* $divisor */ false, /* $only_reduction */ $discounted_price, /* $user_reduction */
+			1, /* $quantity */ false, /* $force_associated_tax */ null, /* $id_customer */ null, /* $id_cart */
+			null, /* $id_address */ $specific_price_output, /* $specific_price_output */
+			true, /* $with_eco_tax */ true, /* $use_group_reduction */ $context, true /* $use_customer_price */);
 
 		// If currency was replaced in context, restore the old one.
 		if (isset($old_currency))

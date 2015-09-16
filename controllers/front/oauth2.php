@@ -62,7 +62,7 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
 					throw new NostoException('Failed to save account.');
 
 				$account_helper->updateAccount($new_account, $context, $id_lang);
-				$account_helper->updateCurrencyExchangeRates($new_account, $context, $id_lang);
+				$account_helper->updateCurrencyExchangeRates($new_account, $context);
 
 				$msg = $this->module->l('Account %s successfully connected to Nosto.', 'oauth2');
 				$this->redirectToModuleAdmin(array(
@@ -72,10 +72,9 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
 			}
 			catch (NostoException $e)
 			{
-				Nosto::helper('nosto_tagging/logger')->error(
-					__CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(),
-					$e->getCode()
-				);
+				/** @var NostoTaggingHelperLogger $logger */
+				$logger = Nosto::helper('nosto_tagging/logger');
+				$logger->error(__CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(), $e->getCode());
 
 				$msg = $this->module->l('Account could not be connected to Nosto. Please contact Nosto support.', 'oauth2');
 				$this->redirectToModuleAdmin(array(
@@ -91,10 +90,11 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
 				$message_parts[] = $error_reason;
 			if (($error_description = Tools::getValue('error_description')) !== false)
 				$message_parts[] = urldecode($error_description);
-			Nosto::helper('nosto_tagging/logger')->error(
-				__CLASS__.'::'.__FUNCTION__.' - '.implode(' - ', $message_parts),
-				200
-			);
+
+			/** @var NostoTaggingHelperLogger $logger */
+			$logger = Nosto::helper('nosto_tagging/logger');
+			$logger->error(__CLASS__.'::'.__FUNCTION__.' - '.implode(' - ', $message_parts), 200);
+
 			// Prefer to show the error description sent from Nosto to the user when something is wrong.
 			// These messages are localized to users current back office language.
 			if (!empty($error_description))

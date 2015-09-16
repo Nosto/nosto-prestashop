@@ -46,7 +46,7 @@ class NostoTaggingProductVariation extends NostoTaggingModel implements NostoPro
 	/**
 	 * @var NostoPrice the list price of the variation without discounts but incl taxes.
 	 */
-	protected $listPrice;
+	protected $list_price;
 
 	/**
 	 * @var NostoProductAvailability the availability of the price variation, i.e. if it is in stock or not.
@@ -63,10 +63,13 @@ class NostoTaggingProductVariation extends NostoTaggingModel implements NostoPro
 	 */
 	public function loadData(Product $product, Context $context, Currency $currency, NostoProductAvailability $availability)
 	{
+		/** @var NostoTaggingHelperPrice $helper_price */
+		$helper_price = Nosto::helper('nosto_tagging/price');
+
 		$this->id = new NostoPriceVariation($currency->iso_code);
 		$this->currency = new NostoCurrencyCode($currency->iso_code);
-		$this->price = $this->getPriceHelper()->getProductPriceInclTax($product, $context, $currency);
-		$this->listPrice = $this->getPriceHelper()->getProductListPriceInclTax($product, $context, $currency);
+		$this->price = $helper_price->getProductPriceInclTax($product, $context, $currency);
+		$this->list_price = $helper_price->getProductListPriceInclTax($product, $context, $currency);
 		$this->availability = $availability;
 	}
 
@@ -107,7 +110,7 @@ class NostoTaggingProductVariation extends NostoTaggingModel implements NostoPro
 	 */
 	public function getListPrice()
 	{
-		return $this->listPrice;
+		return $this->list_price;
 	}
 
 	/**

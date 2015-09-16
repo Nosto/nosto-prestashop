@@ -267,6 +267,19 @@ class NostoTaggingHelperConfig
 	}
 
 	/**
+	 * Returns the multi currency method in use for the context.
+	 *
+	 * @param int $id_lang the language.
+	 * @param null|int $id_shop_group the shop group (defaults to current context).
+	 * @param null|int $id_shop the shop (defaults to current context).
+	 * @return string the multi currency method.
+	 */
+	public function getMultiCurrencyMethod($id_lang, $id_shop_group = null, $id_shop = null)
+	{
+		return $this->read(self::MULTI_CURRENCY_METHOD, $id_lang, $id_shop_group, $id_shop);
+	}
+
+	/**
 	 * Checks the the product price variations are to be used.
 	 *
 	 * @param int $id_lang the language.
@@ -276,7 +289,7 @@ class NostoTaggingHelperConfig
 	 */
 	public function isMultiCurrencyMethodPriceVariation($id_lang, $id_shop_group = null, $id_shop = null)
 	{
-		$method = $this->read(self::MULTI_CURRENCY_METHOD, $id_lang, $id_shop_group, $id_shop);
+		$method = $this->getMultiCurrencyMethod($id_lang, $id_shop_group, $id_shop);
 		return ($method === self::MULTI_CURRENCY_METHOD_VARIATION);
 	}
 
@@ -290,8 +303,20 @@ class NostoTaggingHelperConfig
 	 */
 	public function isMultiCurrencyMethodExchangeRate($id_lang, $id_shop_group = null, $id_shop = null)
 	{
-		$method = $this->read(self::MULTI_CURRENCY_METHOD, $id_lang, $id_shop_group, $id_shop);
+		$method = $this->getMultiCurrencyMethod($id_lang, $id_shop_group, $id_shop);
 		return ($method === self::MULTI_CURRENCY_METHOD_EXCHANGE_RATE);
+	}
+
+	/**
+	 * Saves the multi currency method to the config for given language.
+	 *
+	 * @param string $method the multi currency method.
+	 * @param int $id_lang the language to save the method for.
+	 * @return bool true if saved correctly, false otherwise.
+	 */
+	public function saveMultiCurrencyMethod($method, $id_lang)
+	{
+		return $this->write(self::MULTI_CURRENCY_METHOD, $method, $id_lang);
 	}
 
 	/**

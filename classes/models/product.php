@@ -130,24 +130,24 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 		/** @var Shop|ShopCore $shop */
 		$shop = $context->shop;
 
-		/** @var NostoTaggingHelperCurrency $currency_helper */
-		$currency_helper = Nosto::helper('nosto_tagging/currency');
-		/** @var NostoTaggingHelperPrice $price_helper */
-		$price_helper = Nosto::helper('nosto_tagging/price');
-		/** @var NostoTaggingHelperUrl $url_helper */
-		$url_helper = Nosto::helper('nosto_tagging/url');
-		/** @var NostoTaggingHelperConfig $config_helper */
-		$config_helper = Nosto::helper('nosto_tagging/config');
+		/** @var NostoTaggingHelperCurrency $helper_currency */
+		$helper_currency = Nosto::helper('nosto_tagging/currency');
+		/** @var NostoTaggingHelperPrice $helper_price */
+		$helper_price = Nosto::helper('nosto_tagging/price');
+		/** @var NostoTaggingHelperUrl $helper_url */
+		$helper_url = Nosto::helper('nosto_tagging/url');
+		/** @var NostoTaggingHelperConfig $helper_config */
+		$helper_config = Nosto::helper('nosto_tagging/config');
 
-		$base_currency = $currency_helper->getBaseCurrency($context);
-		$currencies = $currency_helper->getCurrencies($context);
+		$base_currency = $helper_currency->getBaseCurrency($context);
+		$currencies = $helper_currency->getCurrencies($context);
 
-		$this->url = $url_helper->getProductUrl($product, $lang->id, $shop->id);
-		$this->image_url = $url_helper->getProductImageUrl($product);
+		$this->url = $helper_url->getProductUrl($product, $lang->id, $shop->id);
+		$this->image_url = $helper_url->getProductImageUrl($product);
 		$this->product_id = (int)$product->id;
 		$this->name = $product->name;
-		$this->price = $price_helper->getProductPriceInclTax($product, $context, $base_currency);
-		$this->list_price = $price_helper->getProductListPriceInclTax($product, $context, $base_currency);
+		$this->price = $helper_price->getProductPriceInclTax($product, $context, $base_currency);
+		$this->list_price = $helper_price->getProductListPriceInclTax($product, $context, $base_currency);
 		$this->currency_code = new NostoCurrencyCode($base_currency->iso_code);
 		$this->availability = $this->checkAvailability($product);
 		$this->tags = $this->buildTags($product, $lang->id);
@@ -160,15 +160,8 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 		if (count($currencies) > 1)
 		{
 			$this->price_variation = new NostoPriceVariation($base_currency->iso_code);
-			if ($config_helper->isMultiCurrencyMethodPriceVariation($lang->id, $shop->id_shop_group, $shop->id))
-			{
-				$this->price_variations = $this->buildPriceVariations(
-					$product,
-					$context,
-					$base_currency,
-					$currencies
-				);
-			}
+			if ($helper_config->isMultiCurrencyMethodPriceVariation($lang->id, $shop->id_shop_group, $shop->id))
+				$this->price_variations = $this->buildPriceVariations($product, $context, $base_currency, $currencies);
 		}
 	}
 
@@ -423,12 +416,10 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	public function getFullDescription()
 	{
 		$descriptions = array();
-		if (!empty($this->short_description)) {
+		if (!empty($this->short_description))
 			$descriptions[] = $this->short_description;
-		}
-		if (!empty($this->description)) {
+		if (!empty($this->description))
 			$descriptions[] = $this->description;
-		}
 		return implode(' ', $descriptions);
 	}
 

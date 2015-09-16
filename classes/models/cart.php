@@ -75,8 +75,7 @@ class NostoTaggingCart extends NostoTaggingModel
 					foreach ($products as $key => &$product)
 						if (empty($product['gift'])
 							&& (int)$product['id_product'] === (int)$cart_rule['gift_product']
-							&& (int)$product['id_product_attribute'] === (int)$cart_rule['gift_product_attribute']
-						)
+							&& (int)$product['id_product_attribute'] === (int)$cart_rule['gift_product_attribute'])
 						{
 							$product['cart_quantity'] = (int)$product['cart_quantity'];
 							$product['cart_quantity']--;
@@ -111,10 +110,10 @@ class NostoTaggingCart extends NostoTaggingModel
 	 */
 	protected function buildLineItem(array $item, Currency $currency)
 	{
-		/** @var NostoTaggingHelperCurrency $currency_helper */
-		$currency_helper = Nosto::helper('nosto_tagging/currency');
+		/** @var NostoTaggingHelperCurrency $helper_currency */
+		$helper_currency = Nosto::helper('nosto_tagging/currency');
 
-		$base_currency = $currency_helper->getBaseCurrency(Context::getContext());
+		$base_currency = $helper_currency->getBaseCurrency(Context::getContext());
 		$nosto_base_currency = new NostoCurrencyCode($base_currency->iso_code);
 		$nosto_currency = new NostoCurrencyCode($currency->iso_code);
 
@@ -125,22 +124,13 @@ class NostoTaggingCart extends NostoTaggingModel
 		$nosto_price = NostoPrice::fromString($item['price_wt'], $nosto_currency);
 		if ($currency->iso_code !== $base_currency->iso_code)
 		{
-			$currencyExchange = new NostoCurrencyExchange();
-			$rate = new NostoCurrencyExchangeRate(
-				$nosto_currency,
-				1 / $currency->conversion_rate
-			);
-			$nosto_price = $currencyExchange->convert($nosto_price, $rate);
+			$currency_exchange = new NostoCurrencyExchange();
+			$rate = new NostoCurrencyExchangeRate($nosto_currency, 1 / $currency->conversion_rate);
+			$nosto_price = $currency_exchange->convert($nosto_price, $rate);
 		}
 
 		$line_item = new NostoTaggingCartItem();
-		$line_item->loadData(
-			$item['id_product'],
-			$name,
-			$item['cart_quantity'],
-			$nosto_price,
-			$nosto_base_currency
-		);
+		$line_item->loadData($item['id_product'], $name, $item['cart_quantity'], $nosto_price, $nosto_base_currency);
 
 		return $line_item;
 	}

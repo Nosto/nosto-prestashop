@@ -69,12 +69,10 @@ class NostoTaggingHelperProductService
 			}
 			catch (NostoException $e)
 			{
-				Nosto::helper('nosto_tagging/logger')->error(
-					__CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(),
-					$e->getCode(),
-					get_class($product),
-					(int)$product->id
-				);
+				/** @var NostoTaggingHelperLogger $logger */
+				$logger = Nosto::helper('nosto_tagging/logger');
+				$logger->error(__CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(), $e->getCode(), get_class($product),
+					(int)$product->id);
 			}
 		}
 	}
@@ -106,12 +104,10 @@ class NostoTaggingHelperProductService
 			}
 			catch (NostoException $e)
 			{
-				Nosto::helper('nosto_tagging/logger')->error(
-					__CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(),
-					$e->getCode(),
-					get_class($product),
-					(int)$product->id
-				);
+				/** @var NostoTaggingHelperLogger $logger */
+				$logger = Nosto::helper('nosto_tagging/logger');
+				$logger->error(__CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(), $e->getCode(), get_class($product),
+					(int)$product->id);
 			}
 		}
 	}
@@ -142,12 +138,10 @@ class NostoTaggingHelperProductService
 			}
 			catch (NostoException $e)
 			{
-				Nosto::helper('nosto_tagging/logger')->error(
-					__CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(),
-					$e->getCode(),
-					get_class($product),
-					(int)$product->id
-				);
+				/** @var NostoTaggingHelperLogger $logger */
+				$logger = Nosto::helper('nosto_tagging/logger');
+				$logger->error(__CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(), $e->getCode(), get_class($product),
+					(int)$product->id);
 			}
 		}
 	}

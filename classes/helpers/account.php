@@ -73,10 +73,9 @@ class NostoTaggingHelperAccount
 				}
 				catch (NostoException $e)
 				{
-					Nosto::helper('nosto_tagging/logger')->error(
-						__CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(),
-						$e->getCode()
-					);
+					/** @var NostoTaggingHelperLogger $logger */
+					$logger = Nosto::helper('nosto_tagging/logger');
+					$logger->error(__CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(), $e->getCode());
 				}
 		}
 		return $success;
@@ -174,10 +173,9 @@ class NostoTaggingHelperAccount
 		}
 		catch (NostoException $e)
 		{
-			Nosto::helper('nosto_tagging/logger')->error(
-				__CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(),
-				$e->getCode()
-			);
+			/** @var NostoTaggingHelperLogger $logger */
+			$logger = Nosto::helper('nosto_tagging/logger');
+			$logger->error(__CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(), $e->getCode());
 		}
 
 		return false;
@@ -186,26 +184,14 @@ class NostoTaggingHelperAccount
 	/**
 	 * Sends a currency exchange rate update request to Nosto via the API.
 	 *
-	 * Checks if multi currency is enabled for the context before attempting to
-	 * send the exchange rates.
-	 *
 	 * @param NostoAccount $account
 	 * @param Context|ContextCore $context
-	 * @param int $id_lang
 	 * @return bool
 	 */
-	public function updateCurrencyExchangeRates(NostoAccount $account, Context $context, $id_lang)
+	public function updateCurrencyExchangeRates(NostoAccount $account, Context $context)
 	{
-		/** @var NostoTaggingHelperConfig $config_helper */
-		$config_helper = Nosto::helper('nosto_tagging/config');
 		/** @var NostoTaggingHelperCurrency $currency_helper */
 		$currency_helper = Nosto::helper('nosto_tagging/currency');
-
-		$id_shop_group = (int)$context->shop->id_shop_group;
-		$id_shop = (int)$context->shop->id;
-
-		if (!$config_helper->isMultiCurrencyMethodExchangeRate($id_lang, $id_shop_group, $id_shop))
-			return false;
 
 		try
 		{
@@ -215,10 +201,9 @@ class NostoTaggingHelperAccount
 		}
 		catch (NostoException $e)
 		{
-			Nosto::helper('nosto_tagging/logger')->error(
-				__CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(),
-				$e->getCode()
-			);
+			/** @var NostoTaggingHelperLogger $logger */
+			$logger = Nosto::helper('nosto_tagging/logger');
+			$logger->error(__CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(), $e->getCode());
 		}
 
 		return false;
