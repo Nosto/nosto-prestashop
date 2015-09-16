@@ -68,8 +68,12 @@ class NostoTaggingHelperPrice
 		// If the requested currency is not the one in the context, then set it.
 		if ($currency->iso_code !== $context->currency->iso_code)
 		{
+			/** @var Currency|CurrencyCore $old_currency */
 			$old_currency = $context->currency;
 			$context->currency = $currency;
+			// PS 1.4 has the currency stored in the cookie.
+			if (isset($context->cookie, $context->cookie->id_currency))
+				$context->cookie->id_currency = $currency->id;
 		}
 
 		$id_customer = (int)$context->cookie->id_customer;
@@ -83,7 +87,12 @@ class NostoTaggingHelperPrice
 
 		// If currency was replaced in context, restore the old one.
 		if (isset($old_currency))
+		{
 			$context->currency = $old_currency;
+			// PS 1.4 has the currency stored in the cookie.
+			if (isset($context->cookie, $context->cookie->id_currency))
+				$context->cookie->id_currency = $old_currency->id;
+		}
 
 		return new NostoPrice($value);
 	}
