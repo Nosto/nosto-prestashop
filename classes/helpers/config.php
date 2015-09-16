@@ -276,7 +276,8 @@ class NostoTaggingHelperConfig
 	 */
 	public function getMultiCurrencyMethod($id_lang, $id_shop_group = null, $id_shop = null)
 	{
-		return $this->read(self::MULTI_CURRENCY_METHOD, $id_lang, $id_shop_group, $id_shop);
+		$method = $this->read(self::MULTI_CURRENCY_METHOD, $id_lang, $id_shop_group, $id_shop);
+		return !empty($method) ? $method : self::MULTI_CURRENCY_METHOD_EXCHANGE_RATE;
 	}
 
 	/**
