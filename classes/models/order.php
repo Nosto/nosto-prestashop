@@ -79,6 +79,9 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 		if (!Validate::isLoadedObject($currency))
 			return;
 
+		// Set the currencies conversion rate to what it was when the order was made.
+		$currency->conversion_rate = $order->conversion_rate;
+
 		$customer = new Customer((int)$order->id_customer);
 		// The order reference was introduced in prestashop 1.5 where orders can be split into multiple ones.
 		$this->order_number = isset($order->reference) ? (string)$order->reference : $order->id;
