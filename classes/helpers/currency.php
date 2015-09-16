@@ -65,13 +65,7 @@ class NostoTaggingHelperCurrency
 		if (_PS_VERSION_ >= '1.5')
 			return Currency::getCurrenciesByIdShop($id_shop);
 		else
-			return Db::getInstance()->executeS('
-				SELECT *
-				FROM `'._DB_PREFIX_.'currency` c
-				LEFT JOIN `'._DB_PREFIX_.'currency_shop` cs ON (cs.`id_currency` = c.`id_currency`)
-				WHERE cs.`id_shop` = '.$id_shop.'
-				ORDER BY `name` ASC'
-			);
+			return Currency::getCurrencies();
 	}
 
 	/**
