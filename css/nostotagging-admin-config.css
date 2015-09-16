@@ -8,11 +8,6 @@
 #content.bootstrap .nostotagging .panel-install {
     margin-bottom: 42px;
 }
-
-#content.bootstrap .nostotagging .panel-install .panel-body {
-    padding: 2em 2em;
-}
-
 #content.bootstrap .nostotagging .panel-heading {
     margin: 0;
     font-size: .8rem;
@@ -116,6 +111,14 @@
 .tw-bs .nostotagging .panel-footer {
     height: 78px;
     margin: auto;
+}
+
+.tw-bs .nostotagging .panel.panel-install {
+    margin-bottom: 42px;
+}
+
+.tw-bs .nostotagging .panel.panel-install .panel-body {
+    padding: 2em 2em;
 }
 
 .tw-bs .nostotagging .panes {
