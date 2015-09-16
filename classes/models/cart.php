@@ -34,29 +34,31 @@ class NostoTaggingCart extends NostoTaggingModel
 	public $line_items = array();
 
 	/**
-	 * Loads the cart data from supplied cart object.
+	 * Sets up this DTO.
 	 *
-	 * @param Cart|CartCore $cart the cart object.
+	 * @param Cart|CartCore $cart the PS cart model.
+	 * @param Context|null the PS context model.
 	 */
-	public function loadData(Cart $cart)
+	public function loadData(Cart $cart, Context $context = null)
 	{
 		if (!Validate::isLoadedObject($cart) || $cart->getProducts() === array())
 			return;
 
-		/** @var Currency|CurrencyCore $currency */
-		$currency = new Currency($cart->id_currency);
-		if (!Validate::isLoadedObject($currency))
-			return;
+		if (is_null($context))
+			$context = Context::getContext();
 
-		foreach ($this->fetchCartItems($cart) as $item)
-			$this->line_items[] = $this->buildLineItem($item, $currency);
+		/** @var CurrencyCore $currency */
+		$currency = new Currency($cart->id_currency);
+		if (Validate::isLoadedObject($currency))
+			foreach ($this->fetchCartItems($cart) as $item)
+				$this->line_items[] = $this->buildLineItem($item, $currency, $context);
 	}
 
 	/**
 	 * Returns all the items currency in the shopping cart.
 	 * For PS 1.5 and above, gift products are also included.
 	 *
-	 * @param Cart|CartCore $cart the cart.
+	 * @param Cart|CartCore $cart the PS cart model.
 	 * @return array the items.
 	 */
 	protected function fetchCartItems(Cart $cart)
@@ -106,14 +108,15 @@ class NostoTaggingCart extends NostoTaggingModel
 	 *
 	 * @param array $item the item data.
 	 * @param Currency|CurrencyCore $currency the currency the item price is in.
+	 * @param Context $context the PS context model.
 	 * @return NostoTaggingCartItem the Nosto line item.
 	 */
-	protected function buildLineItem(array $item, Currency $currency)
+	protected function buildLineItem(array $item, Currency $currency, Context $context)
 	{
 		/** @var NostoTaggingHelperCurrency $helper_currency */
 		$helper_currency = Nosto::helper('nosto_tagging/currency');
 
-		$base_currency = $helper_currency->getBaseCurrency(Context::getContext());
+		$base_currency = $helper_currency->getBaseCurrency($context);
 		$nosto_base_currency = new NostoCurrencyCode($base_currency->iso_code);
 		$nosto_currency = new NostoCurrencyCode($currency->iso_code);
 
@@ -129,8 +132,8 @@ class NostoTaggingCart extends NostoTaggingModel
 			$nosto_price = $currency_exchange->convert($nosto_price, $rate);
 		}
 
-		$line_item = new NostoTaggingCartItem();
-		$line_item->loadData($item['id_product'], $name, $item['cart_quantity'], $nosto_price, $nosto_base_currency);
+		$line_item = new NostoTaggingCartItem($item['id_product'], $name, $item['cart_quantity'], $nosto_price,
+			$nosto_base_currency);
 
 		return $line_item;
 	}

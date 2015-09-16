@@ -54,7 +54,9 @@ abstract class NostoTaggingLineItem extends NostoTaggingModel
 	protected $currency;
 
 	/**
-	 * Loads the item data.
+	 * Constructor.
+	 *
+	 * Sets the value object data.
 	 *
 	 * @param int $id the items ID.
 	 * @param string $name the item name.
@@ -62,7 +64,7 @@ abstract class NostoTaggingLineItem extends NostoTaggingModel
 	 * @param NostoPrice $price the item unit price.
 	 * @param NostoCurrencyCode $currency the item currency.
 	 */
-	public function loadData($id, $name, $quantity, NostoPrice $price, NostoCurrencyCode $currency)
+	public function __construct($id, $name, $quantity, NostoPrice $price, NostoCurrencyCode $currency)
 	{
 		$this->product_id = (int)$id;
 		$this->name = (string)$name;

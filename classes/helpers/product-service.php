@@ -45,7 +45,7 @@ class NostoTaggingHelperProductService
 	/**
 	 * Sends a product create API request to Nosto.
 	 *
-	 * @param Product $product the product that has been created.
+	 * @param Product|ProductCore $product the product that has been created.
 	 */
 	public function create(Product $product)
 	{
@@ -80,7 +80,7 @@ class NostoTaggingHelperProductService
 	/**
 	 * Sends a product update API request to Nosto.
 	 *
-	 * @param Product $product the product that has been updated.
+	 * @param Product|ProductCore $product the product that has been updated.
 	 */
 	public function update(Product $product)
 	{
@@ -115,7 +115,7 @@ class NostoTaggingHelperProductService
 	/**
 	 * Sends a product delete API request to Nosto.
 	 *
-	 * @param Product $product the product that has been deleted.
+	 * @param Product|ProductCore $product the product that has been deleted.
 	 */
 	public function delete(Product $product)
 	{
@@ -127,11 +127,10 @@ class NostoTaggingHelperProductService
 		{
 			list($account) = $data;
 
-			$nosto_product = new NostoTaggingProduct();
-			$nosto_product->assignId($product);
-
 			try
 			{
+				$nosto_product = new NostoTaggingProduct();
+				$nosto_product->setProductId((int)$product->id);
 				$service = new NostoServiceProduct($account);
 				$service->addProduct($nosto_product);
 				$service->delete();
@@ -226,9 +225,13 @@ class NostoTaggingHelperProductService
 
 		try {
 			$nosto_product = new NostoTaggingProduct();
-			$nosto_product->loadData($this->makeContext($id_lang, $id_shop), $product);
+			$nosto_product->loadData($product, $this->makeContext($id_lang, $id_shop));
 		} catch (NostoException $e) {
 			$nosto_product = null;
+			/** @var NostoTaggingHelperLogger $logger */
+			$logger = Nosto::helper('nosto_tagging/logger');
+			$logger->error(__CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(), $e->getCode(), get_class($product),
+				(int)$product->id);
 		}
 
 		$this->restoreContextSnapshot();

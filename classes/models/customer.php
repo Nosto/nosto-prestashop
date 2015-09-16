@@ -44,14 +44,14 @@ class NostoTaggingCustomer extends NostoTaggingModel
 	public $email;
 
 	/**
-	 * Loads the customer data from supplied context and customer objects.
+	 * Sets up this DTO.
 	 *
-	 * @param Context $context the context object.
-	 * @param Customer $customer the customer object.
+	 * @param Customer|CustomerCore $customer the PS customer model.
+	 * @param Context $context the PS context model.
 	 */
-	public function loadData(Context $context, Customer $customer)
+	public function loadData(Customer $customer, Context $context = null)
 	{
-		if (!$this->isCustomerLoggedIn($context, $customer))
+		if (!self::isLoggedIn($customer, $context))
 			return;
 
 		$this->first_name = $customer->firstname;
@@ -63,14 +63,17 @@ class NostoTaggingCustomer extends NostoTaggingModel
 	 * Check if the customer is logged in or not.
 	 * We need to check the cookie if PS version is 1.4 as the CustomerBackwardModule::isLogged() method does not work.
 	 *
-	 * @param Context $context the context object.
-	 * @param Customer $customer the customer object to check.
+	 * @param Customer|CustomerCore $customer the PS customer model.
+	 * @param Context|null $context the PS context model.
 	 * @return bool true if the customer is logged in, false otherwise.
 	 */
-	public function isCustomerLoggedIn(Context $context, Customer $customer)
+	public static function isLoggedIn(Customer $customer, Context $context = null)
 	{
 		if (!Validate::isLoadedObject($customer))
 			return false;
+
+		if (is_null($context))
+			$context = Context::getContext();
 
 		if (_PS_VERSION_ >= '1.5')
 			return $customer->isLogged();

@@ -44,11 +44,13 @@ class NostoTaggingOrderBuyer implements NostoOrderBuyerInterface
 	protected $email;
 
 	/**
-	 * Loads the buyer data from the customer object.
+	 * Constructor.
 	 *
-	 * @param Customer $customer the customer object.
+	 * Sets the value objects data from the PS customer model.
+	 *
+	 * @param Customer|CustomerCore $customer the PS customer model.
 	 */
-	public function loadData(Customer $customer)
+	public function __construct(Customer $customer)
 	{
 		$this->first_name = $customer->firstname;
 		$this->last_name = $customer->lastname;

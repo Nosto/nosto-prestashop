@@ -64,33 +64,32 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 	protected $order_status;
 
 	/**
-	 * Loads the order data from supplied context and order objects.
+	 * Sets up this DTO.
 	 *
-	 * @param Context $context the context object.
-	 * @param Order|OrderCore $order the order object.
+	 * @param Order|OrderCore $order the PS order model.
+	 * @param Context|null $context the PS context model.
 	 */
-	public function loadData(Context $context, Order $order)
+	public function loadData(Order $order, Context $context = null)
 	{
 		if (!Validate::isLoadedObject($order))
 			return;
 
+		if (is_null($context))
+			$context = Context::getContext();
+
 		/** @var Currency|CurrencyCore $currency */
 		$currency = new Currency($order->id_currency);
-		if (!Validate::isLoadedObject($currency))
-			return;
-
 		// Set the currencies conversion rate to what it was when the order was made.
 		$currency->conversion_rate = $order->conversion_rate;
 
 		$customer = new Customer((int)$order->id_customer);
 		// The order reference was introduced in prestashop 1.5 where orders can be split into multiple ones.
 		$this->order_number = isset($order->reference) ? (string)$order->reference : $order->id;
-		$this->buyer_info = new NostoTaggingOrderBuyer();
-		$this->buyer_info->loadData($customer);
+		$this->buyer_info = new NostoTaggingOrderBuyer($customer);
 		$this->created_date = new NostoDate(strtotime($order->date_add));
 
 		foreach ($this->fetchOrderItems($order) as $item)
-			if (($line_item = $this->buildLineItem($item, $context, $currency)) !== false)
+			if (($line_item = $this->buildLineItem($item, $currency, $context)) !== false)
 				$this->purchased_items[] = $line_item;
 
 		$payment_module = Module::getInstanceByName($order->module);
@@ -99,8 +98,7 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 		else
 			$this->payment_provider = $order->module.' [unknown]';
 
-		$this->order_status = new NostoTaggingOrderStatus();
-		$this->order_status->loadData($order);
+		$this->order_status = new NostoTaggingOrderStatus($order);
 	}
 
 	/**
@@ -167,11 +165,11 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 	 * Turns an order item into a NostoTaggingOrderItem object.
 	 *
 	 * @param array $item the item data.
-	 * @param Context $context the context.
 	 * @param Currency|CurrencyCore $currency the currency.
+	 * @param Context|null $context the PS context model.
 	 * @return NostoTaggingOrderItem the line item.
 	 */
-	protected function buildLineItem(array $item, Context $context, Currency $currency)
+	protected function buildLineItem(array $item, Currency $currency, Context $context = null)
 	{
 		if (isset($item['product_id']))
 		{
@@ -215,8 +213,8 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 			$nosto_price = $currency_exchange->convert($nosto_price, $rate);
 		}
 
-		$line_item = new NostoTaggingOrderItem();
-		$line_item->loadData($item['id'], $item['name'], $item['quantity'], $nosto_price, $nosto_base_currency);
+		$line_item = new NostoTaggingOrderItem($item['id'], $item['name'], $item['quantity'], $nosto_price,
+			$nosto_base_currency);
 
 		return $line_item;
 	}
@@ -226,7 +224,7 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 	 *
 	 * Abstracts the difference between PS versions.
 	 *
-	 * @param Order|OrderCore $order the order.
+	 * @param Order|OrderCore $order the PS order model.
 	 * @return array the items.
 	 */
 	protected function fetchOrderItems(Order $order)

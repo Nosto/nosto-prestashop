@@ -34,9 +34,9 @@ class NostoTaggingBrand extends NostoTaggingModel
 	public $brand_string;
 
 	/**
-	 * Loads the brand data from supplied manufacturer object.
+	 * Sets up this DTO.
 	 *
-	 * @param Manufacturer $manufacturer the manufacturer object.
+	 * @param Manufacturer|ManufacturerCore $manufacturer the PS manufacturer model.
 	 */
 	public function loadData(Manufacturer $manufacturer)
 	{

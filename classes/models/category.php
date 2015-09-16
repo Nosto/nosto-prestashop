@@ -34,17 +34,22 @@ class NostoTaggingCategory extends NostoTaggingModel
 	public $category_string;
 
 	/**
-	 * Loads the category data from supplied context and category objects.
+	 * Sets up this DTO.
 	 *
-	 * @param Context $context the context object.
-	 * @param Category $category the category object.
+	 * @param Category|CategoryCore $category the PS category model.
+	 * @param Context|null $context the PS context model.
 	 */
-	public function loadData(Context $context, Category $category)
+	public function loadData(Category $category, Context $context = null)
 	{
 		if (!Validate::isLoadedObject($category))
 			return;
 
-		$this->category_string = self::buildCategoryString($category->id, $context->language->id);
+		if (is_null($context))
+			$context = Context::getContext();
+
+		/** @var LanguageCore $language */
+		$language = $context->language;
+		$this->category_string = self::buildCategoryString($category->id, $language->id);
 	}
 
 	/**
@@ -58,6 +63,7 @@ class NostoTaggingCategory extends NostoTaggingModel
 	{
 		$category_list = array();
 
+		/** @var CategoryCore $category */
 		$category = new Category((int)$id_category, $id_lang);
 
 		if (Validate::isLoadedObject($category) && (int)$category->active === 1)

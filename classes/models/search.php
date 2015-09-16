@@ -34,11 +34,11 @@ class NostoTaggingSearch extends NostoTaggingModel
 	protected $search_term;
 
 	/**
-	 * Setter for the search term.
+	 * Sets up this DTO.
 	 *
-	 * @param string $search_term the term.
+	 * @param string $search_term the search term.
 	 */
-	public function setSearchTerm($search_term)
+	public function loadData($search_term)
 	{
 		$this->search_term = $search_term;
 	}

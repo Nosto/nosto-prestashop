@@ -754,7 +754,7 @@ class NostoTagging extends Module
 
 			try {
 				$nosto_order = new NostoTaggingOrder();
-				$nosto_order->loadData($this->context, $order);
+				$nosto_order->loadData($order);
 			} catch (NostoException $e) {
 				/** @var NostoTaggingHelperLogger $logger */
 				$logger = Nosto::helper('nosto_tagging/logger');
@@ -1159,16 +1159,14 @@ class NostoTagging extends Module
 	 */
 	protected function getCustomerTagging()
 	{
-		$nosto_customer = new NostoTaggingCustomer();
-		if (!$nosto_customer->isCustomerLoggedIn($this->context, $this->context->customer))
+		$customer = $this->context->customer;
+		if (!NostoTaggingCustomer::isLoggedIn($customer))
 			return '';
 
-		$nosto_customer->loadData($this->context, $this->context->customer);
+		$nosto_customer = new NostoTaggingCustomer();
+		$nosto_customer->loadData($customer);
 
-		$this->smarty->assign(array(
-			'nosto_customer' => $nosto_customer,
-		));
-
+		$this->smarty->assign(array('nosto_customer' => $nosto_customer));
 		return $this->display(__FILE__, 'views/templates/hook/top_customer-tagging.tpl');
 	}
 
@@ -1180,6 +1178,7 @@ class NostoTagging extends Module
 	protected function getCartTagging()
 	{
 		$nosto_cart = new NostoTaggingCart();
+
 		try {
 			$nosto_cart->loadData($this->context->cart);
 		} catch (NostoException $e) {
@@ -1188,10 +1187,7 @@ class NostoTagging extends Module
 			$logger->error(__CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(), $e->getCode());
 		}
 
-		$this->smarty->assign(array(
-			'nosto_cart' => $nosto_cart,
-		));
-
+		$this->smarty->assign(array('nosto_cart' => $nosto_cart));
 		return $this->display(__FILE__, 'views/templates/hook/top_cart-tagging.tpl');
 	}
 
@@ -1215,10 +1211,7 @@ class NostoTagging extends Module
 			return '';
 		}
 
-		$this->smarty->assign(array(
-			'nosto_price_variation' => $nosto_price_variation,
-		));
-
+		$this->smarty->assign(array('nosto_price_variation' => $nosto_price_variation));
 		return $this->display(__FILE__, 'views/templates/hook/top_price_variation-tagging.tpl');
 	}
 
@@ -1232,8 +1225,9 @@ class NostoTagging extends Module
 	protected function getProductTagging(Product $product, Category $category = null)
 	{
 		$nosto_product = new NostoTaggingProduct();
+
 		try {
-			$nosto_product->loadData($this->context, $product);
+			$nosto_product->loadData($product);
 		} catch (NostoException $e) {
 			/** @var NostoTaggingHelperLogger $logger */
 			$logger = Nosto::helper('nosto_tagging/logger');
@@ -1245,7 +1239,7 @@ class NostoTagging extends Module
 		if (Validate::isLoadedObject($category))
 		{
 			$nosto_category = new NostoTaggingCategory();
-			$nosto_category->loadData($this->context, $category);
+			$nosto_category->loadData($category);
 			$params['nosto_category'] = $nosto_category;
 		}
 
@@ -1262,18 +1256,16 @@ class NostoTagging extends Module
 	protected function getOrderTagging(Order $order)
 	{
 		$nosto_order = new NostoTaggingOrder();
+
 		try {
-			$nosto_order->loadData($this->context, $order);
+			$nosto_order->loadData($order);
 		} catch (NostoException $e) {
 			/** @var NostoTaggingHelperLogger $logger */
 			$logger = Nosto::helper('nosto_tagging/logger');
 			$logger->error(__CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(), $e->getCode());
 		}
 
-		$this->smarty->assign(array(
-			'nosto_order' => $nosto_order,
-		));
-
+		$this->smarty->assign(array('nosto_order' => $nosto_order));
 		return $this->display(__FILE__, 'views/templates/hook/order-confirmation_order-tagging.tpl');
 	}
 
@@ -1286,12 +1278,9 @@ class NostoTagging extends Module
 	protected function getCategoryTagging(Category $category)
 	{
 		$nosto_category = new NostoTaggingCategory();
-		$nosto_category->loadData($this->context, $category);
+		$nosto_category->loadData($category);
 
-		$this->smarty->assign(array(
-			'nosto_category' => $nosto_category,
-		));
-
+		$this->smarty->assign(array('nosto_category' => $nosto_category));
 		return $this->display(__FILE__, 'views/templates/hook/category-footer_category-tagging.tpl');
 	}
 
@@ -1301,15 +1290,12 @@ class NostoTagging extends Module
 	 * @param Manufacturer $manufacturer
 	 * @return string The rendered HTML
 	 */
-	protected function getBrandTagging($manufacturer)
+	protected function getBrandTagging(Manufacturer $manufacturer)
 	{
 		$nosto_brand = new NostoTaggingBrand();
 		$nosto_brand->loadData($manufacturer);
 
-		$this->smarty->assign(array(
-			'nosto_brand' => $nosto_brand,
-		));
-
+		$this->smarty->assign(array('nosto_brand' => $nosto_brand));
 		return $this->display(__FILE__, 'views/templates/hook/manufacturer-footer_brand-tagging.tpl');
 	}
 
@@ -1322,12 +1308,9 @@ class NostoTagging extends Module
 	protected function getSearchTagging($search_term)
 	{
 		$nosto_search = new NostoTaggingSearch();
-		$nosto_search->setSearchTerm($search_term);
+		$nosto_search->loadData($search_term);
 
-		$this->smarty->assign(array(
-			'nosto_search' => $nosto_search,
-		));
-
+		$this->smarty->assign(array('nosto_search' => $nosto_search));
 		return $this->display(__FILE__, 'views/templates/hook/top_search-tagging.tpl');
 	}
 }

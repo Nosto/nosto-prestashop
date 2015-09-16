@@ -54,22 +54,22 @@ class NostoTaggingProductVariation extends NostoTaggingModel implements NostoPro
 	protected $availability;
 
 	/**
-	 * Loads the variation data.
+	 * Constructor.
 	 *
-	 * @param Product|ProductCore $product the product.
-	 * @param Context|ContextCore $context the context.
-	 * @param Currency|CurrencyCore $currency the currency.
-	 * @param NostoProductAvailability $availability the availability.
+	 * Sets up this value object.
+	 *
+	 * @param NostoPriceVariation $id the product variation ID.
+	 * @param NostoCurrencyCode $currency the product ISO 4217 currency code.
+	 * @param NostoPrice $price the product price.
+	 * @param NostoPrice $list_price the product list price.
+	 * @param NostoProductAvailability $availability the product availability.
 	 */
-	public function loadData(Product $product, Context $context, Currency $currency, NostoProductAvailability $availability)
+	public function __construct(NostoPriceVariation $id, NostoCurrencyCode $currency, NostoPrice $price, NostoPrice $list_price, NostoProductAvailability $availability)
 	{
-		/** @var NostoTaggingHelperPrice $helper_price */
-		$helper_price = Nosto::helper('nosto_tagging/price');
-
-		$this->id = new NostoPriceVariation($currency->iso_code);
-		$this->currency = new NostoCurrencyCode($currency->iso_code);
-		$this->price = $helper_price->getProductPriceInclTax($product, $context, $currency);
-		$this->list_price = $helper_price->getProductListPriceInclTax($product, $context, $currency);
+		$this->id = $id;
+		$this->currency = $currency;
+		$this->price = $price;
+		$this->list_price = $list_price;
 		$this->availability = $availability;
 	}
 
