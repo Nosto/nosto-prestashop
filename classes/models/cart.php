@@ -40,7 +40,7 @@ class NostoTaggingCart extends NostoTaggingModel
 	 */
 	public function loadData(Cart $cart)
 	{
-		if (!Validate::isLoadedObject($cart) || ($products = $cart->getProducts()) === array())
+		if (!Validate::isLoadedObject($cart) || $cart->getProducts() === array())
 			return;
 
 		/** @var Currency|CurrencyCore $currency */

@@ -381,7 +381,7 @@ class NostoTagging extends Module
 		$html = '';
 		$html .= $this->getCustomerTagging();
 		$html .= $this->getCartTagging();
-		// todo: current currency tagging
+		$html .= $this->getPriceVariationTagging();
 
 		if ($this->isController('category'))
 		{
@@ -1137,6 +1137,31 @@ class NostoTagging extends Module
 		));
 
 		return $this->display(__FILE__, 'views/templates/hook/top_cart-tagging.tpl');
+	}
+
+	/**
+	 * Render meta-data (tagging) for the price variation in use.
+	 *
+	 * This is needed for the multi currency features.
+	 *
+	 * @return string The rendered HTML
+	 */
+	protected function getPriceVariationTagging()
+	{
+		try {
+			$nosto_price_variation = new NostoPriceVariation($this->context->currency->iso_code);
+		} catch (NostoException $e) {
+			/** @var NostoTaggingHelperLogger $logger */
+			$logger = Nosto::helper('nosto_tagging/logger');
+			$logger->error(__CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(), $e->getCode());
+			return '';
+		}
+
+		$this->smarty->assign(array(
+			'nosto_price_variation' => $nosto_price_variation,
+		));
+
+		return $this->display(__FILE__, 'views/templates/hook/top_price_variation-tagging.tpl');
 	}
 
 	/**
