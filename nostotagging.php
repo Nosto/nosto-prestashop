@@ -278,7 +278,8 @@ class NostoTagging extends Module
 					sprintf($this->l('Install Nosto to your %s shop'), $language['name']),
 			),
 			$this->name.'_ps_version_class' => 'ps-'.str_replace('.', '', Tools::substr(_PS_VERSION_, 0, 3)),
-			$this->name.'_multi_currency_method' => $helper_config->getMultiCurrencyMethod($language['id_lang'])
+			$this->name.'_multi_currency_method' => $helper_config->getMultiCurrencyMethod($language['id_lang']),
+			$this->name.'_use_direct_include' => (int)$helper_config->getUseDirectInclude($language['id_lang']),
 		));
 
 		// Try to login employee to Nosto in order to get a url to the internal setting pages,
@@ -333,6 +334,8 @@ class NostoTagging extends Module
 		$helper_account = Nosto::helper('nosto_tagging/account');
 		/** @var NostoTaggingHelperUrl $helper_url */
 		$helper_url = Nosto::helper('nosto_tagging/url');
+		/** @var NostoTaggingHelperConfig $helper_config */
+		$helper_config = Nosto::helper('nosto_tagging/config');
 		/** @var LanguageCore $language */
 		$language = $this->context->language;
 
@@ -344,12 +347,13 @@ class NostoTagging extends Module
 		/** @var LinkCore $link */
 		$link = new Link();
 		$this->smarty->assign(array(
-			'server_address' => $server_address,
-			'account_name' => $account->getName(),
+			'nosto_server' => $server_address,
+			'nosto_account' => $account->getName(),
 			'nosto_version' => $this->version,
 			'nosto_unique_id' => $this->getUniqueInstallationId(),
 			'nosto_language' => Tools::strtolower($language->iso_code),
 			'add_to_cart_url' => $link->getPageLink('cart.php'),
+			'nosto_use_direct_include' => $helper_config->getUseDirectInclude($language->id)
 		));
 
 		$this->context->controller->addJS($this->_path.'js/nostotagging-auto-slots.js');

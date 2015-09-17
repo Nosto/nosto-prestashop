@@ -218,17 +218,15 @@ class AdminNostoConfigController
 		$helper_config = Nosto::helper('nosto_tagging/config');
 		/** @var NostoTaggingHelperFlashMessage $helper_flash */
 		$helper_flash = Nosto::helper('nosto_tagging/flash_message');
-		$all_saved = true;
 
-		$multi_currency_method = Tools::getValue('nostotagging_multi_currency_method');
-		if (!$helper_config->saveMultiCurrencyMethod($multi_currency_method, $this->language['id_lang']))
-		{
-			$all_saved = false;
-			$helper_flash->add('error', $this->module->l('There was an error saving the multi currency method.'));
-		}
-
-		if ($all_saved)
+		$advanced_settings = array(
+			NostoTaggingHelperConfig::MULTI_CURRENCY_METHOD => Tools::getValue('nostotagging_multi_currency_method', ''),
+			NostoTaggingHelperConfig::USE_DIRECT_INCLUDE => (int)Tools::getValue('nostotagging_use_direct_include', 0)
+		);
+		if ($helper_config->saveSettings($advanced_settings, $this->language['id_lang']))
 			$helper_flash->add('success', $this->module->l('The settings have been saved.'));
+		else
+			$helper_flash->add('error', $this->module->l('There was an error saving the settings.'));
 	}
 
 	/**

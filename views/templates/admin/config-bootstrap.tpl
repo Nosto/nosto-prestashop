@@ -102,12 +102,19 @@
                                         <div class="panel-heading">{l s='Advanced settings' mod='nostotagging'}</div>
                                         <div class="panel-body">
                                             <div class="form-group">
-                                                <label for="nostotagging_multi_currency_method">Multi Currency Method</label>
+                                                <label for="nostotagging_multi_currency_method">{l s='Multi Currency Method' mod='nostotagging'}</label>
                                                 <select id="nostotagging_multi_currency_method" name="nostotagging_multi_currency_method" class="form-control input-sm">
-                                                    <option value="exchangeRates" {if $nostotagging_multi_currency_method==="exchangeRates"}selected="selected"{/if}>Exchange Rates</option>
-                                                    <option value="priceVariation" {if $nostotagging_multi_currency_method==="priceVariation"}selected="selected"{/if}>Price Variations</option>
+                                                    <option value="exchangeRates" {if $nostotagging_multi_currency_method==="exchangeRates"}selected="selected"{/if}>{l s='Exchange Rates' mod='nostotagging'}</option>
+                                                    <option value="priceVariation" {if $nostotagging_multi_currency_method==="priceVariation"}selected="selected"{/if}>{l s='Price Variations' mod='nostotagging'}</option>
                                                 </select>
                                                 <p class="help-block">{l s='By default Nosto uses the currency exchange rates from the shop to display recommendations in the correct currency. Changing this setting to "Price Variations" allows you to tag all the different prices on the product page. This can be useful when having specialized price rules configured that do not depend on the exchange rates for the currencies.' mod='nostotagging'}</p>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="nostotagging_use_direct_include">{l s='Use direct include (Beta)' mod='nostotagging'}</label>
+                                                <select id="nostotagging_use_direct_include" name="nostotagging_use_direct_include" class="form-control input-sm">
+                                                    <option value="0" {if $nostotagging_use_direct_include===0}selected="selected"{/if}>{l s='No' mod='nostotagging'}</option>
+                                                    <option value="1" {if $nostotagging_use_direct_include===1}selected="selected"{/if}>{l s='Yes' mod='nostotagging'}</option>
+                                                </select>
                                             </div>
                                         </div>
                                         <div class="panel-footer">

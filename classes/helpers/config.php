@@ -32,6 +32,7 @@ class NostoTaggingHelperConfig
 	const ADMIN_URL = 'NOSTOTAGGING_ADMIN_URL';
 	const INSTALLED_VERSION = 'NOSTOTAGGING_INSTALLED_VERSION';
 	const MULTI_CURRENCY_METHOD = 'NOSTOTAGGING_MC_METHOD';
+	const USE_DIRECT_INCLUDE = 'NOSTOTAGGING_DIRECT_INCLUDE';
 
 	const MULTI_CURRENCY_METHOD_VARIATION = 'priceVariation';
 	const MULTI_CURRENCY_METHOD_EXCHANGE_RATE = 'exchangeRate';
@@ -309,15 +310,33 @@ class NostoTaggingHelperConfig
 	}
 
 	/**
-	 * Saves the multi currency method to the config for given language.
+	 * Returns if the "use direct include" option is enabled.
 	 *
-	 * @param string $method the multi currency method.
-	 * @param int $id_lang the language to save the method for.
-	 * @return bool true if saved correctly, false otherwise.
+	 * @param int $id_lang the language.
+	 * @param null|int $id_shop_group the shop group (defaults to current context).
+	 * @param null|int $id_shop the shop (defaults to current context).
+	 * @return bool true if enabled, false otherwise.
 	 */
-	public function saveMultiCurrencyMethod($method, $id_lang)
+	public function getUseDirectInclude($id_lang, $id_shop_group = null, $id_shop = null)
 	{
-		return $this->write(self::MULTI_CURRENCY_METHOD, $method, $id_lang);
+		return (bool)$this->read(self::USE_DIRECT_INCLUDE, $id_lang, $id_shop_group, $id_shop);
+	}
+
+	/**
+	 * Saves an array of key=>value pairs to the config for given language.
+	 *
+	 * @param array $settings the settings to save.
+	 * @param int $id_lang the language.
+	 * @return bool if all settings where saved successfully.
+	 */
+	public function saveSettings(array $settings, $id_lang)
+	{
+		$saved = true;
+		foreach ($settings as $key => $value) {
+			if (!$this->write($key, $value, $id_lang))
+				$saved = false;
+		}
+		return $saved;
 	}
 
 	/**
