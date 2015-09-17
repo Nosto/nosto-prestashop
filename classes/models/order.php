@@ -200,18 +200,15 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 
 		/** @var NostoTaggingHelperCurrency $helper_currency */
 		$helper_currency = Nosto::helper('nosto_tagging/currency');
+		/** @var NostoTaggingHelperPrice $helper_price */
+		$helper_price = Nosto::helper('nosto_tagging/price');
 
 		$base_currency = $helper_currency->getBaseCurrency($context);
 		$nosto_base_currency = new NostoCurrencyCode($base_currency->iso_code);
-		$nosto_currency = new NostoCurrencyCode($currency->iso_code);
 
-		$nosto_price = NostoPrice::fromString($item['price'], $nosto_currency);
+		$nosto_price = new NostoPrice($item['price']);
 		if ($currency->iso_code !== $base_currency->iso_code)
-		{
-			$currency_exchange = new NostoCurrencyExchange();
-			$rate = new NostoCurrencyExchangeRate($nosto_currency, 1 / $currency->conversion_rate);
-			$nosto_price = $currency_exchange->convert($nosto_price, $rate);
-		}
+			$nosto_price = $helper_price->convertToBaseCurrency($nosto_price, $currency);
 
 		$line_item = new NostoTaggingOrderItem($item['id'], $item['name'], $item['quantity'], $nosto_price,
 			$nosto_base_currency);

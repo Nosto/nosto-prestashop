@@ -115,22 +115,19 @@ class NostoTaggingCart extends NostoTaggingModel
 	{
 		/** @var NostoTaggingHelperCurrency $helper_currency */
 		$helper_currency = Nosto::helper('nosto_tagging/currency');
+		/** @var NostoTaggingHelperPrice $helper_price */
+		$helper_price = Nosto::helper('nosto_tagging/price');
 
 		$base_currency = $helper_currency->getBaseCurrency($context);
 		$nosto_base_currency = new NostoCurrencyCode($base_currency->iso_code);
-		$nosto_currency = new NostoCurrencyCode($currency->iso_code);
 
 		$name = $item['name'];
 		if (isset($item['attributes_small']))
 			$name .= ' ('.$item['attributes_small'].')';
 
-		$nosto_price = NostoPrice::fromString($item['price_wt'], $nosto_currency);
+		$nosto_price = new NostoPrice($item['price_wt']);
 		if ($currency->iso_code !== $base_currency->iso_code)
-		{
-			$currency_exchange = new NostoCurrencyExchange();
-			$rate = new NostoCurrencyExchangeRate($nosto_currency, 1 / $currency->conversion_rate);
-			$nosto_price = $currency_exchange->convert($nosto_price, $rate);
-		}
+			$nosto_price = $helper_price->convertToBaseCurrency($nosto_price, $currency);
 
 		$line_item = new NostoTaggingCartItem($item['id_product'], $name, $item['cart_quantity'], $nosto_price,
 			$nosto_base_currency);

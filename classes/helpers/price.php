@@ -55,7 +55,24 @@ class NostoTaggingHelperPrice
 	}
 
 	/**
+	 * Converts the price to it's base currency.
+	 *
+	 * @param NostoPrice $price the price in other than it's base currency.
+	 * @param Currency|CurrencyCore $currency the currency the price is currently in.
+	 * @return NostoPrice the converted price.
+	 */
+	public function convertToBaseCurrency(NostoPrice $price, Currency $currency)
+	{
+		$nosto_currency = new NostoCurrencyCode($currency->iso_code);
+		$currency_exchange = new NostoCurrencyExchange();
+		$rate = new NostoCurrencyExchangeRate($nosto_currency, 1 / $currency->conversion_rate);
+		$new_price = $currency_exchange->convert($price, $rate);
+		return $new_price;
+	}
+
+	/**
 	 * Returns the product price for the given currency.
+	 * The price is rounded according to the configured rounding mode in PS.
 	 *
 	 * @param Product|ProductCore $product the product.
 	 * @param Context|ContextCore $context the context.
@@ -94,6 +111,17 @@ class NostoTaggingHelperPrice
 				$context->cookie->id_currency = $old_currency->id;
 		}
 
-		return new NostoPrice($value);
+		return $this->roundPrice(new NostoPrice($value));
+	}
+
+	/**
+	 * Rounds the price according to the PS rounding mode setting.
+	 *
+	 * @param NostoPrice $price the price to round.
+	 * @return NostoPrice the rounded price.
+	 */
+	protected function roundPrice(NostoPrice $price)
+	{
+		return new NostoPrice(Tools::ps_round($price->getRawPrice(), 2));
 	}
 }
