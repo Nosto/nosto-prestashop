@@ -247,6 +247,8 @@ class NostoTagging extends Module
 		$helper_config = Nosto::helper('nosto_tagging/config');
 		/** @var NostoTaggingHelperFlashMessage $helper_flash */
 		$helper_flash = Nosto::helper('nosto_tagging/flash_message');
+		/** @var NostoTaggingHelperUrl $helper_url */
+		$helper_url = Nosto::helper('nosto_tagging/url');
 
 		// Always update the url to the module admin page when we access it.
 		// This can then later be used by the oauth2 controller to redirect the user back.
@@ -256,7 +258,8 @@ class NostoTagging extends Module
 		$ctrl = new AdminNostoConfigController($this, $admin_url);
 		$ctrl->runAction();
 
-		$languages = Language::getLanguages(true, $this->context->shop->id);
+		$id_shop = $this->context->shop->id;
+		$languages = Language::getLanguages(true, $id_shop);
 		$language = $ctrl->getLanguage();
 
 		/** @var NostoAccount|null $account */
@@ -278,10 +281,15 @@ class NostoTagging extends Module
 					sprintf($this->l('Your account ID is %s'), (!is_null($account)) ? $account->getName() : ''),
 				'nostotagging_not_installed_subheading' =>
 					sprintf($this->l('Install Nosto to your %s shop'), $language['name']),
+				'nostotagging_exchange_rate_cron_message' =>
+					sprintf($this->l('By running the url %s in your servers crontab, or using the Prestashop `cronjob` module, exchange rates are sent to Nosto periodically.'),
+						$helper_url->getModuleUrl($this->name, $this->_path, 'cronRates', $language['id_lang'],
+							$id_shop, array('token' => $this->getCronAccessToken())))
 			),
 			$this->name.'_ps_version_class' => 'ps-'.str_replace('.', '', Tools::substr(_PS_VERSION_, 0, 3)),
 			$this->name.'_multi_currency_method' => $helper_config->getMultiCurrencyMethod($language['id_lang']),
 			$this->name.'_use_direct_include' => (int)$helper_config->getUseDirectInclude($language['id_lang']),
+			$this->name.'_currency_formats' => array(), // todo
 		));
 
 		// Try to login employee to Nosto in order to get a url to the internal setting pages,

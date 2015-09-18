@@ -78,6 +78,14 @@
                                         <div class="panel-heading">{l s='Update account settings' mod='nostotagging'}</div>
                                         <div class="panel-body">
                                             <p class="help-block">{l s='Synchronise shop settings with Nosto by clicking the button below. This will send information like currency settings to Nosto.' mod='nostotagging'}</p>
+                                            <div class="help-block">
+                                                {l s='Preview of the current currency formats extracted from Prestashop.' mod='nostotagging'}
+                                                <ul>
+                                                    {foreach from=$nostotagging_currency_formats item=$format}
+                                                        <li>{$format|escape:'htmlall':'UTF-8'}</li>
+                                                    {/foreach}
+                                                </ul>
+                                            </div>
                                             <div class="form-group">
                                                 <button name="submit_nostotagging_update_account" class="btn btn-blue" type="submit" value="1">
                                                     {l s='Update account' mod='nostotagging'}
@@ -88,7 +96,8 @@
                                     <div class="panel panel-default">
                                         <div class="panel-heading">{l s='Update exchange rates' mod='nostotagging'}</div>
                                         <div class="panel-body">
-                                            <p class="help-block">{l s='Synchronise currency exchange rates with Nosto by clicking the button below. Note that there is also a cron job available for periodically updating the rates.' mod='nostotagging'}</p>
+                                            <p class="help-block">{l s='Synchronise currency exchange rates with Nosto by clicking the button below. Note that there is also a cron controller available for periodically updating the rates.' mod='nostotagging'}</p>
+                                            <p class="help-block">{$translations.nostotagging_exchange_rate_cron_message|escape:'htmlall':'UTF-8'}</p>
                                             <div class="form-group">
                                                 <button name="submit_nostotagging_update_exchange_rates" class="btn btn-blue" type="submit" value="1">
                                                     {l s='Update exchange rates' mod='nostotagging'}
