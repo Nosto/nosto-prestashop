@@ -36,13 +36,6 @@ class NostoTaggingHelperProductService
 	private static $processed_products = array();
 
 	/**
-	 * @var array stores a snapshot of the context object and shop context so it can be restored between processing all
-	 * accounts. This is important as the accounts belong to different shops and languages and the context, that
-	 * contains this information, is used internally in PrestaShop when generating urls.
-	 */
-	private $context_snapshot;
-
-	/**
 	 * Sends a product create API request to Nosto.
 	 *
 	 * @param Product|ProductCore $product the product that has been created.
@@ -221,11 +214,13 @@ class NostoTaggingHelperProductService
 		if (isset($product->visibility) && $product->visibility === 'none')
 			return null;
 
-		$this->makeContextSnapshot();
+		/** @var NostoTaggingHelperContextFactory $factory */
+		$factory = Nosto::helper('nosto_tagging/context_factory');
+		$snapshot = new NostoTaggingContextSnapshot();
 
 		try {
 			$nosto_product = new NostoTaggingProduct();
-			$nosto_product->loadData($product, $this->makeContext($id_lang, $id_shop));
+			$nosto_product->loadData($product, $factory->forgeContext($id_lang, $id_shop));
 		} catch (NostoException $e) {
 			$nosto_product = null;
 			/** @var NostoTaggingHelperLogger $logger */
@@ -234,93 +229,8 @@ class NostoTaggingHelperProductService
 				(int)$product->id);
 		}
 
-		$this->restoreContextSnapshot();
+		$snapshot->restore();
 
 		return $nosto_product;
-	}
-
-	/**
-	 * Stores a snapshot of the current context.
-	 */
-	protected function makeContextSnapshot()
-	{
-		$this->context_snapshot = array(
-			'shop_context' => (_PS_VERSION_ >= '1.5') ? Shop::getContext() : null,
-			'context_object' => Context::getContext()->cloneContext()
-		);
-	}
-
-	/**
-	 * Restore the context snapshot to the current context.
-	 */
-	protected function restoreContextSnapshot()
-	{
-		if (!empty($this->context_snapshot))
-		{
-			$original_context = $this->context_snapshot['context_object'];
-			$shop_context = $this->context_snapshot['shop_context'];
-			$this->context_snapshot = null;
-
-			$current_context = Context::getContext();
-			$current_context->language = $original_context->language;
-			$current_context->shop = $original_context->shop;
-			$current_context->link = $original_context->link;
-			$current_context->currency = $original_context->currency;
-
-			if (_PS_VERSION_ >= '1.5')
-			{
-				Shop::setContext($shop_context, $current_context->shop->id);
-				Dispatcher::$instance = null;
-				if (method_exists('ShopUrl', 'resetMainDomainCache'))
-					ShopUrl::resetMainDomainCache();
-			}
-		}
-	}
-
-	/**
-	 * Modifies the current context and replaces the info related to shop, link, language and currency.
-	 *
-	 * We need this when generating the product data for the different shops and languages.
-	 * The currency will be the first found for the shop, but it defaults to the PS default currency
-	 * if no shop specific one is found.
-	 *
-	 * @param int $id_lang the language ID to add to the new context.
-	 * @param int $id_shop the shop ID to add to the new context.
-	 * @return Context the new context.
-	 */
-	protected function makeContext($id_lang, $id_shop)
-	{
-		if (_PS_VERSION_ >= '1.5')
-		{
-			// Reset the shop context to be the current processed shop. This will fix the "friendly url" format of urls
-			// generated through the Link class.
-			Shop::setContext(Shop::CONTEXT_SHOP, $id_shop);
-			// Reset the dispatcher singleton instance so that the url rewrite setting is check on a shop basis when
-			// generating product urls. This will fix the issue of incorrectly formatted urls when one shop has the
-			// rewrite setting enabled and another does not.
-			Dispatcher::$instance = null;
-			if (method_exists('ShopUrl', 'resetMainDomainCache'))
-			{
-				// Reset the shop url domain cache so that it is re-initialized on a shop basis when generating product
-				// image urls. This will fix the issue of the image urls having an incorrect shop base url when the
-				// shops are configured to use different domains.
-				ShopUrl::resetMainDomainCache();
-			}
-
-			foreach (Currency::getCurrenciesByIdShop($id_shop) as $row)
-				if ($row['deleted'] === '0' && $row['active'] === '1')
-				{
-					$currency = new Currency($row['id_currency']);
-					break;
-				}
-		}
-
-		$context = Context::getContext();
-		$context->language = new Language($id_lang);
-		$context->shop = new Shop($id_shop);
-		$context->link = new Link('http://', 'http://');
-		$context->currency = isset($currency) ? $currency : Currency::getDefaultCurrency();
-
-		return $context;
 	}
 }

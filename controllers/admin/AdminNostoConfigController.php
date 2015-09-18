@@ -223,7 +223,12 @@ class AdminNostoConfigController
 			NostoTaggingHelperConfig::MULTI_CURRENCY_METHOD => Tools::getValue('nostotagging_multi_currency_method', ''),
 			NostoTaggingHelperConfig::USE_DIRECT_INCLUDE => (int)Tools::getValue('nostotagging_use_direct_include', 0)
 		);
-		if ($helper_config->saveSettings($advanced_settings, $this->language['id_lang']))
+		$settings_saved = true;
+		foreach ($advanced_settings as $key => $value)
+			if (!$helper_config->write($key, $value, $this->language['id_lang']))
+				$settings_saved = false;
+
+		if ($settings_saved)
 			$helper_flash->add('success', $this->module->l('The settings have been saved.'));
 		else
 			$helper_flash->add('error', $this->module->l('There was an error saving the settings.'));

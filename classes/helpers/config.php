@@ -33,6 +33,7 @@ class NostoTaggingHelperConfig
 	const INSTALLED_VERSION = 'NOSTOTAGGING_INSTALLED_VERSION';
 	const MULTI_CURRENCY_METHOD = 'NOSTOTAGGING_MC_METHOD';
 	const USE_DIRECT_INCLUDE = 'NOSTOTAGGING_DIRECT_INCLUDE';
+	const CRON_ACCESS_TOKEN = 'NOSTOTAGGING_CRON_ACCESS_TOKEN';
 
 	const MULTI_CURRENCY_METHOD_VARIATION = 'priceVariation';
 	const MULTI_CURRENCY_METHOD_EXCHANGE_RATE = 'exchangeRate';
@@ -323,20 +324,26 @@ class NostoTaggingHelperConfig
 	}
 
 	/**
-	 * Saves an array of key=>value pairs to the config for given language.
+	 * Returns the access token for the cron controllers.
+	 * This token is stored globally for all stores and languages.
 	 *
-	 * @param array $settings the settings to save.
-	 * @param int $id_lang the language.
-	 * @return bool if all settings where saved successfully.
+	 * @return string|bool the token or false if not found.
 	 */
-	public function saveSettings(array $settings, $id_lang)
+	public function getCronAccessToken()
 	{
-		$saved = true;
-		foreach ($settings as $key => $value) {
-			if (!$this->write($key, $value, $id_lang))
-				$saved = false;
-		}
-		return $saved;
+		return $this->read(self::CRON_ACCESS_TOKEN);
+	}
+
+	/**
+	 * Saves the access token for the cron controllers.
+	 * This token is stored globally for all stores and languages.
+	 *
+	 * @param string $token the token.
+	 * @return bool true if saved successfully, false otherwise.
+	 */
+	public function saveCronAccessToken($token)
+	{
+		return $this->write(self::CRON_ACCESS_TOKEN, $token, null, true);
 	}
 
 	/**

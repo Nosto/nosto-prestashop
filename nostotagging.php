@@ -37,6 +37,7 @@ if ((basename(__FILE__) === 'nostotagging.php'))
 	require_once($module_dir.'/classes/helpers/account.php');
 	require_once($module_dir.'/classes/helpers/admin-tab.php');
 	require_once($module_dir.'/classes/helpers/config.php');
+	require_once($module_dir.'/classes/helpers/context-factory.php');
 	require_once($module_dir.'/classes/helpers/currency.php');
 	require_once($module_dir.'/classes/helpers/customer.php');
 	require_once($module_dir.'/classes/helpers/flash-message.php');
@@ -56,6 +57,7 @@ if ((basename(__FILE__) === 'nostotagging.php'))
 	require_once($module_dir.'/classes/models/cart.php');
 	require_once($module_dir.'/classes/models/cart-item.php');
 	require_once($module_dir.'/classes/models/category.php');
+	require_once($module_dir.'/classes/models/context-snapshot.php');
 	require_once($module_dir.'/classes/models/customer.php');
 	require_once($module_dir.'/classes/models/order.php');
 	require_once($module_dir.'/classes/models/order-buyer.php');
@@ -319,6 +321,27 @@ class NostoTagging extends Module
 	public function getUniqueInstallationId()
 	{
 		return sha1($this->name._COOKIE_KEY_);
+	}
+
+	/**
+	 * Returns the access token needed to validate requests to the cron controllers.
+	 * The access token is stored in the db config, and will be renewed if the module
+	 * is re-installed or the db entry is removed.
+	 *
+	 * @return string the access token.
+	 */
+	public function getCronAccessToken()
+	{
+		/** @var NostoTaggingHelperConfig $helper_config */
+		$helper_config = Nosto::helper('nosto_tagging/config');
+		$token = $helper_config->getCronAccessToken();
+		if (empty($token))
+		{
+			// Running bin2hex() will make the string length 32 characters.
+			$token = bin2hex(phpseclib_Crypt_Random::string(16));
+			$helper_config->saveCronAccessToken($token);
+		}
+		return $token;
 	}
 
 	/**

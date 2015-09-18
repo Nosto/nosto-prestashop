@@ -34,7 +34,7 @@ if (!defined('_PS_VERSION_'))
 	/*
 	 * White-list of valid controllers that this script is allowed to run.
 	 */
-	$controller_white_list = array('oauth2', 'product', 'order');
+	$controller_white_list = array('oauth2', 'product', 'order', 'cronRates');
 
 	/*
 	 * If this file is symlinked, then we need to parse the `SCRIPT_FILENAME` to get the path of the PS root dir.
@@ -63,7 +63,7 @@ if (!defined('_PS_VERSION_'))
 	if (_PS_VERSION_ < '1.5')
 		require_once($controller_dir.'/module.php');
 
-	$controller = Tools::strtolower((string)Tools::getValue('controller'));
+	$controller = (string)Tools::getValue('controller');
 	if (!empty($controller) && in_array($controller, $controller_white_list))
 	{
 		require_once($controller_dir.'/'.$controller.'.php');
