@@ -202,7 +202,7 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 	 * The date must be an instance of the NostoDate class.
 	 *
 	 * Usage:
-	 * $object->setCreatedDate(NostoDate $created_date);
+	 * $object->setCreatedDate(new NostoDate(strtotime('2015-01-01 00:00:00')));
 	 *
 	 * @param NostoDate $created_date the creation date.
 	 */

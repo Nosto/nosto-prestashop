@@ -155,7 +155,7 @@ class NostoTaggingCart extends NostoTaggingModel
 	 * Adds a new item to the cart tagging.
 	 *
 	 * Usage:
-	 * $object->addLineItem(NostoTaggingCartItem $item);
+	 * $object->addLineItem(new NostoTaggingCartItem(99, 'Example Product', 1, new NostoPrice(10.99), new NostoCurrencyCode('USD')));
 	 *
 	 * @param NostoTaggingCartItem $item the new item.
 	 */
