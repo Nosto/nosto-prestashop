@@ -266,30 +266,30 @@ class NostoTagging extends Module
 		$account = $helper_account->find($language['id_lang']);
 
 		$this->context->smarty->assign(array(
-			$this->name.'_form_action' => $this->getAdminUrl(),
-			$this->name.'_has_account' => (!is_null($account)),
-			$this->name.'_account_name' => (!is_null($account)) ? $account->getName() : null,
-			$this->name.'_account_email' => $this->context->employee->email,
-			$this->name.'_account_authorized' => (!is_null($account)),
-			$this->name.'_languages' => $languages,
-			$this->name.'_current_language' => $language,
+			'nostotagging_form_action' => $this->getAdminUrl(),
+			'nostotagging_has_account' => (!is_null($account)),
+			'nostotagging_account_name' => (!is_null($account)) ? $account->getName() : null,
+			'nostotagging_account_email' => $this->context->employee->email,
+			'nostotagging_account_authorized' => (!is_null($account)),
+			'nostotagging_languages' => $languages,
+			'nostotagging_current_language' => $language,
 			// Hack a few translations for the view as PS 1.4 does not support sprintf syntax in smarty "l" function.
-			'translations' => array(
-				'nostotagging_installed_heading' =>
+			'nostotagging_translations' => array(
+				'installed_heading' =>
 					sprintf($this->l('You have installed Nosto to your %s shop'), $language['name']),
-				'nostotagging_installed_subheading' =>
+				'installed_subheading' =>
 					sprintf($this->l('Your account ID is %s'), (!is_null($account)) ? $account->getName() : ''),
-				'nostotagging_not_installed_subheading' =>
+				'not_installed_subheading' =>
 					sprintf($this->l('Install Nosto to your %s shop'), $language['name']),
-				'nostotagging_exchange_rate_cron_message' =>
-					sprintf($this->l('By running the url %s in your servers crontab, or using the Prestashop `cronjob` module, exchange rates are sent to Nosto periodically.'),
+				'exchange_rate_crontab_example' =>
+					sprintf($this->l('0 0 * * * curl --silent %s /dev/null 2>&1'),
 						$helper_url->getModuleUrl($this->name, $this->_path, 'cronRates', $language['id_lang'],
-							$id_shop, array('token' => $this->getCronAccessToken())))
+							$id_shop, array('token' => $this->getCronAccessToken()))),
 			),
-			$this->name.'_ps_version_class' => 'ps-'.str_replace('.', '', Tools::substr(_PS_VERSION_, 0, 3)),
-			$this->name.'_multi_currency_method' => $helper_config->getMultiCurrencyMethod($language['id_lang']),
-			$this->name.'_use_direct_include' => (int)$helper_config->getUseDirectInclude($language['id_lang']),
-			$this->name.'_currency_formats' => array(), // todo
+			'nostotagging_ps_version_class' => 'ps-'.str_replace('.', '', Tools::substr(_PS_VERSION_, 0, 3)),
+			'nostotagging_multi_currency_method' => $helper_config->getMultiCurrencyMethod($language['id_lang']),
+			'nostotagging_use_direct_include' => (int)$helper_config->getUseDirectInclude($language['id_lang']),
+			'nostotagging_currency_formats' => $this->getCurrencyFormatPreviews(),
 		));
 
 		// Try to login employee to Nosto in order to get a url to the internal setting pages,
@@ -976,6 +976,28 @@ class NostoTagging extends Module
 	public function getPath()
 	{
 		return $this->_path;
+	}
+
+	/**
+	 * Returns a list of currency previews for the the current context.
+	 *
+	 * Example:
+	 *
+	 * array("$1,234.56", "1 234,56 €")
+	 *
+	 * @return array the previews.
+	 */
+	protected function getCurrencyFormatPreviews()
+	{
+		$previews = array();
+
+		/** @var NostoTaggingHelperCurrency $helper_currency */
+		$helper_currency = Nosto::helper('nosto_tagging/currency');
+		$currencies = $helper_currency->getCurrencies($this->context);
+		foreach ($currencies as $currency)
+			$previews[] = Tools::displayPrice('1234.56', $currency);
+
+		return $previews;
 	}
 
 	/**
