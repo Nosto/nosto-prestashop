@@ -31,7 +31,7 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 	/**
 	 * @var bool if we should include special line items such as discounts and shipping costs.
 	 */
-	public $include_special_items = true;
+	protected $include_special_items = true;
 
 	/**
 	 * @var string the order number.
@@ -99,6 +99,15 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 			$this->payment_provider = $order->module.' [unknown]';
 
 		$this->order_status = new NostoTaggingOrderStatus($order);
+	}
+
+	/**
+	 * Exclude any special order items, e.g. shipping costs.
+	 * This methods needs to be invoked before NostoTaggingOrder::loadData.
+	 */
+	public function excludeSpecialItems()
+	{
+		$this->include_special_items = false;
 	}
 
 	/**

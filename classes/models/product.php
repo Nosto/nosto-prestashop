@@ -170,8 +170,12 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 		// Execute hook `actionObjectNostoTaggingProductLoadAfter`, so that other modules can add/modify the product.
 		// This is useful when wanting to add custom data, e.g. tag1, tag2, tag3, to the product that is automatically
 		// included in both the tagging on the product pages and in the server-to-server API calls.
-		Hook::exec('actionObject'.get_class($this).'LoadAfter',
-			array('nosto_product' => $this, 'product' => $product, 'context' => $context));
+		if (_PS_VERSION_ >= '1.5')
+			Hook::exec('actionObject'.get_class($this).'LoadAfter',
+				array('nosto_product' => $this, 'product' => $product, 'context' => $context));
+		else
+			Module::hookExec('actionObject'.get_class($this).'LoadAfter',
+				array('nosto_product' => $this, 'product' => $product, 'context' => $context));
 	}
 
 	/**
@@ -466,12 +470,12 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	 *
 	 * @param int $id the product ID.
 	 *
-	 * @throws NostoInvalidArgumentException
+	 * @throws InvalidArgumentException
 	 */
 	public function setProductId($id)
 	{
 		if (!is_int($id) || !($id > 0))
-			throw new NostoInvalidArgumentException('ID must be an integer above zero.');
+			throw new InvalidArgumentException('ID must be an integer above zero.');
 
 		$this->product_id = $id;
 	}
@@ -613,7 +617,7 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	 *
 	 * @param array $tags the tags.
 	 *
-	 * @throws NostoInvalidArgumentException
+	 * @throws InvalidArgumentException
 	 */
 	public function setTag1(array $tags)
 	{
@@ -632,12 +636,12 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	 *
 	 * @param string $tag the tag to add.
 	 *
-	 * @throws NostoInvalidArgumentException
+	 * @throws InvalidArgumentException
 	 */
 	public function addTag1($tag)
 	{
 		if (!is_string($tag) || empty($tag))
-			throw new NostoInvalidArgumentException('Tag must be a non-empty string value.');
+			throw new InvalidArgumentException('Tag must be a non-empty string value.');
 
 		$this->tags['tag1'][] = $tag;
 	}
@@ -652,7 +656,7 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	 *
 	 * @param array $tags the tags.
 	 *
-	 * @throws NostoInvalidArgumentException
+	 * @throws InvalidArgumentException
 	 */
 	public function setTag2(array $tags)
 	{
@@ -671,12 +675,12 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	 *
 	 * @param string $tag the tag to add.
 	 *
-	 * @throws NostoInvalidArgumentException
+	 * @throws InvalidArgumentException
 	 */
 	public function addTag2($tag)
 	{
 		if (!is_string($tag) || empty($tag))
-			throw new NostoInvalidArgumentException('Tag must be a non-empty string value.');
+			throw new InvalidArgumentException('Tag must be a non-empty string value.');
 
 		$this->tags['tag2'][] = $tag;
 	}
@@ -691,7 +695,7 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	 *
 	 * @param array $tags the tags.
 	 *
-	 * @throws NostoInvalidArgumentException
+	 * @throws InvalidArgumentException
 	 */
 	public function setTag3(array $tags)
 	{
@@ -710,12 +714,12 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	 *
 	 * @param string $tag the tag to add.
 	 *
-	 * @throws NostoInvalidArgumentException
+	 * @throws InvalidArgumentException
 	 */
 	public function addTag3($tag)
 	{
 		if (!is_string($tag) || empty($tag))
-			throw new NostoInvalidArgumentException('Tag must be a non-empty string value.');
+			throw new InvalidArgumentException('Tag must be a non-empty string value.');
 
 		$this->tags['tag3'][] = $tag;
 	}
@@ -730,12 +734,12 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	 *
 	 * @param string $brand the brand name.
 	 *
-	 * @throws NostoInvalidArgumentException
+	 * @throws InvalidArgumentException
 	 */
 	public function setBrand($brand)
 	{
 		if (!is_string($brand) || empty($brand))
-			throw new NostoInvalidArgumentException('Brand must be a non-empty string value.');
+			throw new InvalidArgumentException('Brand must be a non-empty string value.');
 
 		$this->brand = $brand;
 	}
@@ -751,7 +755,7 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	 *
 	 * @param array $categories the categories.
 	 *
-	 * @throws NostoInvalidArgumentException
+	 * @throws InvalidArgumentException
 	 */
 	public function setCategories(array $categories)
 	{
@@ -771,12 +775,12 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	 *
 	 * @param string $category the category.
 	 *
-	 * @throws NostoInvalidArgumentException
+	 * @throws InvalidArgumentException
 	 */
 	public function addCategory($category)
 	{
 		if (!is_string($category) || empty($category))
-			throw new NostoInvalidArgumentException('Category must be a non-empty string value.');
+			throw new InvalidArgumentException('Category must be a non-empty string value.');
 
 		$this->categories[] = $category;
 	}
@@ -791,12 +795,12 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	 *
 	 * @param string $name the name.
 	 *
-	 * @throws NostoInvalidArgumentException
+	 * @throws InvalidArgumentException
 	 */
 	public function setName($name)
 	{
 		if (!is_string($name) || empty($name))
-			throw new NostoInvalidArgumentException('Category must be a non-empty string value.');
+			throw new InvalidArgumentException('Category must be a non-empty string value.');
 
 		$this->name = $name;
 	}
@@ -811,12 +815,12 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	 *
 	 * @param string $url the url.
 	 *
-	 * @throws NostoInvalidArgumentException
+	 * @throws InvalidArgumentException
 	 */
 	public function setUrl($url)
 	{
 		if (!Validate::isUrl($url) || !Validate::isAbsoluteUrl($url))
-			throw new NostoInvalidArgumentException('URL must be valid and absolute.');
+			throw new InvalidArgumentException('URL must be valid and absolute.');
 
 		$this->url = $url;
 	}
@@ -856,7 +860,7 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	public function setDescription($description)
 	{
 		if (!is_string($description) || empty($description))
-			throw new NostoInvalidArgumentException('Description must be a non-empty string value.');
+			throw new InvalidArgumentException('Description must be a non-empty string value.');
 
 		$this->description = $description;
 	}
@@ -871,12 +875,12 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	 *
 	 * @param string $short_description the `short` description.
 	 *
-	 * @throws NostoInvalidArgumentException
+	 * @throws InvalidArgumentException
 	 */
 	public function setShortDescription($short_description)
 	{
 		if (!is_string($short_description) || empty($short_description))
-			throw new NostoInvalidArgumentException('Short description must be a non-empty string value.');
+			throw new InvalidArgumentException('Short description must be a non-empty string value.');
 
 		$this->short_description = $short_description;
 	}

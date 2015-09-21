@@ -46,7 +46,7 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
 
 			try {
 				$nosto_order = new NostoTaggingOrder();
-				$nosto_order->include_special_items = false;
+				$nosto_order->excludeSpecialItems();
 				$nosto_order->loadData($order);
 				$collection[] = $nosto_order;
 			} catch (NostoException $e) {
