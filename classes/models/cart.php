@@ -53,7 +53,7 @@ class NostoTaggingCart extends NostoTaggingModel
 			foreach ($this->fetchCartItems($cart) as $item)
 				$this->line_items[] = $this->buildLineItem($item, $currency, $context);
 
-		$this->dispatchHookActionObjectLoadAfter(array(
+		$this->dispatchHookActionLoadAfter(array(
 			'nosto_cart' => $this,
 			'cart' => $cart,
 			'context' => $context

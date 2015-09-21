@@ -61,7 +61,7 @@ class NostoTaggingCustomer extends NostoTaggingModel
 		$this->last_name = $customer->lastname;
 		$this->email = $customer->email;
 
-		$this->dispatchHookActionObjectLoadAfter(array(
+		$this->dispatchHookActionLoadAfter(array(
 			'nosto_customer' => $this,
 			'customer' => $customer,
 			'context' => $context

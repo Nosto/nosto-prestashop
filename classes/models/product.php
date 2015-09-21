@@ -167,7 +167,7 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 				$this->price_variations = $this->buildPriceVariations($product, $context, $base_currency, $currencies);
 		}
 
-		$this->dispatchHookActionObjectLoadAfter(array(
+		$this->dispatchHookActionLoadAfter(array(
 			'nosto_product' => $this,
 			'product' => $product,
 			'context' => $context

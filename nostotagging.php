@@ -104,6 +104,41 @@ class NostoTagging extends Module
 			'title' => 'Search footer',
 			'description' => 'Add new blocks below the search result list.',
 		),
+		array(
+			'name' => 'actionNostoBrandLoadAfter',
+			'title' => 'After load nosto brand',
+			'description' => 'Action hook fired after a Nosto brand object has been loaded.',
+		),
+		array(
+			'name' => 'actionNostoCartLoadAfter',
+			'title' => 'After load nosto cart',
+			'description' => 'Action hook fired after a Nosto cart object has been loaded.',
+		),
+		array(
+			'name' => 'actionNostoCategoryLoadAfter',
+			'title' => 'After load nosto category',
+			'description' => 'Action hook fired after a Nosto category object has been loaded.',
+		),
+		array(
+			'name' => 'actionNostoCustomerLoadAfter',
+			'title' => 'After load nosto customer',
+			'description' => 'Action hook fired after a Nosto customer object has been loaded.',
+		),
+		array(
+			'name' => 'actionNostoOrderLoadAfter',
+			'title' => 'After load nosto order',
+			'description' => 'Action hook fired after a Nosto order object has been loaded.',
+		),
+		array(
+			'name' => 'actionNostoProductLoadAfter',
+			'title' => 'After load nosto product',
+			'description' => 'Action hook fired after a Nosto product object has been loaded.',
+		),
+		array(
+			'name' => 'actionNostoSearchLoadAfter',
+			'title' => 'After load nosto search',
+			'description' => 'Action hook fired after a Nosto search object has been loaded.',
+		),
 	);
 
 	/**

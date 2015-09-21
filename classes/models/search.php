@@ -42,7 +42,7 @@ class NostoTaggingSearch extends NostoTaggingModel
 	{
 		$this->search_term = $search_term;
 
-		$this->dispatchHookActionObjectLoadAfter(array(
+		$this->dispatchHookActionLoadAfter(array(
 			'nosto_search' => $this,
 			'context' => Context::getContext()
 		));

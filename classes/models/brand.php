@@ -45,7 +45,7 @@ class NostoTaggingBrand extends NostoTaggingModel
 
 		$this->brand = DS.$manufacturer->name;
 
-		$this->dispatchHookActionObjectLoadAfter(array(
+		$this->dispatchHookActionLoadAfter(array(
 			'nosto_brand' => $this,
 			'manufacturer' => $manufacturer,
 			'context' => Context::getContext()

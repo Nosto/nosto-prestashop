@@ -51,7 +51,7 @@ class NostoTaggingCategory extends NostoTaggingModel
 		$language = $context->language;
 		$this->category = self::buildCategoryString($category->id, $language->id);
 
-		$this->dispatchHookActionObjectLoadAfter(array(
+		$this->dispatchHookActionLoadAfter(array(
 			'nosto_category' => $this,
 			'category' => $category,
 			'context' => $context

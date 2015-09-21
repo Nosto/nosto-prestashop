@@ -100,7 +100,7 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 
 		$this->order_status = new NostoTaggingOrderStatus($order);
 
-		$this->dispatchHookActionObjectLoadAfter(array(
+		$this->dispatchHookActionLoadAfter(array(
 			'nosto_order' => $this,
 			'order' => $order,
 			'context' => $context
