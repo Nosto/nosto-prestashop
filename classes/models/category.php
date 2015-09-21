@@ -31,7 +31,7 @@ class NostoTaggingCategory extends NostoTaggingModel
 	/**
 	 * @var string the built category string.
 	 */
-	public $category_string;
+	protected $category;
 
 	/**
 	 * Sets up this DTO.
@@ -49,7 +49,13 @@ class NostoTaggingCategory extends NostoTaggingModel
 
 		/** @var LanguageCore $language */
 		$language = $context->language;
-		$this->category_string = self::buildCategoryString($category->id, $language->id);
+		$this->category = self::buildCategoryString($category->id, $language->id);
+
+		$this->dispatchHookActionObjectLoadAfter(array(
+			'nosto_category' => $this,
+			'category' => $category,
+			'context' => $context
+		));
 	}
 
 	/**
@@ -75,5 +81,37 @@ class NostoTaggingCategory extends NostoTaggingModel
 			return '';
 
 		return DS.implode(DS, array_reverse($category_list));
+	}
+
+	/**
+	 * Returns the category value.
+	 *
+	 * @return string the category.
+	 */
+	public function getCategory()
+	{
+		return $this->category;
+	}
+
+	/**
+	 * Sets the category string.
+	 *
+	 * The category must be a non-empty string, that starts with a "/" character.
+	 *
+	 * Usage:
+	 * $object->setCategory('/Clothes/Winter/Coats');
+	 *
+	 * @param string $category the category string.
+	 *
+	 * @throws InvalidArgumentException
+	 */
+	public function setCategory($category)
+	{
+		if (!is_string($category) || empty($category))
+			throw new InvalidArgumentException('Category must be a non-empty string value.');
+		if ($category[0] !== DS)
+			throw new InvalidArgumentException(sprintf('Category string must start with a %s character.', DS));
+
+		$this->category = $category;
 	}
 }

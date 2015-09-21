@@ -31,17 +31,17 @@ class NostoTaggingCustomer extends NostoTaggingModel
 	/**
 	 * @var string the customer first name.
 	 */
-	public $first_name;
+	protected $first_name;
 
 	/**
 	 * @var string the customer last name.
 	 */
-	public $last_name;
+	protected $last_name;
 
 	/**
 	 * @var string the customer email address.
 	 */
-	public $email;
+	protected $email;
 
 	/**
 	 * Sets up this DTO.
@@ -54,9 +54,18 @@ class NostoTaggingCustomer extends NostoTaggingModel
 		if (!self::isLoggedIn($customer, $context))
 			return;
 
+		if (is_null($context))
+			$context = Context::getContext();
+
 		$this->first_name = $customer->firstname;
 		$this->last_name = $customer->lastname;
 		$this->email = $customer->email;
+
+		$this->dispatchHookActionObjectLoadAfter(array(
+			'nosto_customer' => $this,
+			'customer' => $customer,
+			'context' => $context
+		));
 	}
 
 	/**
@@ -87,5 +96,97 @@ class NostoTaggingCustomer extends NostoTaggingModel
 			&& !empty($customer->id)
 			&& ($context->cookie->id_customer == $customer->id)
 			&& $context->cookie->isLogged());
+	}
+
+	/**
+	 * Returns the logged in customers first name.
+	 *
+	 * @return string the name.
+	 */
+	public function getFirstName()
+	{
+		return $this->first_name;
+	}
+
+	/**
+	 * Returns the logged in customers last name.
+	 *
+	 * @return string the name.
+	 */
+	public function getLastName()
+	{
+		return $this->last_name;
+	}
+
+	/**
+	 * Returns the logged in customers email address.
+	 *
+	 * @return string the email.
+	 */
+	public function getEmail()
+	{
+		return $this->email;
+	}
+
+	/**
+	 * Sets the first name of the logged in user.
+	 *
+	 * The name must be a non-empty string.
+	 *
+	 * Usage:
+	 * $object->setFirstName('John');
+	 *
+	 * @param string $first_name the name.
+	 *
+	 * @throws InvalidArgumentException
+	 */
+	public function setFirstName($first_name)
+	{
+		if (!is_string($first_name) || empty($first_name))
+			throw new InvalidArgumentException('First name must be a non-empty string value.');
+
+		$this->first_name = $first_name;
+	}
+
+	/**
+	 * Sets the last name of the logged in user.
+	 *
+	 * The name must be a non-empty string.
+	 *
+	 * Usage:
+	 * $object->setLastName('Doe');
+	 *
+	 * @param string $last_name the name.
+	 *
+	 * @throws InvalidArgumentException
+	 */
+	public function setLastName($last_name)
+	{
+		if (!is_string($last_name) || empty($last_name))
+			throw new InvalidArgumentException('Last name must be a non-empty string value.');
+
+		$this->last_name = $last_name;
+	}
+
+	/**
+	 * Sets the email address of the logged in user.
+	 *
+	 * The email must be a non-empty valid email address string.
+	 *
+	 * Usage:
+	 * $object->setEmail('john.doe@example.com');
+	 *
+	 * @param string $email the email.
+	 *
+	 * @throws InvalidArgumentException
+	 */
+	public function setEmail($email)
+	{
+		if (!is_string($email) || empty($email))
+			throw new InvalidArgumentException('Email name must be a non-empty string value.');
+		if (!Validate::isEmail($email))
+			throw new InvalidArgumentException('Email is not a valid email address.');
+
+		$this->email = $email;
 	}
 }

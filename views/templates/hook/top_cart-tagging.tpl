@@ -24,7 +24,7 @@
 
 {if isset($nosto_cart) && is_object($nosto_cart)}
     <div class="nosto_cart" style="display:none">
-        {foreach from=$nosto_cart->line_items item=line_item}
+        {foreach from=$nosto_cart->getLineItems() item=line_item}
             <div class="line_item">
                 <span class="product_id">{$line_item->getProductId()|escape:'htmlall':'UTF-8'}</span>
                 <span class="quantity">{$line_item->getQuantity()|escape:'htmlall':'UTF-8'}</span>

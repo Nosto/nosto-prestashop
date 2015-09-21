@@ -26,7 +26,7 @@
 /**
  * Abstract model for representing a line item in the cart and orders.
  */
-abstract class NostoTaggingLineItem extends NostoTaggingModel
+abstract class NostoTaggingLineItem
 {
 	/**
 	 * @var int the unique identifier.

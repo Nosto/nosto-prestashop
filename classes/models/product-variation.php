@@ -26,7 +26,7 @@
 /**
  * Model for tagging products variations.
  */
-class NostoTaggingProductVariation extends NostoTaggingModel implements NostoProductPriceVariationInterface
+class NostoTaggingProductVariation implements NostoProductPriceVariationInterface
 {
 	/**
 	 * @var NostoPriceVariation the variation ID.

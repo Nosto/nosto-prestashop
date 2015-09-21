@@ -25,8 +25,44 @@
 
 /**
  * Base model for all tagging model classes.
+ *
+ * Tagging models are:
+ *
+ * - NostoTaggingBrand
+ * - NostoTaggingCart
+ * - NostoTaggingCategory
+ * - NostoTaggingCustomer
+ * - NostoTaggingOrder
+ * - NostoTaggingProduct
+ * - NostoTaggingSearch
  */
 abstract class NostoTaggingModel
 {
+	/**
+	 * Dispatches the hook `actionObject{MODEL}LoadAfter`.
+	 *
+	 * This method can be called last in the tagging model loadData() methods, to allow overriding of model data.
+	 *
+	 * @param array $params the hook params.
+	 */
+	protected function dispatchHookActionObjectLoadAfter(array $params)
+	{
+		$this->dispatchHook('actionObject'.get_class($this).'LoadAfter', $params);
+	}
 
+	/**
+	 * Executes a PS hook by name.
+	 *
+	 * Abstracts the differences between PS versions.
+	 *
+	 * @param string $name the hook name.
+	 * @param array $params the hook params.
+	 */
+	private function dispatchHook($name, array $params)
+	{
+		if (_PS_VERSION_ >= '1.5')
+			Hook::exec($name, $params);
+		else
+			Module::hookExec($name, $params);
+	}
 }

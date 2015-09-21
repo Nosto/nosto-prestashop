@@ -99,6 +99,12 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 			$this->payment_provider = $order->module.' [unknown]';
 
 		$this->order_status = new NostoTaggingOrderStatus($order);
+
+		$this->dispatchHookActionObjectLoadAfter(array(
+			'nosto_order' => $this,
+			'order' => $order,
+			'context' => $context
+		));
 	}
 
 	/**
@@ -168,6 +174,106 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 	public function getOrderStatus()
 	{
 		return $this->order_status;
+	}
+
+	/**
+	 * Sets the unique order number identifying the order.
+	 *
+	 * The number must be a non-empty value.
+	 *
+	 * Usage:
+	 * $object->setOrderNumber('order123');
+	 *
+	 * @param string|int $order_number the order number.
+	 *
+	 * @throws InvalidArgumentException
+	 */
+	public function setOrderNumber($order_number)
+	{
+		if (!(is_int($order_number) || is_string($order_number)) || empty($order_number))
+			throw new InvalidArgumentException('Order number must be a non-empty value.');
+
+		$this->order_number = $order_number;
+	}
+
+	/**
+	 * Sets the date when the order was placed.
+	 *
+	 * The date must be an instance of the NostoDate class.
+	 *
+	 * Usage:
+	 * $object->setCreatedDate(NostoDate $created_date);
+	 *
+	 * @param NostoDate $created_date the creation date.
+	 */
+	public function setCreatedDate(NostoDate $created_date)
+	{
+		$this->created_date = $created_date;
+	}
+
+	/**
+	 * Sets the payment provider used for placing the order.
+	 *
+	 * The provider must be a non-empty string value. Preferred formatting is "[provider name] [provider version]".
+	 *
+	 * Usage:
+	 * $object->setPaymentProvider("payment_gateway [1.0.0]");
+	 *
+	 * @param string $payment_provider the payment provider.
+	 *
+	 * @throws InvalidArgumentException
+	 */
+	public function setPaymentProvider($payment_provider)
+	{
+		if (!is_string($payment_provider) || empty($payment_provider))
+			throw new InvalidArgumentException('Payment provider must be a non-empty string value.');
+
+		$this->payment_provider = $payment_provider;
+	}
+
+	/**
+	 * Sets the buyer info of the user who placed the order.
+	 *
+	 * The info object must implement the NostoOrderBuyerInterface interface.
+	 *
+	 * Usage:
+	 * $object->setBuyerInfo(NostoOrderBuyerInterface $buyer_info);
+	 *
+	 * @param NostoOrderBuyerInterface $buyer_info the buyer info object.
+	 */
+	public function setBuyerInfo(NostoOrderBuyerInterface $buyer_info)
+	{
+		$this->buyer_info = $buyer_info;
+	}
+
+	/**
+	 * Adds a purchased item to the order.
+	 *
+	 * The item object must implement the NostoOrderItemInterface interface.
+	 *
+	 * Usage:
+	 * $object->addPurchasedItems(NostoOrderItemInterface $purchased_item);
+	 *
+	 * @param NostoOrderItemInterface $purchased_item the item object.
+	 */
+	public function addPurchasedItems(NostoOrderItemInterface $purchased_item)
+	{
+		$this->purchased_items[] = $purchased_item;
+	}
+
+	/**
+	 * Sets the order status.
+	 *
+	 * The status object must implement the NostoOrderStatusInterface interface.
+	 *
+	 * Usage:
+	 * $object->setOrderStatus(NostoOrderStatusInterface $order_status);
+	 *
+	 * @param NostoOrderStatusInterface $order_status the status object.
+	 */
+	public function setOrderStatus(NostoOrderStatusInterface $order_status)
+	{
+		$this->order_status = $order_status;
 	}
 
 	/**

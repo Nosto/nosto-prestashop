@@ -41,6 +41,11 @@ class NostoTaggingSearch extends NostoTaggingModel
 	public function loadData($search_term)
 	{
 		$this->search_term = $search_term;
+
+		$this->dispatchHookActionObjectLoadAfter(array(
+			'nosto_search' => $this,
+			'context' => Context::getContext()
+		));
 	}
 
 	/**
@@ -51,5 +56,25 @@ class NostoTaggingSearch extends NostoTaggingModel
 	public function getSearchTerm()
 	{
 		return $this->search_term;
+	}
+
+	/**
+	 * Sets the search term.
+	 *
+	 * The term must be a non-empty string.
+	 *
+	 * Usage:
+	 * $object->setSearchTerm('test');
+	 *
+	 * @param string $term the search term.
+	 *
+	 * @throws InvalidArgumentException
+	 */
+	public function setSearchTerm($term)
+	{
+		if (!is_string($term) || empty($term))
+			throw new InvalidArgumentException('Search term must be a non-empty string value.');
+
+		$this->search_term = $term;
 	}
 }

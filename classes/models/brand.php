@@ -31,7 +31,7 @@ class NostoTaggingBrand extends NostoTaggingModel
 	/**
 	 * @var string the built brand string.
 	 */
-	public $brand_string;
+	protected $brand;
 
 	/**
 	 * Sets up this DTO.
@@ -43,6 +43,44 @@ class NostoTaggingBrand extends NostoTaggingModel
 		if (!Validate::isLoadedObject($manufacturer))
 			return;
 
-		$this->brand_string = DS.$manufacturer->name;
+		$this->brand = DS.$manufacturer->name;
+
+		$this->dispatchHookActionObjectLoadAfter(array(
+			'nosto_brand' => $this,
+			'manufacturer' => $manufacturer,
+			'context' => Context::getContext()
+		));
+	}
+
+	/**
+	 * Returns the brand value.
+	 *
+	 * @return string the brand.
+	 */
+	public function getBrand()
+	{
+		return $this->brand;
+	}
+
+	/**
+	 * Sets the brand name of a manufacturer.
+	 *
+	 * The name must be a non-empty string, that starts with a "/" character.
+	 *
+	 * Usage:
+	 * $object->setBrand('Example');
+	 *
+	 * @param string $brand the brand name.
+	 *
+	 * @throws InvalidArgumentException
+	 */
+	public function setBrand($brand)
+	{
+		if (!is_string($brand) || empty($brand))
+			throw new InvalidArgumentException('Brand must be a non-empty string value.');
+		if ($brand[0] !== DS)
+			throw new InvalidArgumentException(sprintf('Brand string must start with a %s character.', DS));
+
+		$this->brand = $brand;
 	}
 }

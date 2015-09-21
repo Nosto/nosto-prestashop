@@ -31,7 +31,7 @@ class NostoTaggingCart extends NostoTaggingModel
 	/**
 	 * @var NostoTaggingCartItem[] line items in the cart.
 	 */
-	public $line_items = array();
+	protected $line_items = array();
 
 	/**
 	 * Sets up this DTO.
@@ -52,6 +52,12 @@ class NostoTaggingCart extends NostoTaggingModel
 		if (Validate::isLoadedObject($currency))
 			foreach ($this->fetchCartItems($cart) as $item)
 				$this->line_items[] = $this->buildLineItem($item, $currency, $context);
+
+		$this->dispatchHookActionObjectLoadAfter(array(
+			'nosto_cart' => $this,
+			'cart' => $cart,
+			'context' => $context
+		));
 	}
 
 	/**
@@ -133,5 +139,28 @@ class NostoTaggingCart extends NostoTaggingModel
 			$nosto_base_currency);
 
 		return $line_item;
+	}
+
+	/**
+	 * Returns the cart line items.
+	 *
+	 * @return NostoTaggingCartItem[] the items.
+	 */
+	public function getLineItems()
+	{
+		return $this->line_items;
+	}
+
+	/**
+	 * Adds a new item to the cart tagging.
+	 *
+	 * Usage:
+	 * $object->addLineItem(NostoTaggingCartItem $item);
+	 *
+	 * @param NostoTaggingCartItem $item the new item.
+	 */
+	public function addLineItem(NostoTaggingCartItem $item)
+	{
+		$this->line_items[] = $item;
 	}
 }
