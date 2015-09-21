@@ -167,15 +167,15 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 				$this->price_variations = $this->buildPriceVariations($product, $context, $base_currency, $currencies);
 		}
 
-		// Execute hook `actionObjectNostoTaggingProductLoadAfter`, so that other modules can add/modify the product.
+		// Execute hook `actionObjectNostoTaggingProductLoadAfter`, so that other modules can modify the product.
 		// This is useful when wanting to add custom data, e.g. tag1, tag2, tag3, to the product that is automatically
 		// included in both the tagging on the product pages and in the server-to-server API calls.
+		$hook_name = 'actionObject'.get_class($this).'LoadAfter';
+		$hook_params = array('nosto_product' => $this, 'product' => $product, 'context' => $context);
 		if (_PS_VERSION_ >= '1.5')
-			Hook::exec('actionObject'.get_class($this).'LoadAfter',
-				array('nosto_product' => $this, 'product' => $product, 'context' => $context));
+			Hook::exec($hook_name, $hook_params);
 		else
-			Module::hookExec('actionObject'.get_class($this).'LoadAfter',
-				array('nosto_product' => $this, 'product' => $product, 'context' => $context));
+			Module::hookExec($hook_name, $hook_params);
 	}
 
 	/**
