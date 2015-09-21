@@ -51,7 +51,7 @@ class NostoTaggingCart extends NostoTaggingModel
 		$currency = new Currency($cart->id_currency);
 		if (Validate::isLoadedObject($currency))
 			foreach ($this->fetchCartItems($cart) as $item)
-				$this->line_items[] = $this->buildLineItem($item, $currency, $context);
+				$this->line_items[] = $this->buildLineItem($cart, $item, $context);
 
 		$this->dispatchHookActionLoadAfter(array(
 			'nosto_cart' => $this,
@@ -112,12 +112,12 @@ class NostoTaggingCart extends NostoTaggingModel
 	/**
 	 * Builds the Nosto line item for given cart item.
 	 *
+	 * @param Cart|CartCore $cart the PS cart model.
 	 * @param array $item the item data.
-	 * @param Currency|CurrencyCore $currency the currency the item price is in.
 	 * @param Context $context the PS context model.
 	 * @return NostoTaggingCartItem the Nosto line item.
 	 */
-	protected function buildLineItem(array $item, Currency $currency, Context $context)
+	protected function buildLineItem(Cart $cart, array $item, Context $context)
 	{
 		/** @var NostoTaggingHelperCurrency $helper_currency */
 		$helper_currency = Nosto::helper('nosto_tagging/currency');
@@ -131,10 +131,7 @@ class NostoTaggingCart extends NostoTaggingModel
 		if (isset($item['attributes_small']))
 			$name .= ' ('.$item['attributes_small'].')';
 
-		$nosto_price = new NostoPrice($item['price_wt']);
-		if ($currency->iso_code !== $base_currency->iso_code)
-			$nosto_price = $helper_price->convertToBaseCurrency($nosto_price, $currency);
-
+		$nosto_price = $helper_price->getCartItemPriceInclTax($cart, $item, $context, $base_currency);
 		$line_item = new NostoTaggingCartItem($item['id_product'], $name, $item['cart_quantity'], $nosto_price,
 			$nosto_base_currency);
 

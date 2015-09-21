@@ -321,7 +321,12 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 		$base_currency = $helper_currency->getBaseCurrency($context);
 		$nosto_base_currency = new NostoCurrencyCode($base_currency->iso_code);
 
-		$nosto_price = new NostoPrice($item['price']);
+		$price = isset($item['unit_price_tax_incl']) ? $item['unit_price_tax_incl'] : $item['price'];
+		$nosto_price = new NostoPrice($price);
+		// This conversion will cause a slight inaccuracy in the price, as we are converting an already converted and
+		// rounded price back to it's base currency. Nosto requires the price to be in it's base currency, but it is
+		// saved by PS in the currency it was bought in and the accuracy is already lost. The loss will be in the range
+		// of a one "cent".
 		if ($currency->iso_code !== $base_currency->iso_code)
 			$nosto_price = $helper_price->convertToBaseCurrency($nosto_price, $currency);
 

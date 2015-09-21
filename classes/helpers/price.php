@@ -38,7 +38,7 @@ class NostoTaggingHelperPrice
 	 */
 	public function getProductPriceInclTax(Product $product, Context $context, Currency $currency)
 	{
-		return $this->calcPrice($product, $context, $currency, true);
+		return $this->calcPrice($product->id, $currency, $context, array('user_reduction' => true));
 	}
 
 	/**
@@ -51,7 +51,32 @@ class NostoTaggingHelperPrice
 	 */
 	public function getProductListPriceInclTax(Product $product, Context $context, Currency $currency)
 	{
-		return $this->calcPrice($product, $context, $currency, false);
+		return $this->calcPrice($product->id, $currency, $context, array('user_reduction' => false));
+	}
+
+	/**
+	 * Returns the cart item price including taxes for the given currency.
+	 *
+	 * @param Cart|CartCore $cart the cart.
+	 * @param array $item the cart item.
+	 * @param Context $context the context.
+	 * @param Currency $currency the currency.
+	 * @return NostoPrice the price.
+	 */
+	public function getCartItemPriceInclTax(Cart $cart, array $item, Context $context, Currency $currency)
+	{
+		if (Configuration::get('PS_TAX_ADDRESS_TYPE') == 'id_address_invoice')
+			$id_address = (int)$cart->id_address_invoice;
+		else
+			$id_address = (int)$item['id_address_delivery'];
+
+		return $this->calcPrice((int)$item['id_product'], $currency, $context, array(
+			'user_reduction' => true,
+			'id_product_attribute' => (isset($item['id_product_attribute']) ? (int)$item['id_product_attribute'] : null),
+			'id_customer' => ((int)$cart->id_customer ? (int)$cart->id_customer : null),
+			'id_cart' => (int)$cart->id,
+			'id_address' => (Address::addressExists($id_address) ? (int)$id_address : null),
+		));
 	}
 
 	/**
@@ -67,20 +92,20 @@ class NostoTaggingHelperPrice
 		$currency_exchange = new NostoCurrencyExchange();
 		$rate = new NostoCurrencyExchangeRate($nosto_currency, 1 / $currency->conversion_rate);
 		$new_price = $currency_exchange->convert($price, $rate);
-		return $new_price;
+		return $this->roundPrice($new_price);
 	}
 
 	/**
 	 * Returns the product price for the given currency.
 	 * The price is rounded according to the configured rounding mode in PS.
 	 *
-	 * @param Product|ProductCore $product the product.
-	 * @param Context|ContextCore $context the context.
-	 * @param Currency|CurrencyCore $currency the currency.
-	 * @param bool $discounted_price
+	 * @param int $id_product the product ID.
+	 * @param Currency|CurrencyCore $currency the currency object.
+	 * @param Context $context the context object.
+	 * @param array $options options for the Product::getPriceStatic method.
 	 * @return NostoPrice the price.
 	 */
-	protected function calcPrice(Product $product, Context $context, Currency $currency, $discounted_price = true)
+	protected function calcPrice($id_product, Currency $currency, Context $context, array $options = array())
 	{
 		// If the requested currency is not the one in the context, then set it.
 		if ($currency->iso_code !== $context->currency->iso_code)
@@ -90,17 +115,36 @@ class NostoTaggingHelperPrice
 			$context->currency = $currency;
 			// PS 1.4 has the currency stored in the cookie.
 			if (isset($context->cookie, $context->cookie->id_currency))
+			{
 				$context->cookie->id_currency = $currency->id;
+				$context->cart->id_currency = $currency->id;
+			}
 		}
 
-		$id_customer = (int)$context->cookie->id_customer;
-		$incl_tax = (bool)!Product::getTaxCalculationMethod($id_customer);
+		$options = array_merge(array(
+			'include_tax' => true,
+			'id_product_attribute' => null,
+			'decimals' => 6,
+			'divisor' => null,
+			'only_reduction' => false,
+			'user_reduction' => true,
+			'quantity' => 1,
+			'force_associated_tax' => false,
+			'id_customer' => null,
+			'id_cart' => null,
+			'id_address' => null,
+			'with_eco_tax' => true,
+			'use_group_reduction' => true,
+			'use_customer_price' => true,
+		), $options);
+		// This option is used as a reference, so we need it in a separate variable.
 		$specific_price_output = null;
-		$value = Product::getPriceStatic((int)$product->id, $incl_tax, null, /* $id_product_attribute */ 6,
-			/* $decimals */ null, /* $divisor */ false, /* $only_reduction */ $discounted_price, /* $user_reduction */
-			1, /* $quantity */ false, /* $force_associated_tax */ null, /* $id_customer */ null, /* $id_cart */
-			null, /* $id_address */ $specific_price_output, /* $specific_price_output */
-			true, /* $with_eco_tax */ true, /* $use_group_reduction */ $context, true /* $use_customer_price */);
+
+		$value = Product::getPriceStatic((int)$id_product, $options['include_tax'], $options['id_product_attribute'],
+			$options['decimals'], $options['divisor'], $options['only_reduction'], $options['user_reduction'],
+			$options['quantity'], $options['force_associated_tax'], $options['id_customer'], $options['id_cart'],
+			$options['id_address'], $specific_price_output, $options['with_eco_tax'], $options['use_group_reduction'],
+			$context, $options['use_customer_price']);
 
 		// If currency was replaced in context, restore the old one.
 		if (isset($old_currency))
@@ -108,7 +152,10 @@ class NostoTaggingHelperPrice
 			$context->currency = $old_currency;
 			// PS 1.4 has the currency stored in the cookie.
 			if (isset($context->cookie, $context->cookie->id_currency))
+			{
 				$context->cookie->id_currency = $old_currency->id;
+				$context->cart->id_currency = $old_currency->id;
+			}
 		}
 
 		return $this->roundPrice(new NostoPrice($value));
