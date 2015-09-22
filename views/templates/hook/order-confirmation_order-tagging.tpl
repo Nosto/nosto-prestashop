@@ -34,13 +34,13 @@
             <span class="email">{$nosto_order->getBuyerInfo()->getEmail()|escape:'htmlall':'UTF-8'}</span>
         </div>
         <div class="purchased_items">
-            {foreach from=$nosto_order->getPurchasedItems() item=lineItem}
+            {foreach from=$nosto_order->getPurchasedItems() item=line_item}
                 <div class="line_item">
-                    <span class="product_id">{$lineItem->getProductId()|escape:'htmlall':'UTF-8'}</span>
-                    <span class="quantity">{$lineItem->getQuantity()|escape:'htmlall':'UTF-8'}</span>
-                    <span class="name">{$lineItem->getName()|escape:'htmlall':'UTF-8'}</span>
-                    <span class="unit_price">{$lineItem->getUnitPrice()->getPrice()|number_format:2:'.':''|escape:'htmlall':'UTF-8'}</span>
-                    <span class="price_currency_code">{$lineItem->getCurrency()->getCode()|escape:'htmlall':'UTF-8'}</span>
+                    <span class="product_id">{$line_item->getProductId()|escape:'htmlall':'UTF-8'}</span>
+                    <span class="quantity">{$line_item->getQuantity()|escape:'htmlall':'UTF-8'}</span>
+                    <span class="name">{$line_item->getName()|escape:'htmlall':'UTF-8'}</span>
+                    <span class="unit_price">{$line_item->getUnitPrice()->getPrice()|number_format:2:'.':''|escape:'htmlall':'UTF-8'}</span>
+                    <span class="price_currency_code">{$line_item->getCurrency()->getCode()|escape:'htmlall':'UTF-8'}</span>
                 </div>
             {/foreach}
         </div>
