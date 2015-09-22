@@ -63,6 +63,7 @@ class NostoTaggingHelperUpdater
 				if (file_exists($script['file']) && is_readable($script['file']))
 				{
 					// Run the script and update the currently installed module version so future updates can work.
+					/** @noinspection PhpIncludeInspection */
 					include_once $script['file'];
 					call_user_func($script['upgrade_function'], $module);
 				}

@@ -55,17 +55,20 @@ if (!defined('_PS_VERSION_'))
 
 	$controller_dir = $ps_dir.'/modules/nostotagging/controllers/front';
 
+	/** @noinspection PhpIncludeInspection */
 	require_once($ps_dir.'/config/config.inc.php');
 
 	/*
 	 * The "ModuleFrontController" class won't be defined in prestashop 1.4, so define it.
 	 */
 	if (_PS_VERSION_ < '1.5')
+		/** @noinspection PhpIncludeInspection */
 		require_once($controller_dir.'/module.php');
 
 	$controller = (string)Tools::getValue('controller');
 	if (!empty($controller) && in_array($controller, $controller_white_list))
 	{
+		/** @noinspection PhpIncludeInspection */
 		require_once($controller_dir.'/'.$controller.'.php');
 		ControllerFactory::getController('NostoTagging'.Tools::ucfirst($controller).'ModuleFrontController')->run();
 	}

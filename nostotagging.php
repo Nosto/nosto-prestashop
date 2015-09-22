@@ -162,6 +162,7 @@ class NostoTagging extends Module
 
 		// Backward compatibility
 		if (_PS_VERSION_ < '1.5')
+			/** @noinspection PhpIncludeInspection */
 			require(_PS_MODULE_DIR_.$this->name.'/backward_compatibility/backward.php');
 
 		// Only try to use class files if we can resolve the __FILE__ global to the current file.
