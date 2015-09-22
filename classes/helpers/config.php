@@ -31,6 +31,12 @@ class NostoTaggingHelperConfig
 	const ACCOUNT_NAME = 'NOSTOTAGGING_ACCOUNT_NAME';
 	const ADMIN_URL = 'NOSTOTAGGING_ADMIN_URL';
 	const INSTALLED_VERSION = 'NOSTOTAGGING_INSTALLED_VERSION';
+	const MULTI_CURRENCY_METHOD = 'NOSTOTAGGING_MC_METHOD';
+	const USE_DIRECT_INCLUDE = 'NOSTOTAGGING_DIRECT_INCLUDE';
+	const CRON_ACCESS_TOKEN = 'NOSTOTAGGING_CRON_ACCESS_TOKEN';
+
+	const MULTI_CURRENCY_METHOD_VARIATION = 'priceVariation';
+	const MULTI_CURRENCY_METHOD_EXCHANGE_RATE = 'exchangeRate';
 
 	const TOKEN_CONFIG_PREFIX = 'NOSTOTAGGING_API_TOKEN_';
 
@@ -260,6 +266,84 @@ class NostoTaggingHelperConfig
 	public function getInstalledVersion()
 	{
 		return $this->read(self::INSTALLED_VERSION);
+	}
+
+	/**
+	 * Returns the multi currency method in use for the context.
+	 *
+	 * @param int $id_lang the language.
+	 * @param null|int $id_shop_group the shop group (defaults to current context).
+	 * @param null|int $id_shop the shop (defaults to current context).
+	 * @return string the multi currency method.
+	 */
+	public function getMultiCurrencyMethod($id_lang, $id_shop_group = null, $id_shop = null)
+	{
+		$method = $this->read(self::MULTI_CURRENCY_METHOD, $id_lang, $id_shop_group, $id_shop);
+		return !empty($method) ? $method : self::MULTI_CURRENCY_METHOD_EXCHANGE_RATE;
+	}
+
+	/**
+	 * Checks the the product price variations are to be used.
+	 *
+	 * @param int $id_lang the language.
+	 * @param null|int $id_shop_group the shop group (defaults to current context).
+	 * @param null|int $id_shop the shop (defaults to current context).
+	 * @return boolean true if the variations are to be used, false otherwise.
+	 */
+	public function isMultiCurrencyMethodPriceVariation($id_lang, $id_shop_group = null, $id_shop = null)
+	{
+		$method = $this->getMultiCurrencyMethod($id_lang, $id_shop_group, $id_shop);
+		return ($method === self::MULTI_CURRENCY_METHOD_VARIATION);
+	}
+
+	/**
+	 * Checks the the product price exchange rates are to be used.
+	 *
+	 * @param int $id_lang the language.
+	 * @param null|int $id_shop_group the shop group (defaults to current context).
+	 * @param null|int $id_shop the shop (defaults to current context).
+	 * @return boolean true if the rates are to be used, false otherwise.
+	 */
+	public function isMultiCurrencyMethodExchangeRate($id_lang, $id_shop_group = null, $id_shop = null)
+	{
+		$method = $this->getMultiCurrencyMethod($id_lang, $id_shop_group, $id_shop);
+		return ($method === self::MULTI_CURRENCY_METHOD_EXCHANGE_RATE);
+	}
+
+	/**
+	 * Returns if the "use direct include" option is enabled.
+	 *
+	 * @param int $id_lang the language.
+	 * @param null|int $id_shop_group the shop group (defaults to current context).
+	 * @param null|int $id_shop the shop (defaults to current context).
+	 * @return bool true if enabled, false otherwise.
+	 */
+	public function getUseDirectInclude($id_lang, $id_shop_group = null, $id_shop = null)
+	{
+		return (bool)$this->read(self::USE_DIRECT_INCLUDE, $id_lang, $id_shop_group, $id_shop);
+	}
+
+	/**
+	 * Returns the access token for the cron controllers.
+	 * This token is stored globally for all stores and languages.
+	 *
+	 * @return string|bool the token or false if not found.
+	 */
+	public function getCronAccessToken()
+	{
+		return $this->read(self::CRON_ACCESS_TOKEN);
+	}
+
+	/**
+	 * Saves the access token for the cron controllers.
+	 * This token is stored globally for all stores and languages.
+	 *
+	 * @param string $token the token.
+	 * @return bool true if saved successfully, false otherwise.
+	 */
+	public function saveCronAccessToken($token)
+	{
+		return $this->write(self::CRON_ACCESS_TOKEN, $token, null, true);
 	}
 
 	/**

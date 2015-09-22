@@ -26,10 +26,8 @@
 /**
  * Model for tagging products.
  */
-class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInterface, NostoValidatableInterface
+class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInterface
 {
-	const IN_STOCK = 'InStock';
-	const OUT_OF_STOCK = 'OutOfStock';
 	const ADD_TO_CART = 'add-to-cart';
 
 	/**
@@ -53,29 +51,33 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	protected $image_url;
 
 	/**
-	 * @var string product price, discounted including vat.
+	 * @var NostoPrice product price, discounted including vat.
 	 */
 	protected $price;
 
 	/**
-	 * @var string product list price, including vat.
+	 * @var NostoPrice product list price, including vat.
 	 */
 	protected $list_price;
 
 	/**
-	 * @var string the currency iso code.
+	 * @var NostoCurrencyCode the currency iso code.
 	 */
 	protected $currency_code;
 
 	/**
-	 * @var string product availability (use constants).
+	 * @var NostoProductAvailability product availability (use constants).
 	 */
 	protected $availability;
 
 	/**
 	 * @var array list of product tags.
 	 */
-	protected $tags = array();
+	protected $tags = array(
+		'tag1' => array(),
+		'tag2' => array(),
+		'tag3' => array(),
+	);
 
 	/**
 	 * @var array list of product category strings.
@@ -98,128 +100,94 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	protected $brand;
 
 	/**
-	 * @var string the product publish date.
+	 * @var NostoDate the product publish date.
 	 */
 	protected $date_published;
 
 	/**
-	 * @inheritdoc
+	 * @var NostoPriceVariation the price variation that is currently in use.
 	 */
-	public function getValidationRules()
-	{
-		return array(
-			array(
-				array(
-					'url',
-					'product_id',
-					'name',
-					'image_url',
-					'price',
-					'list_price',
-					'currency_code',
-					'availability',
-				),
-				'required',
-			)
-		);
-	}
+	protected $price_variation;
 
 	/**
-	 * Loads the product data from supplied context and product objects.
-	 *
-	 * @param Context $context the context object.
-	 * @param Product $product the product object.
+	 * @var NostoProductPriceVariationInterface[] all price variations.
 	 */
-	public function loadData(Context $context, Product $product)
+	protected $price_variations;
+
+	/**
+	 * Sets up this DTO.
+	 *
+	 * @param Product|ProductCore $product the PS product model.
+	 * @param Context|null $context the PS context model.
+	 */
+	public function loadData(Product $product, Context $context = null)
 	{
 		if (!Validate::isLoadedObject($product))
 			return;
 
-		/** @var NostoTaggingHelperUrl $url_helper */
-		$url_helper = Nosto::helper('nosto_tagging/url');
+		if (is_null($context))
+			$context = Context::getContext();
 
-		$id_lang = $context->language->id;
-		$id_shop = $context->shop->id;
-		$currency_iso_code = $context->currency->iso_code;
+		/** @var Language|LanguageCore $language */
+		$language = $context->language;
+		/** @var Shop|ShopCore $shop */
+		$shop = $context->shop;
 
-		$this->url = $url_helper->getProductUrl($product, $id_lang, $id_shop);
-		$this->image_url = $url_helper->getProductImageUrl($product);
+		/** @var NostoTaggingHelperCurrency $helper_currency */
+		$helper_currency = Nosto::helper('nosto_tagging/currency');
+		/** @var NostoTaggingHelperPrice $helper_price */
+		$helper_price = Nosto::helper('nosto_tagging/price');
+		/** @var NostoTaggingHelperUrl $helper_url */
+		$helper_url = Nosto::helper('nosto_tagging/url');
+		/** @var NostoTaggingHelperConfig $helper_config */
+		$helper_config = Nosto::helper('nosto_tagging/config');
+
+		$base_currency = $helper_currency->getBaseCurrency($context);
+		$currencies = $helper_currency->getCurrencies($context);
+
+		$this->url = $helper_url->getProductUrl($product, $language->id, $shop->id);
+		$this->image_url = $helper_url->getProductImageUrl($product);
 		$this->product_id = (int)$product->id;
 		$this->name = $product->name;
-		$this->price = $this->calcPrice($product, $context);
-		$this->list_price = $this->calcPrice($product, $context, false /*no discounts*/);
-		$this->currency_code = Tools::strtoupper($currency_iso_code);
+		$this->price = $helper_price->getProductPriceInclTax($product, $context, $base_currency);
+		$this->list_price = $helper_price->getProductListPriceInclTax($product, $context, $base_currency);
+		$this->currency_code = new NostoCurrencyCode($base_currency->iso_code);
 		$this->availability = $this->checkAvailability($product);
-		$this->tags = $this->buildTags($product, $id_lang);
-		$this->categories = $this->buildCategories($product, $id_lang);
+		$this->tags['tag1'] = $this->buildTags($product, $language);
+		$this->categories = $this->buildCategories($product, $language);
 		$this->short_description = $product->description_short;
 		$this->description = $product->description;
+		$this->date_published = new NostoDate(strtotime($product->date_add));
 		$this->brand = (!empty($product->manufacturer_name)) ? $product->manufacturer_name : null;
-		$this->date_published = Nosto::helper('date')->format($product->date_add);
+
+		if (count($currencies) > 1)
+		{
+			$this->price_variation = new NostoPriceVariation($base_currency->iso_code);
+			if ($helper_config->isMultiCurrencyMethodPriceVariation($language->id, $shop->id_shop_group, $shop->id))
+				$this->price_variations = $this->buildPriceVariations($product, $context, $base_currency, $currencies);
+		}
+
+		$this->dispatchHookActionLoadAfter(array(
+			'nosto_product' => $this,
+			'product' => $product,
+			'context' => $context
+		));
 	}
 
 	/**
-	 * Assigns the product ID from given product.
-	 *
-	 * This method exists in order to expose a public API to change the ID.
-	 *
-	 * @param Product $product the product object.
-	 */
-	public function assignId(Product $product)
-	{
-		$this->product_id = (int)$product->id;
-	}
-
-	/**
-	 * Calculates the price (including tax if applicable) and returns it.
-	 *
-	 * We need to check if taxes are to be included in the prices, given that they are configured.
-	 * This is determined by the "Price display method" setting of the active user group.
-	 * Possible values are 1, tax excluded, and 0, tax included.
-	 *
-	 * @param Product $product the product model.
-	 * @param Context $context the context to calculate the price on (currency conversion).
-	 * @param bool $discounted_price if discounts should be applied.
-	 * @return string the calculated price.
-	 */
-	protected function calcPrice(Product $product, Context $context, $discounted_price = true)
-	{
-		$incl_tax = (bool)!Product::getTaxCalculationMethod((int)$context->cookie->id_customer);
-		$specific_price_output = null;
-		$value = Product::getPriceStatic(
-			(int)$product->id,
-			$incl_tax,
-			null, // $id_product_attribute
-			6, // $decimals
-			null, // $divisor
-			false, // $only_reduction
-			$discounted_price, // $user_reduction
-			1, // $quantity
-			false, // $force_associated_tax
-			null, // $id_customer
-			null, // $id_cart
-			null, // $id_address
-			$specific_price_output, // $specific_price_output
-			true, // $with_eco_tax
-			true, // $use_group_reduction
-			$context,
-			true // $use_customer_price
-		);
-		return Nosto::helper('price')->format($value);
-	}
-
-	/**
-	 * Checks the availability of the product and returns the "availability constant".
+	 * Checks the availability of the product and returns it.
 	 *
 	 * The product is considered available if it is visible in the shop and is in stock.
 	 *
-	 * @param Product $product the product model.
-	 * @return string the value, i.e. self::IN_STOCK or self::OUT_OF_STOCK.
+	 * @param Product|ProductCore $product the PS product model.
+	 * @return NostoProductAvailability the availability.
 	 */
 	protected function checkAvailability(Product $product)
 	{
 		$is_visible = (_PS_VERSION_ >= '1.5') ? ($product->visibility !== 'none') : true;
-		return ($product->checkQty(1) && $is_visible) ? self::IN_STOCK : self::OUT_OF_STOCK;
+		return new NostoProductAvailability(($product->checkQty(1) && $is_visible)
+			? NostoProductAvailability::IN_STOCK
+			: NostoProductAvailability::OUT_OF_STOCK);
 	}
 
 	/**
@@ -229,18 +197,18 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	 * any action from the user, e.g. the product cannot have any variations or choices. This tag is then used in the
 	 * recommendations to render the "Add to cart" button for the product when it is recommended to a user.
 	 *
-	 * @param Product $product the product model.
-	 * @param int $id_lang for which language ID to fetch the product tags.
+	 * @param Product|ProductCore $product the PS product model.
+	 * @param Language|LanguageCore $language the PS language model.
 	 * @return array the built tags.
 	 */
-	protected function buildTags(Product $product, $id_lang)
+	protected function buildTags(Product $product, Language $language)
 	{
 		$tags = array();
-		if (($product_tags = $product->getTags($id_lang)) !== '')
+		if (($product_tags = $product->getTags($language->id)) !== '')
 			$tags = explode(', ', $product_tags);
 
 		// If the product has no attributes (color, size etc.), then we mark it as possible to add directly to cart.
-		$product_attributes = $product->getAttributesGroups($id_lang);
+		$product_attributes = $product->getAttributesGroups($language->id);
 		if (empty($product_attributes))
 			$tags[] = self::ADD_TO_CART;
 
@@ -252,16 +220,16 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	 *
 	 * By "path" we mean the full tree path of the products categories and sub-categories.
 	 *
-	 * @param Product $product the product model.
-	 * @param int $id_lang for which language ID to fetch the categories.
+	 * @param Product|ProductCore $product the PS product model.
+	 * @param Language|LanguageCore $language the PS language model.
 	 * @return array the built category paths.
 	 */
-	protected function buildCategories(Product $product, $id_lang)
+	protected function buildCategories(Product $product, Language $language)
 	{
 		$categories = array();
 		foreach ($product->getCategories() as $category_id)
 		{
-			$category = NostoTaggingCategory::buildCategoryString($category_id, $id_lang);
+			$category = NostoTaggingCategory::buildCategoryString($category_id, $language->id);
 			if (!empty($category))
 				$categories[] = $category;
 		}
@@ -269,7 +237,41 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	}
 
 	/**
-	 * @inheritdoc
+	 * Builds all product price variations for the currencies.
+	 *
+	 * @param Product|ProductCore $product the PS product model.
+	 * @param Context $context the PS context model.
+	 * @param Currency|CurrencyCore $base_currency the PS currency model.
+	 * @param array $currencies
+	 * @return NostoProductPriceVariationInterface[] all price variations.
+	 */
+	protected function buildPriceVariations(Product $product, Context $context, Currency $base_currency, array $currencies)
+	{
+		/** @var NostoTaggingHelperPrice $helper_price */
+		$helper_price = Nosto::helper('nosto_tagging/price');
+
+		$variations = array();
+		foreach ($currencies as $currency)
+		{
+			if ($base_currency->iso_code === $currency['iso_code'])
+				continue;
+
+			/** @var Currency|CurrencyCore $currency_model */
+			$currency_model = new Currency($currency['id_currency']);
+			$variation = new NostoTaggingProductVariation(new NostoPriceVariation($currency_model->iso_code),
+				new NostoCurrencyCode($currency_model->iso_code),
+				$helper_price->getProductPriceInclTax($product, $context, $currency_model),
+				$helper_price->getProductListPriceInclTax($product, $context, $currency_model),
+				$this->availability);
+			$variations[] = $variation;
+		}
+		return $variations;
+	}
+
+	/**
+	 * Returns the absolute url to the product page in the shop frontend.
+	 *
+	 * @return string the url.
 	 */
 	public function getUrl()
 	{
@@ -277,7 +279,9 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	}
 
 	/**
-	 * @inheritdoc
+	 * Returns the product's unique identifier.
+	 *
+	 * @return int|string the ID.
 	 */
 	public function getProductId()
 	{
@@ -285,7 +289,9 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	}
 
 	/**
-	 * @inheritdoc
+	 * Returns the name of the product.
+	 *
+	 * @return string the name.
 	 */
 	public function getName()
 	{
@@ -293,7 +299,9 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	}
 
 	/**
-	 * @inheritdoc
+	 * Returns the absolute url the one of the product images in the shop frontend.
+	 *
+	 * @return string the url.
 	 */
 	public function getImageUrl()
 	{
@@ -301,7 +309,19 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	}
 
 	/**
-	 * @inheritdoc
+	 * Returns the absolute url to one of the product image thumbnails in the shop frontend.
+	 *
+	 * @return string the url.
+	 */
+	public function getThumbUrl()
+	{
+		return null;
+	}
+
+	/**
+	 * Returns the price of the product including possible discounts and taxes.
+	 *
+	 * @return NostoPrice the price.
 	 */
 	public function getPrice()
 	{
@@ -309,7 +329,9 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	}
 
 	/**
-	 * @inheritdoc
+	 * Returns the list price of the product without discounts but including possible taxes.
+	 *
+	 * @return NostoPrice the price.
 	 */
 	public function getListPrice()
 	{
@@ -317,15 +339,31 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	}
 
 	/**
-	 * @inheritdoc
+	 * Returns the currency code (ISO 4217) the product is sold in.
+	 *
+	 * @return NostoCurrencyCode the currency code.
 	 */
-	public function getCurrencyCode()
+	public function getCurrency()
 	{
 		return $this->currency_code;
 	}
 
 	/**
-	 * @inheritdoc
+	 * Returns the ID of the price variation that is currently in use.
+	 *
+	 * @return string the price variation ID.
+	 */
+	public function getPriceVariationId()
+	{
+		return (!is_null($this->price_variation))
+			? $this->price_variation->getId()
+			: null;
+	}
+
+	/**
+	 * Returns the availability of the product, i.e. if it is in stock or not.
+	 *
+	 * @return NostoProductAvailability the availability.
 	 */
 	public function getAvailability()
 	{
@@ -333,7 +371,9 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	}
 
 	/**
-	 * @inheritdoc
+	 * Returns the tags for the product.
+	 *
+	 * @return array the tags array, e.g. array('tag1' => array("winter", "shoe")).
 	 */
 	public function getTags()
 	{
@@ -341,7 +381,9 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	}
 
 	/**
-	 * @inheritdoc
+	 * Returns the categories the product is located in.
+	 *
+	 * @return array list of category strings, e.g. array("/shoes/winter", "shoes/boots").
 	 */
 	public function getCategories()
 	{
@@ -349,7 +391,9 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	}
 
 	/**
-	 * @inheritdoc
+	 * Returns the product short description.
+	 *
+	 * @return string the short description.
 	 */
 	public function getShortDescription()
 	{
@@ -357,7 +401,9 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	}
 
 	/**
-	 * @inheritdoc
+	 * Returns the product description.
+	 *
+	 * @return string the description.
 	 */
 	public function getDescription()
 	{
@@ -365,7 +411,25 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	}
 
 	/**
-	 * @inheritdoc
+	 * Returns the full product description,
+	 * i.e. both the "short" and "normal" descriptions concatenated.
+	 *
+	 * @return string the full descriptions.
+	 */
+	public function getFullDescription()
+	{
+		$descriptions = array();
+		if (!empty($this->short_description))
+			$descriptions[] = $this->short_description;
+		if (!empty($this->description))
+			$descriptions[] = $this->description;
+		return implode(' ', $descriptions);
+	}
+
+	/**
+	 * Returns the product brand name.
+	 *
+	 * @return string the brand name.
 	 */
 	public function getBrand()
 	{
@@ -373,10 +437,447 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	}
 
 	/**
-	 * @inheritdoc
+	 * Returns the product publication date in the shop.
+	 *
+	 * @return NostoDate the date.
 	 */
 	public function getDatePublished()
 	{
 		return $this->date_published;
+	}
+
+	/**
+	 * Returns the product price variations if any exist.
+	 *
+	 * @return NostoProductPriceVariationInterface[] the price variations.
+	 */
+	public function getPriceVariations()
+	{
+		return $this->price_variations;
+	}
+
+	/**
+	 * Sets the product ID from given product.
+	 *
+	 * The product ID must be an integer above zero.
+	 *
+	 * Usage:
+	 * $object->assignId(1);
+	 *
+	 * @param int $id the product ID.
+	 *
+	 * @throws InvalidArgumentException
+	 */
+	public function setProductId($id)
+	{
+		if (!is_int($id) || !($id > 0))
+			throw new InvalidArgumentException('ID must be an integer above zero.');
+
+		$this->product_id = $id;
+	}
+
+	/**
+	 * Sets the availability state of the product.
+	 *
+	 * The availability of the product must be either "InStock" or "OutOfStock", represented as a value object of class
+	 * `NostoProductAvailability`.
+	 *
+	 * Usage:
+	 * $object->setAvailability(new NostoProductAvailability(NostoProductAvailability::IN_STOCK));
+	 *
+	 * @param NostoProductAvailability $availability the availability.
+	 */
+	public function setAvailability(NostoProductAvailability $availability)
+	{
+		$this->availability = $availability;
+	}
+
+	/**
+	 * Sets the currency code (ISO 4217) the product is sold in.
+	 *
+	 * The currency must be in ISO 4217 format, represented as a value object of class `NostoCurrencyCode`.
+	 *
+	 * Usage:
+	 * $object->setCurrency(new NostoCurrencyCode('USD'));
+	 *
+	 * @param NostoCurrencyCode $currency the currency code.
+	 */
+	public function setCurrency(NostoCurrencyCode $currency)
+	{
+		$this->currency_code = $currency;
+	}
+
+	/**
+	 * Sets the products published date.
+	 *
+	 * The date must be a UNIX timestamp, represented as a value object of class `NostoDate`.
+	 *
+	 * Usage:
+	 * $object->setDatePublished(new NostoDate(strtotime('2015-01-01 00:00:00')));
+	 *
+	 * @param NostoDate $date the date.
+	 */
+	public function setDatePublished(NostoDate $date)
+	{
+		$this->date_published = $date;
+	}
+
+	/**
+	 * Sets the product price.
+	 *
+	 * The price must be a numeric value, represented as a value object of class `NostoPrice`.
+	 *
+	 * Usage:
+	 * $object->setPrice(new NostoPrice(99.99));
+	 *
+	 * @param NostoPrice $price the price.
+	 */
+	public function setPrice(NostoPrice $price)
+	{
+		$this->price = $price;
+	}
+
+	/**
+	 * Sets the product list price.
+	 *
+	 * The price must be a numeric value, represented as a value object of class `NostoPrice`.
+	 *
+	 * Usage:
+	 * $object->setListPrice(new NostoPrice(99.99));
+	 *
+	 * @param NostoPrice $list_price the price.
+	 */
+	public function setListPrice(NostoPrice $list_price)
+	{
+		$this->list_price = $list_price;
+	}
+
+	/**
+	 * Sets the product price variation ID.
+	 *
+	 * The ID must be a non-empty string, represented as a value object of class `NostoPriceVariation`.
+	 *
+	 * Usage:
+	 * $object->setPriceVariationId(new NostoPriceVariation('USD'));
+	 *
+	 * @param NostoPriceVariation $price_variation the price variation.
+	 */
+	public function setPriceVariationId(NostoPriceVariation $price_variation)
+	{
+		$this->price_variation = $price_variation;
+	}
+
+	/**
+	 * Sets the product price variations.
+	 *
+	 * The variations represent the possible product prices in different currencies and must implement the
+	 * `NostoProductPriceVariationInterface` interface.
+	 * This is only used in multi currency environments when the multi currency method is set to "priceVariations".
+	 *
+	 * Usage:
+	 * $object->setPriceVariations(array(NostoProductPriceVariationInterface $price_variation [, ... ]))
+	 *
+	 * @param NostoProductPriceVariationInterface[] $price_variations the price variations.
+	 */
+	public function setPriceVariations(array $price_variations)
+	{
+		$this->price_variations = array();
+		foreach ($price_variations as $price_variation)
+			$this->addPriceVariation($price_variation);
+	}
+
+	/**
+	 * Adds a product price variation.
+	 *
+	 * The variation represents the product price in another currency than the base currency, and must implement the
+	 * `NostoProductPriceVariationInterface` interface.
+	 * This is only used in multi currency environments when the multi currency method is set to "priceVariations".
+	 *
+	 * Usage:
+	 * $object->addPriceVariation(NostoProductPriceVariationInterface $price_variation);
+	 *
+	 * @param NostoProductPriceVariationInterface $price_variation the price variation.
+	 */
+	public function addPriceVariation(NostoProductPriceVariationInterface $price_variation)
+	{
+		$this->price_variations[] = $price_variation;
+	}
+
+	/**
+	 * Sets all the tags to the `tag1` field.
+	 *
+	 * The tags must be an array of non-empty string values.
+	 *
+	 * Usage:
+	 * $object->setTag1(array('customTag1', 'customTag2'));
+	 *
+	 * @param array $tags the tags.
+	 *
+	 * @throws InvalidArgumentException
+	 */
+	public function setTag1(array $tags)
+	{
+		$this->tags['tag1'] = array();
+		foreach ($tags as $tag)
+			$this->addTag1($tag);
+	}
+
+	/**
+	 * Adds a new tag to the `tag1` field.
+	 *
+	 * The tag must be a non-empty string value.
+	 *
+	 * Usage:
+	 * $object->addTag1('customTag');
+	 *
+	 * @param string $tag the tag to add.
+	 *
+	 * @throws InvalidArgumentException
+	 */
+	public function addTag1($tag)
+	{
+		if (!is_string($tag) || empty($tag))
+			throw new InvalidArgumentException('Tag must be a non-empty string value.');
+
+		$this->tags['tag1'][] = $tag;
+	}
+
+	/**
+	 * Sets all the tags to the `tag2` field.
+	 *
+	 * The tags must be an array of non-empty string values.
+	 *
+	 * Usage:
+	 * $object->setTag2(array('customTag1', 'customTag2'));
+	 *
+	 * @param array $tags the tags.
+	 *
+	 * @throws InvalidArgumentException
+	 */
+	public function setTag2(array $tags)
+	{
+		$this->tags['tag1'] = array();
+		foreach ($tags as $tag)
+			$this->addTag2($tag);
+	}
+
+	/**
+	 * Adds a new tag to the `tag2` field.
+	 *
+	 * The tag must be a non-empty string value.
+	 *
+	 * Usage:
+	 * $object->addTag2('customTag');
+	 *
+	 * @param string $tag the tag to add.
+	 *
+	 * @throws InvalidArgumentException
+	 */
+	public function addTag2($tag)
+	{
+		if (!is_string($tag) || empty($tag))
+			throw new InvalidArgumentException('Tag must be a non-empty string value.');
+
+		$this->tags['tag2'][] = $tag;
+	}
+
+	/**
+	 * Sets all the tags to the `tag3` field.
+	 *
+	 * The tags must be an array of non-empty string values.
+	 *
+	 * Usage:
+	 * $object->setTag3(array('customTag1', 'customTag2'));
+	 *
+	 * @param array $tags the tags.
+	 *
+	 * @throws InvalidArgumentException
+	 */
+	public function setTag3(array $tags)
+	{
+		$this->tags['tag1'] = array();
+		foreach ($tags as $tag)
+			$this->addTag3($tag);
+	}
+
+	/**
+	 * Adds a new tag to the `tag3` field.
+	 *
+	 * The tag must be a non-empty string value.
+	 *
+	 * Usage:
+	 * $object->addTag3('customTag');
+	 *
+	 * @param string $tag the tag to add.
+	 *
+	 * @throws InvalidArgumentException
+	 */
+	public function addTag3($tag)
+	{
+		if (!is_string($tag) || empty($tag))
+			throw new InvalidArgumentException('Tag must be a non-empty string value.');
+
+		$this->tags['tag3'][] = $tag;
+	}
+
+	/**
+	 * Sets the brand name of the product manufacturer.
+	 *
+	 * The name must be a non-empty string.
+	 *
+	 * Usage:
+	 * $object->setBrand('Example');
+	 *
+	 * @param string $brand the brand name.
+	 *
+	 * @throws InvalidArgumentException
+	 */
+	public function setBrand($brand)
+	{
+		if (!is_string($brand) || empty($brand))
+			throw new InvalidArgumentException('Brand must be a non-empty string value.');
+
+		$this->brand = $brand;
+	}
+
+	/**
+	 * Sets the product categories.
+	 *
+	 * The categories must be an array of non-empty string values. The categories are expected to include the entire
+	 * sub/parent category path, e.g. "clothes/winter/coats".
+	 *
+	 * Usage:
+	 * $object->setCategories(array('clothes/winter/coats' [, ... ] ));
+	 *
+	 * @param array $categories the categories.
+	 *
+	 * @throws InvalidArgumentException
+	 */
+	public function setCategories(array $categories)
+	{
+		$this->categories = array();
+		foreach ($categories as $category)
+			$this->addCategory($category);
+	}
+
+	/**
+	 * Adds a category to the product.
+	 *
+	 * The category must be a non-empty string and is expected to include the entire sub/parent category path,
+	 * e.g. "clothes/winter/coats".
+	 *
+	 * Usage:
+	 * $object->addCategory('clothes/winter/coats');
+	 *
+	 * @param string $category the category.
+	 *
+	 * @throws InvalidArgumentException
+	 */
+	public function addCategory($category)
+	{
+		if (!is_string($category) || empty($category))
+			throw new InvalidArgumentException('Category must be a non-empty string value.');
+
+		$this->categories[] = $category;
+	}
+
+	/**
+	 * Sets the product name.
+	 *
+	 * The name must be a non-empty string.
+	 *
+	 * Usage:
+	 * $object->setName('Example');
+	 *
+	 * @param string $name the name.
+	 *
+	 * @throws InvalidArgumentException
+	 */
+	public function setName($name)
+	{
+		if (!is_string($name) || empty($name))
+			throw new InvalidArgumentException('Category must be a non-empty string value.');
+
+		$this->name = $name;
+	}
+
+	/**
+	 * Sets the URL for the product page in the shop frontend that shows this product.
+	 *
+	 * The URL must be absolute, i.e. must include the protocol http or https.
+	 *
+	 * Usage:
+	 * $object->setUrl("http://my.shop.com/products/example.html");
+	 *
+	 * @param string $url the url.
+	 *
+	 * @throws InvalidArgumentException
+	 */
+	public function setUrl($url)
+	{
+		if (!Validate::isUrl($url) || !Validate::isAbsoluteUrl($url))
+			throw new InvalidArgumentException('URL must be valid and absolute.');
+
+		$this->url = $url;
+	}
+
+	/**
+	 * Sets the image URL for the product.
+	 *
+	 * The URL must be absolute, i.e. must include the protocol http or https.
+	 *
+	 * Usage:
+	 * $object->setImageUrl("http://my.shop.com/media/example.jpg");
+	 *
+	 * @param string $image_url the url.
+	 *
+	 * @throws InvalidArgumentException
+	 */
+	public function setImageUrl($image_url)
+	{
+		if (!Validate::isUrl($image_url) || !Validate::isAbsoluteUrl($image_url))
+			throw new InvalidArgumentException('Image URL must be valid and absolute.');
+
+		$this->image_url = $image_url;
+	}
+
+	/**
+	 * Sets the product description.
+	 *
+	 * The description must be a non-empty string.
+	 *
+	 * Usage:
+	 * $object->setDescription('Lorem ipsum dolor sit amet, ludus possim ut ius, bonorum facilis mandamus nam ea. ... ');
+	 *
+	 * @param string $description the description.
+	 *
+	 * @throws InvalidArgumentException
+	 */
+	public function setDescription($description)
+	{
+		if (!is_string($description) || empty($description))
+			throw new InvalidArgumentException('Description must be a non-empty string value.');
+
+		$this->description = $description;
+	}
+
+	/**
+	 * Sets the product `short` description.
+	 *
+	 * The description must be a non-empty string.
+	 *
+	 * Usage:
+	 * $object->setShortDescription('Lorem ipsum dolor sit amet, ludus possim ut ius.');
+	 *
+	 * @param string $short_description the `short` description.
+	 *
+	 * @throws InvalidArgumentException
+	 */
+	public function setShortDescription($short_description)
+	{
+		if (!is_string($short_description) || empty($short_description))
+			throw new InvalidArgumentException('Short description must be a non-empty string value.');
+
+		$this->short_description = $short_description;
 	}
 }

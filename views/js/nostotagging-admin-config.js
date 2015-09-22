@@ -34,18 +34,18 @@ $(document).ready( function() {
     // Click event handler for the "Account settings".
     $("#nostotagging_account_setup").click(function(event) {
         event.preventDefault();
-        var $iframe = $('#nostotagging_iframe'),
-            $installedView = $('#nostotagging_installed');
-        $installedView.show();
-        $iframe.hide();
+        var $iframeView = $('#nostotagging_view_iframe'),
+            $settingsView = $('#nostotagging_view_settings');
+        $settingsView.show();
+        $iframeView.hide();
     });
     // Click event handler for the "Back" button on the "You have installed Nosto...." page.
     $('#nostotagging_back_to_iframe').click(function(event) {
         event.preventDefault();
-        var $iframe = $('#nostotagging_iframe'),
-            $installedView = $('#nostotagging_installed');
-        $iframe.show();
-        $installedView.hide();
+        var $iframeView = $('#nostotagging_view_iframe'),
+            $settingsView = $('#nostotagging_view_settings');
+        $iframeView.show();
+        $settingsView.hide();
     });
     // Init the iframe re-sizer.
     $('#nostotagging_iframe').iFrameResize({heightCalculationMethod : 'bodyScroll'});

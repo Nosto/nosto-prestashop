@@ -24,32 +24,9 @@
  */
 
 /**
- * Meta data class for account billing related information needed when creating new accounts.
+ * Model for tagging cart items.
  */
-class NostoTaggingMetaAccountBilling implements NostoAccountMetaBillingInterface
+class NostoTaggingCartItem extends NostoTaggingLineItem
 {
-	/**
-	 * @var NostoCountryCode country ISO (ISO 3166-1 alpha-2) code for billing details.
-	 */
-	protected $country;
 
-	/**
-	 * Loads the meta data from the given context.
-	 *
-	 * @param Context $context the context to use as data source.
-	 */
-	public function loadData($context)
-	{
-		$this->country = new NostoCountryCode($context->country->iso_code);
-	}
-
-	/**
-	 * The 2-letter ISO code (ISO 3166-1 alpha-2) for the country used in account's billing details.
-	 *
-	 * @return NostoCountryCode the country code.
-	 */
-	public function getCountry()
-	{
-		return $this->country;
-	}
 }

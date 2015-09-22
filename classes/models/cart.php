@@ -29,23 +29,47 @@
 class NostoTaggingCart extends NostoTaggingModel
 {
 	/**
-	 * @var array line items in the cart.
+	 * @var NostoTaggingCartItem[] line items in the cart.
 	 */
-	public $line_items = array();
+	protected $line_items = array();
 
 	/**
-	 * Loads the cart data from supplied cart object.
+	 * Sets up this DTO.
 	 *
-	 * @param Cart $cart the cart object.
+	 * @param Cart|CartCore $cart the PS cart model.
+	 * @param Context|null the PS context model.
 	 */
-	public function loadData(Cart $cart)
+	public function loadData(Cart $cart, Context $context = null)
 	{
-		if (!Validate::isLoadedObject($cart) || ($products = $cart->getProducts()) === array())
+		if (!Validate::isLoadedObject($cart) || $cart->getProducts() === array())
 			return;
 
+		if (is_null($context))
+			$context = Context::getContext();
+
+		/** @var CurrencyCore $currency */
 		$currency = new Currency($cart->id_currency);
-		if (!Validate::isLoadedObject($currency))
-			return;
+		if (Validate::isLoadedObject($currency))
+			foreach ($this->fetchCartItems($cart) as $item)
+				$this->line_items[] = $this->buildLineItem($cart, $item, $context);
+
+		$this->dispatchHookActionLoadAfter(array(
+			'nosto_cart' => $this,
+			'cart' => $cart,
+			'context' => $context
+		));
+	}
+
+	/**
+	 * Returns all the items currency in the shopping cart.
+	 * For PS 1.5 and above, gift products are also included.
+	 *
+	 * @param Cart|CartCore $cart the PS cart model.
+	 * @return array the items.
+	 */
+	protected function fetchCartItems(Cart $cart)
+	{
+		$products = $cart->getProducts();
 
 		// Cart rules are available from prestashop 1.5 onwards.
 		if (_PS_VERSION_ >= '1.5')
@@ -79,24 +103,61 @@ class NostoTaggingCart extends NostoTaggingModel
 					unset($product);
 				}
 
-			$items = array_merge($products, $gift_products);
+			return array_merge($products, $gift_products);
 		}
-		else
-			$items = $products;
 
-		foreach ($items as $item)
-		{
-			$name = $item['name'];
-			if (isset($item['attributes_small']))
-				$name .= ' ('.$item['attributes_small'].')';
+		return $products;
+	}
 
-			$this->line_items[] = array(
-				'product_id' => (int)$item['id_product'],
-				'quantity' => (int)$item['cart_quantity'],
-				'name' => (string)$name,
-				'unit_price' => Nosto::helper('price')->format($item['price_wt']),
-				'price_currency_code' => (string)$currency->iso_code,
-			);
-		}
+	/**
+	 * Builds the Nosto line item for given cart item.
+	 *
+	 * @param Cart|CartCore $cart the PS cart model.
+	 * @param array $item the item data.
+	 * @param Context $context the PS context model.
+	 * @return NostoTaggingCartItem the Nosto line item.
+	 */
+	protected function buildLineItem(Cart $cart, array $item, Context $context)
+	{
+		/** @var NostoTaggingHelperCurrency $helper_currency */
+		$helper_currency = Nosto::helper('nosto_tagging/currency');
+		/** @var NostoTaggingHelperPrice $helper_price */
+		$helper_price = Nosto::helper('nosto_tagging/price');
+
+		$base_currency = $helper_currency->getBaseCurrency($context);
+		$nosto_base_currency = new NostoCurrencyCode($base_currency->iso_code);
+
+		$name = $item['name'];
+		if (isset($item['attributes_small']))
+			$name .= ' ('.$item['attributes_small'].')';
+
+		$nosto_price = $helper_price->getCartItemPriceInclTax($cart, $item, $context, $base_currency);
+		$line_item = new NostoTaggingCartItem($item['id_product'], $name, $item['cart_quantity'], $nosto_price,
+			$nosto_base_currency);
+
+		return $line_item;
+	}
+
+	/**
+	 * Returns the cart line items.
+	 *
+	 * @return NostoTaggingCartItem[] the items.
+	 */
+	public function getLineItems()
+	{
+		return $this->line_items;
+	}
+
+	/**
+	 * Adds a new item to the cart tagging.
+	 *
+	 * Usage:
+	 * $object->addLineItem(new NostoTaggingCartItem(99, 'Example Product', 1, new NostoPrice(10.99), new NostoCurrencyCode('USD')));
+	 *
+	 * @param NostoTaggingCartItem $item the new item.
+	 */
+	public function addLineItem(NostoTaggingCartItem $item)
+	{
+		$this->line_items[] = $item;
 	}
 }

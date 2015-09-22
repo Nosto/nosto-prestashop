@@ -24,32 +24,35 @@
  */
 
 /**
- * Meta data class for account billing related information needed when creating new accounts.
+ * Base controller for all Nosto CRON controllers.
+ *
+ * @property NostoTagging $module
  */
-class NostoTaggingMetaAccountBilling implements NostoAccountMetaBillingInterface
+abstract class NostoTaggingCronModuleFrontController extends ModuleFrontController
 {
 	/**
-	 * @var NostoCountryCode country ISO (ISO 3166-1 alpha-2) code for billing details.
+	 * @inheritdoc
 	 */
-	protected $country;
-
-	/**
-	 * Loads the meta data from the given context.
-	 *
-	 * @param Context $context the context to use as data source.
-	 */
-	public function loadData($context)
+	public function init()
 	{
-		$this->country = new NostoCountryCode($context->country->iso_code);
+		parent::init();
+
+		if (!$this->validateToken(Tools::getValue('token')))
+		{
+			header('HTTP/1.1 403 Forbidden');
+			exit('Access forbidden');
+		}
 	}
 
 	/**
-	 * The 2-letter ISO code (ISO 3166-1 alpha-2) for the country used in account's billing details.
+	 * Validates an access token.
+	 * This is used to prevent unauthorized use of the cron controller.
 	 *
-	 * @return NostoCountryCode the country code.
+	 * @param string $token the access token.
+	 * @return bool if the token is valid.
 	 */
-	public function getCountry()
+	protected function validateToken($token)
 	{
-		return $this->country;
+		return ($token === $this->module->getCronAccessToken());
 	}
 }

@@ -361,7 +361,7 @@ EOT;
 		{
 			/** @var LinkCore $link */
 			$link = new Link();
-			return $link->getModuleLink($name, 'oauth2', $params, null, $id_lang, $id_shop);
+			return $link->getModuleLink($name, $controller, $params, null, $id_lang, $id_shop);
 		}
 	}
 

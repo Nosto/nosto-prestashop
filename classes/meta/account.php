@@ -26,7 +26,7 @@
 /**
  * Meta data class for account related information needed when creating new accounts.
  */
-class NostoTaggingMetaAccount implements NostoAccountMetaDataInterface
+class NostoTaggingMetaAccount implements NostoAccountMetaInterface
 {
 	/**
 	 * @var string the store name.
@@ -44,19 +44,19 @@ class NostoTaggingMetaAccount implements NostoAccountMetaDataInterface
 	protected $front_page_url;
 
 	/**
-	 * @var string the store currency ISO (ISO 4217) code.
+	 * @var NostoCurrencyCode the store currency ISO (ISO 4217) code.
 	 */
-	protected $currency_code;
+	protected $currency;
 
 	/**
-	 * @var string the store language ISO (ISO 639-1) code.
+	 * @var NostoLanguageCode the store language ISO (ISO 639-1) code.
 	 */
-	protected $language_code;
+	protected $language;
 
 	/**
-	 * @var string the owner language ISO (ISO 639-1) code.
+	 * @var NostoLanguageCode the owner language ISO (ISO 639-1) code.
 	 */
-	protected $owner_language_code;
+	protected $owner_language;
 
 	/**
 	 * @var NostoTaggingMetaAccountOwner the account owner meta model.
@@ -74,6 +74,21 @@ class NostoTaggingMetaAccount implements NostoAccountMetaDataInterface
 	protected $sign_up_api_token = 'JRtgvoZLMl4NPqO9XWhRdvxkTMtN82ITTJij8U7necieJPCvjtZjm5C4fpNrYJ81';
 
 	/**
+	 * @var NostoCurrency[] list of currency objects supported by the store the account is to be created for.
+	 */
+	protected $currencies = array();
+
+	/**
+	 * @var NostoPriceVariation  the default price variation ID if store is using multiple currencies.
+	 */
+	protected $price_variation;
+
+	/**
+	 * @var boolean if exchange rates are used to handle multi-currency setups.
+	 */
+	protected $use_exchange_rates = false;
+
+	/**
 	 * Loads the meta data for the context and given language.
 	 *
 	 * @param Context $context the context to use as data source.
@@ -81,8 +96,9 @@ class NostoTaggingMetaAccount implements NostoAccountMetaDataInterface
 	 */
 	public function loadData($context, $id_lang)
 	{
-		$language = new Language($id_lang);
-		if (!Validate::isLoadedObject($language))
+		/** @var Language|LanguageCore $user_lang */
+		$user_lang = new Language($id_lang);
+		if (!Validate::isLoadedObject($user_lang))
 			return;
 
 		if (!Validate::isLoadedObject($context->language))
@@ -92,26 +108,42 @@ class NostoTaggingMetaAccount implements NostoAccountMetaDataInterface
 		if (!Validate::isLoadedObject($context->country))
 			$context->country = new Country((int)Configuration::get('PS_COUNTRY_DEFAULT'));
 
+		/** @var NostoTaggingHelperCurrency $helper_currency */
+		$helper_currency = Nosto::helper('nosto_tagging/currency');
+		/** @var NostoTaggingHelperConfig $helper_config */
+		$helper_config = Nosto::helper('nosto_tagging/config');
+
+		$base_currency = $helper_currency->getBaseCurrency($context);
+		$currencies = $helper_currency->getCurrencies($context);
+
+		/** @var Shop|ShopCore $shop */
+		$shop = $context->shop;
+		/** @var Language|LanguageCore $shop_lang */
+		$shop_lang = $context->language;
+
 		$this->title = Configuration::get('PS_SHOP_NAME');
 		$this->name = Tools::substr(sha1(rand()), 0, 8);
-		$this->front_page_url = $this->getContextShopUrl($context, $language);
-		$this->currency_code = $context->currency->iso_code;
-		$this->language_code = $context->language->iso_code;
-		$this->owner_language_code = $language->iso_code;
+		$this->front_page_url = $this->getContextShopUrl($context, $user_lang);
+		$this->currency = new NostoCurrencyCode($base_currency->iso_code);
+		$this->language = new NostoLanguageCode($shop_lang->iso_code);
+		$this->owner_language = new NostoLanguageCode($user_lang->iso_code);
 		$this->owner = new NostoTaggingMetaAccountOwner();
 		$this->owner->loadData($context);
 		$this->billing = new NostoTaggingMetaAccountBilling();
 		$this->billing->loadData($context);
-	}
 
-	/**
-	 * Sets the store title.
-	 *
-	 * @param string $title the store title.
-	 */
-	public function setTitle($title)
-	{
-		$this->title = $title;
+		if (count($currencies) > 0)
+		{
+			foreach ($currencies as $currency)
+				$this->currencies[$currency['iso_code']] = $helper_currency->getNostoCurrency($currency);
+
+			if (count($currencies) > 1)
+			{
+				$this->price_variation = new NostoPriceVariation($base_currency->iso_code);
+				$this->use_exchange_rates = $helper_config->isMultiCurrencyMethodExchangeRate($shop_lang->id,
+					$shop->id_shop_group, $shop->id);
+			}
+		}
 	}
 
 	/**
@@ -122,16 +154,6 @@ class NostoTaggingMetaAccount implements NostoAccountMetaDataInterface
 	public function getTitle()
 	{
 		return $this->title;
-	}
-
-	/**
-	 * Sets the account name.
-	 *
-	 * @param string $name the account name.
-	 */
-	public function setName($name)
-	{
-		$this->name = $name;
 	}
 
 	/**
@@ -158,18 +180,7 @@ class NostoTaggingMetaAccount implements NostoAccountMetaDataInterface
 	}
 
 	/**
-	 * Sets the store front page url.
-	 *
-	 * @param string $url the front page url.
-	 */
-	public function setFrontPageUrl($url)
-	{
-		$this->front_page_url = $url;
-	}
-
-	/**
-	 * Absolute url to the front page of the shop for which the account is
-	 * created for.
+	 * Absolute url to the front page of the shop for which the account is created for.
 	 *
 	 * @return string the url.
 	 */
@@ -179,66 +190,33 @@ class NostoTaggingMetaAccount implements NostoAccountMetaDataInterface
 	}
 
 	/**
-	 * Sets the store currency ISO (ISO 4217) code.
+	 * The 3-letter ISO code (ISO 4217) for the currency used by the shop for which the account is created for.
 	 *
-	 * @param string $code the currency ISO code.
+	 * @return NostoCurrencyCode the currency code.
 	 */
-	public function setCurrencyCode($code)
+	public function getCurrency()
 	{
-		$this->currency_code = $code;
+		return $this->currency;
 	}
 
 	/**
-	 * The 3-letter ISO code (ISO 4217) for the currency used by the shop for
-	 * which the account is created for.
+	 * The 2-letter ISO code (ISO 639-1) for the language used by the shop for which the account is created for.
 	 *
-	 * @return string the currency ISO code.
+	 * @return NostoLanguageCode the language code.
 	 */
-	public function getCurrencyCode()
+	public function getLanguage()
 	{
-		return $this->currency_code;
+		return $this->language;
 	}
 
 	/**
-	 * Sets the store language ISO (ISO 639-1) code.
+	 * The 2-letter ISO code (ISO 639-1) for the language of the account owner who is creating the account.
 	 *
-	 * @param string $language_code the language ISO code.
+	 * @return NostoLanguageCode the language code.
 	 */
-	public function setLanguageCode($language_code)
+	public function getOwnerLanguage()
 	{
-		$this->language_code = $language_code;
-	}
-
-	/**
-	 * The 2-letter ISO code (ISO 639-1) for the language used by the shop for
-	 * which the account is created for.
-	 *
-	 * @return string the language ISO code.
-	 */
-	public function getLanguageCode()
-	{
-		return $this->language_code;
-	}
-
-	/**
-	 * Sets the owner language ISO (ISO 639-1) code.
-	 *
-	 * @param string $language_code the language ISO code.
-	 */
-	public function setOwnerLanguageCode($language_code)
-	{
-		$this->owner_language_code = $language_code;
-	}
-
-	/**
-	 * The 2-letter ISO code (ISO 639-1) for the language of the account owner
-	 * who is creating the account.
-	 *
-	 * @return string the language ISO code.
-	 */
-	public function getOwnerLanguageCode()
-	{
-		return $this->owner_language_code;
+		return $this->owner_language;
 	}
 
 	/**
@@ -270,6 +248,51 @@ class NostoTaggingMetaAccount implements NostoAccountMetaDataInterface
 	public function getSignUpApiToken()
 	{
 		return $this->sign_up_api_token;
+	}
+
+	/**
+	 * Optional partner code for Nosto partners.
+	 * The code is issued by Nosto to partners only.
+	 *
+	 * @return string|null the partner code or null if none exist.
+	 */
+	public function getPartnerCode()
+	{
+		return null;
+	}
+
+	/**
+	 * Returns a list of currency objects supported by the store the account is to be created for.
+	 *
+	 * @return NostoCurrency[] the currencies.
+	 */
+	public function getCurrencies()
+	{
+		return $this->currencies;
+	}
+
+	/**
+	 * Returns the default price variation ID if store is using multiple currencies.
+	 * This ID identifies the price that products are specified in and can be set to the currency
+	 * ISO 639-1 code
+	 *
+	 * @return string|null the currency ID or null if not set.
+	 */
+	public function getDefaultPriceVariationId()
+	{
+		return (!is_null($this->price_variation)) ? $this->price_variation->getId() : null;
+	}
+
+	/**
+	 * Returns if exchange rates are used to handle multi-currency setups.
+	 * It is also possible to handle multi-currency setups using variation tagging on the product
+	 * pages, i.e. in addition to the product base price, you also tag all price variations.
+	 *
+	 * @return bool if the rates are used.
+	 */
+	public function getUseCurrencyExchangeRates()
+	{
+		return $this->use_exchange_rates;
 	}
 
 	/**

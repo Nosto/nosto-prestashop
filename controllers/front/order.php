@@ -37,22 +37,21 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
 	 */
 	public function initContent()
 	{
-		$collection = new NostoExportOrderCollection();
+		$collection = new NostoExportCollectionOrder();
 		foreach ($this->getOrderIds() as $id_order)
 		{
 			$order = new Order($id_order);
 			if (!Validate::isLoadedObject($order))
 				continue;
 
-			$nosto_order = new NostoTaggingOrder();
-			$nosto_order->include_special_items = false;
-			$nosto_order->loadData($this->module->getContext(), $order);
-
-			$validator = new NostoValidator($nosto_order);
-			if ($validator->validate())
+			try {
+				$nosto_order = new NostoTaggingOrder();
+				$nosto_order->excludeSpecialItems();
+				$nosto_order->loadData($order);
 				$collection[] = $nosto_order;
-
-			$order = null;
+			} catch (NostoException $e) {
+				continue;
+			}
 		}
 
 		$this->encryptOutput($collection);
@@ -67,21 +66,17 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
 	{
 		$context = $this->module->getContext();
 		if (_PS_VERSION_ > '1.5')
-			$where = strtr(
-				'`id_shop_group` = {g} AND `id_shop` = {s} AND `id_lang` = {l}',
+			$where = strtr('`id_shop_group` = {g} AND `id_shop` = {s} AND `id_lang` = {l}',
 				array(
 					'{g}' => pSQL($context->shop->id_shop_group),
 					'{s}' => pSQL($context->shop->id),
 					'{l}' => pSQL($context->language->id),
-				)
-			);
+				));
 		else
-			$where = strtr(
-				'`id_lang` = {l}',
+			$where = strtr('`id_lang` = {l}',
 				array(
 					'{l}' => pSQL($context->language->id),
-				)
-			);
+				));
 
 		$sql = <<<EOT
 			SELECT `id_order`

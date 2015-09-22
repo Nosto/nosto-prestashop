@@ -24,42 +24,50 @@
  */
 
 /**
- * Meta data class for account owner related information needed when creating new accounts.
+ * Meta data class for account Single Sign On.
  */
-class NostoTaggingMetaAccountOwner implements NostoAccountMetaOwnerInterface
+class NostoTaggingMetaAccountSso implements NostoAccountMetaSingleSignOnInterface
 {
 	/**
-	 * @var string the account owner first name.
+	 * @var string the first name of the user who is doing the SSO.
 	 */
 	protected $first_name;
 
 	/**
-	 * @var string the account owner last name.
+	 * @var string the last name of the user who is doing the SSO.
 	 */
 	protected $last_name;
 
 	/**
-	 * @var string the account owner email address.
+	 * @var string the email address of the user who doing the SSO.
 	 */
 	protected $email;
 
 	/**
-	 * Loads the meta data from the given context.
+	 * Loads the SSO data.
 	 *
-	 * @param Context $context the context to use as data source.
+	 * @param Employee|EmployeeCore $employee the employee doing the SSO.
 	 */
-	public function loadData($context)
+	public function loadData(Employee $employee)
 	{
-		if ($context->employee)
-		{
-			$this->first_name = $context->employee->firstname;
-			$this->last_name = $context->employee->lastname;
-			$this->email = $context->employee->email;
-		}
+		$this->first_name = $employee->firstname;
+		$this->last_name = $employee->lastname;
+		$this->email = $employee->email;
 	}
 
 	/**
-	 * The first name of the account owner.
+	 * The name of the platform.
+	 * A list of valid platform names is issued by Nosto.
+	 *
+	 * @return string the platform name.
+	 */
+	public function getPlatform()
+	{
+		return 'prestashop';
+	}
+
+	/**
+	 * The first name of the user who is doing the SSO.
 	 *
 	 * @return string the first name.
 	 */
@@ -69,7 +77,7 @@ class NostoTaggingMetaAccountOwner implements NostoAccountMetaOwnerInterface
 	}
 
 	/**
-	 * The last name of the account owner.
+	 * The last name of the user who is doing the SSO.
 	 *
 	 * @return string the last name.
 	 */
@@ -79,17 +87,7 @@ class NostoTaggingMetaAccountOwner implements NostoAccountMetaOwnerInterface
 	}
 
 	/**
-	 * Sets the email address of the account owner.
-	 *
-	 * @param string $email the email address.
-	 */
-	public function setEmail($email)
-	{
-		$this->email = $email;
-	}
-
-	/**
-	 * The email address of the account owner.
+	 * The email address of the user who doing the SSO.
 	 *
 	 * @return string the email address.
 	 */

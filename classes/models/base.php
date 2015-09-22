@@ -25,23 +25,46 @@
 
 /**
  * Base model for all tagging model classes.
+ *
+ * Tagging models are:
+ *
+ * - NostoTaggingBrand
+ * - NostoTaggingCart
+ * - NostoTaggingCategory
+ * - NostoTaggingCustomer
+ * - NostoTaggingOrder
+ * - NostoTaggingProduct
+ * - NostoTaggingSearch
  */
 abstract class NostoTaggingModel
 {
 	/**
-	 * Returns a protected/private property value by invoking it's public getter.
+	 * Dispatches the hook `action{MODEL}LoadAfter`.
 	 *
-	 * The getter names are assumed to be the property name in camel case with preceding word "get".
+	 * This method can be called last in the tagging model loadData() methods, to allow overriding of model data.
 	 *
-	 * @param string $name the property name.
-	 * @return mixed the property value.
-	 * @throws Exception if public getter does not exist.
+	 * @param array $params the hook params.
 	 */
-	public function __get($name)
+	protected function dispatchHookActionLoadAfter(array $params)
 	{
-		$getter = 'get'.str_replace('_', '', $name);
-		if (method_exists($this, $getter))
-			return $this->{$getter}();
-		throw new Exception(sprintf('Property `%s.%s` is not defined.', get_class($this), $name));
+		// We replace the "NostoTagging" part of the class name with "Nosto", e.g. "NostoTaggingProduct" => "NostoProduct".
+		// This is done in order to keep the hook names within the 32 character limit in PS 1.4.
+		$this->dispatchHook('action'.str_replace('NostoTagging', 'Nosto', get_class($this)).'LoadAfter', $params);
+	}
+
+	/**
+	 * Executes a PS hook by name.
+	 *
+	 * Abstracts the differences between PS versions.
+	 *
+	 * @param string $name the hook name.
+	 * @param array $params the hook params.
+	 */
+	private function dispatchHook($name, array $params)
+	{
+		if (_PS_VERSION_ >= '1.5')
+			Hook::exec($name, $params);
+		else
+			Module::hookExec($name, $params);
 	}
 }

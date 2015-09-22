@@ -65,7 +65,7 @@ abstract class NostoTaggingApiModuleFrontController extends ModuleFrontControlle
 	{
 		/** @var NostoAccount $account */
 		$account = Nosto::helper('nosto_tagging/account')->find($this->module->getContext()->language->id);
-		if ($account && $account->isConnectedToNosto())
+		if ($account)
 		{
 			$cipher_text = NostoExporter::export($account, $collection);
 			echo $cipher_text;

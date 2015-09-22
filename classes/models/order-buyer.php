@@ -44,7 +44,23 @@ class NostoTaggingOrderBuyer implements NostoOrderBuyerInterface
 	protected $email;
 
 	/**
-	 * @inheritdoc
+	 * Constructor.
+	 *
+	 * Sets the value objects data from the PS customer model.
+	 *
+	 * @param Customer|CustomerCore $customer the PS customer model.
+	 */
+	public function __construct(Customer $customer)
+	{
+		$this->first_name = $customer->firstname;
+		$this->last_name = $customer->lastname;
+		$this->email = $customer->email;
+	}
+
+	/**
+	 * Gets the first name of the user who placed the order.
+	 *
+	 * @return string the first name.
 	 */
 	public function getFirstName()
 	{
@@ -52,7 +68,9 @@ class NostoTaggingOrderBuyer implements NostoOrderBuyerInterface
 	}
 
 	/**
-	 * @inheritdoc
+	 * Gets the last name of the user who placed the order.
+	 *
+	 * @return string the last name.
 	 */
 	public function getLastName()
 	{
@@ -60,22 +78,12 @@ class NostoTaggingOrderBuyer implements NostoOrderBuyerInterface
 	}
 
 	/**
-	 * @inheritdoc
+	 * Gets the email address of the user who placed the order.
+	 *
+	 * @return string the email address.
 	 */
 	public function getEmail()
 	{
 		return $this->email;
-	}
-
-	/**
-	 * Loads the buyer data from the customer object.
-	 *
-	 * @param Customer $customer the customer object.
-	 */
-	public function loadData(Customer $customer)
-	{
-		$this->first_name = $customer->firstname;
-		$this->last_name = $customer->lastname;
-		$this->email = $customer->email;
 	}
 }

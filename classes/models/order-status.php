@@ -39,11 +39,13 @@ class NostoTaggingOrderStatus implements NostoOrderStatusInterface
 	protected $label;
 
 	/**
-	 * Loads the order status data from the order model.
+	 * Constructor.
 	 *
-	 * @param Order $order the model.
+	 * Sets up this value object.
+	 *
+	 * @param Order|OrderCore $order the PS order model.
 	 */
-	public function loadData(Order $order)
+	public function __construct(Order $order)
 	{
 		// We prefer to use the English state name for the status code, as we use it as an unique identifier of that
 		// particular order status. The status label will primarily be in the language of the order.
@@ -67,7 +69,9 @@ class NostoTaggingOrderStatus implements NostoOrderStatusInterface
 	}
 
 	/**
-	 * @inheritdoc
+	 * Returns the order status code.
+	 *
+	 * @return string the code.
 	 */
 	public function getCode()
 	{
@@ -75,7 +79,9 @@ class NostoTaggingOrderStatus implements NostoOrderStatusInterface
 	}
 
 	/**
-	 * @inheritdoc
+	 * Returns the order status label.
+	 *
+	 * @return string the label.
 	 */
 	public function getLabel()
 	{

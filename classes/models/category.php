@@ -31,20 +31,31 @@ class NostoTaggingCategory extends NostoTaggingModel
 	/**
 	 * @var string the built category string.
 	 */
-	public $category_string;
+	protected $category;
 
 	/**
-	 * Loads the category data from supplied context and category objects.
+	 * Sets up this DTO.
 	 *
-	 * @param Context $context the context object.
-	 * @param Category $category the category object.
+	 * @param Category|CategoryCore $category the PS category model.
+	 * @param Context|null $context the PS context model.
 	 */
-	public function loadData(Context $context, Category $category)
+	public function loadData(Category $category, Context $context = null)
 	{
 		if (!Validate::isLoadedObject($category))
 			return;
 
-		$this->category_string = self::buildCategoryString($category->id, $context->language->id);
+		if (is_null($context))
+			$context = Context::getContext();
+
+		/** @var LanguageCore $language */
+		$language = $context->language;
+		$this->category = self::buildCategoryString($category->id, $language->id);
+
+		$this->dispatchHookActionLoadAfter(array(
+			'nosto_category' => $this,
+			'category' => $category,
+			'context' => $context
+		));
 	}
 
 	/**
@@ -58,6 +69,7 @@ class NostoTaggingCategory extends NostoTaggingModel
 	{
 		$category_list = array();
 
+		/** @var CategoryCore $category */
 		$category = new Category((int)$id_category, $id_lang);
 
 		if (Validate::isLoadedObject($category) && (int)$category->active === 1)
@@ -69,5 +81,37 @@ class NostoTaggingCategory extends NostoTaggingModel
 			return '';
 
 		return DS.implode(DS, array_reverse($category_list));
+	}
+
+	/**
+	 * Returns the category value.
+	 *
+	 * @return string the category.
+	 */
+	public function getCategory()
+	{
+		return $this->category;
+	}
+
+	/**
+	 * Sets the category string.
+	 *
+	 * The category must be a non-empty string, that starts with a "/" character.
+	 *
+	 * Usage:
+	 * $object->setCategory('/Clothes/Winter/Coats');
+	 *
+	 * @param string $category the category string.
+	 *
+	 * @throws InvalidArgumentException
+	 */
+	public function setCategory($category)
+	{
+		if (!is_string($category) || empty($category))
+			throw new InvalidArgumentException('Category must be a non-empty string value.');
+		if ($category[0] !== DS)
+			throw new InvalidArgumentException(sprintf('Category string must start with a %s character.', DS));
+
+		$this->category = $category;
 	}
 }

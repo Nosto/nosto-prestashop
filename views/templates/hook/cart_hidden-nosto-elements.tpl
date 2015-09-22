@@ -23,10 +23,9 @@
 *}
 
 <div id="hidden_nosto_elements" style="display: none;">
-    {if (!empty($hidden_nosto_elements_prepend))}
-        <div class="prepend">{$hidden_nosto_elements_prepend}</div>
-    {/if}
-    {if (!empty($hidden_nosto_elements_append))}
-        <div class="append">{$hidden_nosto_elements_append}</div>
-    {/if}
+    <div class="append">
+        <div class="hidden_nosto_element" data-nosto-id="nosto-page-cart1"></div>
+        <div class="hidden_nosto_element" data-nosto-id="nosto-page-cart3"></div>
+        <div class="hidden_nosto_element" data-nosto-id="nosto-page-cart2"></div>
+    </div>
 </div>

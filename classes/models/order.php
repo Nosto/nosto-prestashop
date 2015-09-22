@@ -26,12 +26,12 @@
 /**
  * Model for tagging orders.
  */
-class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface, NostoValidatableInterface
+class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 {
 	/**
 	 * @var bool if we should include special line items such as discounts and shipping costs.
 	 */
-	public $include_special_items = true;
+	protected $include_special_items = true;
 
 	/**
 	 * @var string the order number.
@@ -44,12 +44,12 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 	protected $buyer_info = array();
 
 	/**
-	 * @var string the order creation date.
+	 * @var NostoDate the order creation date.
 	 */
 	protected $created_date;
 
 	/**
-	 * @var NostoTaggingOrderPurchasedItem[] purchased items in the order.
+	 * @var NostoTaggingOrderItem[] purchased items in the order.
 	 */
 	protected $purchased_items = array();
 
@@ -64,89 +64,33 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 	protected $order_status;
 
 	/**
-	 * @inheritdoc
-	 */
-	public function getOrderNumber()
-	{
-		return $this->order_number;
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function getCreatedDate()
-	{
-		return $this->created_date;
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function getPaymentProvider()
-	{
-		return $this->payment_provider;
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function getBuyerInfo()
-	{
-		return $this->buyer_info;
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function getPurchasedItems()
-	{
-		return $this->purchased_items;
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function getOrderStatus()
-	{
-		return $this->order_status;
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function getValidationRules()
-	{
-		return array(
-			array(
-				array(
-					'order_number',
-					'created_date',
-					'buyer_info',
-					'purchased_items',
-				),
-				'required'
-			)
-		);
-	}
-
-	/**
-	 * Loads the order data from supplied context and order objects.
+	 * Sets up this DTO.
 	 *
-	 * @param Context $context the context object.
-	 * @param Order $order the order object.
+	 * @param Order|OrderCore $order the PS order model.
+	 * @param Context|null $context the PS context model.
 	 */
-	public function loadData(Context $context, Order $order)
+	public function loadData(Order $order, Context $context = null)
 	{
 		if (!Validate::isLoadedObject($order))
 			return;
 
+		if (is_null($context))
+			$context = Context::getContext();
+
+		/** @var Currency|CurrencyCore $currency */
+		$currency = new Currency($order->id_currency);
+		// Set the currencies conversion rate to what it was when the order was made.
+		$currency->conversion_rate = $order->conversion_rate;
+
 		$customer = new Customer((int)$order->id_customer);
 		// The order reference was introduced in prestashop 1.5 where orders can be split into multiple ones.
 		$this->order_number = isset($order->reference) ? (string)$order->reference : $order->id;
-		$this->buyer_info = new NostoTaggingOrderBuyer();
-		$this->buyer_info->loadData($customer);
-		$this->created_date = Nosto::helper('date')->format($order->date_add);
-		$this->purchased_items = $this->findPurchasedItems($context, $order);
+		$this->buyer_info = new NostoTaggingOrderBuyer($customer);
+		$this->created_date = new NostoDate(strtotime($order->date_add));
+
+		foreach ($this->fetchOrderItems($order) as $item)
+			if (($line_item = $this->buildLineItem($item, $currency, $context)) !== false)
+				$this->purchased_items[] = $line_item;
 
 		$payment_module = Module::getInstanceByName($order->module);
 		if ($payment_module !== false && isset($payment_module->version))
@@ -154,26 +98,254 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 		else
 			$this->payment_provider = $order->module.' [unknown]';
 
-		$this->order_status = new NostoTaggingOrderStatus();
-		$this->order_status->loadData($order);
+		$this->order_status = new NostoTaggingOrderStatus($order);
+
+		$this->dispatchHookActionLoadAfter(array(
+			'nosto_order' => $this,
+			'order' => $order,
+			'context' => $context
+		));
 	}
 
 	/**
-	 * Finds purchased items for the order.
-	 *
-	 * @param Context $context the context.
-	 * @param Order $order the order object.
-	 * @return NostoTaggingOrderPurchasedItem[] the purchased items.
+	 * Exclude any special order items, e.g. shipping costs.
+	 * This methods needs to be invoked before NostoTaggingOrder::loadData.
 	 */
-	protected function findPurchasedItems(Context $context, Order $order)
+	public function excludeSpecialItems()
 	{
-		$purchased_items = array();
+		$this->include_special_items = false;
+	}
 
-		$currency = new Currency($order->id_currency);
-		if (!Validate::isLoadedObject($currency))
-			return $purchased_items;
+	/**
+	 * The unique order number identifying the order.
+	 *
+	 * @return string|int the order number.
+	 */
+	public function getOrderNumber()
+	{
+		return $this->order_number;
+	}
 
-		$products = array();
+	/**
+	 * The date when the order was placed.
+	 *
+	 * @return NostoDate the creation date.
+	 */
+	public function getCreatedDate()
+	{
+		return $this->created_date;
+	}
+
+	/**
+	 * The payment provider used for placing the order, formatted according to "[provider name] [provider version]".
+	 *
+	 * @return string the payment provider.
+	 */
+	public function getPaymentProvider()
+	{
+		return $this->payment_provider;
+	}
+
+	/**
+	 * The buyer info of the user who placed the order.
+	 *
+	 * @return NostoOrderBuyerInterface the meta data model.
+	 */
+	public function getBuyerInfo()
+	{
+		return $this->buyer_info;
+	}
+
+	/**
+	 * The purchased items which were included in the order.
+	 *
+	 * @return NostoOrderItemInterface[] the meta data models.
+	 */
+	public function getPurchasedItems()
+	{
+		return $this->purchased_items;
+	}
+
+	/**
+	 * Returns the order status model.
+	 *
+	 * @return NostoOrderStatusInterface the model.
+	 */
+	public function getOrderStatus()
+	{
+		return $this->order_status;
+	}
+
+	/**
+	 * Sets the unique order number identifying the order.
+	 *
+	 * The number must be a non-empty value.
+	 *
+	 * Usage:
+	 * $object->setOrderNumber('order123');
+	 *
+	 * @param string|int $order_number the order number.
+	 *
+	 * @throws InvalidArgumentException
+	 */
+	public function setOrderNumber($order_number)
+	{
+		if (!(is_int($order_number) || is_string($order_number)) || empty($order_number))
+			throw new InvalidArgumentException('Order number must be a non-empty value.');
+
+		$this->order_number = $order_number;
+	}
+
+	/**
+	 * Sets the date when the order was placed.
+	 *
+	 * The date must be an instance of the NostoDate class.
+	 *
+	 * Usage:
+	 * $object->setCreatedDate(new NostoDate(strtotime('2015-01-01 00:00:00')));
+	 *
+	 * @param NostoDate $created_date the creation date.
+	 */
+	public function setCreatedDate(NostoDate $created_date)
+	{
+		$this->created_date = $created_date;
+	}
+
+	/**
+	 * Sets the payment provider used for placing the order.
+	 *
+	 * The provider must be a non-empty string value. Preferred formatting is "[provider name] [provider version]".
+	 *
+	 * Usage:
+	 * $object->setPaymentProvider("payment_gateway [1.0.0]");
+	 *
+	 * @param string $payment_provider the payment provider.
+	 *
+	 * @throws InvalidArgumentException
+	 */
+	public function setPaymentProvider($payment_provider)
+	{
+		if (!is_string($payment_provider) || empty($payment_provider))
+			throw new InvalidArgumentException('Payment provider must be a non-empty string value.');
+
+		$this->payment_provider = $payment_provider;
+	}
+
+	/**
+	 * Sets the buyer info of the user who placed the order.
+	 *
+	 * The info object must implement the NostoOrderBuyerInterface interface.
+	 *
+	 * Usage:
+	 * $object->setBuyerInfo(NostoOrderBuyerInterface $buyer_info);
+	 *
+	 * @param NostoOrderBuyerInterface $buyer_info the buyer info object.
+	 */
+	public function setBuyerInfo(NostoOrderBuyerInterface $buyer_info)
+	{
+		$this->buyer_info = $buyer_info;
+	}
+
+	/**
+	 * Adds a purchased item to the order.
+	 *
+	 * The item object must implement the NostoOrderItemInterface interface.
+	 *
+	 * Usage:
+	 * $object->addPurchasedItems(NostoOrderItemInterface $purchased_item);
+	 *
+	 * @param NostoOrderItemInterface $purchased_item the item object.
+	 */
+	public function addPurchasedItems(NostoOrderItemInterface $purchased_item)
+	{
+		$this->purchased_items[] = $purchased_item;
+	}
+
+	/**
+	 * Sets the order status.
+	 *
+	 * The status object must implement the NostoOrderStatusInterface interface.
+	 *
+	 * Usage:
+	 * $object->setOrderStatus(NostoOrderStatusInterface $order_status);
+	 *
+	 * @param NostoOrderStatusInterface $order_status the status object.
+	 */
+	public function setOrderStatus(NostoOrderStatusInterface $order_status)
+	{
+		$this->order_status = $order_status;
+	}
+
+	/**
+	 * Turns an order item into a NostoTaggingOrderItem object.
+	 *
+	 * @param array $item the item data.
+	 * @param Currency|CurrencyCore $currency the currency.
+	 * @param Context|null $context the PS context model.
+	 * @return NostoTaggingOrderItem the line item.
+	 */
+	protected function buildLineItem(array $item, Currency $currency, Context $context = null)
+	{
+		if (isset($item['product_id']))
+		{
+			$id_lang = (int)$context->language->id;
+
+			/** @var Product|ProductCore $product */
+			$product = new Product($item['product_id'], false, $id_lang);
+			if (!Validate::isLoadedObject($product))
+				return false;
+
+			$product_name = $product->name;
+			$id_attribute = (int)$item['product_attribute_id'];
+			$attribute_combinations = $this->getProductAttributeCombinationsById($product, $id_attribute, $id_lang);
+			if (!empty($attribute_combinations))
+			{
+				$attribute_combination_names = array();
+				foreach ($attribute_combinations as $attribute_combination)
+					$attribute_combination_names[] = $attribute_combination['attribute_name'];
+				if (!empty($attribute_combination_names))
+					$product_name .= ' ('.implode(', ', $attribute_combination_names).')';
+			}
+
+			$item['id'] = $product->id;
+			$item['name'] = $product_name;
+			$item['quantity'] = $item['product_quantity'];
+			$item['price'] = $item['product_price_wt'];
+		}
+
+		/** @var NostoTaggingHelperCurrency $helper_currency */
+		$helper_currency = Nosto::helper('nosto_tagging/currency');
+		/** @var NostoTaggingHelperPrice $helper_price */
+		$helper_price = Nosto::helper('nosto_tagging/price');
+
+		$base_currency = $helper_currency->getBaseCurrency($context);
+		$nosto_base_currency = new NostoCurrencyCode($base_currency->iso_code);
+
+		$price = isset($item['unit_price_tax_incl']) ? $item['unit_price_tax_incl'] : $item['price'];
+		$nosto_price = new NostoPrice($price);
+		// This conversion will cause a slight inaccuracy in the price, as we are converting an already converted and
+		// rounded price back to it's base currency. Nosto requires the price to be in it's base currency, but it is
+		// saved by PS in the currency it was bought in and the accuracy is already lost. The loss will be in the range
+		// of a one "cent".
+		if ($currency->iso_code !== $base_currency->iso_code)
+			$nosto_price = $helper_price->convertToBaseCurrency($nosto_price, $currency);
+
+		$line_item = new NostoTaggingOrderItem($item['id'], $item['name'], $item['quantity'], $nosto_price,
+			$nosto_base_currency);
+
+		return $line_item;
+	}
+
+	/**
+	 * Returns the order items.
+	 *
+	 * Abstracts the difference between PS versions.
+	 *
+	 * @param Order|OrderCore $order the PS order model.
+	 * @return array the items.
+	 */
+	protected function fetchOrderItems(Order $order)
+	{
 		$total_discounts_tax_incl = 0;
 		$total_shipping_tax_incl = 0;
 		$total_wrapping_tax_incl = 0;
@@ -182,26 +354,23 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 		// Cart rules and split orders are available from prestashop 1.5 onwards.
 		if (_PS_VERSION_ >= '1.5')
 		{
+			$products = array();
 			// One order can be split into multiple orders, so we need to combine their data.
 			$order_collection = Order::getByReference($order->reference);
-			foreach ($order_collection as $item)
+			foreach ($order_collection as $data)
 			{
-				/** @var $item Order */
-				$products = array_merge($products, $item->getProducts());
-				$total_discounts_tax_incl = Tools::ps_round($total_discounts_tax_incl + $item->total_discounts_tax_incl, 2);
-				$total_shipping_tax_incl = Tools::ps_round($total_shipping_tax_incl + $item->total_shipping_tax_incl, 2);
-				$total_wrapping_tax_incl = Tools::ps_round($total_wrapping_tax_incl + $item->total_wrapping_tax_incl, 2);
+				$products = array_merge($products, $data->getProducts());
+				$total_discounts_tax_incl = Tools::ps_round($total_discounts_tax_incl + $data->total_discounts_tax_incl, 2);
+				$total_shipping_tax_incl = Tools::ps_round($total_shipping_tax_incl + $data->total_shipping_tax_incl, 2);
+				$total_wrapping_tax_incl = Tools::ps_round($total_wrapping_tax_incl + $data->total_wrapping_tax_incl, 2);
 			}
 
-			// We need the cart rules used for the order to check for gift products and free shipping.
-			// The cart is the same even if the order is split into many objects.
+			$gift_products = array();
+			$cart_rules = array();
 			$cart = new Cart($order->id_cart);
 			if (Validate::isLoadedObject($cart))
 				$cart_rules = (array)$cart->getCartRules();
-			else
-				$cart_rules = array();
 
-			$gift_products = array();
 			foreach ($cart_rules as $cart_rule)
 				if ((int)$cart_rule['gift_product'])
 				{
@@ -234,61 +403,25 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 		}
 		else
 		{
-			$products = $order->getProducts();
+			$items = $order->getProducts();
 			$total_discounts_tax_incl = $order->total_discounts;
 			$total_shipping_tax_incl = $order->total_shipping;
 			$total_wrapping_tax_incl = $order->total_wrapping;
-
-			$items = $products;
 		}
 
-		$id_lang = (int)$context->language->id;
-		foreach ($items as $item)
+		if ($this->include_special_items && !empty($items))
 		{
-			$p = new Product($item['product_id'], false, $context->language->id);
-			if (Validate::isLoadedObject($p))
-			{
-				$product_name = $p->name;
-				$id_attribute = (int)$item['product_attribute_id'];
-				$attribute_combinations = $this->getProductAttributeCombinationsById($p, $id_attribute, $id_lang);
-				if (!empty($attribute_combinations))
-				{
-					$attribute_combination_names = array();
-					foreach ($attribute_combinations as $attribute_combination)
-						$attribute_combination_names[] = $attribute_combination['attribute_name'];
-					if (!empty($attribute_combination_names))
-						$product_name .= ' ('.implode(', ', $attribute_combination_names).')';
-				}
-
-				$purchased_item = new NostoTaggingOrderPurchasedItem();
-				$purchased_item->setProductId((int)$p->id);
-				$purchased_item->setQuantity((int)$item['product_quantity']);
-				$purchased_item->setName((string)$product_name);
-				$purchased_item->setUnitPrice(Nosto::helper('price')->format($item['product_price_wt']));
-				$purchased_item->setCurrencyCode((string)$currency->iso_code);
-				$purchased_items[] = $purchased_item;
-			}
-		}
-
-		if ($this->include_special_items && !empty($purchased_items))
-		{
-			// Add special items for discounts, shipping and gift wrapping.
-
 			if ($total_discounts_tax_incl > 0)
 			{
 				// Subtract possible gift product price from total as gifts are tagged with price zero (0).
 				$total_discounts_tax_incl = Tools::ps_round($total_discounts_tax_incl - $total_gift_tax_incl, 2);
 				if ($total_discounts_tax_incl > 0)
-				{
-					$purchased_item = new NostoTaggingOrderPurchasedItem();
-					$purchased_item->setProductId(-1);
-					$purchased_item->setQuantity(1);
-					$purchased_item->setName('Discount');
-					// Note the negative value.
-					$purchased_item->setUnitPrice(Nosto::helper('price')->format(-$total_discounts_tax_incl));
-					$purchased_item->setCurrencyCode((string)$currency->iso_code);
-					$purchased_items[] = $purchased_item;
-				}
+					$items[] = array(
+						'id' => -1,
+						'name' => 'Discount',
+						'quantity' => 1,
+						'price' => -$total_discounts_tax_incl
+					);
 			}
 
 			// Check is free shipping applies to the cart.
@@ -302,29 +435,23 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 					}
 
 			if (!$free_shipping && $total_shipping_tax_incl > 0)
-			{
-				$purchased_item = new NostoTaggingOrderPurchasedItem();
-				$purchased_item->setProductId(-1);
-				$purchased_item->setQuantity(1);
-				$purchased_item->setName('Shipping');
-				$purchased_item->setUnitPrice(Nosto::helper('price')->format($total_shipping_tax_incl));
-				$purchased_item->setCurrencyCode((string)$currency->iso_code);
-				$purchased_items[] = $purchased_item;
-			}
+				$items[] = array(
+					'id' => -1,
+					'name' => 'Shipping',
+					'quantity' => 1,
+					'price' => $total_shipping_tax_incl
+				);
 
 			if ($total_wrapping_tax_incl > 0)
-			{
-				$purchased_item = new NostoTaggingOrderPurchasedItem();
-				$purchased_item->setProductId(-1);
-				$purchased_item->setQuantity(1);
-				$purchased_item->setName('Gift Wrapping');
-				$purchased_item->setUnitPrice(Nosto::helper('price')->format($total_wrapping_tax_incl));
-				$purchased_item->setCurrencyCode((string)$currency->iso_code);
-				$purchased_items[] = $purchased_item;
-			}
+				$items[] = array(
+					'id' => -1,
+					'name' => 'Gift Wrapping',
+					'quantity' => 1,
+					'price' => $total_wrapping_tax_incl
+				);
 		}
 
-		return $purchased_items;
+		return $items;
 	}
 
 	/**
@@ -348,9 +475,9 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 			LEFT JOIN `'._DB_PREFIX_.'product_attribute_combination` pac ON pac.`id_product_attribute` = pa.`id_product_attribute`
 			LEFT JOIN `'._DB_PREFIX_.'attribute` a ON a.`id_attribute` = pac.`id_attribute`
 			LEFT JOIN `'._DB_PREFIX_.'attribute_group` ag ON ag.`id_attribute_group` = a.`id_attribute_group`
-			LEFT JOIN `'._DB_PREFIX_.'attribute_lang` al ON (a.`id_attribute` = al.`id_attribute` AND al.`id_lang` = '.(int)($id_lang).')
-			LEFT JOIN `'._DB_PREFIX_.'attribute_group_lang` agl ON (ag.`id_attribute_group` = agl.`id_attribute_group` AND agl.`id_lang` = '.(int)($id_lang).')
-			WHERE pa.`id_product` = '.(int)($product->id).'
+			LEFT JOIN `'._DB_PREFIX_.'attribute_lang` al ON (a.`id_attribute` = al.`id_attribute` AND al.`id_lang` = '.(int)$id_lang.')
+			LEFT JOIN `'._DB_PREFIX_.'attribute_group_lang` agl ON (ag.`id_attribute_group` = agl.`id_attribute_group` AND agl.`id_lang` = '.(int)$id_lang.')
+			WHERE pa.`id_product` = '.(int)$product->id.'
 			AND pa.`id_product_attribute` = '.(int)$id_product_attribute.'
 			GROUP BY pa.`id_product_attribute`, ag.`id_attribute_group`
 			ORDER BY pa.`id_product_attribute`'
