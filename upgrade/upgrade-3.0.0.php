@@ -27,13 +27,13 @@ if (!defined('_PS_VERSION_'))
 	exit;
 
 /**
- * Upgrades the module to version 2.5.0.
+ * Upgrades the module to version 3.0.0.
  *
  * Creates "action{MODEL}LoadAfter" hooks dispatched by the tagging model.
  *
  * @return bool
  */
-function upgrade_module_2_5_0()
+function upgrade_module_3_0_0()
 {
 	$hooks = array(
 		array(
