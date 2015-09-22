@@ -29,7 +29,7 @@
                 <span class="product_id">{$line_item->getProductId()|escape:'htmlall':'UTF-8'}</span>
                 <span class="quantity">{$line_item->getQuantity()|escape:'htmlall':'UTF-8'}</span>
                 <span class="name">{$line_item->getName()|escape:'htmlall':'UTF-8'}</span>
-                <span class="unit_price">{$line_item->getUnitPrice()->getPrice()|number_format:2:'.':''}</span>
+                <span class="unit_price">{$line_item->getUnitPrice()->getPrice()|number_format:2:'.':''|escape:'htmlall':'UTF-8'}</span>
                 <span class="price_currency_code">{$line_item->getCurrency()->getCode()|escape:'htmlall':'UTF-8'}</span>
             </div>
         {/foreach}

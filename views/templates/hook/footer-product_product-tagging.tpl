@@ -29,7 +29,7 @@
         <span class="name">{$nosto_product->getName()|escape:'htmlall':'UTF-8'}</span>
         <span class="image_url">{$nosto_product->getImageUrl()|escape:'htmlall':'UTF-8'}</span>
         {if $nosto_product->getPrice()}
-            <span class="price">{$nosto_product->getPrice()->getPrice()|number_format:2:'.':''}</span>
+            <span class="price">{$nosto_product->getPrice()->getPrice()|number_format:2:'.':''|escape:'htmlall':'UTF-8'}</span>
         {/if}
         {if $nosto_product->getCurrency()}
             <span class="price_currency_code">{$nosto_product->getCurrency()->getCode()|escape:'htmlall':'UTF-8'}</span>
@@ -44,7 +44,7 @@
             <span class="description">{$nosto_product->getFullDescription()|escape:'htmlall':'UTF-8'}</span>
         {/if}
         {if $nosto_product->getListPrice()}
-            <span class="list_price">{$nosto_product->getListPrice()->getPrice()|number_format:2:'.':''}</span>
+            <span class="list_price">{$nosto_product->getListPrice()->getPrice()|number_format:2:'.':''|escape:'htmlall':'UTF-8'}</span>
         {/if}
         {if $nosto_product->getBrand()}
             <span class="brand">{$nosto_product->getBrand()|escape:'htmlall':'UTF-8'}</span>
@@ -55,7 +55,7 @@
             {/foreach}
         {/foreach}
         {if $nosto_product->getDatePublished()}
-            <span class="date_published">{$nosto_product->getDatePublished()->getTimestamp()|date_format:'%Y-%m-%d'}</span>
+            <span class="date_published">{$nosto_product->getDatePublished()->getTimestamp()|date_format:'%Y-%m-%d'|escape:'htmlall':'UTF-8'}</span>
         {/if}
         {if $nosto_product->getPriceVariationId()}
             <span class="variation_id">{$nosto_product->getPriceVariationId()|escape:'htmlall':'UTF-8'}</span>
@@ -63,8 +63,8 @@
                 <div class="variation">
                     <span class="variation_id">{$variation->getId()->getId()|escape:'htmlall':'UTF-8'}</span>
                     <span class="price_currency_code">{$variation->getCurrency()->getCode()|escape:'htmlall':'UTF-8'}</span>
-                    <span class="price">{$variation->getPrice()->getPrice()|number_format:2:'.':''}</span>
-                    <span class="list_price">{$variation->getListPrice()->getPrice()|number_format:2:'.':''}</span>
+                    <span class="price">{$variation->getPrice()->getPrice()|number_format:2:'.':''|escape:'htmlall':'UTF-8'}</span>
+                    <span class="list_price">{$variation->getListPrice()->getPrice()|number_format:2:'.':''|escape:'htmlall':'UTF-8'}</span>
                     <span class="availability">{$variation->getAvailability()->getAvailability()|escape:'htmlall':'UTF-8'}</span>
                 </div>
             {/foreach}
