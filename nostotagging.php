@@ -347,10 +347,10 @@ class NostoTagging extends Module
 		if (_PS_VERSION_ >= '1.5' && Shop::getContext() !== Shop::CONTEXT_SHOP)
 			$output .= $this->displayError($this->l('Please choose a shop to configure Nosto for.'));
 
-		$stylesheets = '<link rel="stylesheet" href="'.$this->_path.'css/tw-bs-v3.1.1.css">';
-		$stylesheets .= '<link rel="stylesheet" href="'.$this->_path.'css/nostotagging-admin-config.css">';
-		$scripts = '<script type="text/javascript" src="'.$this->_path.'js/iframeresizer.min.js"></script>';
-		$scripts .= '<script type="text/javascript" src="'.$this->_path.'js/nostotagging-admin-config.js"></script>';
+		$stylesheets = '<link rel="stylesheet" href="'.$this->_path.'views/css/tw-bs-v3.1.1.css">';
+		$stylesheets .= '<link rel="stylesheet" href="'.$this->_path.'views/css/nostotagging-admin-config.css">';
+		$scripts = '<script type="text/javascript" src="'.$this->_path.'views/js/iframeresizer.min.js"></script>';
+		$scripts .= '<script type="text/javascript" src="'.$this->_path.'views/js/nostotagging-admin-config.js"></script>';
 		$output .= $this->display(__FILE__, 'views/templates/admin/config-bootstrap.tpl');
 
 		return $stylesheets.$scripts.$output;
@@ -422,7 +422,7 @@ class NostoTagging extends Module
 			'nosto_use_direct_include' => $helper_config->getUseDirectInclude($language->id)
 		));
 
-		$this->context->controller->addJS($this->_path.'js/nostotagging-auto-slots.js');
+		$this->context->controller->addJS($this->_path.'views/js/nostotagging-auto-slots.js');
 
 		$html = $this->display(__FILE__, 'views/templates/hook/header_meta-tags.tpl');
 		$html .= $this->display(__FILE__, 'views/templates/hook/header_embed-script.tpl');
@@ -457,7 +457,7 @@ class NostoTagging extends Module
 		// Nosto menu item in PS >= 1.6.
 		$ctrl = $this->context->controller;
 		if ($ctrl instanceof AdminController && method_exists($ctrl, 'addCss'))
-			$ctrl->addCss($this->_path.'css/nostotagging-back-office.css');
+			$ctrl->addCss($this->_path.'views/css/nostotagging-back-office.css');
 	}
 
 	/**
