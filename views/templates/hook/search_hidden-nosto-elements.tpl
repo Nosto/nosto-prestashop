@@ -23,10 +23,10 @@
 *}
 
 <div id="hidden_nosto_elements" style="display: none;">
-    {if (!empty($hidden_nosto_elements_prepend))}
-        <div class="prepend">{$hidden_nosto_elements_prepend}</div>
-    {/if}
-    {if (!empty($hidden_nosto_elements_append))}
-        <div class="append">{$hidden_nosto_elements_append}</div>
-    {/if}
+    <div class="prepend">
+        <div class="hidden_nosto_element" data-nosto-id="nosto-page-search1"></div>
+    </div>
+    <div class="append">
+        <div class="hidden_nosto_element" data-nosto-id="nosto-page-search2"></div>
+    </div>
 </div>
