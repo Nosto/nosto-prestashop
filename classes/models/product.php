@@ -831,12 +831,12 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	 *
 	 * @param string $image_url the url.
 	 *
-	 * @throws NostoInvalidArgumentException
+	 * @throws InvalidArgumentException
 	 */
 	public function setImageUrl($image_url)
 	{
 		if (!Validate::isUrl($image_url) || !Validate::isAbsoluteUrl($image_url))
-			throw new NostoInvalidArgumentException('Image URL must be valid and absolute.');
+			throw new InvalidArgumentException('Image URL must be valid and absolute.');
 
 		$this->image_url = $image_url;
 	}
