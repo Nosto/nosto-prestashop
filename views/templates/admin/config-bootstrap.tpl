@@ -172,12 +172,45 @@
                                 <div class="col-md-6 col-md-pull-6">
                                     <div class="content-block">
                                         <div class="content-panel">
-                                            <h2>{l s='Welcome to Nosto' mod='nostotagging'}</h2>
-                                            <p class="content-text">
-                                                {l s='Nosto helps you increase sales by delivering your customers personalized shopping experiences.' mod='nostotagging'}<br/>
-                                                {l s='Join over 4,500 online retailers in over 100 countries using Nosto to delight their customers and grow their business!' mod='nostotagging'}
-                                            </p>
-                                            <img src="https://my.nosto.com/public/platform/img/install-recommendations.png" class="img-responsive center">
+                                            <div class="panel panel-default">
+                                                <div class="panel-body">
+                                                    <div class="row">
+                                                        <div class="col-sxs-12">
+                                                            <h2>{l s='Welcome to Nosto.' mod='nostotagging'}</h2>
+                                                            <!-- extras.platforms.install.welcomeNosto-->
+                                                            <p class="content-text">
+                                                                {l s='A full personalization solution, Nosto is the easiest way to deliver your customers personalized shopping experiences - wherever they are. ' mod='nostotagging'} <br><br>
+                                                                {l s='Join the 10,000+ retailers, in over 100 countries, who are using Nosto to delight their customers and grow their business.' mod='nostotagging'}
+                                                            <!-- extras.platforms.install.installMessage -->
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-sxs-12 col-sm-6">
+                                                            <h6>{l s='Facebook Ads' mod='nostotagging'}</h6>
+                                                            <!-- extras.platforms.install.facebookAds -->
+                                                            <img src="https://my.nosto.com/public/platform/img/install-feature-facebook.jpg" alt="" class="img-responsive">
+                                                        </div>
+                                                        <div class="col-sxs-12 col-sm-6">
+                                                            <h6>{l s='Product Recommendations' mod='nostotagging'}</h6>
+                                                            <!-- extras.platforms.install.productRecommendations -->
+                                                            <img src="https://my.nosto.com/public/platform/img/install-feature-recommendations.jpg" alt="" class="img-responsive">
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-sxs-12 col-sm-6">
+                                                            <h6>{l s='Behavioural Pop-ups' mod='nostotagging'}</h6>
+                                                            <!-- extras.platforms.install.behaviouralPopups -->
+                                                            <img src="https://my.nosto.com/public/platform/img/install-feature-popups.jpg" alt="" class="img-responsive">
+                                                        </div>
+                                                        <div class="col-sxs-12 col-sm-6">
+                                                            <h6>{l s='Triggered Emails' mod='nostotagging'}</h6>
+                                                            <!-- extras.platforms.install.triggeredEmails -->
+                                                            <img src="https://my.nosto.com/public/platform/img/install-feature-recommendations.jpg" class="img-responsive">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

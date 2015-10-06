@@ -16,6 +16,40 @@
     padding: 5px;
 }
 
+#content.bootstrap .nostotagging .col-xs-1, #content.bootstrap .nostotagging .col-sm-1,
+#content.bootstrap .nostotagging .col-md-1, #content.bootstrap .nostotagging .col-lg-1,
+#content.bootstrap .nostotagging .col-xs-2, #content.bootstrap .nostotagging .col-sm-2,
+#content.bootstrap .nostotagging .col-md-2, #content.bootstrap .nostotagging .col-lg-2,
+#content.bootstrap .nostotagging .col-xs-3, #content.bootstrap .nostotagging .col-sm-3,
+#content.bootstrap .nostotagging .col-md-3, #content.bootstrap .nostotagging .col-lg-3,
+#content.bootstrap .nostotagging .col-xs-4, #content.bootstrap .nostotagging .col-sm-4,
+#content.bootstrap .nostotagging .col-md-4, #content.bootstrap .nostotagging .col-lg-4,
+#content.bootstrap .nostotagging .col-xs-5, #content.bootstrap .nostotagging .col-sm-5,
+#content.bootstrap .nostotagging .col-md-5, #content.bootstrap .nostotagging .col-lg-5,
+#content.bootstrap .nostotagging .col-xs-6, #content.bootstrap .nostotagging .col-sm-6,
+#content.bootstrap .nostotagging .col-md-6, #content.bootstrap .nostotagging .col-lg-6,
+#content.bootstrap .nostotagging .col-xs-7, #content.bootstrap .nostotagging .col-sm-7,
+#content.bootstrap .nostotagging .col-md-7, #content.bootstrap .nostotagging .col-lg-7,
+#content.bootstrap .nostotagging .col-xs-8, #content.bootstrap .nostotagging .col-sm-8,
+#content.bootstrap .nostotagging .col-md-8, #content.bootstrap .nostotagging .col-lg-8,
+#content.bootstrap .nostotagging .col-xs-9, #content.bootstrap .nostotagging .col-sm-9,
+#content.bootstrap .nostotagging .col-md-9, #content.bootstrap .nostotagging .col-lg-9,
+#content.bootstrap .nostotagging .col-xs-10, #content.bootstrap .nostotagging .col-sm-10,
+#content.bootstrap .nostotagging .col-md-10, #content.bootstrap .nostotagging .col-lg-10,
+#content.bootstrap .nostotagging .col-xs-11, #content.bootstrap .nostotagging .col-sm-11,
+#content.bootstrap .nostotagging .col-md-11, #content.bootstrap .nostotagging .col-lg-11,
+#content.bootstrap .nostotagging .col-xs-12, #content.bootstrap .nostotagging .col-sm-12,
+#content.bootstrap .nostotagging .col-md-12, #content.bootstrap .nostotagging .col-lg-12 {
+    position: relative;
+    min-height: 1px;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+#content.bootstrap .nostotagging .content-panel .panel {
+    border-color: #fff;
+}
+
 .tw-bs .nostotagging {
     font-weight: 400;
     line-height: 1.6;
@@ -30,9 +64,13 @@
     float: none;
 }
 
+.tw-bs .nostotagging h2,
+.tw-bs .nostotagging h6 {
+    font-weight: 700;
+}
+
 .tw-bs .nostotagging h2 {
     color: #2e3b51;
-    font-weight: 700;
 }
 
 .tw-bs .nostotagging iframe {
@@ -167,7 +205,7 @@
     background: #364156 url("https://my.nosto.com/public/platform/img/install-bg.png") no-repeat top left;
     background-size: cover;
     color: #fff;
-    height: 677px;
+    height: 800px;
 }
 
 .tw-bs .content-block {
@@ -180,6 +218,10 @@
 
 .tw-bs .content-panel {
     margin: 0 auto;
+}
+
+.tw-bs .content-panel .panel {
+    border-color: #fff;
 }
 
 @media (min-width: 768px) {
@@ -223,4 +265,8 @@
 .tw-bs .link-wrap {
     margin-top: 2em;
     color: #333;
+}
+
+.tw-bs.ps-14 .row {
+    background: none;
 }
