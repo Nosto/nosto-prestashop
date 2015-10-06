@@ -30,6 +30,10 @@ $_MODULE['<{nostotagging}prestashop>config-bootstrap_8cb33a3501e7052ae865c670615
 $_MODULE['<{nostotagging}prestashop>config-bootstrap_a4ea91cd0d1ea33d8113457644dd6157'] = 'cliquez ici';
 $_MODULE['<{nostotagging}prestashop>config-bootstrap_3722d8107ead3c11d3a3b60dd92d7f3d'] = 'En installant Nosto vous acceptez les';
 $_MODULE['<{nostotagging}prestashop>config-bootstrap_97abaa921b2270031573362f57aad4a4'] = 'termes et conditions de Nosto';
-$_MODULE['<{nostotagging}prestashop>config-bootstrap_3fea86f98e9d6d41bc92f64df751f487'] = 'Bienvenue dans Nosto';
-$_MODULE['<{nostotagging}prestashop>config-bootstrap_c80a5c3f0ff0704472acaea2a14e33f7'] = 'Nosto vous aide à augmenter vos ventes en proposant une expérience d\'achat unique et agréable à chaque visiteur.';
-$_MODULE['<{nostotagging}prestashop>config-bootstrap_bb1e6af66a20a2b26355c98c86c866bb'] = 'Joignez-vous à plus de 4000 e-commerçants utilisant Nosto pour satisfaire leurs clients et développer leur entreprise!';
+$_MODULE['<{nostotagging}prestashop>config-bootstrap_096b6a9ad2685e6e35b7d75f05a4dd3d'] = 'Bienvenue dans Nosto';
+$_MODULE['<{nostotagging}prestashop>config-bootstrap_f9435972f7e6f7b6c5d8d6b4e8688a27'] = 'Solution de personnalisation complète, Nosto est la manière la plus simple d\'offrir à vos visiteurs une expérience d\'achat personnalisée - où qu\'ils soient.';
+$_MODULE['<{nostotagging}prestashop>config-bootstrap_5d4458d1a6873e632b86f0f9eee320f8'] = 'Rejoignez plus de 10 000 eCommerçants, dans plus de 100 pays, qui utilisent Nosto pour offrir une expérience d\'achat unique et augmenter leurs performances.';
+$_MODULE['<{nostotagging}prestashop>config-bootstrap_0a1068d4187d880068c65be6c5b16158'] = 'Facebook Ads';
+$_MODULE['<{nostotagging}prestashop>config-bootstrap_e1492b33be1d51cc1c880ac61f4949dd'] = 'Recommandations produits';
+$_MODULE['<{nostotagging}prestashop>config-bootstrap_427893795e39ef395440ad58f2220300'] = 'Pop-ups comportementaux';
+$_MODULE['<{nostotagging}prestashop>config-bootstrap_5253b8ce018adcf45f3ea48700f6b4b0'] = 'Emails automatisés';
