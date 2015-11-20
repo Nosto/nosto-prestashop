@@ -42,6 +42,22 @@ abstract class NostoTaggingApiModuleFrontController extends ModuleFrontControlle
 	public $offset = 0;
 
 	/**
+	 * @var int id of the record to fetch. If present only single record will be returned
+	 */
+	private $id;
+
+	/**
+	 * @var array ids of the records to be fetched. If present only records with these ids will be returned
+	 * 	Ids can can be passed as an array or in a comma separated string.
+	 *
+	 * Examples:
+	 * &ids=1,2,3...
+	 * &ids[]=1&ids[]=2&ids[]=3
+
+	 */
+	private $ids = array();
+
+	/**
 	 * @inheritdoc
 	 */
 	public function __construct()
@@ -53,6 +69,12 @@ abstract class NostoTaggingApiModuleFrontController extends ModuleFrontControlle
 
 		if (($offset = Tools::getValue('offset')) !== false && !empty($offset))
 			$this->offset = (int)$offset;
+
+		if (($id = Tools::getValue('id')) !== false && !empty($id))
+			$this->id = $id;
+
+		if (($ids = Tools::getValue('ids')) !== false && !empty($ids))
+			$this->ids = $this->convertToArray($ids);
 	}
 
 	/**
@@ -73,5 +95,50 @@ abstract class NostoTaggingApiModuleFrontController extends ModuleFrontControlle
 		// It is important to stop the script execution after the export,
 		// in order to avoid any additional data being outputted.
 		die();
+	}
+
+	/**
+	 * Convert a comma separated string into array
+	 *
+	 * @param mixed $ids
+	 * @return array
+	 */
+	private function convertToArray($ids)
+	{
+		if (!is_array($ids)) {
+			$ids = explode(',', $ids);
+		}
+		if (!is_array($ids)) {
+			return array();
+		}
+
+		return array_unique($ids);
+	}
+
+	/**
+	 * Returns the id parameter
+	 * @return int
+	 */
+	public function getId() {
+		return $this->id;
+	}
+
+	/**
+	 * Returns the orderIds parameter
+	 * @return array
+	 */
+	public function getIds() {
+		return $this->ids;
+	}
+
+	/**
+	 * Sanitizes / escapes a value for sql
+	 *
+	 * @param mixed $value
+	 * @return array
+	 */
+	public function sanitizeValue($value)
+	{
+		return pSQL($value);
 	}
 }

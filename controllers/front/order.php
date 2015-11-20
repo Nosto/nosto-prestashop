@@ -38,7 +38,7 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
 	public function initContent()
 	{
 		$collection = new NostoExportCollectionOrder();
-		foreach ($this->getOrderIds() as $id_order)
+		foreach ($this->fetchOrderIds() as $id_order)
 		{
 			$order = new Order($id_order);
 			if (!Validate::isLoadedObject($order))
@@ -62,26 +62,50 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
 	 *
 	 * @return array the order id list.
 	 */
-	protected function getOrderIds()
+	protected function fetchOrderIds()
 	{
 		$context = $this->module->getContext();
 		if (_PS_VERSION_ > '1.5')
 			$where = strtr('`id_shop_group` = {g} AND `id_shop` = {s} AND `id_lang` = {l}',
 				array(
-					'{g}' => pSQL($context->shop->id_shop_group),
-					'{s}' => pSQL($context->shop->id),
-					'{l}' => pSQL($context->language->id),
+					'{g}' => $this->sanitizeValue($context->shop->id_shop_group),
+					'{s}' => $this->sanitizeValue($context->shop->id),
+					'{l}' => $this->sanitizeValue($context->language->id),
 				));
 		else
 			$where = strtr('`id_lang` = {l}',
 				array(
-					'{l}' => pSQL($context->language->id),
+					'{l}' => $this->sanitizeValue($context->language->id),
 				));
+
+	 	$sort = '`date_add` DESC';
+
+		if (!empty($ids = $this->getIds()) && count($this->getIds() > 0)) {
+			$ids = array_map(
+				function ($val) {
+					return '\'' . $this->sanitizeValue($val) . '\'';
+				},
+				$ids
+			);
+
+			$where .= sprintf(
+				' AND `reference` IN(%s)',
+				implode(',', $ids)
+			);
+		}
+
+		if (!empty($this->getId())) {
+			$where .= sprintf(
+				' AND `reference` = \'%s\'',
+				$this->sanitizeValue($this->getId())
+			);
+		}
 
 		$sql = <<<EOT
 			SELECT `id_order`
 			FROM `ps_orders`
 			WHERE $where
+			ORDER BY $sort
 			LIMIT $this->limit
 			OFFSET $this->offset
 EOT;

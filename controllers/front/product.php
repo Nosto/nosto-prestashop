@@ -69,11 +69,36 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
 	 */
 	protected function getProductIds()
 	{
+		$where = sprintf(
+			'`active` = %d
+				AND
+			`available_for_order` = %d',
+			1,
+			1
+		);
+
+		if (!empty($ids = $this->getIds()) && count($this->getIds() > 0)) {
+
+			$ids = array_map('intval', $ids);
+
+			$where .= sprintf(
+				' AND `id_product` IN(%s)',
+				implode(',', $ids)
+			);
+		}
+
+		if (!empty($this->getId())) {
+			$where .= sprintf(
+				' AND `id_product` = %d',
+				(int)$this->getId()
+			);
+		}
+
 		$product_ids = array();
 		$sql = <<<EOT
 			SELECT `id_product`
 			FROM `ps_product`
-			WHERE `active` = 1 AND `available_for_order` = 1
+			WHERE $where
 			LIMIT $this->limit
 			OFFSET $this->offset
 EOT;
