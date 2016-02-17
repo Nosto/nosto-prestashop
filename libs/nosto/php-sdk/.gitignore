@@ -1,0 +1,6 @@
+.env
+.env.*
+vendor
+
+tests/_output/*
+node_modules

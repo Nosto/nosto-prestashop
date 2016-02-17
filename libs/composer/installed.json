@@ -1,0 +1,33 @@
+[
+    {
+        "name": "nosto/php-sdk",
+        "version": "1.12.1",
+        "version_normalized": "1.12.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/Nosto/php-sdk.git",
+            "reference": "78e95e9a9f37f361c92c2c5c7ef3d2e216e15bf7"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/Nosto/php-sdk/zipball/78e95e9a9f37f361c92c2c5c7ef3d2e216e15bf7",
+            "reference": "78e95e9a9f37f361c92c2c5c7ef3d2e216e15bf7",
+            "shasum": ""
+        },
+        "require-dev": {
+            "codeception/codeception": "@stable",
+            "codeception/specify": "@stable"
+        },
+        "time": "2015-06-05 06:44:51",
+        "type": "library",
+        "installation-source": "dist",
+        "license": [
+            "BSD-3-Clause"
+        ],
+        "description": "PHP SDK for developing Nosto modules for e-commerce platforms",
+        "support": {
+            "source": "https://github.com/Nosto/php-sdk/tree/1.12.1",
+            "issues": "https://github.com/Nosto/php-sdk/issues"
+        }
+    }
+]
