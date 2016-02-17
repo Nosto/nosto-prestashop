@@ -105,13 +105,12 @@ class NostoTagging extends Module
 	{
 		$this->name = 'nostotagging';
 		$this->tab = 'advertising_marketing';
-		$this->version = '2.4.3';
+		$this->version = '2.4.4';
 		$this->author = 'Nosto';
 		$this->need_instance = 1;
 		$this->bootstrap = true;
 
 		parent::__construct();
-
 		$this->displayName = $this->l('Personalization for PrestaShop');
 		$this->description = $this->l('Increase your conversion rate and average order value by delivering your customers personalized product recommendations throughout their shopping journey.');
 
@@ -299,7 +298,7 @@ class NostoTagging extends Module
 		/** @var NostoAccount $account */
 		$account = Nosto::helper('nosto_tagging/account')->find($language_id);
 
-		$this->context->smarty->assign(array(
+		$this->getSmarty()->assign(array(
 			$this->name.'_form_action' => $this->getAdminUrl(),
 			$this->name.'_has_account' => ($account !== null),
 			$this->name.'_account_name' => ($account !== null) ? $account->getName() : null,
@@ -337,7 +336,7 @@ class NostoTagging extends Module
 				$meta->loadData($this->context, $language_id);
 				$url = $account->getIframeUrl($meta);
 				if (!empty($url))
-					$this->context->smarty->assign(array('iframe_url' => $url));
+					$this->getSmarty()->assign(array('iframe_url' => $url));
 			}
 			catch (NostoException $e)
 			{
@@ -414,7 +413,8 @@ class NostoTagging extends Module
 
 		/** @var LinkCore $link */
 		$link = new Link();
-		$this->smarty->assign(array(
+
+		$this->getSmarty()->assign(array(
 			'server_address' => $server_address,
 			'account_name' => $account->getName(),
 			'nosto_version' => $this->version,
@@ -1053,7 +1053,7 @@ class NostoTagging extends Module
 			return '';
 		}
 
-		$this->smarty->assign(array(
+		$this->getSmarty()->assign(array(
 			'hidden_nosto_elements_prepend' => $prepend,
 			'hidden_nosto_elements_append' => $append,
 		));
@@ -1184,7 +1184,7 @@ class NostoTagging extends Module
 
 		$nosto_customer->loadData($this->context, $this->context->customer);
 
-		$this->smarty->assign(array(
+		$this->getSmarty()->assign(array(
 			'nosto_customer' => $nosto_customer,
 		));
 
@@ -1201,7 +1201,7 @@ class NostoTagging extends Module
 		$nosto_cart = new NostoTaggingCart();
 		$nosto_cart->loadData($this->context->cart);
 
-		$this->smarty->assign(array(
+		$this->getSmarty()->assign(array(
 			'nosto_cart' => $nosto_cart,
 		));
 
@@ -1229,7 +1229,7 @@ class NostoTagging extends Module
 			$params['nosto_category'] = $nosto_category;
 		}
 
-		$this->smarty->assign($params);
+		$this->getSmarty()->assign($params);
 		return $this->display(__FILE__, 'views/templates/hook/footer-product_product-tagging.tpl');
 	}
 
@@ -1244,7 +1244,7 @@ class NostoTagging extends Module
 		$nosto_order = new NostoTaggingOrder();
 		$nosto_order->loadData($this->context, $order);
 
-		$this->smarty->assign(array(
+		$this->getSmarty()->assign(array(
 			'nosto_order' => $nosto_order,
 		));
 
@@ -1262,7 +1262,7 @@ class NostoTagging extends Module
 		$nosto_category = new NostoTaggingCategory();
 		$nosto_category->loadData($this->context, $category);
 
-		$this->smarty->assign(array(
+		$this->getSmarty()->assign(array(
 			'nosto_category' => $nosto_category,
 		));
 
@@ -1280,7 +1280,7 @@ class NostoTagging extends Module
 		$nosto_brand = new NostoTaggingBrand();
 		$nosto_brand->loadData($manufacturer);
 
-		$this->smarty->assign(array(
+		$this->getSmarty()->assign(array(
 			'nosto_brand' => $nosto_brand,
 		));
 
@@ -1298,10 +1298,35 @@ class NostoTagging extends Module
 		$nosto_search = new NostoTaggingSearch();
 		$nosto_search->setSearchTerm($search_term);
 
-		$this->smarty->assign(array(
+		$this->getSmarty()->assign(array(
 			'nosto_search' => $nosto_search,
 		));
 
 		return $this->display(__FILE__, 'views/templates/hook/top_search-tagging.tpl');
+	}
+
+	/**
+	 * Method for resolving correct smarty object
+	 *
+	 * @return Smarty|Smarty_Data
+	 * @throws \NostoException
+	 */
+	protected function getSmarty()
+	{
+		if (
+			!empty($this->smarty)
+			&& method_exists($this->smarty, 'assign')
+		) {
+
+			return $this->smarty;
+		} elseif (
+			!empty($this->context->smarty)
+			&& method_exists($this->context->smarty, 'assign')
+		) {
+
+			return $this->context->smarty;
+		}
+
+		throw new \NostoException('Could not find smarty');
 	}
 }
