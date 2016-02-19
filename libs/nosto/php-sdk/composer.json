@@ -1,0 +1,10 @@
+{
+    "name": "nosto/php-sdk",
+    "description": "PHP SDK for developing Nosto modules for e-commerce platforms",
+    "license": "BSD-3-Clause",
+    "require-dev": {
+        "codeception/codeception": "2.0.0",
+        "codeception/specify": "0.4.1",
+        "codeception/aspect-mock": "0.5.3"
+    }
+}
