@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2016, Nosto Solutions Ltd
+ * Copyright (c) 2015, Nosto Solutions Ltd
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -29,7 +29,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * @author Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2016 Nosto Solutions Ltd
+ * @copyright 2015 Nosto Solutions Ltd
  * @license http://opensource.org/licenses/BSD-3-Clause BSD 3-Clause
  */
 
@@ -47,7 +47,7 @@ class NostoHelperIframe extends NostoHelper
      *
      * @param NostoAccountMetaSingleSignOnInterface $sso the SSO meta data.
      * @param NostoAccountMetaIframeInterface $iframe the iframe meta data.
-     * @param NostoAccountMetaInterface $account the account to return the url for.
+     * @param NostoAccount|null $account the account to return the url for.
      * @param array $params additional parameters to add to the iframe url.
      * @return string the iframe url.
      * @throws NostoException if the url cannot be created.
@@ -55,7 +55,7 @@ class NostoHelperIframe extends NostoHelper
     public function getUrl(
         NostoAccountMetaSingleSignOnInterface $sso,
         NostoAccountMetaIframeInterface $iframe,
-        NostoAccountMetaInterface $account = null,
+        NostoAccount $account = null,
         array $params = array()
     ) {
         $queryParams = http_build_query(

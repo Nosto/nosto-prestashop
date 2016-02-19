@@ -1383,4 +1383,26 @@ class NostoTagging extends Module
 		$this->smarty->assign(array('nosto_search' => $nosto_search));
 		return $this->display(__FILE__, 'views/templates/hook/top_search-tagging.tpl');
 	}
+
+	/**
+	 * Method for resolving correct smarty object
+	 *
+	 * @return Smarty|Smarty_Data
+	 * @throws \NostoException
+	 */
+	protected function getSmarty()
+	{
+		if (
+			!empty($this->smarty)
+			&& method_exists($this->smarty, 'assign')
+		) {
+			return $this->smarty;
+		} elseif (
+			!empty($this->context->smarty)
+			&& method_exists($this->context->smarty, 'assign')
+		) {
+			return $this->context->smarty;
+		}
+		throw new \NostoException('Could not find smarty');
+	}
 }

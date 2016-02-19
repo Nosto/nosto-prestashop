@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2016, Nosto Solutions Ltd
+ * Copyright (c) 2015, Nosto Solutions Ltd
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -29,7 +29,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * @author Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2016 Nosto Solutions Ltd
+ * @copyright 2015 Nosto Solutions Ltd
  * @license http://opensource.org/licenses/BSD-3-Clause BSD 3-Clause
  */
 
@@ -44,7 +44,53 @@ class NostoExportCollectionProduct extends NostoProductCollection implements Nos
      */
     public function getJson()
     {
-        $serializer = new NostoProductCollectionSerializerJson();
-        return $serializer->serialize($this);
+        /** @var NostoFormatterDate $dateFormatter */
+        $dateFormatter = Nosto::formatter('date');
+        /** @var NostoFormatterPrice $priceFormatter */
+        $priceFormatter = Nosto::formatter('price');
+
+        $dateFormat = new NostoDateFormat(NostoDateFormat::YMD);
+        $priceFormat = new NostoPriceFormat(2, '.', '');
+
+        $array = array();
+        /** @var NostoProductInterface $item */
+        foreach ($this->getArrayCopy() as $item) {
+            $data = array(
+                'url' => $item->getUrl(),
+                'product_id' => $item->getProductId(),
+                'name' => $item->getName(),
+                'image_url' => $item->getImageUrl(),
+                'price' => $priceFormatter->format($item->getPrice(), $priceFormat),
+                'price_currency_code' => $item->getCurrency()->getCode(),
+                'availability' => $item->getAvailability()->getAvailability(),
+                'categories' => $item->getCategories(),
+            );
+
+            // Optional properties.
+
+            if ($item->getThumbUrl()) {
+                $data['thumb_url'] = $item->getThumbUrl();
+            }
+            if ($item->getFullDescription()) {
+                $data['description'] = $item->getFullDescription();
+            }
+            if ($item->getListPrice()) {
+                $data['list_price'] = $priceFormatter->format($item->getListPrice(), $priceFormat);
+            }
+            if ($item->getBrand()) {
+                $data['brand'] = $item->getBrand();
+            }
+            foreach ($item->getTags() as $type => $tags) {
+                if (is_array($tags) && count($tags) > 0) {
+                    $data[$type] = $tags;
+                }
+            }
+            if ($item->getDatePublished()) {
+                $data['date_published'] = $dateFormatter->format($item->getDatePublished(), $dateFormat);
+            }
+
+            $array[] = $data;
+        }
+        return json_encode($array);
     }
 }

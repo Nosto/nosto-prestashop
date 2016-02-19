@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2016, Nosto Solutions Ltd
+ * Copyright (c) 2015, Nosto Solutions Ltd
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -29,7 +29,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * @author Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2016 Nosto Solutions Ltd
+ * @copyright 2015 Nosto Solutions Ltd
  * @license http://opensource.org/licenses/BSD-3-Clause BSD 3-Clause
  */
 
@@ -45,7 +45,7 @@
 class NostoServiceOrder
 {
     /**
-     * @var NostoAccountMetaInterface the Nosto account to confirm an order for.
+     * @var NostoAccount the Nosto account to confirm an order for.
      */
     protected $account;
 
@@ -54,9 +54,9 @@ class NostoServiceOrder
      *
      * Accepts the Nosto account for which the service is to operate on.
      *
-     * @param NostoAccountMetaInterface $account the Nosto account object.
+     * @param NostoAccount $account the Nosto account object.
      */
-    public function __construct(NostoAccountMetaInterface $account)
+    public function __construct(NostoAccount $account)
     {
         $this->account = $account;
     }
@@ -107,7 +107,36 @@ class NostoServiceOrder
      */
     protected function getOrderAsJson(NostoOrderInterface $order)
     {
-        $serializer = new NostoOrderSerializerJson();
-        return $serializer->serialize($order);
+        /** @var NostoFormatterDate $dateFormatter */
+        $dateFormatter = Nosto::formatter('date');
+        /** @var NostoFormatterPrice $priceFormatter */
+        $priceFormatter = Nosto::formatter('price');
+
+        $dateFormat = new NostoDateFormat(NostoDateFormat::YMD);
+        $priceFormat = new NostoPriceFormat(2, '.', '');
+
+        $data = array(
+            'order_number' => $order->getOrderNumber(),
+            'order_status_code' => $order->getOrderStatus()->getCode(),
+            'order_status_label' => $order->getOrderStatus()->getLabel(),
+            'buyer' => array(
+                'first_name' => $order->getBuyerInfo()->getFirstName(),
+                'last_name' => $order->getBuyerInfo()->getLastName(),
+                'email' => $order->getBuyerInfo()->getEmail(),
+            ),
+            'created_at' => $dateFormatter->format($order->getCreatedDate(), $dateFormat),
+            'payment_provider' => $order->getPaymentProvider(),
+            'purchased_items' => array(),
+        );
+        foreach ($order->getPurchasedItems() as $item) {
+            $data['purchased_items'][] = array(
+                'product_id' => $item->getProductId(),
+                'quantity' => (int)$item->getQuantity(),
+                'name' => $item->getName(),
+                'unit_price' => $priceFormatter->format($item->getUnitPrice(), $priceFormat),
+                'price_currency_code' => $item->getCurrency()->getCode(),
+            );
+        }
+        return json_encode($data);
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2016, Nosto Solutions Ltd
+ * Copyright (c) 2015, Nosto Solutions Ltd
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -29,7 +29,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * @author Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2016 Nosto Solutions Ltd
+ * @copyright 2015 Nosto Solutions Ltd
  * @license http://opensource.org/licenses/BSD-3-Clause BSD 3-Clause
  */
 
@@ -42,14 +42,11 @@ class NostoFormatterDate extends NostoFormatter
      * Formats a NostoDate object into a date string.
      *
      * @param NostoDate $date the date object.
-     * @param NostoDateFormat|null $format the formatting or null if default.
+     * @param NostoDateFormat $format the formatting.
      * @return string the formatted date.
      */
-    public function format(NostoDate $date, NostoDateFormat $format = null)
+    public function format(NostoDate $date, NostoDateFormat $format)
     {
-        if (is_null($format)) {
-            $format = new NostoDateFormat(NostoDateFormat::YMD);
-        }
         return date($format->getFormat(), $date->getTimestamp());
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2016, Nosto Solutions Ltd
+ * Copyright (c) 2015, Nosto Solutions Ltd
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -29,7 +29,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * @author Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2016 Nosto Solutions Ltd
+ * @copyright 2015 Nosto Solutions Ltd
  * @license http://opensource.org/licenses/BSD-3-Clause BSD 3-Clause
  */
 
@@ -42,7 +42,7 @@ class NostoServiceAccount
      * Sends an account create API call to Nosto.
      *
      * @param NostoAccountMetaInterface $meta the account meta data.
-     * @return NostoAccountMetaInterface the newly created account.
+     * @return NostoAccount the newly created account.
      *
      * @throws NostoException on failure.
      */
@@ -70,13 +70,13 @@ class NostoServiceAccount
      * An example of this would be when a new currency is added and the price formatting details need to be made
      * available in Nosto for the recommendations.
      *
-     * @param NostoAccountMetaInterface $account the account to update.
+     * @param NostoAccount $account the account to update.
      * @param NostoAccountMetaInterface $meta the account meta data.
      * @return bool true on success.
      *
      * @throws NostoException on failure.
      */
-    public function update(NostoAccountMetaInterface $account, NostoAccountMetaInterface $meta)
+    public function update(NostoAccount $account, NostoAccountMetaInterface $meta)
     {
         $token = $account->getApiToken(NostoApiToken::API_SETTINGS);
         if (is_null($token)) {
@@ -99,12 +99,12 @@ class NostoServiceAccount
      *
      * This notifies Nosto about accounts that are no longer in use.
      *
-     * @param NostoAccountMetaInterface $account the account to delete.
+     * @param NostoAccount $account the account to delete.
      * @return bool true on success.
      *
      * @throws NostoException on failure.
      */
-    public function delete(NostoAccountMetaInterface $account)
+    public function delete(NostoAccount $account)
     {
         $token = $account->getApiToken(NostoApiToken::API_SSO);
         if (is_null($token)) {
@@ -131,7 +131,7 @@ class NostoServiceAccount
      *
      * @param NostoOauthClientMetaInterface $meta the OAuth client meta data to use for connection to Nosto.
      * @param string $authCode the authorization code that grants access to transfer data from Nosto.
-     * @return NostoAccountMetaInterface the synced account.
+     * @return NostoAccount the synced account.
      *
      * @throws NostoException on failure.
      */
@@ -165,13 +165,13 @@ class NostoServiceAccount
      *
      * Requires that the account has a valid sso token associated with it.
      *
-     * @param NostoAccountMetaInterface $account the account to sign into.
+     * @param NostoAccount $account the account to sign into.
      * @param NostoAccountMetaSingleSignOnInterface $meta the SSO meta-data.
      * @return string a secure login url.
      *
      * @throws NostoException on failure.
      */
-    public function sso(NostoAccountMetaInterface $account, NostoAccountMetaSingleSignOnInterface $meta)
+    public function sso(NostoAccount $account, NostoAccountMetaSingleSignOnInterface $meta)
     {
         $token = $account->getApiToken(NostoApiToken::API_SSO);
         if (is_null($token)) {
@@ -269,7 +269,26 @@ class NostoServiceAccount
                 $data['api_tokens'][] = 'api_'.$name;
             }
         }
-        self::resolveCurrencyOptions($data, $meta);
+
+        // Add all configured currency formats.
+        $currencies = $meta->getCurrencies();
+        if (count($currencies) > 0) {
+            $data['currencies'] = array();
+            foreach ($currencies as $currency) {
+                $data['currencies'][$currency->getCode()->getCode()] = array(
+                    'currency_before_amount' => ($currency->getSymbol()->getPosition() === NostoCurrencySymbol::SYMBOL_POS_LEFT),
+                    'currency_token' => $currency->getSymbol()->getSymbol(),
+                    'decimal_character' => $currency->getFormat()->getDecimalSymbol(),
+                    'grouping_separator' => $currency->getFormat()->getGroupSymbol(),
+                    'decimal_places' => $currency->getFormat()->getPrecision(),
+                );
+            }
+            // Add multi-currency settings.
+            if (count($currencies) > 1) {
+                $data['default_variant_id'] = $meta->getDefaultPriceVariationId();
+                $data['use_exchange_rates'] = (bool)$meta->getUseCurrencyExchangeRates();
+            }
+        }
 
         return json_encode($data);
     }
@@ -288,38 +307,27 @@ class NostoServiceAccount
             'front_page_url' => $meta->getFrontPageUrl(),
             'currency_code' => $meta->getCurrency()->getCode(),
         );
-        self::resolveCurrencyOptions($data, $meta);
 
-        return json_encode($data);
-    }
-
-    /**
-     * Resolves and populates the currency settings
-     *
-     * @param array $data
-     * @param NostoAccountMetaInterface $meta
-     */
-    public static function resolveCurrencyOptions(array &$data, NostoAccountMetaInterface $meta)
-    {
+        // Add all configured currency formats.
         $currencies = $meta->getCurrencies();
-        $currencyCount = count($currencies);
-        if ($currencyCount > 0) {
+        if (count($currencies) > 0) {
             $data['currencies'] = array();
             foreach ($currencies as $currency) {
                 $data['currencies'][$currency->getCode()->getCode()] = array(
-                    'currency_before_amount' => (
-                        $currency->getSymbol()->getPosition() === NostoCurrencySymbol::SYMBOL_POS_LEFT
-                    ),
+                    'currency_before_amount' => ($currency->getSymbol()->getPosition() === NostoCurrencySymbol::SYMBOL_POS_LEFT),
                     'currency_token' => $currency->getSymbol()->getSymbol(),
                     'decimal_character' => $currency->getFormat()->getDecimalSymbol(),
                     'grouping_separator' => $currency->getFormat()->getGroupSymbol(),
                     'decimal_places' => $currency->getFormat()->getPrecision(),
                 );
             }
+            // Add multi-currency settings.
+            if (count($currencies) > 1) {
+                $data['default_variant_id'] = $meta->getDefaultPriceVariationId();
+                $data['use_exchange_rates'] = (bool)$meta->getUseCurrencyExchangeRates();
+            }
         }
 
-        $data['use_exchange_rates'] = $meta->getUseCurrencyExchangeRates();
-        $data['default_variant_id'] = $meta->getDefaultPriceVariationId();
-
+        return json_encode($data);
     }
 }

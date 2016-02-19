@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2016, Nosto Solutions Ltd
+ * Copyright (c) 2015, Nosto Solutions Ltd
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -29,7 +29,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * @author Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2016 Nosto Solutions Ltd
+ * @copyright 2015 Nosto Solutions Ltd
  * @license http://opensource.org/licenses/BSD-3-Clause BSD 3-Clause
  */
 
@@ -96,6 +96,13 @@ interface NostoProductInterface
     public function getCurrency();
 
     /**
+     * Returns the ID of the price variation that is currently in use.
+     *
+     * @return string the price variation ID.
+     */
+    public function getPriceVariationId();
+
+    /**
      * Returns the availability of the product, i.e. if it is in stock or not.
      *
      * @return NostoProductAvailability the availability.
@@ -110,11 +117,18 @@ interface NostoProductInterface
     public function getTags();
 
     /**
-     * Returns the categories the product belongs to.
+     * Returns the categories the product is located in.
      *
-     * @return NostoCategoryInterface[] list of category objects.
+     * @return array list of category strings, e.g. array("/shoes/winter", "shoes/boots").
      */
     public function getCategories();
+
+    /**
+     * Returns the product short description.
+     *
+     * @return string the short description.
+     */
+    public function getShortDescription();
 
     /**
      * Returns the product description.
@@ -122,6 +136,14 @@ interface NostoProductInterface
      * @return string the description.
      */
     public function getDescription();
+
+    /**
+     * Returns the full product description,
+     * i.e. both the "short" and "normal" descriptions concatenated.
+     *
+     * @return string the full descriptions.
+     */
+    public function getFullDescription();
 
     /**
      * Returns the product brand name.
@@ -138,16 +160,9 @@ interface NostoProductInterface
     public function getDatePublished();
 
     /**
-     * Returns the ID of the variation that is currently in use.
+     * Returns the product price variations if any exist.
      *
-     * @return string the variation ID.
+     * @return NostoProductPriceVariationInterface[] the price variations.
      */
-    public function getVariationId();
-
-    /**
-     * Returns the product variations if any exist.
-     *
-     * @return NostoProductPriceVariationInterface[] the variations.
-     */
-    public function getVariations();
+    public function getPriceVariations();
 }

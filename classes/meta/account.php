@@ -26,7 +26,7 @@
 /**
  * Meta data class for account related information needed when creating new accounts.
  */
-class NostoTaggingMetaAccount implements NostoAccountMetaInterface
+class NostoTaggingMetaAccount extends NostoAccount
 {
 	/**
 	 * @var string the store name.

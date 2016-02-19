@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2016, Nosto Solutions Ltd
+ * Copyright (c) 2015, Nosto Solutions Ltd
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -29,11 +29,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * @author Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2016 Nosto Solutions Ltd
+ * @copyright 2015 Nosto Solutions Ltd
  * @license http://opensource.org/licenses/BSD-3-Clause BSD 3-Clause
  */
 
-require_once(dirname(__FILE__).'/src/CategoryInterface.php');
 require_once(dirname(__FILE__).'/src/OrderInterface.php');
 require_once(dirname(__FILE__).'/src/ProductInterface.php');
 require_once(dirname(__FILE__).'/src/Account/MetaInterface.php');
@@ -41,45 +40,30 @@ require_once(dirname(__FILE__).'/src/Account/Meta/BillingInterface.php');
 require_once(dirname(__FILE__).'/src/Account/Meta/IframeInterface.php');
 require_once(dirname(__FILE__).'/src/Account/Meta/OwnerInterface.php');
 require_once(dirname(__FILE__).'/src/Account/Meta/SingleSignOnInterface.php');
-require_once(dirname(__FILE__).'/src/Cart/ItemInterface.php');
 require_once(dirname(__FILE__).'/src/Export/CollectionInterface.php');
 require_once(dirname(__FILE__).'/src/Oauth/Client/MetaInterface.php');
 require_once(dirname(__FILE__).'/src/Order/BuyerInterface.php');
 require_once(dirname(__FILE__).'/src/Order/ItemInterface.php');
 require_once(dirname(__FILE__).'/src/Order/StatusInterface.php');
-require_once(dirname(__FILE__).'/src/Order/Payment/ProviderInterface.php');
 require_once(dirname(__FILE__).'/src/Product/Price/VariationInterface.php');
 
 require_once(dirname(__FILE__).'/src/Account.php');
-require_once(dirname(__FILE__).'/src/Billing.php');
-require_once(dirname(__FILE__).'/src/Cart.php');
-require_once(dirname(__FILE__).'/src/Category.php');
 require_once(dirname(__FILE__).'/src/Cipher.php');
 require_once(dirname(__FILE__).'/src/Collection.php');
 require_once(dirname(__FILE__).'/src/Currency.php');
 require_once(dirname(__FILE__).'/src/Date.php');
 require_once(dirname(__FILE__).'/src/DotEnv.php');
-require_once(dirname(__FILE__).'/src/NostoException.php');
-require_once(dirname(__FILE__).'/src/NostoInvalidArgumentException.php');
+require_once(dirname(__FILE__).'/src/Exception.php');
 require_once(dirname(__FILE__).'/src/Exporter.php');
 require_once(dirname(__FILE__).'/src/Formatter.php');
 require_once(dirname(__FILE__).'/src/Helper.php');
-require_once(dirname(__FILE__).'/src/Iframe.php');
-require_once(dirname(__FILE__).'/src/LineItem.php');
 require_once(dirname(__FILE__).'/src/Message.php');
 require_once(dirname(__FILE__).'/src/Nosto.php');
-require_once(dirname(__FILE__).'/src/Oauth.php');
-require_once(dirname(__FILE__).'/src/Order.php');
-require_once(dirname(__FILE__).'/src/Owner.php');
 require_once(dirname(__FILE__).'/src/Price.php');
-require_once(dirname(__FILE__).'/src/Product.php');
-require_once(dirname(__FILE__).'/src/Sso.php');
-require_once(dirname(__FILE__).'/src/Uri.php');
 
 require_once(dirname(__FILE__).'/src/Http/Request.php');
 require_once(dirname(__FILE__).'/src/Api/Request.php');
 require_once(dirname(__FILE__).'/src/Api/Token.php');
-require_once(dirname(__FILE__).'/src/Cart/Item.php');
 require_once(dirname(__FILE__).'/src/Country/Code.php');
 require_once(dirname(__FILE__).'/src/Currency/Code.php');
 require_once(dirname(__FILE__).'/src/Currency/Exchange.php');
@@ -105,18 +89,9 @@ require_once(dirname(__FILE__).'/src/Http/Request/Adapter/Socket.php');
 require_once(dirname(__FILE__).'/src/Language/Code.php');
 require_once(dirname(__FILE__).'/src/Oauth/Client.php');
 require_once(dirname(__FILE__).'/src/Oauth/Token.php');
-require_once(dirname(__FILE__).'/src/Order/Buyer.php');
-require_once(dirname(__FILE__).'/src/Order/Item.php');
-require_once(dirname(__FILE__).'/src/Order/Status.php');
-require_once(dirname(__FILE__).'/src/Order/Collection/Serializer/Json.php');
-require_once(dirname(__FILE__).'/src/Order/Serializer/Array.php');
-require_once(dirname(__FILE__).'/src/Order/Serializer/Json.php');
-require_once(dirname(__FILE__).'/src/Order/Payment/Provider.php');
 require_once(dirname(__FILE__).'/src/Price/Format.php');
-require_once(dirname(__FILE__).'/src/Product/Collection/Serializer/Json.php');
-require_once(dirname(__FILE__).'/src/Product/Serializer/Array.php');
+require_once(dirname(__FILE__).'/src/Price/Variation.php');
 require_once(dirname(__FILE__).'/src/Product/Availability.php');
-require_once(dirname(__FILE__).'/src/Product/Price/Variation.php');
 require_once(dirname(__FILE__).'/src/Service/Currency/Exchange/Rate.php');
 require_once(dirname(__FILE__).'/src/Service/Account.php');
 require_once(dirname(__FILE__).'/src/Service/Order.php');

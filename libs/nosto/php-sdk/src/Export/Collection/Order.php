@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2016, Nosto Solutions Ltd
+ * Copyright (c) 2015, Nosto Solutions Ltd
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -29,7 +29,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * @author Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2016 Nosto Solutions Ltd
+ * @copyright 2015 Nosto Solutions Ltd
  * @license http://opensource.org/licenses/BSD-3-Clause BSD 3-Clause
  */
 
@@ -44,7 +44,41 @@ class NostoExportCollectionOrder extends NostoOrderCollection implements NostoEx
      */
     public function getJson()
     {
-        $serializer = new NostoOrderCollectionSerializerJson();
-        return $serializer->serialize($this);
+        /** @var NostoFormatterDate $dateFormatter */
+        $dateFormatter = Nosto::formatter('date');
+        /** @var NostoFormatterPrice $priceFormatter */
+        $priceFormatter = Nosto::formatter('price');
+
+        $dateFormat = new NostoDateFormat(NostoDateFormat::YMD);
+        $priceFormat = new NostoPriceFormat(2, '.', '');
+
+        $array = array();
+        /** @var NostoOrderInterface $item */
+        foreach ($this->getArrayCopy() as $item) {
+            $data = array(
+                'order_number' => $item->getOrderNumber(),
+                'order_status_code' => $item->getOrderStatus()->getCode(),
+                'order_status_label' => $item->getOrderStatus()->getLabel(),
+                'created_at' => $dateFormatter->format($item->getCreatedDate(), $dateFormat),
+                'buyer' => array(
+                    'first_name' => $item->getBuyerInfo()->getFirstName(),
+                    'last_name' => $item->getBuyerInfo()->getLastName(),
+                    'email' => $item->getBuyerInfo()->getEmail(),
+                ),
+                'payment_provider' => $item->getPaymentProvider(),
+                'purchased_items' => array(),
+            );
+            foreach ($item->getPurchasedItems() as $orderItem) {
+                $data['purchased_items'][] = array(
+                    'product_id' => $orderItem->getProductId(),
+                    'quantity' => (int)$orderItem->getQuantity(),
+                    'name' => $orderItem->getName(),
+                    'unit_price' => $priceFormatter->format($orderItem->getUnitPrice(), $priceFormat),
+                    'price_currency_code' => $orderItem->getCurrency()->getCode(),
+                );
+            }
+            $array[] = $data;
+        }
+        return json_encode($array);
     }
 }

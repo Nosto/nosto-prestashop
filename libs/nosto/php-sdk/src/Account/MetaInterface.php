@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2016, Nosto Solutions Ltd
+ * Copyright (c) 2015, Nosto Solutions Ltd
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -29,7 +29,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * @author Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2016 Nosto Solutions Ltd
+ * @copyright 2015 Nosto Solutions Ltd
  * @license http://opensource.org/licenses/BSD-3-Clause BSD 3-Clause
  */
 
@@ -136,52 +136,11 @@ interface NostoAccountMetaInterface
     public function getDefaultPriceVariationId();
 
     /**
-     * Returns if exchange rates should be used for handling
-     * multiple currencies. Please note that the method only tells if the
-     * setting is active. Method does not take account whether multiple
-     * currencies actually exist or are used.
+     * Returns if exchange rates are used to handle multi-currency setups.
+     * It is also possible to handle multi-currency setups using variation tagging on the product
+     * pages, i.e. in addition to the product base price, you also tag all price variations.
      *
-     * @return boolean if multi variants are used
+     * @return bool if the rates are used.
      */
     public function getUseCurrencyExchangeRates();
-
-    /**
-     * Checks if this account has been connected to Nosto, i.e. all API tokens exist.
-     *
-     * @return bool true if it is connected, false otherwise.
-     */
-    public function isConnectedToNosto();
-
-    /**
-     * Returns a list of API token names that are present for the account.
-     * The API tokens act as scopes when doing OAuth requests to Nosto.
-     *
-     * @return array the list of names.
-     */
-    public function getMissingScopes();
-
-    /**
-     * Gets an api token associated with this account by it's name , e.g. "sso".
-     *
-     * @param string $name the api token name.
-     * @return NostoApiToken|null the token or null if not found.
-     */
-    public function getApiToken($name);
-
-    /**
-     * Returns the accounts API tokens.
-     *
-     * @return NostoApiToken[] the tokens.
-     */
-    public function getTokens();
-
-    /**
-     * Checks if this account is the same as the given account.
-     * They are considered equal if their name property match. The tokens are not relevant in the comparison,
-     * as they are not required by the account upon creation.
-     *
-     * @param NostoAccount $account the account to check.
-     * @return bool true if equals.
-     */
-    public function equals(NostoAccount $account);
 }

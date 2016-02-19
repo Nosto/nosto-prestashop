@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2016, Nosto Solutions Ltd
+ * Copyright (c) 2015, Nosto Solutions Ltd
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -29,7 +29,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * @author Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2016 Nosto Solutions Ltd
+ * @copyright 2015 Nosto Solutions Ltd
  * @license http://opensource.org/licenses/BSD-3-Clause BSD 3-Clause
  */
 
@@ -39,7 +39,7 @@
 class NostoServiceProduct
 {
     /**
-     * @var NostoAccountMetaInterface the account to perform the operation on.
+     * @var NostoAccount the account to perform the operation on.
      */
     protected $account;
 
@@ -53,9 +53,9 @@ class NostoServiceProduct
      *
      * Accepts the account for which the product operation is to be performed on.
      *
-     * @param NostoAccountMetaInterface $account the account object.
+     * @param NostoAccount $account the account object.
      */
-    public function __construct(NostoAccountMetaInterface $account)
+    public function __construct(NostoAccount $account)
     {
         $this->account = $account;
         $this->collection = new NostoProductCollection();
@@ -151,19 +151,90 @@ class NostoServiceProduct
     {
         $token = $this->account->getApiToken(NostoApiToken::API_PRODUCTS);
         if (is_null($token)) {
-            throw new NostoException(
-                sprintf(
-                    'No `%s` API token found for account "%s".',
-                    NostoApiToken::API_PRODUCTS,
-                    $this->account->getName()
-                )
-            );
+            throw new NostoException(sprintf('No `%s` API token found for account "%s".', NostoApiToken::API_PRODUCTS, $this->account->getName()));
         }
 
         $request = new NostoApiRequest();
         $request->setContentType('application/json');
         $request->setAuthBasic('', $token->getValue());
         return $request;
+    }
+
+    /**
+     * Converts the product object into an array and returns it.
+     *
+     * Example:
+     *
+     * array(
+     *     'url' => 'http://www.example.com/product/CANOE123',
+     *     'product_id' => 'CANOE123',
+     *     'name' => 'ACME Foldable Canoe',
+     *     'image_url' => 'http://www.example.com/product/images/CANOE123.jpg',
+     *     'price' => '1269.00',
+     *     'price_currency_code' => 'EUR',
+     *     'availability' => 'InStock',
+     *     'categories' => array('/Outdoor/Boats/Canoes', '/Sales/Boats'),
+     *     'description' => 'This foldable canoe is easy to travel with.',
+     *     'list_price' => '1299.00',
+     *     'brand' => 'ACME',
+     *     'tag1' => array('Men'),
+     *     'tag2' => array('Foldable'),
+     *     'tag3' => array('Brown', 'Black', 'Orange'),
+     *     'date_published' => '2011-12-31'
+     * )
+     *
+     * @param NostoProductInterface $product the object.
+     * @return array the newly created array.
+     */
+    protected function getProductAsArray(NostoProductInterface $product)
+    {
+        /** @var NostoFormatterDate $dateFormatter */
+        $dateFormatter = Nosto::formatter('date');
+        /** @var NostoFormatterPrice $priceFormatter */
+        $priceFormatter = Nosto::formatter('price');
+
+        $dateFormat = new NostoDateFormat(NostoDateFormat::YMD);
+        $priceFormat = new NostoPriceFormat(2, '.', '');
+
+        $data = array(
+            'url' => $product->getUrl(),
+            'product_id' => $product->getProductId(),
+            'name' => $product->getName(),
+            'image_url' => $product->getImageUrl(),
+            'price' => $priceFormatter->format($product->getPrice(), $priceFormat),
+            'price_currency_code' => $product->getCurrency()->getCode(),
+            'availability' => $product->getAvailability()->getAvailability(),
+            'categories' => $product->getCategories(),
+        );
+
+        // Optional properties.
+
+        if ($product->getThumbUrl()) {
+            $data['thumb_url'] = $product->getThumbUrl();
+        }
+        if ($product->getFullDescription()) {
+            $data['description'] = $product->getFullDescription();
+        }
+        if ($product->getListPrice()) {
+            $data['list_price'] = $priceFormatter->format($product->getListPrice(), $priceFormat);
+        }
+        if ($product->getBrand()) {
+            $data['brand'] = $product->getBrand();
+        }
+        foreach ($product->getTags() as $type => $tags) {
+            if (is_array($tags) && count($tags) > 0) {
+                $data[$type] = $tags;
+            }
+        }
+        if ($product->getDatePublished()) {
+            $data['date_published'] = $dateFormatter->format($product->getDatePublished(), $dateFormat);
+        }
+
+        if ($product->getPriceVariationId()) {
+            $data['variation_id'] = $product->getPriceVariationId();
+        }
+
+        return $data;
     }
 
     /**
@@ -174,12 +245,15 @@ class NostoServiceProduct
      */
     protected function getCollectionAsJson()
     {
-        if ($this->collection->count() === 0) {
+        $data = array();
+        foreach ($this->collection->getArrayCopy() as $item) {
+            /** @var NostoProductInterface $item */
+            $data[] = $this->getProductAsArray($item);
+        }
+        if (empty($data)) {
             throw new NostoException('No products found in collection.');
         }
-
-        $serializer = new NostoProductCollectionSerializerJson();
-        return $serializer->serialize($this->collection);
+        return json_encode($data);
     }
 
     /**
@@ -190,14 +264,13 @@ class NostoServiceProduct
      */
     protected function getCollectionIdsAsJson()
     {
-        if ($this->collection->count() === 0) {
-            throw new NostoException('No products found in collection.');
-        }
-
         $data = array();
         foreach ($this->collection->getArrayCopy() as $item) {
             /** @var NostoProductInterface $item */
             $data[] = $item->getProductId();
+        }
+        if (empty($data)) {
+            throw new NostoException('No products found in collection.');
         }
         return json_encode($data);
     }

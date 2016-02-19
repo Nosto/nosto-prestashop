@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2016, Nosto Solutions Ltd
+ * Copyright (c) 2015, Nosto Solutions Ltd
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -29,7 +29,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * @author Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2016 Nosto Solutions Ltd
+ * @copyright 2015 Nosto Solutions Ltd
  * @license http://opensource.org/licenses/BSD-3-Clause BSD 3-Clause
  */
 
@@ -43,11 +43,11 @@ class NostoExporter
     /**
      * Encrypts and returns the data.
      *
-     * @param NostoAccountMetaInterface $account the account to export the data for.
+     * @param NostoAccount $account the account to export the data for.
      * @param NostoExportCollectionInterface $collection the data collection to export.
      * @return string the encrypted data.
      */
-    public static function export(NostoAccountMetaInterface $account, NostoExportCollectionInterface $collection)
+    public static function export(NostoAccount $account, NostoExportCollectionInterface $collection)
     {
         $data = '';
         // Use the first 16 chars of the SSO token as secret for encryption.

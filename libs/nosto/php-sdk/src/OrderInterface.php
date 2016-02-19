@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2016, Nosto Solutions Ltd
+ * Copyright (c) 2015, Nosto Solutions Ltd
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -29,7 +29,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * @author Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2016 Nosto Solutions Ltd
+ * @copyright 2015 Nosto Solutions Ltd
  * @license http://opensource.org/licenses/BSD-3-Clause BSD 3-Clause
  */
 
@@ -47,15 +47,6 @@ interface NostoOrderInterface
     public function getOrderNumber();
 
     /**
-     * Returns an external order reference number.
-     * This can help identify the order in Nosto's backend, while the above
-     * order number is more of a "machine name" for the order.
-     *
-     * @return string|null the order reference or null if not used.
-     */
-    public function getExternalRef();
-
-    /**
      * The date when the order was placed.
      *
      * @return NostoDate the creation date.
@@ -63,9 +54,9 @@ interface NostoOrderInterface
     public function getCreatedDate();
 
     /**
-     * The payment provider used for placing the order.
+     * The payment provider used for placing the order, formatted according to "[provider name] [provider version]".
      *
-     * @return NostoOrderPaymentProviderInterface the payment provider.
+     * @return string the payment provider.
      */
     public function getPaymentProvider();
 
@@ -74,27 +65,19 @@ interface NostoOrderInterface
      *
      * @return NostoOrderBuyerInterface the meta data model.
      */
-    public function getBuyer();
+    public function getBuyerInfo();
 
     /**
      * The purchased items which were included in the order.
      *
      * @return NostoOrderItemInterface[] the meta data models.
      */
-    public function getItems();
+    public function getPurchasedItems();
 
     /**
      * Returns the order status model.
      *
      * @return NostoOrderStatusInterface the model.
      */
-    public function getStatus();
-
-    /**
-     * Returns a list of history order status models.
-     * These are used in the order export to track the order funnel.
-     *
-     * @return NostoOrderStatusInterface[] the status models.
-     */
-    public function getHistoryStatuses();
+    public function getOrderStatus();
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2016, Nosto Solutions Ltd
+ * Copyright (c) 2015, Nosto Solutions Ltd
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -29,7 +29,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * @author Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2016 Nosto Solutions Ltd
+ * @copyright 2015 Nosto Solutions Ltd
  * @license http://opensource.org/licenses/BSD-3-Clause BSD 3-Clause
  */
 
@@ -42,19 +42,11 @@ class NostoFormatterPrice extends NostoFormatter
      * Formats a NostoPrice object into a price string.
      *
      * @param NostoPrice $price the price object.
-     * @param NostoPriceFormat|null $format the price format or null if default.
+     * @param NostoPriceFormat $format the price format.
      * @return string the formatted price.
      */
-    public function format(NostoPrice $price, NostoPriceFormat $format = null)
+    public function format(NostoPrice $price, NostoPriceFormat $format)
     {
-        if (is_null($format)) {
-            $format = new NostoPriceFormat(2, '.', '');
-        }
-        return number_format(
-            $price->getPrice(),
-            $format->getDecimals(),
-            $format->getDecimalPoint(),
-            $format->getThousandsSeparator()
-        );
+        return number_format($price->getPrice(), $format->getDecimals(), $format->getDecimalPoint(), $format->getThousandsSeparator());
     }
 }

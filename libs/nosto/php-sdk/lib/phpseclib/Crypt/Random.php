@@ -125,6 +125,8 @@ class phpseclib_Crypt_Random
 
             $v = $seed = $_SESSION['seed'] = pack('H*', sha1(
                     serialize($_SERVER) .
+                    serialize($_POST) .
+                    serialize($_GET) .
                     serialize($_COOKIE) .
                     serialize($GLOBALS) .
                     serialize($_SESSION) .

@@ -2,25 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [2.4.1]
-### Changed
-- Impelement more classes in SDK
-- Improve multi currency handling
-
-## [2.4.0]
-### Changed
-- Loosen up the data validation and handle incorrect data types
-- Add support for Bitcoin
-- Exclude test related code from archives with .gitattributes
-
-## [2.3.0]
-### Changed
-- Make order buyer info optional
-
-## [2.2.0]
-### Added
-- "external_order_ref" to order tagging and API requests in order to better track orders
-- "order_statuses" to order export in order to better track orders
+## [Unreleased][unreleased]
 
 ## [2.1.0]
 ### Added
@@ -68,9 +50,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Initial release
 
 
-[unreleased]: https://github.com/nosto/php-sdk/compare/2.3.0...develop
-[2.3.0]: https://github.com/nosto/php-sdk/compare/2.2.0...2.3.0
-[2.2.0]: https://github.com/nosto/php-sdk/compare/2.1.0...2.2.0
+[unreleased]: https://github.com/nosto/php-sdk/compare/2.1.0...develop
 [2.1.0]: https://github.com/nosto/php-sdk/compare/2.0.1...2.1.0
 [2.0.1]: https://github.com/nosto/php-sdk/compare/2.0.0...2.0.1
 [2.0.0]: https://github.com/nosto/php-sdk/compare/1.13.0...2.0.0

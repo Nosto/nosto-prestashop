@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2016, Nosto Solutions Ltd
+ * Copyright (c) 2015, Nosto Solutions Ltd
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -29,7 +29,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * @author Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2016 Nosto Solutions Ltd
+ * @copyright 2015 Nosto Solutions Ltd
  * @license http://opensource.org/licenses/BSD-3-Clause BSD 3-Clause
  */
 
@@ -60,22 +60,10 @@ final class NostoOAuthToken
     public function __construct($merchantName, $accessToken)
     {
         if (!is_string($merchantName) || empty($merchantName)) {
-            throw new NostoInvalidArgumentException(
-                sprintf(
-                    '%s.merchantName (%s) must be a non-empty string value',
-                    __CLASS__,
-                    $merchantName
-                )
-            );
+            throw new NostoInvalidArgumentException(sprintf('%s.merchantName (%s) must be a non-empty string value', __CLASS__, $merchantName));
         }
         if (!is_string($accessToken) || empty($accessToken)) {
-            throw new NostoInvalidArgumentException(
-                sprintf(
-                    '%s.accessToken (%s) must be a non-empty string value',
-                    __CLASS__,
-                    $accessToken
-                )
-            );
+            throw new NostoInvalidArgumentException(sprintf('%s.accessToken (%s) must be a non-empty string value', __CLASS__, $accessToken));
         }
 
         $this->merchantName = $merchantName;
