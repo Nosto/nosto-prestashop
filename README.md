@@ -107,6 +107,10 @@ PrestaShop version 1.4.x - 1.6.x
 
 ## Changelog
 
+* 2.4.4
+    * Fix occasionally missing smarty
+    * Remove submodules for backward compatibility and Nosto PHP SDK
+
 * 2.4.3
     * Update module admin page
 
