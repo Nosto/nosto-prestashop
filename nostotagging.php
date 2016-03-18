@@ -94,6 +94,21 @@ class NostoTagging extends Module
 			'title' => 'Search footer',
 			'description' => 'Add new blocks below the search result list.',
 		),
+        array(
+            'name' => 'actionNostoCartLoadAfter',
+            'title' => 'After load nosto cart',
+            'description' => 'Action hook fired after a Nosto cart object has been loaded.',
+        ),
+        array(
+            'name' => 'actionNostoOrderLoadAfter',
+            'title' => 'After load nosto order',
+            'description' => 'Action hook fired after a Nosto order object has been loaded.',
+        ),
+        array(
+            'name' => 'actionNostoProductLoadAfter',
+            'title' => 'After load nosto product',
+            'description' => 'Action hook fired after a Nosto product object has been loaded.',
+        ),
 	);
 
 	/**
@@ -105,7 +120,7 @@ class NostoTagging extends Module
 	{
 		$this->name = 'nostotagging';
 		$this->tab = 'advertising_marketing';
-		$this->version = '2.4.4';
+		$this->version = '2.5.0';
 		$this->author = 'Nosto';
 		$this->need_instance = 1;
 		$this->bootstrap = true;

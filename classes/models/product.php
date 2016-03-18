@@ -72,11 +72,14 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 	 */
 	protected $availability;
 
-	/**
-	 * @var array list of product tags.
-	 */
-	protected $tags = array();
-
+    /**
+     * @var array list of product tags.
+     */
+    protected $tags = array(
+        'tag1' => array(),
+        'tag2' => array(),
+        'tag3' => array(),
+    );
 	/**
 	 * @var array list of product category strings.
 	 */
@@ -150,12 +153,18 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 		$this->list_price = $this->calcPrice($product, $context, false /*no discounts*/);
 		$this->currency_code = strtoupper($currency_iso_code);
 		$this->availability = $this->checkAvailability($product);
-		$this->tags = $this->buildTags($product, $id_lang);
+		$this->tags['tag1'] = $this->buildTags($product, $id_lang);
 		$this->categories = $this->buildCategories($product, $id_lang);
 		$this->short_description = $product->description_short;
 		$this->description = $product->description;
 		$this->brand = (!empty($product->manufacturer_name)) ? $product->manufacturer_name : null;
 		$this->date_published = Nosto::helper('date')->format($product->date_add);
+
+        $this->dispatchHookActionLoadAfter(array(
+            'nosto_product' => $this,
+            'product' => $product,
+            'context' => $context
+        ));
 	}
 
 	/**
@@ -268,115 +277,443 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 		return $categories;
 	}
 
-	/**
-	 * @inheritdoc
-	 */
-	public function getUrl()
-	{
-		return $this->url;
-	}
+    /**
+     * Returns the absolute url to the product page in the shop frontend.
+     *
+     * @return string the url.
+     */
+    public function getUrl()
+    {
+        return $this->url;
+    }
+    
+    /**
+     * Returns the product's unique identifier.
+     *
+     * @return int|string the ID.
+     */
+    public function getProductId()
+    {
+        return $this->product_id;
+    }
+    
+    /**
+     * Returns the name of the product.
+     *
+     * @return string the name.
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+    
+    /**
+     * Returns the absolute url the one of the product images in the shop frontend.
+     *
+     * @return string the url.
+     */
+    public function getImageUrl()
+    {
+        return $this->image_url;
+    }
+    
+    /**
+     * Returns the absolute url to one of the product image thumbnails in the shop frontend.
+     *
+     * @return string the url.
+     */
+    public function getThumbUrl()
+    {
+        return null;
+    }
+    
+    /**
+     * Returns the price of the product including possible discounts and taxes.
+     *
+     * @return string the price.
+     */
+    public function getPrice()
+    {
+        return $this->price;
+    }
+    
+    /**
+     * Returns the list price of the product without discounts but including possible taxes.
+     *
+     * @return string the price.
+     */
+    public function getListPrice()
+    {
+        return $this->list_price;
+    }
+    
+    /**
+     * Returns the currency code (ISO 4217) the product is sold in.
+     *
+     * @return string the currency code.
+     */
+    public function getCurrencyCode()
+    {
+        return $this->currency_code;
+    }
 
-	/**
-	 * @inheritdoc
-	 */
-	public function getProductId()
-	{
-		return $this->product_id;
-	}
+    /**
+     * Returns the availability of the product, i.e. if it is in stock or not.
+     *
+     * @return string the availability.
+     */
+    public function getAvailability()
+    {
+        return $this->availability;
+    }
+    
+    /**
+     * Returns the tags for the product.
+     *
+     * @return array the tags array, e.g. array('tag1' => array("winter", "shoe")).
+     */
+    public function getTags()
+    {
+        return $this->tags;
+    }
+    
+    /**
+     * Returns the categories the product is located in.
+     *
+     * @return array list of category strings, e.g. array("/shoes/winter", "shoes/boots").
+     */
+    public function getCategories()
+    {
+        return $this->categories;
+    }
+    
+    /**
+     * Returns the product short description.
+     *
+     * @return string the short description.
+     */
+    public function getShortDescription()
+    {
+        return $this->short_description;
+    }
+    
+    /**
+     * Returns the product description.
+     *
+     * @return string the description.
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+    
+    /**
+     * Returns the full product description,
+     * i.e. both the "short" and "normal" descriptions concatenated.
+     *
+     * @return string the full descriptions.
+     */
+    public function getFullDescription()
+    {
+        $descriptions = array();
+        if (!empty($this->short_description))
+            $descriptions[] = $this->short_description;
+        if (!empty($this->description))
+            $descriptions[] = $this->description;
+        return implode(' ', $descriptions);
+    }
+    
+    /**
+     * Returns the product brand name.
+     *
+     * @return string the brand name.
+     */
+    public function getBrand()
+    {
+        return $this->brand;
+    }
+    
+    /**
+     * Returns the product publication date in the shop.
+     *
+     * @return string the date.
+     */
+    public function getDatePublished()
+    {
+        return $this->date_published;
+    }
+    
+    /**
+     * Sets the product ID from given product.
+     *
+     * @param int $id the product ID.
+     */
+    public function setProductId($id)
+    {
+        $this->product_id = $id;
+    }
+    
+    /**
+     * Sets the availability state of the product.
+     *
+     * @param string $availability the availability.
+     */
+    public function setAvailability($availability)
+    {
+        $this->availability = $availability;
+    }
+    
+    /**
+     * Sets the currency code (ISO 4217) the product is sold in.
+     *
+     * @param string $currency the currency code.
+     */
+    public function setCurrencyCode($currency)
+    {
+        $this->currency_code = $currency;
+    }
+    
+    /**
+     * Sets the products published date.
+     *
+     * @param string $date the date.
+     */
+    public function setDatePublished($date)
+    {
+        $this->date_published = $date;
+    }
+    
+    /**
+     * Sets the product price.
+     *
+     * @param int $price the price.
+     */
+    public function setPrice($price)
+    {
+        $this->price = $price;
+    }
 
-	/**
-	 * @inheritdoc
-	 */
-	public function getName()
-	{
-		return $this->name;
-	}
+    /**
+     * Sets the product list price.
+     *
+     * @param int $list_price the price.
+     */
+    public function setListPrice($list_price)
+    {
+        $this->list_price = $list_price;
+    }
 
-	/**
-	 * @inheritdoc
-	 */
-	public function getImageUrl()
-	{
-		return $this->image_url;
-	}
+    /**
+     * Sets the tags array for the `tag1` attribute.
+     *
+     * The tags must be an array of non-empty values.
+     *
+     * Usage:
+     * $object->setTag1(array('customTag1', 'customTag2'));
+     *
+     * @param array $tags the tags.
+     */
+    public function setTag1(array $tags)
+    {
+        $this->tags['tag1'] = array();
+        foreach ($tags as $tag)
+            $this->addTag1($tag);
+    }
+    
+    /**
+     * Adds a new tag to the `tag1` field.
+     *
+     * The tag must be a non-empty value.
+     *
+     * Usage:
+     * $object->addTag1('customTag');
+     *
+     * @param string $tag the tag to add.
+     */
+    public function addTag1($tag)
+    {
+        $this->tags['tag1'][] = $tag;
+    }
+    
+    /**
+     * Sets the tags array for the `tag2` attribute.
+     *
+     * The tags must be an array of non-empty values.
+     *
+     * Usage:
+     * $object->setTag2(array('customTag1', 'customTag2'));
+     *
+     * @param array $tags the tags.
+     */
+    public function setTag2(array $tags)
+    {
+        $this->tags['tag2'] = array();
+        foreach ($tags as $tag)
+            $this->addTag2($tag);
+    }
+    
+    /**
+     * Adds a new tag to the `tag2` field.
+     *
+     * The tag must be a non-empty  value.
+     *
+     * Usage:
+     * $object->addTag2('customTag');
+     *
+     * @param string $tag the tag to add.
+     */
+    public function addTag2($tag)
+    {
+        $this->tags['tag2'][] = $tag;
+    }
+    
+    /**
+     * Sets the tags array for the `tag3` attribute.
+     *
+     * The tags must be an array of non-empty values.
+     *
+     * Usage:
+     * $object->setTag3(array('customTag1', 'customTag2'));
+     *
+     * @param array $tags the tags.
+     */
+    public function setTag3(array $tags)
+    {
+        $this->tags['tag3'] = array();
+        foreach ($tags as $tag)
+            $this->addTag3($tag);
+    }
+    
+    /**
+     * Adds a new tag to the `tag3` field.
+     *
+     * The tag must be a non-empty value.
+     *
+     * Usage:
+     * $object->addTag3('customTag');
+     *
+     * @param string $tag the tag to add.
+     */
+    public function addTag3($tag)
+    {
+        $this->tags['tag3'][] = $tag;
+    }
+    /**
+     * Sets the brand name of the product manufacturer.
+     *
+     * The name must be a non-empty string.
+     *
+     * @param string $brand the brand name.
+     */
+    public function setBrand($brand)
+    {
+        $this->brand = $brand;
+    }
+    /**
+     * Sets the product categories.
+     *
+     * The categories must be an array of non-empty values. The categories are expected to include the entire
+     * sub/parent category path, e.g. "clothes/winter/coats".
+     *
+     * Usage:
+     * $object->setCategories(array('clothes/winter/coats' [, ... ] ));
+     *
+     * @param array $categories the categories.
+     */
+    public function setCategories(array $categories)
+    {
+        $this->categories = array();
+        foreach ($categories as $category)
+            $this->addCategory($category);
+    }
 
-	/**
-	 * @inheritdoc
-	 */
-	public function getPrice()
-	{
-		return $this->price;
-	}
+    /**
+     * Adds a category to the product.
+     *
+     * The category must be a non-empty and is expected to include the entire sub/parent category path,
+     * e.g. "clothes/winter/coats".
+     *
+     * Usage:
+     * $object->addCategory('clothes/winter/coats');
+     *
+     * @param string $category the category.
+     */
+    public function addCategory($category)
+    {
+        $this->categories[] = $category;
+    }
 
-	/**
-	 * @inheritdoc
-	 */
-	public function getListPrice()
-	{
-		return $this->list_price;
-	}
+    /**
+     * Sets the product name.
+     *
+     * The name must be a non-empty value.
+     *
+     * Usage:
+     * $object->setName('Example');
+     *
+     * @param string $name the name.
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
 
-	/**
-	 * @inheritdoc
-	 */
-	public function getCurrencyCode()
-	{
-		return $this->currency_code;
-	}
+    /**
+     * Sets the URL for the product page in the shop frontend that shows this product.
+     *
+     * The URL must be absolute, i.e. must include the protocol http or https.
+     *
+     * Usage:
+     * $object->setUrl("http://my.shop.com/products/example.html");
+     *
+     * @param string $url the url.
+     */
+    public function setUrl($url)
+    {
+        $this->url = $url;
+    }
 
-	/**
-	 * @inheritdoc
-	 */
-	public function getAvailability()
-	{
-		return $this->availability;
-	}
+    /**
+     * Sets the image URL for the product.
+     *
+     * The URL must be absolute, i.e. must include the protocol http or https.
+     *
+     * Usage:
+     * $object->setImageUrl("http://my.shop.com/media/example.jpg");
+     *
+     * @param string $image_url the url.
+     */
+    public function setImageUrl($image_url)
+    {
+        $this->image_url = $image_url;
+    }
 
-	/**
-	 * @inheritdoc
-	 */
-	public function getTags()
-	{
-		return $this->tags;
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function getCategories()
-	{
-		return $this->categories;
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function getShortDescription()
-	{
-		return $this->short_description;
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function getDescription()
-	{
-		return $this->description;
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function getBrand()
-	{
-		return $this->brand;
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function getDatePublished()
-	{
-		return $this->date_published;
-	}
+    /**
+     * Sets the product description.
+     *
+     * The description must be a non-empty string.
+     *
+     * Usage:
+     * $object->setDescription('Lorem ipsum dolor sit amet, ludus possim ut ius, bonorum facilis mandamus nam ea. ... ');
+     *
+     * @param string $description the description.
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+    }
+    /**
+     * Sets the product `short` description.
+     *
+     * The description must be a non-empty string.
+     *
+     * Usage:
+     * $object->setShortDescription('Lorem ipsum dolor sit amet, ludus possim ut ius.');
+     *
+     * @param string $short_description the `short` description.
+     */
+    public function setShortDescription($short_description)
+    {
+        $this->short_description = $short_description;
+    }
 }

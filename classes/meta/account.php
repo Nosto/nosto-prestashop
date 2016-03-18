@@ -300,4 +300,11 @@ class NostoTaggingMetaAccount implements NostoAccountMetaDataInterface
 		}
 		return $base.$lang;
 	}
+
+    public function getPartnerCode()
+    {
+        return '';
+    }
+
+
 }

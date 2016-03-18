@@ -98,7 +98,7 @@ interface NostoProductInterface
     /**
      * Returns the tags for the product.
      *
-     * @return array the tags array, e.g. array("winter", "shoe").
+     * @return array the tags array, e.g. array('tag1' => array("winter", "shoe")).
      */
     public function getTags();
 
@@ -122,6 +122,14 @@ interface NostoProductInterface
      * @return string the description.
      */
     public function getDescription();
+
+    /**
+     * Returns the full product description,
+     * i.e. both the "short" and "normal" descriptions concatenated.
+     *
+     * @return string the full descriptions.
+     */
+    public function getFullDescription();
 
     /**
      * Returns the product brand name.

@@ -111,6 +111,78 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 		return $this->order_status;
 	}
 
+    /**
+     * Sets the unique order number identifying the order.
+     *
+     * The number must be a non-empty value.
+     *
+     * @param string|int $order_number the order number.
+     */
+    public function setOrderNumber($order_number)
+    {
+        $this->order_number = $order_number;
+    }
+
+    /**
+     * Sets the date when the order was placed.
+     *
+     * The date must be an instance of the NostoDate class.
+     *
+     * @param string $created_date the creation date.
+     */
+    public function setCreatedDate($created_date)
+    {
+        $this->created_date = $created_date;
+    }
+
+    /**
+     * Sets the payment provider used for placing the order.
+     *
+     * The provider must be a non-empty string value. Preferred formatting is "[provider name] [provider version]".
+     *
+     * @param string $payment_provider the payment provider.
+     */
+    public function setPaymentProvider($payment_provider)
+    {
+        $this->payment_provider = $payment_provider;
+    }
+
+    /**
+     * Sets the buyer info of the user who placed the order.
+     *
+     * The info object must implement the NostoOrderBuyerInterface interface.
+     *
+     * @param NostoOrderBuyerInterface $buyer_info the buyer info object.
+     */
+    public function setBuyerInfo(NostoOrderBuyerInterface $buyer_info)
+    {
+        $this->buyer_info = $buyer_info;
+    }
+
+    /**
+     * Adds a purchased item to the order.
+     *
+     * The item object must implement the NostoOrderItemInterface interface.
+     *
+     * @param NostoOrderItemInterface $purchased_item the item object.
+     */
+    public function addPurchasedItem(NostoOrderItemInterface $purchased_item)
+    {
+        $this->purchased_items[] = $purchased_item;
+    }
+
+    /**
+     * Sets the order status.
+     *
+     * The status object must implement the NostoOrderStatusInterface interface.
+     *
+     * @param NostoOrderStatusInterface $order_status the status object.
+     */
+    public function setOrderStatus(NostoOrderStatusInterface $order_status)
+    {
+        $this->order_status = $order_status;
+    }
+
 	/**
 	 * @inheritdoc
 	 */
@@ -156,6 +228,12 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 
 		$this->order_status = new NostoTaggingOrderStatus();
 		$this->order_status->loadData($order);
+
+        $this->dispatchHookActionLoadAfter(array(
+            'nosto_order' => $this,
+            'order' => $order,
+            'context' => $context
+        ));
 	}
 
 	/**
@@ -241,6 +319,10 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 
 			$items = $products;
 		}
+
+        if (!$context) {
+            $context = Context::getContext();
+        }
 
 		$id_lang = (int)$context->language->id;
 		foreach ($items as $item)

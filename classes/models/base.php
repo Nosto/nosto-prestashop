@@ -28,6 +28,37 @@
  */
 abstract class NostoTaggingModel
 {
+
+    /**
+     * Dispatches the hook `action{MODEL}LoadAfter`.
+     *
+     * This method can be called last in the tagging model loadData() methods, to allow overriding of model data.
+     *
+     * @param array $params the hook params.
+     */
+    protected function dispatchHookActionLoadAfter(array $params)
+    {
+        // We replace the "NostoTagging" part of the class name with "Nosto", e.g. "NostoTaggingProduct" => "NostoProduct".
+        // This is done in order to keep the hook names within the 32 character limit in PS 1.4.
+        $this->dispatchHook('action'.str_replace('NostoTagging', 'Nosto', get_class($this)).'LoadAfter', $params);
+    }
+
+    /**
+     * Executes a PS hook by name.
+     *
+     * Abstracts the differences between PS versions.
+     *
+     * @param string $name the hook name.
+     * @param array $params the hook params.
+     */
+    private function dispatchHook($name, array $params)
+    {
+        if (_PS_VERSION_ >= '1.5')
+            Hook::exec($name, $params);
+        else
+            Module::hookExec($name, $params);
+    }
+
 	/**
 	 * Returns a protected/private property value by invoking it's public getter.
 	 *
