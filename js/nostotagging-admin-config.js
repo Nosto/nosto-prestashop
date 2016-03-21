@@ -22,9 +22,9 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-$(document).ready( function() {
+$(document).ready(function () {
     // Change event handler for "Manage Accounts:".
-    $("#nostotagging_language").change(function() {
+    $("#nostotagging_language").change(function () {
         var langId = parseInt($(this).val()),
             $currentLanguage = $('#nostotagging_current_language'),
             $form = $('form.nostotagging');
@@ -32,7 +32,7 @@ $(document).ready( function() {
         $form.submit();
     });
     // Click event handler for the "Account settings".
-    $("#nostotagging_account_setup").click(function(event) {
+    $("#nostotagging_account_setup").click(function (event) {
         event.preventDefault();
         var $iframe = $('#nostotagging_iframe'),
             $installedView = $('#nostotagging_installed');
@@ -40,7 +40,7 @@ $(document).ready( function() {
         $iframe.hide();
     });
     // Click event handler for the "Back" button on the "You have installed Nosto...." page.
-    $('#nostotagging_back_to_iframe').click(function(event) {
+    $('#nostotagging_back_to_iframe').click(function (event) {
         event.preventDefault();
         var $iframe = $('#nostotagging_iframe'),
             $installedView = $('#nostotagging_installed');

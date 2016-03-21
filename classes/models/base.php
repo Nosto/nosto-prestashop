@@ -38,9 +38,13 @@ abstract class NostoTaggingModel
      */
     protected function dispatchHookActionLoadAfter(array $params)
     {
-        // We replace the "NostoTagging" part of the class name with "Nosto", e.g. "NostoTaggingProduct" => "NostoProduct".
+        // We replace the "NostoTagging" part of the class
+        // name with "Nosto", e.g. "NostoTaggingProduct" => "NostoProduct".
         // This is done in order to keep the hook names within the 32 character limit in PS 1.4.
-        $this->dispatchHook('action'.str_replace('NostoTagging', 'Nosto', get_class($this)).'LoadAfter', $params);
+        $this->dispatchHook(
+            'action'.str_replace('NostoTagging', 'Nosto', get_class($this)).'LoadAfter',
+            $params
+        );
     }
 
     /**
@@ -53,26 +57,28 @@ abstract class NostoTaggingModel
      */
     private function dispatchHook($name, array $params)
     {
-        if (_PS_VERSION_ >= '1.5')
+        if (_PS_VERSION_ >= '1.5') {
             Hook::exec($name, $params);
-        else
+        } else {
             Module::hookExec($name, $params);
+        }
     }
 
-	/**
-	 * Returns a protected/private property value by invoking it's public getter.
-	 *
-	 * The getter names are assumed to be the property name in camel case with preceding word "get".
-	 *
-	 * @param string $name the property name.
-	 * @return mixed the property value.
-	 * @throws Exception if public getter does not exist.
-	 */
-	public function __get($name)
-	{
-		$getter = 'get'.str_replace('_', '', $name);
-		if (method_exists($this, $getter))
-			return $this->{$getter}();
-		throw new Exception(sprintf('Property `%s.%s` is not defined.', get_class($this), $name));
-	}
+    /**
+     * Returns a protected/private property value by invoking it's public getter.
+     *
+     * The getter names are assumed to be the property name in camel case with preceding word "get".
+     *
+     * @param string $name the property name.
+     * @return mixed the property value.
+     * @throws Exception if public getter does not exist.
+     */
+    public function __get($name)
+    {
+        $getter = 'get'.str_replace('_', '', $name);
+        if (method_exists($this, $getter)) {
+            return $this->{$getter}();
+        }
+        throw new Exception(sprintf('Property `%s.%s` is not defined.', get_class($this), $name));
+    }
 }

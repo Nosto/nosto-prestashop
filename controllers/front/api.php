@@ -31,47 +31,48 @@
  */
 abstract class NostoTaggingApiModuleFrontController extends ModuleFrontController
 {
-	/**
-	 * @var int the amount of items to fetch.
-	 */
-	public $limit = 100;
+    /**
+     * @var int the amount of items to fetch.
+     */
+    public $limit = 100;
 
-	/**
-	 * @var int the offset of items to fetch.
-	 */
-	public $offset = 0;
+    /**
+     * @var int the offset of items to fetch.
+     */
+    public $offset = 0;
 
-	/**
-	 * @inheritdoc
-	 */
-	public function __construct()
-	{
-		parent::__construct();
+    /**
+     * @inheritdoc
+     */
+    public function __construct()
+    {
+        parent::__construct();
 
-		if (($limit = Tools::getValue('limit')) !== false && !empty($limit))
-			$this->limit = (int)$limit;
+        if (($limit = Tools::getValue('limit')) !== false && !empty($limit)) {
+            $this->limit = (int)$limit;
+        }
 
-		if (($offset = Tools::getValue('offset')) !== false && !empty($offset))
-			$this->offset = (int)$offset;
-	}
+        if (($offset = Tools::getValue('offset')) !== false && !empty($offset)) {
+            $this->offset = (int)$offset;
+        }
+    }
 
-	/**
-	 * Encrypts and outputs the data and ends the application flow.
-	 * Only send the response if we can encrypt it, i.e. we have an shared encryption secret with nosto.
-	 *
-	 * @param NostoExportCollectionInterface $collection the data collection to output as encrypted response.
-	 */
-	public function encryptOutput(NostoExportCollectionInterface $collection)
-	{
-		/** @var NostoAccount $account */
-		$account = Nosto::helper('nosto_tagging/account')->find($this->module->getContext()->language->id);
-		if ($account && $account->isConnectedToNosto())
-		{
-			$cipher_text = NostoExporter::export($account, $collection);
-			echo $cipher_text;
-		}
-		// It is important to stop the script execution after the export,
-		// in order to avoid any additional data being outputted.
-		die();
-	}
+    /**
+     * Encrypts and outputs the data and ends the application flow.
+     * Only send the response if we can encrypt it, i.e. we have an shared encryption secret with nosto.
+     *
+     * @param NostoExportCollectionInterface $collection the data collection to output as encrypted response.
+     */
+    public function encryptOutput(NostoExportCollectionInterface $collection)
+    {
+        /** @var NostoAccount $account */
+        $account = Nosto::helper('nosto_tagging/account')->find($this->module->getContext()->language->id);
+        if ($account && $account->isConnectedToNosto()) {
+            $cipher_text = NostoExporter::export($account, $collection);
+            echo $cipher_text;
+        }
+        // It is important to stop the script execution after the export,
+        // in order to avoid any additional data being outputted.
+        die();
+    }
 }

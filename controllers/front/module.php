@@ -28,25 +28,26 @@
  */
 abstract class ModuleFrontController extends FrontController
 {
-	/**
-	 * @var Module the module instance.
-	 */
-	public $module;
+    /**
+     * @var Module the module instance.
+     */
+    public $module;
 
-	/**
-	 * @inheritdoc
-	 */
-	public function init()
-	{
-		parent::init();
-		$this->module = Module::getInstanceByName(Tools::getValue('module'));
-		if (!$this->module->active)
-			Tools::redirect('index.php');
-		$this->initContent();
-	}
+    /**
+     * @inheritdoc
+     */
+    public function init()
+    {
+        parent::init();
+        $this->module = Module::getInstanceByName(Tools::getValue('module'));
+        if (!$this->module->active) {
+            Tools::redirect('index.php');
+        }
+        $this->initContent();
+    }
 
-	/**
-	 * Initializes the content.
-	 */
-	abstract public function initContent();
+    /**
+     * Initializes the content.
+     */
+    abstract public function initContent();
 }
