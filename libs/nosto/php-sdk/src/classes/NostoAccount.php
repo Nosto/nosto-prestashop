@@ -87,12 +87,24 @@ class NostoAccount extends NostoObject implements NostoAccountInterface, NostoVa
                 'last_name' => $meta->getOwner()->getLastName(),
                 'email' => $meta->getOwner()->getEmail(),
             ),
-            'billing_details' => array(
-                'country' => strtoupper($meta->getBillingDetails()->getCountry()),
-            ),
             'api_tokens' => array(),
         );
 
+        // Add optional billing details if the required data is set.
+        $billingDetails = array(
+            'country' => strtoupper($meta->getBillingDetails()->getCountry())
+        );
+        if (!empty($billingDetails['country'])) {
+            $params['billing_details'] = $billingDetails;
+        }
+
+        // Add optional partner code if one is set.
+        $partnerCode = $meta->getPartnerCode();
+        if (!empty($partnerCode)) {
+            $params['partner_code'] = $partnerCode;
+        }
+
+        // Request all available API tokens for the account.
         foreach (NostoApiToken::$tokenNames as $name) {
             $params['api_tokens'][] = 'api_'.$name;
         }

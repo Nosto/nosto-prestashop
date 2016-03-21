@@ -22,15 +22,15 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-$(function() {
+$(function () {
     if (typeof nostojs === 'function') {
-        nostojs(function(api) {
-            api.listen("postrender", function() {
+        nostojs(function (api) {
+            api.listen("postrender", function () {
                 var $center_column = $('#center_column'),
                     $hidden_elements = $('#hidden_nosto_elements'),
                     reloadRecommendations = false;
                 if ($center_column && $hidden_elements) {
-                    $hidden_elements.find('.prepend .hidden_nosto_element').each(function() {
+                    $hidden_elements.find('.prepend .hidden_nosto_element').each(function () {
                         var $slot = $(this),
                             nostoId = $slot.data('nosto-id');
                         if (nostoId && !$('#'+nostoId).length) {
@@ -40,7 +40,7 @@ $(function() {
                             reloadRecommendations = true;
                         }
                     });
-                    $hidden_elements.find('.append .hidden_nosto_element').each(function() {
+                    $hidden_elements.find('.append .hidden_nosto_element').each(function () {
                         var $slot = $(this),
                             nostoId = $slot.data('nosto-id');
                         if (nostoId && !$('#'+nostoId).length) {

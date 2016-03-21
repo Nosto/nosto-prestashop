@@ -46,9 +46,15 @@
 		{if $nosto_product->getDatePublished() neq ''}
 			<span class="date_published">{$nosto_product->getDatePublished()|escape:'htmlall':'UTF-8'}</span>
 		{/if}
-		{foreach from=$nosto_product->getTags() item=tag}
-            {if $tag neq ''}
-            <span class="tag1">{$tag|escape:'htmlall':'UTF-8'}</span>
+		{foreach from=$nosto_product->getTags() key=tagName item=tags}
+            {if $tags|is_array}
+                {foreach from=$tags item=tagValue}
+                    <span class="{$tagName|escape:'quotes'}">{$tagValue|escape:'htmlall':'UTF-8'}</span>
+                {/foreach}
+            {else}
+                {if $tags neq ''}
+                    <span class="tag1">{$tags|escape:'htmlall':'UTF-8'}</span>
+                {/if}
             {/if}
 		{/foreach}
 	</div>

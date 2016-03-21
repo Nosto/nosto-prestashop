@@ -47,21 +47,38 @@ class NostoExportProductCollection extends NostoProductCollection implements Nos
         $array = array();
         /** @var NostoProductInterface $item */
         foreach ($this->getArrayCopy() as $item) {
-            $array[] = array(
+            $data = array(
                 'url' => $item->getUrl(),
                 'product_id' => $item->getProductId(),
                 'name' => $item->getName(),
                 'image_url' => $item->getImageUrl(),
                 'price' => Nosto::helper('price')->format($item->getPrice()),
-                'list_price' => Nosto::helper('price')->format($item->getListPrice()),
                 'price_currency_code' => strtoupper($item->getCurrencyCode()),
                 'availability' => $item->getAvailability(),
-                'tags' => $item->getTags(),
                 'categories' => $item->getCategories(),
-                'description' => $item->getShortDescription().'<br/>'.$item->getDescription(),
-                'brand' => $item->getBrand(),
-                'date_published' => Nosto::helper('date')->format($item->getDatePublished()),
             );
+
+            // Optional properties.
+
+            if ($item->getFullDescription()) {
+                $data['description'] = $item->getFullDescription();
+            }
+            if ($item->getListPrice()) {
+                $data['list_price'] = Nosto::helper('price')->format($item->getListPrice());
+            }
+            if ($item->getBrand()) {
+                $data['brand'] = $item->getBrand();
+            }
+            foreach ($item->getTags() as $type => $tags) {
+                if (is_array($tags) && count($tags) > 0) {
+                    $data[$type] = $tags;
+                }
+            }
+            if ($item->getDatePublished()) {
+                $data['date_published'] = Nosto::helper('date')->format($item->getDatePublished());
+            }
+
+            $array[] = $data;
         }
         return json_encode($array);
     }

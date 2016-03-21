@@ -28,21 +28,22 @@
  */
 class NostoTaggingBrand extends NostoTaggingModel
 {
-	/**
-	 * @var string the built brand string.
-	 */
-	public $brand_string;
+    /**
+     * @var string the built brand string.
+     */
+    public $brand_string;
 
-	/**
-	 * Loads the brand data from supplied manufacturer object.
-	 *
-	 * @param Manufacturer $manufacturer the manufacturer object.
-	 */
-	public function loadData(Manufacturer $manufacturer)
-	{
-		if (!Validate::isLoadedObject($manufacturer))
-			return;
+    /**
+     * Loads the brand data from supplied manufacturer object.
+     *
+     * @param Manufacturer $manufacturer the manufacturer object.
+     */
+    public function loadData(Manufacturer $manufacturer)
+    {
+        if (!Validate::isLoadedObject($manufacturer)) {
+            return;
+        }
 
-		$this->brand_string = DS.$manufacturer->name;
-	}
+        $this->brand_string = DS.$manufacturer->name;
+    }
 }

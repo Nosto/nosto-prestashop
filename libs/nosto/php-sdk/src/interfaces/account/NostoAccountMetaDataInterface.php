@@ -110,4 +110,12 @@ interface NostoAccountMetaDataInterface
      * @return string the API token.
      */
     public function getSignUpApiToken();
+
+    /**
+     * Optional partner code for Nosto partners.
+     * The code is issued by Nosto to partners only.
+     *
+     * @return string|null the partner code or null if none exist.
+     */
+    public function getPartnerCode();
 }

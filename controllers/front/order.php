@@ -23,6 +23,7 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
+
 require_once(dirname(__FILE__).'/api.php');
 
 /**
@@ -32,68 +33,71 @@ require_once(dirname(__FILE__).'/api.php');
  */
 class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontController
 {
-	/**
-	 * @inheritdoc
-	 */
-	public function initContent()
-	{
-		$collection = new NostoExportOrderCollection();
-		foreach ($this->getOrderIds() as $id_order)
-		{
-			$order = new Order($id_order);
-			if (!Validate::isLoadedObject($order))
-				continue;
+    /**
+     * @inheritdoc
+     */
+    public function initContent()
+    {
+        $collection = new NostoExportOrderCollection();
+        foreach ($this->getOrderIds() as $id_order) {
+            $order = new Order($id_order);
+            if (!Validate::isLoadedObject($order)) {
+                continue;
+            }
 
-			$nosto_order = new NostoTaggingOrder();
-			$nosto_order->include_special_items = false;
-			$nosto_order->loadData($this->module->getContext(), $order);
+            $nosto_order = new NostoTaggingOrder();
+            $nosto_order->include_special_items = false;
+            $nosto_order->loadData($this->module->getContext(), $order);
 
-			$validator = new NostoValidator($nosto_order);
-			if ($validator->validate())
-				$collection[] = $nosto_order;
+            $validator = new NostoValidator($nosto_order);
+            if ($validator->validate()) {
+                $collection[] = $nosto_order;
+            }
 
-			$order = null;
-		}
+            $order = null;
+        }
 
-		$this->encryptOutput($collection);
-	}
+        $this->encryptOutput($collection);
+    }
 
-	/**
-	 * Returns a list of all order ids with limit and offset applied.
-	 *
-	 * @return array the order id list.
-	 */
-	protected function getOrderIds()
-	{
-		$context = $this->module->getContext();
-		if (_PS_VERSION_ > '1.5')
-			$where = strtr(
-				'`id_shop_group` = {g} AND `id_shop` = {s} AND `id_lang` = {l}',
-				array(
-					'{g}' => pSQL($context->shop->id_shop_group),
-					'{s}' => pSQL($context->shop->id),
-					'{l}' => pSQL($context->language->id),
-				)
-			);
-		else
-			$where = strtr(
-				'`id_lang` = {l}',
-				array(
-					'{l}' => pSQL($context->language->id),
-				)
-			);
+    /**
+     * Returns a list of all order ids with limit and offset applied.
+     *
+     * @return array the order id list.
+     */
+    protected function getOrderIds()
+    {
+        $context = $this->module->getContext();
+        if (_PS_VERSION_ > '1.5') {
+            $where = strtr(
+                '`id_shop_group` = {g} AND `id_shop` = {s} AND `id_lang` = {l}',
+                array(
+                    '{g}' => pSQL($context->shop->id_shop_group),
+                    '{s}' => pSQL($context->shop->id),
+                    '{l}' => pSQL($context->language->id),
+                )
+            );
+        } else {
+            $where = strtr(
+                '`id_lang` = {l}',
+                array(
+                    '{l}' => pSQL($context->language->id),
+                )
+            );
+        }
 
-		$sql = <<<EOT
+        $sql = <<<EOT
 			SELECT `id_order`
 			FROM `ps_orders`
 			WHERE $where
 			LIMIT $this->limit
 			OFFSET $this->offset
 EOT;
-		$rows = Db::getInstance()->executeS($sql);
-		$order_ids = array();
-		foreach ($rows as $row)
-			$order_ids[] = (int)$row['id_order'];
-		return $order_ids;
-	}
+        $rows = Db::getInstance()->executeS($sql);
+        $order_ids = array();
+        foreach ($rows as $row) {
+            $order_ids[] = (int)$row['id_order'];
+        }
+        return $order_ids;
+    }
 }

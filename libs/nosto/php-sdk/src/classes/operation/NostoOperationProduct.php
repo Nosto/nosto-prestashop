@@ -163,26 +163,63 @@ class NostoOperationProduct
     /**
      * Converts the product object into an array and returns it.
      *
+     * Example:
+     *
+     * array(
+     *     'url' => 'http://www.example.com/product/CANOE123',
+     *     'product_id' => 'CANOE123',
+     *     'name' => 'ACME Foldable Canoe',
+     *     'image_url' => 'http://www.example.com/product/images/CANOE123.jpg',
+     *     'price' => '1269.00',
+     *     'price_currency_code' => 'EUR',
+     *     'availability' => 'InStock',
+     *     'categories' => array('/Outdoor/Boats/Canoes', '/Sales/Boats'),
+     *     'description' => 'This foldable canoe is easy to travel with.',
+     *     'list_price' => '1299.00',
+     *     'brand' => 'ACME',
+     *     'tag1' => array('Men'),
+     *     'tag2' => array('Foldable'),
+     *     'tag3' => array('Brown', 'Black', 'Orange'),
+     *     'date_published' => '2011-12-31'
+     * )
+     *
      * @param NostoProductInterface $product the object.
      * @return array the newly created array.
      */
     protected function getProductAsArray(NostoProductInterface $product)
     {
-        return array(
+        $data = array(
             'url' => $product->getUrl(),
             'product_id' => $product->getProductId(),
             'name' => $product->getName(),
             'image_url' => $product->getImageUrl(),
             'price' => Nosto::helper('price')->format($product->getPrice()),
-            'list_price' => Nosto::helper('price')->format($product->getListPrice()),
             'price_currency_code' => strtoupper($product->getCurrencyCode()),
             'availability' => $product->getAvailability(),
-            'tag1' => $product->getTags(),
             'categories' => $product->getCategories(),
-            'description' => $product->getShortDescription().'<br/>'.$product->getDescription(),
-            'brand' => $product->getBrand(),
-            'date_published' => Nosto::helper('date')->format($product->getDatePublished()),
         );
+
+        // Optional properties.
+
+        if ($product->getFullDescription()) {
+            $data['description'] = $product->getFullDescription();
+        }
+        if ($product->getListPrice()) {
+            $data['list_price'] = Nosto::helper('price')->format($product->getListPrice());
+        }
+        if ($product->getBrand()) {
+            $data['brand'] = $product->getBrand();
+        }
+        foreach ($product->getTags() as $type => $tags) {
+            if (is_array($tags) && count($tags) > 0) {
+                $data[$type] = $tags;
+            }
+        }
+        if ($product->getDatePublished()) {
+            $data['date_published'] = Nosto::helper('date')->format($product->getDatePublished());
+        }
+
+        return $data;
     }
 
     /**
