@@ -381,7 +381,7 @@ class NostoTagging extends Module
     protected function createAccount($id_lang, $email)
     {
         try {
-            $meta = new Nosto_Tagging_Meta_Account();
+            $meta = new NostoTaggingMetaAccount();
             $meta->loadData($this->context, $id_lang);
             $meta->getOwner()->setEmail($email);
             /** @var NostoAccount $account */
