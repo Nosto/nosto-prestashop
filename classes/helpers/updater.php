@@ -110,7 +110,7 @@ class NostoTaggingHelperUpdater
             }
         }
 
-        usort($scripts, array('NostoTaggingUpdater', 'sortUpgradeScriptsByVersion'));
+        usort($scripts, array('NostoTaggingHelperUpdater', 'sortUpgradeScriptsByVersion'));
         return $scripts;
     }
 
