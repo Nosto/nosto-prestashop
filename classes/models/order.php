@@ -220,12 +220,15 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
         $this->buyer_info->loadData($customer);
         $this->created_date = Nosto::helper('date')->format($order->date_add);
         $this->purchased_items = $this->findPurchasedItems($context, $order);
+        $this->payment_provider = 'unknown';
 
-        $payment_module = Module::getInstanceByName($order->module);
-        if ($payment_module !== false && isset($payment_module->version)) {
-            $this->payment_provider = $order->module.' ['.$payment_module->version.']';
-        } else {
-            $this->payment_provider = $order->module.' [unknown]';
+        if (!empty($order->module)) {
+            $payment_module = Module::getInstanceByName($order->module);
+            if ($payment_module !== false && isset($payment_module->version)) {
+                $this->payment_provider = $order->module.' ['.$payment_module->version.']';
+            } else {
+                $this->payment_provider = $order->module.' [unknown]';
+            }
         }
 
         $this->order_status = new NostoTaggingOrderStatus();
