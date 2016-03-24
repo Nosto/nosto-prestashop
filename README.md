@@ -107,6 +107,10 @@ PrestaShop version 1.4.x - 1.6.x
 
 ## Changelog
 
+* 2.5.0
+    * Add possibility to override data for product and order models 
+    * Handle empty payment module in order
+
 * 2.4.4
     * Fix occasionally missing smarty
     * Remove submodules for backward compatibility and Nosto PHP SDK
