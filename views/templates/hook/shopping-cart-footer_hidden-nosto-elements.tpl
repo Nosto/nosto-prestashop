@@ -21,7 +21,10 @@
 * @copyright 2013-2015 Nosto Solutions Ltd
 * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *}
-
-<div class="hidden_nosto_element" data-nosto-id="nosto-page-cart1"></div>
-<div class="hidden_nosto_element" data-nosto-id="nosto-page-cart3"></div>
-<div class="hidden_nosto_element" data-nosto-id="nosto-page-cart2"></div>
+<div id="hidden_nosto_elements" style="display: none;">
+    <div class="append">
+        <div class="hidden_nosto_element" data-nosto-id="nosto-page-cart1"></div>
+        <div class="hidden_nosto_element" data-nosto-id="nosto-page-cart3"></div>
+        <div class="hidden_nosto_element" data-nosto-id="nosto-page-cart2"></div>
+    </div>
+</div>

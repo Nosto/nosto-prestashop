@@ -514,7 +514,7 @@ class NostoTagging extends Module
                 $html .= $this->getBrandTagging($manufacturer);
             }
         } elseif ($this->isController('search')) {
-            $search_term = Tools::getValue('search_query', null);
+            $search_term = Tools::getValue('search_query', Tools::getValue('s'));
             if (!is_null($search_term)) {
                 $html .= $this->getSearchTagging($search_term);
             }
@@ -637,8 +637,12 @@ class NostoTagging extends Module
 
         $product = isset($params['product']) ? $params['product'] : null;
         $category = isset($params['category']) ? $params['category'] : null;
-        $html .= $this->getProductTagging($product, $category);
 
+        if (!is_a($product, Product)) {
+            $product = new Product($product['id_product'], true, $this->context->language->id, $this->context->shop->id);
+        }
+
+        $html .= $this->getProductTagging($product, $category);
         $html .= $this->display(__FILE__, 'views/templates/hook/footer-product_nosto-elements.tpl');
 
         return $html;
@@ -1052,36 +1056,25 @@ class NostoTagging extends Module
      */
     protected function getHiddenRecommendationElements()
     {
-        $prepend = '';
-        $append = '';
-
         if ($this->isController('index')) {
         // The home page.
-            $append .= $this->display(__FILE__, 'views/templates/hook/home_hidden-nosto-elements.tpl');
+            return $this->display(__FILE__, 'views/templates/hook/home_hidden-nosto-elements.tpl');
         } elseif ($this->isController('product')) {
         // The product page.
-            $append .= $this->display(__FILE__, 'views/templates/hook/footer-product_hidden-nosto-elements.tpl');
+            return $this->display(__FILE__, 'views/templates/hook/footer-product_hidden-nosto-elements.tpl');
         } elseif ($this->isController('order') && (int)Tools::getValue('step', 0) === 0) {
         // The cart summary page.
-            $append .= $this->display(__FILE__, 'views/templates/hook/shopping-cart-footer_hidden-nosto-elements.tpl');
+            return $this->display(__FILE__, 'views/templates/hook/shopping-cart-footer_hidden-nosto-elements.tpl');
         } elseif ($this->isController('category') || $this->isController('manufacturer')) {
         // The category/manufacturer page.
-            $append .= $this->display(__FILE__, 'views/templates/hook/category-footer_hidden-nosto-elements.tpl');
+            return $this->display(__FILE__, 'views/templates/hook/category-footer_hidden-nosto-elements.tpl');
         } elseif ($this->isController('search')) {
         // The search page.
-            $prepend .= $this->display(__FILE__, 'views/templates/hook/search-top_hidden-nosto-elements.tpl');
-            $append .= $this->display(__FILE__, 'views/templates/hook/search-footer_hidden-nosto-elements.tpl');
+            return $this->display(__FILE__, 'views/templates/hook/search_hidden-nosto-elements.tpl');
         } else {
             // If the current page is not one of the ones we want to show recommendations on, just return empty.
             return '';
         }
-
-        $this->getSmarty()->assign(array(
-            'hidden_nosto_elements_prepend' => $prepend,
-            'hidden_nosto_elements_append' => $append,
-        ));
-
-        return $this->display(__FILE__, 'views/templates/hook/hidden-nosto-elements.tpl');
     }
 
     /**
