@@ -10,6 +10,9 @@
   "require": {
     "nosto/php-sdk": "1.13.0"
   },
+  "require-dev": {
+    "phing/phing": "2.*"
+  },
   "config": {
     "vendor-dir": "libs"
   }
