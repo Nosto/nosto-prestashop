@@ -93,6 +93,6 @@ class NostoTaggingOrderStatus implements NostoOrderStatusInterface
     {
         $pattern = array('/[^a-zA-Z0-9]+/', '/_+/', '/^_+/', '/_+$/');
         $replacement = array('_', '_', '', '');
-        return strtolower(preg_replace($pattern, $replacement, $name));
+        return Tools::strtolower(preg_replace($pattern, $replacement, $name));
     }
 }
