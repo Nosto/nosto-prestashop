@@ -49,8 +49,8 @@
             <fileset refid="sourcefiles" />
         </copy>
         <phingcall target="updatedependencies" />
+        <phingcall target="cleandependencies" />
         <phingcall target="copyindex" />
-
     </target>
 
     <target name="copyindex">
@@ -60,6 +60,15 @@
         </exec>
     </target>
 
+    <target name="cleandependencies">
+        <delete dir="${buildsrc}/libs/nosto/php-sdk/tests" />
+        <delete file="${buildsrc}/libs/nosto/php-sdk/codeception.yml" />
+        <delete file="${buildsrc}/libs/nosto/php-sdk/.gitignore" />
+        <delete file="${buildsrc}/libs/nosto/php-sdk/Gruntfile.js" />
+        <delete file="${buildsrc}/libs/nosto/php-sdk/package.json" />
+        <delete file="${buildsrc}/libs/nosto/php-sdk/composer.json" />
+   </target>
+
     <target name="updatedependencies">
         <echo msg="Updating dependencies" />
         <exec executable="composer" dir="${buildsrc}">
@@ -67,7 +76,6 @@
             <arg value="--no-dev" />
         </exec>
         <echo msg="Files copied and compressed" />
-
     </target>
 
     <fileset dir="${srcdir}" id="sourcefiles">
