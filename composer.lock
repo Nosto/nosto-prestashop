@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "d212d62d438553085e0a08bc9939f26b",
-    "content-hash": "d37e98f10fb67eade6f5f54074a1fde5",
+    "hash": "e07dcc641e8f1d805ed9dfaa8a68ef7b",
+    "content-hash": "29f7a158bae0f161758501386be6c8c8",
     "packages": [
         {
             "name": "nosto/php-sdk",

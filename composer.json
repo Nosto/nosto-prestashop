@@ -1,12 +1,6 @@
 {
   "name": "nosto/nostotagging",
   "description": "Nosto Module for Prestashop",
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/Nosto/php-sdk.git"
-    }
-  ],
   "require": {
     "nosto/php-sdk": "1.13.0"
   },
