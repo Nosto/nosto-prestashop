@@ -1052,36 +1052,25 @@ class NostoTagging extends Module
      */
     protected function getHiddenRecommendationElements()
     {
-        $prepend = '';
-        $append = '';
-
         if ($this->isController('index')) {
         // The home page.
-            $append .= $this->display(__FILE__, 'views/templates/hook/home_hidden-nosto-elements.tpl');
+            return $this->display(__FILE__, 'views/templates/hook/home_hidden-nosto-elements.tpl');
         } elseif ($this->isController('product')) {
         // The product page.
-            $append .= $this->display(__FILE__, 'views/templates/hook/footer-product_hidden-nosto-elements.tpl');
+            return $this->display(__FILE__, 'views/templates/hook/footer-product_hidden-nosto-elements.tpl');
         } elseif ($this->isController('order') && (int)Tools::getValue('step', 0) === 0) {
         // The cart summary page.
-            $append .= $this->display(__FILE__, 'views/templates/hook/shopping-cart-footer_hidden-nosto-elements.tpl');
+            return $this->display(__FILE__, 'views/templates/hook/shopping-cart-footer_hidden-nosto-elements.tpl');
         } elseif ($this->isController('category') || $this->isController('manufacturer')) {
         // The category/manufacturer page.
-            $append .= $this->display(__FILE__, 'views/templates/hook/category-footer_hidden-nosto-elements.tpl');
+            return $this->display(__FILE__, 'views/templates/hook/category-footer_hidden-nosto-elements.tpl');
         } elseif ($this->isController('search')) {
         // The search page.
-            $prepend .= $this->display(__FILE__, 'views/templates/hook/search-top_hidden-nosto-elements.tpl');
-            $append .= $this->display(__FILE__, 'views/templates/hook/search-footer_hidden-nosto-elements.tpl');
+            return $this->display(__FILE__, 'views/templates/hook/search_hidden-nosto-elements.tpl');
         } else {
             // If the current page is not one of the ones we want to show recommendations on, just return empty.
             return '';
         }
-
-        $this->getSmarty()->assign(array(
-            'hidden_nosto_elements_prepend' => $prepend,
-            'hidden_nosto_elements_append' => $append,
-        ));
-
-        return $this->display(__FILE__, 'views/templates/hook/hidden-nosto-elements.tpl');
     }
 
     /**
