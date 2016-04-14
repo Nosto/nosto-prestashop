@@ -26,7 +26,7 @@
 /**
  * Model for tagging products.
  */
-class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInterface, NostoValidatableInterface
+class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInterface
 {
     const IN_STOCK = 'InStock';
     const OUT_OF_STOCK = 'OutOfStock';
@@ -104,28 +104,6 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
      * @var string the product publish date.
      */
     protected $date_published;
-
-    /**
-     * @inheritdoc
-     */
-    public function getValidationRules()
-    {
-        return array(
-            array(
-                array(
-                    'url',
-                    'product_id',
-                    'name',
-                    'image_url',
-                    'price',
-                    'list_price',
-                    'currency_code',
-                    'availability',
-                ),
-                'required',
-            )
-        );
-    }
 
     /**
      * Loads the product data from supplied context and product objects.
