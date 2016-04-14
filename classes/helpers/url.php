@@ -43,12 +43,13 @@ class NostoTaggingHelperUrl
         try {
             if (!$id_product) {
             // Find a product that is active and available for order.
-                $sql = <<<EOT
-			SELECT `id_product`
-			FROM `ps_product`
-			WHERE `active` = 1
-			AND `available_for_order` = 1
-EOT;
+                $sql = '
+                    SELECT `id_product`
+                    FROM `'._DB_PREFIX_.'product`
+                    WHERE `active` = 1
+                    AND `available_for_order` = 1
+                ';
+
                 $row = Db::getInstance()->getRow($sql);
                 $id_product = isset($row['id_product']) ? (int)$row['id_product'] : 0;
             }
@@ -82,12 +83,12 @@ EOT;
         try {
             if (!$id_category) {
             // Find a category that is active, not the root category and has a parent category.
-                $sql = <<<EOT
-				SELECT `id_category`
-				FROM `ps_category`
-				WHERE `active` = 1
-				AND `id_parent` > 0
-EOT;
+                $sql = '
+                    SELECT `id_category`
+                    FROM `'._DB_PREFIX_.'category`
+                    WHERE `active` = 1
+                    AND `id_parent` > 0
+				';
                 // There is not "is_root_category" in PS 1.4, but in >= 1.5 we want to skip the root.
                 if (_PS_VERSION_ >= '1.5') {
                     $sql .= ' AND `is_root_category` = 0';
