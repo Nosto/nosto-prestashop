@@ -65,7 +65,7 @@ class NostoTaggingHelperProductOperation
             try {
                 $op = new NostoOperationProduct($account);
                 $op->addProduct($nosto_product);
-                $op->create();
+                $op->upsert();
             } catch (NostoException $e) {
                 Nosto::helper('nosto_tagging/logger')->error(
                     __CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(),
@@ -100,7 +100,7 @@ class NostoTaggingHelperProductOperation
             try {
                 $op = new NostoOperationProduct($account);
                 $op->addProduct($nosto_product);
-                $op->update();
+                $op->upsert();
             } catch (NostoException $e) {
                 Nosto::helper('nosto_tagging/logger')->error(
                     __CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(),
