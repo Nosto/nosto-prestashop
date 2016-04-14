@@ -26,7 +26,7 @@
 /**
  * Model for tagging orders.
  */
-class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface, NostoValidatableInterface
+class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 {
     /**
      * @var bool if we should include special line items such as discounts and shipping costs.
@@ -181,24 +181,6 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
     public function setOrderStatus(NostoOrderStatusInterface $order_status)
     {
         $this->order_status = $order_status;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getValidationRules()
-    {
-        return array(
-            array(
-                array(
-                    'order_number',
-                    'created_date',
-                    'buyer_info',
-                    'purchased_items',
-                ),
-                'required'
-            )
-        );
     }
 
     /**

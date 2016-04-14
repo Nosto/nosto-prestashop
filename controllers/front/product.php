@@ -47,13 +47,7 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
 
             $nosto_product = new NostoTaggingProduct();
             $nosto_product->loadData($context, $product);
-
-            $validator = new NostoValidator($nosto_product);
-            if ($validator->validate()) {
-                $collection[] = $nosto_product;
-            }
-
-            $product = null;
+            $collection[] = $nosto_product;
         }
 
         $this->encryptOutput($collection);
