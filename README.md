@@ -110,6 +110,10 @@ PrestaShop version 1.4.x - 1.6.x
 * 2.5.0
     * Add possibility to override data for product and order models 
     * Handle empty payment module in order
+    * Add database prefix to custom queries
+    * Loosen up the product and order validation
+    * Change coding standards & module structure to meet Prestashop validation rules
+    * Introduce packaging with phing (development only)
 
 * 2.4.4
     * Fix occasionally missing smarty
