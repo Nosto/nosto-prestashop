@@ -227,11 +227,6 @@ class NostoTaggingHelperProductOperation
 
         $this->restoreContextSnapshot();
 
-        $validator = new NostoValidator($nosto_product);
-        if (!$validator->validate()) {
-            return null;
-        }
-
         return $nosto_product;
     }
 
