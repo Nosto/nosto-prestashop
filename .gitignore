@@ -1,4 +1,3 @@
-libs/phing
-libs/bin
+libs/
 build/package
 build/src
