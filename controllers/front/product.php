@@ -67,13 +67,19 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
     protected function getProductIds()
     {
         $product_ids = array();
-        $sql = <<<EOT
-			SELECT `id_product`
-			FROM `ps_product`
-			WHERE `active` = 1 AND `available_for_order` = 1
-			LIMIT $this->limit
-			OFFSET $this->offset
-EOT;
+        $sql = sprintf(
+            '
+                SELECT id_product
+                FROM %sproduct
+                WHERE active = 1 AND available_for_order = 1
+                LIMIT %d
+                OFFSET %d
+            ',
+            _DB_PREFIX_,
+            $this->limit,
+            $this->offset
+        );
+
         $rows = Db::getInstance()->executeS($sql);
         foreach ($rows as $row) {
             $product_ids[] = (int)$row['id_product'];

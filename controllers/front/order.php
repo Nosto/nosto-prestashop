@@ -84,13 +84,20 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
             );
         }
 
-        $sql = <<<EOT
-			SELECT `id_order`
-			FROM `ps_orders`
-			WHERE $where
-			LIMIT $this->limit
-			OFFSET $this->offset
-EOT;
+        $sql = sprintf(
+            '
+                SELECT id_order
+                FROM %sorders
+                WHERE %s
+                LIMIT %d
+                OFFSET %d
+            ',
+            _DB_PREFIX_,
+            $where,
+            $this->limit,
+            $this->offset
+        );
+
         $rows = Db::getInstance()->executeS($sql);
         $order_ids = array();
         foreach ($rows as $row) {
