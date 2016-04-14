@@ -21,7 +21,12 @@
 * @copyright 2013-2016 Nosto Solutions Ltd
 * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *}
+<div id="hidden_nosto_elements" style="display: none;">
+    <div class="prepend">
+        <div class="hidden_nosto_element" data-nosto-id="nosto-page-search1"></div>
+    </div>
+    <div class="append">
+        <div class="hidden_nosto_element" data-nosto-id="nosto-page-search2"></div>
+    </div>
+</div>
 
-{if isset($nosto_brand) && is_object($nosto_brand)}
-    <div class="nosto_category" style="display:none">{$nosto_brand->brand_string|escape:'htmlall':'UTF-8'}</div>
-{/if}

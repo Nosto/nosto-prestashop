@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~ 2013-2016 Nosto Solutions Ltd
+  ~
+  ~ NOTICE OF LICENSE
+  ~
+  ~ This source file is subject to the Academic Free License (AFL 3.0)
+  ~ that is bundled with this package in the file LICENSE.txt.
+  ~ It is also available through the world-wide-web at this URL:
+  ~ http://opensource.org/licenses/afl-3.0.php
+  ~ If you did not receive a copy of the license and are unable to
+  ~ obtain it through the world-wide-web, please send an email
+  ~ to contact@nosto.com so we can send you a copy immediately.
+  ~
+  ~ DISCLAIMER
+  ~
+  ~ Do not edit or add to this file if you wish to upgrade PrestaShop to newer
+  ~ versions in the future. If you wish to customize PrestaShop for your
+  ~ needs please refer to http://www.prestashop.com for more information.
+  ~
+  ~ @author    Nosto Solutions Ltd <contact@nosto.com>
+  ~ @copyright 2013-2016 Nosto Solutions Ltd
+  ~ @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+  -->
+
+<project name="nostotagging" default="dist">
+
+    <property name="package"  value="${phing.project.name}" override="true" />
+    <property name="buildstatic" value="./build/static" override="false" />
+    <property name="buildsrc" value="./build/src" override="false" />
+    <property name="buildbin" value="./build/bin" override="false" />
+    <property name="buildroot" value="./build" override="true" />
+    <property name="builddest" value="./build/package" override="true" />
+    <property name="srcdir"   value="${project.basedir}" override="true" />
+    <property name="packagename"   value="${project.basedir}" override="true" />
+
+    <!-- ============================================  -->
+    <!-- Target: prepare                               -->
+    <!-- ============================================  -->
+    <target name="prepare">
+        <echo msg="Cleaning up directory ./build" />
+        <delete dir="${builddest}" />
+        <mkdir dir="${builddest}" />
+        <delete dir="${buildsrc}" />
+        <mkdir dir="${buildsrc}" />
+
+        <copy todir="${buildsrc}">
+            <fileset refid="sourcefiles" />
+        </copy>
+        <phingcall target="updatedependencies" />
+        <phingcall target="cleandependencies" />
+        <phingcall target="copyindex" />
+    </target>
+
+    <target name="copyindex">
+        <echo msg="Copying index file" />
+        <exec executable="sh">
+            <arg value="${buildbin}/copy_index.sh" />
+        </exec>
+    </target>
+
+    <target name="cleandependencies">
+        <delete dir="${buildsrc}/libs/nosto/php-sdk/tests" />
+        <delete file="${buildsrc}/libs/nosto/php-sdk/codeception.yml" />
+        <delete file="${buildsrc}/libs/nosto/php-sdk/.gitignore" />
+        <delete file="${buildsrc}/libs/nosto/php-sdk/Gruntfile.js" />
+        <delete file="${buildsrc}/libs/nosto/php-sdk/package.json" />
+        <delete file="${buildsrc}/libs/nosto/php-sdk/composer.json" />
+   </target>
+
+    <target name="updatedependencies">
+        <echo msg="Updating dependencies" />
+        <exec executable="composer" dir="${buildsrc}">
+            <arg value="install" />
+            <arg value="--no-dev" />
+        </exec>
+        <echo msg="Files copied and compressed" />
+    </target>
+
+    <fileset dir="${srcdir}" id="sourcefiles">
+        <patternset id="nostotagging.sources">
+            <include name="**" />
+            <exclude name="*.DS_STORE" />
+            <exclude name="**/.idea/**" />
+            <exclude name="**/tests/**" />
+            <exclude name="**/phing/**" />
+            <exclude name="**/build/**" />
+            <exclude name="**/build.xml" />
+            <exclude name="**/ruleset.xml" />
+            <exclude name="**/*Gruntfile*" />
+            <exclude name="**/*codeception*" />
+            <exclude name="libs/**" />
+            <exclude name="**/*package.json*" />
+        </patternset>
+    </fileset>
+
+    <!-- ============================================  -->
+    <!-- Target: build                                 -->
+    <!-- ============================================  -->
+    <target name="build" depends="prepare">
+        <echo msg="Building a package" />
+        <zip destfile="${builddest}/nostotagging.zip" prefix="nostotagging/">
+            <fileset dir="${buildsrc}">
+                <include name="**/*"/>
+            </fileset>
+        </zip>
+        <move file="${builddest}/nostotagging.zip" tofile="${builddest}/${version}-Nosto.-.Personalization.for.PrestaShop.zip" />
+        <echo msg="Files copied and compressed" />
+    </target>
+
+    <!-- ============================================  -->
+    <!-- (DEFAULT)  Target: dist                       -->
+    <!-- ============================================  -->
+    <target name="dist" depends="build">
+        <echo msg="All done" />
+    </target>
+</project>

@@ -362,10 +362,10 @@ class NostoTagging extends Module
             }
         }
 
-        $stylesheets = '<link rel="stylesheet" href="'.$this->_path.'css/tw-bs-v3.1.1.css">';
-        $stylesheets .= '<link rel="stylesheet" href="'.$this->_path.'css/nostotagging-admin-config.css">';
-        $scripts = '<script type="text/javascript" src="'.$this->_path.'js/iframeresizer.min.js"></script>';
-        $scripts .= '<script type="text/javascript" src="'.$this->_path.'js/nostotagging-admin-config.js"></script>';
+        $stylesheets = '<link rel="stylesheet" href="'.$this->_path.'views/css/tw-bs-v3.1.1.css">';
+        $stylesheets .= '<link rel="stylesheet" href="'.$this->_path.'views/css/nostotagging-admin-config.css">';
+        $scripts = '<script type="text/javascript" src="'.$this->_path.'views/js/iframeresizer.min.js"></script>';
+        $scripts .= '<script type="text/javascript" src="'.$this->_path.'views/js/nostotagging-admin-config.js"></script>';
         $output .= $this->display(__FILE__, 'views/templates/admin/config-bootstrap.tpl');
 
         return $stylesheets.$scripts.$output;
@@ -434,7 +434,7 @@ class NostoTagging extends Module
             'add_to_cart_url' => $link->getPageLink('cart.php'),
         ));
 
-        $this->context->controller->addJS($this->_path.'js/nostotagging-auto-slots.js');
+        $this->context->controller->addJS($this->_path.'views/js/nostotagging-auto-slots.js');
 
         $html = $this->display(__FILE__, 'views/templates/hook/header_meta-tags.tpl');
         $html .= $this->display(__FILE__, 'views/templates/hook/header_embed-script.tpl');
@@ -469,7 +469,7 @@ class NostoTagging extends Module
         // Nosto menu item in PS >= 1.6.
         $ctrl = $this->context->controller;
         if ($ctrl instanceof AdminController && method_exists($ctrl, 'addCss')) {
-            $ctrl->addCss($this->_path.'css/nostotagging-back-office.css');
+            $ctrl->addCss($this->_path.'views/css/nostotagging-back-office.css');
         }
     }
 
@@ -1052,36 +1052,25 @@ class NostoTagging extends Module
      */
     protected function getHiddenRecommendationElements()
     {
-        $prepend = '';
-        $append = '';
-
         if ($this->isController('index')) {
         // The home page.
-            $append .= $this->display(__FILE__, 'views/templates/hook/home_hidden-nosto-elements.tpl');
+            return $this->display(__FILE__, 'views/templates/hook/home_hidden-nosto-elements.tpl');
         } elseif ($this->isController('product')) {
         // The product page.
-            $append .= $this->display(__FILE__, 'views/templates/hook/footer-product_hidden-nosto-elements.tpl');
+            return $this->display(__FILE__, 'views/templates/hook/footer-product_hidden-nosto-elements.tpl');
         } elseif ($this->isController('order') && (int)Tools::getValue('step', 0) === 0) {
         // The cart summary page.
-            $append .= $this->display(__FILE__, 'views/templates/hook/shopping-cart-footer_hidden-nosto-elements.tpl');
+            return $this->display(__FILE__, 'views/templates/hook/shopping-cart-footer_hidden-nosto-elements.tpl');
         } elseif ($this->isController('category') || $this->isController('manufacturer')) {
         // The category/manufacturer page.
-            $append .= $this->display(__FILE__, 'views/templates/hook/category-footer_hidden-nosto-elements.tpl');
+            return $this->display(__FILE__, 'views/templates/hook/category-footer_hidden-nosto-elements.tpl');
         } elseif ($this->isController('search')) {
         // The search page.
-            $prepend .= $this->display(__FILE__, 'views/templates/hook/search-top_hidden-nosto-elements.tpl');
-            $append .= $this->display(__FILE__, 'views/templates/hook/search-footer_hidden-nosto-elements.tpl');
+            return $this->display(__FILE__, 'views/templates/hook/search_hidden-nosto-elements.tpl');
         } else {
             // If the current page is not one of the ones we want to show recommendations on, just return empty.
             return '';
         }
-
-        $this->getSmarty()->assign(array(
-            'hidden_nosto_elements_prepend' => $prepend,
-            'hidden_nosto_elements_append' => $append,
-        ));
-
-        return $this->display(__FILE__, 'views/templates/hook/hidden-nosto-elements.tpl');
     }
 
     /**

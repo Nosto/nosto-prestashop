@@ -95,11 +95,12 @@ class NostoTaggingHelperConfig
         $config_table = _DB_PREFIX_.'configuration';
         $config_lang_table = $config_table.'_lang';
 
-        Db::getInstance()->execute('
-			DELETE `'.$config_lang_table.'` FROM `'.$config_lang_table.'`
+        Db::getInstance()->execute(
+            'DELETE `'.$config_lang_table.'` FROM `'.$config_lang_table.'`
 			LEFT JOIN `'.$config_table.'`
 			ON `'.$config_lang_table.'`.`id_configuration` = `'.$config_table.'`.`id_configuration`
-			WHERE `'.$config_table.'`.`name` LIKE "NOSTOTAGGING_%"');
+			WHERE `'.$config_table.'`.`name` LIKE "NOSTOTAGGING_%"'
+        );
         Db::getInstance()->execute('
 			DELETE FROM `'.$config_table.'`
 			WHERE `'.$config_table.'`.`name` LIKE "NOSTOTAGGING_%"');
@@ -149,13 +150,14 @@ class NostoTaggingHelperConfig
         $config_lang_table = $config_table.'_lang';
 
         if (!empty($id_lang)) {
-            Db::getInstance()->execute('
-				DELETE `'.$config_lang_table.'` FROM `'.$config_lang_table.'`
+            Db::getInstance()->execute(
+                'DELETE `'.$config_lang_table.'` FROM `'.$config_lang_table.'`
 				INNER JOIN `'.$config_table.'`
 				ON `'.$config_lang_table.'`.`id_configuration` = `'.$config_table.'`.`id_configuration`
 				WHERE `'.$config_table.'`.`name` LIKE "NOSTOTAGGING_%"
 				AND `id_lang` = '.(int)$id_lang
-                .$context_restriction);
+                .$context_restriction
+            );
         }
         // We do not actually delete the main config entries, just set them to NULL, as there might me other language
         // specific entries tied to them. The main entries are not used anyways if there are languages defined.
