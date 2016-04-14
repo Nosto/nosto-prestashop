@@ -841,10 +841,6 @@ class NostoTagging extends Module
 
             $nosto_order = new NostoTaggingOrder();
             $nosto_order->loadData($this->context, $order);
-            $validator = new NostoValidator($nosto_order);
-            if (!$validator->validate()) {
-                return;
-            }
 
             // PS 1.4 does not have "id_shop_group" and "id_shop" properties in the order object.
             $id_shop_group = isset($order->id_shop_group) ? $order->id_shop_group : null;
