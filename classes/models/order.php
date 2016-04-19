@@ -287,8 +287,13 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
                             if (!($product['product_quantity'] > 0)) {
                                 unset($products[$key]);
                             }
+                           if (isset($product['product_price_wt'])) {
+                                $product_price_wt = $product['product_price_wt'];
+                            } else {
+                                $product_price_wt = 0;
+                            }
                             $total_gift_tax_incl = Tools::ps_round(
-                                $total_gift_tax_incl + $product['product_price_wt'],
+                                $total_gift_tax_incl + $product_price_wt,
                                 2
                             );
                             $gift_product = $product;
