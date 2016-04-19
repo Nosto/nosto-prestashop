@@ -28,7 +28,8 @@
 
     <property name="package"  value="${phing.project.name}" override="true" />
     <property name="buildstatic" value="./build/static" override="false" />
-    <property name="buildsrc" value="./build/src" override="false" />
+    <property name="zipbase" value="./build/src/" override="false" />
+    <property name="buildsrc" value="./build/src/nostotagging" override="false" />
     <property name="buildbin" value="./build/bin" override="false" />
     <property name="buildroot" value="./build" override="true" />
     <property name="builddest" value="./build/package" override="true" />
@@ -41,10 +42,11 @@
     <target name="prepare">
         <echo msg="Cleaning up directory ./build" />
         <delete dir="${builddest}" />
-        <mkdir dir="${builddest}" />
         <delete dir="${buildsrc}" />
+        <delete dir="${zipbase}" />
+        <mkdir dir="${builddest}" />
+        <mkdir dir="${zipbase}" />
         <mkdir dir="${buildsrc}" />
-
         <copy todir="${buildsrc}">
             <fileset refid="sourcefiles" />
         </copy>
@@ -100,12 +102,12 @@
     <!-- ============================================  -->
     <target name="build" depends="prepare">
         <echo msg="Building a package" />
-        <zip destfile="${builddest}/nostotagging.zip" prefix="nostotagging/">
-            <fileset dir="${buildsrc}">
-                <include name="**/*"/>
-            </fileset>
-        </zip>
-        <move file="${builddest}/nostotagging.zip" tofile="${builddest}/${version}-Nosto.-.Personalization.for.PrestaShop.zip" />
+        <exec executable="zip" dir="${zipbase}">
+            <arg value="-r" />
+            <arg value="nostotagging.zip" />
+            <arg value="nostotagging" />
+        </exec>
+        <move file="${zipbase}/nostotagging.zip" tofile="${builddest}/${version}-Nosto.-.Personalization.for.PrestaShop.zip" />
         <echo msg="Files copied and compressed" />
     </target>
 
