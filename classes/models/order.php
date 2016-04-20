@@ -287,7 +287,7 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
                             if (!($product['product_quantity'] > 0)) {
                                 unset($products[$key]);
                             }
-                           if (isset($product['product_price_wt'])) {
+                            if (isset($product['product_price_wt'])) {
                                 $product_price_wt = $product['product_price_wt'];
                             } else {
                                 $product_price_wt = 0;
