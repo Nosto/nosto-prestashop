@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2015 Nosto Solutions Ltd
+ * 2013-2016 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,7 +19,7 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2015 Nosto Solutions Ltd
+ * @copyright 2013-2016 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
@@ -28,20 +28,57 @@
  */
 abstract class NostoTaggingModel
 {
-	/**
-	 * Returns a protected/private property value by invoking it's public getter.
-	 *
-	 * The getter names are assumed to be the property name in camel case with preceding word "get".
-	 *
-	 * @param string $name the property name.
-	 * @return mixed the property value.
-	 * @throws Exception if public getter does not exist.
-	 */
-	public function __get($name)
-	{
-		$getter = 'get'.str_replace('_', '', $name);
-		if (method_exists($this, $getter))
-			return $this->{$getter}();
-		throw new Exception(sprintf('Property `%s.%s` is not defined.', get_class($this), $name));
-	}
+
+    /**
+     * Dispatches the hook `action{MODEL}LoadAfter`.
+     *
+     * This method can be called last in the tagging model loadData() methods, to allow overriding of model data.
+     *
+     * @param array $params the hook params.
+     */
+    protected function dispatchHookActionLoadAfter(array $params)
+    {
+        // We replace the "NostoTagging" part of the class
+        // name with "Nosto", e.g. "NostoTaggingProduct" => "NostoProduct".
+        // This is done in order to keep the hook names within the 32 character limit in PS 1.4.
+        $this->dispatchHook(
+            'action'.str_replace('NostoTagging', 'Nosto', get_class($this)).'LoadAfter',
+            $params
+        );
+    }
+
+    /**
+     * Executes a PS hook by name.
+     *
+     * Abstracts the differences between PS versions.
+     *
+     * @param string $name the hook name.
+     * @param array $params the hook params.
+     */
+    private function dispatchHook($name, array $params)
+    {
+        if (_PS_VERSION_ >= '1.5') {
+            Hook::exec($name, $params);
+        } else {
+            Module::hookExec($name, $params);
+        }
+    }
+
+    /**
+     * Returns a protected/private property value by invoking it's public getter.
+     *
+     * The getter names are assumed to be the property name in camel case with preceding word "get".
+     *
+     * @param string $name the property name.
+     * @return mixed the property value.
+     * @throws Exception if public getter does not exist.
+     */
+    public function __get($name)
+    {
+        $getter = 'get'.str_replace('_', '', $name);
+        if (method_exists($this, $getter)) {
+            return $this->{$getter}();
+        }
+        throw new Exception(sprintf('Property `%s.%s` is not defined.', get_class($this), $name));
+    }
 }

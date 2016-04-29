@@ -1,5 +1,5 @@
-/**
- * 2013-2015 Nosto Solutions Ltd
+/*
+ * 2013-2016 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -18,19 +18,20 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2015 Nosto Solutions Ltd
+ * @copyright 2013-2016 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-$(function() {
+$(function () {
     if (typeof nostojs === 'function') {
-        nostojs(function(api) {
-            api.listen("postrender", function() {
-                var $center_column = $('#center_column'),
-                    $hidden_elements = $('#hidden_nosto_elements'),
-                    reloadRecommendations = false;
+        nostojs(function (api) {
+            api.listen("postrender", function () {
+                var $center_column = $('#center_column, #content-wrapper');
+                var $hidden_elements = $('#hidden_nosto_elements');
+                var reloadRecommendations = false;
+
                 if ($center_column && $hidden_elements) {
-                    $hidden_elements.find('.prepend .hidden_nosto_element').each(function() {
+                    $hidden_elements.find('.prepend .hidden_nosto_element').each(function () {
                         var $slot = $(this),
                             nostoId = $slot.data('nosto-id');
                         if (nostoId && !$('#'+nostoId).length) {
@@ -40,7 +41,7 @@ $(function() {
                             reloadRecommendations = true;
                         }
                     });
-                    $hidden_elements.find('.append .hidden_nosto_element').each(function() {
+                    $hidden_elements.find('.append .hidden_nosto_element').each(function () {
                         var $slot = $(this),
                             nostoId = $slot.data('nosto-id');
                         if (nostoId && !$('#'+nostoId).length) {

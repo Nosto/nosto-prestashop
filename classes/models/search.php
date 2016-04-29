@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2015 Nosto Solutions Ltd
+ * 2013-2016 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,7 +19,7 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2015 Nosto Solutions Ltd
+ * @copyright 2013-2016 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
@@ -28,28 +28,28 @@
  */
 class NostoTaggingSearch extends NostoTaggingModel
 {
-	/**
-	 * @var string the search term.
-	 */
-	protected $search_term;
+    /**
+     * @var string the search term.
+     */
+    protected $search_term;
 
-	/**
-	 * Setter for the search term.
-	 *
-	 * @param string $search_term the term.
-	 */
-	public function setSearchTerm($search_term)
-	{
-		$this->search_term = $search_term;
-	}
+    /**
+     * Setter for the search term.
+     *
+     * @param string $search_term the term.
+     */
+    public function setSearchTerm($search_term)
+    {
+        $this->search_term = $search_term;
+    }
 
-	/**
-	 * Getter for the search term.
-	 *
-	 * @return string the term.
-	 */
-	public function getSearchTerm()
-	{
-		return $this->search_term;
-	}
+    /**
+     * Getter for the search term.
+     *
+     * @return string the term.
+     */
+    public function getSearchTerm()
+    {
+        return $this->search_term;
+    }
 }

@@ -1,4 +1,27 @@
 <?php
+/**
+ * 2013-2016 Nosto Solutions Ltd
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to contact@nosto.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
+ * versions in the future. If you wish to customize PrestaShop for your
+ * needs please refer to http://www.prestashop.com for more information.
+ *
+ * @author    Nosto Solutions Ltd <contact@nosto.com>
+ * @copyright 2013-2016 Nosto Solutions Ltd
+ * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
 
 global $_MODULE;
 $_MODULE = array();
@@ -28,6 +51,10 @@ $_MODULE['<{nostotagging}prestashop>config-bootstrap_8cb33a3501e7052ae865c670615
 $_MODULE['<{nostotagging}prestashop>config-bootstrap_a4ea91cd0d1ea33d8113457644dd6157'] = 'haz clic aquí';
 $_MODULE['<{nostotagging}prestashop>config-bootstrap_3722d8107ead3c11d3a3b60dd92d7f3d'] = 'Al instalar Nosto, estas de acuerdo con';
 $_MODULE['<{nostotagging}prestashop>config-bootstrap_97abaa921b2270031573362f57aad4a4'] = 'los términos y condiciones';
-$_MODULE['<{nostotagging}prestashop>config-bootstrap_3fea86f98e9d6d41bc92f64df751f487'] = 'Bienvenido a Nosto';
-$_MODULE['<{nostotagging}prestashop>config-bootstrap_c80a5c3f0ff0704472acaea2a14e33f7'] = 'Nosto te ayuda a aumentar tus ventas ofreciendo experiencias de compra personalizadas a cada uno de tus clientes.';
-$_MODULE['<{nostotagging}prestashop>config-bootstrap_bb1e6af66a20a2b26355c98c86c866bb'] = 'Unete a más de 4,500 tiendas online en más de 100 paises que usan Nosto para mejorar la experiencia de compra y hacer crecer su negocio.';
+$_MODULE['<{nostotagging}prestashop>config-bootstrap_096b6a9ad2685e6e35b7d75f05a4dd3d'] = 'Bienvenido a Nosto';
+$_MODULE['<{nostotagging}prestashop>config-bootstrap_f9435972f7e6f7b6c5d8d6b4e8688a27'] = 'Nosto es la solución de personalización de mayor crecimiento en el mundo, que permite a tiendas online ofrecer experencias de compras personalizadas a sus clientes en todos los canales.';
+$_MODULE['<{nostotagging}prestashop>config-bootstrap_5d4458d1a6873e632b86f0f9eee320f8'] = 'Más de 10,000 tiendas en el mundo confían en Nosto.';
+$_MODULE['<{nostotagging}prestashop>config-bootstrap_0a1068d4187d880068c65be6c5b16158'] = 'Facebook Ads';
+$_MODULE['<{nostotagging}prestashop>config-bootstrap_e1492b33be1d51cc1c880ac61f4949dd'] = 'Recomendaciones de productos';
+$_MODULE['<{nostotagging}prestashop>config-bootstrap_427893795e39ef395440ad58f2220300'] = 'Pop-ups de comportamiento';
+$_MODULE['<{nostotagging}prestashop>config-bootstrap_5253b8ce018adcf45f3ea48700f6b4b0'] = 'Emails personalizados';

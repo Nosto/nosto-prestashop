@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2015 Nosto Solutions Ltd
+ * 2013-2016 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,7 +19,7 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2015 Nosto Solutions Ltd
+ * @copyright 2013-2016 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
@@ -32,50 +32,52 @@ require_once(dirname(__FILE__).'/api.php');
  */
 class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFrontController
 {
-	/**
-	 * @inheritdoc
-	 */
-	public function initContent()
-	{
-		$context = $this->module->getContext();
-		$collection = new NostoExportProductCollection();
-		foreach ($this->getProductIds() as $id_product)
-		{
-			$product = new Product($id_product, true, $context->language->id, $context->shop->id);
-			if (!Validate::isLoadedObject($product))
-				continue;
+    /**
+     * @inheritdoc
+     */
+    public function initContent()
+    {
+        $context = $this->module->getContext();
+        $collection = new NostoExportProductCollection();
+        foreach ($this->getProductIds() as $id_product) {
+            $product = new Product($id_product, true, $context->language->id, $context->shop->id);
+            if (!Validate::isLoadedObject($product)) {
+                continue;
+            }
 
-			$nosto_product = new NostoTaggingProduct();
-			$nosto_product->loadData($context, $product);
+            $nosto_product = new NostoTaggingProduct();
+            $nosto_product->loadData($context, $product);
+            $collection[] = $nosto_product;
+        }
 
-			$validator = new NostoValidator($nosto_product);
-			if ($validator->validate())
-				$collection[] = $nosto_product;
+        $this->encryptOutput($collection);
+    }
 
-			$product = null;
-		}
+    /**
+     * Returns a list of all active product ids with limit and offset applied.
+     *
+     * @return array the product id list.
+     */
+    protected function getProductIds()
+    {
+        $product_ids = array();
+        $sql = sprintf(
+            '
+                SELECT id_product
+                FROM %sproduct
+                WHERE active = 1 AND available_for_order = 1
+                LIMIT %d
+                OFFSET %d
+            ',
+            _DB_PREFIX_,
+            $this->limit,
+            $this->offset
+        );
 
-		$this->encryptOutput($collection);
-	}
-
-	/**
-	 * Returns a list of all active product ids with limit and offset applied.
-	 *
-	 * @return array the product id list.
-	 */
-	protected function getProductIds()
-	{
-		$product_ids = array();
-		$sql = <<<EOT
-			SELECT `id_product`
-			FROM `ps_product`
-			WHERE `active` = 1 AND `available_for_order` = 1
-			LIMIT $this->limit
-			OFFSET $this->offset
-EOT;
-		$rows = Db::getInstance()->executeS($sql);
-		foreach ($rows as $row)
-			$product_ids[] = (int)$row['id_product'];
-		return $product_ids;
-	}
+        $rows = Db::getInstance()->executeS($sql);
+        foreach ($rows as $row) {
+            $product_ids[] = (int)$row['id_product'];
+        }
+        return $product_ids;
+    }
 }

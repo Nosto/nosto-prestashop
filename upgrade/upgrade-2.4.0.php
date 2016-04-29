@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2015 Nosto Solutions Ltd
+ * 2013-2016 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,12 +19,13 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2015 Nosto Solutions Ltd
+ * @copyright 2013-2016 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-if (!defined('_PS_VERSION_'))
-	exit;
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 /**
  * Upgrades the module to version 2.4.0.
@@ -37,9 +38,10 @@ if (!defined('_PS_VERSION_'))
  */
 function upgrade_module_2_4_0($object)
 {
-	if (_PS_VERSION_ < '1.5')
-		return true;
+    if (_PS_VERSION_ < '1.5') {
+        return true;
+    }
 
-	return Nosto::helper('nosto_tagging/admin_tab')->install()
-		&& $object->registerHook('displayBackOfficeHeader');
+    return Nosto::helper('nosto_tagging/admin_tab')->install()
+        && $object->registerHook('displayBackOfficeHeader');
 }

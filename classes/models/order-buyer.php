@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2015 Nosto Solutions Ltd
+ * 2013-2016 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,7 +19,7 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2015 Nosto Solutions Ltd
+ * @copyright 2013-2016 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
@@ -28,54 +28,54 @@
  */
 class NostoTaggingOrderBuyer implements NostoOrderBuyerInterface
 {
-	/**
-	 * @var string the first name of the one who placed the order.
-	 */
-	protected $first_name;
+    /**
+     * @var string the first name of the one who placed the order.
+     */
+    protected $first_name;
 
-	/**
-	 * @var string the last name of the one who placed the order.
-	 */
-	protected $last_name;
+    /**
+     * @var string the last name of the one who placed the order.
+     */
+    protected $last_name;
 
-	/**
-	 * @var string the email address of the one who placed the order.
-	 */
-	protected $email;
+    /**
+     * @var string the email address of the one who placed the order.
+     */
+    protected $email;
 
-	/**
-	 * @inheritdoc
-	 */
-	public function getFirstName()
-	{
-		return $this->first_name;
-	}
+    /**
+     * @inheritdoc
+     */
+    public function getFirstName()
+    {
+        return $this->first_name;
+    }
 
-	/**
-	 * @inheritdoc
-	 */
-	public function getLastName()
-	{
-		return $this->last_name;
-	}
+    /**
+     * @inheritdoc
+     */
+    public function getLastName()
+    {
+        return $this->last_name;
+    }
 
-	/**
-	 * @inheritdoc
-	 */
-	public function getEmail()
-	{
-		return $this->email;
-	}
+    /**
+     * @inheritdoc
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
 
-	/**
-	 * Loads the buyer data from the customer object.
-	 *
-	 * @param Customer $customer the customer object.
-	 */
-	public function loadData(Customer $customer)
-	{
-		$this->first_name = $customer->firstname;
-		$this->last_name = $customer->lastname;
-		$this->email = $customer->email;
-	}
+    /**
+     * Loads the buyer data from the customer object.
+     *
+     * @param Customer $customer the customer object.
+     */
+    public function loadData(Customer $customer)
+    {
+        $this->first_name = $customer->firstname;
+        $this->last_name = $customer->lastname;
+        $this->email = $customer->email;
+    }
 }

@@ -4,6 +4,21 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
 
+## [2.5.0]
+- Add possibility to override data for product and order models
+- Handle empty payment module in order
+- Add database prefix to custom queries
+- Loosen up the product and order validation
+- Change coding standards & module structure to meet Prestashop validation rules
+- Introduce packaging with phing (development only)
+
+## [2.4.4]
+- Fix occasionally missing smarty
+- Remove submodules for backward compatibility and Nosto PHP SDK
+
+## [2.4.3]
+- Update module admin page
+
 ## [2.4.2]
 ### Fixed
 - Issue with missing "addCss" method in hook "displayBackOfficeHeader", when controller in context inherits
@@ -157,7 +172,10 @@ from "AdminTab" instead of "AdminController" in PS 1.5+
 - Initial release
 
 
-[unreleased]: https://github.com/nosto/nostotagging/compare/2.4.2...develop
+[unreleased]: https://github.com/nosto/nostotagging/compare/2.5.0...develop
+[2.5.0]: https://github.com/nosto/nostotagging/compare/2.4.4...2.5.0
+[2.4.4]: https://github.com/nosto/nostotagging/compare/2.4.3...2.4.4
+[2.4.3]: https://github.com/nosto/nostotagging/compare/2.4.2...2.4.3
 [2.4.2]: https://github.com/nosto/nostotagging/compare/2.4.1...2.4.2
 [2.4.1]: https://github.com/nosto/nostotagging/compare/2.4.0...2.4.1
 [2.4.0]: https://github.com/nosto/nostotagging/compare/0.4.1...2.4.0

@@ -1,5 +1,5 @@
 {*
-* 2013-2015 Nosto Solutions Ltd
+* 2013-2016 Nosto Solutions Ltd
 *
 * NOTICE OF LICENSE
 *
@@ -18,15 +18,15 @@
 * needs please refer to http://www.prestashop.com for more information.
 *
 * @author    Nosto Solutions Ltd <contact@nosto.com>
-* @copyright 2013-2015 Nosto Solutions Ltd
+* @copyright 2013-2016 Nosto Solutions Ltd
 * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *}
-
 <div id="hidden_nosto_elements" style="display: none;">
-    {if (!empty($hidden_nosto_elements_prepend))}
-        <div class="prepend">{$hidden_nosto_elements_prepend}</div>
-    {/if}
-    {if (!empty($hidden_nosto_elements_append))}
-        <div class="append">{$hidden_nosto_elements_append}</div>
-    {/if}
+    <div class="prepend">
+        <div class="hidden_nosto_element" data-nosto-id="nosto-page-search1"></div>
+    </div>
+    <div class="append">
+        <div class="hidden_nosto_element" data-nosto-id="nosto-page-search2"></div>
+    </div>
 </div>
+

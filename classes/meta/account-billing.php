@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2015 Nosto Solutions Ltd
+ * 2013-2016 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,7 +19,7 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2015 Nosto Solutions Ltd
+ * @copyright 2013-2016 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
@@ -28,38 +28,38 @@
  */
 class NostoTaggingMetaAccountBilling implements NostoAccountMetaDataBillingDetailsInterface
 {
-	/**
-	 * @var string country ISO (ISO 3166-1 alpha-2) code for billing details.
-	 */
-	protected $country;
+    /**
+     * @var string country ISO (ISO 3166-1 alpha-2) code for billing details.
+     */
+    protected $country;
 
-	/**
-	 * Loads the meta data from the given context.
-	 *
-	 * @param Context $context the context to use as data source.
-	 */
-	public function loadData($context)
-	{
-		$this->country = $context->country->iso_code;
-	}
+    /**
+     * Loads the meta data from the given context.
+     *
+     * @param Context $context the context to use as data source.
+     */
+    public function loadData($context)
+    {
+        $this->country = $context->country->iso_code;
+    }
 
-	/**
-	 * Sets the account billing details country ISO (ISO 3166-1 alpha-2) code.
-	 *
-	 * @param string $country the country ISO code.
-	 */
-	public function setCountry($country)
-	{
-		$this->country = $country;
-	}
+    /**
+     * Sets the account billing details country ISO (ISO 3166-1 alpha-2) code.
+     *
+     * @param string $country the country ISO code.
+     */
+    public function setCountry($country)
+    {
+        $this->country = $country;
+    }
 
-	/**
-	 * The 2-letter ISO code (ISO 3166-1 alpha-2) for billing details country.
-	 *
-	 * @return string the country ISO code.
-	 */
-	public function getCountry()
-	{
-		return $this->country;
-	}
+    /**
+     * The 2-letter ISO code (ISO 3166-1 alpha-2) for billing details country.
+     *
+     * @return string the country ISO code.
+     */
+    public function getCountry()
+    {
+        return $this->country;
+    }
 }
