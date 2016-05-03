@@ -43,6 +43,7 @@ if ((basename(__FILE__) === 'nostotagging.php')) {
     require_once($module_dir.'/classes/helpers/product-operation.php');
     require_once($module_dir.'/classes/helpers/updater.php');
     require_once($module_dir.'/classes/helpers/url.php');
+    require_once($module_dir.'/classes/helpers/currency.php');
     require_once($module_dir.'/classes/meta/account.php');
     require_once($module_dir.'/classes/meta/account-billing.php');
     require_once($module_dir.'/classes/meta/account-iframe.php');
@@ -54,6 +55,7 @@ if ((basename(__FILE__) === 'nostotagging.php')) {
     require_once($module_dir.'/classes/models/customer.php');
     require_once($module_dir.'/classes/models/order.php');
     require_once($module_dir.'/classes/models/order-buyer.php');
+    require_once($module_dir.'/classes/models/price-variation.php');
     require_once($module_dir.'/classes/models/order-purchased-item.php');
     require_once($module_dir.'/classes/models/order-status.php');
     require_once($module_dir.'/classes/models/product.php');
@@ -108,6 +110,11 @@ class NostoTagging extends Module
             'name' => 'actionNostoProductLoadAfter',
             'title' => 'After load nosto product',
             'description' => 'Action hook fired after a Nosto product object has been loaded.',
+        ),
+        array(
+            'name' => 'actionNostoPriceVariationLoadAfter',
+            'title' => 'After load nosto price variation',
+            'description' => 'Action hook fired after a Nosto price variation object has been initialized.',
         ),
     );
 
@@ -490,6 +497,7 @@ class NostoTagging extends Module
         $html = '';
         $html .= $this->getCustomerTagging();
         $html .= $this->getCartTagging();
+        $html .= $this->getPriceVariationTagging();
 
         if ($this->isController('category')) {
         // The "getCategory" method is available from Prestashop 1.5.6.0 upwards.
@@ -1333,5 +1341,28 @@ class NostoTagging extends Module
         }
 
         throw new \NostoException('Could not find smarty');
+    }
+
+    /**
+     * Render meta-data (tagging) for the price variation in use.
+     *
+     * This is needed for the multi currency features.
+     *
+     * @return string The rendered HTML
+     */
+    protected function getPriceVariationTagging()
+    {
+        $priceVariation = new NostoTaggingPriceVariation();
+        /* @var $currencyHelper NostoTaggingHelperCurrency */
+        $currencyHelper = Nosto::helper('nosto_tagging/currency');
+        $currencies = $currencyHelper->getCurrencies($this->context);
+        
+        if (count($currencies) > 1) {
+            $priceVariation->setVariationId(
+                $currencyHelper->getActiveCurrency($this->context)
+            );
+        }
+        $this->getSmarty()->assign(array('nosto_price_variation' => $priceVariation));
+        return $this->display(__FILE__, 'views/templates/hook/top_price_variation-tagging.tpl');
     }
 }
