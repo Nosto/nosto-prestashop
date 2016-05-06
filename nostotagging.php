@@ -44,6 +44,7 @@ if ((basename(__FILE__) === 'nostotagging.php')) {
     require_once($module_dir.'/classes/helpers/updater.php');
     require_once($module_dir.'/classes/helpers/url.php');
     require_once($module_dir.'/classes/helpers/currency.php');
+    require_once($module_dir.'/classes/helpers/context-factory.php');
     require_once($module_dir.'/classes/meta/account.php');
     require_once($module_dir.'/classes/meta/account-billing.php');
     require_once($module_dir.'/classes/meta/account-iframe.php');

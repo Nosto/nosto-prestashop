@@ -150,4 +150,28 @@ class NostoTaggingHelperAccount
         $account = $this->find($lang_id, $id_shop_group, $id_shop);
         return ($account !== null && $account->isConnectedToNosto());
     }
+
+
+    /**
+     * Sends a currency exchange rate update request to Nosto via the API.
+     *
+     * @param NostoAccount $account
+     * @param Context|ContextCore $context
+     * @return bool
+     */
+    public function updateCurrencyExchangeRates(NostoAccount $account, Context $context)
+    {
+        /** @var NostoTaggingHelperCurrency $currency_helper */
+        $currency_helper = Nosto::helper('nosto_tagging/currency');
+        try {
+            $exchangeRates = $currency_helper->getExchangeRateCollection($context);
+            $service = new NostoOperationExchangeRate($account);
+            return $service->update($exchangeRates);
+        } catch (NostoException $e) {
+            /** @var NostoTaggingHelperLogger $logger */
+            $logger = Nosto::helper('nosto_tagging/logger');
+            $logger->error(__CLASS__ . '::' . __FUNCTION__ . ' - ' . $e->getMessage(), $e->getCode());
+        }
+        return false;
+    }
 }
