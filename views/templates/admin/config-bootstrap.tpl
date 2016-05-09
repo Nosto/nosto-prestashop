@@ -55,8 +55,8 @@
                     <div class="panel-body text-center">
                         {if $nostotagging_account_authorized}
                             <div id="nostotagging_installed" style="{if !empty($iframe_url)}display: none;{/if}">
-                                <h2>{$translations.nostotagging_installed_heading|escape:'htmlall':'UTF-8'}</h2>
-                                <p>{$translations.nostotagging_installed_subheading|escape:'htmlall':'UTF-8'}</p>
+                                <h2>{$nostotagging_translations.installed_heading|escape:'htmlall':'UTF-8'}</h2>
+                                <p>{$nostotagging_translations.installed_subheading|escape:'htmlall':'UTF-8'}</p>
                                 <div class="panes">
                                     <p>{l s='If you want to change the account, you need to remove the existing one first' mod='nostotagging'}</p>
                                     {if !empty($iframe_url)}
@@ -64,6 +64,29 @@
                                     {/if}
                                     <button type="submit" onclick="return confirm('{l s='Are you sure you want to uninstall Nosto?' mod='nostotagging'}');"
                                             value="1" class="btn btn-red" name="submit_nostotagging_reset_account">{l s='Remove Nosto' mod='nostotagging'}</button>
+                                </div>
+                                <hr>
+                                <div class="row-fluid">
+                                    <div class="col-xs-6">
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">{l s='Exchange rates' mod='nostotagging'}</div>
+                                            <div class="panel-body">
+                                                <p class="help-block">{l
+                                                    s='Synchronise currency exchange rates with Nosto by
+                                            clicking the button below. Note that there is also a cron controller available
+                                            for periodically updating the rates. You can set up the cron job by adding the
+                                            example below to your servers crontab, or by using the Prestashop `cronjob` module.'
+                                                    mod='nostotagging'
+                                                    }</p>
+                                                <p class="help-block">{$nostotagging_translations.exchange_rate_crontab_example|escape:'quotes':'UTF-8'}</p>
+                                                <div class="form-group">
+                                                    <button name="submit_nostotagging_update_exchange_rates" class="btn btn-blue" type="submit" value="1">
+                                                        {l s='Update exchange rates' mod='nostotagging'}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             {if !empty($iframe_url)}
@@ -79,7 +102,7 @@
                                                     <div class="login-block">
                                                         <img src="https://my.nosto.com/public/images/nosto/logoslogan.svg" class="img-logo">
                                                         <h2 class="h4 content-header">{l s='Unlock Your 14-Day Free Trial' mod='nostotagging'}</h2>
-                                                        <p class="content-subheader">{$translations.nostotagging_not_installed_subheading|escape:'htmlall':'UTF-8'}</p>
+                                                        <p class="content-subheader">{$nostotagging_translations.not_installed_subheading|escape:'htmlall':'UTF-8'}</p>
                                                         <div class="panes">
                                                             <div id="nostotagging_new_account_group">
                                                                 <div class="form-group">

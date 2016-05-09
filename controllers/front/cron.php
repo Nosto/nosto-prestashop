@@ -52,7 +52,6 @@ abstract class NostoTaggingCronModuleFrontController extends ModuleFrontControll
      */
     protected function validateToken($token)
     {
-        return true;
         return ($token === $this->module->getCronAccessToken());
     }
 }

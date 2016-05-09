@@ -31,6 +31,7 @@ class NostoTaggingHelperConfig
     const ACCOUNT_NAME = 'NOSTOTAGGING_ACCOUNT_NAME';
     const ADMIN_URL = 'NOSTOTAGGING_ADMIN_URL';
     const INSTALLED_VERSION = 'NOSTOTAGGING_INSTALLED_VERSION';
+    const CRON_ACCESS_TOKEN = 'NOSTOTAGGING_CRON_ACCESS_TOKEN';
 
     const TOKEN_CONFIG_PREFIX = 'NOSTOTAGGING_API_TOKEN_';
 
@@ -280,5 +281,28 @@ class NostoTaggingHelperConfig
     protected function getTokenConfigKey($name)
     {
         return self::TOKEN_CONFIG_PREFIX.Tools::strtoupper($name);
+    }
+
+    /**
+     * Returns the access token for the cron controllers.
+     * This token is stored globally for all stores and languages.
+     *
+     * @return string|bool the token or false if not found.
+     */
+    public function getCronAccessToken()
+    {
+        return $this->read(self::CRON_ACCESS_TOKEN);
+    }
+
+    /**
+     * Saves the access token for the cron controllers.
+     * This token is stored globally for all stores and languages.
+     *
+     * @param string $token the token.
+     * @return bool true if saved successfully, false otherwise.
+     */
+    public function saveCronAccessToken($token)
+    {
+        return $this->write(self::CRON_ACCESS_TOKEN, $token, null, true);
     }
 }

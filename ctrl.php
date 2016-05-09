@@ -30,7 +30,7 @@
  * The script is meant to run outside of Prestashop, so if _PS_VERSION_ is already defined, we do nothing.
  */
 if (!defined('_PS_VERSION_')) {
-/*
+    /*
 	 * White-list of valid controllers that this script is allowed to run.
 	 */
     $controller_white_list = array('oauth2', 'product', 'order', 'cronrates');

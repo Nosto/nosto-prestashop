@@ -249,7 +249,9 @@ class NostoTagging extends Module
         $account_email = $employee->email;
         /** @var NostoTaggingHelperFlashMessage $helper_flash */
         $helper_flash = Nosto::helper('nosto_tagging/flash_message');
-
+        /** @var NostoTaggingHelperUrl $helper_url */
+        $helper_url = Nosto::helper('nosto_tagging/url');
+        
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $language_id = (int)Tools::getValue($this->name.'_current_language');
             $current_language = $this->ensureAdminLanguage($languages, $language_id);
@@ -286,6 +288,37 @@ class NostoTagging extends Module
             } elseif (Tools::isSubmit('submit_nostotagging_reset_account')) {
                 $account = Nosto::helper('nosto_tagging/account')->find($language_id);
                 Nosto::helper('nosto_tagging/account')->delete($account, $language_id);
+            } elseif (Tools::isSubmit('submit_nostotagging_update_exchange_rates')) {
+
+                /* @var NostoTaggingHelperAccount $account_helper */
+                $account_helper = Nosto::helper('nosto_tagging/account');
+                $nosto_account = $account_helper->find($language_id);
+                if ($nosto_account &&
+                    $account_helper->updateCurrencyExchangeRates(
+                        $nosto_account,
+                        $this->context
+                    )
+                ) {
+                    $helper_flash->add(
+                        'success',
+                        $this->l(
+                            'Exchange rates succesfully updated to Nosto'
+                        )
+                    );
+                } else {
+
+                    if (!$nosto_account->getApiToken(NostoApiToken::API_EXCHANGE_RATES)) {
+                        $message = 'Failed to update exchange rates to Nosto due to a missing API token. 
+                            Please, reconnect your account with Nosto';
+                    } else {
+                        $message = 'There was an error updating the exchange rates. 
+                            See Prestashop logs for more information.';
+                    }
+                    $helper_flash->add(
+                        'error',
+                        $this->l($message)
+                    );
+                }
             }
 
             // Refresh the page after every POST to get rid of form re-submission errors.
@@ -321,6 +354,7 @@ class NostoTagging extends Module
 
         /** @var NostoAccount $account */
         $account = Nosto::helper('nosto_tagging/account')->find($language_id);
+        $id_shop = $this->context->shop->id;
 
         $this->getSmarty()->assign(array(
             $this->name.'_form_action' => $this->getAdminUrl(),
@@ -331,23 +365,35 @@ class NostoTagging extends Module
             $this->name.'_languages' => $languages,
             $this->name.'_current_language' => $current_language,
             // Hack a few translations for the view as PS 1.4 does not support sprintf syntax in smarty "l" function.
-            'translations' => array(
-                'nostotagging_installed_heading' => sprintf(
+            $this->name.'_translations' => array(
+                'installed_heading' => sprintf(
                     $this->l('You have installed Nosto to your %s shop'),
                     $current_language['name']
                 ),
-                'nostotagging_installed_subheading' => sprintf(
+                'installed_subheading' => sprintf(
                     $this->l('Your account ID is %s'),
                     ($account !== null) ? $account->getName() : ''
                 ),
-                'nostotagging_not_installed_subheading' => sprintf(
+                'not_installed_subheading' => sprintf(
                     $this->l('Install Nosto to your %s shop'),
                     $current_language['name']
+                ),
+                'exchange_rate_crontab_example' =>sprintf(
+                    '0 0 * * * curl --silent %s > /dev/null 2>&1',
+                    $helper_url->getModuleUrl(
+                        $this->name,
+                        $this->_path,
+                        'cronRates',
+                        $current_language['id_lang'],
+                        $id_shop,
+                        array('token' => $this->getCronAccessToken())
+                    )
                 ),
             ),
             $this->name.'_ps_version_class' => 'ps-'.str_replace('.', '', Tools::substr(_PS_VERSION_, 0, 3))
         ));
 
+        
         // Try to login employee to Nosto in order to get a url to the internal setting pages,
         // which are then shown in an iframe on the module config page.
         if ($account && $account->isConnectedToNosto()) {
@@ -1365,5 +1411,25 @@ class NostoTagging extends Module
         }
         $this->getSmarty()->assign(array('nosto_price_variation' => $priceVariation));
         return $this->display(__FILE__, 'views/templates/hook/top_price_variation-tagging.tpl');
+    }
+
+    /**
+     * Returns the access token needed to validate requests to the cron controllers.
+     * The access token is stored in the db config, and will be renewed if the module
+     * is re-installed or the db entry is removed.
+     *
+     * @return string the access token.
+     */
+    public function getCronAccessToken()
+    {
+        /** @var NostoTaggingHelperConfig $helper_config */
+        $helper_config = Nosto::helper('nosto_tagging/config');
+        $token = $helper_config->getCronAccessToken();
+        if (empty($token)) {
+            // Running bin2hex() will make the string length 32 characters.
+            $token = bin2hex(NostoCryptRandom::getRandomString(16));
+            $helper_config->saveCronAccessToken($token);
+        }
+        return $token;
     }
 }

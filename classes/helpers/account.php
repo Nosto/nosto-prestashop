@@ -165,7 +165,7 @@ class NostoTaggingHelperAccount
         $currency_helper = Nosto::helper('nosto_tagging/currency');
         try {
             $exchangeRates = $currency_helper->getExchangeRateCollection($context);
-            $service = new NostoOperationExchangeRate($account);
+            $service = new NostoOperationExchangeRate($account, $exchangeRates);
             return $service->update($exchangeRates);
         } catch (NostoException $e) {
             /** @var NostoTaggingHelperLogger $logger */
