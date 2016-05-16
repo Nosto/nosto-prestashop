@@ -87,6 +87,27 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="col-xs-6">
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">{l s='Advanced settings' mod='nostotagging'}</div>
+                                            <div class="panel-body">
+                                                <div class="form-group">
+                                                    <label for="multi_currency_method">{l s='Multi Currency Method' mod='nostotagging'}</label>
+                                                    <select id="multi_currency_method" name="multi_currency_method" class="form-control input-sm">
+                                                        <option value="disabled" {if $multi_currency_method==="disabled"}selected="selected"{/if}>{l s='Disabled' mod='nostotagging'}</option>
+                                                        <option value="exchangeRates" {if $multi_currency_method==="exchangeRates"}selected="selected"{/if}>{l s='Exchange Rates' mod='nostotagging'}</option>
+                                                    </select>
+                                                    <p class="help-block">{l s='By default Nosto uses the currency exchange rates from the shop to display recommendations in the correct currency. Changing this setting to "Price Variations" allows you to tag all the different prices on the product page. This can be useful when having specialized price rules configured that do not depend on the exchange rates for the currencies.' mod='nostotagging'}</p>
+                                                </div>
+                                            </div>
+                                            <div class="panel-footer">
+                                                <button name="submit_nostotagging_advanced_settings" class="btn btn-default pull-right" type="submit"  value="1">
+                                                    <i class="process-icon-save"></i> {l s='Save' mod='nostotagging'}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
                             {if !empty($iframe_url)}

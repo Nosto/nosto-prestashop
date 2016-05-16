@@ -32,7 +32,7 @@ class NostoTaggingHelperCurrency
      * Fetches the base currency from the context.
      *
      * @param Context|ContextCore $context the context.
-     * @return string Currency code in ISO 4217
+     * @return Currency
      *
      * @throws NostoException if the currency cannot be found, we require it.
      */
@@ -56,7 +56,7 @@ class NostoTaggingHelperCurrency
             );
         }
 
-        return $base_currency->iso_code;
+        return $base_currency;
     }
 
     /**
@@ -146,7 +146,7 @@ class NostoTaggingHelperCurrency
      */
     public function getExchangeRateCollection(Context $context)
     {
-        $base_currency_code = $this->getBaseCurrency($context);
+        $base_currency_code = $this->getBaseCurrency($context)->iso_code;
         $currencies = $this->getCurrencies($context);
         $exchange_rates = new NostoExchangeRateCollection();
         foreach ($currencies as $currency) {

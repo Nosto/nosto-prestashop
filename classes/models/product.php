@@ -127,18 +127,36 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 
         /** @var NostoTaggingHelperUrl $url_helper */
         $url_helper = Nosto::helper('nosto_tagging/url');
+        /** @var NostoTaggingHelperPrice $helper_price */
+        $helper_price = Nosto::helper('nosto_tagging/price');
+        /** @var NostoTaggingHelperCurrency $helper_currency */
+        $helper_currency = Nosto::helper('nosto_tagging/currency');
+        /** @var NostoTaggingHelperConfig $helper_config */
+        $helper_config = Nosto::helper('nosto_tagging/config');
+
+        $base_currency = $helper_currency->getBaseCurrency($context);
 
         $id_lang = $context->language->id;
         $id_shop = $context->shop->id;
-        $currency_iso_code = $context->currency->iso_code;
+        $id_shop_group = $context->shop->id_shop_group;
+
+        $b = $helper_config->useMultipleCurrencies($id_lang) === true;
+        if ($b) {
+            $tagging_currency = $base_currency;
+        } else {
+            $tagging_currency= $context->currency;
+        }
 
         $this->url = $url_helper->getProductUrl($product, $id_lang, $id_shop);
         $this->image_url = $url_helper->getProductImageUrl($product);
         $this->product_id = (int)$product->id;
         $this->name = $product->name;
-        $this->price = $this->calcPrice($product, $context);
-        $this->list_price = $this->calcPrice($product, $context, false /*no discounts*/);
-        $this->currency_code = Tools::strtoupper($currency_iso_code);
+
+        $this->price = $helper_price->getProductPriceInclTax($product, $context, $tagging_currency);
+        $this->list_price = $helper_price->getProductListPriceInclTax($product, $context, $tagging_currency);
+        $this->currency_code = Tools::strtoupper($tagging_currency->iso_code);
+
+        $this->availability = $this->checkAvailability($product);
         $this->availability = $this->checkAvailability($product);
         $this->tags['tag1'] = $this->buildTags($product, $id_lang);
         $this->categories = $this->buildCategories($product, $id_lang);
@@ -164,44 +182,6 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
     public function assignId(Product $product)
     {
         $this->product_id = (int)$product->id;
-    }
-
-    /**
-     * Calculates the price (including tax if applicable) and returns it.
-     *
-     * We need to check if taxes are to be included in the prices, given that they are configured.
-     * This is determined by the "Price display method" setting of the active user group.
-     * Possible values are 1, tax excluded, and 0, tax included.
-     *
-     * @param Product $product the product model.
-     * @param Context $context the context to calculate the price on (currency conversion).
-     * @param bool $discounted_price if discounts should be applied.
-     * @return string the calculated price.
-     */
-    protected function calcPrice(Product $product, Context $context, $discounted_price = true)
-    {
-        $incl_tax = (bool)!Product::getTaxCalculationMethod((int)$context->cookie->id_customer);
-        $specific_price_output = null;
-        $value = Product::getPriceStatic(
-            (int)$product->id,
-            $incl_tax,
-            null, // $id_product_attribute
-            6, // $decimals
-            null, // $divisor
-            false, // $only_reduction
-            $discounted_price, // $user_reduction
-            1, // $quantity
-            false, // $force_associated_tax
-            null, // $id_customer
-            null, // $id_cart
-            null, // $id_address
-            $specific_price_output, // $specific_price_output
-            true, // $with_eco_tax
-            true, // $use_group_reduction
-            $context,
-            true // $use_customer_price
-        );
-        return Nosto::helper('price')->format($value);
     }
 
     /**

@@ -32,8 +32,11 @@ class NostoTaggingHelperConfig
     const ADMIN_URL = 'NOSTOTAGGING_ADMIN_URL';
     const INSTALLED_VERSION = 'NOSTOTAGGING_INSTALLED_VERSION';
     const CRON_ACCESS_TOKEN = 'NOSTOTAGGING_CRON_ACCESS_TOKEN';
-
+    const MULTI_CURRENCY_METHOD = 'NOSTOTAGGING_MC_METHOD';
     const TOKEN_CONFIG_PREFIX = 'NOSTOTAGGING_API_TOKEN_';
+    const MULTI_CURRENCY_METHOD_VARIATION = 'priceVariation';
+    const MULTI_CURRENCY_METHOD_EXCHANGE_RATE = 'exchangeRate';
+    const MULTI_CURRENCY_METHOD_DISABLED = 'disabled';
 
     /**
      * Reads and returns a config entry value.
@@ -93,18 +96,18 @@ class NostoTaggingHelperConfig
      */
     public function purge()
     {
-        $config_table = _DB_PREFIX_.'configuration';
-        $config_lang_table = $config_table.'_lang';
+        $config_table = _DB_PREFIX_ . 'configuration';
+        $config_lang_table = $config_table . '_lang';
 
         Db::getInstance()->execute(
-            'DELETE `'.$config_lang_table.'` FROM `'.$config_lang_table.'`
-			LEFT JOIN `'.$config_table.'`
-			ON `'.$config_lang_table.'`.`id_configuration` = `'.$config_table.'`.`id_configuration`
-			WHERE `'.$config_table.'`.`name` LIKE "NOSTOTAGGING_%"'
+            'DELETE `' . $config_lang_table . '` FROM `' . $config_lang_table . '`
+			LEFT JOIN `' . $config_table . '`
+			ON `' . $config_lang_table . '`.`id_configuration` = `' . $config_table . '`.`id_configuration`
+			WHERE `' . $config_table . '`.`name` LIKE "NOSTOTAGGING_%"'
         );
         Db::getInstance()->execute('
-			DELETE FROM `'.$config_table.'`
-			WHERE `'.$config_table.'`.`name` LIKE "NOSTOTAGGING_%"');
+			DELETE FROM `' . $config_table . '`
+			WHERE `' . $config_table . '`.`name` LIKE "NOSTOTAGGING_%"');
 
         // Reload the config.
         Configuration::loadConfiguration();
@@ -131,10 +134,10 @@ class NostoTaggingHelperConfig
             }
 
             if ($id_shop) {
-                $context_restriction = ' AND `id_shop` = '.$id_shop;
+                $context_restriction = ' AND `id_shop` = ' . $id_shop;
             } elseif ($id_shop_group) {
                 $context_restriction = '
-                    AND `id_shop_group` = '.$id_shop_group.'
+                    AND `id_shop_group` = ' . $id_shop_group . '
                     AND (`id_shop` IS NULL OR `id_shop` = 0)
                 ';
             } else {
@@ -147,17 +150,17 @@ class NostoTaggingHelperConfig
             $context_restriction = '';
         }
 
-        $config_table = _DB_PREFIX_.'configuration';
-        $config_lang_table = $config_table.'_lang';
+        $config_table = _DB_PREFIX_ . 'configuration';
+        $config_lang_table = $config_table . '_lang';
 
         if (!empty($id_lang)) {
             Db::getInstance()->execute(
-                'DELETE `'.$config_lang_table.'` FROM `'.$config_lang_table.'`
-				INNER JOIN `'.$config_table.'`
-				ON `'.$config_lang_table.'`.`id_configuration` = `'.$config_table.'`.`id_configuration`
-				WHERE `'.$config_table.'`.`name` LIKE "NOSTOTAGGING_%"
-				AND `id_lang` = '.(int)$id_lang
-                .$context_restriction
+                'DELETE `' . $config_lang_table . '` FROM `' . $config_lang_table . '`
+				INNER JOIN `' . $config_table . '`
+				ON `' . $config_lang_table . '`.`id_configuration` = `' . $config_table . '`.`id_configuration`
+				WHERE `' . $config_table . '`.`name` LIKE "NOSTOTAGGING_%"
+				AND `id_lang` = ' . (int)$id_lang
+                . $context_restriction
             );
         }
         // We do not actually delete the main config entries, just set them to NULL, as there might me other language
@@ -280,7 +283,7 @@ class NostoTaggingHelperConfig
      */
     protected function getTokenConfigKey($name)
     {
-        return self::TOKEN_CONFIG_PREFIX.Tools::strtoupper($name);
+        return self::TOKEN_CONFIG_PREFIX . Tools::strtoupper($name);
     }
 
     /**
@@ -305,4 +308,54 @@ class NostoTaggingHelperConfig
     {
         return $this->write(self::CRON_ACCESS_TOKEN, $token, null, true);
     }
+
+    /**
+     * Returns the multi currency method in use for the context.
+     *
+     * @param int $id_lang the language.
+     * @return string the multi currency method.
+     */
+    public function getMultiCurrencyMethod($id_lang)
+    {
+        $method = $this->read(self::MULTI_CURRENCY_METHOD, $id_lang);
+        return !empty($method) ? $method : self::MULTI_CURRENCY_METHOD_DISABLED;
+    }
+
+    /**
+     * Returns the multi currency method in use for the context.
+     *
+     * @param int $id_lang the language.
+     * @param string $method the multi currency method.
+     * @return string the multi currency method.
+     */
+    public function saveMultiCurrencyMethod($id_lang, $method)
+    {
+        return $this->write(self::MULTI_CURRENCY_METHOD, $method, $id_lang);
+    }
+
+    /**
+     * Checks if multiple currencies are used in tagging
+     *
+     * @param int $id_lang the language.
+     * @param null|int $id_shop_group the shop group (defaults to current context).
+     * @param null|int $id_shop the shop (defaults to current context).
+     * @return boolean the multi currency method.
+     */
+    public function useMultipleCurrencies($id_lang, $id_shop_group = null, $id_shop = null)
+    {
+        if (
+            $this->getMultiCurrencyMethod(
+                $id_lang,
+                $id_shop_group,
+                $id_shop
+            ) !== self::MULTI_CURRENCY_METHOD_DISABLED
+        ) {
+
+            return true;
+        } else {
+
+            return false;
+        }
+    }
+
 }

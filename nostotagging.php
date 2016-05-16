@@ -45,6 +45,7 @@ if ((basename(__FILE__) === 'nostotagging.php')) {
     require_once($module_dir.'/classes/helpers/url.php');
     require_once($module_dir.'/classes/helpers/currency.php');
     require_once($module_dir.'/classes/helpers/context-factory.php');
+    require_once($module_dir.'/classes/helpers/price.php');
     require_once($module_dir.'/classes/meta/account.php');
     require_once($module_dir.'/classes/meta/account-billing.php');
     require_once($module_dir.'/classes/meta/account-iframe.php');
@@ -251,7 +252,9 @@ class NostoTagging extends Module
         $helper_flash = Nosto::helper('nosto_tagging/flash_message');
         /** @var NostoTaggingHelperUrl $helper_url */
         $helper_url = Nosto::helper('nosto_tagging/url');
-        
+        /** @var NostoTaggingHelperConfig $helper_config */
+        $helper_config = Nosto::helper('nosto_tagging/config');
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $language_id = (int)Tools::getValue($this->name.'_current_language');
             $current_language = $this->ensureAdminLanguage($languages, $language_id);
@@ -318,6 +321,22 @@ class NostoTagging extends Module
                         'error',
                         $this->l($message)
                     );
+                }
+            } elseif (Tools::isSubmit('multi_currency_method')) {
+                /** @var NostoTaggingHelperConfig $helper_config */
+                $helper_config = Nosto::helper('nosto_tagging/config');
+                /** @var NostoTaggingHelperFlashMessage $helper_flash */
+                $helper_flash = Nosto::helper('nosto_tagging/flash_message');
+
+                if (
+                    $helper_config->saveMultiCurrencyMethod(
+                        $language_id,
+                        Tools::getValue('multi_currency_method')
+                    )
+                ) {
+                    $helper_flash->add('success', $this->l('The settings have been saved.'));
+                } else {
+                    $helper_flash->add('error', $this->l('There was an error saving the settings.'));
                 }
             }
 
@@ -390,6 +409,7 @@ class NostoTagging extends Module
                     )
                 ),
             ),
+            'multi_currency_method' => $helper_config->getMultiCurrencyMethod($current_language['id_lang']),
             $this->name.'_ps_version_class' => 'ps-'.str_replace('.', '', Tools::substr(_PS_VERSION_, 0, 3))
         ));
 
@@ -486,6 +506,7 @@ class NostoTagging extends Module
             'nosto_unique_id' => $this->getUniqueInstallationId(),
             'nosto_language' => Tools::strtolower($this->context->language->iso_code),
             'add_to_cart_url' => $link->getPageLink('cart.php'),
+            'static_token' => Tools::getToken(false)
         ));
 
         $this->context->controller->addJS($this->_path.'views/js/nostotagging-auto-slots.js');
