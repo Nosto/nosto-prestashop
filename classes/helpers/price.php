@@ -73,7 +73,9 @@ class NostoTaggingHelperPrice
 
         return $this->calcPrice((int)$item['id_product'], $currency, $context, array(
             'user_reduction' => true,
-            'id_product_attribute' => (isset($item['id_product_attribute']) ? (int)$item['id_product_attribute'] : null),
+            'id_product_attribute' => (
+                isset($item['id_product_attribute']) ? (int)$item['id_product_attribute'] : null
+            ),
             'id_customer' => ((int)$cart->id_customer ? (int)$cart->id_customer : null),
             'id_cart' => (int)$cart->id,
             'id_address' => (Address::addressExists($id_address) ? (int)$id_address : null),

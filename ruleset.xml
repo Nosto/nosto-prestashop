@@ -40,5 +40,6 @@
         <exclude name="PSR1.Files.SideEffects.FoundWithSymbols">
             <exclude-pattern>nostotagging.php</exclude-pattern>
         </exclude>
+        <exclude name="PSR2.ControlStructures.ControlStructureSpacing.SpacingAfterOpenBrace"/>
     </rule>
 </ruleset>

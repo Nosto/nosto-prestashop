@@ -322,21 +322,51 @@ class NostoTagging extends Module
                         $this->l($message)
                     );
                 }
-            } elseif (Tools::isSubmit('multi_currency_method')) {
+            } elseif (
+                Tools::isSubmit('submit_nostotagging_advanced_settings')
+                && Tools::isSubmit('multi_currency_method')
+            ) {
+                /** @var NostoTaggingHelperAccount $helper_account */
+                $helper_account = Nosto::helper('nosto_tagging/account');
                 /** @var NostoTaggingHelperConfig $helper_config */
                 $helper_config = Nosto::helper('nosto_tagging/config');
                 /** @var NostoTaggingHelperFlashMessage $helper_flash */
                 $helper_flash = Nosto::helper('nosto_tagging/flash_message');
 
-                if (
-                    $helper_config->saveMultiCurrencyMethod(
-                        $language_id,
-                        Tools::getValue('multi_currency_method')
-                    )
-                ) {
+                $helper_config->saveMultiCurrencyMethod($language_id, Tools::getValue('multi_currency_method'));
+
+                $account = $helper_account->find($language_id);
+                $account_meta = new NostoTaggingMetaAccount();
+                $account_meta->loadData($this->context, $language_id);
+
+                // Make sure we Nosto is installed for the current store
+                if (empty($account) || !$account->isConnectedToNosto()) {
+                    Tools::redirect(
+                        NostoHttpRequest::replaceQueryParamInUrl(
+                            'language_id',
+                            $language_id,
+                            $admin_url
+                        ),
+                        ''
+                    );
+                    die;
+                }
+
+                try {
+                    $helper_account->updateSettings($account, $account_meta);
                     $helper_flash->add('success', $this->l('The settings have been saved.'));
-                } else {
-                    $helper_flash->add('error', $this->l('There was an error saving the settings.'));
+                } catch (NostoException $e) {
+                    Nosto::helper('nosto_tagging/logger')->error(
+                        __CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(),
+                        $e->getCode(),
+                        'Employee',
+                        (int)$employee->id
+                    );
+
+                    $helper_flash->add(
+                        'error',
+                        $this->l('There was an error saving the settings. Please, see log for details.')
+                    );
                 }
             }
 
@@ -439,7 +469,8 @@ class NostoTagging extends Module
         $stylesheets = '<link rel="stylesheet" href="'.$this->_path.'views/css/tw-bs-v3.1.1.css">';
         $stylesheets .= '<link rel="stylesheet" href="'.$this->_path.'views/css/nostotagging-admin-config.css">';
         $scripts = '<script type="text/javascript" src="'.$this->_path.'views/js/iframeresizer.min.js"></script>';
-        $scripts .= '<script type="text/javascript" src="'.$this->_path.'views/js/nostotagging-admin-config.js"></script>';
+        $scripts .= '<script type="text/javascript" src="'.$this->_path.'views/js/nostotagging-admin-config.js">';
+        $scripts .= '</script>';
         $output .= $this->display(__FILE__, 'views/templates/admin/config-bootstrap.tpl');
 
         return $stylesheets.$scripts.$output;

@@ -153,7 +153,7 @@ class NostoTaggingHelperAccount
 
 
     /**
-     * Sends a currency exchange rate update request to Nosto via the API.
+     * Sends a currency exchange rate update request to Nosto via API.
      *
      * @param NostoAccount $account
      * @param Context|ContextCore $context
@@ -173,5 +173,18 @@ class NostoTaggingHelperAccount
             $logger->error(__CLASS__ . '::' . __FUNCTION__ . ' - ' . $e->getMessage(), $e->getCode());
         }
         return false;
+    }
+
+    /**
+     * Sends account settings update request to Nosto via API.
+     *
+     * @param NostoAccount $account
+     * @param NostoAccountMetaData $accountMetaData
+     * @return bool
+     */
+    public function updateSettings(NostoAccount $account, NostoAccountMetaData $accountMetaData)
+    {
+        $service = new NostoOperationAccount($account, $accountMetaData);
+        return $service->update();
     }
 }
