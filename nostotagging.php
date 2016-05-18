@@ -34,6 +34,7 @@ if (!defined('_PS_VERSION_')) {
 if ((basename(__FILE__) === 'nostotagging.php')) {
     $module_dir = dirname(__FILE__);
     require_once($module_dir.'/libs/nosto/php-sdk/src/config.inc.php');
+    require_once($module_dir.'/classes/collections/exchange-rates.php');
     require_once($module_dir.'/classes/helpers/account.php');
     require_once($module_dir.'/classes/helpers/admin-tab.php');
     require_once($module_dir.'/classes/helpers/config.php');
@@ -117,6 +118,11 @@ class NostoTagging extends Module
             'name' => 'actionNostoPriceVariationLoadAfter',
             'title' => 'After load nosto price variation',
             'description' => 'Action hook fired after a Nosto price variation object has been initialized.',
+        ),
+        array(
+            'name' => 'actionNostoExchangeRatesLoadAfter',
+            'title' => 'After load nosto exhange rates',
+            'description' => 'Action hook fired after a Nosto exhange rate collection has been initialized.',
         ),
     );
 
@@ -1451,18 +1457,18 @@ class NostoTagging extends Module
      */
     protected function getPriceVariationTagging()
     {
-        $priceVariation = new NostoTaggingPriceVariation();
         /* @var $currencyHelper NostoTaggingHelperCurrency */
         $currencyHelper = Nosto::helper('nosto_tagging/currency');
-        $currencies = $currencyHelper->getCurrencies($this->context);
-        
-        if (count($currencies) > 1) {
-            $priceVariation->setVariationId(
-                $currencyHelper->getActiveCurrency($this->context)
-            );
+        /** @var NostoTaggingHelperConfig $helper_config */
+        $helper_config = Nosto::helper('nosto_tagging/config');
+        $id_lang = $this->context->language->id;
+        if ($helper_config->useMultipleCurrencies($id_lang)) {
+            $defautVariationId = $currencyHelper->getActiveCurrency($this->context);
+            $priceVariation = new NostoTaggingPriceVariation($defautVariationId);
+            $this->getSmarty()->assign(array('nosto_price_variation' => $priceVariation));
+            return $this->display(__FILE__, 'views/templates/hook/top_price_variation-tagging.tpl');
         }
-        $this->getSmarty()->assign(array('nosto_price_variation' => $priceVariation));
-        return $this->display(__FILE__, 'views/templates/hook/top_price_variation-tagging.tpl');
+
     }
 
     /**

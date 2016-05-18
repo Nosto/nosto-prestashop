@@ -76,6 +76,8 @@ class NostoTaggingMetaAccount extends NostoAccountMeta
         if ($config_helper->useMultipleCurrencies($id_lang)) {
             $this->useCurrencyExchangeRates = $config_helper->useMultipleCurrencies($id_lang);
             $this->defautVariationId = $currency_helper->getBaseCurrency($context)->iso_code;
+        } else {
+            $this->useCurrencyExchangeRates = false;
         }
     }
 

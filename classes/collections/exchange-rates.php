@@ -24,40 +24,44 @@
  */
 
 /**
- * Model for the price variation
+ * Created by PhpStorm.
+ * User: hannupolonen
+ * Date: 18/05/16
+ * Time: 12:52
  */
-class NostoTaggingPriceVariation extends NostoTaggingModel
+
+/**
+ * Meta data class for account related information needed when creating new accounts.
+ */
+class NostoTaggingCollectionExchangeRates extends NostoExchangeRateCollection
 {
-    /**
-     * The id of the variation
-     * @var mixed variation id
-     */
-    private $variationId;
-
-    /**
-     * Constructor
-     */
-    public function __construct($variationId = null)
+    public function __construct($input, $flags=0, $iterator_class="ArrayIterator")
     {
-        $this->setVariationId($variationId);
-        $this->dispatchHookActionLoadAfter(array(
-            'nosto_price_variation' => $this
-        ));
+        parent::__construct($input, $flags, $iterator_class);
+        
+        $this->dispatchHook(
+            'actionNostoExchangeRatesLoadAfter',
+            array(
+                'nosto_exhange_rates' => $this,
+            )
+        );
     }
 
     /**
-     * @return mixed
+     * Executes a PS hook by name.
+     *
+     * Abstracts the differences between PS versions.
+     *
+     * @param string $name the hook name.
+     * @param array $params the hook params.
      */
-    public function getVariationId()
+    private function dispatchHook($name, array $params)
     {
-        return $this->variationId;
+        if (_PS_VERSION_ >= '1.5') {
+            Hook::exec($name, $params);
+        } else {
+            Module::hookExec($name, $params);
+        }
     }
-
-    /**
-     * @param mixed $variationId
-     */
-    public function setVariationId($variationId)
-    {
-        $this->variationId = $variationId;
-    }
+    
 }

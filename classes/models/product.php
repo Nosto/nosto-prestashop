@@ -73,6 +73,11 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
     protected $availability;
 
     /**
+     * @var string variationId
+     */
+    protected $variationId;
+
+    /**
      * @var array list of product tags.
      */
     protected $tags = array(
@@ -140,8 +145,10 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
         $id_shop = $context->shop->id;
 
         if ($helper_config->useMultipleCurrencies($id_lang) === true) {
+            $this->variationId = $base_currency;
             $tagging_currency = $base_currency;
         } else {
+            $this->variationId = false;
             $tagging_currency= $context->currency;
         }
 
@@ -685,5 +692,23 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
     public function setShortDescription($short_description)
     {
         $this->short_description = $short_description;
+    }
+
+    /**
+     * Sets the variation id
+     *
+     * @param string $variationId
+     */
+    public function setVariationId($variationId)
+    {
+        $this->variationId = $variationId;
+    }
+
+    /*
+     * @inheritdoc
+     */
+    public function getVariationId()
+    {
+        return $this->variationId;
     }
 }

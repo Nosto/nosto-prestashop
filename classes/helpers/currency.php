@@ -142,13 +142,13 @@ class NostoTaggingHelperCurrency
      * Returns a collection of all currency exchange rates for the context.
      *
      * @param Context $context the context.
-     * @return NostoExchangeRateCollection
+     * @return NostoTaggingCollectionExchangeRates
      */
     public function getExchangeRateCollection(Context $context)
     {
         $base_currency_code = $this->getBaseCurrency($context)->iso_code;
         $currencies = $this->getCurrencies($context);
-        $exchange_rates = new NostoExchangeRateCollection();
+        $exchange_rates = array();
         foreach ($currencies as $currency) {
             // Skip base currencyCode.
             if ($currency['iso_code'] === $base_currency_code) {
@@ -157,11 +157,13 @@ class NostoTaggingHelperCurrency
             
             $exchange_rates[] = new NostoExchangeRate(
                 $currency['iso_code'],
+                $currency['iso_code'],
                 $currency['conversion_rate']
             );
         }
 
-        return $exchange_rates;
+        $rates = new NostoTaggingCollectionExchangeRates($exchange_rates);
+        return $rates;
     }
 
 
