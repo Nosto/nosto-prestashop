@@ -4,7 +4,7 @@ This project adheres to Semantic Versioning(http://semver.org/).
 
 
 ## 2.6.0
-- Add support for multiple currencies (using exhange rates)
+- Add support for multiple currencies (using exchange rates)
 
 ## 2.5.0
 - Add possibility to override data for product and order models

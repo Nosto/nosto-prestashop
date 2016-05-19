@@ -121,8 +121,8 @@ class NostoTagging extends Module
         ),
         array(
             'name' => 'actionNostoRatesLoadAfter',
-            'title' => 'After load nosto exhange rates',
-            'description' => 'Action hook fired after a Nosto exhange rate collection has been initialized.',
+            'title' => 'After load nosto exchange rates',
+            'description' => 'Action hook fired after a Nosto exchange rate collection has been initialized.',
         ),
     );
 
@@ -135,7 +135,7 @@ class NostoTagging extends Module
     {
         $this->name = 'nostotagging';
         $this->tab = 'advertising_marketing';
-        $this->version = '2.6-R1';
+        $this->version = '2.6.R1';
         $this->author = 'Nosto';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -311,7 +311,7 @@ class NostoTagging extends Module
                     $helper_flash->add(
                         'success',
                         $this->l(
-                            'Exchange rates succesfully updated to Nosto'
+                            'Exchange rates successfully updated to Nosto'
                         )
                     );
                 } else {
@@ -1463,12 +1463,11 @@ class NostoTagging extends Module
         $helper_config = Nosto::helper('nosto_tagging/config');
         $id_lang = $this->context->language->id;
         if ($helper_config->useMultipleCurrencies($id_lang)) {
-            $defautVariationId = $currencyHelper->getActiveCurrency($this->context);
-            $priceVariation = new NostoTaggingPriceVariation($defautVariationId);
+            $defaultVariationId = $currencyHelper->getActiveCurrency($this->context);
+            $priceVariation = new NostoTaggingPriceVariation($defaultVariationId);
             $this->getSmarty()->assign(array('nosto_price_variation' => $priceVariation));
             return $this->display(__FILE__, 'views/templates/hook/top_price_variation-tagging.tpl');
         }
-
     }
 
     /**

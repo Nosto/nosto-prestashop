@@ -42,7 +42,7 @@ class NostoTaggingCollectionExchangeRates extends NostoExchangeRateCollection
         $this->dispatchHook(
             'actionNostoExchangeRatesLoadAfter',
             array(
-                'nosto_exhange_rates' => $this,
+                'nosto_exchange_rates' => $this,
             )
         );
     }
