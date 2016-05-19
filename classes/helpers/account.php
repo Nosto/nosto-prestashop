@@ -179,10 +179,10 @@ class NostoTaggingHelperAccount
      * Sends account settings update request to Nosto via API.
      *
      * @param NostoAccount $account
-     * @param NostoAccountMetaData $accountMetaData
+     * @param NostoTaggingMetaAccount $accountMetaData
      * @return bool
      */
-    public function updateSettings(NostoAccount $account, NostoAccountMetaData $accountMetaData)
+    public function updateSettings(NostoAccount $account, NostoTaggingMetaAccount $accountMetaData)
     {
         $service = new NostoOperationAccount($account, $accountMetaData);
         return $service->update();

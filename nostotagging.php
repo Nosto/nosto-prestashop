@@ -115,12 +115,12 @@ class NostoTagging extends Module
             'description' => 'Action hook fired after a Nosto product object has been loaded.',
         ),
         array(
-            'name' => 'actionNostoPriceVariationLoadAfter',
+            'name' => 'actionNostoPriceVariantLoadAfter',
             'title' => 'After load nosto price variation',
             'description' => 'Action hook fired after a Nosto price variation object has been initialized.',
         ),
         array(
-            'name' => 'actionNostoExchangeRatesLoadAfter',
+            'name' => 'actionNostoRatesLoadAfter',
             'title' => 'After load nosto exhange rates',
             'description' => 'Action hook fired after a Nosto exhange rate collection has been initialized.',
         ),
@@ -135,7 +135,7 @@ class NostoTagging extends Module
     {
         $this->name = 'nostotagging';
         $this->tab = 'advertising_marketing';
-        $this->version = '2.5.0';
+        $this->version = '2.6-R1';
         $this->author = 'Nosto';
         $this->need_instance = 1;
         $this->bootstrap = true;
