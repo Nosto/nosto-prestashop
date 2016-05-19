@@ -34,7 +34,7 @@ if (!defined('_PS_VERSION_')) {
  *
  * @return bool
  */
-function upgrade_module_2_6_0()
+function upgrade_module_2_6_R1()
 {
     $hooks = array(
         array(
@@ -44,8 +44,8 @@ function upgrade_module_2_6_0()
         ),
         array(
             'name' => 'actionNostoRatesLoadAfter',
-            'title' => 'After load nosto exhange rates',
-            'description' => 'Action hook fired after a Nosto exhange rate collection has been initialized.',
+            'title' => 'After load nosto exchange rates',
+            'description' => 'Action hook fired after a Nosto exchange rate collection has been initialized.',
         ),
     );
 
