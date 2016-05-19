@@ -145,7 +145,7 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
         $id_shop = $context->shop->id;
 
         if ($helper_config->useMultipleCurrencies($id_lang) === true) {
-            $this->variationId = $base_currency;
+            $this->variationId = $base_currency->iso_code;
             $tagging_currency = $base_currency;
         } else {
             $this->variationId = false;

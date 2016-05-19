@@ -57,8 +57,12 @@
                 {/if}
             {/if}
 		{/foreach}
+			{if $nosto_product->getVariationId()}
+					<span class="variation_id">{$nosto_product->getVariationId()|escape:'htmlall':'UTF-8'}</span>
+			{/if}
 	</div>
-    {if isset($nosto_category) && is_object($nosto_category)}
-        <div class="nosto_category" style="display:none">{$nosto_category->category_string|escape:'htmlall':'UTF-8'}</div>
-    {/if}
+		{if isset($nosto_category) && is_object($nosto_category)}
+				<div class="nosto_category" style="display:none">{$nosto_category->category_string|escape:'htmlall':'UTF-8'}</div>
+		{/if}
+
 {/if}
