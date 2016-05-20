@@ -28,7 +28,7 @@ if (!defined('_PS_VERSION_')) {
 }
 
 /**
- * Upgrades the module to version 2.6.0.
+ * Upgrades the module to version 2.6.R1.
  *
  * Creates "action{MODEL}LoadAfter" hooks dispatched by the tagging model.
  *
