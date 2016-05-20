@@ -28,6 +28,10 @@
     <description>Prestashop coding standard.</description>
     <rule ref="PSR2">
         <exclude name="PSR1.Classes.ClassDeclaration.MissingNamespace"/>
+        <exclude name="PSR1.Files.SideEffects.FoundWithSymbols">
+            <exclude-pattern>nostotagging.php</exclude-pattern>
+        </exclude>
+        <exclude name="PSR2.ControlStructures.ControlStructureSpacing.SpacingAfterOpenBrace"/>
     </rule>
     <exclude-pattern>*/composer/*</exclude-pattern>
     <exclude-pattern>*/php-sdk/*</exclude-pattern>
@@ -36,10 +40,4 @@
     <exclude-pattern>en.php</exclude-pattern>
     <exclude-pattern>es.php</exclude-pattern>
     <exclude-pattern>fr.php</exclude-pattern>
-    <rule ref="PSR2">
-        <exclude name="PSR1.Files.SideEffects.FoundWithSymbols">
-            <exclude-pattern>nostotagging.php</exclude-pattern>
-        </exclude>
-        <exclude name="PSR2.ControlStructures.ControlStructureSpacing.SpacingAfterOpenBrace"/>
-    </rule>
 </ruleset>

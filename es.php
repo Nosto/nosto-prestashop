@@ -58,3 +58,7 @@ $_MODULE['<{nostotagging}prestashop>config-bootstrap_0a1068d4187d880068c65be6c5b
 $_MODULE['<{nostotagging}prestashop>config-bootstrap_e1492b33be1d51cc1c880ac61f4949dd'] = 'Recomendaciones de productos';
 $_MODULE['<{nostotagging}prestashop>config-bootstrap_427893795e39ef395440ad58f2220300'] = 'Pop-ups de comportamiento';
 $_MODULE['<{nostotagging}prestashop>config-bootstrap_5253b8ce018adcf45f3ea48700f6b4b0'] = 'Emails personalizados';
+/** New translations for multi currency **/
+$_MODULE['<{nostotagging}prestashop>nostotagging_147237024a3b18a0fb1d552ae74777b6'] = 'ES / Exchange rates succesfully updated to Nosto';
+$_MODULE['<{nostotagging}prestashop>nostotagging_60be9e8ed4b6fade7d41dd408263c684'] = 'ES / With Synchronise currency exchange rates Nosto by clicking the button below. Note That there is a cron controller Also available for Periodically updating the rates. You can set-up the cron job by adding the example below to your servers crontab, or by using the `cronjob` Prestashop module.';
+// Nosto has created a module for Shopware, so the easiest way to start using Nosto is to install the Nosto module for Shopware and open up an account directly from the Shopware admin.

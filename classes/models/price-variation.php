@@ -36,6 +36,7 @@ class NostoTaggingPriceVariation extends NostoTaggingModel
 
     /**
      * Constructor
+     * @param null $variationId
      */
     public function __construct($variationId = null)
     {

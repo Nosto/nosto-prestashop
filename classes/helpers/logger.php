@@ -71,12 +71,10 @@ class NostoTaggingHelperLogger
     }
 
     /**
-     * Logs an info to the PS log.
+     * Logs info message into the PS log
      *
-     * @param string $message the message.
-     * @param null|int $error_code the error code.
-     * @param null|string $object_type the object type affected.
-     * @param null|int $object_id the object id affected.
+     * @param $message
+     * @return void
      */
     public function info($message)
     {

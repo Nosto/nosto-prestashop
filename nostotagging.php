@@ -1466,8 +1466,11 @@ class NostoTagging extends Module
             $defaultVariationId = $currencyHelper->getActiveCurrency($this->context);
             $priceVariation = new NostoTaggingPriceVariation($defaultVariationId);
             $this->getSmarty()->assign(array('nosto_price_variation' => $priceVariation));
+
             return $this->display(__FILE__, 'views/templates/hook/top_price_variation-tagging.tpl');
         }
+
+        return '';
     }
 
     /**

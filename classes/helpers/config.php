@@ -337,19 +337,11 @@ class NostoTaggingHelperConfig
      * Checks if multiple currencies are used in tagging
      *
      * @param int $id_lang the language.
-     * @param null|int $id_shop_group the shop group (defaults to current context).
-     * @param null|int $id_shop the shop (defaults to current context).
      * @return boolean the multi currency method.
      */
-    public function useMultipleCurrencies($id_lang, $id_shop_group = null, $id_shop = null)
+    public function useMultipleCurrencies($id_lang)
     {
-        if (
-            $this->getMultiCurrencyMethod(
-                $id_lang,
-                $id_shop_group,
-                $id_shop
-            ) !== self::MULTI_CURRENCY_METHOD_DISABLED
-        ) {
+        if ($this->getMultiCurrencyMethod($id_lang) !== self::MULTI_CURRENCY_METHOD_DISABLED) {
 
             return true;
         } else {
@@ -357,5 +349,4 @@ class NostoTaggingHelperConfig
             return false;
         }
     }
-
 }
