@@ -23,5 +23,5 @@
 *}
 
 {if isset($nosto_price_variation) && $nosto_price_variation->getVariationId()}
-		<div class="nosto_variation" style="display:none">{$nosto_price_variation->getVariationId()|escape:'htmlall':'UTF-8'}</div>
+	<div class="nosto_variation" style="display:none">{$nosto_price_variation->getVariationId()|escape:'htmlall':'UTF-8'}</div>
 {/if}
