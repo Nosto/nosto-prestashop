@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "a0acb55fea1d17854c2cb3f5eacab212",
-    "content-hash": "f17095b900f48bfd882b1a889d06fabf",
+    "hash": "2da6bb5a20ebf33760e4d7263623656c",
+    "content-hash": "92d783406e310234690c39e136b65616",
     "packages": [
         {
             "name": "nosto/php-sdk",
-            "version": "1.14.0-RC1",
+            "version": "1.14.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Nosto/php-sdk.git",
-                "reference": "c95c30c8eb19ddbf91482f5f54ea58fc9070fd1e"
+                "reference": "063aee2356438ab498cf9b7216fa51abd2e59bd1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Nosto/php-sdk/zipball/c95c30c8eb19ddbf91482f5f54ea58fc9070fd1e",
-                "reference": "c95c30c8eb19ddbf91482f5f54ea58fc9070fd1e",
+                "url": "https://api.github.com/repos/Nosto/php-sdk/zipball/063aee2356438ab498cf9b7216fa51abd2e59bd1",
+                "reference": "063aee2356438ab498cf9b7216fa51abd2e59bd1",
                 "shasum": ""
             },
             "require-dev": {
@@ -26,15 +26,12 @@
                 "codeception/specify": "@stable"
             },
             "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-3-Clause"
             ],
             "description": "PHP SDK for developing Nosto modules for e-commerce platforms",
-            "support": {
-                "source": "https://github.com/Nosto/php-sdk/tree/feature/support-exhange-rates",
-                "issues": "https://github.com/Nosto/php-sdk/issues"
-            },
-            "time": "2016-05-18 13:42:41"
+            "time": "2016-05-20 06:37:32"
         }
     ],
     "packages-dev": [
@@ -132,9 +129,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "nosto/php-sdk": 5
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],

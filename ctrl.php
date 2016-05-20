@@ -67,7 +67,7 @@ if (!defined('_PS_VERSION_')) {
 
     $controller = Tools::strtolower((string)Tools::getValue('controller'));
     if (!empty($controller)
-        && in_array(strtolower($controller), $controller_white_list)
+        && in_array(Tools::strtolower($controller), $controller_white_list)
     ) {
         require_once($controller_dir.'/'.$controller.'.php');
         ControllerFactory::getController('NostoTagging'.Tools::ucfirst($controller).'ModuleFrontController')->run();

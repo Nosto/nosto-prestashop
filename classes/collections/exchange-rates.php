@@ -35,7 +35,7 @@
  */
 class NostoTaggingCollectionExchangeRates extends NostoExchangeRateCollection
 {
-    public function __construct($input, $flags=0, $iterator_class="ArrayIterator")
+    public function __construct($input, $flags = 0, $iterator_class = "ArrayIterator")
     {
         parent::__construct($input, $flags, $iterator_class);
         
@@ -63,5 +63,4 @@ class NostoTaggingCollectionExchangeRates extends NostoExchangeRateCollection
             Module::hookExec($name, $params);
         }
     }
-    
 }

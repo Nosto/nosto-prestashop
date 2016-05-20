@@ -83,22 +83,6 @@ class NostoTaggingHelperPrice
     }
 
     /**
-     * Converts the price to it's base currency.
-     *
-     * @param NostoPrice $price the price in other than it's base currency.
-     * @param Currency|CurrencyCore $currency the currency the price is currently in.
-     * @return NostoPrice the converted price.
-     */
-    public function convertToBaseCurrency(NostoPrice $price, Currency $currency)
-    {
-        $nosto_currency = new NostoCurrencyCode($currency->iso_code);
-        $currency_exchange = new NostoCurrencyExchange();
-        $rate = new NostoCurrencyExchangeRate($nosto_currency, 1 / $currency->conversion_rate);
-        $new_price = $currency_exchange->convert($price, $rate);
-        return $this->roundPrice($new_price);
-    }
-
-    /**
      * Returns the product price for the given currency.
      * The price is rounded according to the configured rounding mode in PS.
      *
