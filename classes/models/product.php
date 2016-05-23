@@ -138,6 +138,8 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
         $helper_currency = Nosto::helper('nosto_tagging/currency');
         /** @var NostoTaggingHelperConfig $helper_config */
         $helper_config = Nosto::helper('nosto_tagging/config');
+        /** @var NostoHelperPrice $helper_config */
+        $nosto_helper_price = Nosto::helper('nosto/price');
 
         $base_currency = $helper_currency->getBaseCurrency($context);
 
@@ -157,8 +159,20 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
         $this->product_id = (int)$product->id;
         $this->name = $product->name;
 
-        $this->price = $helper_price->getProductPriceInclTax($product, $context, $tagging_currency);
-        $this->list_price = $helper_price->getProductListPriceInclTax($product, $context, $tagging_currency);
+        $this->price = $nosto_helper_price->format(
+            $helper_price->getProductPriceInclTax(
+                $product,
+                $context,
+                $tagging_currency
+            )
+        );
+        $this->list_price = $nosto_helper_price->format(
+            $helper_price->getProductListPriceInclTax(
+                $product,
+                $context,
+                $tagging_currency
+            )
+        );
         $this->currency_code = Tools::strtoupper($tagging_currency->iso_code);
 
         $this->availability = $this->checkAvailability($product);

@@ -321,6 +321,9 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
             $context = Context::getContext();
         }
 
+        /** @var NostoHelperPrice $helper_config */
+        $nosto_helper_price = Nosto::helper('nosto/price');
+
         $id_lang = (int)$context->language->id;
         foreach ($items as $item) {
             $p = new Product($item['product_id'], false, $context->language->id);
@@ -342,7 +345,7 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
                 $purchased_item->setProductId((int)$p->id);
                 $purchased_item->setQuantity((int)$item['product_quantity']);
                 $purchased_item->setName((string)$product_name);
-                $purchased_item->setUnitPrice(Nosto::helper('price')->format($item['product_price_wt']));
+                $purchased_item->setUnitPrice($nosto_helper_price->format($item['product_price_wt']));
                 $purchased_item->setCurrencyCode((string)$currency->iso_code);
                 $purchased_items[] = $purchased_item;
             }
@@ -360,7 +363,7 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
                     $purchased_item->setQuantity(1);
                     $purchased_item->setName('Discount');
                     // Note the negative value.
-                    $purchased_item->setUnitPrice(Nosto::helper('price')->format(-$total_discounts_tax_incl));
+                    $purchased_item->setUnitPrice($nosto_helper_price->format(-$total_discounts_tax_incl));
                     $purchased_item->setCurrencyCode((string)$currency->iso_code);
                     $purchased_items[] = $purchased_item;
                 }
@@ -382,7 +385,7 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
                 $purchased_item->setProductId(-1);
                 $purchased_item->setQuantity(1);
                 $purchased_item->setName('Shipping');
-                $purchased_item->setUnitPrice(Nosto::helper('price')->format($total_shipping_tax_incl));
+                $purchased_item->setUnitPrice($nosto_helper_price->format($total_shipping_tax_incl));
                 $purchased_item->setCurrencyCode((string)$currency->iso_code);
                 $purchased_items[] = $purchased_item;
             }
@@ -392,7 +395,7 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
                 $purchased_item->setProductId(-1);
                 $purchased_item->setQuantity(1);
                 $purchased_item->setName('Gift Wrapping');
-                $purchased_item->setUnitPrice(Nosto::helper('price')->format($total_wrapping_tax_incl));
+                $purchased_item->setUnitPrice($nosto_helper_price->format($total_wrapping_tax_incl));
                 $purchased_item->setCurrencyCode((string)$currency->iso_code);
                 $purchased_items[] = $purchased_item;
             }
