@@ -59,6 +59,11 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
     protected $payment_provider;
 
     /**
+     * @var string external order reference.
+     */
+    protected $external_order_ref;
+
+    /**
      * @var NostoTaggingOrderStatus the order status.
      */
     protected $order_status;
@@ -184,6 +189,26 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
     }
 
     /**
+     * Gets the external order ref
+     *
+     * @return string
+     */
+    public function getExternalOrderRef()
+    {
+        return $this->external_order_ref;
+    }
+
+    /**
+     * Sets the external order ref
+     *
+     * @param string $external_order_ref
+     */
+    public function setExternalOrderRef($external_order_ref)
+    {
+        $this->external_order_ref = $external_order_ref;
+    }
+
+    /**
      * Loads the order data from supplied context and order objects.
      *
      * @param Context $context the context object.
@@ -197,6 +222,12 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 
         $customer = new Customer((int)$order->id_customer);
         // The order reference was introduced in prestashop 1.5 where orders can be split into multiple ones.
+        if (isset($order->reference)) {
+            $this->order_number = $order->reference;
+            $this->external_order_ref = $order->id;
+        } else {
+            $this->order_number = $order->id;
+        }
         $this->order_number = isset($order->reference) ? (string)$order->reference : $order->id;
         $this->buyer_info = new NostoTaggingOrderBuyer();
         $this->buyer_info->loadData($customer);
