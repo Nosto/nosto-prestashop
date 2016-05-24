@@ -415,7 +415,8 @@ class NostoTagging extends Module
 
         $missing_tokens = true;
         if (
-            $account->getApiToken(NostoApiToken::API_EXCHANGE_RATES)
+            $account instanceof NostoAccountInterface
+            && $account->getApiToken(NostoApiToken::API_EXCHANGE_RATES)
             && $account->getApiToken(NostoApiToken::API_SETTINGS)
         ) {
             $missing_tokens = false;

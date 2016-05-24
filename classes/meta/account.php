@@ -62,22 +62,22 @@ class NostoTaggingMetaAccount extends NostoAccountMeta
             $context->country = new Country((int)Configuration::get('PS_COUNTRY_DEFAULT'));
         }
 
-        $this->title = Configuration::get('PS_SHOP_NAME');
-        $this->name = Tools::substr(sha1(rand()), 0, 8);
-        $this->front_page_url = $this->getContextShopUrl($context, $language);
-        $this->currency_code = $context->currency->iso_code;
-        $this->language_code = $context->language->iso_code;
-        $this->owner_language_code = $language->iso_code;
+        $this->setTitle(Configuration::get('PS_SHOP_NAME'));
+        $this->setName(Tools::substr(sha1(rand()), 0, 8));
+        $this->setFrontPageUrl($this->getContextShopUrl($context, $language));
+        $this->setCurrencyCode($context->currency->iso_code);
+        $this->setLanguageCode($context->language->iso_code);
+        $this->setOwnerLanguageCode($language->iso_code);
         $this->owner = new NostoTaggingMetaAccountOwner();
         $this->owner->loadData($context);
         $this->billing = new NostoTaggingMetaAccountBilling();
         $this->billing->loadData($context);
-        $this->currencies = $this->buildCurrencies($context);
+        $this->setCurrencies($this->buildCurrencies($context));
         if ($config_helper->useMultipleCurrencies($id_lang)) {
-            $this->useCurrencyExchangeRates = $config_helper->useMultipleCurrencies($id_lang);
-            $this->defautVariationId = $currency_helper->getBaseCurrency($context)->iso_code;
+            $this->setUseCurrencyExchangeRates($config_helper->useMultipleCurrencies($id_lang));
+            $this->setDefaultVariationId($currency_helper->getBaseCurrency($context)->iso_code);
         } else {
-            $this->useCurrencyExchangeRates = false;
+            $this->setUseCurrencyExchangeRates(false);
         }
     }
 
