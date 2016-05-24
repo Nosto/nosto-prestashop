@@ -135,7 +135,7 @@ class NostoTagging extends Module
     {
         $this->name = 'nostotagging';
         $this->tab = 'advertising_marketing';
-        $this->version = '2.6.R1';
+        $this->version = '2.6.R2';
         $this->author = 'Nosto';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -163,6 +163,8 @@ class NostoTagging extends Module
             // Check for module updates for PS < 1.5.4.0.
             Nosto::helper('nosto_tagging/updater')->checkForUpdates($this);
         }
+
+        NostoHttpRequest::buildUserAgent('Prestashop', _PS_VERSION_, $this->version);
     }
 
     /**
