@@ -66,6 +66,16 @@
                                             value="1" class="btn btn-red" name="submit_nostotagging_reset_account">{l s='Remove Nosto' mod='nostotagging'}</button>
                                 </div>
                                 <hr>
+                                {if $missing_tokens === true}
+                                <div class="row-fluid">
+                                    <div class="col-xs-12">
+                                        <div class="alert alert-warning">
+                                            {l s='Your current installation is missing API tokens required for the multi currency settings. Please reconnect your account with Nosto by ' mod='nostotagging'}
+                                            <button type="submit" value="1" class="btn-link" name="submit_nostotagging_authorize_account">{l s='clicking here' mod='nostotagging'}</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                {/if}
                                 <div class="row-fluid">
                                     <div class="col-xs-6">
                                         <div class="panel">
@@ -78,7 +88,7 @@
                                                         <option value="exchangeRates" {if $multi_currency_method==="exchangeRates"}selected="selected"{/if}>{l s='Exchange Rates' mod='nostotagging'}</option>
                                                     </select>
                                                     <p class="help-block">{l s='Changing this setting to "Exchange Rates" will enable multi currency feature in Nosto.' mod='nostotagging'}</p>
-                                                    <button name="submit_nostotagging_advanced_settings" class="btn btn-default pull-right nosto-footer" type="submit"  value="1">
+                                                    <button name="submit_nostotagging_advanced_settings" class="btn btn-default pull-right nosto-footer" type="submit" value="1" {if $missing_tokens === true}disabled="disabled"{/if}>
                                                         <i class="process-icon-save"></i> {l s='Save' mod='nostotagging'}
                                                     </button>
                                                 </div>
@@ -99,7 +109,7 @@
                                                     }</p>
                                                 <p class="help-block">{$nostotagging_translations.exchange_rate_crontab_example|escape:'quotes':'UTF-8'}</p>
                                                 <div class="form-group">
-                                                    <button name="submit_nostotagging_update_exchange_rates" class="btn btn-blue" type="submit" value="1">
+                                                    <button name="submit_nostotagging_update_exchange_rates" class="btn btn-blue" type="submit" value="1" {if $missing_tokens === true}disabled="disabled"{/if}>
                                                         {l s='Update exchange rates' mod='nostotagging'}
                                                     </button>
                                                 </div>

@@ -413,6 +413,14 @@ class NostoTagging extends Module
         $account = Nosto::helper('nosto_tagging/account')->find($language_id);
         $id_shop = $this->context->shop->id;
 
+        $missing_tokens = true;
+        if (
+            $account->getApiToken(NostoApiToken::API_EXCHANGE_RATES)
+            && $account->getApiToken(NostoApiToken::API_SETTINGS)
+        ) {
+            $missing_tokens = false;
+        }
+
         $this->getSmarty()->assign(array(
             $this->name.'_form_action' => $this->getAdminUrl(),
             $this->name.'_has_account' => ($account !== null),
@@ -448,7 +456,8 @@ class NostoTagging extends Module
                 ),
             ),
             'multi_currency_method' => $helper_config->getMultiCurrencyMethod($current_language['id_lang']),
-            $this->name.'_ps_version_class' => 'ps-'.str_replace('.', '', Tools::substr(_PS_VERSION_, 0, 3))
+            $this->name.'_ps_version_class' => 'ps-'.str_replace('.', '', Tools::substr(_PS_VERSION_, 0, 3)),
+            'missing_tokens' => $missing_tokens,
         ));
 
         
