@@ -3,7 +3,13 @@ All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
 
-## 2.6.0
+## 2.6.R2
+- Define user agent for API calls
+- Fix the missing static token
+- Add alert for missing Nosto API tokens
+- Add support for external order ref
+
+## 2.6.R1
 - Add support for multiple currencies (using exchange rates)
 
 ## 2.5.0
