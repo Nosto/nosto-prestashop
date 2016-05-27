@@ -216,10 +216,6 @@ class NostoTaggingHelperProductOperation
             return null;
         }
 
-        if (isset($product->visibility) && $product->visibility === 'none') {
-            return null;
-        }
-
         $this->makeContextSnapshot();
 
         $nosto_product = new NostoTaggingProduct();

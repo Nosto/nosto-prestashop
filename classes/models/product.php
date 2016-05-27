@@ -28,9 +28,6 @@
  */
 class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInterface, NostoValidatableInterface
 {
-    const IN_STOCK = 'InStock';
-    const OUT_OF_STOCK = 'OutOfStock';
-    const ADD_TO_CART = 'add-to-cart';
 
     /**
      * @var string absolute url to the product page.
@@ -176,7 +173,6 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
         $this->currency_code = Tools::strtoupper($tagging_currency->iso_code);
 
         $this->availability = $this->checkAvailability($product);
-        $this->availability = $this->checkAvailability($product);
         $this->tags['tag1'] = $this->buildTags($product, $id_lang);
         $this->categories = $this->buildCategories($product, $id_lang);
         $this->short_description = $product->description_short;
@@ -213,8 +209,13 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
      */
     protected function checkAvailability(Product $product)
     {
-        $is_visible = (_PS_VERSION_ >= '1.5') ? ($product->visibility !== 'none') : true;
-        return ($product->checkQty(1) && $is_visible) ? self::IN_STOCK : self::OUT_OF_STOCK;
+        if (_PS_VERSION_ >= '1.5' && $product->visibility === 'none') {
+
+            return self::INVISIBLE;
+        } else {
+
+            return ($product->checkQty(1)) ? self::IN_STOCK : self::OUT_OF_STOCK;
+        }
     }
 
     /**
