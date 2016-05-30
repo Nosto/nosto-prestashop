@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
 
+## 2.6.R3
+- Update also invisible products to Nosto
+
 ## 2.6.R2
 - Define user agent for API calls
 - Fix the missing static token
