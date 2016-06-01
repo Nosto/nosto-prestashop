@@ -37,6 +37,9 @@ class NostoTaggingHelperConfig
     const MULTI_CURRENCY_METHOD_VARIATION = 'priceVariation';
     const MULTI_CURRENCY_METHOD_EXCHANGE_RATE = 'exchangeRate';
     const MULTI_CURRENCY_METHOD_DISABLED = 'disabled';
+    const NOSTOTAGGING_POSITION = 'NOSTOTAGGING_POSITION';
+    const NOSTOTAGGING_POSITION_TOP = 'top';
+    const NOSTOTAGGING_POSITION_FOOTER = 'footer';
 
     /**
      * Reads and returns a config entry value.
@@ -322,16 +325,41 @@ class NostoTaggingHelperConfig
     }
 
     /**
-     * Returns the multi currency method in use for the context.
+     * Returns the position where to render Nosto tagging
+     *
+     * @param int $id_lang the language.
+     * @return string
+     */
+    public function getNostotaggingRenderPosition($id_lang)
+    {
+        $position = $this->read(self::NOSTOTAGGING_POSITION, $id_lang);
+        return !empty($position) ? $position: self::NOSTOTAGGING_POSITION_TOP;
+    }
+
+    /**
+     * Saves the multi currency method in use for the context.
      *
      * @param int $id_lang the language.
      * @param string $method the multi currency method.
-     * @return string the multi currency method.
+     * @return void
      */
     public function saveMultiCurrencyMethod($id_lang, $method)
     {
         return $this->write(self::MULTI_CURRENCY_METHOD, $method, $id_lang);
     }
+
+    /**
+     * Saves the position where to render Nosto tagging
+     *
+     * @param int $id_lang the language.
+     * @param string $method the multi currency method.
+     * @return void
+     */
+    public function saveNostoTaggingRenderPosition($id_lang, $method)
+    {
+        return $this->write(self::NOSTOTAGGING_POSITION, $method, $id_lang);
+    }
+
 
     /**
      * Checks if multiple currencies are used in tagging

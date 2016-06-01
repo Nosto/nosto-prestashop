@@ -82,6 +82,13 @@
                                             <div class="panel-heading">{l s='Advanced settings' mod='nostotagging'}</div>
                                             <div class="panel-body">
                                                 <div class="form-group">
+                                                    <label for="nostotagging_position">{l s='Nosto tagging position' mod='nostotagging'}</label>
+                                                    <select id="nostotagging_position" name="nostotagging_position" class="form-control input-sm">
+                                                        <option value="top" {if $nostotagging_position==="top"}selected="selected"{/if}>{l s='Top' mod='nostotagging'}</option>
+                                                        <option value="footer" {if $nostotagging_position==="footer"}selected="selected"{/if}>{l s='Footer' mod='nostotagging'}</option>
+                                                    </select>
+                                                    <p class="help-block">{l s='Change this settings to be "Footer" if your theme does not have displayTop hook' mod='nostotagging'}</p>
+
                                                     <label for="multi_currency_method">{l s='Multi Currency Method' mod='nostotagging'}</label>
                                                     <select id="multi_currency_method" name="multi_currency_method" class="form-control input-sm">
                                                         <option value="disabled" {if $multi_currency_method==="disabled"}selected="selected"{/if}>{l s='Disabled' mod='nostotagging'}</option>
