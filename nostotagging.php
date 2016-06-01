@@ -660,7 +660,6 @@ class NostoTagging extends Module
         $tagging_position = $config_helper->getNostotaggingRenderPosition($this->context->language->id);
         $html = '';
         if ($tagging_position === $config_helper::NOSTOTAGGING_POSITION_TOP) {
-
             $html .= $this->getDefaultTagging();
         }
 
