@@ -47,7 +47,6 @@ abstract class NostoTaggingApiModuleFrontController extends ModuleFrontControlle
     public function __construct()
     {
         parent::__construct();
-
         if (($limit = Tools::getValue('limit')) !== false && !empty($limit)) {
             $this->limit = (int)$limit;
         }

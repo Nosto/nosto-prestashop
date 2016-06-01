@@ -69,4 +69,15 @@ class NostoTaggingHelperLogger
     {
         $this->log($message, self::SEVERITY_ERROR, $error_code, $object_type, $object_id);
     }
+
+    /**
+     * Logs info message into the PS log
+     *
+     * @param $message
+     * @return void
+     */
+    public function info($message)
+    {
+        $this->log($message, self::SEVERITY_INFO);
+    }
 }

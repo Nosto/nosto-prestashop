@@ -55,8 +55,8 @@
                     <div class="panel-body text-center">
                         {if $nostotagging_account_authorized}
                             <div id="nostotagging_installed" style="{if !empty($iframe_url)}display: none;{/if}">
-                                <h2>{$translations.nostotagging_installed_heading|escape:'htmlall':'UTF-8'}</h2>
-                                <p>{$translations.nostotagging_installed_subheading|escape:'htmlall':'UTF-8'}</p>
+                                <h2>{$nostotagging_translations.installed_heading|escape:'htmlall':'UTF-8'}</h2>
+                                <p>{$nostotagging_translations.installed_subheading|escape:'htmlall':'UTF-8'}</p>
                                 <div class="panes">
                                     <p>{l s='If you want to change the account, you need to remove the existing one first' mod='nostotagging'}</p>
                                     {if !empty($iframe_url)}
@@ -64,6 +64,59 @@
                                     {/if}
                                     <button type="submit" onclick="return confirm('{l s='Are you sure you want to uninstall Nosto?' mod='nostotagging'}');"
                                             value="1" class="btn btn-red" name="submit_nostotagging_reset_account">{l s='Remove Nosto' mod='nostotagging'}</button>
+                                </div>
+                                <hr>
+                                {if $missing_tokens === true}
+                                <div class="row-fluid">
+                                    <div class="col-xs-12">
+                                        <div class="alert alert-warning">
+                                            {l s='Your current installation is missing API tokens required for the multi currency settings. Please reconnect your account with Nosto by ' mod='nostotagging'}
+                                            <button type="submit" value="1" class="btn-link" name="submit_nostotagging_authorize_account">{l s='clicking here' mod='nostotagging'}</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                {/if}
+                                <div class="row-fluid">
+                                    <div class="col-xs-6">
+                                        <div class="panel">
+                                            <div class="panel-heading">{l s='Advanced settings' mod='nostotagging'}</div>
+                                            <div class="panel-body">
+                                                <div class="form-group">
+                                                    <label for="multi_currency_method">{l s='Multi Currency Method' mod='nostotagging'}</label>
+                                                    <select id="multi_currency_method" name="multi_currency_method" class="form-control input-sm">
+                                                        <option value="disabled" {if $multi_currency_method==="disabled"}selected="selected"{/if}>{l s='Disabled' mod='nostotagging'}</option>
+                                                        <option value="exchangeRates" {if $multi_currency_method==="exchangeRates"}selected="selected"{/if}>{l s='Exchange Rates' mod='nostotagging'}</option>
+                                                    </select>
+                                                    <p class="help-block">{l s='Changing this setting to "Exchange Rates" will enable multi currency feature in Nosto.' mod='nostotagging'}</p>
+                                                    <button name="submit_nostotagging_advanced_settings" class="btn btn-default pull-right nosto-footer" type="submit" value="1" {if $missing_tokens === true}disabled="disabled"{/if}>
+                                                        <i class="process-icon-save"></i> {l s='Save' mod='nostotagging'}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-6">
+                                        {if $multi_currency_method!=="disabled"}
+                                        <div class="panel">
+                                            <div class="panel-heading">{l s='Exchange rates' mod='nostotagging'}</div>
+                                            <div class="panel-body">
+                                                <p class="help-block">{l
+                                                    s='Synchronise currency exchange rates with Nosto by
+                                            clicking the button below. Note that there is also a cron controller available
+                                            for periodically updating the rates. You can set up the cron job by adding the
+                                            example below to your servers crontab, or by using the Prestashop `cronjob` module.'
+                                                    mod='nostotagging'
+                                                    }</p>
+                                                <p class="help-block">{$nostotagging_translations.exchange_rate_crontab_example|escape:'quotes':'UTF-8'}</p>
+                                                <div class="form-group">
+                                                    <button name="submit_nostotagging_update_exchange_rates" class="btn btn-blue" type="submit" value="1" {if $missing_tokens === true}disabled="disabled"{/if}>
+                                                        {l s='Update exchange rates' mod='nostotagging'}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {/if}
+                                    </div>
                                 </div>
                             </div>
                             {if !empty($iframe_url)}
@@ -79,7 +132,7 @@
                                                     <div class="login-block">
                                                         <img src="https://my.nosto.com/public/images/nosto/logoslogan.svg" class="img-logo">
                                                         <h2 class="h4 content-header">{l s='Unlock Your 14-Day Free Trial' mod='nostotagging'}</h2>
-                                                        <p class="content-subheader">{$translations.nostotagging_not_installed_subheading|escape:'htmlall':'UTF-8'}</p>
+                                                        <p class="content-subheader">{$nostotagging_translations.not_installed_subheading|escape:'htmlall':'UTF-8'}</p>
                                                         <div class="panes">
                                                             <div id="nostotagging_new_account_group">
                                                                 <div class="form-group">
