@@ -342,6 +342,7 @@ class NostoTagging extends Module
                 $helper_flash = Nosto::helper('nosto_tagging/flash_message');
 
                 $helper_config->saveMultiCurrencyMethod($language_id, Tools::getValue('multi_currency_method'));
+                $helper_config->saveNostoTaggingRenderPosition($language_id, Tools::getValue('nostotagging_position'));
 
                 $account = $helper_account->find($language_id);
                 $account_meta = new NostoTaggingMetaAccount();
@@ -457,6 +458,7 @@ class NostoTagging extends Module
                 ),
             ),
             'multi_currency_method' => $helper_config->getMultiCurrencyMethod($current_language['id_lang']),
+            'nostotagging_position' => $helper_config->getNostotaggingRenderPosition($current_language['id_lang']),
             $this->name.'_ps_version_class' => 'ps-'.str_replace('.', '', Tools::substr(_PS_VERSION_, 0, 3)),
             'missing_tokens' => $missing_tokens,
         ));
@@ -597,15 +599,7 @@ class NostoTagging extends Module
         }
     }
 
-    /**
-     * Hook for adding content to the top of every page.
-     *
-     * Adds customer and cart tagging.
-     * Adds nosto elements.
-     *
-     * @return string The HTML to output
-     */
-    public function hookDisplayTop()
+    public function getDefaultTagging()
     {
         if (!Nosto::helper('nosto_tagging/account')->existsAndIsConnected($this->context->language->id)) {
             return '';
@@ -617,7 +611,7 @@ class NostoTagging extends Module
         $html .= $this->getPriceVariationTagging();
 
         if ($this->isController('category')) {
-        // The "getCategory" method is available from Prestashop 1.5.6.0 upwards.
+            // The "getCategory" method is available from Prestashop 1.5.6.0 upwards.
             if (method_exists($this->context->controller, 'getCategory')) {
                 $category = $this->context->controller->getCategory();
             } else {
@@ -628,7 +622,7 @@ class NostoTagging extends Module
                 $html .= $this->getCategoryTagging($category);
             }
         } elseif ($this->isController('manufacturer')) {
-        // The "getManufacturer" method is available from Prestashop 1.5.6.0 upwards.
+            // The "getManufacturer" method is available from Prestashop 1.5.6.0 upwards.
             if (method_exists($this->context->controller, 'getManufacturer')) {
                 $manufacturer = $this->context->controller->getManufacturer();
             } else {
@@ -647,6 +641,28 @@ class NostoTagging extends Module
 
         $html .= $this->display(__FILE__, 'views/templates/hook/top_nosto-elements.tpl');
         $html .= $this->getHiddenRecommendationElements();
+
+        return $html;
+
+    }
+    /**
+     * Hook for adding content to the top of every page.
+     *
+     * Adds customer and cart tagging.
+     * Adds nosto elements.
+     *
+     * @return string The HTML to output
+     */
+    public function hookDisplayTop()
+    {
+        /* @var NostoTaggingHelperConfig $config_helper */
+        $config_helper = Nosto::helper('nosto_tagging/config');
+        $tagging_position = $config_helper->getNostotaggingRenderPosition($this->context->language->id);
+        $html = '';
+        if ($tagging_position === $config_helper::NOSTOTAGGING_POSITION_TOP) {
+
+            $html .= $this->getDefaultTagging();
+        }
 
         return $html;
     }
@@ -674,8 +690,16 @@ class NostoTagging extends Module
         if (!Nosto::helper('nosto_tagging/account')->existsAndIsConnected($this->context->language->id)) {
             return '';
         }
+        /* @var NostoTaggingHelperConfig $config_helper */
+        $config_helper = Nosto::helper('nosto_tagging/config');
 
-        return $this->display(__FILE__, 'views/templates/hook/footer_nosto-elements.tpl');
+        $html = '';
+        $tagging_position = $config_helper->getNostotaggingRenderPosition($this->context->language->id);
+        if ($tagging_position === $config_helper::NOSTOTAGGING_POSITION_FOOTER) {
+            $html = $this->getDefaultTagging();
+        }
+        $html .= $this->display(__FILE__, 'views/templates/hook/footer_nosto-elements.tpl');
+        return $html;
     }
 
     /**
