@@ -1211,6 +1211,12 @@ class NostoTagging extends Module
         } elseif ($this->isController('search')) {
         // The search page.
             return $this->display(__FILE__, 'views/templates/hook/search_hidden-nosto-elements.tpl');
+        } elseif ($this->isController('pagenotfound')) {
+        // The search page.
+            return $this->display(__FILE__, 'views/templates/hook/404_hidden_nosto-elements.tpl');
+        } elseif ($this->isController('order-confirmation')) {
+        // The search page.
+            return $this->display(__FILE__, 'views/templates/hook/order-confirmation_hidden_nosto-elements.tpl');
         } else {
             // If the current page is not one of the ones we want to show recommendations on, just return empty.
             return '';
