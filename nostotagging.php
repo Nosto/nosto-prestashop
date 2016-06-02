@@ -135,7 +135,7 @@ class NostoTagging extends Module
     {
         $this->name = 'nostotagging';
         $this->tab = 'advertising_marketing';
-        $this->version = '2.6.R3';
+        $this->version = '2.6.R4';
         $this->author = 'Nosto';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -283,6 +283,7 @@ class NostoTagging extends Module
                         'Account could not be automatically created. Please visit nosto.com to create a new account.'
                     ));
                 } else {
+                    $helper_config->clearCache();
                     $helper_flash->add('success', $this->l(
                         'Account created. Please check your email and follow the instructions to set a password for
                         your new account within three days.'
@@ -298,6 +299,7 @@ class NostoTagging extends Module
                 die();
             } elseif (Tools::isSubmit('submit_nostotagging_reset_account')) {
                 $account = Nosto::helper('nosto_tagging/account')->find($language_id);
+                $helper_config->clearCache();
                 Nosto::helper('nosto_tagging/account')->delete($account, $language_id);
             } elseif (Tools::isSubmit('submit_nostotagging_update_exchange_rates')) {
 

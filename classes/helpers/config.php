@@ -360,7 +360,6 @@ class NostoTaggingHelperConfig
         return $this->write(self::NOSTOTAGGING_POSITION, $method, $id_lang);
     }
 
-
     /**
      * Checks if multiple currencies are used in tagging
      *
@@ -376,5 +375,16 @@ class NostoTaggingHelperConfig
 
             return false;
         }
+    }
+
+    /**
+     * Clears tagging related caches (compiled templates)
+     *
+     * @param Smarty $smarty
+     * @return boolean the multi currency method.
+     */
+    public function clearCache($smarty = null)
+    {
+        Tools::clearCompile($smarty);
     }
 }

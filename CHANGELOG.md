@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
 
+## 2.6.R4
+- Add tagging to 404 and order confirmation pages
+- Clear cache after Nosto account is installed or reconnected
+
 ## 2.6.R3
 - Update also invisible products to Nosto
 
