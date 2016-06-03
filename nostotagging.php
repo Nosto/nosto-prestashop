@@ -278,16 +278,30 @@ class NostoTagging extends Module
                     $helper_flash->add('error', $this->l('Email cannot be empty.'));
                 } elseif (!Validate::isEmail($account_email)) {
                     $helper_flash->add('error', $this->l('Email is not a valid email address.'));
-                } elseif (!$this->createAccount($language_id, $account_email)) {
-                    $helper_flash->add('error', $this->l(
-                        'Account could not be automatically created. Please visit nosto.com to create a new account.'
-                    ));
                 } else {
-                    $helper_config->clearCache();
-                    $helper_flash->add('success', $this->l(
-                        'Account created. Please check your email and follow the instructions to set a password for
+                    try {
+                        $this->createAccount($language_id, $account_email);
+                        $helper_config->clearCache();
+                        $helper_flash->add('success', $this->l(
+                            'Account created. Please check your email and follow the instructions to set a password for
                         your new account within three days.'
-                    ));
+                        ));
+                    } catch (NostoHttpException $e) {
+                        $helper_flash->add('error', $this->l(
+                            'Account could not be automatically created. Please visit nosto.com to create a new account.'
+                        ));
+                        $helper_flash->add('error', $this->l(
+                            $e->getPublicMessage()->getMessage()
+                        ));
+
+                        /* @var NostoExceptionMessage $error */
+                        foreach ($e->getErrors() as $error) {
+                            Nosto::helper('nosto_tagging/logger')->error(
+                                $error->getKey().'::'.$error->getMessage(),
+                                $e->getCode()
+                            );
+                        }
+                    }
                 }
             } elseif (Tools::isSubmit('submit_nostotagging_authorize_account')) {
                 $meta = new NostoTaggingMetaOauth();
@@ -507,20 +521,15 @@ class NostoTagging extends Module
      */
     protected function createAccount($id_lang, $email)
     {
-        try {
-            $meta = new NostoTaggingMetaAccount();
-            $meta->loadData($this->context, $id_lang);
-            $meta->getOwner()->setEmail($email);
-            /** @var NostoAccount $account */
-            $account = NostoAccount::create($meta);
-            return Nosto::helper('nosto_tagging/account')->save($account, $id_lang);
-        } catch (NostoException $e) {
-            Nosto::helper('nosto_tagging/logger')->error(
-                __CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(),
-                $e->getCode()
-            );
-        }
-        return false;
+        $meta = new NostoTaggingMetaAccount();
+        $meta->loadData($this->context, $id_lang);
+        $meta->getOwner()->setEmail($email);
+        /** @var NostoAccount $account */
+        $account = NostoAccount::create($meta);
+
+        /* @var NostoTaggingHelperAccount $account_helper */
+        $account_helper = Nosto::helper('nosto_tagging/account');
+        return $account_helper->save($account, $id_lang);
     }
 
     /**
