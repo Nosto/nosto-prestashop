@@ -635,7 +635,7 @@ class NostoTagging extends Module
                 $html .= $this->getBrandTagging($manufacturer);
             }
         } elseif ($this->isController('search')) {
-            $search_term = Tools::getValue('search_query', null);
+            $search_term = Tools::getValue('search_query', Tools::getValue('s'));
             if (!is_null($search_term)) {
                 $html .= $this->getSearchTagging($search_term);
             }
@@ -787,8 +787,12 @@ class NostoTagging extends Module
 
         $product = isset($params['product']) ? $params['product'] : null;
         $category = isset($params['category']) ? $params['category'] : null;
-        $html .= $this->getProductTagging($product, $category);
 
+        if (!is_a($product, Product)) {
+            $product = new Product($product['id_product'], true, $this->context->language->id, $this->context->shop->id);
+        }
+
+        $html .= $this->getProductTagging($product, $category);
         $html .= $this->display(__FILE__, 'views/templates/hook/footer-product_nosto-elements.tpl');
 
         return $html;
