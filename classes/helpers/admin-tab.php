@@ -68,7 +68,7 @@ class NostoTaggingHelperAdminTab
         $added = $tab->add();
 
         // For PS 1.6 it is enough to have the main menu, for PS 1.5 we need a sub-menu.
-        if ($added && _PS_VERSION_ < '1.6') {
+        if ($added && (_PS_VERSION_ < '1.6' || _PS_VERSION_ >= '1.7')) {
             $tab = new Tab();
             $tab->active = 1;
             $tab->class_name = 'AdminNostoPersonalization';
