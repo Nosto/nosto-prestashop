@@ -286,7 +286,7 @@ class NostoTagging extends Module
                             'success',
                             $this->l(
                                 'Account created. Please check your email and follow the instructions to set a'
-                                . ' for your new account within three days.'
+                                . ' password for your new account within three days.'
                             )
                         );
                     } catch (NostoApiResponseException $e) {
