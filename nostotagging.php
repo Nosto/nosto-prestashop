@@ -282,17 +282,25 @@ class NostoTagging extends Module
                     try {
                         $this->createAccount($language_id, $account_email);
                         $helper_config->clearCache();
-                        $helper_flash->add('success', $this->l(
-                            'Account created. Please check your email and follow the instructions to set a password for
-                        your new account within three days.'
-                        ));
+                        $helper_flash->add(
+                            'success',
+                            $this->l(
+                                'Account created. Please check your email and follow the instructions to set a'
+                                . ' for your new account within three days.'
+                            )
+                        );
                     } catch (NostoHttpException $e) {
-                        $helper_flash->add('error', $this->l(
-                            'Account could not be automatically created. Please visit nosto.com to create a new account.'
-                        ));
-                        $helper_flash->add('error', $this->l(
-                            $e->getPublicMessage()->getMessage()
-                        ));
+                        $error_message = $this->l(
+                            'Account could not be automatically created. '
+                        );
+
+                        if ($e->getPublicMessage() instanceof NostoExceptionMessage) {
+                            $error_message .= $this->l(
+                                $e->getPublicMessage()->getMessage() . '. '
+                            );
+                        }
+                        $error_message .= $this->l('Please see logs for details. ');
+                        $helper_flash->add('error', $error_message);
 
                         /* @var NostoExceptionMessage $error */
                         foreach ($e->getErrors() as $error) {
@@ -301,6 +309,18 @@ class NostoTagging extends Module
                                 $e->getCode()
                             );
                         }
+                    } catch (Exception $e) {
+                        Nosto::helper('nosto_tagging/logger')->error(
+                            __CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(),
+                            $e->getCode(),
+                            'Employee',
+                            (int)$employee->id
+                        );
+
+                        $helper_flash->add(
+                            'error',
+                            $this->l('Account could not be automatically created. Please see logs for details.')
+                        );
                     }
                 }
             } elseif (Tools::isSubmit('submit_nostotagging_authorize_account')) {
