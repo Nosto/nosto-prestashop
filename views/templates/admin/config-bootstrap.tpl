@@ -90,7 +90,7 @@
                                                     <p class="help-block">{l s='Change this settings to be "Footer" if your theme does not have displayTop hook' mod='nostotagging'}</p>
 
                                                     <label for="multi_currency_method">{l s='Multi Currency Method' mod='nostotagging'}</label>
-                                                    <select id="multi_currency_method" name="multi_currency_method" class="form-control input-sm">
+                                                    <select id="multi_currency_method" name="multi_currency_method" class="form-control input-sm" {if $missing_tokens === true}disabled="disabled"{/if}>
                                                         <option value="disabled" {if $multi_currency_method==="disabled"}selected="selected"{/if}>{l s='Disabled' mod='nostotagging'}</option>
                                                         <option value="exchangeRates" {if $multi_currency_method==="exchangeRates"}selected="selected"{/if}>{l s='Exchange Rates' mod='nostotagging'}</option>
                                                     </select>
