@@ -289,37 +289,30 @@ class NostoTagging extends Module
                                 . ' for your new account within three days.'
                             )
                         );
-                    } catch (NostoHttpException $e) {
-                        $error_message = $this->l(
-                            'Account could not be automatically created. '
+                    } catch (NostoApiResponseException $e) {
+                        $helper_flash->add(
+                            'error',
+                            $this->l(
+                                'Account could not be automatically created due to missing or invalid parameters. Please see your Prestashop logs for details'
+                            )
                         );
-
-                        if ($e->getPublicMessage() instanceof NostoExceptionMessage) {
-                            $error_message .= $this->l(
-                                $e->getPublicMessage()->getMessage() . '. '
-                            );
-                        }
-                        $error_message .= $this->l('Please see logs for details. ');
-                        $helper_flash->add('error', $error_message);
-
-                        /* @var NostoExceptionMessage $error */
-                        foreach ($e->getErrors() as $error) {
-                            Nosto::helper('nosto_tagging/logger')->error(
-                                $error->getKey().'::'.$error->getMessage(),
-                                $e->getCode()
-                            );
-                        }
-                    } catch (Exception $e) {
                         Nosto::helper('nosto_tagging/logger')->error(
-                            __CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(),
+                            'Creating Nosto account failed: ' . $e->getMessage() .':'.$e->getCode(),
                             $e->getCode(),
                             'Employee',
                             (int)$employee->id
                         );
 
+                    } catch (Exception $e) {
                         $helper_flash->add(
                             'error',
                             $this->l('Account could not be automatically created. Please see logs for details.')
+                        );
+                        Nosto::helper('nosto_tagging/logger')->error(
+                            'Creating Nosto account failed: ' . $e->getMessage() .':'.$e->getCode(),
+                            $e->getCode(),
+                            'Employee',
+                            (int)$employee->id
                         );
                     }
                 }
