@@ -69,10 +69,10 @@
                                 {if $missing_tokens === true}
                                 <div class="row-fluid">
                                     <div class="col-xs-12">
-                                        <div class="alert alert-warning">
+                                        <p>
                                             {l s='Your current installation is missing API tokens required for the multi currency settings. Please reconnect your account with Nosto by ' mod='nostotagging'}
                                             <button type="submit" value="1" class="btn-link" name="submit_nostotagging_authorize_account">{l s='clicking here' mod='nostotagging'}</button>
-                                        </div>
+                                        </p>
                                     </div>
                                 </div>
                                 {/if}

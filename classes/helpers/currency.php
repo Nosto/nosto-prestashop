@@ -68,11 +68,19 @@ class NostoTaggingHelperCurrency
     public function getCurrencies(Context $context)
     {
         $id_shop = (int)$context->shop->id;
+        $currencies = array();
         if (_PS_VERSION_ >= '1.5') {
-            return Currency::getCurrenciesByIdShop($id_shop);
+            $all_currencies = Currency::getCurrenciesByIdShop($id_shop);
         } else {
-            return Currency::getCurrencies();
+            $all_currencies = Currency::getCurrencies();
         }
+        foreach ($all_currencies as $currency) {
+            if (isset($currency['deleted']) && !$currency['deleted']) {
+                $currencies[] = $currency;
+            }
+        }
+
+        return $currencies;
     }
 
     /**

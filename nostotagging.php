@@ -440,8 +440,11 @@ class NostoTagging extends Module
         }
 
         /** @var NostoAccount $account */
+
         $account = Nosto::helper('nosto_tagging/account')->find($language_id);
         $id_shop = $this->context->shop->id;
+        $account_meta = new NostoTaggingMetaAccount();
+        $account_meta->loadData($this->context, $language_id);
 
         $missing_tokens = true;
         if (
@@ -520,6 +523,13 @@ class NostoTagging extends Module
         $scripts = '<script type="text/javascript" src="'.$this->_path.'views/js/iframeresizer.min.js"></script>';
         $scripts .= '<script type="text/javascript" src="'.$this->_path.'views/js/nostotagging-admin-config.js">';
         $scripts .= '</script>';
+        $currencies = $account_meta->getCurrencies();
+        if ($missing_tokens && count($currencies)>1) {
+            $output .= $this->displayWarning(
+                'Your current installation is missing API tokens required for the multi currency settings. ' .
+                'Please reconnect your account with Nosto.'
+            );
+        }
         $output .= $this->display(__FILE__, 'views/templates/admin/config-bootstrap.tpl');
 
         return $stylesheets.$scripts.$output;
