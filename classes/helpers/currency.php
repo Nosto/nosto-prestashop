@@ -28,6 +28,14 @@
  */
 class NostoTaggingHelperCurrency
 {
+    public static $currencyFormatMap = array(
+        'EUR' => 2,
+        'GBP' => 3,
+        'USD' => 1,
+    );
+
+    public static $fallbackCurrencyFormat = 2;
+
     /**
      * Fetches the base currency from the context.
      *
@@ -85,7 +93,15 @@ class NostoTaggingHelperCurrency
      */
     public function getNostoCurrency(array $currency)
     {
-        switch ($currency['format']) {
+        if (empty($currency['format'])) {
+            $format = self::resolveFormat($currency);
+            if (empty($format)) {
+                $format = self::$fallbackCurrencyFormat;
+            }
+        } else {
+            $format = currency['format'];
+        }
+        switch ($format) {
             /* X 0,000.00 */
             case 1:
                 $group_symbol = ',';
@@ -174,5 +190,23 @@ class NostoTaggingHelperCurrency
     public function getActiveCurrency(Context $context)
     {
         return $context->currency->iso_code;
+    }
+
+    /**
+     * Resolves the currency format
+     *
+     * @param array $currency the PS currency data.
+     * @return int
+     */
+    public static function resolveFormat(array $currency)
+    {
+        $currency_code = !empty($currency['iso_code']) ? $currency['iso_code'] : '';
+        if (isset(self::$currencyFormatMap[$currency_code])) {
+
+            return self::$currencyFormatMap[$currency_code];
+        } else {
+
+            return null;
+        }
     }
 }
