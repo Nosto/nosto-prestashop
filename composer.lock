@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "e07dcc641e8f1d805ed9dfaa8a68ef7b",
-    "content-hash": "29f7a158bae0f161758501386be6c8c8",
+    "hash": "b8f41cd9636a725b2a36915a1f6134ff",
+    "content-hash": "ffe692c64287479d9c6fdd2756d177b2",
     "packages": [
         {
             "name": "nosto/php-sdk",
-            "version": "1.13.0",
+            "version": "1.15.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Nosto/php-sdk.git",
-                "reference": "7d2b48807e8abf68da5b0f6f67f9286c074dee38"
+                "reference": "a46835ec3c28c8d82c9a89d751358bbb15e2e442"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Nosto/php-sdk/zipball/7d2b48807e8abf68da5b0f6f67f9286c074dee38",
-                "reference": "7d2b48807e8abf68da5b0f6f67f9286c074dee38",
+                "url": "https://api.github.com/repos/Nosto/php-sdk/zipball/a46835ec3c28c8d82c9a89d751358bbb15e2e442",
+                "reference": "a46835ec3c28c8d82c9a89d751358bbb15e2e442",
                 "shasum": ""
             },
             "require-dev": {
@@ -26,15 +26,12 @@
                 "codeception/specify": "@stable"
             },
             "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-3-Clause"
             ],
             "description": "PHP SDK for developing Nosto modules for e-commerce platforms",
-            "support": {
-                "source": "https://github.com/Nosto/php-sdk/tree/1.13.0",
-                "issues": "https://github.com/Nosto/php-sdk/issues"
-            },
-            "time": "2015-07-28 12:17:40"
+            "time": "2016-06-08 10:41:52"
         }
     ],
     "packages-dev": [

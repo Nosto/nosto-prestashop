@@ -28,9 +28,6 @@
  */
 class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInterface, NostoValidatableInterface
 {
-    const IN_STOCK = 'InStock';
-    const OUT_OF_STOCK = 'OutOfStock';
-    const ADD_TO_CART = 'add-to-cart';
 
     /**
      * @var string absolute url to the product page.
@@ -71,6 +68,11 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
      * @var string product availability (use constants).
      */
     protected $availability;
+
+    /**
+     * @var string variationId
+     */
+    protected $variationId;
 
     /**
      * @var array list of product tags.
@@ -127,18 +129,49 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 
         /** @var NostoTaggingHelperUrl $url_helper */
         $url_helper = Nosto::helper('nosto_tagging/url');
+        /** @var NostoTaggingHelperPrice $helper_price */
+        $helper_price = Nosto::helper('nosto_tagging/price');
+        /** @var NostoTaggingHelperCurrency $helper_currency */
+        $helper_currency = Nosto::helper('nosto_tagging/currency');
+        /** @var NostoTaggingHelperConfig $helper_config */
+        $helper_config = Nosto::helper('nosto_tagging/config');
+        /** @var NostoHelperPrice $helper_config */
+        $nosto_helper_price = Nosto::helper('nosto/price');
+
+        $base_currency = $helper_currency->getBaseCurrency($context);
 
         $id_lang = $context->language->id;
         $id_shop = $context->shop->id;
-        $currency_iso_code = $context->currency->iso_code;
+
+        if ($helper_config->useMultipleCurrencies($id_lang) === true) {
+            $this->variationId = $base_currency->iso_code;
+            $tagging_currency = $base_currency;
+        } else {
+            $this->variationId = false;
+            $tagging_currency= $context->currency;
+        }
 
         $this->url = $url_helper->getProductUrl($product, $id_lang, $id_shop);
         $this->image_url = $url_helper->getProductImageUrl($product);
         $this->product_id = (int)$product->id;
         $this->name = $product->name;
-        $this->price = $this->calcPrice($product, $context);
-        $this->list_price = $this->calcPrice($product, $context, false /*no discounts*/);
-        $this->currency_code = Tools::strtoupper($currency_iso_code);
+
+        $this->price = $nosto_helper_price->format(
+            $helper_price->getProductPriceInclTax(
+                $product,
+                $context,
+                $tagging_currency
+            )
+        );
+        $this->list_price = $nosto_helper_price->format(
+            $helper_price->getProductListPriceInclTax(
+                $product,
+                $context,
+                $tagging_currency
+            )
+        );
+        $this->currency_code = Tools::strtoupper($tagging_currency->iso_code);
+
         $this->availability = $this->checkAvailability($product);
         $this->tags['tag1'] = $this->buildTags($product, $id_lang);
         $this->categories = $this->buildCategories($product, $id_lang);
@@ -167,44 +200,6 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
     }
 
     /**
-     * Calculates the price (including tax if applicable) and returns it.
-     *
-     * We need to check if taxes are to be included in the prices, given that they are configured.
-     * This is determined by the "Price display method" setting of the active user group.
-     * Possible values are 1, tax excluded, and 0, tax included.
-     *
-     * @param Product $product the product model.
-     * @param Context $context the context to calculate the price on (currency conversion).
-     * @param bool $discounted_price if discounts should be applied.
-     * @return string the calculated price.
-     */
-    protected function calcPrice(Product $product, Context $context, $discounted_price = true)
-    {
-        $incl_tax = (bool)!Product::getTaxCalculationMethod((int)$context->cookie->id_customer);
-        $specific_price_output = null;
-        $value = Product::getPriceStatic(
-            (int)$product->id,
-            $incl_tax,
-            null, // $id_product_attribute
-            6, // $decimals
-            null, // $divisor
-            false, // $only_reduction
-            $discounted_price, // $user_reduction
-            1, // $quantity
-            false, // $force_associated_tax
-            null, // $id_customer
-            null, // $id_cart
-            null, // $id_address
-            $specific_price_output, // $specific_price_output
-            true, // $with_eco_tax
-            true, // $use_group_reduction
-            $context,
-            true // $use_customer_price
-        );
-        return Nosto::helper('price')->format($value);
-    }
-
-    /**
      * Checks the availability of the product and returns the "availability constant".
      *
      * The product is considered available if it is visible in the shop and is in stock.
@@ -214,8 +209,11 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
      */
     protected function checkAvailability(Product $product)
     {
-        $is_visible = (_PS_VERSION_ >= '1.5') ? ($product->visibility !== 'none') : true;
-        return ($product->checkQty(1) && $is_visible) ? self::IN_STOCK : self::OUT_OF_STOCK;
+        if (_PS_VERSION_ >= '1.5' && $product->visibility === 'none') {
+            return self::INVISIBLE;
+        } else {
+            return ($product->checkQty(1)) ? self::IN_STOCK : self::OUT_OF_STOCK;
+        }
     }
 
     /**
@@ -707,5 +705,23 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
     public function setShortDescription($short_description)
     {
         $this->short_description = $short_description;
+    }
+
+    /**
+     * Sets the variation id
+     *
+     * @param string $variationId
+     */
+    public function setVariationId($variationId)
+    {
+        $this->variationId = $variationId;
+    }
+
+    /*
+     * @inheritdoc
+     */
+    public function getVariationId()
+    {
+        return $this->variationId;
     }
 }

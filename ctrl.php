@@ -30,10 +30,10 @@
  * The script is meant to run outside of Prestashop, so if _PS_VERSION_ is already defined, we do nothing.
  */
 if (!defined('_PS_VERSION_')) {
-/*
+    /*
 	 * White-list of valid controllers that this script is allowed to run.
 	 */
-    $controller_white_list = array('oauth2', 'product', 'order');
+    $controller_white_list = array('oauth2', 'product', 'order', 'cronrates');
 
     /*
 	 * If this file is symlinked, then we need to parse the `SCRIPT_FILENAME` to get the path of the PS root dir.
@@ -66,8 +66,17 @@ if (!defined('_PS_VERSION_')) {
     }
 
     $controller = Tools::strtolower((string)Tools::getValue('controller'));
-    if (!empty($controller) && in_array($controller, $controller_white_list)) {
+    if (!empty($controller)
+        && in_array(Tools::strtolower($controller), $controller_white_list)
+    ) {
         require_once($controller_dir.'/'.$controller.'.php');
         ControllerFactory::getController('NostoTagging'.Tools::ucfirst($controller).'ModuleFrontController')->run();
+    } else {
+        die(
+            sprintf(
+                'Controller %s empty or not whitelisted',
+                htmlentities($controller)
+            )
+        );
     }
 }

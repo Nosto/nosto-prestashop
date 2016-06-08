@@ -26,52 +26,20 @@
 /**
  * Meta data class for account related information needed when creating new accounts.
  */
-class NostoTaggingMetaAccount implements NostoAccountMetaDataInterface
+class NostoTaggingMetaAccount extends NostoAccountMeta
 {
-    /**
-     * @var string the store name.
-     */
-    protected $title;
-
-    /**
-     * @var string the account name.
-     */
-    protected $name;
-
-    /**
-     * @var string the store front end url.
-     */
-    protected $front_page_url;
-
-    /**
-     * @var string the store currency ISO (ISO 4217) code.
-     */
-    protected $currency_code;
-
-    /**
-     * @var string the store language ISO (ISO 639-1) code.
-     */
-    protected $language_code;
-
-    /**
-     * @var string the owner language ISO (ISO 639-1) code.
-     */
-    protected $owner_language_code;
-
-    /**
-     * @var NostoTaggingMetaAccountOwner the account owner meta model.
-     */
-    protected $owner;
-
-    /**
-     * @var NostoTaggingMetaAccountBilling the billing meta model.
-     */
-    protected $billing;
-
     /**
      * @var string the API token used to identify an account creation.
      */
     protected $sign_up_api_token = 'JRtgvoZLMl4NPqO9XWhRdvxkTMtN82ITTJij8U7necieJPCvjtZjm5C4fpNrYJ81';
+
+    /**
+     * NostoTaggingMetaAccount constructor.
+     */
+    public function __construct()
+    {
+        parent::__construct('prestashop', $this->sign_up_api_token, null);
+    }
 
     /**
      * Loads the meta data for the context and given language.
@@ -81,6 +49,12 @@ class NostoTaggingMetaAccount implements NostoAccountMetaDataInterface
      */
     public function loadData($context, $id_lang)
     {
+
+        /** @var NostoTaggingHelperCurrency $currency_helper */
+        $currency_helper = Nosto::helper('nosto_tagging/currency');
+        /** @var NostoTaggingHelperConfig $config_helper */
+        $config_helper = Nosto::helper('nosto_tagging/config');
+
         $language = new Language($id_lang);
         if (!Validate::isLoadedObject($language)) {
             return;
@@ -96,184 +70,23 @@ class NostoTaggingMetaAccount implements NostoAccountMetaDataInterface
             $context->country = new Country((int)Configuration::get('PS_COUNTRY_DEFAULT'));
         }
 
-        $this->title = Configuration::get('PS_SHOP_NAME');
-        $this->name = Tools::substr(sha1(rand()), 0, 8);
-        $this->front_page_url = $this->getContextShopUrl($context, $language);
-        $this->currency_code = $context->currency->iso_code;
-        $this->language_code = $context->language->iso_code;
-        $this->owner_language_code = $language->iso_code;
+        $this->setTitle(Configuration::get('PS_SHOP_NAME'));
+        $this->setName(Tools::substr(sha1(rand()), 0, 8));
+        $this->setFrontPageUrl($this->getContextShopUrl($context, $language));
+        $this->setCurrencyCode($context->currency->iso_code);
+        $this->setLanguageCode($context->language->iso_code);
+        $this->setOwnerLanguageCode($language->iso_code);
         $this->owner = new NostoTaggingMetaAccountOwner();
         $this->owner->loadData($context);
         $this->billing = new NostoTaggingMetaAccountBilling();
         $this->billing->loadData($context);
-    }
-
-    /**
-     * Sets the store title.
-     *
-     * @param string $title the store title.
-     */
-    public function setTitle($title)
-    {
-        $this->title = $title;
-    }
-
-    /**
-     * The shops name for which the account is to be created for.
-     *
-     * @return string the name.
-     */
-    public function getTitle()
-    {
-        return $this->title;
-    }
-
-    /**
-     * Sets the account name.
-     *
-     * @param string $name the account name.
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-    }
-
-    /**
-     * The name of the account to create.
-     * This has to follow the pattern of
-     * "[platform name]-[8 character lowercase alpha numeric string]".
-     *
-     * @return string the account name.
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * The name of the platform the account is used on.
-     * A list of valid platform names is issued by Nosto.
-     *
-     * @return string the platform names.
-     */
-    public function getPlatform()
-    {
-        return 'prestashop';
-    }
-
-    /**
-     * Sets the store front page url.
-     *
-     * @param string $url the front page url.
-     */
-    public function setFrontPageUrl($url)
-    {
-        $this->front_page_url = $url;
-    }
-
-    /**
-     * Absolute url to the front page of the shop for which the account is
-     * created for.
-     *
-     * @return string the url.
-     */
-    public function getFrontPageUrl()
-    {
-        return $this->front_page_url;
-    }
-
-    /**
-     * Sets the store currency ISO (ISO 4217) code.
-     *
-     * @param string $code the currency ISO code.
-     */
-    public function setCurrencyCode($code)
-    {
-        $this->currency_code = $code;
-    }
-
-    /**
-     * The 3-letter ISO code (ISO 4217) for the currency used by the shop for
-     * which the account is created for.
-     *
-     * @return string the currency ISO code.
-     */
-    public function getCurrencyCode()
-    {
-        return $this->currency_code;
-    }
-
-    /**
-     * Sets the store language ISO (ISO 639-1) code.
-     *
-     * @param string $language_code the language ISO code.
-     */
-    public function setLanguageCode($language_code)
-    {
-        $this->language_code = $language_code;
-    }
-
-    /**
-     * The 2-letter ISO code (ISO 639-1) for the language used by the shop for
-     * which the account is created for.
-     *
-     * @return string the language ISO code.
-     */
-    public function getLanguageCode()
-    {
-        return $this->language_code;
-    }
-
-    /**
-     * Sets the owner language ISO (ISO 639-1) code.
-     *
-     * @param string $language_code the language ISO code.
-     */
-    public function setOwnerLanguageCode($language_code)
-    {
-        $this->owner_language_code = $language_code;
-    }
-
-    /**
-     * The 2-letter ISO code (ISO 639-1) for the language of the account owner
-     * who is creating the account.
-     *
-     * @return string the language ISO code.
-     */
-    public function getOwnerLanguageCode()
-    {
-        return $this->owner_language_code;
-    }
-
-    /**
-     * Meta data model for the account owner who is creating the account.
-     *
-     * @return NostoTaggingMetaAccountOwner the meta data model.
-     */
-    public function getOwner()
-    {
-        return $this->owner;
-    }
-
-    /**
-     * Meta data model for the account billing details.
-     *
-     * @return NostoTaggingMetaAccountBilling the meta data model.
-     */
-    public function getBillingDetails()
-    {
-        return $this->billing;
-    }
-
-    /**
-     * The API token used to identify an account creation.
-     * This token is platform specific and issued by Nosto.
-     *
-     * @return string the API token.
-     */
-    public function getSignUpApiToken()
-    {
-        return $this->sign_up_api_token;
+        $this->setCurrencies($this->buildCurrencies($context));
+        if ($config_helper->useMultipleCurrencies($id_lang)) {
+            $this->setUseCurrencyExchangeRates($config_helper->useMultipleCurrencies($id_lang));
+            $this->setDefaultVariationId($currency_helper->getBaseCurrency($context)->iso_code);
+        } else {
+            $this->setUseCurrencyExchangeRates(false);
+        }
     }
 
     /**
@@ -306,8 +119,17 @@ class NostoTaggingMetaAccount implements NostoAccountMetaDataInterface
         return $base.$lang;
     }
 
-    public function getPartnerCode()
+    protected function buildCurrencies(Context $context)
     {
-        return '';
+        $nosto_currencies = array();
+        /** @var NostoTaggingHelperCurrency $currency_helper */
+        $currency_helper = Nosto::helper('nosto_tagging/currency');
+        $currencies = $currency_helper->getCurrencies($context);
+        foreach ($currencies as $currency) {
+            $nosto_currency = $currency_helper->getNostoCurrency($currency);
+            $nosto_currencies[] = $nosto_currency;
+        }
+
+        return $nosto_currencies;
     }
 }

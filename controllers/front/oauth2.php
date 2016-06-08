@@ -38,6 +38,9 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
         // The user accepted the authorization request.
             // The authorization server responded with a code that can be used to exchange for the access token.
             try {
+                /** @var NostoTaggingHelperConfig $helper_config */
+                $helper_config = Nosto::helper('nosto_tagging/config');
+
                 $meta = new NostoTaggingMetaOauth();
                 $meta->setModuleName($this->module->name);
                 $meta->setModulePath($this->module->getPath());
@@ -47,7 +50,7 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
                 if (!Nosto::helper('nosto_tagging/account')->save($account, $id_lang)) {
                     throw new NostoException('Failed to save account.');
                 }
-
+                $helper_config->clearCache();
                 $msg = $this->module->l('Account %s successfully connected to Nosto.', 'oauth2');
                 $this->redirectToModuleAdmin(array(
                     'language_id' => $id_lang,

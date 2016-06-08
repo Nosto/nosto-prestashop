@@ -59,6 +59,11 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
     protected $payment_provider;
 
     /**
+     * @var string external order reference.
+     */
+    protected $external_order_ref;
+
+    /**
      * @var NostoTaggingOrderStatus the order status.
      */
     protected $order_status;
@@ -184,6 +189,26 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
     }
 
     /**
+     * Gets the external order ref
+     *
+     * @return string
+     */
+    public function getExternalOrderRef()
+    {
+        return $this->external_order_ref;
+    }
+
+    /**
+     * Sets the external order ref
+     *
+     * @param string $external_order_ref
+     */
+    public function setExternalOrderRef($external_order_ref)
+    {
+        $this->external_order_ref = $external_order_ref;
+    }
+
+    /**
      * Loads the order data from supplied context and order objects.
      *
      * @param Context $context the context object.
@@ -197,6 +222,12 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
 
         $customer = new Customer((int)$order->id_customer);
         // The order reference was introduced in prestashop 1.5 where orders can be split into multiple ones.
+        if (isset($order->reference)) {
+            $this->order_number = $order->reference;
+            $this->external_order_ref = $order->id;
+        } else {
+            $this->order_number = $order->id;
+        }
         $this->order_number = isset($order->reference) ? (string)$order->reference : $order->id;
         $this->buyer_info = new NostoTaggingOrderBuyer();
         $this->buyer_info->loadData($customer);
@@ -250,7 +281,7 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
         // One order can be split into multiple orders, so we need to combine their data.
             $order_collection = Order::getByReference($order->reference);
             foreach ($order_collection as $item) {
-            /** @var $item Order */
+                /** @var $item Order */
                 $products = array_merge($products, $item->getProducts());
                 $total_discounts_tax_incl = Tools::ps_round(
                     $total_discounts_tax_incl + $item->total_discounts_tax_incl,
@@ -321,6 +352,9 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
             $context = Context::getContext();
         }
 
+        /** @var NostoHelperPrice $helper_config */
+        $nosto_helper_price = Nosto::helper('nosto/price');
+
         $id_lang = (int)$context->language->id;
         foreach ($items as $item) {
             $p = new Product($item['product_id'], false, $context->language->id);
@@ -342,7 +376,7 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
                 $purchased_item->setProductId((int)$p->id);
                 $purchased_item->setQuantity((int)$item['product_quantity']);
                 $purchased_item->setName((string)$product_name);
-                $purchased_item->setUnitPrice(Nosto::helper('price')->format($item['product_price_wt']));
+                $purchased_item->setUnitPrice($nosto_helper_price->format($item['product_price_wt']));
                 $purchased_item->setCurrencyCode((string)$currency->iso_code);
                 $purchased_items[] = $purchased_item;
             }
@@ -360,7 +394,7 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
                     $purchased_item->setQuantity(1);
                     $purchased_item->setName('Discount');
                     // Note the negative value.
-                    $purchased_item->setUnitPrice(Nosto::helper('price')->format(-$total_discounts_tax_incl));
+                    $purchased_item->setUnitPrice($nosto_helper_price->format(-$total_discounts_tax_incl));
                     $purchased_item->setCurrencyCode((string)$currency->iso_code);
                     $purchased_items[] = $purchased_item;
                 }
@@ -382,7 +416,7 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
                 $purchased_item->setProductId(-1);
                 $purchased_item->setQuantity(1);
                 $purchased_item->setName('Shipping');
-                $purchased_item->setUnitPrice(Nosto::helper('price')->format($total_shipping_tax_incl));
+                $purchased_item->setUnitPrice($nosto_helper_price->format($total_shipping_tax_incl));
                 $purchased_item->setCurrencyCode((string)$currency->iso_code);
                 $purchased_items[] = $purchased_item;
             }
@@ -392,7 +426,7 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
                 $purchased_item->setProductId(-1);
                 $purchased_item->setQuantity(1);
                 $purchased_item->setName('Gift Wrapping');
-                $purchased_item->setUnitPrice(Nosto::helper('price')->format($total_wrapping_tax_incl));
+                $purchased_item->setUnitPrice($nosto_helper_price->format($total_wrapping_tax_incl));
                 $purchased_item->setCurrencyCode((string)$currency->iso_code);
                 $purchased_items[] = $purchased_item;
             }

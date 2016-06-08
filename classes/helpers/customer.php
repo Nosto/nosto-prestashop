@@ -144,10 +144,8 @@ class NostoTaggingHelperCustomer
         // We read it to keep a mapping of the Nosto user ID and the Prestashop user ID so we can identify which user
         // actually completed an order. We do this for tracking whether or not to send abandoned cart emails.
         if ($GLOBALS[self::GLOBAL_COOKIES] && isset($GLOBALS[self::GLOBAL_COOKIES][self::COOKIE_NAME])) {
-
             return $GLOBALS[self::GLOBAL_COOKIES][self::COOKIE_NAME];
         } else {
-
             return null;
         }
     }
