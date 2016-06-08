@@ -471,7 +471,7 @@ class NostoTagging extends Module
             $account_iframe->loadData($this->context, $language_id);
             /* @var NostoHelperIframe $iframe_helper */
             $iframe_helper = Nosto::helper('iframe');
-            $iframe_installation_url = $iframe_helper->getUrl($account_iframe);
+            $iframe_installation_url = $iframe_helper->getUrl($account_iframe, null, array('v'=>1));
         } else {
             $iframe_installation_url = null;
         }

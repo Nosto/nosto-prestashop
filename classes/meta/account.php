@@ -34,6 +34,14 @@ class NostoTaggingMetaAccount extends NostoAccountMeta
     protected $sign_up_api_token = 'JRtgvoZLMl4NPqO9XWhRdvxkTMtN82ITTJij8U7necieJPCvjtZjm5C4fpNrYJ81';
 
     /**
+     * NostoTaggingMetaAccount constructor.
+     */
+    public function __construct()
+    {
+        parent::__construct('prestashop', $this->sign_up_api_token, null);
+    }
+
+    /**
      * Loads the meta data for the context and given language.
      *
      * @param Context $context the context to use as data source.
@@ -125,21 +133,4 @@ class NostoTaggingMetaAccount extends NostoAccountMeta
         return $nosto_currencies;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function getPlatform()
-    {
-        return 'prestashop';
-    }
-
-    public function getSignUpApiToken()
-    {
-        return $this->sign_up_api_token;
-    }
-
-    public function getPartnerCode()
-    {
-        return '';
-    }
 }
