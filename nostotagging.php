@@ -518,7 +518,8 @@ class NostoTagging extends Module
             $this->name.'_ps_version_class' => 'ps-'.str_replace('.', '', Tools::substr(_PS_VERSION_, 0, 3)),
             'missing_tokens' => $missing_tokens,
             'iframe_installation_url' => $iframe_installation_url,
-            'iframe_origin' => $helper_url->getIframeOrigin()
+            'iframe_origin' => $helper_url->getIframeOrigin(),
+            'module_path' => $this->_path
         ));
 
         // Try to login employee to Nosto in order to get a url to the internal setting pages,
@@ -543,11 +544,6 @@ class NostoTagging extends Module
             }
         }
 
-        $stylesheets = '<link rel="stylesheet" href="'.$this->_path.'views/css/tw-bs-v3.1.1.css">';
-        $stylesheets .= '<link rel="stylesheet" href="'.$this->_path.'views/css/nostotagging-admin-config.css">';
-        $scripts = '<script type="text/javascript" src="'.$this->_path.'views/js/iframeresizer.min.js"></script>';
-        $scripts .= '<script type="text/javascript" src="'.$this->_path.'views/js/nostotagging-admin-config.js">';
-        $scripts .= '</script>';
         $output .= $this->display(__FILE__, 'views/templates/admin/config-bootstrap.tpl');
 
         return $stylesheets.$scripts.$output;

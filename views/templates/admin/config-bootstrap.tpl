@@ -22,6 +22,12 @@
 * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *}
 
+<link rel="stylesheet" href="{$module_path}views/css/tw-bs-v3.1.1.css">
+<link rel="stylesheet" href="{$module_path}views/css/nostotagging-admin-config.css">
+<script type="text/javascript" src="{$module_path}views/js/iframeresizer.min.js"></script>
+<script type="text/javascript" src="{$module_path}views/js/nostotagging-admin-config.js"></script>
+
+
 <div class="tw-bs {$nostotagging_ps_version_class|escape:'htmlall':'UTF-8'}">
     <div class="container-fluid">
         <div class="row">
