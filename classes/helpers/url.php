@@ -30,6 +30,7 @@ class NostoTaggingHelperUrl
 {
     const DEFAULT_SERVER_ADDRESS = 'connect.nosto.com';
     const OPTIMAL_PRODUCT_IMAGE_WIDTH = 450;
+    const DEFAULT_IFRAME_ORIGIN_REGEXP = '(https:\/\/(.*)\.hub\.nosto\.com)|(https:\/\/my\.nosto\.com)';
 
     /**
      * Returns a preview url to a product page.
@@ -422,5 +423,15 @@ class NostoTaggingHelperUrl
             }
         }
         return isset($found['name']) ? $found['name'] : false;
+    }
+
+    /**
+     * Returns the iframe origin where messages are allowed
+     *
+     * @return string|false
+     */
+    public function getIframeOrigin()
+    {
+        return isset($_ENV['NOSTO_IFRAME_ORIGIN_REGEXP']) ? $_ENV['NOSTO_IFRAME_ORIGIN_REGEXP'] : self::DEFAULT_IFRAME_ORIGIN_REGEXP;
     }
 }
