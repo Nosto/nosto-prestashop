@@ -272,15 +272,23 @@ class NostoTagging extends Module
                 // After the redirect this will be checked again and an error message is outputted.
             } elseif ($current_language['id_lang'] != $language_id) {
                 $helper_flash->add('error', $this->l('Language cannot be empty.'));
-            } elseif (Tools::isSubmit('submit_nostotagging_new_account')) {
-                        $account_email = (string)Tools::getValue($this->name.'_account_email');
+            } elseif (
+                Tools::isSubmit('submit_nostotagging_new_account')
+                || Tools::getValue('nostotagging_account_action') === 'newAccount'
+            ) {
+                $account_email = (string)Tools::getValue($this->name.'_account_email');
                 if (empty($account_email)) {
                     $helper_flash->add('error', $this->l('Email cannot be empty.'));
                 } elseif (!Validate::isEmail($account_email)) {
                     $helper_flash->add('error', $this->l('Email is not a valid email address.'));
                 } else {
                     try {
-                        $this->createAccount($language_id, $account_email);
+                        if (Tools::isSubmit('nostotagging_account_details')) {
+                            $account_details = Tools::jsonDecode(Tools::getValue('nostotagging_account_details'));
+                        } else {
+                            $account_details = false;
+                        }
+                        $this->createAccount($language_id, $account_email, $account_details);
                         $helper_config->clearCache();
                         $helper_flash->add(
                             'success',
@@ -316,7 +324,10 @@ class NostoTagging extends Module
                         );
                     }
                 }
-            } elseif (Tools::isSubmit('submit_nostotagging_authorize_account')) {
+            } elseif (
+                Tools::isSubmit('submit_nostotagging_authorize_account')
+                || Tools::getValue('nostotagging_account_action') === 'connectAccount'
+            ) {
                 $meta = new NostoTaggingMetaOauth();
                 $meta->setModuleName($this->name);
                 $meta->setModulePath($this->_path);
@@ -324,7 +335,10 @@ class NostoTagging extends Module
                 $client = new NostoOAuthClient($meta);
                 Tools::redirect($client->getAuthorizationUrl(), '');
                 die();
-            } elseif (Tools::isSubmit('submit_nostotagging_reset_account')) {
+            } elseif (
+                Tools::isSubmit('submit_nostotagging_reset_account')
+                || Tools::getValue('nostotagging_account_action') === 'removeAccount'
+            ) {
                 $account = Nosto::helper('nosto_tagging/account')->find($language_id);
                 $helper_config->clearCache();
                 Nosto::helper('nosto_tagging/account')->delete($account, $language_id);
@@ -450,8 +464,21 @@ class NostoTagging extends Module
             $missing_tokens = false;
         }
 
+        if ($account instanceof NostoAccountInterface === false) {
+            $account_iframe = new NostoTaggingMetaAccountIframe();
+            $account_iframe->loadData($this->context, $language_id);
+            /* @var NostoHelperIframe $iframe_helper */
+            $iframe_helper = Nosto::helper('iframe');
+            $iframe_installation_url = $iframe_helper->getUrl($account_iframe, null, array('v'=>1));
+        } else {
+            $iframe_installation_url = null;
+        }
+
         $this->getSmarty()->assign(array(
             $this->name.'_form_action' => $this->getAdminUrl(),
+            $this->name.'_create_account' => $this->getAdminUrl(),
+            $this->name.'_delete_account' => $this->getAdminUrl(),
+            $this->name.'_connect_account' => $this->getAdminUrl(),
             $this->name.'_has_account' => ($account !== null),
             $this->name.'_account_name' => ($account !== null) ? $account->getName() : null,
             $this->name.'_account_email' => $account_email,
@@ -488,9 +515,11 @@ class NostoTagging extends Module
             'nostotagging_position' => $helper_config->getNostotaggingRenderPosition($current_language['id_lang']),
             $this->name.'_ps_version_class' => 'ps-'.str_replace('.', '', Tools::substr(_PS_VERSION_, 0, 3)),
             'missing_tokens' => $missing_tokens,
+            'iframe_installation_url' => $iframe_installation_url,
+            'iframe_origin' => $helper_url->getIframeOrigin(),
+            'module_path' => $this->_path
         ));
 
-        
         // Try to login employee to Nosto in order to get a url to the internal setting pages,
         // which are then shown in an iframe on the module config page.
         if ($account && $account->isConnectedToNosto()) {
@@ -513,14 +542,9 @@ class NostoTagging extends Module
             }
         }
 
-        $stylesheets = '<link rel="stylesheet" href="'.$this->_path.'views/css/tw-bs-v3.1.1.css">';
-        $stylesheets .= '<link rel="stylesheet" href="'.$this->_path.'views/css/nostotagging-admin-config.css">';
-        $scripts = '<script type="text/javascript" src="'.$this->_path.'views/js/iframeresizer.min.js"></script>';
-        $scripts .= '<script type="text/javascript" src="'.$this->_path.'views/js/nostotagging-admin-config.js">';
-        $scripts .= '</script>';
         $output .= $this->display(__FILE__, 'views/templates/admin/config-bootstrap.tpl');
 
-        return $stylesheets.$scripts.$output;
+        return $output;
     }
 
     /**
@@ -528,13 +552,15 @@ class NostoTagging extends Module
      *
      * @param int $id_lang the language ID for which to create the account.
      * @param string $email the account owner email address.
+     * @param string $account_details the details for the account.
      * @return bool true if account was created, false otherwise.
      */
-    protected function createAccount($id_lang, $email)
+    protected function createAccount($id_lang, $email, $account_details = "")
     {
         $meta = new NostoTaggingMetaAccount();
         $meta->loadData($this->context, $id_lang);
         $meta->getOwner()->setEmail($email);
+        $meta->setDetails($account_details);
         /** @var NostoAccount $account */
         $account = NostoAccount::create($meta);
 
