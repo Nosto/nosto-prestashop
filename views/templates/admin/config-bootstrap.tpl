@@ -168,7 +168,6 @@
                                                     $('#nostotagging_account_details').val('');
                                                 }
                                             }
-                                            console.log(data.params);
                                             $('#nosto_form_id').submit();
                                         }
                                     }
