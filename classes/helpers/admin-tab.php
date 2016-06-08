@@ -103,7 +103,7 @@ class NostoTaggingHelperAdminTab
         foreach (array('AdminNosto', 'AdminNostoPersonalization') as $tab_name) {
             $id_tab = (int)Tab::getIdFromClassName($tab_name);
             if ($id_tab) {
-            /** @var TabCore $tab */
+                /** @var TabCore $tab */
                 $tab = new Tab($id_tab);
                 $tab->delete();
             }

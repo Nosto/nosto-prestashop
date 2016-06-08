@@ -369,10 +369,8 @@ class NostoTaggingHelperConfig
     public function useMultipleCurrencies($id_lang)
     {
         if ($this->getMultiCurrencyMethod($id_lang) !== self::MULTI_CURRENCY_METHOD_DISABLED) {
-
             return true;
         } else {
-
             return false;
         }
     }

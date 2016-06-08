@@ -200,7 +200,7 @@ class NostoTaggingHelperUrl
         }
 
         if (version_compare(_PS_VERSION_, '1.5.0.0') === -1 || version_compare(_PS_VERSION_, '1.5.5.0') >= 0) {
-        /** @var LinkCore $link */
+            /** @var LinkCore $link */
             $link = new Link();
             $url = $link->getProductLink($product, null, null, null, $id_lang, $id_shop);
         } else {
@@ -243,7 +243,7 @@ class NostoTaggingHelperUrl
         }
 
         if (version_compare(_PS_VERSION_, '1.5.0.0') === -1 || version_compare(_PS_VERSION_, '1.5.5.0') >= 0) {
-        /** @var LinkCore $link */
+            /** @var LinkCore $link */
             $link = new Link();
             $url = $link->getCategoryLink($category, null, $id_lang, null, $id_shop);
         } else {
@@ -286,7 +286,7 @@ class NostoTaggingHelperUrl
         }
 
         if (version_compare(_PS_VERSION_, '1.5.0.0') === -1 || version_compare(_PS_VERSION_, '1.5.5.0') >= 0) {
-        /** @var LinkCore $link */
+            /** @var LinkCore $link */
             $link = new Link();
             $url = $link->getPageLink($controller, true, $id_lang, null, false, $id_shop);
         } else {

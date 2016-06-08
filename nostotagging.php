@@ -329,7 +329,6 @@ class NostoTagging extends Module
                 $helper_config->clearCache();
                 Nosto::helper('nosto_tagging/account')->delete($account, $language_id);
             } elseif (Tools::isSubmit('submit_nostotagging_update_exchange_rates')) {
-
                 /* @var NostoTaggingHelperAccount $account_helper */
                 $account_helper = Nosto::helper('nosto_tagging/account');
                 $nosto_account = $account_helper->find($language_id);
@@ -346,7 +345,6 @@ class NostoTagging extends Module
                         )
                     );
                 } else {
-
                     if (!$nosto_account->getApiToken(NostoApiToken::API_EXCHANGE_RATES)) {
                         $message = 'Failed to update exchange rates to Nosto due to a missing API token. 
                             Please, reconnect your account with Nosto';
@@ -1501,12 +1499,10 @@ class NostoTagging extends Module
         if (!empty($this->smarty)
             && method_exists($this->smarty, 'assign')
         ) {
-
             return $this->smarty;
         } elseif (!empty($this->context->smarty)
             && method_exists($this->context->smarty, 'assign')
         ) {
-
             return $this->context->smarty;
         }
 
