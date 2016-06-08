@@ -8,6 +8,7 @@ This project adheres to Semantic Versioning(http://semver.org/).
 - Clear cache after Nosto account is installed or reconnected
 - Display proper error messages
 - Add setting where to render default Nosto tagging
+- Add support for account details
 
 ## 2.6.R3
 - Update also invisible products to Nosto
