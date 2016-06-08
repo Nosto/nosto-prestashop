@@ -22,10 +22,10 @@
 * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *}
 
-<link rel="stylesheet" href="{$module_path}views/css/tw-bs-v3.1.1.css">
-<link rel="stylesheet" href="{$module_path}views/css/nostotagging-admin-config.css">
-<script type="text/javascript" src="{$module_path}views/js/iframeresizer.min.js"></script>
-<script type="text/javascript" src="{$module_path}views/js/nostotagging-admin-config.js"></script>
+<link rel="stylesheet" href="{$module_path|escape:'htmlall':'UTF-8'}views/css/tw-bs-v3.1.1.css">
+<link rel="stylesheet" href="{$module_path|escape:'htmlall':'UTF-8'}views/css/nostotagging-admin-config.css">
+<script type="text/javascript" src="{$module_path|escape:'htmlall':'UTF-8'}views/js/iframeresizer.min.js"></script>
+<script type="text/javascript" src="{$module_path|escape:'htmlall':'UTF-8'}views/js/nostotagging-admin-config.js"></script>
 
 
 <div class="tw-bs {$nostotagging_ps_version_class|escape:'htmlall':'UTF-8'}">
@@ -139,13 +139,13 @@
                                 <iframe id="nostotagging_iframe" frameborder="0" width="100%" scrolling="no" src="{$iframe_url|escape:'htmlall':'UTF-8'}"></iframe>
                             {/if}
                         {else}
-                            <iframe id="nostotagging_iframe" frameborder="0" width="100%" scrolling="no" src="{$iframe_installation_url}"></iframe>
+                            <iframe id="nostotagging_iframe" frameborder="0" width="100%" scrolling="no" src="{$iframe_installation_url|escape:'htmlall':'UTF-8'}"></iframe>
                             <script type="text/javascript">
                                 {literal}
                                 $(document).ready(function() {
                                     iFrameResize({heightCalculationMethod : "bodyScroll"});
                                     function receiveMessage(event) {
-                                        var originRegexp = new RegExp("{/literal}{$iframe_origin}{literal}");
+                                        var originRegexp = new RegExp("{/literal}{$iframe_origin|escape:'htmlall':'UTF-8'}{literal}");
                                         if (!originRegexp.test(event.origin)) {
                                             return;
                                         }

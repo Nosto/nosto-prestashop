@@ -284,7 +284,7 @@ class NostoTagging extends Module
                 } else {
                     try {
                         if (Tools::isSubmit('nostotagging_account_details')) {
-                            $account_details = json_decode(Tools::getValue('nostotagging_account_details'));
+                            $account_details = Tools::jsonDecode(Tools::getValue('nostotagging_account_details'));
                         } else {
                             $account_details = false;
                         }
@@ -546,7 +546,7 @@ class NostoTagging extends Module
 
         $output .= $this->display(__FILE__, 'views/templates/admin/config-bootstrap.tpl');
 
-        return $stylesheets.$scripts.$output;
+        return $output;
     }
 
     /**

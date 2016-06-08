@@ -132,5 +132,4 @@ class NostoTaggingMetaAccount extends NostoAccountMeta
 
         return $nosto_currencies;
     }
-
 }
