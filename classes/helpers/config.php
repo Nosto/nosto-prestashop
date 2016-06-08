@@ -383,6 +383,8 @@ class NostoTaggingHelperConfig
      */
     public function clearCache($smarty = null)
     {
-        Tools::clearCompile($smarty);
+        if (method_exists('Tools', 'clearCompile')) {
+            Tools::clearCompile($smarty);
+        }
     }
 }

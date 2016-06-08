@@ -139,6 +139,7 @@ class NostoTagging extends Module
         $this->author = 'Nosto';
         $this->need_instance = 1;
         $this->bootstrap = true;
+        $this->ps_versions_compliancy = array('min' => '1.4', 'max' => _PS_VERSION_);
 
         parent::__construct();
         $this->displayName = $this->l('Personalization for PrestaShop');
