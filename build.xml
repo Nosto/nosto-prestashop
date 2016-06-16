@@ -62,6 +62,29 @@
         </exec>
     </target>
 
+    <target name="phpcs">
+        <echo msg="Checking code style" />
+        <phpcodesniffer standard="ruleset.xml" haltonerror="true">
+            <fileset dir="${srcdir}">
+                <exclude name="**lib**" />
+                <exclude name="**backward_compatibility**" />
+                <include name="**/*.php" />
+            </fileset>
+            <formatter type="full" usefile="false"/>
+        </phpcodesniffer>
+    </target>
+
+    <target name="phpmd">
+        <echo msg="Checking code messes" />
+        <phpmd rulesets="unusedcode">
+            <fileset dir="${srcdir}">
+                <exclude name="**lib**" />
+                <exclude name="**backward_compatibility**" />
+            </fileset>
+            <formatter type="text" useFile="false" outfile="."/>
+        </phpmd>
+    </target>
+
     <target name="cleandependencies">
         <delete dir="${buildsrc}/libs/nosto/php-sdk/tests" />
         <delete file="${buildsrc}/libs/nosto/php-sdk/codeception.yml" />
@@ -100,7 +123,7 @@
     <!-- ============================================  -->
     <!-- Target: build                                 -->
     <!-- ============================================  -->
-    <target name="build" depends="prepare">
+    <target name="build" depends="phpcs, phpmd, prepare">
         <echo msg="Building a package" />
         <exec executable="zip" dir="${zipbase}">
             <arg value="-r" />

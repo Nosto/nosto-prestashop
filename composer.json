@@ -5,7 +5,8 @@
     "nosto/php-sdk": "1.15.5"
   },
   "require-dev": {
-    "phing/phing": "2.*"
+    "phing/phing": "2.*",
+    "phpmd/phpmd" : "@stable"
   },
   "config": {
     "vendor-dir": "libs"
