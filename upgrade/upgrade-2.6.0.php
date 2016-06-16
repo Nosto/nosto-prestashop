@@ -28,14 +28,16 @@ if (!defined('_PS_VERSION_')) {
 }
 
 /**
- * Upgrades the module to version 2.6.R1.
+ * Upgrades the module to version 2.6.0.
  *
  * Creates "action{MODEL}LoadAfter" hooks dispatched by the tagging model.
  *
  * @return bool
  */
-function upgrade_module_2_6_R1()
+function upgrade_module_2_6_0()
 {
+    $success = true;
+
     $hooks = array(
         array(
             'name' => 'actionNostoPriceVariantLoadAfter',
@@ -49,7 +51,6 @@ function upgrade_module_2_6_R1()
         ),
     );
 
-    $success = true;
     foreach ($hooks as $hook) {
         $callback = array('Hook', (method_exists('Hook', 'getIdByName')) ? 'getIdByName' : 'get');
         $id_hook = call_user_func($callback, $hook['name']);
@@ -65,6 +66,10 @@ function upgrade_module_2_6_R1()
             }
         }
     }
+
+    /** @var NostoTaggingHelperConfig $helper_config */
+    $helper_config = Nosto::helper('nosto_tagging/config');
+    $helper_config->clearCache();
 
     return $success;
 }
