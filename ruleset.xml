@@ -33,7 +33,13 @@
         </exclude>
         <exclude name="PSR2.ControlStructures.ControlStructureSpacing.SpacingAfterOpenBrace"/>
     </rule>
-    <exclude-pattern>*/libs/*</exclude-pattern>
+    <exclude-pattern>/build/</exclude-pattern>
+    <exclude-pattern>/libs/composer/</exclude-pattern>
+    <exclude-pattern>/libs/nosto/</exclude-pattern>
+    <exclude-pattern>/libs/pdepend/</exclude-pattern>
+    <exclude-pattern>/libs/phing/</exclude-pattern>
+    <exclude-pattern>/libs/phpmd/</exclude-pattern>
+    <exclude-pattern>/libs/symfony/</exclude-pattern>
     <exclude-pattern>backward_compatibility/Context.php</exclude-pattern>
     <exclude-pattern>de.php</exclude-pattern>
     <exclude-pattern>en.php</exclude-pattern>

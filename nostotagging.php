@@ -302,7 +302,8 @@ class NostoTagging extends Module
                         $helper_flash->add(
                             'error',
                             $this->l(
-                                'Account could not be automatically created due to missing or invalid parameters. Please see your Prestashop logs for details'
+                                'Account could not be automatically created due to missing or invalid parameters.'
+                                . 'Please see your Prestashop logs for details'
                             )
                         );
                         Nosto::helper('nosto_tagging/logger')->error(
