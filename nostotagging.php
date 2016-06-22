@@ -686,6 +686,19 @@ class NostoTagging extends Module
             if (!is_null($search_term)) {
                 $html .= $this->getSearchTagging($search_term);
             }
+        } elseif ($this->isController('product')) {
+            $product = null;
+            $category = null;
+            if (method_exists($this->context->controller, 'getProduct')) {
+                $product = $this->context->controller->getProduct();
+            }
+            if (method_exists($this->context->controller, 'getCategory')) {
+                $category = $this->context->controller->getCategory();
+            }
+            $html .= $this->getProductTagging($product, $category);
+        } elseif ($this->isController('order-confirmation')) {
+            $order = new Order((int)Tools::getValue('id_order'), $this->context->language->id);
+            $html .= $this->getOrderTagging($order);
         }
 
         $html .= $this->display(__FILE__, 'views/templates/hook/top_nosto-elements.tpl');
@@ -830,15 +843,7 @@ class NostoTagging extends Module
             return '';
         }
 
-        $html = '';
-
-        $product = isset($params['product']) ? $params['product'] : null;
-        $category = isset($params['category']) ? $params['category'] : null;
-        $html .= $this->getProductTagging($product, $category);
-
-        $html .= $this->display(__FILE__, 'views/templates/hook/footer-product_nosto-elements.tpl');
-
-        return $html;
+        return $this->display(__FILE__, 'views/templates/hook/footer-product_nosto-elements.tpl');
     }
 
     /**
@@ -898,12 +903,7 @@ class NostoTagging extends Module
             return '';
         }
 
-        $html = '';
-
-        $order = isset($params['objOrder']) ? $params['objOrder'] : null;
-        $html .= $this->getOrderTagging($order);
-
-        return $html;
+        return '';
     }
 
     /**
