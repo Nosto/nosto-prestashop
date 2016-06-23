@@ -135,7 +135,7 @@ class NostoTagging extends Module
     {
         $this->name = 'nostotagging';
         $this->tab = 'advertising_marketing';
-        $this->version = '2.6.0';
+        $this->version = '2.6.1';
         $this->author = 'Nosto';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -648,6 +648,11 @@ class NostoTagging extends Module
         }
     }
 
+    /**
+     * Generates the tagging based on controller
+     *
+     * @return string
+     */
     public function getDefaultTagging()
     {
         if (!Nosto::helper('nosto_tagging/account')->existsAndIsConnected($this->context->language->id)) {
@@ -687,15 +692,12 @@ class NostoTagging extends Module
                 $html .= $this->getSearchTagging($search_term);
             }
         } elseif ($this->isController('product')) {
-            $product = null;
-            $category = null;
-            if (method_exists($this->context->controller, 'getProduct')) {
-                $product = $this->context->controller->getProduct();
+            $product = $this->resolveProductInContext();
+            $category = $this->resolveCategoryInContext();
+
+            if ($product instanceof Product) {
+                $html .= $this->getProductTagging($product, $category);
             }
-            if (method_exists($this->context->controller, 'getCategory')) {
-                $category = $this->context->controller->getCategory();
-            }
-            $html .= $this->getProductTagging($product, $category);
         } elseif ($this->isController('order-confirmation')) {
             $order = new Order((int)Tools::getValue('id_order'), $this->context->language->id);
             $html .= $this->getOrderTagging($order);
@@ -707,6 +709,58 @@ class NostoTagging extends Module
         return $html;
 
     }
+
+    /**
+     * Tries to resolve current / active category in context
+     *
+     * @return Category|null
+     */
+    protected function resolveCategoryInContext()
+    {
+        $category = null;
+        if (method_exists($this->context->controller, 'getCategory')) {
+            $category = $this->context->controller->getCategory();
+        }
+        if ($category instanceof Category == false) {
+            $id_category = null;
+            if (Tools::getValue('id_cateogry')) {
+                $id_category = Tools::getValue('id_category');
+            } elseif (
+                isset($this->context->cookie)
+                && ($this->context->cookie->last_visited_category)
+            ) {
+                $id_category = $this->context->cookie->last_visited_category;
+            }
+            if ($id_category) {
+                $category = new Category($id_category, $this->context->language->id, $this->context->shop->id);
+            }
+        }
+
+        return $category;
+    }
+
+    /**
+     * Tries to resolve current / active product in context
+     *
+     * @return null|Product
+     */
+    protected function resolveProductInContext()
+    {
+        $product = null;
+        if (method_exists($this->context->controller, 'getProduct')) {
+            $product = $this->context->controller->getProduct();
+        }
+        // If product is not set try to get use parameters (mostly for Prestashop < 1.5)
+        if ($product instanceof Product == false) {
+            if (Tools::getValue('id_product')) {
+                $id_product = Tools::getValue('id_product');
+                $product = new Product($id_product, true, $this->context->language->id);
+            }
+        }
+
+        return $product;
+    }
+
     /**
      * Hook for adding content to the top of every page.
      *
