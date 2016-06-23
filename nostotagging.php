@@ -699,8 +699,12 @@ class NostoTagging extends Module
                 $html .= $this->getProductTagging($product, $category);
             }
         } elseif ($this->isController('order-confirmation')) {
-            $order = new Order((int)Tools::getValue('id_order'), $this->context->language->id);
-            $html .= $this->getOrderTagging($order);
+            if ($id_order = (int)Tools::getValue('id_order')) {
+                $order = new Order($id_order, $this->context->language->id);
+                if ($order instanceof Order) {
+                    $html .= $this->getOrderTagging($order);
+                }
+            }
         }
 
         $html .= $this->display(__FILE__, 'views/templates/hook/top_nosto-elements.tpl');
