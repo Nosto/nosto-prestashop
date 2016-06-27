@@ -1320,7 +1320,7 @@ class NostoTagging extends Module
         } elseif ($this->isController('search')) {
         // The search page.
             return $this->display(__FILE__, 'views/templates/hook/search_hidden-nosto-elements.tpl');
-        } elseif ($this->isController('pagenotfound')) {
+        } elseif ($this->isController('pagenotfound') || $this->isController('404')) {
         // The search page.
             return $this->display(__FILE__, 'views/templates/hook/404_hidden_nosto-elements.tpl');
         } elseif ($this->isController('order-confirmation')) {
