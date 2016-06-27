@@ -700,9 +700,11 @@ class NostoTagging extends Module
             }
         } elseif ($this->isController('order-confirmation')) {
             if ($id_order = (int)Tools::getValue('id_order')) {
-                $order = new Order($id_order, $this->context->language->id);
+                $order = new Order($id_order);
                 if ($order instanceof Order) {
-                    $html .= $this->getOrderTagging($order);
+                    if (Validate::isLoadedObject($order)) {
+                        $html .= $this->getOrderTagging($order);
+                    }
                 }
             }
         }
