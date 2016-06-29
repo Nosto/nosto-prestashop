@@ -4,6 +4,7 @@ This project adheres to Semantic Versioning(http://semver.org/).
 
 ## 2.6.1
 - Change order and product tagging to header / footer
+- Remove sending deleted currencies to Nosto
 
 ## 2.6.0
 - Add support for multiple currencies (using exchange rates)
