@@ -699,13 +699,9 @@ class NostoTagging extends Module
                 $html .= $this->getProductTagging($product, $category);
             }
         } elseif ($this->isController('order-confirmation')) {
-            if ($id_order = (int)Tools::getValue('id_order')) {
-                $order = new Order($id_order);
-                if ($order instanceof Order) {
-                    if (Validate::isLoadedObject($order)) {
-                        $html .= $this->getOrderTagging($order);
-                    }
-                }
+            $order = $this->resolveOrderInContext();
+            if ($order instanceof Order) {
+                $html .= $this->getOrderTagging($order);
             }
         }
 
@@ -714,6 +710,27 @@ class NostoTagging extends Module
 
         return $html;
 
+    }
+
+    /**
+     * Tries to resolve current / active order confirmation in context
+     *
+     * @return Order|null
+     */
+    protected function resolveOrderInContext()
+    {
+        $order = null;
+        if ($id_order = (int)Tools::getValue('id_order')) {
+            $order = new Order($id_order);
+        }
+        if (
+            $order instanceof Order === false
+            || !Validate::isLoadedObject($order)
+        ) {
+            $order = null;
+        }
+
+        return $order;
     }
 
     /**
@@ -741,6 +758,12 @@ class NostoTagging extends Module
                 $category = new Category($id_category, $this->context->language->id, $this->context->shop->id);
             }
         }
+        if (
+            $category instanceof Category === false
+            || !Validate::isLoadedObject($category)
+        ) {
+            $category = null;
+        }
 
         return $category;
     }
@@ -758,10 +781,19 @@ class NostoTagging extends Module
         }
         // If product is not set try to get use parameters (mostly for Prestashop < 1.5)
         if ($product instanceof Product == false) {
+            $id_product = null;
             if (Tools::getValue('id_product')) {
                 $id_product = Tools::getValue('id_product');
+            }
+            if ($id_product) {
                 $product = new Product($id_product, true, $this->context->language->id);
             }
+        }
+        if (
+            $product instanceof Product == false
+            || !Validate::isLoadedObject($product)
+        ) {
+            $product = null;
         }
 
         return $product;
