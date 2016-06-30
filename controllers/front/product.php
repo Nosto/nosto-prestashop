@@ -37,7 +37,6 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
      */
     public function initContent()
     {
-        header('Content-Type: application/json');
         $context = $this->module->getContext();
         $collection = new NostoExportProductCollection();
 

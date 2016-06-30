@@ -36,17 +36,16 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
      */
     public function initContent()
     {
-        header('Content-Type: application/json');
         $context = $this->module->getContext();
         $collection = new NostoExportOrderCollection();
 
         if (!empty(Tools::getValue('id'))) {
-            $order = new Order(Tools::getValue('id'));
-            if (!Validate::isLoadedObject($order)) {
+            $orders = Order::getByReference(Tools::getValue('id'));
+            if (!$orders || empty($orders)) {
                 Tools::display404Error();
             }
             $nosto_order = new NostoTaggingOrder();
-            $nosto_order->loadData($context, $order);
+            $nosto_order->loadData($context, $orders[0]);
             $collection[] = $nosto_order;
         } else {
             foreach ($this->getOrderIds() as $id_order) {
