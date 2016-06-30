@@ -369,10 +369,8 @@ class NostoTaggingHelperConfig
     public function useMultipleCurrencies($id_lang)
     {
         if ($this->getMultiCurrencyMethod($id_lang) !== self::MULTI_CURRENCY_METHOD_DISABLED) {
-
             return true;
         } else {
-
             return false;
         }
     }
@@ -385,6 +383,8 @@ class NostoTaggingHelperConfig
      */
     public function clearCache($smarty = null)
     {
-        Tools::clearCompile($smarty);
+        if (method_exists('Tools', 'clearCompile')) {
+            Tools::clearCompile($smarty);
+        }
     }
 }

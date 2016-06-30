@@ -281,7 +281,7 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
         // One order can be split into multiple orders, so we need to combine their data.
             $order_collection = Order::getByReference($order->reference);
             foreach ($order_collection as $item) {
-            /** @var $item Order */
+                /** @var $item Order */
                 $products = array_merge($products, $item->getProducts());
                 $total_discounts_tax_incl = Tools::ps_round(
                     $total_discounts_tax_incl + $item->total_discounts_tax_incl,

@@ -167,7 +167,10 @@ class NostoTaggingHelperCurrency
         $exchange_rates = array();
         foreach ($currencies as $currency) {
             // Skip base currencyCode.
-            if ($currency['iso_code'] === $base_currency_code) {
+            if (
+                $currency['iso_code'] === $base_currency_code
+                || $currency['deleted'] == 1
+            ) {
                 continue;
             }
             

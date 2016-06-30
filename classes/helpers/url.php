@@ -30,6 +30,7 @@ class NostoTaggingHelperUrl
 {
     const DEFAULT_SERVER_ADDRESS = 'connect.nosto.com';
     const OPTIMAL_PRODUCT_IMAGE_WIDTH = 450;
+    const DEFAULT_IFRAME_ORIGIN_REGEXP = '(https:\/\/(.*)\.hub\.nosto\.com)|(https:\/\/my\.nosto\.com)';
 
     /**
      * Returns a preview url to a product page.
@@ -200,7 +201,7 @@ class NostoTaggingHelperUrl
         }
 
         if (version_compare(_PS_VERSION_, '1.5.0.0') === -1 || version_compare(_PS_VERSION_, '1.5.5.0') >= 0) {
-        /** @var LinkCore $link */
+            /** @var LinkCore $link */
             $link = new Link();
             $url = $link->getProductLink($product, null, null, null, $id_lang, $id_shop);
         } else {
@@ -243,7 +244,7 @@ class NostoTaggingHelperUrl
         }
 
         if (version_compare(_PS_VERSION_, '1.5.0.0') === -1 || version_compare(_PS_VERSION_, '1.5.5.0') >= 0) {
-        /** @var LinkCore $link */
+            /** @var LinkCore $link */
             $link = new Link();
             $url = $link->getCategoryLink($category, null, $id_lang, null, $id_shop);
         } else {
@@ -286,7 +287,7 @@ class NostoTaggingHelperUrl
         }
 
         if (version_compare(_PS_VERSION_, '1.5.0.0') === -1 || version_compare(_PS_VERSION_, '1.5.5.0') >= 0) {
-        /** @var LinkCore $link */
+            /** @var LinkCore $link */
             $link = new Link();
             $url = $link->getPageLink($controller, true, $id_lang, null, false, $id_shop);
         } else {
@@ -422,5 +423,15 @@ class NostoTaggingHelperUrl
             }
         }
         return isset($found['name']) ? $found['name'] : false;
+    }
+
+    /**
+     * Returns the iframe origin where messages are allowed
+     *
+     * @return string|false
+     */
+    public function getIframeOrigin()
+    {
+        return isset($_ENV['NOSTO_IFRAME_ORIGIN_REGEXP']) ? $_ENV['NOSTO_IFRAME_ORIGIN_REGEXP'] : self::DEFAULT_IFRAME_ORIGIN_REGEXP;
     }
 }

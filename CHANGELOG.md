@@ -2,22 +2,22 @@
 All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
+## 2.6.1
+- Change order and product tagging to header / footer
+- Remove sending deleted currencies to Nosto
 
-## 2.6.R4
+## 2.6.0
+- Add support for multiple currencies (using exchange rates)
 - Add tagging to 404 and order confirmation pages
 - Clear cache after Nosto account is installed or reconnected
-
-## 2.6.R3
+- Display proper error messages
+- Add setting where to render default Nosto tagging
+- Add support for account details
 - Update also invisible products to Nosto
-
-## 2.6.R2
 - Define user agent for API calls
 - Fix the missing static token
 - Add alert for missing Nosto API tokens
 - Add support for external order ref
-
-## 2.6.R1
-- Add support for multiple currencies (using exchange rates)
 
 ## 2.5.0
 - Add possibility to override data for product and order models

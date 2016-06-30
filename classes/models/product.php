@@ -210,10 +210,8 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
     protected function checkAvailability(Product $product)
     {
         if (_PS_VERSION_ >= '1.5' && $product->visibility === 'none') {
-
             return self::INVISIBLE;
         } else {
-
             return ($product->checkQty(1)) ? self::IN_STOCK : self::OUT_OF_STOCK;
         }
     }

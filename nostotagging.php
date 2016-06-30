@@ -135,10 +135,11 @@ class NostoTagging extends Module
     {
         $this->name = 'nostotagging';
         $this->tab = 'advertising_marketing';
-        $this->version = '2.6.R4';
+        $this->version = '2.6.1';
         $this->author = 'Nosto';
         $this->need_instance = 1;
         $this->bootstrap = true;
+        $this->ps_versions_compliancy = array('min' => '1.4', 'max' => _PS_VERSION_);
 
         parent::__construct();
         $this->displayName = $this->l('Personalization for PrestaShop');
@@ -272,24 +273,62 @@ class NostoTagging extends Module
                 // After the redirect this will be checked again and an error message is outputted.
             } elseif ($current_language['id_lang'] != $language_id) {
                 $helper_flash->add('error', $this->l('Language cannot be empty.'));
-            } elseif (Tools::isSubmit('submit_nostotagging_new_account')) {
-                        $account_email = (string)Tools::getValue($this->name.'_account_email');
+            } elseif (
+                Tools::isSubmit('submit_nostotagging_new_account')
+                || Tools::getValue('nostotagging_account_action') === 'newAccount'
+            ) {
+                $account_email = (string)Tools::getValue($this->name.'_account_email');
                 if (empty($account_email)) {
                     $helper_flash->add('error', $this->l('Email cannot be empty.'));
                 } elseif (!Validate::isEmail($account_email)) {
                     $helper_flash->add('error', $this->l('Email is not a valid email address.'));
-                } elseif (!$this->createAccount($language_id, $account_email)) {
-                    $helper_flash->add('error', $this->l(
-                        'Account could not be automatically created. Please visit nosto.com to create a new account.'
-                    ));
                 } else {
-                    $helper_config->clearCache();
-                    $helper_flash->add('success', $this->l(
-                        'Account created. Please check your email and follow the instructions to set a password for
-                        your new account within three days.'
-                    ));
+                    try {
+                        if (Tools::isSubmit('nostotagging_account_details')) {
+                            $account_details = Tools::jsonDecode(Tools::getValue('nostotagging_account_details'));
+                        } else {
+                            $account_details = false;
+                        }
+                        $this->createAccount($language_id, $account_email, $account_details);
+                        $helper_config->clearCache();
+                        $helper_flash->add(
+                            'success',
+                            $this->l(
+                                'Account created. Please check your email and follow the instructions to set a'
+                                . ' password for your new account within three days.'
+                            )
+                        );
+                    } catch (NostoApiResponseException $e) {
+                        $helper_flash->add(
+                            'error',
+                            $this->l(
+                                'Account could not be automatically created due to missing or invalid parameters. Please see your Prestashop logs for details'
+                            )
+                        );
+                        Nosto::helper('nosto_tagging/logger')->error(
+                            'Creating Nosto account failed: ' . $e->getMessage() .':'.$e->getCode(),
+                            $e->getCode(),
+                            'Employee',
+                            (int)$employee->id
+                        );
+
+                    } catch (Exception $e) {
+                        $helper_flash->add(
+                            'error',
+                            $this->l('Account could not be automatically created. Please see logs for details.')
+                        );
+                        Nosto::helper('nosto_tagging/logger')->error(
+                            'Creating Nosto account failed: ' . $e->getMessage() .':'.$e->getCode(),
+                            $e->getCode(),
+                            'Employee',
+                            (int)$employee->id
+                        );
+                    }
                 }
-            } elseif (Tools::isSubmit('submit_nostotagging_authorize_account')) {
+            } elseif (
+                Tools::isSubmit('submit_nostotagging_authorize_account')
+                || Tools::getValue('nostotagging_account_action') === 'connectAccount'
+            ) {
                 $meta = new NostoTaggingMetaOauth();
                 $meta->setModuleName($this->name);
                 $meta->setModulePath($this->_path);
@@ -297,12 +336,14 @@ class NostoTagging extends Module
                 $client = new NostoOAuthClient($meta);
                 Tools::redirect($client->getAuthorizationUrl(), '');
                 die();
-            } elseif (Tools::isSubmit('submit_nostotagging_reset_account')) {
+            } elseif (
+                Tools::isSubmit('submit_nostotagging_reset_account')
+                || Tools::getValue('nostotagging_account_action') === 'removeAccount'
+            ) {
                 $account = Nosto::helper('nosto_tagging/account')->find($language_id);
                 $helper_config->clearCache();
                 Nosto::helper('nosto_tagging/account')->delete($account, $language_id);
             } elseif (Tools::isSubmit('submit_nostotagging_update_exchange_rates')) {
-
                 /* @var NostoTaggingHelperAccount $account_helper */
                 $account_helper = Nosto::helper('nosto_tagging/account');
                 $nosto_account = $account_helper->find($language_id);
@@ -319,7 +360,6 @@ class NostoTagging extends Module
                         )
                     );
                 } else {
-
                     if (!$nosto_account->getApiToken(NostoApiToken::API_EXCHANGE_RATES)) {
                         $message = 'Failed to update exchange rates to Nosto due to a missing API token. 
                             Please, reconnect your account with Nosto';
@@ -425,8 +465,21 @@ class NostoTagging extends Module
             $missing_tokens = false;
         }
 
+        if ($account instanceof NostoAccountInterface === false) {
+            $account_iframe = new NostoTaggingMetaAccountIframe();
+            $account_iframe->loadData($this->context, $language_id);
+            /* @var NostoHelperIframe $iframe_helper */
+            $iframe_helper = Nosto::helper('iframe');
+            $iframe_installation_url = $iframe_helper->getUrl($account_iframe, null, array('v'=>1));
+        } else {
+            $iframe_installation_url = null;
+        }
+
         $this->getSmarty()->assign(array(
             $this->name.'_form_action' => $this->getAdminUrl(),
+            $this->name.'_create_account' => $this->getAdminUrl(),
+            $this->name.'_delete_account' => $this->getAdminUrl(),
+            $this->name.'_connect_account' => $this->getAdminUrl(),
             $this->name.'_has_account' => ($account !== null),
             $this->name.'_account_name' => ($account !== null) ? $account->getName() : null,
             $this->name.'_account_email' => $account_email,
@@ -463,9 +516,11 @@ class NostoTagging extends Module
             'nostotagging_position' => $helper_config->getNostotaggingRenderPosition($current_language['id_lang']),
             $this->name.'_ps_version_class' => 'ps-'.str_replace('.', '', Tools::substr(_PS_VERSION_, 0, 3)),
             'missing_tokens' => $missing_tokens,
+            'iframe_installation_url' => $iframe_installation_url,
+            'iframe_origin' => $helper_url->getIframeOrigin(),
+            'module_path' => $this->_path
         ));
 
-        
         // Try to login employee to Nosto in order to get a url to the internal setting pages,
         // which are then shown in an iframe on the module config page.
         if ($account && $account->isConnectedToNosto()) {
@@ -488,14 +543,9 @@ class NostoTagging extends Module
             }
         }
 
-        $stylesheets = '<link rel="stylesheet" href="'.$this->_path.'views/css/tw-bs-v3.1.1.css">';
-        $stylesheets .= '<link rel="stylesheet" href="'.$this->_path.'views/css/nostotagging-admin-config.css">';
-        $scripts = '<script type="text/javascript" src="'.$this->_path.'views/js/iframeresizer.min.js"></script>';
-        $scripts .= '<script type="text/javascript" src="'.$this->_path.'views/js/nostotagging-admin-config.js">';
-        $scripts .= '</script>';
         $output .= $this->display(__FILE__, 'views/templates/admin/config-bootstrap.tpl');
 
-        return $stylesheets.$scripts.$output;
+        return $output;
     }
 
     /**
@@ -503,24 +553,21 @@ class NostoTagging extends Module
      *
      * @param int $id_lang the language ID for which to create the account.
      * @param string $email the account owner email address.
+     * @param string $account_details the details for the account.
      * @return bool true if account was created, false otherwise.
      */
-    protected function createAccount($id_lang, $email)
+    protected function createAccount($id_lang, $email, $account_details = "")
     {
-        try {
-            $meta = new NostoTaggingMetaAccount();
-            $meta->loadData($this->context, $id_lang);
-            $meta->getOwner()->setEmail($email);
-            /** @var NostoAccount $account */
-            $account = NostoAccount::create($meta);
-            return Nosto::helper('nosto_tagging/account')->save($account, $id_lang);
-        } catch (NostoException $e) {
-            Nosto::helper('nosto_tagging/logger')->error(
-                __CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(),
-                $e->getCode()
-            );
-        }
-        return false;
+        $meta = new NostoTaggingMetaAccount();
+        $meta->loadData($this->context, $id_lang);
+        $meta->getOwner()->setEmail($email);
+        $meta->setDetails($account_details);
+        /** @var NostoAccount $account */
+        $account = NostoAccount::create($meta);
+
+        /* @var NostoTaggingHelperAccount $account_helper */
+        $account_helper = Nosto::helper('nosto_tagging/account');
+        return $account_helper->save($account, $id_lang);
     }
 
     /**
@@ -601,6 +648,11 @@ class NostoTagging extends Module
         }
     }
 
+    /**
+     * Generates the tagging based on controller
+     *
+     * @return string
+     */
     public function getDefaultTagging()
     {
         if (!Nosto::helper('nosto_tagging/account')->existsAndIsConnected($this->context->language->id)) {
@@ -639,6 +691,18 @@ class NostoTagging extends Module
             if (!is_null($search_term)) {
                 $html .= $this->getSearchTagging($search_term);
             }
+        } elseif ($this->isController('product')) {
+            $product = $this->resolveProductInContext();
+            $category = $this->resolveCategoryInContext();
+
+            if ($product instanceof Product) {
+                $html .= $this->getProductTagging($product, $category);
+            }
+        } elseif ($this->isController('order-confirmation')) {
+            $order = $this->resolveOrderInContext();
+            if ($order instanceof Order) {
+                $html .= $this->getOrderTagging($order);
+            }
         }
 
         $html .= $this->display(__FILE__, 'views/templates/hook/top_nosto-elements.tpl');
@@ -647,6 +711,94 @@ class NostoTagging extends Module
         return $html;
 
     }
+
+    /**
+     * Tries to resolve current / active order confirmation in context
+     *
+     * @return Order|null
+     */
+    protected function resolveOrderInContext()
+    {
+        $order = null;
+        if ($id_order = (int)Tools::getValue('id_order')) {
+            $order = new Order($id_order);
+        }
+        if (
+            $order instanceof Order === false
+            || !Validate::isLoadedObject($order)
+        ) {
+            $order = null;
+        }
+
+        return $order;
+    }
+
+    /**
+     * Tries to resolve current / active category in context
+     *
+     * @return Category|null
+     */
+    protected function resolveCategoryInContext()
+    {
+        $category = null;
+        if (method_exists($this->context->controller, 'getCategory')) {
+            $category = $this->context->controller->getCategory();
+        }
+        if ($category instanceof Category == false) {
+            $id_category = null;
+            if (Tools::getValue('id_cateogry')) {
+                $id_category = Tools::getValue('id_category');
+            } elseif (
+                isset($this->context->cookie)
+                && ($this->context->cookie->last_visited_category)
+            ) {
+                $id_category = $this->context->cookie->last_visited_category;
+            }
+            if ($id_category) {
+                $category = new Category($id_category, $this->context->language->id, $this->context->shop->id);
+            }
+        }
+        if (
+            $category instanceof Category === false
+            || !Validate::isLoadedObject($category)
+        ) {
+            $category = null;
+        }
+
+        return $category;
+    }
+
+    /**
+     * Tries to resolve current / active product in context
+     *
+     * @return null|Product
+     */
+    protected function resolveProductInContext()
+    {
+        $product = null;
+        if (method_exists($this->context->controller, 'getProduct')) {
+            $product = $this->context->controller->getProduct();
+        }
+        // If product is not set try to get use parameters (mostly for Prestashop < 1.5)
+        if ($product instanceof Product == false) {
+            $id_product = null;
+            if (Tools::getValue('id_product')) {
+                $id_product = Tools::getValue('id_product');
+            }
+            if ($id_product) {
+                $product = new Product($id_product, true, $this->context->language->id);
+            }
+        }
+        if (
+            $product instanceof Product == false
+            || !Validate::isLoadedObject($product)
+        ) {
+            $product = null;
+        }
+
+        return $product;
+    }
+
     /**
      * Hook for adding content to the top of every page.
      *
@@ -783,19 +935,7 @@ class NostoTagging extends Module
             return '';
         }
 
-        $html = '';
-
-        $product = isset($params['product']) ? $params['product'] : null;
-        $category = isset($params['category']) ? $params['category'] : null;
-
-        if (!is_a($product, Product)) {
-            $product = new Product($product['id_product'], true, $this->context->language->id, $this->context->shop->id);
-        }
-
-        $html .= $this->getProductTagging($product, $category);
-        $html .= $this->display(__FILE__, 'views/templates/hook/footer-product_nosto-elements.tpl');
-
-        return $html;
+        return $this->display(__FILE__, 'views/templates/hook/footer-product_nosto-elements.tpl');
     }
 
     /**
@@ -855,12 +995,7 @@ class NostoTagging extends Module
             return '';
         }
 
-        $html = '';
-
-        $order = isset($params['objOrder']) ? $params['objOrder'] : null;
-        $html .= $this->getOrderTagging($order);
-
-        return $html;
+        return '';
     }
 
     /**
@@ -1217,7 +1352,7 @@ class NostoTagging extends Module
         } elseif ($this->isController('search')) {
         // The search page.
             return $this->display(__FILE__, 'views/templates/hook/search_hidden-nosto-elements.tpl');
-        } elseif ($this->isController('pagenotfound')) {
+        } elseif ($this->isController('pagenotfound') || $this->isController('404')) {
         // The search page.
             return $this->display(__FILE__, 'views/templates/hook/404_hidden_nosto-elements.tpl');
         } elseif ($this->isController('order-confirmation')) {
@@ -1483,12 +1618,10 @@ class NostoTagging extends Module
         if (!empty($this->smarty)
             && method_exists($this->smarty, 'assign')
         ) {
-
             return $this->smarty;
         } elseif (!empty($this->context->smarty)
             && method_exists($this->context->smarty, 'assign')
         ) {
-
             return $this->context->smarty;
         }
 
