@@ -177,7 +177,7 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
         $this->categories = $this->buildCategories($product, $id_lang);
         $this->short_description = $product->description_short;
         $this->description = $product->description;
-        $this->brand = (!empty($product->manufacturer_name)) ? $product->manufacturer_name : null;
+        $this->brand = $this->buildBrand($product);
         $this->date_published = Nosto::helper('date')->format($product->date_add);
 
         $this->dispatchHookActionLoadAfter(array(
@@ -264,6 +264,23 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
             }
         }
         return $categories;
+    }
+
+    /**
+     * Builds the brand name from the product's manufacturer to and returns them.
+     *
+     * @param Product $product the product model.
+     * @return string the built brand name.
+     */
+    protected function buildBrand(Product $product)
+    {
+        $manufacturer = null;
+        if (empty($product->manufacturer_name) && !empty($product->id_manufacturer)) {
+            $manufacturer = Manufacturer::getNameById($product->id_manufacturer);
+        } else {
+            $manufacturer = $product->manufacturer_name;
+        }
+        return $manufacturer;
     }
 
     /**
