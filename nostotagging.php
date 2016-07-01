@@ -346,7 +346,8 @@ class NostoTagging extends Module
                     } catch (Exception $e) {
                         $helper_flash->add(
                             'error',
-                            $this->l('Account could not be automatically created. Please see logs for details.')
+                            $this->l('Account could not be automatically created. The error message was: ')
+                            . $e->getMessage()
                         );
                         Nosto::helper('nosto_tagging/logger')->error(
                             'Creating Nosto account failed: ' . $e->getMessage() .':'.$e->getCode(),
