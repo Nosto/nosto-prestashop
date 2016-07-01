@@ -606,7 +606,8 @@ class NostoTagging extends Module
             'nosto_unique_id' => $this->getUniqueInstallationId(),
             'nosto_language' => Tools::strtolower($this->context->language->iso_code),
             'add_to_cart_url' => $link->getPageLink('cart.php'),
-            'static_token' => Tools::getToken(false)
+            'static_token' => Tools::getToken(false),
+            'disable_autoload' => (bool)!empty($this->getHiddenRecommendationElements())
         ));
 
         $this->context->controller->addJS($this->_path.'views/js/nostotagging-auto-slots.js');
