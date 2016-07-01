@@ -41,7 +41,7 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
 
         if (!empty(Tools::getValue('id'))) {
             $orders = Order::getByReference(Tools::getValue('id'));
-            if (!$orders || empty($orders)) {
+            if (empty($orders)) {
                 Tools::display404Error();
             }
             $nosto_order = new NostoTaggingOrder();
