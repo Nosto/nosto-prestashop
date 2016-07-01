@@ -179,46 +179,77 @@ class NostoTagging extends Module
      */
     public function install()
     {
-        if (parent::install()
-            && Nosto::helper('nosto_tagging/customer')->createTable()
-            && Nosto::helper('nosto_tagging/admin_tab')->install()
-            && $this->initHooks()
-            && $this->registerHook('displayCategoryTop')
-            && $this->registerHook('displayCategoryFooter')
-            && $this->registerHook('displaySearchTop')
-            && $this->registerHook('displaySearchFooter')
-            && $this->registerHook('header')
-            && $this->registerHook('top')
-            && $this->registerHook('footer')
-            && $this->registerHook('productfooter')
-            && $this->registerHook('shoppingCart')
-            && $this->registerHook('orderConfirmation')
-            && $this->registerHook('postUpdateOrderStatus')
-            && $this->registerHook('paymentTop')
-            && $this->registerHook('home')) {
-        // For versions 1.4.0.1 - 1.5.3.1 we need to keep track of the currently installed version.
-            // This is to enable auto-update of the module by running its upgrade scripts.
-            // This config value is updated in the NostoTaggingUpdater helper every time the module is updated.
-            if (version_compare(_PS_VERSION_, '1.5.4.0', '<')) {
-                Nosto::helper('nosto_tagging/config')->saveInstalledVersion($this->version);
+        $success = false;
+        if (parent::install()) {
+            $success = true;
+            if (
+                !$this->registerHook('displayCategoryTop')
+                || !$this->registerHook('displayCategoryFooter')
+                || !$this->registerHook('displaySearchTop')
+                || !$this->registerHook('displaySearchFooter')
+                || !$this->registerHook('header')
+                || !$this->registerHook('top')
+                || !$this->registerHook('footer')
+                || !$this->registerHook('productfooter')
+                || !$this->registerHook('shoppingCart')
+                || !$this->registerHook('orderConfirmation')
+                || !$this->registerHook('postUpdateOrderStatus')
+                || !$this->registerHook('paymentTop')
+                || !$this->registerHook('home')
+            ) {
+                $success = false;
+                $this->_errors[] = $this->l(
+                    'Failed to register hooks'
+                );
             }
 
-            if (_PS_VERSION_ < '1.5') {
-            // For PS 1.4 we need to register some additional hooks for the product create/update/delete.
-                return $this->registerHook('updateproduct')
+            /* @var NostoTaggingHelperCustomer $helper_customer */
+            $helper_customer = Nosto::helper('nosto_tagging/customer');
+            if (!$helper_customer->createTable()) {
+                $success = false;
+                $this->_errors[] = $this->l(
+                    'Failed to create Nosto customer table'
+                );
+            }
+
+            /* @var NostoTaggingHelperAdminTab $helper_admin_tab */
+            $helper_admin_tab = Nosto::helper('nosto_tagging/admin_tab');
+            if (!$helper_admin_tab->install()) {
+                $success = false;
+                $this->_errors[] = $this->l(
+                    'Failed to create Nosto admin tab'
+                );
+            }
+
+            if (!$this->initHooks()) {
+                $success = false;
+            }
+
+            // For versions 1.4.0.1 - 1.5.3.1 we need to keep track of the currently installed version.
+            // This is to enable auto-update of the module by running its upgrade scripts.
+            // This config value is updated in the NostoTaggingUpdater helper every time the module is updated.
+            if ($success) {
+                if (version_compare(_PS_VERSION_, '1.5.4.0', '<')) {
+                    Nosto::helper('nosto_tagging/config')->saveInstalledVersion($this->version);
+                }
+
+                if (_PS_VERSION_ < '1.5') {
+                    // For PS 1.4 we need to register some additional hooks for the product create/update/delete.
+                    return $this->registerHook('updateproduct')
                     && $this->registerHook('deleteproduct')
                     && $this->registerHook('addproduct')
                     && $this->registerHook('updateQuantity');
-            } else {
-                // And for PS >= 1.5 we register the object specific hooks for the product create/update/delete.
-                // Also register the back office header hook to add some CSS to the entire back office.
-                return $this->registerHook('actionObjectUpdateAfter')
+                } else {
+                    // And for PS >= 1.5 we register the object specific hooks for the product create/update/delete.
+                    // Also register the back office header hook to add some CSS to the entire back office.
+                    return $this->registerHook('actionObjectUpdateAfter')
                     && $this->registerHook('actionObjectDeleteAfter')
                     && $this->registerHook('actionObjectAddAfter')
                     && $this->registerHook('displayBackOfficeHeader');
+                }
             }
         }
-        return false;
+        return $success;
     }
 
     /**
@@ -315,7 +346,8 @@ class NostoTagging extends Module
                     } catch (Exception $e) {
                         $helper_flash->add(
                             'error',
-                            $this->l('Account could not be automatically created. Please see logs for details.')
+                            $this->l('Account could not be automatically created. The error message was: ')
+                            . $e->getMessage()
                         );
                         Nosto::helper('nosto_tagging/logger')->error(
                             'Creating Nosto account failed: ' . $e->getMessage() .':'.$e->getCode(),
@@ -1453,6 +1485,7 @@ class NostoTagging extends Module
      */
     protected function initHooks()
     {
+        $success = true;
         if (!empty(self::$custom_hooks)) {
             foreach (self::$custom_hooks as $hook) {
                 $callback = array('Hook', (method_exists('Hook', 'getIdByName')) ? 'getIdByName' : 'get');
@@ -1465,13 +1498,19 @@ class NostoTagging extends Module
                     $new_hook->add();
                     $id_hook = $new_hook->id;
                     if (!$id_hook) {
-                        return false;
+                        $this->_errors[] = $this->l(
+                            sprintf(
+                                'Hook %s could not be created',
+                                $hook['name']
+                            )
+                        );
+                        $success = false;
                     }
                 }
             }
         }
 
-        return true;
+        return $success;
     }
 
     /**
