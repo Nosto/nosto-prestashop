@@ -432,6 +432,11 @@ class NostoTaggingHelperUrl
      */
     public function getIframeOrigin()
     {
-        return isset($_ENV['NOSTO_IFRAME_ORIGIN_REGEXP']) ? $_ENV['NOSTO_IFRAME_ORIGIN_REGEXP'] : self::DEFAULT_IFRAME_ORIGIN_REGEXP;
+        $origin = self::DEFAULT_IFRAME_ORIGIN_REGEXP;
+        if (isset($_ENV['NOSTO_IFRAME_ORIGIN_REGEXP'])) {
+            $origin = $_ENV['NOSTO_IFRAME_ORIGIN_REGEXP'];
+        }
+
+        return $origin;
     }
 }
