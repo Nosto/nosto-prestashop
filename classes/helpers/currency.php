@@ -87,66 +87,70 @@ class NostoTaggingHelperCurrency
      * Parses a PS currency into a Nosto currency.
      *
      * @param array $currency the PS currency data.
+     * @param Context $context context where the currencies are used.
      * @return NostoCurrency the nosto currency.
      *
      * @throws NostoException if currency cannot be parsed.
      */
-    public function getNostoCurrency(array $currency)
+    public function getNostoCurrency(array $currency, Context $context = null)
     {
-        if (empty($currency['format'])) {
-            $format = self::resolveFormat($currency);
-            if (empty($format)) {
-                $format = self::$fallbackCurrencyFormat;
-            }
+        $group_length = 3;
+        $precision = 2;
+
+        // In Prestashop 1.7 (Beta 1) the format is fixed
+        if(
+            $context instanceof Context
+            && version_compare(_PS_VERSION_, 1.7)
+        ) {
+            $group_symbol = ',';
+            $decimal_symbol = '.';
+            $symbol_position = NostoCurrencySymbol::SYMBOL_POS_LEFT;
         } else {
-            $format = currency['format'];
-        }
-        switch ($format) {
-            /* X 0,000.00 */
-            case 1:
-                $group_symbol = ',';
-                $decimal_symbol = '.';
-                $group_length = 3;
-                $precision = 2;
-                $symbol_position = NostoCurrencySymbol::SYMBOL_POS_LEFT;
-                break;
-            /* 0 000,00 X*/
-            case 2:
-                $group_symbol = ' ';
-                $decimal_symbol = ',';
-                $group_length = 3;
-                $precision = 2;
-                $symbol_position = NostoCurrencySymbol::SYMBOL_POS_RIGHT;
-                break;
-            /* X 0.000,00 */
-            case 3:
-                $group_symbol = '.';
-                $decimal_symbol = ',';
-                $group_length = 3;
-                $precision = 2;
-                $symbol_position = NostoCurrencySymbol::SYMBOL_POS_LEFT;
-                break;
-            /* 0,000.00 X */
-            case 4:
-                $group_symbol = ',';
-                $decimal_symbol = '.';
-                $group_length = 3;
-                $precision = 2;
-                $symbol_position = NostoCurrencySymbol::SYMBOL_POS_RIGHT;
-                break;
-            /* X 0'000.00 */
-            case 5:
-                $group_symbol = '\'';
-                $decimal_symbol = '.';
-                $group_length = 3;
-                $precision = 2;
-                $symbol_position = NostoCurrencySymbol::SYMBOL_POS_LEFT;
-                break;
 
-            default:
-                throw new NostoException(sprintf('Unsupported PrestaShop currency format %d.', $currency['format']));
-        }
+            if (empty($currency['format'])) {
+                $format = self::resolveFormat($currency);
+                if (empty($format)) {
+                    $format = self::$fallbackCurrencyFormat;
+                }
+            } else {
+                $format = currency['format'];
+            }
+            switch ($format) {
+                /* X 0,000.00 */
+                case 1:
+                    $group_symbol = ',';
+                    $decimal_symbol = '.';
+                    $symbol_position = NostoCurrencySymbol::SYMBOL_POS_LEFT;
+                    break;
+                /* 0 000,00 X*/
+                case 2:
+                    $group_symbol = ' ';
+                    $decimal_symbol = ',';
+                    $symbol_position = NostoCurrencySymbol::SYMBOL_POS_RIGHT;
+                    break;
+                /* X 0.000,00 */
+                case 3:
+                    $group_symbol = '.';
+                    $decimal_symbol = ',';
+                    $symbol_position = NostoCurrencySymbol::SYMBOL_POS_LEFT;
+                    break;
+                /* 0,000.00 X */
+                case 4:
+                    $group_symbol = ',';
+                    $decimal_symbol = '.';
+                    $symbol_position = NostoCurrencySymbol::SYMBOL_POS_RIGHT;
+                    break;
+                /* X 0'000.00 */
+                case 5:
+                    $group_symbol = '\'';
+                    $decimal_symbol = '.';
+                    $symbol_position = NostoCurrencySymbol::SYMBOL_POS_LEFT;
+                    break;
 
+                default:
+                    throw new NostoException(sprintf('Unsupported PrestaShop currency format %d.', $currency['format']));
+            }
+        }
         return new NostoCurrency(
             new NostoCurrencyCode($currency['iso_code']),
             new NostoCurrencySymbol($currency['sign'], $symbol_position),
@@ -199,9 +203,10 @@ class NostoTaggingHelperCurrency
      * Resolves the currency format
      *
      * @param array $currency the PS currency data.
+     * @param string $locale locale in string format (en-us, fi-fi, etc.)
      * @return int
      */
-    public static function resolveFormat(array $currency)
+    public static function resolveFormat(array $currency, $locale = null)
     {
         $currency_code = !empty($currency['iso_code']) ? $currency['iso_code'] : '';
         if (isset(self::$currencyFormatMap[$currency_code])) {

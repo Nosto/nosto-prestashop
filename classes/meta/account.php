@@ -126,7 +126,7 @@ class NostoTaggingMetaAccount extends NostoAccountMeta
         $currency_helper = Nosto::helper('nosto_tagging/currency');
         $currencies = $currency_helper->getCurrencies($context);
         foreach ($currencies as $currency) {
-            $nosto_currency = $currency_helper->getNostoCurrency($currency);
+            $nosto_currency = $currency_helper->getNostoCurrency($currency, $context);
             $nosto_currencies[] = $nosto_currency;
         }
 
