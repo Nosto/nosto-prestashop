@@ -50,9 +50,11 @@ class NostoTaggingMetaAccountOwner implements NostoAccountMetaDataOwnerInterface
      */
     public function loadData($context)
     {
-        $this->first_name = $context->employee->firstname;
-        $this->last_name = $context->employee->lastname;
-        $this->email = $context->employee->email;
+        if (!empty($context->employee)) {
+            $this->first_name = $context->employee->firstname;
+            $this->last_name = $context->employee->lastname;
+            $this->email = $context->employee->email;
+        }
     }
 
     /**
