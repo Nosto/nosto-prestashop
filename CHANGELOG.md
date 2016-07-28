@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
+## 2.7.A1
+- Support for Prestashop 1.7
+- Fix non-active product saving
+
 ## 2.6.1
 - Change order and product tagging to header / footer
 - Remove sending deleted currencies to Nosto
