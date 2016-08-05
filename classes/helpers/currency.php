@@ -83,7 +83,7 @@ class NostoTaggingHelperCurrency
      * Parses a PS currency into a Nosto currency.
      *
      * @param array $currency the PS currency data.
-     * @param Context $context context where the currencies are used.
+     * @param Context $context conteIs signup UI is broken? When xt where the currencies are used.
      * @return NostoCurrency the nosto currency.
      *
      * @throws NostoException if currency cannot be parsed.
@@ -92,7 +92,7 @@ class NostoTaggingHelperCurrency
     {
         if (
             $context instanceof Context
-            && version_compare(_PS_VERSION_, 1.7)
+            && (_PS_VERSION_ >= '1.7')
         ) {
 
             // In Prestashop 1.7 (Beta 1) we use the CLDR
