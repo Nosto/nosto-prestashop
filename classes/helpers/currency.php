@@ -157,7 +157,7 @@ class NostoTaggingHelperCurrency
             ) {
                 continue;
             }
-            
+
             $exchange_rates[] = new NostoExchangeRate(
                 $currency['iso_code'],
                 $currency['iso_code'],
@@ -177,5 +177,126 @@ class NostoTaggingHelperCurrency
     public function getActiveCurrency(Context $context)
     {
         return $context->currency->iso_code;
+    }
+
+    /**
+     * Returns a collection of countries that have tax rules
+     *
+     * @param Context $context_clone the context.
+     * @return NostoExchangeRateCollection
+     */
+    public function getTaxRulesExchangeRateCollection(Context $context_clone)
+    {
+        /** @var NostoTaggingHelperPrice $helper_price */
+        $helper_price = Nosto::helper('nosto_tagging/price');
+        /** @var NostoTaggingHelperProduct $helper_product */
+        $helper_product = Nosto::helper('nosto_tagging/product');
+
+        $context_clone = clone $context_clone;
+        // ToDo - switch to getting an active product
+        $product = $helper_product->getSingleActiveProduct($context_clone);
+
+        $tax_rule_countries = $this->getCountriesWithTaxRules($context_clone);
+        $rates = new NostoExchangeRateCollection();
+        $base_price = $helper_price->getProductPriceInclTax(
+            $product,
+            $context_clone,
+            $this->getBaseCurrency($context_clone)
+        );
+
+        // ToDo - save the original context & countries here
+        // We would need to calculate these for all currencies
+        // Try to come up with a list "EUR_AU", "EUR_FI", "EUR_DE"
+        $currencies = $this->getCurrencies($context_clone);
+        foreach ($tax_rule_countries as $country_id => $country) {
+            foreach ($currencies as $currency_arr) {
+                if ($currency_arr['deleted'] == 1) {
+                    continue;
+                }
+                $currency = new Currency($currency_arr['id_currency']);
+                //var_dump($currency); die;
+                /* @var ContextCore $context_clone */
+                $context_clone->country = $country;
+                $context_clone->customer->geoloc_id_country = $country->id;
+                $context_clone->currency = $currency;
+                $price = $helper_price->getProductListPriceInclTax(
+                    $product,
+                    $context_clone,
+                    $currency
+                );
+                $exchange_rate_name = $this->getGeneratedVariationId($context_clone);
+                $exchange_rate = round($price/$base_price, 4);
+                $rates[] = new NostoExchangeRate(
+                    $exchange_rate_name,
+                    $context_clone->currency->iso_code,
+                    $exchange_rate
+                );
+            }
+        }
+
+        return $rates;
+    }
+
+    public function getGeneratedVariationId(Context $context)
+    {
+        return sprintf(
+            '%s_%s',
+            $context->country->iso_code,
+            $context->currency->iso_code
+        );
+    }
+
+    public function getCountriesWithTaxRules(Context $context)
+    {
+        $res = array();
+        $id_lang = $context->language->id;
+        $taxRuleGroups = $this->getTaxGroupsInUse($context);
+        // We can only handle single tax group with exhchange rate multiplier
+        /* @var TaxRulesGroup $taxRuleGroup */
+        foreach ($taxRuleGroups as $taxRuleGroupId) {
+            $taxRuleGroup = new TaxRulesGroup($taxRuleGroupId);
+            $countries = TaxRule::getTaxRulesByGroupId($id_lang, $taxRuleGroup->id);
+            foreach ($countries as $country) {
+                $country_id = $country['id_country'];
+                if (!isset($res[$country_id])) {
+                    $res[$country_id] = new Country($country_id);
+                }
+            }
+        }
+        return $res;
+    }
+    /**
+     * Returns an array of tax rule groups that are assigned to any product
+     *
+     * @param Context $context the context.
+     * @return array
+     */
+    public function getTaxGroupsInUse(Context $context)
+    {
+        $res = array();
+        $sql = sprintf(
+            '
+                SELECT 
+                    p.id_tax_rules_group AS id
+                FROM 
+                    %sproduct p
+                INNER JOIN
+                    %stax_rules_group trg ON (p.id_tax_rules_group = trg.id_tax_rules_group)
+                WHERE
+                    trg.deleted != 1
+                AND
+                    trg.active = 1
+                GROUP BY 
+                    p.id_tax_rules_group;
+           ',
+            _DB_PREFIX_,
+            _DB_PREFIX_
+        );
+
+        $rows = Db::getInstance()->executeS($sql);
+        foreach ($rows as $row) {
+            $res[] = $row['id'];
+        }
+        return $res;
     }
 }

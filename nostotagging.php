@@ -411,14 +411,33 @@ class NostoTagging extends Module
             ) {
                 /** @var NostoTaggingHelperAccount $helper_account */
                 $helper_account = Nosto::helper('nosto_tagging/account');
+                /** @var NostoTaggingHelperCurrency $helper_currency */
+                $helper_currency = Nosto::helper('nosto_tagging/currency');
                 /** @var NostoTaggingHelperConfig $helper_config */
                 $helper_config = Nosto::helper('nosto_tagging/config');
                 /** @var NostoTaggingHelperFlashMessage $helper_flash */
                 $helper_flash = Nosto::helper('nosto_tagging/flash_message');
 
-                $helper_config->saveMultiCurrencyMethod($language_id, Tools::getValue('multi_currency_method'));
+
+                $multi_currency_method = Tools::getValue('multi_currency_method');
+                $helper_config->saveMultiCurrencyMethod($language_id, $multi_currency_method);
                 $helper_config->saveNostoTaggingRenderPosition($language_id, Tools::getValue('nostotagging_position'));
 
+                // Check that only one tax rule group is in use, otherwise revert back to disabled
+                if ($multi_currency_method === NostoTaggingHelperConfig::MULTI_CURRENCY_METHOD_TAX_RULES_EXCHANGE_RATE) {
+                    $tax_rule_groups_in_use = $helper_currency->getTaxGroupsInUse($this->context);
+                    if (count($tax_rule_groups_in_use) > 1) {
+                        $helper_flash->add(
+                            'error',
+                            $this->l('You cannot use this multi currency method when multiple tax rule groups are used for products.')
+                        );
+                        $helper_config->saveMultiCurrencyMethod(
+                            $language_id,
+                            NostoTaggingHelperConfig::MULTI_CURRENCY_METHOD_DISABLED
+                        );
+
+                    }
+                }
                 $account = $helper_account->find($language_id);
                 $account_meta = new NostoTaggingMetaAccount();
                 $account_meta->loadData($this->context, $language_id);
@@ -451,6 +470,10 @@ class NostoTagging extends Module
                         'error',
                         $this->l('There was an error saving the settings. Please, see log for details.')
                     );
+                }
+                // Also update the exchange rates if multi currency is used
+                if ($account_meta->getUseCurrencyExchangeRates()) {
+                    $helper_account->updateCurrencyExchangeRates($account, $this->context);
                 }
             }
 
@@ -1684,10 +1707,15 @@ class NostoTagging extends Module
         $helper_config = Nosto::helper('nosto_tagging/config');
         $id_lang = $this->context->language->id;
         if ($helper_config->useMultipleCurrencies($id_lang)) {
-            $defaultVariationId = $currencyHelper->getActiveCurrency($this->context);
-            $priceVariation = new NostoTaggingPriceVariation($defaultVariationId);
-            $this->getSmarty()->assign(array('nosto_price_variation' => $priceVariation));
+            $multi_currency_method = $helper_config->getMultiCurrencyMethod($id_lang);
+            if ($multi_currency_method == NostoTaggingHelperConfig::MULTI_CURRENCY_METHOD_EXCHANGE_RATE) {
+                $variationId = $currencyHelper->getActiveCurrency($this->context);
+            } else {
+                $variationId = $currencyHelper->getGeneratedVariationId($this->context);
+            }
+            $priceVariation = new NostoTaggingPriceVariation($variationId);
 
+            $this->getSmarty()->assign(array('nosto_price_variation' => $priceVariation));
             return $this->display(__FILE__, 'views/templates/hook/top_price_variation-tagging.tpl');
         }
 

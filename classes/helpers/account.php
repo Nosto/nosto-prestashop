@@ -163,8 +163,15 @@ class NostoTaggingHelperAccount
     {
         /** @var NostoTaggingHelperCurrency $currency_helper */
         $currency_helper = Nosto::helper('nosto_tagging/currency');
+        /** @var NostoTaggingHelperConfig $config_helper */
+        $config_helper = Nosto::helper('nosto_tagging/config');
+        $multi_currency_method = $config_helper->getMultiCurrencyMethod($context->language->id);
         try {
-            $exchangeRates = $currency_helper->getExchangeRateCollection($context);
+            if ($multi_currency_method === NostoTaggingHelperConfig::MULTI_CURRENCY_METHOD_TAX_RULES_EXCHANGE_RATE) {
+                $exchangeRates = $currency_helper->getTaxRulesExchangeRateCollection($context);
+            } else {
+                $exchangeRates = $currency_helper->getExchangeRateCollection($context);
+            }
             $service = new NostoOperationExchangeRate($account, $exchangeRates);
             return $service->update($exchangeRates);
         } catch (NostoException $e) {

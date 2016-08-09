@@ -102,6 +102,7 @@
                                                     <select id="multi_currency_method" name="multi_currency_method" class="form-control input-sm" {if $missing_tokens === true}disabled="disabled"{/if}>
                                                         <option value="disabled" {if $multi_currency_method==="disabled"}selected="selected"{/if}>{l s='Disabled' mod='nostotagging'}</option>
                                                         <option value="exchangeRates" {if $multi_currency_method==="exchangeRates"}selected="selected"{/if}>{l s='Exchange Rates' mod='nostotagging'}</option>
+                                                        <option value="taxRuleExchangeRates" {if $multi_currency_method==="taxRuleExchangeRates"}selected="selected"{/if}>{l s='Tax Rule Based Exchange Rates' mod='nostotagging'}</option>
                                                     </select>
                                                     <p class="help-block">{l s='Changing this setting to "Exchange Rates" will enable multi currency feature in Nosto.' mod='nostotagging'}</p>
                                                     <button name="submit_nostotagging_advanced_settings" class="btn btn-default pull-right nosto-footer" type="submit" value="1" {if $missing_tokens === true}disabled="disabled"{/if}>

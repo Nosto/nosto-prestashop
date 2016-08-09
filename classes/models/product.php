@@ -127,6 +127,11 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
             return;
         }
 
+        $context_clone = clone $context;
+        $context_clone->country = new Country(7);
+        $id_lang = $context_clone->language->id;
+        $id_shop = $context_clone->shop->id;
+
         /** @var NostoTaggingHelperUrl $url_helper */
         $url_helper = Nosto::helper('nosto_tagging/url');
         /** @var NostoTaggingHelperPrice $helper_price */
@@ -138,17 +143,14 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
         /** @var NostoHelperPrice $helper_config */
         $nosto_helper_price = Nosto::helper('nosto/price');
 
-        $base_currency = $helper_currency->getBaseCurrency($context);
-
-        $id_lang = $context->language->id;
-        $id_shop = $context->shop->id;
+        $base_currency = $helper_currency->getBaseCurrency($context_clone);
 
         if ($helper_config->useMultipleCurrencies($id_lang) === true) {
             $this->variationId = $base_currency->iso_code;
             $tagging_currency = $base_currency;
         } else {
             $this->variationId = false;
-            $tagging_currency= $context->currency;
+            $tagging_currency= $context_clone->currency;
         }
 
         $this->url = $url_helper->getProductUrl($product, $id_lang, $id_shop);
@@ -156,17 +158,18 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
         $this->product_id = (int)$product->id;
         $this->name = $product->name;
 
+
         $this->price = $nosto_helper_price->format(
             $helper_price->getProductPriceInclTax(
                 $product,
-                $context,
+                $context_clone,
                 $tagging_currency
             )
         );
         $this->list_price = $nosto_helper_price->format(
             $helper_price->getProductListPriceInclTax(
                 $product,
-                $context,
+                $context_clone,
                 $tagging_currency
             )
         );
@@ -179,7 +182,6 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
         $this->description = $product->description;
         $this->brand = (!empty($product->manufacturer_name)) ? $product->manufacturer_name : null;
         $this->date_published = Nosto::helper('date')->format($product->date_add);
-
         $this->dispatchHookActionLoadAfter(array(
             'nosto_product' => $this,
             'product' => $product,
@@ -724,4 +726,5 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
     {
         return $this->variationId;
     }
+
 }

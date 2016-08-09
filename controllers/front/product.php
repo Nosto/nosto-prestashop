@@ -37,6 +37,7 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
      */
     public function initContent()
     {
+        /* @var ContextCore $context */
         $context = $this->module->getContext();
         $collection = new NostoExportProductCollection();
 
@@ -60,6 +61,15 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
                 $collection[] = $nosto_product;
             }
         }
+
+        /** @var NostoTaggingHelperCurrency $helper_currency */
+        $helper_currency = Nosto::helper('nosto_tagging/currency');
+        $rates = $helper_currency->getTaxRulesExchangeRateCollection($context);
+        $op = new NostoOperationExchangeRate(new NostoAccount('whadeva'), $rates);
+        header('content-type: application/json');
+        echo $op->getCollectionAsJson();
+//        var_dump($rates);
+        die();
 
         $this->encryptOutput($collection);
     }

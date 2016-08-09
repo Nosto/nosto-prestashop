@@ -36,6 +36,7 @@ class NostoTaggingHelperConfig
     const TOKEN_CONFIG_PREFIX = 'NOSTOTAGGING_API_TOKEN_';
     const MULTI_CURRENCY_METHOD_VARIATION = 'priceVariation';
     const MULTI_CURRENCY_METHOD_EXCHANGE_RATE = 'exchangeRate';
+    const MULTI_CURRENCY_METHOD_TAX_RULES_EXCHANGE_RATE = 'taxRuleExchangeRates';
     const MULTI_CURRENCY_METHOD_DISABLED = 'disabled';
     const NOSTOTAGGING_POSITION = 'NOSTOTAGGING_POSITION';
     const NOSTOTAGGING_POSITION_TOP = 'top';
@@ -368,7 +369,9 @@ class NostoTaggingHelperConfig
      */
     public function useMultipleCurrencies($id_lang)
     {
-        if ($this->getMultiCurrencyMethod($id_lang) !== self::MULTI_CURRENCY_METHOD_DISABLED) {
+        if (
+            $this->getMultiCurrencyMethod($id_lang) !== self::MULTI_CURRENCY_METHOD_DISABLED
+        ) {
             return true;
         } else {
             return false;
