@@ -211,7 +211,7 @@ class NostoTaggingHelperProductOperation
      */
     protected function loadNostoProduct($id_product, $id_lang, $id_shop)
     {
-        $product = new Product($id_product, false, $id_lang, $id_shop);
+        $product = new Product($id_product, true, $id_lang, $id_shop);
         if (!Validate::isLoadedObject($product)) {
             return null;
         }
