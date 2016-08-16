@@ -196,6 +196,7 @@ class NostoTagging extends Module
                 || !$this->registerHook('postUpdateOrderStatus')
                 || !$this->registerHook('paymentTop')
                 || !$this->registerHook('home')
+                || !$this->registerHook('actionAdminBefore')
             ) {
                 $success = false;
                 $this->_errors[] = $this->l(
@@ -245,7 +246,7 @@ class NostoTagging extends Module
                     return $this->registerHook('actionObjectUpdateAfter')
                     && $this->registerHook('actionObjectDeleteAfter')
                     && $this->registerHook('actionObjectAddAfter')
-                    && $this->registerHook('displayBackOfficeHeader');
+                    && $this->registerHook('actionObjectCurrencyUpdateAfter');
                 }
             }
         }
@@ -451,6 +452,11 @@ class NostoTagging extends Module
                         'error',
                         $this->l('There was an error saving the settings. Please, see log for details.')
                     );
+                }
+
+                // Also update the exchange rates if multi currency is used
+                if ($account_meta->getUseCurrencyExchangeRates()) {
+                    $helper_account->updateCurrencyExchangeRates($account, $this->context);
                 }
             }
 
@@ -1712,5 +1718,84 @@ class NostoTagging extends Module
             $helper_config->saveCronAccessToken($token);
         }
         return $token;
+    }
+
+    /**
+     * Updates the exchange rates to Nosto when user logs in or logs out
+     *
+     * @param array $params
+     */
+    public function hookActionAdminBefore(Array $params)
+    {
+        if ($this->exchangeRatesShouldBeUpdated()) {
+            /** @var NostoTaggingHelperCurrency $currency_helper */
+            $currency_helper = Nosto::helper('nosto_tagging/currency');
+            try {
+                $currency_helper->updateExchangeRatesForAllStores();
+                $this->defineExchangeRatesAsUpdated();
+            } catch (NostoException $e) {
+                $logger = Nosto::helper('nosto_tagging/logger');
+                $logger->error(
+                    'Exchange rate sync failed in dispacther with error: %s',
+                    $e->getMessage()
+                );
+            }
+        }
+    }
+
+    /**
+     * Defines exhange rates updated for current session
+     */
+    public function defineExchangeRatesAsUpdated()
+    {
+        $this->getContext()->cookie->nostoExchangeRatesUpdated = true;
+    }
+
+    /**
+     * Checks if the exchange rates have been updated during the current
+     * admin session
+     *
+     * @return boolean
+     */
+    public function exchangeRatesShouldBeUpdated()
+    {
+        $cookie = $this->getContext()->cookie;
+        if (
+            isset($cookie->nostoExchangeRatesUpdated)
+            && $cookie->nostoExchangeRatesUpdated == true
+        ) {
+
+            return false;
+        }
+        /* @var Employee $employee */
+        $employee = $this->context->employee;
+        if ($employee instanceof Employee && $employee->isLoggedBack()) {
+
+            return true;
+        } else {
+
+            return false;
+        }
+    }
+
+    /**
+     * Updates the exchange rates to Nosto when currency object is saved
+     *
+     * @param array $params
+     */
+    public function hookActionObjectCurrencyUpdateAfter(Array $params)
+    {
+        /** @var NostoTaggingHelperCurrency $currency_helper */
+        $currency_helper = Nosto::helper('nosto_tagging/currency');
+        try {
+            $currency_helper->updateExchangeRatesForAllStores();
+            $this->defineExchangeRatesAsUpdated();
+        } catch (NostoException $e) {
+            $logger = Nosto::helper('nosto_tagging/logger');
+            $logger->error(
+                'Exchange rate sync failed in currency update after with error: %s',
+                $e->getMessage()
+            );
+        }
     }
 }

@@ -48,7 +48,7 @@ class NostoTaggingCronRatesModuleFrontController extends NostoTaggingCronModuleF
 
         try {
             $currency_helper->updateExchangeRatesForAllStores();
-        } catch(NostoException $e) {
+        } catch (NostoException $e) {
             $logger->error(
                 'NOSTO CRON - exchange rate sync failed with error: %s',
                 $e->getMessage()
