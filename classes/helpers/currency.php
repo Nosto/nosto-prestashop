@@ -40,7 +40,12 @@ class NostoTaggingHelperCurrency
     {
         $id_lang = $context->language->id;
         $id_shop = $context->shop->id;
-        $id_shop_group = $context->shop->id_shop_group;
+        if (isset($context->shop->id_shop_group)) {
+            $id_shop_group = $context->shop->id_shop_group;
+        } else {
+            $id_shop_group = null;
+        }
+
         $base_id_currency = (int)Configuration::get('PS_CURRENCY_DEFAULT', $id_lang, $id_shop_group, $id_shop);
         if ($base_id_currency === 0) {
             $base_id_currency = (int)Configuration::get('PS_CURRENCY_DEFAULT', null, $id_shop_group, $id_shop);

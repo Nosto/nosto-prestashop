@@ -196,7 +196,6 @@ class NostoTagging extends Module
                 || !$this->registerHook('postUpdateOrderStatus')
                 || !$this->registerHook('paymentTop')
                 || !$this->registerHook('home')
-                || !$this->registerHook('actionAdminBefore')
             ) {
                 $success = false;
                 $this->_errors[] = $this->l(
@@ -239,14 +238,16 @@ class NostoTagging extends Module
                     return $this->registerHook('updateproduct')
                     && $this->registerHook('deleteproduct')
                     && $this->registerHook('addproduct')
-                    && $this->registerHook('updateQuantity');
+                    && $this->registerHook('updateQuantity')
+                    && $this->registerHook('backOfficeFooter');
                 } else {
                     // And for PS >= 1.5 we register the object specific hooks for the product create/update/delete.
                     // Also register the back office header hook to add some CSS to the entire back office.
                     return $this->registerHook('actionObjectUpdateAfter')
                     && $this->registerHook('actionObjectDeleteAfter')
                     && $this->registerHook('actionObjectAddAfter')
-                    && $this->registerHook('actionObjectCurrencyUpdateAfter');
+                    && $this->registerHook('actionObjectCurrencyUpdateAfter')
+                    && $this->registerHook('actionAdminBefore');
                 }
             }
         }
@@ -1720,12 +1721,7 @@ class NostoTagging extends Module
         return $token;
     }
 
-    /**
-     * Updates the exchange rates to Nosto when user logs in or logs out
-     *
-     * @param array $params
-     */
-    public function hookActionAdminBefore(Array $params)
+    private function handleExchangeRateUpdate(array $params)
     {
         if ($this->exchangeRatesShouldBeUpdated()) {
             /** @var NostoTaggingHelperCurrency $currency_helper */
@@ -1742,7 +1738,20 @@ class NostoTagging extends Module
             }
         }
     }
+    /**
+     * Updates the exchange rates to Nosto when user logs in or logs out
+     *
+     * @param array $params
+     */
+    public function hookActionAdminBefore(array $params)
+    {
+        return $this->handleExchangeRateUpdate($params);
+    }
 
+    public function hookBackOfficeFooter(array $params)
+    {
+        return $this->handleExchangeRateUpdate($params);
+    }
     /**
      * Defines exhange rates updated for current session
      */
@@ -1767,15 +1776,8 @@ class NostoTagging extends Module
 
             return false;
         }
-        /* @var Employee $employee */
-        $employee = $this->context->employee;
-        if ($employee instanceof Employee && $employee->isLoggedBack()) {
 
-            return true;
-        } else {
-
-            return false;
-        }
+        return $this->adminLoggedIn();
     }
 
     /**
@@ -1796,6 +1798,19 @@ class NostoTagging extends Module
                 'Exchange rate sync failed in currency update after with error: %s',
                 $e->getMessage()
             );
+        }
+    }
+
+    public function adminLoggedIn()
+    {
+        /* @var Employee $employee */
+        $employee = $this->context->employee;
+        if ($employee instanceof Employee && $employee->id) {
+
+            return true;
+        } else {
+
+            return false;
         }
     }
 }
