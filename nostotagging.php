@@ -247,7 +247,7 @@ class NostoTagging extends Module
                     && $this->registerHook('actionObjectDeleteAfter')
                     && $this->registerHook('actionObjectAddAfter')
                     && $this->registerHook('actionObjectCurrencyUpdateAfter')
-                    && $this->registerHook('actionAdminBefore');
+                    && $this->registerHook('displayBackOfficeTop');
                 }
             }
         }
@@ -1743,7 +1743,7 @@ class NostoTagging extends Module
      *
      * @param array $params
      */
-    public function hookActionAdminBefore(array $params)
+    public function hookDisplayBackOfficeTop(array $params)
     {
         return $this->handleExchangeRateUpdate($params);
     }
