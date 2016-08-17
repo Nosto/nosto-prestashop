@@ -970,7 +970,7 @@ class NostoTagging extends Module
      * @param array $params
      * @return string The HTML to output
      */
-    public function hookDisplayFooterProduct(Array $params)
+    public function hookDisplayFooterProduct(array $params)
     {
         if (!Nosto::helper('nosto_tagging/account')->existsAndIsConnected($this->context->language->id)) {
             return '';
@@ -986,7 +986,7 @@ class NostoTagging extends Module
      * @param array $params
      * @return string The HTML to output
      */
-    public function hookProductFooter(Array $params)
+    public function hookProductFooter(array $params)
     {
         return $this->hookDisplayFooterProduct($params);
     }
@@ -1030,7 +1030,7 @@ class NostoTagging extends Module
      * @param array $params
      * @return string The HTML to output
      */
-    public function hookDisplayOrderConfirmation(Array $params)
+    public function hookDisplayOrderConfirmation(array $params)
     {
         if (!Nosto::helper('nosto_tagging/account')->existsAndIsConnected($this->context->language->id)) {
             return '';
@@ -1046,7 +1046,7 @@ class NostoTagging extends Module
      * @param array $params
      * @return string The HTML to output
      */
-    public function hookOrderConfirmation(Array $params)
+    public function hookOrderConfirmation(array $params)
     {
         return $this->hookDisplayOrderConfirmation($params);
     }
@@ -1161,7 +1161,7 @@ class NostoTagging extends Module
      *
      * @param array $params
      */
-    public function hookActionOrderStatusPostUpdate(Array $params)
+    public function hookActionOrderStatusPostUpdate(array $params)
     {
         if (isset($params['id_order'])) {
             $order = new Order($params['id_order']);
@@ -1200,7 +1200,7 @@ class NostoTagging extends Module
      * @see NostoTagging::hookActionOrderStatusPostUpdate()
      * @param array $params
      */
-    public function hookPostUpdateOrderStatus(Array $params)
+    public function hookPostUpdateOrderStatus(array $params)
     {
         $this->hookActionOrderStatusPostUpdate($params);
     }
@@ -1237,7 +1237,7 @@ class NostoTagging extends Module
      *
      * @param array $params
      */
-    public function hookActionObjectUpdateAfter(Array $params)
+    public function hookActionObjectUpdateAfter(array $params)
     {
         if (isset($params['object'])) {
             if ($params['object'] instanceof Product) {
@@ -1251,7 +1251,7 @@ class NostoTagging extends Module
      *
      * @param array $params
      */
-    public function hookActionObjectDeleteAfter(Array $params)
+    public function hookActionObjectDeleteAfter(array $params)
     {
         if (isset($params['object'])) {
             if ($params['object'] instanceof Product) {
@@ -1265,7 +1265,7 @@ class NostoTagging extends Module
      *
      * @param array $params
      */
-    public function hookActionObjectAddAfter(Array $params)
+    public function hookActionObjectAddAfter(array $params)
     {
         if (isset($params['object'])) {
             if ($params['object'] instanceof Product) {
@@ -1280,7 +1280,7 @@ class NostoTagging extends Module
      * @see NostoTagging::hookActionObjectUpdateAfter
      * @param array $params
      */
-    public function hookUpdateProduct(Array $params)
+    public function hookUpdateProduct(array $params)
     {
         if (isset($params['product'])) {
             $this->hookActionObjectUpdateAfter(array('object' => $params['product']));
@@ -1293,7 +1293,7 @@ class NostoTagging extends Module
      * @see NostoTagging::hookActionObjectDeleteAfter
      * @param array $params
      */
-    public function hookDeleteProduct(Array $params)
+    public function hookDeleteProduct(array $params)
     {
         if (isset($params['product'])) {
             $this->hookActionObjectDeleteAfter(array('object' => $params['product']));
@@ -1306,7 +1306,7 @@ class NostoTagging extends Module
      * @see NostoTagging::hookActionObjectAddAfter
      * @param array $params
      */
-    public function hookAddProduct(Array $params)
+    public function hookAddProduct(array $params)
     {
         if (isset($params['product'])) {
             $this->hookActionObjectAddAfter(array('object' => $params['product']));
@@ -1320,7 +1320,7 @@ class NostoTagging extends Module
      * @see NostoTagging::hookActionObjectUpdateAfter
      * @param array $params
      */
-    public function hookUpdateQuantity(Array $params)
+    public function hookUpdateQuantity(array $params)
     {
         if (isset($params['product'])) {
             $this->hookActionObjectUpdateAfter(array('object' => $params['product']));
@@ -1721,23 +1721,6 @@ class NostoTagging extends Module
         return $token;
     }
 
-    private function handleExchangeRateUpdate(array $params)
-    {
-        if ($this->exchangeRatesShouldBeUpdated()) {
-            /** @var NostoTaggingHelperCurrency $currency_helper */
-            $currency_helper = Nosto::helper('nosto_tagging/currency');
-            try {
-                $currency_helper->updateExchangeRatesForAllStores();
-                $this->defineExchangeRatesAsUpdated();
-            } catch (NostoException $e) {
-                $logger = Nosto::helper('nosto_tagging/logger');
-                $logger->error(
-                    'Exchange rate sync failed in dispacther with error: %s',
-                    $e->getMessage()
-                );
-            }
-        }
-    }
     /**
      * Updates the exchange rates to Nosto when user logs in or logs out
      *
@@ -1745,19 +1728,21 @@ class NostoTagging extends Module
      */
     public function hookDisplayBackOfficeTop(array $params)
     {
-        return $this->handleExchangeRateUpdate($params);
+        return $this->updateExhangeRatesIfNeeded($params, false);
     }
 
     public function hookBackOfficeFooter(array $params)
     {
-        return $this->handleExchangeRateUpdate($params);
+        return $this->updateExhangeRatesIfNeeded($params, false);
     }
     /**
      * Defines exhange rates updated for current session
      */
     public function defineExchangeRatesAsUpdated()
     {
-        $this->getContext()->cookie->nostoExchangeRatesUpdated = true;
+        if ($this->getContext()->cookie && $this->adminLoggedIn()) {
+            $this->getContext()->cookie->nostoExchangeRatesUpdated = true;
+        }
     }
 
     /**
@@ -1768,16 +1753,20 @@ class NostoTagging extends Module
      */
     public function exchangeRatesShouldBeUpdated()
     {
+        if (!$this->adminLoggedIn()) {
+            return false;
+        }
+
         $cookie = $this->getContext()->cookie;
         if (
             isset($cookie->nostoExchangeRatesUpdated)
-            && $cookie->nostoExchangeRatesUpdated == true
+            && $cookie->nostoExchangeRatesUpdated == true //@codingStandardsIgnoreLine
         ) {
 
             return false;
         }
 
-        return $this->adminLoggedIn();
+        return true;
     }
 
     /**
@@ -1785,20 +1774,34 @@ class NostoTagging extends Module
      *
      * @param array $params
      */
-    public function hookActionObjectCurrencyUpdateAfter(Array $params)
+    public function hookActionObjectCurrencyUpdateAfter(array $params)
     {
-        /** @var NostoTaggingHelperCurrency $currency_helper */
-        $currency_helper = Nosto::helper('nosto_tagging/currency');
-        try {
-            $currency_helper->updateExchangeRatesForAllStores();
-            $this->defineExchangeRatesAsUpdated();
-        } catch (NostoException $e) {
-            $logger = Nosto::helper('nosto_tagging/logger');
-            $logger->error(
-                'Exchange rate sync failed in currency update after with error: %s',
-                $e->getMessage()
-            );
+        return $this->updateExhangeRatesIfNeeded($params, true);
+    }
+
+    /**
+     * Updates the exchange rates to Nosto if needed
+     *
+     * @param array $params
+     * @param boolean $force if set to true cookie check is ignored
+     */
+    public function updateExhangeRatesIfNeeded(array $params, $force = false)
+    {
+        if ($this->exchangeRatesShouldBeUpdated() || $force === true) {
+            /** @var NostoTaggingHelperCurrency $currency_helper */
+            $currency_helper = Nosto::helper('nosto_tagging/currency');
+            try {
+                $currency_helper->updateExchangeRatesForAllStores();
+                $this->defineExchangeRatesAsUpdated();
+            } catch (NostoException $e) {
+                $logger = Nosto::helper('nosto_tagging/logger');
+                $logger->error(
+                    'Exchange rate sync failed with error: %s',
+                    $e->getMessage()
+                );
+            }
         }
+        $this->defineExchangeRatesAsUpdated();
     }
 
     public function adminLoggedIn()
