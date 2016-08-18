@@ -31,22 +31,14 @@ $(document).ready(function () {
         $currentLanguage.val(langId);
         $form.submit();
     });
-    // Click event handler for the "Account settings".
+
+    // Toggle the Nosto settings
     $("#nostotagging_account_setup").click(function (event) {
         event.preventDefault();
-        var $iframe = $('#nostotagging_iframe'),
-            $installedView = $('#nostotagging_installed');
-        $installedView.show();
-        $iframe.hide();
+        $('div.nostotagging_settings').toggle();
+        $('#nostotagging_iframe').toggle();
     });
-    // Click event handler for the "Back" button on the "You have installed Nosto...." page.
-    $('#nostotagging_back_to_iframe').click(function (event) {
-        event.preventDefault();
-        var $iframe = $('#nostotagging_iframe'),
-            $installedView = $('#nostotagging_installed');
-        $iframe.show();
-        $installedView.hide();
-    });
+
     // Init the iframe re-sizer.
     $('#nostotagging_iframe').iFrameResize({heightCalculationMethod : 'bodyScroll'});
 });
