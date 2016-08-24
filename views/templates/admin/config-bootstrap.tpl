@@ -75,7 +75,6 @@
                         </button>
                     </div>
                 </div>
-
                 <hr>
 
                 {if $missing_tokens}
@@ -84,10 +83,10 @@
                             <div class="alert alert-warning">{l s='Your current installation is missing API tokens required for the multi currency settings. Please reconnect your account with Nosto by cliking the button below' mod='nostotagging'}</div>
                         </div>
                         <div class="col-lg-offset-3">
-                            <button class="btn btn-default btn-primary btn-lg" type="submit" name="submit_nostotagging_authorize_account">
+                            <button class="btn btn-default btn-warning btn-lg" type="submit" name="submit_nostotagging_authorize_account">
                                 <span class="ladda-label">
-                                    <i class="icon-refresh"></i>
-                                    {l s='reconnect account' mod='nostotagging'}
+                                    <i class="icon-exchange"></i>
+                                    {l s='Reconnect account' mod='nostotagging'}
                                 </span>
                                 <span class="ladda-spinner"></span>
                             </button>
@@ -149,11 +148,41 @@
                 <div class="form-group">
                     <div class="col-lg-9 col-lg-offset-3">
                         <div class="alert alert-info">
-                            <p>{l s='The exchange rates will be synchronised to Nosto automatically whene you log
+                            <p>
+                                {l s='The exchange rates will be synchronised to Nosto automatically whene you log
                             in to your store admin and when you update the exchange rates.'
                                 mod='nostotagging'}
                             </p>
+                            <p>
+
+                                {l
+                                s='You can also set up the cron job for updating the exchange rates by adding the
+                                            example below to your servers crontab, or by using the Prestashop `cronjob` module.'
+                                mod='nostotagging'
+                                }
+                            </p>
+                            <p style="font-style: italic;">{$nostotagging_translations.exchange_rate_crontab_example|escape:'quotes':'UTF-8'}</p>
+
                         </div>
+
+                        <p>
+                            {l
+                            s='You can also synchronise the exchange rates to Nosto by clicking the button below.'
+                            mod='nostotagging'
+                            }
+                        </p>
+
+                        <div class="form-group">
+                            <button class="btn btn-default btn-info btn-lg" type="submit" name="submit_nostotagging_update_exchange_rates" value="1">
+                                <span class="ladda-label">
+                                    <i class="icon-refresh"></i>
+                                    {l s='Synchronise exchange rates' mod='nostotagging'}
+                                </span>
+                                <span class="ladda-spinner"></span>
+                            </button>
+
+                        </div>
+
                     </div>
                 </div>
             </div>

@@ -505,7 +505,6 @@ class NostoTagging extends Module
         ) {
             $missing_tokens = false;
         }
-
         if ($account instanceof NostoAccountInterface === false) {
             $account_iframe = new NostoTaggingMetaAccountIframe();
             $account_iframe->loadData($this->context, $language_id);
@@ -584,11 +583,20 @@ class NostoTagging extends Module
             }
         }
 
-        $output .= $this->display(__FILE__, 'views/templates/admin/config-bootstrap.tpl');
+        $output .= $this->display(__FILE__, $this->getSettingsTemplate());
 
         return $output;
     }
 
+    private function getSettingsTemplate()
+    {
+        $template_file = 'views/templates/admin/config-bootstrap.tpl';
+        if (_PS_VERSION_ < '1.6') {
+            $template_file  = 'views/templates/admin/legacy-config-bootstrap.tpl';
+        }
+
+        return $template_file;
+    }
     /**
      * Creates a new Nosto account for given shop language.
      *
