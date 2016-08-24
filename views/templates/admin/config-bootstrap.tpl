@@ -29,34 +29,34 @@
     <input type="hidden" id="nostotagging_account_email" name="nostotagging_account_email" value="">
     <input type="hidden" id="nostotagging_account_details" name="nostotagging_account_details" value="">
 
-        <div class="panel" id="nosto-settinxgs">
-            <div class="panel-heading">
-                <div class="row">
-                    <div class="col-md-1">
-                        {l s='Manage accounts:' mod='nostotagging'}
-                    </div>
-                    <div class="col-md-3">
-                        <select id="nostotagging_language" class="form-inline">
-                                {foreach from=$nostotagging_languages item=language}
-                                    <option value="{$language.id_lang|escape:'htmlall':'UTF-8'}" {if $language.id_lang == $nostotagging_current_language.id_lang}selected="selected"{/if}>
-                                        {$language.name|escape:'htmlall':'UTF-8'}
-                                    </option>
-                                {/foreach}
-                            </select>
-                    </div>
-                    <div class="pull-right">
-                        {if $nostotagging_account_authorized}
-                            <p class="nostotagging_settings">
-                                <a href="#" id="nostotagging_account_setup">
-                                    <i class="icon-cog"></i>
-                                    {l s='Account setup' mod='nostotagging'}
-                                </a>
-                            </p>
-                        {/if}
-                    </div>
+    <div class="panel" id="nosto-settings">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-lg-1">
+                    {l s='Manage accounts:' mod='nostotagging'}
+                </div>
+                <div class="col-md-2">
+                    <select id="nostotagging_language">
+                            {foreach from=$nostotagging_languages item=language}
+                                <option value="{$language.id_lang|escape:'htmlall':'UTF-8'}" {if $language.id_lang == $nostotagging_current_language.id_lang}selected="selected"{/if}>
+                                    {$language.name|escape:'htmlall':'UTF-8'}
+                                </option>
+                            {/foreach}
+                        </select>
+                </div>
+                <div class="pull-right">
+                    {if $nostotagging_account_authorized}
+                        <p class="nostotagging_settings">
+                            <a href="#" id="nostotagging_account_setup">
+                                <i class="icon-cog"></i>
+                                {l s='Account setup' mod='nostotagging'}
+                            </a>
+                        </p>
+                    {/if}
                 </div>
             </div>
-            {if $nostotagging_account_authorized}
+        </div>
+        {if $nostotagging_account_authorized}
 
             <div class="form-wrapper nostotagging_settings">
                 <div class="form-group">
@@ -180,9 +180,7 @@
                 </div>
             </div>
         {/if}
-
     </div>
-
 </form>
 <script type="text/javascript" src="{$module_path|escape:'htmlall':'UTF-8'}views/js/nostotagging-admin-config.js"></script>
 <script type="text/javascript" src="{$module_path|escape:'htmlall':'UTF-8'}views/js/iframeresizer.min.js"></script>

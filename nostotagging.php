@@ -497,6 +497,7 @@ class NostoTagging extends Module
         $id_shop = $this->context->shop->id;
 
         $missing_tokens = true;
+
         if (
             $account instanceof NostoAccountInterface
             && $account->getApiToken(NostoApiToken::API_EXCHANGE_RATES)
@@ -1788,6 +1789,7 @@ class NostoTagging extends Module
     public function updateExhangeRatesIfNeeded(array $params, $force = false)
     {
         if ($this->exchangeRatesShouldBeUpdated() || $force === true) {
+            $this->defineExchangeRatesAsUpdated(); // This ensures we only try this at once
             /** @var NostoTaggingHelperCurrency $currency_helper */
             $currency_helper = Nosto::helper('nosto_tagging/currency');
             try {
@@ -1801,7 +1803,6 @@ class NostoTagging extends Module
                 );
             }
         }
-        $this->defineExchangeRatesAsUpdated();
     }
 
     public function adminLoggedIn()
