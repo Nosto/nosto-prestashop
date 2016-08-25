@@ -135,7 +135,7 @@ class NostoTagging extends Module
     {
         $this->name = 'nostotagging';
         $this->tab = 'advertising_marketing';
-        $this->version = '2.6.1';
+        $this->version = '2.X.X';
         $this->author = 'Nosto';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -345,7 +345,6 @@ class NostoTagging extends Module
                             'Employee',
                             (int)$employee->id
                         );
-
                     } catch (Exception $e) {
                         $helper_flash->add(
                             'error',
@@ -648,6 +647,7 @@ class NostoTagging extends Module
         /** @var LinkCore $link */
         $link = new Link();
 
+        $hidden_recommendation_elements = $this->getHiddenRecommendationElements();
         $this->getSmarty()->assign(array(
             'server_address' => $server_address,
             'account_name' => $account->getName(),
@@ -656,7 +656,7 @@ class NostoTagging extends Module
             'nosto_language' => Tools::strtolower($this->context->language->iso_code),
             'add_to_cart_url' => $link->getPageLink('cart.php'),
             'static_token' => Tools::getToken(false),
-            'disable_autoload' => (bool)!empty($this->getHiddenRecommendationElements())
+            'disable_autoload' => (bool)!empty($hidden_recommendation_elements)
         ));
 
         $this->context->controller->addJS($this->_path.'views/js/nostotagging-auto-slots.js');
@@ -759,7 +759,6 @@ class NostoTagging extends Module
         $html .= $this->getHiddenRecommendationElements();
 
         return $html;
-
     }
 
     /**
@@ -1817,12 +1816,11 @@ class NostoTagging extends Module
     {
         /* @var Employee $employee */
         $employee = $this->context->employee;
+        $logged_in = false;
         if ($employee instanceof Employee && $employee->id) {
-
-            return true;
-        } else {
-
-            return false;
+            $logged_in = true;
         }
+
+        return $logged_in;
     }
 }

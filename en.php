@@ -61,7 +61,7 @@ $_MODULE['<{nostotagging}default-bootstrap>config-bootstrap_8f76a793218248d062ce
 $_MODULE['<{nostotagging}default-bootstrap>config-bootstrap_f8a11b960d2916fd208f2352e7aee91a'] = 'Your current installation is missing API tokens required for the multi currency settings. Please reconnect your account with Nosto by cliking the button below';
 $_MODULE['<{nostotagging}default-bootstrap>config-bootstrap_025b3416dd6c7786a2427c86fef51610'] = 'Reconnect account';
 $_MODULE['<{nostotagging}default-bootstrap>config-bootstrap_361fafb597200751c1872dda5a509cee'] = 'The exchange rates will be synchronised to Nosto automatically whene you log in to your store admin and when you update the exchange rates.';
-$_MODULE['<{nostotagging}default-bootstrap>config-bootstrap_1a3302ea869e649b450df1b8cfcdbe03'] = 'POKS You can also set up the cron job for updating the exchange rates by adding the example below to your servers crontab, or by using the Prestashop `cronjob` module.';
+$_MODULE['<{nostotagging}default-bootstrap>config-bootstrap_1a3302ea869e649b450df1b8cfcdbe03'] = 'You can also set up the cron job for updating the exchange rates by adding the example below to your servers crontab, or by using the Prestashop `cronjob` module.';
 $_MODULE['<{nostotagging}default-bootstrap>config-bootstrap_4df4cf8d71c92296026e8876984bc11b'] = 'You can also synchronise the exchange rates to Nosto by clicking the button below.';
 $_MODULE['<{nostotagging}default-bootstrap>config-bootstrap_06926e31af40ebe6c683ba1b63bc3bb4'] = 'Synchronise exchange rates';
 $_MODULE['<{nostotagging}default-bootstrap>legacy-config-bootstrap_cd048faac86d87caf65a2b7d6177d513'] = ' Manage accounts:';
