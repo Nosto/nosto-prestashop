@@ -149,27 +149,18 @@
                     <div class="col-lg-9 col-lg-offset-3">
                         <div class="alert alert-info">
                             <p>
-                                {l s='The exchange rates will be synchronised to Nosto automatically whene you log
-                            in to your store admin and when you update the exchange rates.'
-                                mod='nostotagging'}
+                                {l s='The exchange rates will be synchronised to Nosto automatically whene you log in to your store admin and when you update the exchange rates.' mod='nostotagging'}
                             </p>
                             <p>
 
-                                {l
-                                s='You can also set up the cron job for updating the exchange rates by adding the
-                                            example below to your servers crontab, or by using the Prestashop `cronjob` module.'
-                                mod='nostotagging'
-                                }
+                                {l s='You can also set up the cron job for updating the exchange rates by adding the example below to your servers crontab, or by using the Prestashop `cronjob` module.' mod='nostotagging'}
                             </p>
                             <p style="font-style: italic;">{$nostotagging_translations.exchange_rate_crontab_example|escape:'quotes':'UTF-8'}</p>
 
                         </div>
 
                         <p>
-                            {l
-                            s='You can also synchronise the exchange rates to Nosto by clicking the button below.'
-                            mod='nostotagging'
-                            }
+                            {l s='You can also synchronise the exchange rates to Nosto by clicking the button below.' mod='nostotagging'}
                         </p>
 
                         <div class="form-group">

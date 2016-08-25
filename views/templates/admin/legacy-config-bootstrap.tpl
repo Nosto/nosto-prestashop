@@ -136,23 +136,15 @@
                                                 <div class="panel-heading">{l s='Exchange rates' mod='nostotagging'}</div>
                                                 <div class="panel-body">
                                                     <p class="help-block">
-                                                        {l s='The exchange rates will be synchronised to Nosto automatically whene you log
-in to your store admin and when you update the exchange rates.'
+                                                        {l s='The exchange rates will be synchronised to Nosto automatically whene you log in to your store admin and when you update the exchange rates.'
                                                         mod='nostotagging'}
                                                     </p>
                                                     <p class="help-block">
-                                                        {l
-                                                        s='You can set up the cron job for updating the exchange rates by adding the
-		example below to your servers crontab, or by using the Prestashop `cronjob` module.'
-                                                        mod='nostotagging'
-                                                        }
+                                                        {l s='You can set up the cron job for updating the exchange rates by adding the example below to your servers crontab, or by using the Prestashop `cronjob` module.' mod='nostotagging'}
                                                     </p>
                                                     <p class="help-block">{$nostotagging_translations.exchange_rate_crontab_example|escape:'quotes':'UTF-8'}</p>
                                                     <p class="help-block">
-                                                        {l
-                                                        s='You can also synchronise the exchange rates to Nosto by clicking the button below.'
-                                                        mod='nostotagging'
-                                                        }
+                                                        {l s='You can also synchronise the exchange rates to Nosto by clicking the button below.' mod='nostotagging'}
                                                     </p>
 
                                                     <div class="form-group">
