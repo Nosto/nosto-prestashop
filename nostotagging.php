@@ -497,6 +497,7 @@ class NostoTagging extends Module
         $id_shop = $this->context->shop->id;
 
         $missing_tokens = true;
+
         if (
             $account instanceof NostoAccountInterface
             && $account->getApiToken(NostoApiToken::API_EXCHANGE_RATES)
@@ -504,7 +505,6 @@ class NostoTagging extends Module
         ) {
             $missing_tokens = false;
         }
-
         if ($account instanceof NostoAccountInterface === false) {
             $account_iframe = new NostoTaggingMetaAccountIframe();
             $account_iframe->loadData($this->context, $language_id);
@@ -583,11 +583,20 @@ class NostoTagging extends Module
             }
         }
 
-        $output .= $this->display(__FILE__, 'views/templates/admin/config-bootstrap.tpl');
+        $output .= $this->display(__FILE__, $this->getSettingsTemplate());
 
         return $output;
     }
 
+    private function getSettingsTemplate()
+    {
+        $template_file = 'views/templates/admin/config-bootstrap.tpl';
+        if (_PS_VERSION_ < '1.6') {
+            $template_file  = 'views/templates/admin/legacy-config-bootstrap.tpl';
+        }
+
+        return $template_file;
+    }
     /**
      * Creates a new Nosto account for given shop language.
      *
@@ -1788,6 +1797,7 @@ class NostoTagging extends Module
     public function updateExhangeRatesIfNeeded(array $params, $force = false)
     {
         if ($this->exchangeRatesShouldBeUpdated() || $force === true) {
+            $this->defineExchangeRatesAsUpdated(); // This ensures we only try this at once
             /** @var NostoTaggingHelperCurrency $currency_helper */
             $currency_helper = Nosto::helper('nosto_tagging/currency');
             try {
@@ -1801,7 +1811,6 @@ class NostoTagging extends Module
                 );
             }
         }
-        $this->defineExchangeRatesAsUpdated();
     }
 
     public function adminLoggedIn()
