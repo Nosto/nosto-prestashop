@@ -73,6 +73,8 @@ if ((basename(__FILE__) === 'nostotagging.php')) {
  */
 class NostoTagging extends Module
 {
+    const PLUGIN_VERSION = '2.6.X';
+
     /**
      * Custom hooks to add for this module.
      *
@@ -135,7 +137,7 @@ class NostoTagging extends Module
     {
         $this->name = 'nostotagging';
         $this->tab = 'advertising_marketing';
-        $this->version = '2.6.1';
+        $this->version = self::PLUGIN_VERSION;
         $this->author = 'Nosto';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -468,7 +470,6 @@ class NostoTagging extends Module
         if ($account instanceof NostoAccountInterface === false) {
             $account_iframe = new NostoTaggingMetaAccountIframe();
             $account_iframe->loadData($this->context, $language_id);
-            $account_iframe->setVersionModule($this->version);
             /* @var NostoHelperIframe $iframe_helper */
             $iframe_helper = Nosto::helper('iframe');
             $iframe_installation_url = $iframe_helper->getUrl($account_iframe, null, array('v'=>1));
@@ -528,10 +529,8 @@ class NostoTagging extends Module
             try {
                 $meta = new NostoTaggingMetaAccountIframe();
                 $meta->setUniqueId($this->getUniqueInstallationId());
-                $meta->setVersionModule($this->version);
                 $meta->loadData($this->context, $language_id);
                 $url = $account->getIframeUrl($meta);
-                $meta->setVersionModule($this->version);
                 if (!empty($url)) {
                     $this->getSmarty()->assign(array('iframe_url' => $url));
                 }
