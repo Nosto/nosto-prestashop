@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
+## Not released
+- Add module version for Nosto calls
+
 ## 2.6.1
 - Change order and product tagging to header / footer
 - Remove sending deleted currencies to Nosto
