@@ -468,6 +468,7 @@ class NostoTagging extends Module
         if ($account instanceof NostoAccountInterface === false) {
             $account_iframe = new NostoTaggingMetaAccountIframe();
             $account_iframe->loadData($this->context, $language_id);
+            $account_iframe->setVersionModule($this->version);
             /* @var NostoHelperIframe $iframe_helper */
             $iframe_helper = Nosto::helper('iframe');
             $iframe_installation_url = $iframe_helper->getUrl($account_iframe, null, array('v'=>1));
@@ -530,6 +531,7 @@ class NostoTagging extends Module
                 $meta->setVersionModule($this->version);
                 $meta->loadData($this->context, $language_id);
                 $url = $account->getIframeUrl($meta);
+                $meta->setVersionModule($this->version);
                 if (!empty($url)) {
                     $this->getSmarty()->assign(array('iframe_url' => $url));
                 }
