@@ -120,6 +120,7 @@ class NostoTaggingMetaAccountIframe implements NostoAccountMetaDataIframeInterfa
         $this->preview_url_cart = $url_helper->getPreviewUrlCart($id_lang);
         $this->preview_url_front = $url_helper->getPreviewUrlHome($id_lang);
         $this->shop_name = $shop_language->name;
+        $this->version_module = NostoTagging::PLUGIN_VERSION;
     }
 
     /**
