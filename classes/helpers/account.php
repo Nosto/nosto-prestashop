@@ -70,7 +70,6 @@ class NostoTaggingHelperAccount
             if ($token) {
                 try {
                     $account->delete();
-
                 } catch (NostoException $e) {
                     Nosto::helper('nosto_tagging/logger')->error(
                         __CLASS__ . '::' . __FUNCTION__ . ' - ' . $e->getMessage(),
