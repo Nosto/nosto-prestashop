@@ -150,8 +150,8 @@
                     </div>
                 </div>
 
-
-                <div class="form-group">
+                {if $multi_currency_method!=="disabled"}
+                    <div class="form-group">
                     <div class="col-lg-9 col-lg-offset-3">
                         <div class="alert alert-info">
                             <p>
@@ -182,6 +182,7 @@
 
                     </div>
                 </div>
+                {/if}
             </div>
             <div class="row nostotagging_settings">
                 <div class="col-md-12">
