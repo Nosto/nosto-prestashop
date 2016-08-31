@@ -188,28 +188,26 @@ class NostoTaggingHelperCurrency
      * Returns a collection of countries that have tax rules
      *
      * @param Context $context_clone the context.
-     * @return NostoExchangeRateCollection
+     * @return NostoTaggingCollectionExchangeRates
      */
-    public function getTaxRulesExchangeRateCollection(Context $context_clone)
+    public function getTaxRulesExchangeRateCollection(Context $context)
     {
         /** @var NostoTaggingHelperPrice $helper_price */
         $helper_price = Nosto::helper('nosto_tagging/price');
         /** @var NostoTaggingHelperProduct $helper_product */
         $helper_product = Nosto::helper('nosto_tagging/product');
 
-        $context_clone = clone $context_clone;
-        // ToDo - switch to getting an active product
+        $context_clone = clone $context;
         $product = $helper_product->getSingleActiveProduct($context_clone);
 
         $tax_rule_countries = $this->getCountriesWithTaxRules($context_clone);
-        $rates = new NostoExchangeRateCollection();
+        $rates_array = array();
         $base_price = $helper_price->getProductPriceInclTax(
             $product,
             $context_clone,
             $this->getBaseCurrency($context_clone)
         );
 
-        // ToDo - save the original context & countries here
         // We would need to calculate these for all currencies
         // Try to come up with a list "EUR_AU", "EUR_FI", "EUR_DE"
         $currencies = $this->getCurrencies($context_clone);
@@ -231,26 +229,50 @@ class NostoTaggingHelperCurrency
                 );
                 $exchange_rate_name = $this->getGeneratedVariationId($context_clone);
                 $exchange_rate = round($price/$base_price, 4);
-                $rates[] = new NostoExchangeRate(
+                $rates_array[] = new NostoExchangeRate(
                     $exchange_rate_name,
                     $context_clone->currency->iso_code,
                     $exchange_rate
                 );
             }
         }
+        $normal_exchange_rates = $this->getExchangeRateCollection($context);
+        /* @var NostoExchangeRate $nosto_exchange_rate */
+        foreach ($normal_exchange_rates as $nosto_exchange_rate) {
+            $rates_array[] = $nosto_exchange_rate;
+        }
 
-        return $rates;
+        $ratest_collection = new NostoTaggingCollectionExchangeRates($rates_array);
+        return $ratest_collection;
     }
 
+    /**
+     * Generates the variation id based on country and language
+     *
+     * @param Context $context
+     * @return string
+     */
     public function getGeneratedVariationId(Context $context)
     {
-        return sprintf(
-            '%s_%s',
-            $context->country->iso_code,
-            $context->currency->iso_code
-        );
+        $countriesWithTaxRules = $this->getCountriesWithTaxRules($context);
+
+        if (array_key_exists($context->country->id, $countriesWithTaxRules)) {
+            $variationId = sprintf(
+                '%s_%s',
+                $context->country->iso_code,
+                $context->currency->iso_code
+            );
+        } else {
+            $variationId = $context->currency->iso_code;
+        }
+
+        return $variationId;
     }
 
+    /**
+     * @param Context $context
+     * @return array
+     */
     public function getCountriesWithTaxRules(Context $context)
     {
         $res = array();
@@ -346,5 +368,25 @@ class NostoTaggingHelperCurrency
                 }
             }
         }
+    }
+
+    /**
+     * Returns the exchange rates and possible variations used in this context
+     *
+     * @param Context $context
+     * @return NostoTaggingCollectionExchangeRates
+     */
+    public function getExchangeRatesInUse(Context $context)
+    {
+        /** @var NostoTaggingHelperConfig $config_helper */
+        $config_helper = Nosto::helper('nosto_tagging/config');
+        $multi_currency_method = $config_helper->getMultiCurrencyMethod($context->language->id);
+        if ($multi_currency_method === NostoTaggingHelperConfig::MULTI_CURRENCY_METHOD_TAX_RULES_EXCHANGE_RATE) {
+            $exchange_rates = $this->getTaxRulesExchangeRateCollection($context);
+        } else {
+            $exchange_rates = $this->getExchangeRateCollection($context);
+        }
+
+        return $exchange_rates;
     }
 }

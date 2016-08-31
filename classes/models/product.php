@@ -726,5 +726,4 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
     {
         return $this->variationId;
     }
-
 }

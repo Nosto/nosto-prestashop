@@ -38,7 +38,7 @@ class NostoTaggingHelperProduct
      */
     public function getSingleActiveProduct(Context $context)
     {
-        $product_ids = $this->getActiveProductIds(100, 0);
+        $product_ids = $this->getActiveProductIds(1000, 0);
         foreach ($product_ids as $id_product) {
             $product = new Product($id_product, true, $context->language->id, $context->shop->id);
             if (!Validate::isLoadedObject($product)) {

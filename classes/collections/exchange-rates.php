@@ -24,13 +24,6 @@
  */
 
 /**
- * Created by PhpStorm.
- * User: hannupolonen
- * Date: 18/05/16
- * Time: 12:52
- */
-
-/**
  * Meta data class for account related information needed when creating new accounts.
  */
 class NostoTaggingCollectionExchangeRates extends NostoExchangeRateCollection

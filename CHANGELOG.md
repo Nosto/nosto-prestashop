@@ -2,7 +2,8 @@
 All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
-## Not released
+## 2.7.E1
+- Add possibility to create exchange rates from tax rules (experimental)
 - Add module version for Nosto calls
 
 ## 2.6.1

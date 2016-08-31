@@ -137,6 +137,12 @@
                                 {l s='Exchange Rates' mod='nostotagging'}
                             </label>
                         </div>
+                        <div class="radio ">
+                            <label>
+                                <input type="radio" name="multi_currency_method" value="taxRuleExchangeRates" {if $multi_currency_method==="taxRuleExchangeRates"}checked="checked"{/if}/>
+                                {l s='Tax Rule Based Exchange Rates' mod='nostotagging'}
+                            </label>
+                        </div>
                         <p class="help-block">
                             <i class="icon-warning-sign"></i>
                             {l s='Changing this setting to "Exchange Rates" will enable multi currency feature in Nosto.' mod='nostotagging'}
