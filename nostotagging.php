@@ -249,7 +249,8 @@ class NostoTagging extends Module
                     && $this->registerHook('actionObjectDeleteAfter')
                     && $this->registerHook('actionObjectAddAfter')
                     && $this->registerHook('actionObjectCurrencyUpdateAfter')
-                    && $this->registerHook('displayBackOfficeTop');
+                    && $this->registerHook('displayBackOfficeTop')
+                    && $this->registerHook('displayBackOfficeHeader');
                 }
             }
         }
