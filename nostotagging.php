@@ -73,6 +73,8 @@ if ((basename(__FILE__) === 'nostotagging.php')) {
  */
 class NostoTagging extends Module
 {
+    const PLUGIN_VERSION = '2.7.D';
+
     /**
      * Custom hooks to add for this module.
      *
@@ -135,7 +137,7 @@ class NostoTagging extends Module
     {
         $this->name = 'nostotagging';
         $this->tab = 'advertising_marketing';
-        $this->version = '2.7.A1';
+        $this->version = self::PLUGIN_VERSION;
         $this->author = 'Nosto';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -179,46 +181,80 @@ class NostoTagging extends Module
      */
     public function install()
     {
-        if (parent::install()
-            && Nosto::helper('nosto_tagging/customer')->createTable()
-            && Nosto::helper('nosto_tagging/admin_tab')->install()
-            && $this->initHooks()
-            && $this->registerHook('displayCategoryTop')
-            && $this->registerHook('displayCategoryFooter')
-            && $this->registerHook('displaySearchTop')
-            && $this->registerHook('displaySearchFooter')
-            && $this->registerHook('header')
-            && $this->registerHook('top')
-            && $this->registerHook('footer')
-            && $this->registerHook('productfooter')
-            && $this->registerHook('shoppingCart')
-            && $this->registerHook('orderConfirmation')
-            && $this->registerHook('postUpdateOrderStatus')
-            && $this->registerHook('paymentTop')
-            && $this->registerHook('home')) {
-        // For versions 1.4.0.1 - 1.5.3.1 we need to keep track of the currently installed version.
-            // This is to enable auto-update of the module by running its upgrade scripts.
-            // This config value is updated in the NostoTaggingUpdater helper every time the module is updated.
-            if (version_compare(_PS_VERSION_, '1.5.4.0', '<')) {
-                Nosto::helper('nosto_tagging/config')->saveInstalledVersion($this->version);
+        $success = false;
+        if (parent::install()) {
+            $success = true;
+            if (
+                !$this->registerHook('displayCategoryTop')
+                || !$this->registerHook('displayCategoryFooter')
+                || !$this->registerHook('displaySearchTop')
+                || !$this->registerHook('displaySearchFooter')
+                || !$this->registerHook('header')
+                || !$this->registerHook('top')
+                || !$this->registerHook('footer')
+                || !$this->registerHook('productfooter')
+                || !$this->registerHook('shoppingCart')
+                || !$this->registerHook('orderConfirmation')
+                || !$this->registerHook('postUpdateOrderStatus')
+                || !$this->registerHook('paymentTop')
+                || !$this->registerHook('home')
+            ) {
+                $success = false;
+                $this->_errors[] = $this->l(
+                    'Failed to register hooks'
+                );
             }
 
-            if (_PS_VERSION_ < '1.5') {
-            // For PS 1.4 we need to register some additional hooks for the product create/update/delete.
-                return $this->registerHook('updateproduct')
+            /* @var NostoTaggingHelperCustomer $helper_customer */
+            $helper_customer = Nosto::helper('nosto_tagging/customer');
+            if (!$helper_customer->createTable()) {
+                $success = false;
+                $this->_errors[] = $this->l(
+                    'Failed to create Nosto customer table'
+                );
+            }
+
+            /* @var NostoTaggingHelperAdminTab $helper_admin_tab */
+            $helper_admin_tab = Nosto::helper('nosto_tagging/admin_tab');
+            if (!$helper_admin_tab->install()) {
+                $success = false;
+                $this->_errors[] = $this->l(
+                    'Failed to create Nosto admin tab'
+                );
+            }
+
+            if (!$this->initHooks()) {
+                $success = false;
+            }
+
+            // For versions 1.4.0.1 - 1.5.3.1 we need to keep track of the currently installed version.
+            // This is to enable auto-update of the module by running its upgrade scripts.
+            // This config value is updated in the NostoTaggingUpdater helper every time the module is updated.
+            if ($success) {
+                if (version_compare(_PS_VERSION_, '1.5.4.0', '<')) {
+                    Nosto::helper('nosto_tagging/config')->saveInstalledVersion($this->version);
+                }
+
+                if (_PS_VERSION_ < '1.5') {
+                    // For PS 1.4 we need to register some additional hooks for the product create/update/delete.
+                    return $this->registerHook('updateproduct')
                     && $this->registerHook('deleteproduct')
                     && $this->registerHook('addproduct')
-                    && $this->registerHook('updateQuantity');
-            } else {
-                // And for PS >= 1.5 we register the object specific hooks for the product create/update/delete.
-                // Also register the back office header hook to add some CSS to the entire back office.
-                return $this->registerHook('actionObjectUpdateAfter')
+                    && $this->registerHook('updateQuantity')
+                    && $this->registerHook('backOfficeFooter');
+                } else {
+                    // And for PS >= 1.5 we register the object specific hooks for the product create/update/delete.
+                    // Also register the back office header hook to add some CSS to the entire back office.
+                    return $this->registerHook('actionObjectUpdateAfter')
                     && $this->registerHook('actionObjectDeleteAfter')
                     && $this->registerHook('actionObjectAddAfter')
+                    && $this->registerHook('actionObjectCurrencyUpdateAfter')
+                    && $this->registerHook('displayBackOfficeTop')
                     && $this->registerHook('displayBackOfficeHeader');
+                }
             }
         }
-        return false;
+        return $success;
     }
 
     /**
@@ -312,7 +348,6 @@ class NostoTagging extends Module
                             'Employee',
                             (int)$employee->id
                         );
-
                     } catch (Exception $e) {
                         $helper_flash->add(
                             'error',
@@ -420,6 +455,11 @@ class NostoTagging extends Module
                         $this->l('There was an error saving the settings. Please, see log for details.')
                     );
                 }
+
+                // Also update the exchange rates if multi currency is used
+                if ($account_meta->getUseCurrencyExchangeRates()) {
+                    $helper_account->updateCurrencyExchangeRates($account, $this->context);
+                }
             }
 
             // Refresh the page after every POST to get rid of form re-submission errors.
@@ -458,6 +498,7 @@ class NostoTagging extends Module
         $id_shop = $this->context->shop->id;
 
         $missing_tokens = true;
+
         if (
             $account instanceof NostoAccountInterface
             && $account->getApiToken(NostoApiToken::API_EXCHANGE_RATES)
@@ -465,7 +506,6 @@ class NostoTagging extends Module
         ) {
             $missing_tokens = false;
         }
-
         if ($account instanceof NostoAccountInterface === false) {
             $account_iframe = new NostoTaggingMetaAccountIframe();
             $account_iframe->loadData($this->context, $language_id);
@@ -528,7 +568,6 @@ class NostoTagging extends Module
             try {
                 $meta = new NostoTaggingMetaAccountIframe();
                 $meta->setUniqueId($this->getUniqueInstallationId());
-                $meta->setVersionModule($this->version);
                 $meta->loadData($this->context, $language_id);
                 $url = $account->getIframeUrl($meta);
                 if (!empty($url)) {
@@ -544,11 +583,20 @@ class NostoTagging extends Module
             }
         }
 
-        $output .= $this->display(__FILE__, 'views/templates/admin/config-bootstrap.tpl');
+        $output .= $this->display(__FILE__, $this->getSettingsTemplate());
 
         return $output;
     }
 
+    private function getSettingsTemplate()
+    {
+        $template_file = 'views/templates/admin/config-bootstrap.tpl';
+        if (_PS_VERSION_ < '1.6') {
+            $template_file  = 'views/templates/admin/legacy-config-bootstrap.tpl';
+        }
+
+        return $template_file;
+    }
     /**
      * Creates a new Nosto account for given shop language.
      *
@@ -600,6 +648,7 @@ class NostoTagging extends Module
         /** @var LinkCore $link */
         $link = new Link();
 
+        $hidden_recommendation_elements = $this->getHiddenRecommendationElements();
         $this->getSmarty()->assign(array(
             'server_address' => $server_address,
             'account_name' => $account->getName(),
@@ -607,14 +656,15 @@ class NostoTagging extends Module
             'nosto_unique_id' => $this->getUniqueInstallationId(),
             'nosto_language' => Tools::strtolower($this->context->language->iso_code),
             'add_to_cart_url' => $link->getPageLink('cart.php'),
-            'static_token' => Tools::getToken(false)
+            'static_token' => Tools::getToken(false),
+            'disable_autoload' => (bool)!empty($hidden_recommendation_elements)
         ));
 
         $this->context->controller->addJS($this->_path.'views/js/nostotagging-auto-slots.js');
 
         $html = $this->display(__FILE__, 'views/templates/hook/header_meta-tags.tpl');
         $html .= $this->display(__FILE__, 'views/templates/hook/header_embed-script.tpl');
-//        $html .= $this->display(__FILE__, 'views/templates/hook/header_add-to-cart.tpl');
+        $html .= $this->display(__FILE__, 'views/templates/hook/header_add-to-cart.tpl');
 
         return $html;
     }
@@ -710,7 +760,6 @@ class NostoTagging extends Module
         $html .= $this->getHiddenRecommendationElements();
 
         return $html;
-
     }
 
     /**
@@ -930,7 +979,7 @@ class NostoTagging extends Module
      * @param array $params
      * @return string The HTML to output
      */
-    public function hookDisplayFooterProduct(Array $params)
+    public function hookDisplayFooterProduct(array $params)
     {
         if (!Nosto::helper('nosto_tagging/account')->existsAndIsConnected($this->context->language->id)) {
             return '';
@@ -946,7 +995,7 @@ class NostoTagging extends Module
      * @param array $params
      * @return string The HTML to output
      */
-    public function hookProductFooter(Array $params)
+    public function hookProductFooter(array $params)
     {
         return $this->hookDisplayFooterProduct($params);
     }
@@ -990,7 +1039,7 @@ class NostoTagging extends Module
      * @param array $params
      * @return string The HTML to output
      */
-    public function hookDisplayOrderConfirmation(Array $params)
+    public function hookDisplayOrderConfirmation(array $params)
     {
         if (!Nosto::helper('nosto_tagging/account')->existsAndIsConnected($this->context->language->id)) {
             return '';
@@ -1006,7 +1055,7 @@ class NostoTagging extends Module
      * @param array $params
      * @return string The HTML to output
      */
-    public function hookOrderConfirmation(Array $params)
+    public function hookOrderConfirmation(array $params)
     {
         return $this->hookDisplayOrderConfirmation($params);
     }
@@ -1121,7 +1170,7 @@ class NostoTagging extends Module
      *
      * @param array $params
      */
-    public function hookActionOrderStatusPostUpdate(Array $params)
+    public function hookActionOrderStatusPostUpdate(array $params)
     {
         if (isset($params['id_order'])) {
             $order = new Order($params['id_order']);
@@ -1160,7 +1209,7 @@ class NostoTagging extends Module
      * @see NostoTagging::hookActionOrderStatusPostUpdate()
      * @param array $params
      */
-    public function hookPostUpdateOrderStatus(Array $params)
+    public function hookPostUpdateOrderStatus(array $params)
     {
         $this->hookActionOrderStatusPostUpdate($params);
     }
@@ -1197,7 +1246,7 @@ class NostoTagging extends Module
      *
      * @param array $params
      */
-    public function hookActionObjectUpdateAfter(Array $params)
+    public function hookActionObjectUpdateAfter(array $params)
     {
         if (isset($params['object'])) {
             if ($params['object'] instanceof Product) {
@@ -1211,7 +1260,7 @@ class NostoTagging extends Module
      *
      * @param array $params
      */
-    public function hookActionObjectDeleteAfter(Array $params)
+    public function hookActionObjectDeleteAfter(array $params)
     {
         if (isset($params['object'])) {
             if ($params['object'] instanceof Product) {
@@ -1225,7 +1274,7 @@ class NostoTagging extends Module
      *
      * @param array $params
      */
-    public function hookActionObjectAddAfter(Array $params)
+    public function hookActionObjectAddAfter(array $params)
     {
         if (isset($params['object'])) {
             if ($params['object'] instanceof Product) {
@@ -1240,7 +1289,7 @@ class NostoTagging extends Module
      * @see NostoTagging::hookActionObjectUpdateAfter
      * @param array $params
      */
-    public function hookUpdateProduct(Array $params)
+    public function hookUpdateProduct(array $params)
     {
         if (isset($params['product'])) {
             $this->hookActionObjectUpdateAfter(array('object' => $params['product']));
@@ -1253,7 +1302,7 @@ class NostoTagging extends Module
      * @see NostoTagging::hookActionObjectDeleteAfter
      * @param array $params
      */
-    public function hookDeleteProduct(Array $params)
+    public function hookDeleteProduct(array $params)
     {
         if (isset($params['product'])) {
             $this->hookActionObjectDeleteAfter(array('object' => $params['product']));
@@ -1266,7 +1315,7 @@ class NostoTagging extends Module
      * @see NostoTagging::hookActionObjectAddAfter
      * @param array $params
      */
-    public function hookAddProduct(Array $params)
+    public function hookAddProduct(array $params)
     {
         if (isset($params['product'])) {
             $this->hookActionObjectAddAfter(array('object' => $params['product']));
@@ -1280,7 +1329,7 @@ class NostoTagging extends Module
      * @see NostoTagging::hookActionObjectUpdateAfter
      * @param array $params
      */
-    public function hookUpdateQuantity(Array $params)
+    public function hookUpdateQuantity(array $params)
     {
         if (isset($params['product'])) {
             $this->hookActionObjectUpdateAfter(array('object' => $params['product']));
@@ -1672,5 +1721,100 @@ class NostoTagging extends Module
             $helper_config->saveCronAccessToken($token);
         }
         return $token;
+    }
+
+    /**
+     * Updates the exchange rates to Nosto when user logs in or logs out
+     *
+     * @param array $params
+     */
+    public function hookDisplayBackOfficeTop(array $params)
+    {
+        return $this->updateExhangeRatesIfNeeded($params, false);
+    }
+
+    public function hookBackOfficeFooter(array $params)
+    {
+        return $this->updateExhangeRatesIfNeeded($params, false);
+    }
+    /**
+     * Defines exhange rates updated for current session
+     */
+    public function defineExchangeRatesAsUpdated()
+    {
+        if ($this->getContext()->cookie && $this->adminLoggedIn()) {
+            $this->getContext()->cookie->nostoExchangeRatesUpdated = true;
+        }
+    }
+
+    /**
+     * Checks if the exchange rates have been updated during the current
+     * admin session
+     *
+     * @return boolean
+     */
+    public function exchangeRatesShouldBeUpdated()
+    {
+        if (!$this->adminLoggedIn()) {
+            return false;
+        }
+
+        $cookie = $this->getContext()->cookie;
+        if (
+            isset($cookie->nostoExchangeRatesUpdated)
+            && $cookie->nostoExchangeRatesUpdated == true //@codingStandardsIgnoreLine
+        ) {
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Updates the exchange rates to Nosto when currency object is saved
+     *
+     * @param array $params
+     */
+    public function hookActionObjectCurrencyUpdateAfter(array $params)
+    {
+        return $this->updateExhangeRatesIfNeeded($params, true);
+    }
+
+    /**
+     * Updates the exchange rates to Nosto if needed
+     *
+     * @param array $params
+     * @param boolean $force if set to true cookie check is ignored
+     */
+    public function updateExhangeRatesIfNeeded(array $params, $force = false)
+    {
+        if ($this->exchangeRatesShouldBeUpdated() || $force === true) {
+            $this->defineExchangeRatesAsUpdated(); // This ensures we only try this at once
+            /** @var NostoTaggingHelperCurrency $currency_helper */
+            $currency_helper = Nosto::helper('nosto_tagging/currency');
+            try {
+                $currency_helper->updateExchangeRatesForAllStores();
+                $this->defineExchangeRatesAsUpdated();
+            } catch (NostoException $e) {
+                $logger = Nosto::helper('nosto_tagging/logger');
+                $logger->error(
+                    'Exchange rate sync failed with error: %s',
+                    $e->getMessage()
+                );
+            }
+        }
+    }
+
+    public function adminLoggedIn()
+    {
+        /* @var Employee $employee */
+        $employee = $this->context->employee;
+        $logged_in = false;
+        if ($employee instanceof Employee && $employee->id) {
+            $logged_in = true;
+        }
+
+        return $logged_in;
     }
 }
