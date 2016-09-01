@@ -32,18 +32,23 @@
     <div class="panel" id="nosto-settings">
         <div class="panel-heading">
             <div class="row">
-                <div class="col-lg-1">
-                    {l s='Manage accounts:' mod='nostotagging'}
-                </div>
-                <div class="col-md-2">
-                    <select id="nostotagging_language">
-                            {foreach from=$nostotagging_languages item=language}
-                                <option value="{$language.id_lang|escape:'htmlall':'UTF-8'}" {if $language.id_lang == $nostotagging_current_language.id_lang}selected="selected"{/if}>
-                                    {$language.name|escape:'htmlall':'UTF-8'}
-                                </option>
-                            {/foreach}
-                        </select>
-                </div>
+                {if count($nostotagging_languages) > 1}
+                    <div class="col-md-1">
+                        {l s='Manage accounts:' mod='nostotagging'}
+                    </div>
+                    <div class="col-md-2">
+                            <select id="nostotagging_language">
+                                {foreach from=$nostotagging_languages item=language}
+                                    <option value="{$language.id_lang|escape:'htmlall':'UTF-8'}" {if $language.id_lang == $nostotagging_current_language.id_lang}selected="selected"{/if}>
+                                        {$language.name|escape:'htmlall':'UTF-8'}
+                                    </option>
+                                {/foreach}
+                            </select>
+                    </div>
+                {else}
+                    <div class="col-md-3">
+                    </div>
+                {/if}
                 <div class="pull-right">
                     {if $nostotagging_account_authorized}
                         <p class="nostotagging_settings">
@@ -144,8 +149,8 @@
                     </div>
                 </div>
 
-
-                <div class="form-group">
+                {if $multi_currency_method!=="disabled"}
+                    <div class="form-group">
                     <div class="col-lg-9 col-lg-offset-3">
                         <div class="alert alert-info">
                             <p>
@@ -176,6 +181,7 @@
 
                     </div>
                 </div>
+                {/if}
             </div>
             <div class="row nostotagging_settings">
                 <div class="col-md-12">
