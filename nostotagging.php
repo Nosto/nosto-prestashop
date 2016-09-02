@@ -73,7 +73,18 @@ if ((basename(__FILE__) === 'nostotagging.php')) {
  */
 class NostoTagging extends Module
 {
+    /**
+     * The version of the Nosto plug-in
+     * @var string
+     */
     const PLUGIN_VERSION = '2.7.D';
+
+    /**
+     * Keeps the state of Nosto default tagging
+     *
+     * @var boolean
+     */
+    private static $tagging_rendered = false;
 
     /**
      * Custom hooks to add for this module.
@@ -237,7 +248,7 @@ class NostoTagging extends Module
 
                 if (_PS_VERSION_ < '1.5') {
                     // For PS 1.4 we need to register some additional hooks for the product create/update/delete.
-                    return $this->registerHook('updateproduct')
+                    $success = $this->registerHook('updateproduct')
                     && $this->registerHook('deleteproduct')
                     && $this->registerHook('addproduct')
                     && $this->registerHook('updateQuantity')
@@ -245,15 +256,21 @@ class NostoTagging extends Module
                 } else {
                     // And for PS >= 1.5 we register the object specific hooks for the product create/update/delete.
                     // Also register the back office header hook to add some CSS to the entire back office.
-                    return $this->registerHook('actionObjectUpdateAfter')
+                    $success = $this->registerHook('actionObjectUpdateAfter')
                     && $this->registerHook('actionObjectDeleteAfter')
                     && $this->registerHook('actionObjectAddAfter')
                     && $this->registerHook('actionObjectCurrencyUpdateAfter')
                     && $this->registerHook('displayBackOfficeTop')
                     && $this->registerHook('displayBackOfficeHeader');
                 }
+
+                // New hooks in 1.7
+                if (version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
+                    $this->registerHook('displayNav1');
+                }
             }
         }
+
         return $success;
     }
 
@@ -700,15 +717,35 @@ class NostoTagging extends Module
     }
 
     /**
-     * Generates the tagging based on controller
+     * Generates and renders the defualt tagging if not already added to the
+     * page
      *
      * @return string
      */
     public function getDefaultTagging()
     {
-        if (!Nosto::helper('nosto_tagging/account')->existsAndIsConnected($this->context->language->id)) {
-            return '';
+        $account_helper = Nosto::helper('nosto_tagging/account');
+        $html = '';
+        if (
+            $account_helper->existsAndIsConnected(
+                $this->context->language->id
+            )
+            && self::$tagging_rendered === false
+        ) {
+            $html = $this->generateDefaultTagging();
         }
+        self::$tagging_rendered = true;
+
+        return $html;
+    }
+
+    /**
+     * Generates the tagging based on controller
+     *
+     * @return string
+     */
+    public function generateDefaultTagging()
+    {
 
         $html = '';
         $html .= $this->getCustomerTagging();
@@ -859,15 +896,20 @@ class NostoTagging extends Module
      */
     public function hookDisplayTop()
     {
-        /* @var NostoTaggingHelperConfig $config_helper */
-        $config_helper = Nosto::helper('nosto_tagging/config');
-        $tagging_position = $config_helper->getNostotaggingRenderPosition($this->context->language->id);
-        $html = '';
-        if ($tagging_position === $config_helper::NOSTOTAGGING_POSITION_TOP) {
-            $html .= $this->getDefaultTagging();
-        }
+        return $this->getDefaultTagging();
+    }
 
-        return $html;
+    /**
+     * Hook for adding content to the top of every page in displayNav1.
+     *
+     * Adds customer and cart tagging.
+     * Adds nosto elements.
+     * @since Prestashop 1.7.0.0
+     * @return string The HTML to output
+     */
+    public function hookDisplayNav1()
+    {
+        return $this->getDefaultTagging();
     }
 
     /**
@@ -893,14 +935,7 @@ class NostoTagging extends Module
         if (!Nosto::helper('nosto_tagging/account')->existsAndIsConnected($this->context->language->id)) {
             return '';
         }
-        /* @var NostoTaggingHelperConfig $config_helper */
-        $config_helper = Nosto::helper('nosto_tagging/config');
-
-        $html = '';
-        $tagging_position = $config_helper->getNostotaggingRenderPosition($this->context->language->id);
-        if ($tagging_position === $config_helper::NOSTOTAGGING_POSITION_FOOTER) {
-            $html = $this->getDefaultTagging();
-        }
+        $html = $this->getDefaultTagging();
         $html .= $this->display(__FILE__, 'views/templates/hook/footer_nosto-elements.tpl');
         return $html;
     }
