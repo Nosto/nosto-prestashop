@@ -80,6 +80,12 @@ class NostoTagging extends Module
     const PLUGIN_VERSION = '2.7.D';
 
     /**
+     * Internal name of the Nosto plug-in
+     * @var string
+     */
+    const MODULE_NAME = 'nostotagging';
+
+    /**
      * Keeps the state of Nosto default tagging
      *
      * @var boolean
@@ -146,7 +152,7 @@ class NostoTagging extends Module
      */
     public function __construct()
     {
-        $this->name = 'nostotagging';
+        $this->name = self::MODULE_NAME;
         $this->tab = 'advertising_marketing';
         $this->version = self::PLUGIN_VERSION;
         $this->author = 'Nosto';
@@ -215,7 +221,6 @@ class NostoTagging extends Module
                     'Failed to register hooks'
                 );
             }
-
             /* @var NostoTaggingHelperCustomer $helper_customer */
             $helper_customer = Nosto::helper('nosto_tagging/customer');
             if (!$helper_customer->createTable()) {

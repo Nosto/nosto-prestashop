@@ -28,6 +28,10 @@
  */
 class NostoTaggingHelperAdminTab
 {
+
+    const MAIN_MENU_ITEM_CLASS = 'AdminNosto';
+    const SUB_MENU_ITEM_CLASS = 'AdminNostoPersonalization';
+
     /**
      * @var array translations for the Nosto `Personalization` menu item in PS 1.5.
      */
@@ -54,38 +58,50 @@ class NostoTaggingHelperAdminTab
             return false;
         }
 
-        /** @var TabCore $tab */
-        $tab = new Tab();
-        $tab->active = 1;
-        $tab->class_name = 'AdminNosto';
-        $tab->name = array();
-        foreach ($languages as $lang) {
-            $tab->name[$lang['id_lang']] = 'Nosto';
-        }
-
-        $tab->id_parent = 0;
-        $tab->module = 'nostotagging';
-        $added = $tab->add();
-
-        // For PS 1.6 it is enough to have the main menu, for PS 1.5 we need a sub-menu.
-        if ($added && (_PS_VERSION_ < '1.6' || _PS_VERSION_ >= '1.7')) {
+        $id_tab = (int)Tab::getIdFromClassName(self::MAIN_MENU_ITEM_CLASS);
+        if ($id_tab) {
+            $mainTabAdded = new Tab($id_tab);
+        } else {
+            /** @var TabCore $tab */
             $tab = new Tab();
             $tab->active = 1;
-            $tab->class_name = 'AdminNostoPersonalization';
+            $tab->class_name = self::MAIN_MENU_ITEM_CLASS;
             $tab->name = array();
             foreach ($languages as $lang) {
-                if (isset(self::$item_translations[$lang['iso_code']])) {
-                    $tab->name[$lang['id_lang']] = self::$item_translations[$lang['iso_code']];
-                } else {
-                    $tab->name[$lang['id_lang']] = 'Personalization';
-                }
+                $tab->name[$lang['id_lang']] = 'Nosto';
             }
-            $tab->id_parent = (int)Tab::getIdFromClassName('AdminNosto');
-            $tab->module = 'nostotagging';
-            $added = $tab->add();
+
+            $tab->id_parent = 0;
+            $tab->module = NostoTagging::MODULE_NAME;
+            $mainTabAdded = $tab->add();
         }
 
-        return $added;
+        // For PS 1.6 it is enough to have the main menu, for PS 1.5 and 1.7 we need a sub-menu.
+        if ($mainTabAdded && (_PS_VERSION_ < '1.6' || _PS_VERSION_ >= '1.7')) {
+            $id_tab = (int)Tab::getIdFromClassName(self::SUB_MENU_ITEM_CLASS);
+            if ($id_tab) {
+                $subTabAdded = new Tab($id_tab);
+            } else {
+                $tab = new Tab();
+                $tab->active = 1;
+                $tab->class_name = self::SUB_MENU_ITEM_CLASS;
+                $tab->name = array();
+                foreach ($languages as $lang) {
+                    if (isset(self::$item_translations[$lang['iso_code']])) {
+                        $tab->name[$lang['id_lang']] = self::$item_translations[$lang['iso_code']];
+                    } else {
+                        $tab->name[$lang['id_lang']] = 'Personalization';
+                    }
+                }
+                $tab->id_parent = (int)Tab::getIdFromClassName(self::MAIN_MENU_ITEM_CLASS);
+                $tab->module = NostoTagging::MODULE_NAME;
+                $subTabAdded = $tab->add();
+            }
+        } else {
+            $subTabAdded = true;
+        }
+
+        return (bool)($mainTabAdded && $subTabAdded);
     }
 
     /**
@@ -99,8 +115,8 @@ class NostoTaggingHelperAdminTab
         if (_PS_VERSION_ < '1.5') {
             return true;
         }
-
-        foreach (array('AdminNosto', 'AdminNostoPersonalization') as $tab_name) {
+        $tabs = array(self::MAIN_MENU_ITEM_CLASS, self::SUB_MENU_ITEM_CLASS);
+        foreach ($tabs as $tab_name) {
             $id_tab = (int)Tab::getIdFromClassName($tab_name);
             if ($id_tab) {
                 /** @var TabCore $tab */

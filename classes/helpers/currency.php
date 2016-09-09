@@ -99,7 +99,6 @@ class NostoTaggingHelperCurrency
             $context instanceof Context
             && (_PS_VERSION_ >= '1.7')
         ) {
-
             // In Prestashop 1.7 (Beta 1) we use the CLDR
             try {
                 $nosto_currency = self::createWithCldr($currency, $context);
