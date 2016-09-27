@@ -73,7 +73,7 @@ if ((basename(__FILE__) === 'nostotagging.php')) {
  */
 class NostoTagging extends Module
 {
-    const PLUGIN_VERSION = '2.6.X';
+    const PLUGIN_VERSION = '2.6.2';
 
     /**
      * Custom hooks to add for this module.
@@ -304,7 +304,8 @@ class NostoTagging extends Module
                         $helper_flash->add(
                             'error',
                             $this->l(
-                                'Account could not be automatically created due to missing or invalid parameters. Please see your Prestashop logs for details'
+                                'Account could not be automatically created due to missing or invalid parameters.
+                                Please see your Prestashop logs for details'
                             )
                         );
                         Nosto::helper('nosto_tagging/logger')->error(
@@ -313,7 +314,6 @@ class NostoTagging extends Module
                             'Employee',
                             (int)$employee->id
                         );
-
                     } catch (Exception $e) {
                         $helper_flash->add(
                             'error',
@@ -710,7 +710,6 @@ class NostoTagging extends Module
         $html .= $this->getHiddenRecommendationElements();
 
         return $html;
-
     }
 
     /**
@@ -814,7 +813,7 @@ class NostoTagging extends Module
         $config_helper = Nosto::helper('nosto_tagging/config');
         $tagging_position = $config_helper->getNostotaggingRenderPosition($this->context->language->id);
         $html = '';
-        if ($tagging_position === $config_helper::NOSTOTAGGING_POSITION_TOP) {
+        if ($tagging_position === NostoTaggingHelperConfig::NOSTOTAGGING_POSITION_TOP) {
             $html .= $this->getDefaultTagging();
         }
 
@@ -849,7 +848,7 @@ class NostoTagging extends Module
 
         $html = '';
         $tagging_position = $config_helper->getNostotaggingRenderPosition($this->context->language->id);
-        if ($tagging_position === $config_helper::NOSTOTAGGING_POSITION_FOOTER) {
+        if ($tagging_position === NostoTaggingHelperConfig::NOSTOTAGGING_POSITION_FOOTER) {
             $html = $this->getDefaultTagging();
         }
         $html .= $this->display(__FILE__, 'views/templates/hook/footer_nosto-elements.tpl');
@@ -930,7 +929,7 @@ class NostoTagging extends Module
      * @param array $params
      * @return string The HTML to output
      */
-    public function hookDisplayFooterProduct(Array $params)
+    public function hookDisplayFooterProduct(array $params)
     {
         if (!Nosto::helper('nosto_tagging/account')->existsAndIsConnected($this->context->language->id)) {
             return '';
@@ -946,7 +945,7 @@ class NostoTagging extends Module
      * @param array $params
      * @return string The HTML to output
      */
-    public function hookProductFooter(Array $params)
+    public function hookProductFooter(array $params)
     {
         return $this->hookDisplayFooterProduct($params);
     }
@@ -990,7 +989,7 @@ class NostoTagging extends Module
      * @param array $params
      * @return string The HTML to output
      */
-    public function hookDisplayOrderConfirmation(Array $params)
+    public function hookDisplayOrderConfirmation(array $params)
     {
         if (!Nosto::helper('nosto_tagging/account')->existsAndIsConnected($this->context->language->id)) {
             return '';
@@ -1006,7 +1005,7 @@ class NostoTagging extends Module
      * @param array $params
      * @return string The HTML to output
      */
-    public function hookOrderConfirmation(Array $params)
+    public function hookOrderConfirmation(array $params)
     {
         return $this->hookDisplayOrderConfirmation($params);
     }
@@ -1121,7 +1120,7 @@ class NostoTagging extends Module
      *
      * @param array $params
      */
-    public function hookActionOrderStatusPostUpdate(Array $params)
+    public function hookActionOrderStatusPostUpdate(array $params)
     {
         if (isset($params['id_order'])) {
             $order = new Order($params['id_order']);
@@ -1160,7 +1159,7 @@ class NostoTagging extends Module
      * @see NostoTagging::hookActionOrderStatusPostUpdate()
      * @param array $params
      */
-    public function hookPostUpdateOrderStatus(Array $params)
+    public function hookPostUpdateOrderStatus(array $params)
     {
         $this->hookActionOrderStatusPostUpdate($params);
     }
@@ -1197,7 +1196,7 @@ class NostoTagging extends Module
      *
      * @param array $params
      */
-    public function hookActionObjectUpdateAfter(Array $params)
+    public function hookActionObjectUpdateAfter(array $params)
     {
         if (isset($params['object'])) {
             if ($params['object'] instanceof Product) {
@@ -1211,7 +1210,7 @@ class NostoTagging extends Module
      *
      * @param array $params
      */
-    public function hookActionObjectDeleteAfter(Array $params)
+    public function hookActionObjectDeleteAfter(array $params)
     {
         if (isset($params['object'])) {
             if ($params['object'] instanceof Product) {
@@ -1225,7 +1224,7 @@ class NostoTagging extends Module
      *
      * @param array $params
      */
-    public function hookActionObjectAddAfter(Array $params)
+    public function hookActionObjectAddAfter(array $params)
     {
         if (isset($params['object'])) {
             if ($params['object'] instanceof Product) {
@@ -1240,7 +1239,7 @@ class NostoTagging extends Module
      * @see NostoTagging::hookActionObjectUpdateAfter
      * @param array $params
      */
-    public function hookUpdateProduct(Array $params)
+    public function hookUpdateProduct(array $params)
     {
         if (isset($params['product'])) {
             $this->hookActionObjectUpdateAfter(array('object' => $params['product']));
@@ -1253,7 +1252,7 @@ class NostoTagging extends Module
      * @see NostoTagging::hookActionObjectDeleteAfter
      * @param array $params
      */
-    public function hookDeleteProduct(Array $params)
+    public function hookDeleteProduct(array $params)
     {
         if (isset($params['product'])) {
             $this->hookActionObjectDeleteAfter(array('object' => $params['product']));
@@ -1266,7 +1265,7 @@ class NostoTagging extends Module
      * @see NostoTagging::hookActionObjectAddAfter
      * @param array $params
      */
-    public function hookAddProduct(Array $params)
+    public function hookAddProduct(array $params)
     {
         if (isset($params['product'])) {
             $this->hookActionObjectAddAfter(array('object' => $params['product']));
@@ -1280,7 +1279,7 @@ class NostoTagging extends Module
      * @see NostoTagging::hookActionObjectUpdateAfter
      * @param array $params
      */
-    public function hookUpdateQuantity(Array $params)
+    public function hookUpdateQuantity(array $params)
     {
         if (isset($params['product'])) {
             $this->hookActionObjectUpdateAfter(array('object' => $params['product']));
@@ -1626,7 +1625,7 @@ class NostoTagging extends Module
             return $this->context->smarty;
         }
 
-        throw new \NostoException('Could not find smarty');
+        throw new NostoException('Could not find smarty');
     }
 
     /**
