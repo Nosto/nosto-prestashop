@@ -1715,7 +1715,7 @@ class NostoTagging extends Module
             return $this->context->smarty;
         }
 
-        throw new \NostoException('Could not find smarty');
+        throw new NostoException('Could not find smarty');
     }
 
     /**
