@@ -5,6 +5,9 @@ This project adheres to Semantic Versioning(http://semver.org/).
 ## Not released
 - Add module version for Nosto calls
 
+## 2.6.2
+- Make plug-in compatible with PHP 5.2
+
 ## 2.6.1
 - Change order and product tagging to header / footer
 - Remove sending deleted currencies to Nosto

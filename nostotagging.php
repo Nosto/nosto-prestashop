@@ -73,7 +73,7 @@ if ((basename(__FILE__) === 'nostotagging.php')) {
  */
 class NostoTagging extends Module
 {
-    const PLUGIN_VERSION = '2.6.X';
+    const PLUGIN_VERSION = '2.6.2';
 
     /**
      * Custom hooks to add for this module.
@@ -864,7 +864,7 @@ class NostoTagging extends Module
         $config_helper = Nosto::helper('nosto_tagging/config');
         $tagging_position = $config_helper->getNostotaggingRenderPosition($this->context->language->id);
         $html = '';
-        if ($tagging_position === $config_helper::NOSTOTAGGING_POSITION_TOP) {
+        if ($tagging_position === NostoTaggingHelperConfig::NOSTOTAGGING_POSITION_TOP) {
             $html .= $this->getDefaultTagging();
         }
 
@@ -899,7 +899,7 @@ class NostoTagging extends Module
 
         $html = '';
         $tagging_position = $config_helper->getNostotaggingRenderPosition($this->context->language->id);
-        if ($tagging_position === $config_helper::NOSTOTAGGING_POSITION_FOOTER) {
+        if ($tagging_position === NostoTaggingHelperConfig::NOSTOTAGGING_POSITION_FOOTER) {
             $html = $this->getDefaultTagging();
         }
         $html .= $this->display(__FILE__, 'views/templates/hook/footer_nosto-elements.tpl');
@@ -1683,7 +1683,7 @@ class NostoTagging extends Module
             return $this->context->smarty;
         }
 
-        throw new \NostoException('Could not find smarty');
+        throw new NostoException('Could not find smarty');
     }
 
     /**

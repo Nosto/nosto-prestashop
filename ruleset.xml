@@ -33,7 +33,8 @@
         </exclude>
         <exclude name="PSR2.ControlStructures.ControlStructureSpacing.SpacingAfterOpenBrace"/>
     </rule>
-    <exclude-pattern>/build/</exclude-pattern>
+    <config name="testVersion" value="5.2"/>
+    <rule ref="PHPCompatibility" />
     <exclude-pattern>/libs/composer/</exclude-pattern>
     <exclude-pattern>/libs/nosto/</exclude-pattern>
     <exclude-pattern>/libs/pdepend/</exclude-pattern>
