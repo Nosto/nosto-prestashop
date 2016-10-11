@@ -1290,7 +1290,9 @@ class NostoTagging extends Module
     {
         if (isset($params['object'])) {
             if ($params['object'] instanceof Product) {
-                Nosto::helper('nosto_tagging/product_operation')->update($params['object']);
+                /* @var $nostoProductOperation NostoTaggingHelperProductOperation */
+                $nostoProductOperation = Nosto::helper('nosto_tagging/product_operation');
+                $nostoProductOperation->update($params['object']);
             }
         }
     }

@@ -257,7 +257,8 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
     protected function buildCategories(Product $product, $id_lang)
     {
         $categories = array();
-        foreach ($product->getCategories() as $category_id) {
+        $productCategories = $product->getCategories();
+        foreach ($productCategories as $category_id) {
             $category = NostoTaggingCategory::buildCategoryString($category_id, $id_lang);
             if (!empty($category)) {
                 $categories[] = $category;
