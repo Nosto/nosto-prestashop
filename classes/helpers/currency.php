@@ -310,8 +310,6 @@ class NostoTaggingHelperCurrency
                 INNER JOIN
                     %stax_rules_group trg ON (p.id_tax_rules_group = trg.id_tax_rules_group)
                 WHERE
-                    trg.deleted != 1
-                AND
                     trg.active = 1
                 GROUP BY 
                     p.id_tax_rules_group;

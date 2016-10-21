@@ -300,10 +300,14 @@ class NostoTagging extends Module
         $helper_url = Nosto::helper('nosto_tagging/url');
         /** @var NostoTaggingHelperConfig $helper_config */
         $helper_config = Nosto::helper('nosto_tagging/config');
+        /** @var NostoTaggingHelperContextFactory $context_factory */
+        $context_factory = Nosto::helper('nosto_tagging/context_factory');
+
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $language_id = (int)Tools::getValue($this->name.'_current_language');
             $current_language = $this->ensureAdminLanguage($languages, $language_id);
+            $shop_id = $this->context->shop->id;
 
             if (_PS_VERSION_ >= '1.5' && Shop::getContext() !== Shop::CONTEXT_SHOP) {
             // Do nothing.
@@ -385,10 +389,11 @@ class NostoTagging extends Module
                 /* @var NostoTaggingHelperAccount $account_helper */
                 $account_helper = Nosto::helper('nosto_tagging/account');
                 $nosto_account = $account_helper->find($language_id);
+                $forged_context = $context_factory->forgeContext($language_id, $shop_id);
                 if ($nosto_account &&
                     $account_helper->updateCurrencyExchangeRates(
                         $nosto_account,
-                        $this->context
+                        $forged_context
                     )
                 ) {
                     $helper_flash->add(
@@ -423,7 +428,6 @@ class NostoTagging extends Module
                 /** @var NostoTaggingHelperFlashMessage $helper_flash */
                 $helper_flash = Nosto::helper('nosto_tagging/flash_message');
 
-
                 $multi_currency_method = Tools::getValue('multi_currency_method');
                 $helper_config->saveMultiCurrencyMethod($language_id, $multi_currency_method);
                 $helper_config->saveNostoTaggingRenderPosition($language_id, Tools::getValue('nostotagging_position'));
@@ -432,7 +436,8 @@ class NostoTagging extends Module
                 if (
                     $multi_currency_method === NostoTaggingHelperConfig::MULTI_CURRENCY_METHOD_TAX_RULES_EXCHANGE_RATE
                 ) {
-                    $tax_rule_groups_in_use = $helper_currency->getTaxGroupsInUse($this->context);
+                    $forged_context = $context_factory->forgeContext($language_id, $shop_id);
+                    $tax_rule_groups_in_use = $helper_currency->getTaxGroupsInUse($forged_context);
                     if (count($tax_rule_groups_in_use) > 1) {
                         $helper_flash->add(
                             'error',
