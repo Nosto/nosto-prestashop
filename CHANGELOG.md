@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
+## 2.7.E2
+- Fix the context in Nosto settings
+- Remove incompatible column from tax rules query
+
 ## 2.7.E1
 - Add possibility to create exchange rates from tax rules (experimental)
 - Add module version for Nosto calls
