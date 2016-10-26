@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <module>
 	<name>nostotagging</name>
-	<displayName><![CDATA[Personalization for PrestaShop]]></displayName>
-	<version><![CDATA[2.6.2]]></version>
+	<displayName><![CDATA[Nosto Personalization for PrestaShop]]></displayName>
+	<version><![CDATA[2.7.D]]></version>
 	<description><![CDATA[Increase your conversion rate and average order value by delivering your customers personalized product
             recommendations throughout their shopping journey.]]></description>
 	<author><![CDATA[Nosto]]></author>

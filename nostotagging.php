@@ -73,7 +73,24 @@ if ((basename(__FILE__) === 'nostotagging.php')) {
  */
 class NostoTagging extends Module
 {
-    const PLUGIN_VERSION = '2.6.2';
+    /**
+     * The version of the Nosto plug-in
+     * @var string
+     */
+    const PLUGIN_VERSION = '2.7.D';
+
+    /**
+     * Internal name of the Nosto plug-in
+     * @var string
+     */
+    const MODULE_NAME = 'nostotagging';
+
+    /**
+     * Keeps the state of Nosto default tagging
+     *
+     * @var boolean
+     */
+    private static $tagging_rendered = false;
 
     /**
      * Custom hooks to add for this module.
@@ -135,7 +152,7 @@ class NostoTagging extends Module
      */
     public function __construct()
     {
-        $this->name = 'nostotagging';
+        $this->name = self::MODULE_NAME;
         $this->tab = 'advertising_marketing';
         $this->version = self::PLUGIN_VERSION;
         $this->author = 'Nosto';
@@ -204,7 +221,6 @@ class NostoTagging extends Module
                     'Failed to register hooks'
                 );
             }
-
             /* @var NostoTaggingHelperCustomer $helper_customer */
             $helper_customer = Nosto::helper('nosto_tagging/customer');
             if (!$helper_customer->createTable()) {
@@ -237,7 +253,7 @@ class NostoTagging extends Module
 
                 if (_PS_VERSION_ < '1.5') {
                     // For PS 1.4 we need to register some additional hooks for the product create/update/delete.
-                    return $this->registerHook('updateproduct')
+                    $success = $this->registerHook('updateproduct')
                     && $this->registerHook('deleteproduct')
                     && $this->registerHook('addproduct')
                     && $this->registerHook('updateQuantity')
@@ -245,15 +261,21 @@ class NostoTagging extends Module
                 } else {
                     // And for PS >= 1.5 we register the object specific hooks for the product create/update/delete.
                     // Also register the back office header hook to add some CSS to the entire back office.
-                    return $this->registerHook('actionObjectUpdateAfter')
+                    $success = $this->registerHook('actionObjectUpdateAfter')
                     && $this->registerHook('actionObjectDeleteAfter')
                     && $this->registerHook('actionObjectAddAfter')
                     && $this->registerHook('actionObjectCurrencyUpdateAfter')
                     && $this->registerHook('displayBackOfficeTop')
                     && $this->registerHook('displayBackOfficeHeader');
                 }
+
+                // New hooks in 1.7
+                if (version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
+                    $this->registerHook('displayNav1');
+                }
             }
         }
+
         return $success;
     }
 
@@ -339,7 +361,7 @@ class NostoTagging extends Module
                             'error',
                             $this->l(
                                 'Account could not be automatically created due to missing or invalid parameters.'
-                                . 'Please see your Prestashop logs for details'
+                                . ' Please see your Prestashop logs for details'
                             )
                         );
                         Nosto::helper('nosto_tagging/logger')->error(
@@ -351,8 +373,7 @@ class NostoTagging extends Module
                     } catch (Exception $e) {
                         $helper_flash->add(
                             'error',
-                            $this->l('Account could not be automatically created. The error message was: ')
-                            . $e->getMessage()
+                            $this->l('Account could not be automatically created. Please see logs for details.')
                         );
                         Nosto::helper('nosto_tagging/logger')->error(
                             'Creating Nosto account failed: ' . $e->getMessage() .':'.$e->getCode(),
@@ -701,15 +722,35 @@ class NostoTagging extends Module
     }
 
     /**
-     * Generates the tagging based on controller
+     * Generates and renders the defualt tagging if not already added to the
+     * page
      *
      * @return string
      */
     public function getDefaultTagging()
     {
-        if (!Nosto::helper('nosto_tagging/account')->existsAndIsConnected($this->context->language->id)) {
-            return '';
+        $account_helper = Nosto::helper('nosto_tagging/account');
+        $html = '';
+        if (
+            $account_helper->existsAndIsConnected(
+                $this->context->language->id
+            )
+            && self::$tagging_rendered === false
+        ) {
+            $html = $this->generateDefaultTagging();
         }
+        self::$tagging_rendered = true;
+
+        return $html;
+    }
+
+    /**
+     * Generates the tagging based on controller
+     *
+     * @return string
+     */
+    public function generateDefaultTagging()
+    {
 
         $html = '';
         $html .= $this->getCustomerTagging();
@@ -739,7 +780,7 @@ class NostoTagging extends Module
                 $html .= $this->getBrandTagging($manufacturer);
             }
         } elseif ($this->isController('search')) {
-            $search_term = Tools::getValue('search_query', null);
+            $search_term = Tools::getValue('search_query', Tools::getValue('s'));
             if (!is_null($search_term)) {
                 $html .= $this->getSearchTagging($search_term);
             }
@@ -860,15 +901,20 @@ class NostoTagging extends Module
      */
     public function hookDisplayTop()
     {
-        /* @var NostoTaggingHelperConfig $config_helper */
-        $config_helper = Nosto::helper('nosto_tagging/config');
-        $tagging_position = $config_helper->getNostotaggingRenderPosition($this->context->language->id);
-        $html = '';
-        if ($tagging_position === NostoTaggingHelperConfig::NOSTOTAGGING_POSITION_TOP) {
-            $html .= $this->getDefaultTagging();
-        }
+        return $this->getDefaultTagging();
+    }
 
-        return $html;
+    /**
+     * Hook for adding content to the top of every page in displayNav1.
+     *
+     * Adds customer and cart tagging.
+     * Adds nosto elements.
+     * @since Prestashop 1.7.0.0
+     * @return string The HTML to output
+     */
+    public function hookDisplayNav1()
+    {
+        return $this->getDefaultTagging();
     }
 
     /**
@@ -894,14 +940,7 @@ class NostoTagging extends Module
         if (!Nosto::helper('nosto_tagging/account')->existsAndIsConnected($this->context->language->id)) {
             return '';
         }
-        /* @var NostoTaggingHelperConfig $config_helper */
-        $config_helper = Nosto::helper('nosto_tagging/config');
-
-        $html = '';
-        $tagging_position = $config_helper->getNostotaggingRenderPosition($this->context->language->id);
-        if ($tagging_position === NostoTaggingHelperConfig::NOSTOTAGGING_POSITION_FOOTER) {
-            $html = $this->getDefaultTagging();
-        }
+        $html = $this->getDefaultTagging();
         $html .= $this->display(__FILE__, 'views/templates/hook/footer_nosto-elements.tpl');
         return $html;
     }
@@ -1251,7 +1290,9 @@ class NostoTagging extends Module
     {
         if (isset($params['object'])) {
             if ($params['object'] instanceof Product) {
-                Nosto::helper('nosto_tagging/product_operation')->update($params['object']);
+                /* @var $nostoProductOperation NostoTaggingHelperProductOperation */
+                $nostoProductOperation = Nosto::helper('nosto_tagging/product_operation');
+                $nostoProductOperation->update($params['object']);
             }
         }
     }
@@ -1516,12 +1557,6 @@ class NostoTagging extends Module
                     $new_hook->add();
                     $id_hook = $new_hook->id;
                     if (!$id_hook) {
-                        $this->_errors[] = $this->l(
-                            sprintf(
-                                'Hook %s could not be created',
-                                $hook['name']
-                            )
-                        );
                         $success = false;
                     }
                 }

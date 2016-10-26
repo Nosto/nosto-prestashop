@@ -3,6 +3,8 @@ All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
 ## Not released
+- Support for Prestashop 1.7
+- Fix non-active product saving
 - Add module version for Nosto calls
 
 ## 2.6.2

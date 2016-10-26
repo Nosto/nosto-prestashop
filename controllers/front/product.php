@@ -60,7 +60,6 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
                 $collection[] = $nosto_product;
             }
         }
-
         $this->encryptOutput($collection);
     }
 
