@@ -86,6 +86,17 @@ class NostoTagging extends Module
     const MODULE_NAME = 'nostotagging';
 
     /**
+     * Page type constants
+     */
+    const PAGE_TYPE_FRONT_PAGE = 'front';
+    const PAGE_TYPE_CART = 'cart';
+    const PAGE_TYPE_PRODUCT = 'product';
+    const PAGE_TYPE_CATEGORY = 'category';
+    const PAGE_TYPE_SEARCH = 'search';
+    const PAGE_TYPE_NOTFOUND = 'notfound';
+    const PAGE_TYPE_ORDER = 'order';
+
+    /**
      * Keeps the state of Nosto default tagging
      *
      * @var boolean
@@ -767,6 +778,7 @@ class NostoTagging extends Module
 
             if (Validate::isLoadedObject($category)) {
                 $html .= $this->getCategoryTagging($category);
+                $html .= $this->getPageTypeTagging(self::PAGE_TYPE_CATEGORY);
             }
         } elseif ($this->isController('manufacturer')) {
             // The "getManufacturer" method is available from Prestashop 1.5.6.0 upwards.
@@ -783,19 +795,25 @@ class NostoTagging extends Module
             $search_term = Tools::getValue('search_query', Tools::getValue('s'));
             if (!is_null($search_term)) {
                 $html .= $this->getSearchTagging($search_term);
+                $html .= $this->getPageTypeTagging(self::PAGE_TYPE_SEARCH);
             }
+
         } elseif ($this->isController('product')) {
             $product = $this->resolveProductInContext();
             $category = $this->resolveCategoryInContext();
 
             if ($product instanceof Product) {
                 $html .= $this->getProductTagging($product, $category);
+                $html .= $this->getPageTypeTagging(self::PAGE_TYPE_PRODUCT);
             }
         } elseif ($this->isController('order-confirmation')) {
             $order = $this->resolveOrderInContext();
             if ($order instanceof Order) {
                 $html .= $this->getOrderTagging($order);
+                $html .= $this->getPageTypeTagging(self::PAGE_TYPE_ORDER);
             }
+        } elseif ($this->isController('pagenotfound') || $this->isController('404')) {
+            $html .= $this->getPageTypeTagging(self::PAGE_TYPE_NOTFOUND);
         }
 
         $html .= $this->display(__FILE__, 'views/templates/hook/top_nosto-elements.tpl');
@@ -1056,7 +1074,9 @@ class NostoTagging extends Module
             return '';
         }
 
-        return $this->display(__FILE__, 'views/templates/hook/shopping-cart-footer_nosto-elements.tpl');
+        $html = $this->display(__FILE__, 'views/templates/hook/shopping-cart-footer_nosto-elements.tpl');
+        $html .= $this->getPageTypeTagging(self::PAGE_TYPE_CART);
+        return $html;
     }
 
     /**
@@ -1266,8 +1286,9 @@ class NostoTagging extends Module
         if (!Nosto::helper('nosto_tagging/account')->existsAndIsConnected($this->context->language->id)) {
             return '';
         }
-
-        return $this->display(__FILE__, 'views/templates/hook/home_nosto-elements.tpl');
+        $html = $this->display(__FILE__, 'views/templates/hook/home_nosto-elements.tpl');
+        $html .= $this->getPageTypeTagging(self::PAGE_TYPE_FRONT_PAGE);
+        return $html;
     }
 
     /**
@@ -1860,4 +1881,20 @@ class NostoTagging extends Module
 
         return $logged_in;
     }
+
+    /**
+     * Render page type tagging
+     *
+     * @param string $page_type
+     * @return string the rendered HTML
+     */
+    protected function getPageTypeTagging($page_type)
+    {
+        $this->getSmarty()->assign(array(
+            'nosto_page_type' => $page_type,
+        ));
+
+        return $this->display(__FILE__, 'views/templates/hook/top_page_type-tagging.tpl');
+    }
+
 }
