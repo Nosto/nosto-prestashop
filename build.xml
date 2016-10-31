@@ -64,6 +64,9 @@
     </target>
 
     <target name="phpcs">
+        <exec executable="phpcs">
+            <arg value="-i" />
+        </exec>
         <echo msg="Checking code style" />
         <phpcodesniffer standard="ruleset.xml" haltonerror="true">
             <fileset dir="${buildsrc}">

@@ -234,7 +234,7 @@ class NostoTagging extends Module
             }
             /* @var NostoTaggingHelperCustomer $helper_customer */
             $helper_customer = Nosto::helper('nosto_tagging/customer');
-            if (!$helper_customer->createTable()) {
+            if (!$helper_customer->createTables()) {
                 $success = false;
                 $this->_errors[] = $this->l(
                     'Failed to create Nosto customer table'
@@ -303,7 +303,7 @@ class NostoTagging extends Module
         return parent::uninstall()
             && Nosto::helper('nosto_tagging/account')->deleteAll()
             && Nosto::helper('nosto_tagging/config')->purge()
-            && Nosto::helper('nosto_tagging/customer')->dropTable()
+            && Nosto::helper('nosto_tagging/customer')->dropTables()
             && Nosto::helper('nosto_tagging/admin_tab')->uninstall();
     }
 
