@@ -126,6 +126,35 @@
                 <hr>
 
                 <div class="form-group">
+                    <label class="control-label col-lg-3" for="image_type">
+                        <span class="label-tooltip" data-toggle="tooltip" title="" data-original-title="{l s='Choose which image type Nosto will use in recommendations' mod='nostotagging'}">
+                            {l s='Image type for recommendations' mod='nostotagging'}
+                        </span>
+                    </label>
+
+                    <div class="col-lg-9">
+                        <div class="radio">
+                        </div>
+                        {foreach from=$image_types item=image_type}
+                            <div class="radio ">
+                                <label>
+                                    <input type="radio" name="image_type" value="{$image_type['id_image_type']}" {if $current_image_type===$image_type['id_image_type']}checked="checked"{/if}/>
+                                    {$image_type['name']} ({$image_type['width']} x {$image_type['height']})
+                                </label>
+                            </div>
+                        {/foreach}
+                        <div class="radio">
+                            <label>
+                                <input type="radio" name="image_type" value="0" {if !$current_image_type}checked="checked"{/if}/>
+                                {l s='Not defined' mod='nostotagging'}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="form-group">
                     <label class="control-label col-lg-3" for="multi_currency_method">
                         {l s='Multi Currency Method' mod='nostotagging'}
                     </label>

@@ -40,6 +40,7 @@ if ((basename(__FILE__) === 'nostotagging.php')) {
     require_once($module_dir.'/classes/helpers/config.php');
     require_once($module_dir.'/classes/helpers/customer.php');
     require_once($module_dir.'/classes/helpers/flash-message.php');
+    require_once($module_dir.'/classes/helpers/image.php');
     require_once($module_dir.'/classes/helpers/logger.php');
     require_once($module_dir.'/classes/helpers/product-operation.php');
     require_once($module_dir.'/classes/helpers/updater.php');
@@ -454,6 +455,7 @@ class NostoTagging extends Module
 
                 $helper_config->saveMultiCurrencyMethod($language_id, Tools::getValue('multi_currency_method'));
                 $helper_config->saveNostoTaggingRenderPosition($language_id, Tools::getValue('nostotagging_position'));
+                $helper_config->saveImageType($language_id, Tools::getValue('image_type'));
 
                 $account = $helper_account->find($language_id);
                 $account_meta = new NostoTaggingMetaAccount();
@@ -549,6 +551,9 @@ class NostoTagging extends Module
             $iframe_installation_url = null;
         }
 
+        /** @var NostoTaggingHelperImage $helper_images */
+        $helper_images = Nosto::helper('nosto_tagging/image');
+
         $this->getSmarty()->assign(array(
             $this->name.'_form_action' => $this->getAdminUrl(),
             $this->name.'_create_account' => $this->getAdminUrl(),
@@ -592,7 +597,9 @@ class NostoTagging extends Module
             'missing_tokens' => $missing_tokens,
             'iframe_installation_url' => $iframe_installation_url,
             'iframe_origin' => $helper_url->getIframeOrigin(),
-            'module_path' => $this->_path
+            'module_path' => $this->_path,
+            'image_types' => $helper_images->getProductImageTypes(),
+            'current_image_type' => $helper_config->getImageType($current_language['id_lang'])
         ));
 
         // Try to login employee to Nosto in order to get a url to the internal setting pages,

@@ -137,6 +137,8 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
         $helper_config = Nosto::helper('nosto_tagging/config');
         /** @var NostoHelperPrice $helper_config */
         $nosto_helper_price = Nosto::helper('nosto/price');
+        /** @var NostoTaggingHelperImage $helper_image */
+        $helper_image = Nosto::helper('nosto_tagging/image');
 
         $base_currency = $helper_currency->getBaseCurrency($context);
 
@@ -152,7 +154,7 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
         }
 
         $this->url = $url_helper->getProductUrl($product, $id_lang, $id_shop);
-        $this->image_url = $url_helper->getProductImageUrl($product);
+        $this->image_url = $helper_image->getProductImageUrl($product, $id_lang);
         $this->product_id = (int)$product->id;
         $this->name = $product->name;
 
