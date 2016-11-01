@@ -77,7 +77,7 @@ class NostoTagging extends Module
      * The version of the Nosto plug-in
      * @var string
      */
-    const PLUGIN_VERSION = '2.7.D';
+    const PLUGIN_VERSION = '2.7.0';
 
     /**
      * Internal name of the Nosto plug-in
@@ -797,7 +797,6 @@ class NostoTagging extends Module
                 $html .= $this->getSearchTagging($search_term);
                 $html .= $this->getPageTypeTagging(self::PAGE_TYPE_SEARCH);
             }
-
         } elseif ($this->isController('product')) {
             $product = $this->resolveProductInContext();
             $category = $this->resolveCategoryInContext();
@@ -1725,7 +1724,7 @@ class NostoTagging extends Module
      * Method for resolving correct smarty object
      *
      * @return Smarty|Smarty_Data
-     * @throws \NostoException
+     * @throws NostoException
      */
     protected function getSmarty()
     {
@@ -1896,5 +1895,4 @@ class NostoTagging extends Module
 
         return $this->display(__FILE__, 'views/templates/hook/top_page_type-tagging.tpl');
     }
-
 }

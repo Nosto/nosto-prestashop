@@ -221,6 +221,7 @@ class NostoTaggingHelperCurrency
     public static function createWithCldr(array $currency, Context $context)
     {
         $cldr = Tools::getCldr(null, $context->language->language_code);
+        // @codingStandardsIgnoreLine
         $cldr_currency = new \ICanBoogie\CLDR\Currency($cldr->getRepository(), $currency['iso_code']);
         $localized_currency = $cldr_currency->localize($cldr->getCulture());
 

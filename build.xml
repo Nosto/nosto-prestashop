@@ -142,7 +142,7 @@
     <!-- ============================================  -->
     <!-- Target: build                                 -->
     <!-- ============================================  -->
-    <target name="build" depends="phpcs, phpmd, fixcompatibility, prepare">
+    <target name="build" depends="fixcompatibility, prepare, phpcs, phpmd">
         <echo msg="Building a package" />
         <exec executable="zip" dir="${zipbase}">
             <arg value="-r" />
