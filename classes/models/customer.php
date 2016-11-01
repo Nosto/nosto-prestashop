@@ -44,6 +44,11 @@ class NostoTaggingCustomer extends NostoTaggingModel
     public $email;
 
     /**
+     * @var string the customer customer reference.
+     */
+    public $customer_reference;
+
+    /**
      * Loads the customer data from supplied context and customer objects.
      *
      * @param Context $context the context object.
@@ -58,6 +63,14 @@ class NostoTaggingCustomer extends NostoTaggingModel
         $this->first_name = $customer->firstname;
         $this->last_name = $customer->lastname;
         $this->email = $customer->email;
+        try {
+            $this->populateCustomerReference($customer);
+        } catch (Exception $e) {
+            Nosto::helper('nosto_tagging/logger')->error(
+                __CLASS__ . '::' . __FUNCTION__ . ' - ' . $e->getMessage(),
+                $e->getCode()
+            );
+        }
     }
 
     /**
@@ -88,5 +101,25 @@ class NostoTaggingCustomer extends NostoTaggingModel
             && !empty($customer->id)
             && ($context->cookie->id_customer == $customer->id)
             && $context->cookie->isLogged());
+    }
+
+    /**
+     * Populates customer reference attribute. If customer doesn't yet have
+     * customer reference saved in db a new will be generated and saved
+     *
+     * @param Customer $customer
+     */
+    private function populateCustomerReference(Customer $customer)
+    {
+        /* @var NostoTaggingHelperCustomer $customer_helper */
+        $customer_helper = Nosto::helper('nosto_tagging/customer');
+        $customer_reference = $customer_helper->getCustomerReference($customer);
+        if (!empty($customer_reference)) {
+            $this->customer_reference = $customer_reference;
+        } else {
+            $customer_reference = $customer_helper->generateCustomerReference($customer);
+            $customer_helper->saveCustomerReference($customer, $customer_reference);
+            $this->customer_reference = $customer_reference;
+        }
     }
 }

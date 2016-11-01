@@ -341,7 +341,7 @@ class NostoTaggingHelperConfig
      *
      * @param int $id_lang the language.
      * @param string $method the multi currency method.
-     * @return void
+     * @return bool
      */
     public function saveMultiCurrencyMethod($id_lang, $method)
     {
@@ -353,7 +353,7 @@ class NostoTaggingHelperConfig
      *
      * @param int $id_lang the language.
      * @param string $method the multi currency method.
-     * @return void
+     * @return boolean
      */
     public function saveNostoTaggingRenderPosition($id_lang, $method)
     {
@@ -379,7 +379,6 @@ class NostoTaggingHelperConfig
      * Clears tagging related caches (compiled templates)
      *
      * @param Smarty $smarty
-     * @return boolean the multi currency method.
      */
     public function clearCache($smarty = null)
     {

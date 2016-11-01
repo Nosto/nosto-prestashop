@@ -29,28 +29,39 @@
  */
 class NostoTaggingHelperCustomer
 {
-    const TABLE_NAME = 'nostotagging_customer_link';
+    const TABLE_NAME_CUSTOMER_LINK = 'nostotagging_customer_link';
+    const TABLE_NAME_CUSTOMER_REFERENCE = 'nostotagging_customer_reference';
     const COOKIE_NAME = '2c_cId';
     const GLOBAL_COOKIES = '_COOKIE';
 
     /**
-     * Returns the reference table name.
+     * Returns the customer link table name.
      *
      * @return string
      */
-    public static function getTableName()
+    public static function getCustomerLinkTableName()
     {
-        return _DB_PREFIX_.self::TABLE_NAME;
+        return _DB_PREFIX_.self::TABLE_NAME_CUSTOMER_LINK;
     }
 
     /**
-     * Creates the reference table in db if it does not exist.
+     * Returns the customer reference table name.
+     *
+     * @return string
+     */
+    public static function getCustomerReferenceTableName()
+    {
+        return _DB_PREFIX_.self::TABLE_NAME_CUSTOMER_REFERENCE;
+    }
+
+    /**
+     * Creates the customer link table in db if it does not exist.
      *
      * @return bool
      */
-    public function createTable()
+    public function createCustomerLinkTable()
     {
-        $table = self::getTableName();
+        $table = self::getCustomerLinkTableName();
         $sql = 'CREATE TABLE IF NOT EXISTS `'.$table.'` (
 			`id_cart` INT(10) UNSIGNED NOT NULL,
 			`id_nosto_customer` VARCHAR(255) NOT NULL,
@@ -58,17 +69,36 @@ class NostoTaggingHelperCustomer
 			`date_upd` DATETIME NULL,
 			PRIMARY KEY (`id_cart`, `id_nosto_customer`)
 		) ENGINE '._MYSQL_ENGINE_;
+
         return Db::getInstance()->execute($sql);
     }
 
     /**
-     * Drops the reference table from db if it exists.
+     * Creates the customer reference table in db if it does not exist.
      *
      * @return bool
      */
-    public function dropTable()
+    public function createCustomerReferenceTable()
     {
-        $table = self::getTableName();
+        $table = self::getCustomerReferenceTableName();
+        $sql = 'CREATE TABLE IF NOT EXISTS `'.$table.'` (
+			`id_customer` INT(10) UNSIGNED NOT NULL,
+			`customer_reference` VARCHAR(32) NOT NULL,
+			PRIMARY KEY (`id_customer`)
+		) ENGINE '._MYSQL_ENGINE_;
+
+        return Db::getInstance()->execute($sql);
+    }
+
+    /**
+     * Drops the customer link table from db if it exists.
+     *
+     * @return bool
+     */
+    public function dropCustomerLinkTable()
+    {
+        $table = self::getCustomerLinkTableName();
+
         return Db::getInstance()->execute('DROP TABLE IF EXISTS `'.$table.'`');
     }
 
@@ -89,7 +119,7 @@ class NostoTaggingHelperCustomer
             return false;
         }
 
-        $table = self::getTableName();
+        $table = self::getCustomerLinkTableName();
         $id_cart = (int)$context->cart->id;
         $id_nosto_customer = pSQL($id_nosto_customer);
         $where = '`id_cart` = '.$id_cart.' AND `id_nosto_customer` = "'.$id_nosto_customer.'"';
@@ -125,10 +155,70 @@ class NostoTaggingHelperCustomer
      */
     public function getNostoId(Order $order)
     {
-        $table = self::getTableName();
+        $table = self::getCustomerLinkTableName();
         $id_cart = (int)$order->id_cart;
         $sql = 'SELECT `id_nosto_customer` FROM `'.$table.'` WHERE `id_cart` = '.$id_cart.' ORDER BY `date_add` ASC';
+
         return Db::getInstance()->getValue($sql);
+    }
+
+    /**
+     * Returns the customer reference.
+     *
+     * @param Customer $customer
+     * @return bool|string the customer reference
+     */
+    public function getCustomerReference(Customer $customer)
+    {
+        $sql = sprintf(
+            'SELECT `customer_reference` FROM `%s` WHERE `id_customer` = \'%s\'',
+            self::getCustomerReferenceTableName(),
+            $customer->id
+        );
+
+        return Db::getInstance()->getValue($sql);
+    }
+
+    /**
+     * Saves customer reference into a db. This method checks if the customer id already
+     * exists in the table and updates or inserts accordingly.
+     *
+     * @param Customer $customer
+     * @param $reference
+     * @return bool
+     */
+    public function saveCustomerReference(Customer $customer, $reference)
+    {
+        $table = self::getCustomerReferenceTableName();
+        $customer_reference = pSQL($reference);
+        $data = array(
+            'id_customer' => $customer->id,
+            'customer_reference' => $customer_reference
+        );
+        $existing_id = Db::getInstance()->getRow(
+            sprintf(
+                'SELECT id_customer FROM `%s` WHERE id_customer = \'%s\'',
+                $customer->id
+            )
+        );
+        if (empty($existing_id)) {
+            if (_PS_VERSION_ >= '1.5') {
+                return Db::getInstance()->insert($table, $data, false, true, Db::INSERT, false);
+            } else {
+                return Db::getInstance()->autoExecute($table, $data, 'INSERT');
+            }
+        } else {
+            unset($data['id_customer']);
+            $where = sprintf(
+                'id_customer=\'%s\'',
+                $customer->id
+            );
+            if (_PS_VERSION_ >= '1.5') {
+                return Db::getInstance()->update($table, $data, $where, 0, false, true, false);
+            } else {
+                return Db::getInstance()->autoExecute($table, $data, 'UPDATE', $where);
+            }
+        }
     }
 
     /**
@@ -148,5 +238,56 @@ class NostoTaggingHelperCustomer
         } else {
             return null;
         }
+    }
+
+    /**
+     * Generates new customer reference
+     *
+     * @param Customer $customer
+     * @return string
+     */
+    public function generateCustomerReference(Customer $customer)
+    {
+        $hash = md5($customer->id.$customer->email);
+        $uuid = uniqid(
+            substr($hash, 0, 8),
+            true
+        );
+
+        return $uuid;
+    }
+
+    /**
+     * Creates tables needed for the Nosto plug-in
+     *
+     * @return bool
+     */
+    public function createTables()
+    {
+        $success = true;
+        if (!$this->createCustomerLinkTable()) {
+            $success = false;
+        }
+        if (!$success || !$this->createCustomerReferenceTable()) {
+            $success = false;
+        }
+
+        return $success;
+    }
+
+    /**
+     * Drop tables created by Nosto plug-in. Note that table
+     * nosto_customer_reference is not dropped during the uninstall.
+     *
+     * @return bool
+     */
+    public function dropTables()
+    {
+        $success = true;
+        if (!$this->dropCustomerLinkTable()) {
+            $success = false;
+        }
+
+        return $success;
     }
 }
