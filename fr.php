@@ -84,3 +84,6 @@ $_MODULE['<{nostotagging}default-bootstrap>legacy-config-bootstrap_af5b7d829394b
 $_MODULE['<{nostotagging}default-bootstrap>legacy-config-bootstrap_c9cc8cce247e49bae79f15173ce97354'] = 'Sauvegarder';
 $_MODULE['<{nostotagging}default-bootstrap>legacy-config-bootstrap_a59be03526b7789c28a80fe816cca4c1'] = 'Taux de change';
 $_MODULE['<{nostotagging}default-bootstrap>legacy-config-bootstrap_8f76a793218248d062ced130c0ffd968'] = 'Mettre à jour les taux de change';
+$_MODULE['<{nostotagging}default-bootstrap>config-bootstrap_94e0773892c5921cb240432035ef0c36'] = 'TBT/Choose which image type Nosto will use in recommendations';
+$_MODULE['<{nostotagging}default-bootstrap>config-bootstrap_78d626dce380fe4f04d8d94e2354659c'] = 'TBT/Image type for recommendations';
+$_MODULE['<{nostotagging}default-bootstrap>config-bootstrap_f8b1369a8e9d90da0cae0b11049309af'] = 'TBT/Not defined';
