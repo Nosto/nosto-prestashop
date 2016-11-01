@@ -103,11 +103,6 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
     protected $brand;
 
     /**
-     * @var string the product publish date.
-     */
-    protected $date_published;
-
-    /**
      * @inheritdoc
      */
     public function getValidationRules()
@@ -178,7 +173,6 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
         $this->short_description = $product->description_short;
         $this->description = $product->description;
         $this->brand = $this->buildBrand($product);
-        $this->date_published = Nosto::helper('date')->format($product->date_add);
 
         $this->dispatchHookActionLoadAfter(array(
             'nosto_product' => $this,
@@ -443,16 +437,6 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
     }
     
     /**
-     * Returns the product publication date in the shop.
-     *
-     * @return string the date.
-     */
-    public function getDatePublished()
-    {
-        return $this->date_published;
-    }
-    
-    /**
      * Sets the product ID from given product.
      *
      * @param int $id the product ID.
@@ -480,16 +464,6 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
     public function setCurrencyCode($currency)
     {
         $this->currency_code = $currency;
-    }
-    
-    /**
-     * Sets the products published date.
-     *
-     * @param string $date the date.
-     */
-    public function setDatePublished($date)
-    {
-        $this->date_published = $date;
     }
     
     /**
