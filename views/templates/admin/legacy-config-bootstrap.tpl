@@ -109,6 +109,18 @@
                                                                 {if $nostotagging_position==="footer"}selected="selected"{/if}>{l s='Footer' mod='nostotagging'}</option>
                                                     </select>
                                                     <p class="help-block">{l s='Change this settings to be "Footer" if your theme does not have displayTop hook' mod='nostotagging'}</p>
+                                                    <label for="image_type">{l s='Image type for recommendations' mod='nostotagging'}</label>
+                                                    <select id="image_type" name="image_type"
+                                                            class="form-control input-sm">
+                                                        {foreach from=$image_types item=image_type}
+                                                            <option value="{$image_type['id_image_type']}"
+                                                                    {if $current_image_type===$image_type['id_image_type']}selected="selected"{/if}>{$image_type['name']} ({$image_type['width']} x {$image_type['height']})</option>
+                                                        {/foreach}
+                                                        <option value="0"
+                                                                {if !$current_image_type}selected="selected"{/if}>{l s='Not defined' mod='nostotagging'}</option>
+
+                                                    </select>
+                                                    <p class="help-block">{l s='Choose which image type Nosto will use in recommendations' mod='nostotagging'}</p>
 
                                                     <label for="multi_currency_method">{l s='Multi Currency Method' mod='nostotagging'}</label>
                                                     <select id="multi_currency_method" name="multi_currency_method"

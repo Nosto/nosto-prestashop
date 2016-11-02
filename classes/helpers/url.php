@@ -29,7 +29,6 @@
 class NostoTaggingHelperUrl
 {
     const DEFAULT_SERVER_ADDRESS = 'connect.nosto.com';
-    const OPTIMAL_PRODUCT_IMAGE_WIDTH = 450;
     const DEFAULT_IFRAME_ORIGIN_REGEXP = '(https:\/\/(.*)\.hub\.nosto\.com)|(https:\/\/my\.nosto\.com)';
 
     /**
@@ -374,55 +373,6 @@ class NostoTaggingHelperUrl
         /** @var Shop|ShopCore $shop */
         $base = ($ssl ? 'https://'.$shop->domain_ssl : 'http://'.$shop->domain);
         return $base.$shop->getBaseURI();
-    }
-
-    /**
-     * Returns the absolute product image url of the primary image.
-     *
-     * @param Product|ProductCore $product the product model.
-     * @param Link|LinkCore $link optional link instance to use instead of the one in current context.
-     * @return string the url or empty string if could not be generated.
-     */
-    public function getProductImageUrl($product, $link = null)
-    {
-        if (is_null($link)) {
-            $link = Context::getContext()->link;
-        }
-
-        $image_id = $product->getCoverWs();
-        if ((int)$image_id > 0) {
-            $image_type = $this->chooseOptimalImageType();
-            if (!empty($image_type)) {
-                return $link->getImageLink($product->link_rewrite, $product->id.'-'.$image_id, $image_type);
-            }
-        }
-        return '';
-    }
-
-    /**
-     * Chooses the "optimal" image type to use for product image urls.
-     *
-     * The type is chosen based on which image type has a width closest to `self::OPTIMAL_PRODUCT_IMAGE_WIDTH`.
-     *
-     * @return string|false the image type name or false if not found.
-     */
-    protected function chooseOptimalImageType()
-    {
-        $definition = (_PS_VERSION_ >= '1.5') ? ObjectModel::getDefinition('ImageType') : array();
-        $table_name = isset($definition['table']) ? $definition['table'] : 'image_type';
-        $available_image_types = Db::getInstance()->executeS('
-			SELECT * FROM `'._DB_PREFIX_.pSQL($table_name).'`
-			WHERE `products` = 1
-			ORDER BY `width` ASC
-		');
-        $optimal = self::OPTIMAL_PRODUCT_IMAGE_WIDTH;
-        $found = array();
-        foreach ($available_image_types as $available) {
-            if (empty($found) || abs($optimal - (int)$found['width']) > abs((int)$available['width'] - $optimal)) {
-                $found = $available;
-            }
-        }
-        return isset($found['name']) ? $found['name'] : false;
     }
 
     /**
