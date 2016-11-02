@@ -43,9 +43,6 @@
 		{if $nosto_product->getBrand() neq ''}
 			<span class="brand">{$nosto_product->getBrand()|escape:'htmlall':'UTF-8'}</span>
 		{/if}
-		{if $nosto_product->getDatePublished() neq ''}
-			<span class="date_published">{$nosto_product->getDatePublished()|escape:'htmlall':'UTF-8'}</span>
-		{/if}
 		{foreach from=$nosto_product->getTags() key=tagName item=tags}
             {if $tags|is_array}
                 {foreach from=$tags item=tagValue}
