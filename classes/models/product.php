@@ -134,13 +134,16 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
         $nosto_helper_price = Nosto::helper('nosto/price');
         /** @var NostoTaggingHelperImage $helper_image */
         $helper_image = Nosto::helper('nosto_tagging/image');
-
         $base_currency = $helper_currency->getBaseCurrency($context);
-
         $id_lang = $context->language->id;
-        $id_shop = $context->shop->id;
+        $id_shop = null;
+        $id_shop_group = null;
+        if ($context->shop instanceof Shop) {
+            $id_shop = $context->shop->id;
+            $id_shop_group = $context->shop->id_shop_group;
+        }
 
-        if ($helper_config->useMultipleCurrencies($id_lang) === true) {
+        if ($helper_config->useMultipleCurrencies($id_lang, $id_shop_group, $id_shop) === true) {
             $this->variationId = $base_currency->iso_code;
             $tagging_currency = $base_currency;
         } else {

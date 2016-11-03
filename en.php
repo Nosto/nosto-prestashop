@@ -87,3 +87,7 @@ $_MODULE['<{nostotagging}default-bootstrap>legacy-config-bootstrap_8f76a79321824
 $_MODULE['<{nostotagging}default-bootstrap>config-bootstrap_94e0773892c5921cb240432035ef0c36'] = 'Choose which image type Nosto will use in recommendations';
 $_MODULE['<{nostotagging}default-bootstrap>config-bootstrap_78d626dce380fe4f04d8d94e2354659c'] = 'Image type for recommendations';
 $_MODULE['<{nostotagging}default-bootstrap>config-bootstrap_f8b1369a8e9d90da0cae0b11049309af'] = 'Not defined';
+/**
+ * No keys
+ * Nosto account is not installed to shop <b>%s</b> and language <b>%s</b>
+ */
