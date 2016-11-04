@@ -152,7 +152,7 @@ class NostoTaggingHelperNotification
                         $language,
                         NostoNotificationInterface::TYPE_MULTI_CURRENCY_DISABLED,
                         NostoNotificationInterface::SEVERITY_WARNING,
-                        'Your shop <b>%s</b> (%s) is using multiple currencies but' .
+                        'Your shop <b>%s</b> with language <b>%s</b> is using multiple currencies but' .
                         'the multi-currency feature for Nosto is disabled'
                     );
                     $notifications[] = $notification;

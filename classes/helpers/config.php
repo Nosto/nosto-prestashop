@@ -199,11 +199,20 @@ class NostoTaggingHelperConfig
      *
      * @param string $account_name the account name to save.
      * @param int $id_lang the language to save the account nam for.
+     * @param null|int $id_shop_group the shop group to get the account for (defaults to current context).
+     * @param null|int $id_shop the shop to get the account for (defaults to current context).
      * @return bool true if saved correctly, false otherwise.
      */
-    public function saveAccountName($account_name, $id_lang)
+    public function saveAccountName($account_name, $id_lang, $id_shop_group = null, $id_shop = null)
     {
-        return $this->write(self::ACCOUNT_NAME, $account_name, $id_lang);
+        return $this->write(
+            self::ACCOUNT_NAME,
+            $account_name,
+            $id_lang,
+            false,
+            $id_shop_group,
+            $id_shop
+        );
     }
 
     /**
@@ -459,7 +468,7 @@ class NostoTaggingHelperConfig
      * @param null|int $id_shop
      * @return boolean
      */
-    public function saveImageType($id_lang, $type, $id_shop_group = null, $id_shop = null)
+    public function saveImageType($type, $id_lang, $id_shop_group = null, $id_shop = null)
     {
         return $this->write(
             self::NOSTOTAGGING_IMAGE_TYPE,

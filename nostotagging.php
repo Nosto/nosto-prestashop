@@ -310,9 +310,7 @@ class NostoTagging extends Module
         // This can then later be used by the oauth2 controller to redirect the user back.
         $admin_url = $this->getAdminUrl();
         Nosto::helper('nosto_tagging/config')->saveAdminUrl($admin_url);
-
         $output = '';
-
         $languages = Language::getLanguages(true, $this->context->shop->id);
         /** @var EmployeeCore $employee */
         $employee = $this->context->employee;
@@ -323,14 +321,12 @@ class NostoTagging extends Module
         $helper_url = Nosto::helper('nosto_tagging/url');
         /** @var NostoTaggingHelperConfig $helper_config */
         $helper_config = Nosto::helper('nosto_tagging/config');
-
         $id_shop = null;
         $id_shop_group = null;
         if ($this->context->shop instanceof Shop) {
             $id_shop = $this->context->shop->id;
             $id_shop_group = $this->context->shop->id_shop_group;
         }
-
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $language_id = (int)Tools::getValue($this->name.'_current_language');
             $current_language = $this->ensureAdminLanguage($languages, $language_id);
@@ -680,10 +676,16 @@ class NostoTagging extends Module
         $meta->setDetails($account_details);
         /** @var NostoAccount $account */
         $account = NostoAccount::create($meta);
-
+        $id_shop = null;
+        $id_shop_group = null;
+        if ($this->context->shop instanceof Shop) {
+            $id_shop = $this->context->shop->id;
+            $id_shop_group = $this->context->shop->id_shop_group;
+        }
         /* @var NostoTaggingHelperAccount $account_helper */
         $account_helper = Nosto::helper('nosto_tagging/account');
-        return $account_helper->save($account, $id_lang);
+
+        return $account_helper->save($account, $id_lang, $id_shop_group, $id_shop);
     }
 
     /**
@@ -1771,7 +1773,13 @@ class NostoTagging extends Module
         /** @var NostoTaggingHelperConfig $helper_config */
         $helper_config = Nosto::helper('nosto_tagging/config');
         $id_lang = $this->context->language->id;
-        if ($helper_config->useMultipleCurrencies($id_lang)) {
+        $id_shop = null;
+        $id_shop_group = null;
+        if ($this->context->shop instanceof Shop) {
+            $id_shop = $this->context->shop->id;
+            $id_shop_group = $this->context->shop->id_shop_group;
+        }
+        if ($helper_config->useMultipleCurrencies($id_lang, $id_shop_group, $id_shop)) {
             $defaultVariationId = $currencyHelper->getActiveCurrency($this->context);
             $priceVariation = new NostoTaggingPriceVariation($defaultVariationId);
             $this->getSmarty()->assign(array('nosto_price_variation' => $priceVariation));
@@ -1809,7 +1817,7 @@ class NostoTagging extends Module
      */
     public function hookDisplayBackOfficeTop(array $params)
     {
-        $this->getCheckNotifications();
+        $this->checkNotifications();
     }
 
     /**
@@ -1923,12 +1931,11 @@ class NostoTagging extends Module
     /**
      * Checks all Nosto notifications and adds them as an admin notification
      */
-    public function getCheckNotifications()
+    public function checkNotifications()
     {
         /* @var NostoTaggingHelperNotification $helper_notification */
         $helper_notification = Nosto::helper('nosto_tagging/notification');
         $notifications = $helper_notification->getAll();
-        $contoller = $this->context->controller;
         if (is_array($notifications) && count($notifications)>0) {
             /* @var NostoTaggingAdminNotification $notification */
             foreach ($notifications as $notification) {

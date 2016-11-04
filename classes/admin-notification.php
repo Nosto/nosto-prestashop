@@ -42,6 +42,8 @@ class NostoTaggingAdminNotification extends NostoNotification
         $this->setNotificationType($type);
         $this->setNotificationSeverity($severity);
         $this->setMessage($message);
+        $this->addMessageAttribute($shop->name);
+        $this->addMessageAttribute($language->name);
     }
 
     public function getFormattedMessage()
@@ -51,12 +53,11 @@ class NostoTaggingAdminNotification extends NostoNotification
             $this->getMessage(),
             NostoTagging::MODULE_NAME
         );
-        $string = sprintf(
+        $string = vsprintf(
             Tools::htmlentitiesDecodeUTF8(
                 $message
             ),
-            $this->getStoreName(),
-            $this->getLanguageName()
+            $this->getMessageAttributes()
         );
         return $string;
     }

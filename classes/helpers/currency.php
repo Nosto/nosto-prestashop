@@ -87,7 +87,7 @@ class NostoTaggingHelperCurrency
             $currencies = array();
             /* @var Currency $currency */
             foreach ($all_currencies as $currency) {
-                if ($currency->active) {
+                if ($this->currencyActive($currency)) {
                     $currencies[] = $currency;
                 }
             }
@@ -191,7 +191,7 @@ class NostoTaggingHelperCurrency
     public function getExchangeRateCollection(Context $context)
     {
         $base_currency_code = $this->getBaseCurrency($context)->iso_code;
-        $currencies = $this->getCurrencies($context);
+        $currencies = $this->getCurrencies($context, true);
         $exchange_rates = array();
         foreach ($currencies as $currency) {
             // Skip base currencyCode.
@@ -305,5 +305,19 @@ class NostoTaggingHelperCurrency
                 }
             }
         }
+    }
+
+    public function currencyActive(array $currency)
+    {
+        $active = true;
+        if (!$currency['active']) {
+            $active = false;
+        } else {
+            if (isset($currency['deleted']) && $currency['deleted']) {
+                $active = false;
+            }
+        }
+
+        return $active;
     }
 }
