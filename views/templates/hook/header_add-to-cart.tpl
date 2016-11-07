@@ -28,7 +28,15 @@
         var Nosto = {};
     }
     {/literal}
-    Nosto.addProductToCart = function (productId) {
+    Nosto.addProductToCart = function (productId, element) {
+        if (typeof nostojs !== 'undefined' && typeof element == 'object') {
+            var slotId = Nosto.resolveContextSlotId(element);
+            if (slotId) {
+                nostojs(function (api) {
+                    api.recommendedProductAddedToCart(productId, slotId);
+                });
+            }
+        }
         var form = document.createElement("form");
         form.setAttribute("method", "post");
         form.setAttribute("action", "{$add_to_cart_url|escape:"javascript":"UTF-8"}");
@@ -52,4 +60,21 @@
         document.body.appendChild(form);
         form.submit();
     };
+    Nosto.resolveContextSlotId = function (element) {
+        var m = 20;
+        var n = 0;
+        var e = element;
+        while (typeof e.parentElement !== "undefined" && e.parentElement) {
+            ++n;
+            e = e.parentElement;
+            if (e.getAttribute('class') == 'nosto_element' && e.getAttribute('id')) {
+                return e.getAttribute('id');
+            }
+            if (n >= m) {
+                return false;
+            }
+        }
+        return false;
+    }
+
 </script>
