@@ -390,6 +390,7 @@ class NostoTagging extends Module
             } elseif (
                 Tools::isSubmit('submit_nostotagging_authorize_account')
                 || Tools::getValue('nostotagging_account_action') === 'connectAccount'
+                || Tools::getValue('nostotagging_account_action') === 'syncAccount'
             ) {
                 $meta = new NostoTaggingMetaOauth();
                 $meta->setModuleName($this->name);
