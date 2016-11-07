@@ -729,7 +729,9 @@ class NostoTagging extends Module
             'disable_autoload' => (bool)!empty($hidden_recommendation_elements)
         ));
 
-        $this->context->controller->addJS($this->_path.'views/js/nostotagging-auto-slots.js');
+        $path = 'views/js/nostotagging-auto-slots.js';
+        $this->addJS($path);
+
 
         $html = $this->display(__FILE__, 'views/templates/hook/header_meta-tags.tpl');
         $html .= $this->display(__FILE__, 'views/templates/hook/header_embed-script.tpl');
@@ -1965,6 +1967,17 @@ class NostoTagging extends Module
                 $this->adminDisplayWarning($notification->getFormattedMessage());
                 break;
             default:
+        }
+    }
+
+    private function addJs($path)
+    {
+        if (version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
+            $prefix = sprintf('modules/%s/', self::MODULE_NAME);
+            $this->context->controller->registerJavascript('nostoAutoSlots', $prefix . $path);
+        } else {
+            $prefix = $this->_path;
+            $this->context->controller->addJS($prefix . $path);
         }
     }
 }
