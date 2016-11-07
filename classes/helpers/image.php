@@ -81,11 +81,11 @@ class NostoTaggingHelperImage
      * @param $id_lang
      * @return string
      */
-    public function getTaggingImageTypeName($id_lang)
+    public function getTaggingImageTypeName($id_lang, $id_shop_group = null, $id_shop = null)
     {
         /* @var NostoTaggingHelperConfig $helper_config */
         $helper_config = Nosto::helper('nosto_tagging/config');
-        $saved_image_type_id = $helper_config->getImageType($id_lang);
+        $saved_image_type_id = $helper_config->getImageType($id_lang, $id_shop_group, $id_shop);
         if ($saved_image_type_id) {
             $image_type = new ImageType($saved_image_type_id);
             $image_type_name = $image_type->name;

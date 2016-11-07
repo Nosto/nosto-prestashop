@@ -35,16 +35,27 @@ class NostoTaggingHelperAccount
      *
      * @param NostoAccount $account the account to save.
      * @param null|int $id_lang the ID of the language to set the account name for.
+     * @param null|int $id_shop_group the ID of the shop context.
+     * @param null|int $id_shop the ID of the shop.
      * @return bool true if the save was successful, false otherwise.
      */
-    public function save(NostoAccount $account, $id_lang)
+    public function save(NostoAccount $account, $id_lang, $id_shop_group = null, $id_shop = null)
     {
         /** @var NostoTaggingHelperConfig $helper_config */
         $helper_config = Nosto::helper('nosto_tagging/config');
-        $success = $helper_config->saveAccountName($account->getName(), $id_lang);
+        $success = $helper_config->saveAccountName(
+            $account->getName(),
+            $id_lang,
+            $id_shop_group,
+            $id_shop
+        );
         if ($success) {
             foreach ($account->getTokens() as $token) {
-                $success = $success && $helper_config->saveToken($token->getName(), $token->getValue(), $id_lang);
+                $success = $success && $helper_config->saveToken(
+                    $token->getName(),
+                    $token->getValue(),
+                    $id_lang
+                );
             }
         }
         return $success;

@@ -72,16 +72,30 @@ class NostoTaggingHelperCurrency
      * Fetches all currencies defined in context.
      *
      * @param Context|ContextCore $context the context.
+     * @param boolean $only_active  if set to true, only active languages will be returned
      * @return array the found currencies.
      */
-    public function getCurrencies(Context $context)
+    public function getCurrencies(Context $context, $only_active = false)
     {
         $id_shop = (int)$context->shop->id;
         if (_PS_VERSION_ >= '1.5') {
-            return Currency::getCurrenciesByIdShop($id_shop);
+            $all_currencies = Currency::getCurrenciesByIdShop($id_shop);
         } else {
-            return Currency::getCurrencies();
+            $all_currencies = Currency::getCurrencies();
         }
+        if ($only_active === true) {
+            $currencies = array();
+            /* @var Currency $currency */
+            foreach ($all_currencies as $currency) {
+                if ($this->currencyActive($currency)) {
+                    $currencies[] = $currency;
+                }
+            }
+        } else {
+            $currencies = $all_currencies;
+        }
+
+        return $currencies;
     }
 
     /**
@@ -177,7 +191,7 @@ class NostoTaggingHelperCurrency
     public function getExchangeRateCollection(Context $context)
     {
         $base_currency_code = $this->getBaseCurrency($context)->iso_code;
-        $currencies = $this->getCurrencies($context);
+        $currencies = $this->getCurrencies($context, true);
         $exchange_rates = array();
         foreach ($currencies as $currency) {
             // Skip base currencyCode.
@@ -270,7 +284,7 @@ class NostoTaggingHelperCurrency
             $id_shop_group = isset($shop['id_shop_group']) ? (int)$shop['id_shop_group'] : null;
             foreach (Language::getLanguages(true, $id_shop) as $language) {
                 $id_lang = (int)$language['id_lang'];
-                $use_multiple_currencies = $helper_config->useMultipleCurrencies($id_lang);
+                $use_multiple_currencies = $helper_config->useMultipleCurrencies($id_lang, $id_shop_group, $id_shop);
                 if ($use_multiple_currencies) {
                     $nosto_account = $helper_account->find($id_lang, $id_shop_group, $id_shop);
                     if (!is_null($nosto_account)) {
@@ -291,5 +305,19 @@ class NostoTaggingHelperCurrency
                 }
             }
         }
+    }
+
+    public function currencyActive(array $currency)
+    {
+        $active = true;
+        if (!$currency['active']) {
+            $active = false;
+        } else {
+            if (isset($currency['deleted']) && $currency['deleted']) {
+                $active = false;
+            }
+        }
+
+        return $active;
     }
 }
