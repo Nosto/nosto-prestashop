@@ -138,8 +138,8 @@
                         {foreach from=$image_types item=image_type}
                             <div class="radio ">
                                 <label>
-                                    <input type="radio" name="image_type" value="{$image_type['id_image_type']}" {if $current_image_type===$image_type['id_image_type']}checked="checked"{/if}/>
-                                    {$image_type['name']} ({$image_type['width']} x {$image_type['height']})
+                                    <input type="radio" name="image_type" value="{$image_type['id_image_type']|escape:'quotes':'UTF-8'}" {if $current_image_type===$image_type['id_image_type']}checked="checked"{/if}/>
+                                    {$image_type['name']|escape:'quotes':'UTF-8'} ({$image_type['width']|escape:'quotes':'UTF-8'} x {$image_type['height']|escape:'quotes':'UTF-8'})
                                 </label>
                             </div>
                         {/foreach}

@@ -250,7 +250,7 @@ class NostoTaggingHelperCustomer
     {
         $hash = md5($customer->id.$customer->email);
         $uuid = uniqid(
-            substr($hash, 0, 8),
+            Tools::substr($hash, 0, 8),
             true
         );
 

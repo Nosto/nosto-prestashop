@@ -113,7 +113,7 @@ class NostoTaggingHelperCurrency
             $context instanceof Context
             && (_PS_VERSION_ >= '1.7')
         ) {
-            // In Prestashop 1.7 (Beta 1) we use the CLDR
+            // In Prestashop 1.7 we use the CLDR
             try {
                 $nosto_currency = self::createWithCldr($currency, $context);
                 return $nosto_currency;
@@ -238,7 +238,6 @@ class NostoTaggingHelperCurrency
         // @codingStandardsIgnoreLine
         $cldr_currency = new \ICanBoogie\CLDR\Currency($cldr->getRepository(), $currency['iso_code']);
         $localized_currency = $cldr_currency->localize($cldr->getCulture());
-
         $pattern = $localized_currency->locale->numbers->currency_formats['standard'];
         $symbols = $localized_currency->locale->numbers->symbols;
         $symbol_pos = Tools::strpos($pattern, self::CURRENCY_SYMBOL_MARKER);
