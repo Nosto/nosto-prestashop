@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "c2ea8a2affec14fabf806a395795ab8f",
-    "content-hash": "934b85084467d33dc679affeaaa89ba5",
+    "hash": "30c3205d462bd3fa7ba15138e4c16f9e",
+    "content-hash": "e80ef00259cb6e1161410cc144f3d563",
     "packages": [
         {
             "name": "nosto/php-sdk",
-            "version": "1.15.8",
+            "version": "1.15.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Nosto/php-sdk.git",
-                "reference": "478803711fa83483f8858e76a3f2f3a7d657f44e"
+                "reference": "9dd6461867132d3bed1c2b10a43fffb0b0db035e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Nosto/php-sdk/zipball/478803711fa83483f8858e76a3f2f3a7d657f44e",
-                "reference": "478803711fa83483f8858e76a3f2f3a7d657f44e",
+                "url": "https://api.github.com/repos/Nosto/php-sdk/zipball/9dd6461867132d3bed1c2b10a43fffb0b0db035e",
+                "reference": "9dd6461867132d3bed1c2b10a43fffb0b0db035e",
                 "shasum": ""
             },
             "require-dev": {
@@ -31,7 +31,7 @@
                 "BSD-3-Clause"
             ],
             "description": "PHP SDK for developing Nosto modules for e-commerce platforms",
-            "time": "2016-11-07 09:11:20"
+            "time": "2016-11-07 15:09:04"
         }
     ],
     "packages-dev": [
