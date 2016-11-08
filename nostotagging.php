@@ -175,7 +175,7 @@ class NostoTagging extends Module
         $this->ps_versions_compliancy = array('min' => '1.4', 'max' => _PS_VERSION_);
 
         parent::__construct();
-        $this->displayName = $this->l('Personalization for PrestaShop');
+        $this->displayName = $this->l('Nosto Personalization for PrestaShop');
         $this->description = $this->l(
             'Increase your conversion rate and average order value by delivering your customers personalized product
             recommendations throughout their shopping journey.'
