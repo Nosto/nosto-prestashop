@@ -198,6 +198,7 @@ class NostoTaggingHelperCustomer
         $existing_id = Db::getInstance()->getRow(
             sprintf(
                 'SELECT id_customer FROM `%s` WHERE id_customer = \'%s\'',
+                $table,
                 $customer->id
             )
         );
