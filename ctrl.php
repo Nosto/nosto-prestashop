@@ -34,7 +34,6 @@ if (!defined('_PS_VERSION_')) {
 	 * White-list of valid controllers that this script is allowed to run.
 	 */
     $controller_white_list = array('oauth2', 'product', 'order', 'cronrates');
-
     /*
 	 * If this file is symlinked, then we need to parse the `SCRIPT_FILENAME` to get the path of the PS root dir.
 	 * This is because __FILE__ resolves the symlink source path.
@@ -57,20 +56,35 @@ if (!defined('_PS_VERSION_')) {
     $controller_dir = $ps_dir.'/modules/nostotagging/controllers/front';
 
     require_once($ps_dir.'/config/config.inc.php');
-
     /*
 	 * The "ModuleFrontController" class won't be defined in prestashop 1.4, so define it.
 	 */
     if (_PS_VERSION_ < '1.5') {
         require_once($controller_dir.'/module.php');
     }
-
     $controller = Tools::strtolower((string)Tools::getValue('controller'));
     if (!empty($controller)
         && in_array(Tools::strtolower($controller), $controller_white_list)
     ) {
-        require_once($controller_dir.'/'.$controller.'.php');
-        ControllerFactory::getController('NostoTagging'.Tools::ucfirst($controller).'ModuleFrontController')->run();
+        $class_file = $controller_dir.'/'.$controller.'.php';
+        require_once($class_file);
+        // ControllerFactory is deprecated since Prestashop 1.5 and was removed in 1.7
+        if (!method_exists('ControllerFactory', 'getController')) {
+            switch ($controller) {
+                case 'product':
+                    $nosto_controller = new NostoTaggingProductModuleFrontController();
+                    break;
+                case 'order':
+                    $nosto_controller = new NostoTaggingOrderModuleFrontController();
+                    break;
+                default:
+                    die();
+            }
+
+            $nosto_controller->initContent();
+        } else {
+            $whats = ControllerFactory::getController('NostoTagging' . Tools::ucfirst($controller) . 'ModuleFrontController')->run();
+        }
     } else {
         die(
             sprintf(
