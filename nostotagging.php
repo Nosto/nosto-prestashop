@@ -1974,7 +1974,14 @@ class NostoTagging extends Module
     {
         if (version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
             $prefix = sprintf('modules/%s/', self::MODULE_NAME);
-            $this->context->controller->registerJavascript('nostoAutoSlots', $prefix . $path);
+            $this->context->controller->registerJavascript(
+                'nostoAutoSlots',
+                $prefix . $path,
+                array(
+                    'position' => 'bottom',
+                    'priority' => 200
+                )
+            );
         } else {
             $prefix = $this->_path;
             $this->context->controller->addJS($prefix . $path);
