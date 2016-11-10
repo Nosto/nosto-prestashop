@@ -22,7 +22,6 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 $(function() {
-    return;
     var $center_column = $('#center_column, #content-wrapper');
     var $hidden_elements = $('#hidden_nosto_elements');
     var reloadRecommendations = false;
