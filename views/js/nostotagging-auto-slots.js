@@ -21,51 +21,36 @@
  * @copyright 2013-2016 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
-function nostoWaitNostoJs(name, callback) {
-    var interval = 10; // ms
-    window.setTimeout(function() {
-        if (window[name]) {
-            callback(window[name]);
-        } else {
-            window.setTimeout(arguments.callee, interval);
-        }
-    }, interval);
-}
-
 $(function () {
-   nostoWaitNostoJs('nostojs', function nostoMoveSlots() {
-       if (typeof nostojs === 'function') {
-           nostojs(function (api) {
-               var $center_column = $('#center_column, #content-wrapper');
-               var $hidden_elements = $('#hidden_nosto_elements');
-               var reloadRecommendations = false;
-               if ($center_column && $hidden_elements) {
-                   $hidden_elements.find('.prepend .hidden_nosto_element').each(function () {
-                       var $slot = $(this),
-                           nostoId = $slot.data('nosto-id');
-                       if (nostoId && !$('#'+nostoId).length) {
-                           $slot.attr('id', nostoId);
-                           $slot.attr('class', 'nosto_element');
-                           $slot.prependTo($center_column);
-                           reloadRecommendations = true;
-                       }
-                   });
-                   $hidden_elements.find('.append .hidden_nosto_element').each(function () {
-                       var $slot = $(this),
-                           nostoId = $slot.data('nosto-id');
-                       if (nostoId && !$('#'+nostoId).length) {
-                           $slot.attr('id', nostoId);
-                           $slot.attr('class', 'nosto_element');
-                           $slot.appendTo($center_column);
-                           reloadRecommendations = true;
-                       }
-                   });
-               }
-               $hidden_elements.remove();
-               if (reloadRecommendations) {
-                   api.loadRecommendations();
-               }
-           });
-       }
-   });
+   var $center_column = $('#center_column, #content-wrapper');
+   var $hidden_elements = $('#hidden_nosto_elements');
+   var reloadRecommendations = false;
+   if ($center_column && $hidden_elements) {
+       $hidden_elements.find('.prepend .hidden_nosto_element').each(function () {
+           var $slot = $(this),
+               nostoId = $slot.data('nosto-id');
+           if (nostoId && !$('#'+nostoId).length) {
+               $slot.attr('id', nostoId);
+               $slot.attr('class', 'nosto_element');
+               $slot.prependTo($center_column);
+               reloadRecommendations = true;
+           }
+       });
+       $hidden_elements.find('.append .hidden_nosto_element').each(function () {
+           var $slot = $(this),
+               nostoId = $slot.data('nosto-id');
+           if (nostoId && !$('#'+nostoId).length) {
+               $slot.attr('id', nostoId);
+               $slot.attr('class', 'nosto_element');
+               $slot.appendTo($center_column);
+               reloadRecommendations = true;
+           }
+       });
+    }
+    $hidden_elements.remove();
+    if (reloadRecommendations && typeof nostojs === 'function') {
+        nostojs(function (api) {
+            api.loadRecommendations();
+        });
+    }
 });
