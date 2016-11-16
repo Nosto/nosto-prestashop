@@ -21,8 +21,8 @@
 * @copyright 2013-2016 Nosto Solutions Ltd
 * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *}
-{include file='../partials/js-nosto-stub.tpl'}
+{include file='./partials/js-nosto-stub.tpl'}
 {if !empty($server_address) && !empty($account_name)}
     <script type="text/javascript" src="//{$server_address|escape:"javascript":"UTF-8"}/include/{$account_name|escape:"javascript":"UTF-8"}" async></script>
 {/if}
-{include file='../partials/js-auto-slots-inline.tpl'}
+{include file='./partials/js-auto-slots-inline.tpl'}

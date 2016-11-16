@@ -83,7 +83,9 @@ if (!defined('_PS_VERSION_')) {
 
             $nosto_controller->initContent();
         } else {
-            $whats = ControllerFactory::getController('NostoTagging' . Tools::ucfirst($controller) . 'ModuleFrontController')->run();
+            ControllerFactory::getController(
+                'NostoTagging' . Tools::ucfirst($controller) . 'ModuleFrontController'
+            )->run();
         }
     } else {
         die(
