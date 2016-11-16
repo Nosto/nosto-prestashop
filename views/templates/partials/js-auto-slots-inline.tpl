@@ -13,7 +13,6 @@
           $slot.prependTo($center_column);
         }
       });
-      });
       $hidden_elements.find('.append .hidden_nosto_element').each(function () {
         var $slot = $(this),
                 nostoId = $slot.data('nosto-id');
