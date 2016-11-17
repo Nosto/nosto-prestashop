@@ -150,9 +150,12 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
             $this->variationId = false;
             $tagging_currency= $context->currency;
         }
-
         $this->url = $url_helper->getProductUrl($product, $id_lang, $id_shop);
-        $this->image_url = $helper_image->getProductImageUrl($product, $id_lang);
+        $link = null;
+        if (Configuration::get('PS_SSL_ENABLED_EVERYWHERE')) {
+            $link = new Link('https://', 'https://');
+        }
+        $this->image_url = $helper_image->getProductImageUrl($product, $id_lang, $link);
         $this->product_id = (int)$product->id;
         $this->name = $product->name;
 
