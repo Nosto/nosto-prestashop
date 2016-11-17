@@ -198,6 +198,7 @@ class NostoTaggingHelperCustomer
         $existing_id = Db::getInstance()->getRow(
             sprintf(
                 'SELECT id_customer FROM `%s` WHERE id_customer = \'%s\'',
+                $table,
                 $customer->id
             )
         );
@@ -250,7 +251,7 @@ class NostoTaggingHelperCustomer
     {
         $hash = md5($customer->id.$customer->email);
         $uuid = uniqid(
-            substr($hash, 0, 8),
+            Tools::substr($hash, 0, 8),
             true
         );
 

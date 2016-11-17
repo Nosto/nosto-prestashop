@@ -113,8 +113,8 @@
                                                     <select id="image_type" name="image_type"
                                                             class="form-control input-sm">
                                                         {foreach from=$image_types item=image_type}
-                                                            <option value="{$image_type['id_image_type']}"
-                                                                    {if $current_image_type===$image_type['id_image_type']}selected="selected"{/if}>{$image_type['name']} ({$image_type['width']} x {$image_type['height']})</option>
+                                                            <option value="{$image_type['id_image_type']|escape:'quotes':'UTF-8'}"
+                                                                    {if $current_image_type===$image_type['id_image_type']}selected="selected"{/if}>{$image_type['name']|escape:'quotes':'UTF-8'} ({$image_type['width']|escape:'quotes':'UTF-8'} x {$image_type['height']|escape:'quotes':'UTF-8'})</option>
                                                         {/foreach}
                                                         <option value="0"
                                                                 {if !$current_image_type}selected="selected"{/if}>{l s='Not defined' mod='nostotagging'}</option>

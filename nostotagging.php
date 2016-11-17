@@ -175,7 +175,7 @@ class NostoTagging extends Module
         $this->ps_versions_compliancy = array('min' => '1.4', 'max' => _PS_VERSION_);
 
         parent::__construct();
-        $this->displayName = $this->l('Personalization for PrestaShop');
+        $this->displayName = $this->l('Nosto Personalization for PrestaShop');
         $this->description = $this->l(
             'Increase your conversion rate and average order value by delivering your customers personalized product
             recommendations throughout their shopping journey.'
@@ -729,8 +729,6 @@ class NostoTagging extends Module
             'static_token' => Tools::getToken(false),
             'disable_autoload' => (bool)!empty($hidden_recommendation_elements)
         ));
-
-        $this->context->controller->addJS($this->_path.'views/js/nostotagging-auto-slots.js');
 
         $html = $this->display(__FILE__, 'views/templates/hook/header_meta-tags.tpl');
         $html .= $this->display(__FILE__, 'views/templates/hook/header_embed-script.tpl');

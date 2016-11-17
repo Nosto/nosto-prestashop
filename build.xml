@@ -77,7 +77,7 @@
     </target>
 
     <target name="fixcompatibility">
-        <echo msg="Making compatibility fixes" />
+        <echo msg="Making PHP compatibility fixes" />
         <exec executable="sed">
             <arg value="-i" />
             <arg value="-e" />
@@ -90,7 +90,19 @@
             <arg value="s/__DIR__/dir\(__FILE__\)/g" />
             <arg value="${buildsrc}/libs/autoload.php" />
         </exec>
-
+        <echo msg="Making Prestashop validator compatibility hacks" />
+        <exec executable="sed">
+            <arg value="-i" />
+            <arg value="-e" />
+            <arg value="s/$this->name = self::MODULE_NAME/$this->name = 'nostotagging'/g" />
+            <arg value="${buildsrc}/nostotagging.php" />
+        </exec>
+        <exec executable="sed">
+            <arg value="-i" />
+            <arg value="-e" />
+            <arg value="s/$this->version = self::PLUGIN_VERSION/$this->version = '${version}'/g" />
+            <arg value="${buildsrc}/nostotagging.php" />
+        </exec>
     </target>
 
     <target name="phpmd">

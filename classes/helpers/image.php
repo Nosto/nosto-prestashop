@@ -29,7 +29,7 @@
  */
 class NostoTaggingHelperImage
 {
-    const OPTIMAL_PRODUCT_IMAGE_WIDTH = 450;
+    const OPTIMAL_PRODUCT_IMAGE_WIDTH = 800;
 
     /**
      * Returns all image types configured to be available for product images

@@ -39,6 +39,8 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
     {
         $context = $this->module->getContext();
         $collection = new NostoExportProductCollection();
+        // We need to forge the employee in order to get a price for a product
+        $context->employee = new Employee();
 
         if (!empty(Tools::getValue('id'))) {
             $product = new Product(Tools::getValue('id'), true, $context->language->id, $context->shop->id);
