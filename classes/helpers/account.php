@@ -54,7 +54,9 @@ class NostoTaggingHelperAccount
                 $success = $success && $helper_config->saveToken(
                     $token->getName(),
                     $token->getValue(),
-                    $id_lang
+                    $id_lang,
+                    $id_shop_group,
+                    $id_shop
                 );
             }
         }

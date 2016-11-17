@@ -236,9 +236,16 @@ class NostoTaggingHelperConfig
      * @param int $id_lang the language to save the token for.
      * @return bool true if saved correctly, false otherwise.
      */
-    public function saveToken($token_name, $token_value, $id_lang)
+    public function saveToken($token_name, $token_value, $id_lang, $id_shop_group = null, $id_shop = null)
     {
-        return $this->write($this->getTokenConfigKey($token_name), $token_value, $id_lang);
+        return $this->write(
+            $this->getTokenConfigKey($token_name),
+            $token_value,
+            $id_lang,
+            false,
+            $id_shop_group,
+            $id_shop
+        );
     }
 
     /**
