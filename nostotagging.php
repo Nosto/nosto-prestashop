@@ -231,7 +231,6 @@ class NostoTagging extends Module
                     'Failed to create Nosto customer table'
                 );
             }
-
             /* @var NostoTaggingHelperAdminTab $helper_admin_tab */
             $helper_admin_tab = Nosto::helper('nosto_tagging/admin_tab');
             if (!$helper_admin_tab->install()) {
@@ -240,11 +239,9 @@ class NostoTagging extends Module
                     'Failed to create Nosto admin tab'
                 );
             }
-
             if (!$this->initHooks()) {
                 $success = false;
             }
-
             // For versions 1.4.0.1 - 1.5.3.1 we need to keep track of the currently installed version.
             // This is to enable auto-update of the module by running its upgrade scripts.
             // This config value is updated in the NostoTaggingUpdater helper every time the module is updated.
@@ -270,7 +267,6 @@ class NostoTagging extends Module
                     && $this->registerHook('displayBackOfficeTop')
                     && $this->registerHook('displayBackOfficeHeader');
                 }
-
                 // New hooks in 1.7
                 if (version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
                     $this->registerHook('displayNav1');
@@ -502,7 +498,6 @@ class NostoTagging extends Module
                         $this->l('There was an error saving the settings. Please, see log for details.')
                     );
                 }
-
                 // Also update the exchange rates if multi currency is used
                 if ($account_meta->getUseCurrencyExchangeRates()) {
                     $helper_account->updateCurrencyExchangeRates($account, $this->context);
@@ -559,10 +554,8 @@ class NostoTagging extends Module
         } else {
             $iframe_installation_url = null;
         }
-
         /** @var NostoTaggingHelperImage $helper_images */
         $helper_images = Nosto::helper('nosto_tagging/image');
-
         $this->getSmarty()->assign(array(
             $this->name.'_form_action' => $this->getAdminUrl(),
             $this->name.'_create_account' => $this->getAdminUrl(),
@@ -622,8 +615,7 @@ class NostoTagging extends Module
                 $id_shop
             )
         ));
-
-        // Try to login employee to Nosto in order to get a url to the internal setting pages,
+       // Try to login employee to Nosto in order to get a url to the internal setting pages,
         // which are then shown in an iframe on the module config page.
         if ($account && $account->isConnectedToNosto()) {
             try {
@@ -643,7 +635,6 @@ class NostoTagging extends Module
                 );
             }
         }
-
         $output .= $this->display(__FILE__, $this->getSettingsTemplate());
 
         return $output;
@@ -714,10 +705,8 @@ class NostoTagging extends Module
         if ($account === null) {
             return '';
         }
-
         /** @var LinkCore $link */
         $link = new Link();
-
         $hidden_recommendation_elements = $this->getHiddenRecommendationElements();
         $this->getSmarty()->assign(array(
             'server_address' => $server_address,
@@ -799,12 +788,10 @@ class NostoTagging extends Module
      */
     public function generateDefaultTagging()
     {
-
         $html = '';
         $html .= $this->getCustomerTagging();
         $html .= $this->getCartTagging();
         $html .= $this->getPriceVariationTagging();
-
         if ($this->isController('category')) {
             // The "getCategory" method is available from Prestashop 1.5.6.0 upwards.
             if (method_exists($this->context->controller, 'getCategory')) {
@@ -851,7 +838,6 @@ class NostoTagging extends Module
         } elseif ($this->isController('pagenotfound') || $this->isController('404')) {
             $html .= $this->getPageTypeTagging(self::PAGE_TYPE_NOTFOUND);
         }
-
         $html .= $this->display(__FILE__, 'views/templates/hook/top_nosto-elements.tpl');
         $html .= $this->getHiddenRecommendationElements();
 
