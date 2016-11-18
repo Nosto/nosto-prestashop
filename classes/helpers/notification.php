@@ -130,7 +130,7 @@ class NostoTaggingHelperNotification
                         $language,
                         NostoNotificationInterface::TYPE_MISSING_INSTALLATION,
                         NostoNotificationInterface::SEVERITY_INFO,
-                        'Nosto account is not installed to shop <b>%s</b> and language <b>%s</b>'
+                        'Nosto account is not installed to shop %s and language %s'
                     );
                     $notifications[] = $notification;
                 }
@@ -140,7 +140,7 @@ class NostoTaggingHelperNotification
                         $language,
                         NostoNotificationInterface::TYPE_MISSING_TOKENS,
                         NostoNotificationInterface::SEVERITY_WARNING,
-                        'One or more Nosto API tokens are missing for shop <b>%s</b> and language <b>%s</b>'
+                        'One or more Nosto API tokens are missing for shop %s and language %s'
                     );
                     $notifications[] = $notification;
                 }
@@ -150,7 +150,7 @@ class NostoTaggingHelperNotification
                         $language,
                         NostoNotificationInterface::TYPE_MULTI_CURRENCY_DISABLED,
                         NostoNotificationInterface::SEVERITY_WARNING,
-                        'Your shop <b>%s</b> with language <b>%s</b> is using multiple currencies but' .
+                        'Your shop %s with language %s is using multiple currencies but' .
                         ' the multi-currency feature for Nosto is disabled'
                     );
                     $notifications[] = $notification;

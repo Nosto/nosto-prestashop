@@ -51,14 +51,10 @@ class NostoTaggingAdminNotification extends NostoNotification
         $message = Translate::getModuleTranslation(
             NostoTagging::MODULE_NAME,
             $this->getMessage(),
-            NostoTagging::MODULE_NAME
-        );
-        $string = vsprintf(
-            Tools::htmlentitiesDecodeUTF8(
-                $message
-            ),
+            NostoTagging::MODULE_NAME,
             $this->getMessageAttributes()
         );
-        return $string;
+
+        return $message;
     }
 }

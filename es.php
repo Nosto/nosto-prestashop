@@ -84,6 +84,9 @@ $_MODULE['<{nostotagging}default-bootstrap>legacy-config-bootstrap_af5b7d829394b
 $_MODULE['<{nostotagging}default-bootstrap>legacy-config-bootstrap_c9cc8cce247e49bae79f15173ce97354'] = 'Guardar'; 
 $_MODULE['<{nostotagging}default-bootstrap>legacy-config-bootstrap_a59be03526b7789c28a80fe816cca4c1'] = 'Tasas de cambio'; 
 $_MODULE['<{nostotagging}default-bootstrap>legacy-config-bootstrap_8f76a793218248d062ced130c0ffd968'] = 'Actualizar tasas de cambio';
-$_MODULE['<{nostotagging}default-bootstrap>config-bootstrap_94e0773892c5921cb240432035ef0c36'] = 'TBT/Choose which image type Nosto will use in recommendations';
-$_MODULE['<{nostotagging}default-bootstrap>config-bootstrap_78d626dce380fe4f04d8d94e2354659c'] = 'TBT/Image type for recommendations';
-$_MODULE['<{nostotagging}default-bootstrap>config-bootstrap_f8b1369a8e9d90da0cae0b11049309af'] = 'TBT/Not defined';
+$_MODULE['<{nostotagging}default-bootstrap>config-bootstrap_94e0773892c5921cb240432035ef0c36'] = 'ES - Choose which image type Nosto will use in recommendations';
+$_MODULE['<{nostotagging}default-bootstrap>config-bootstrap_78d626dce380fe4f04d8d94e2354659c'] = 'ES - Image type for recommendations';
+$_MODULE['<{nostotagging}default-bootstrap>config-bootstrap_f8b1369a8e9d90da0cae0b11049309af'] = 'ES - Not defined';
+$_MODULE['<{nostotagging}default-bootstrap>nostotagging_605485203e791a4f0403222f838f26b7'] = 'ES - Your shop %s with language %s is using multiple currencies but the multi-currency feature for Nosto is disabled';
+$_MODULE['<{nostotagging}default-bootstrap>nostotagging_f7ae394e0d95ae666f9a47d3f89d159f'] = 'ES - One or more Nosto API tokens are missing for shop %s and language %s';
+$_MODULE['<{nostotagging}default-bootstrap>nostotagging_b060334ae0182fcd08c14dc40f8d1f7d'] = 'ES - Nosto account is not installed to shop %s and language %s';
