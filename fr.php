@@ -84,9 +84,9 @@ $_MODULE['<{nostotagging}default-bootstrap>legacy-config-bootstrap_af5b7d829394b
 $_MODULE['<{nostotagging}default-bootstrap>legacy-config-bootstrap_c9cc8cce247e49bae79f15173ce97354'] = 'Sauvegarder';
 $_MODULE['<{nostotagging}default-bootstrap>legacy-config-bootstrap_a59be03526b7789c28a80fe816cca4c1'] = 'Taux de change';
 $_MODULE['<{nostotagging}default-bootstrap>legacy-config-bootstrap_8f76a793218248d062ced130c0ffd968'] = 'Mettre à jour les taux de change';
-$_MODULE['<{nostotagging}default-bootstrap>config-bootstrap_94e0773892c5921cb240432035ef0c36'] = 'FR - Choose which image type Nosto will use in recommendations';
-$_MODULE['<{nostotagging}default-bootstrap>config-bootstrap_78d626dce380fe4f04d8d94e2354659c'] = 'FR - Image type for recommendations';
-$_MODULE['<{nostotagging}default-bootstrap>config-bootstrap_f8b1369a8e9d90da0cae0b11049309af'] = 'FR - Not defined';
-$_MODULE['<{nostotagging}default-bootstrap>nostotagging_605485203e791a4f0403222f838f26b7'] = 'FR - Your shop %s with language %s is using multiple currencies but the multi-currency feature for Nosto is disabled';
-$_MODULE['<{nostotagging}default-bootstrap>nostotagging_f7ae394e0d95ae666f9a47d3f89d159f'] = 'FR - One or more Nosto API tokens are missing for shop %s and language %s';
-$_MODULE['<{nostotagging}default-bootstrap>nostotagging_b060334ae0182fcd08c14dc40f8d1f7d'] = 'FR - Nosto account is not installed to shop %s and language %s';
+$_MODULE['<{nostotagging}default-bootstrap>config-bootstrap_94e0773892c5921cb240432035ef0c36'] = 'Veuillez sélectionner le type d\'image utilisé par Nosto dans les recommandations';
+$_MODULE['<{nostotagging}default-bootstrap>config-bootstrap_78d626dce380fe4f04d8d94e2354659c'] = 'Type d\'image pour les recommandations';
+$_MODULE['<{nostotagging}default-bootstrap>config-bootstrap_f8b1369a8e9d90da0cae0b11049309af'] = 'Non-défini';
+$_MODULE['<{nostotagging}default-bootstrap>nostotagging_605485203e791a4f0403222f838f26b7'] = 'Votre boutique %s avec langue %s utilise des devises multiples, mais cette fonction est désactivée';
+$_MODULE['<{nostotagging}default-bootstrap>nostotagging_f7ae394e0d95ae666f9a47d3f89d159f'] = 'Un ou plusieurs Nosto clés API sont inexistants pour boutique %s et pour langue %s';
+$_MODULE['<{nostotagging}default-bootstrap>nostotagging_b060334ae0182fcd08c14dc40f8d1f7d'] = 'Compte Nosto n\'est pas installé pour boutique %s et pour langue %s';
