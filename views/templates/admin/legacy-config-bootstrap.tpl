@@ -27,7 +27,6 @@
 <script type="text/javascript" src="{$module_path|escape:'htmlall':'UTF-8'}views/js/iframeresizer.min.js"></script>
 <script type="text/javascript"
         src="{$module_path|escape:'htmlall':'UTF-8'}views/js/nostotagging-admin-config.js"></script>
-
 <div class="tw-bs {$nostotagging_ps_version_class|escape:'htmlall':'UTF-8'}">
     <div class="container-fluid">
         <div class="row">

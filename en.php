@@ -87,7 +87,6 @@ $_MODULE['<{nostotagging}default-bootstrap>legacy-config-bootstrap_8f76a79321824
 $_MODULE['<{nostotagging}default-bootstrap>config-bootstrap_94e0773892c5921cb240432035ef0c36'] = 'Choose which image type Nosto will use in recommendations';
 $_MODULE['<{nostotagging}default-bootstrap>config-bootstrap_78d626dce380fe4f04d8d94e2354659c'] = 'Image type for recommendations';
 $_MODULE['<{nostotagging}default-bootstrap>config-bootstrap_f8b1369a8e9d90da0cae0b11049309af'] = 'Not defined';
-/**
- * No keys
- * Nosto account is not installed to shop <b>%s</b> and language <b>%s</b>
- */
+$_MODULE['<{nostotagging}default-bootstrap>nostotagging_605485203e791a4f0403222f838f26b7'] = 'Your shop %s with language %s is using multiple currencies but the multi-currency feature for Nosto is disabled';
+$_MODULE['<{nostotagging}default-bootstrap>nostotagging_f7ae394e0d95ae666f9a47d3f89d159f'] = 'One or more Nosto API tokens are missing for shop %s and language %s';
+$_MODULE['<{nostotagging}default-bootstrap>nostotagging_b060334ae0182fcd08c14dc40f8d1f7d'] = 'Nosto account is not installed to shop %s and language %s';

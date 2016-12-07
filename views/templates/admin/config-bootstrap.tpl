@@ -28,7 +28,6 @@
     <input type="hidden" id="nostotagging_account_action" name="nostotagging_account_action" value="">
     <input type="hidden" id="nostotagging_account_email" name="nostotagging_account_email" value="">
     <input type="hidden" id="nostotagging_account_details" name="nostotagging_account_details" value="">
-
     <div class="panel" id="nosto-settings">
         <div class="panel-heading">
             <div class="row">
@@ -62,7 +61,6 @@
             </div>
         </div>
         {if $nostotagging_account_authorized}
-
             <div class="form-wrapper nostotagging_settings">
                 <div class="form-group">
                     <div class="col-lg-offset-3">
@@ -81,7 +79,6 @@
                     </div>
                 </div>
                 <hr>
-
                 {if $missing_tokens}
                     <div class="form-group">
                         <div class="col-lg-offset-3">
@@ -99,8 +96,6 @@
                     </div>
                     <hr>
                 {/if}
-
-
                 <div class="form-group">
                     <label class="control-label col-lg-3" for="nostotagging_position">
                         <span class="label-tooltip" data-toggle="tooltip" title="" data-original-title="{l s='Change this settings to be "Footer" if your theme does not have displayTop hook' mod='nostotagging'}">
@@ -122,9 +117,7 @@
                         </div>
                     </div>
                 </div>
-
                 <hr>
-
                 <div class="form-group">
                     <label class="control-label col-lg-3" for="image_type">
                         <span class="label-tooltip" data-toggle="tooltip" title="" data-original-title="{l s='Choose which image type Nosto will use in recommendations' mod='nostotagging'}">
@@ -151,9 +144,7 @@
                         </div>
                     </div>
                 </div>
-
                 <hr>
-
                 <div class="form-group">
                     <label class="control-label col-lg-3" for="multi_currency_method">
                         {l s='Multi Currency Method' mod='nostotagging'}
@@ -177,39 +168,32 @@
                         </p>
                     </div>
                 </div>
-
                 {if $multi_currency_method!=="disabled"}
                     <div class="form-group">
-                    <div class="col-lg-9 col-lg-offset-3">
-                        <div class="alert alert-info">
+                        <div class="col-lg-9 col-lg-offset-3">
+                            <div class="alert alert-info">
+                                <p>
+                                    {l s='The exchange rates will be synchronised to Nosto automatically whene you log in to your store admin and when you update the exchange rates.' mod='nostotagging'}
+                                </p>
+                                <p>
+                                    {l s='You can also set up the cron job for updating the exchange rates by adding the example below to your servers crontab, or by using the Prestashop `cronjob` module.' mod='nostotagging'}
+                                </p>
+                                <p style="font-style: italic;">{$nostotagging_translations.exchange_rate_crontab_example|escape:'quotes':'UTF-8'}</p>
+                            </div>
                             <p>
-                                {l s='The exchange rates will be synchronised to Nosto automatically whene you log in to your store admin and when you update the exchange rates.' mod='nostotagging'}
+                                {l s='You can also synchronise the exchange rates to Nosto by clicking the button below.' mod='nostotagging'}
                             </p>
-                            <p>
-
-                                {l s='You can also set up the cron job for updating the exchange rates by adding the example below to your servers crontab, or by using the Prestashop `cronjob` module.' mod='nostotagging'}
-                            </p>
-                            <p style="font-style: italic;">{$nostotagging_translations.exchange_rate_crontab_example|escape:'quotes':'UTF-8'}</p>
-
+                            <div class="form-group">
+                                <button class="btn btn-default btn-info btn-lg" type="submit" name="submit_nostotagging_update_exchange_rates" value="1">
+                                    <span class="ladda-label">
+                                        <i class="icon-refresh"></i>
+                                        {l s='Synchronise exchange rates' mod='nostotagging'}
+                                    </span>
+                                    <span class="ladda-spinner"></span>
+                                </button>
+                            </div>
                         </div>
-
-                        <p>
-                            {l s='You can also synchronise the exchange rates to Nosto by clicking the button below.' mod='nostotagging'}
-                        </p>
-
-                        <div class="form-group">
-                            <button class="btn btn-default btn-info btn-lg" type="submit" name="submit_nostotagging_update_exchange_rates" value="1">
-                                <span class="ladda-label">
-                                    <i class="icon-refresh"></i>
-                                    {l s='Synchronise exchange rates' mod='nostotagging'}
-                                </span>
-                                <span class="ladda-spinner"></span>
-                            </button>
-
-                        </div>
-
                     </div>
-                </div>
                 {/if}
             </div>
             <div class="row nostotagging_settings">
@@ -220,7 +204,6 @@
                     </button>
                 </div>
             </div>
-
             {if !empty($iframe_url)}
                 <div class="row nostotagging_iframe_container">
                     <div class="col-md-12">

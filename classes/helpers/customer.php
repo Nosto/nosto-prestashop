@@ -64,7 +64,7 @@ class NostoTaggingHelperCustomer
         $table = self::getCustomerLinkTableName();
         $sql = 'CREATE TABLE IF NOT EXISTS `'.$table.'` (
 			`id_cart` INT(10) UNSIGNED NOT NULL,
-			`id_nosto_customer` VARCHAR(255) NOT NULL,
+			`id_nosto_customer` VARCHAR(64) NOT NULL,
 			`date_add` DATETIME NOT NULL,
 			`date_upd` DATETIME NULL,
 			PRIMARY KEY (`id_cart`, `id_nosto_customer`)
