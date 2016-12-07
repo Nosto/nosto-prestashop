@@ -40,14 +40,14 @@ function upgrade_module_2_7_0($object)
     /* @var NostoTaggingHelperCustomer $helper_customer */
     $helper_customer = Nosto::helper('nosto_tagging/customer');
     $helper_customer->createCustomerReferenceTable();
-
     if (_PS_VERSION_ < '1.5') {
-        return $object->registerHook('backOfficeFooter');
+        $success = $object->registerHook('backOfficeFooter');
     } else {
-        return $object->registerHook('displayBackOfficeTop');
+        $success = $object->registerHook('displayBackOfficeTop');
     }
-
     /** @var NostoTaggingHelperConfig $helper_config */
     $helper_config = Nosto::helper('nosto_tagging/config');
     $helper_config->clearCache();
+
+    return $success;
 }
