@@ -38,16 +38,23 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
         // The user accepted the authorization request.
             // The authorization server responded with a code that can be used to exchange for the access token.
             try {
+                $id_shop = null;
+                $id_shop_group = null;
+                if ($this->module->getContext()->shop instanceof Shop) {
+                    $id_shop = $this->context->shop->id;
+                    $id_shop_group = $this->context->shop->id_shop_group;
+                }
                 /** @var NostoTaggingHelperConfig $helper_config */
                 $helper_config = Nosto::helper('nosto_tagging/config');
-
                 $meta = new NostoTaggingMetaOauth();
                 $meta->setModuleName($this->module->name);
                 $meta->setModulePath($this->module->getPath());
                 $meta->loadData($this->module->getContext(), $id_lang);
                 $account = NostoAccount::syncFromNosto($meta, $code);
 
-                if (!Nosto::helper('nosto_tagging/account')->save($account, $id_lang)) {
+                /* @var NostoTaggingHelperAccount $helper_account */
+                $helper_account = Nosto::helper('nosto_tagging/account');
+                if (!$helper_account->save($account, $id_lang, $id_shop_group, $id_shop)) {
                     throw new NostoException('Failed to save account.');
                 }
                 $helper_config->clearCache();

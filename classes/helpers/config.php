@@ -38,6 +38,7 @@ class NostoTaggingHelperConfig
     const MULTI_CURRENCY_METHOD_EXCHANGE_RATE = 'exchangeRate';
     const MULTI_CURRENCY_METHOD_DISABLED = 'disabled';
     const NOSTOTAGGING_POSITION = 'NOSTOTAGGING_POSITION';
+    const NOSTOTAGGING_IMAGE_TYPE = 'NOSTOTAGGING_IMAGE_TYPE';
     const NOSTOTAGGING_POSITION_TOP = 'top';
     const NOSTOTAGGING_POSITION_FOOTER = 'footer';
 
@@ -61,10 +62,12 @@ class NostoTaggingHelperConfig
      * @param string $name the name of the config entry to save.
      * @param mixed $value the value to save.
      * @param null|int $lang_id the language id to save it for.
+     * @param null|int $id_shop_group
+     * @param null|int $id_shop
      * @param bool $global if it should be saved for all shops or in current context.
      * @return bool true is saved, false otherwise.
      */
-    public function write($name, $value, $lang_id = null, $global = false)
+    public function write($name, $value, $lang_id = null, $global = false, $id_shop_group = null, $id_shop = null)
     {
         $callback = array(
             'Configuration',
@@ -74,7 +77,16 @@ class NostoTaggingHelperConfig
         if (!is_array($value) && !empty($lang_id)) {
             $value = array($lang_id => $value);
         }
-        return call_user_func($callback, (string)$name, $value);
+        if (
+            $global === false
+            && !empty($id_shop_group)
+            && !empty($id_shop)
+        ) {
+            $return = call_user_func($callback, (string)$name, $value, $id_shop_group, $id_shop);
+        } else {
+            $return = call_user_func($callback, (string)$name, $value);
+        }
+        return $return;
     }
 
     /**
@@ -187,11 +199,20 @@ class NostoTaggingHelperConfig
      *
      * @param string $account_name the account name to save.
      * @param int $id_lang the language to save the account nam for.
+     * @param null|int $id_shop_group the shop group to get the account for (defaults to current context).
+     * @param null|int $id_shop the shop to get the account for (defaults to current context).
      * @return bool true if saved correctly, false otherwise.
      */
-    public function saveAccountName($account_name, $id_lang)
+    public function saveAccountName($account_name, $id_lang, $id_shop_group = null, $id_shop = null)
     {
-        return $this->write(self::ACCOUNT_NAME, $account_name, $id_lang);
+        return $this->write(
+            self::ACCOUNT_NAME,
+            $account_name,
+            $id_lang,
+            false,
+            $id_shop_group,
+            $id_shop
+        );
     }
 
     /**
@@ -215,9 +236,16 @@ class NostoTaggingHelperConfig
      * @param int $id_lang the language to save the token for.
      * @return bool true if saved correctly, false otherwise.
      */
-    public function saveToken($token_name, $token_value, $id_lang)
+    public function saveToken($token_name, $token_value, $id_lang, $id_shop_group = null, $id_shop = null)
     {
-        return $this->write($this->getTokenConfigKey($token_name), $token_value, $id_lang);
+        return $this->write(
+            $this->getTokenConfigKey($token_name),
+            $token_value,
+            $id_lang,
+            false,
+            $id_shop_group,
+            $id_shop
+        );
     }
 
     /**
@@ -316,11 +344,13 @@ class NostoTaggingHelperConfig
      * Returns the multi currency method in use for the context.
      *
      * @param int $id_lang the language.
+     * @param null|int $id_shop_group
+     * @param null|int $id_shop
      * @return string the multi currency method.
      */
-    public function getMultiCurrencyMethod($id_lang)
+    public function getMultiCurrencyMethod($id_lang, $id_shop_group = null, $id_shop = null)
     {
-        $method = $this->read(self::MULTI_CURRENCY_METHOD, $id_lang);
+        $method = $this->read(self::MULTI_CURRENCY_METHOD, $id_lang, $id_shop_group, $id_shop);
         return !empty($method) ? $method : self::MULTI_CURRENCY_METHOD_DISABLED;
     }
 
@@ -328,47 +358,76 @@ class NostoTaggingHelperConfig
      * Returns the position where to render Nosto tagging
      *
      * @param int $id_lang the language.
+     * @param null|int $id_shop_group
+     * @param null|int $id_shop
      * @return string
      */
-    public function getNostotaggingRenderPosition($id_lang)
+    public function getNostotaggingRenderPosition($id_lang, $id_shop_group = null, $id_shop = null)
     {
-        $position = $this->read(self::NOSTOTAGGING_POSITION, $id_lang);
+        $position = $this->read(self::NOSTOTAGGING_POSITION, $id_lang, true, $id_shop_group, $id_shop);
         return !empty($position) ? $position: self::NOSTOTAGGING_POSITION_TOP;
     }
 
     /**
      * Saves the multi currency method in use for the context.
      *
-     * @param int $id_lang the language.
      * @param string $method the multi currency method.
-     * @return void
+     * @param int $id_lang the language.
+     * @param null|int $id_shop_group
+     * @param null|int $id_shop
+     * @return bool
      */
-    public function saveMultiCurrencyMethod($id_lang, $method)
+    public function saveMultiCurrencyMethod($method, $id_lang, $id_shop_group = null, $id_shop = null)
     {
-        return $this->write(self::MULTI_CURRENCY_METHOD, $method, $id_lang);
+        return $this->write(
+            self::MULTI_CURRENCY_METHOD,
+            $method,
+            $id_lang,
+            false,
+            $id_shop_group,
+            $id_shop
+        );
     }
 
     /**
      * Saves the position where to render Nosto tagging
      *
-     * @param int $id_lang the language.
      * @param string $method the multi currency method.
-     * @return void
+     * @param int $id_lang the language.
+     * @param null|int $id_shop_group
+     * @param null|int $id_shop
+     *
+     * @return bool
      */
-    public function saveNostoTaggingRenderPosition($id_lang, $method)
+    public function saveNostoTaggingRenderPosition($method, $id_lang, $id_shop_group = null, $id_shop = null)
     {
-        return $this->write(self::NOSTOTAGGING_POSITION, $method, $id_lang);
+        return $this->write(
+            self::NOSTOTAGGING_POSITION,
+            $method,
+            $id_lang,
+            false,
+            $id_shop_group,
+            $id_shop
+        );
     }
 
     /**
      * Checks if multiple currencies are used in tagging
      *
      * @param int $id_lang the language.
+     * @param null|int $id_shop_group
+     * @param null|int $id_shop
      * @return boolean the multi currency method.
      */
-    public function useMultipleCurrencies($id_lang)
+    public function useMultipleCurrencies($id_lang, $id_shop_group = null, $id_shop = null)
     {
-        if ($this->getMultiCurrencyMethod($id_lang) !== self::MULTI_CURRENCY_METHOD_DISABLED) {
+        if (
+            $this->getMultiCurrencyMethod(
+                $id_lang,
+                $id_shop_group,
+                $id_shop
+            ) !== self::MULTI_CURRENCY_METHOD_DISABLED
+        ) {
             return true;
         } else {
             return false;
@@ -379,12 +438,52 @@ class NostoTaggingHelperConfig
      * Clears tagging related caches (compiled templates)
      *
      * @param Smarty $smarty
-     * @return boolean the multi currency method.
      */
     public function clearCache($smarty = null)
     {
         if (method_exists('Tools', 'clearCompile')) {
             Tools::clearCompile($smarty);
         }
+    }
+
+    /**
+     * Returns the image type to be used for Nosto tagging
+     *
+     * @param int $id_lang the language.
+     * @param null|int $id_shop_group
+     * @param null|int $id_shop
+     * @return int
+     */
+    public function getImageType($id_lang, $id_shop_group = null, $id_shop = null)
+    {
+        $type = $this->read(
+            self::NOSTOTAGGING_IMAGE_TYPE,
+            $id_lang,
+            $id_shop_group,
+            $id_shop
+        );
+
+        return !empty($type) ? $type : null;
+    }
+
+    /**
+     * Saves the image type to be used for Nosto tagging
+     *
+     * @param int $id_lang the language.
+     * @param int $type the image type id
+     * @param null|int $id_shop_group
+     * @param null|int $id_shop
+     * @return boolean
+     */
+    public function saveImageType($type, $id_lang, $id_shop_group = null, $id_shop = null)
+    {
+        return $this->write(
+            self::NOSTOTAGGING_IMAGE_TYPE,
+            $type,
+            $id_lang,
+            false,
+            $id_shop_group,
+            $id_shop
+        );
     }
 }

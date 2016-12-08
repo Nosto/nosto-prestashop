@@ -1,4 +1,5 @@
-/*
+<?php
+/**
  * 2013-2016 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
@@ -22,23 +23,31 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-$(document).ready(function () {
-    // Change event handler for "Manage Accounts:".
-    $("#nostotagging_language").change(function () {
-        var langId = parseInt($(this).val()),
-            $currentLanguage = $('#nostotagging_current_language'),
-            $form = $('form.nostotagging');
-        $currentLanguage.val(langId);
-        $form.submit();
-    });
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
-    // Toggle the Nosto settings
-    $("#nostotagging_account_setup").click(function (event) {
-        event.preventDefault();
-        $('div.nostotagging_settings').toggle();
-        $('#nostotagging_iframe').toggle();
-    });
+/**
+ * Upgrades the module to version 2.7.0.
+ *
+ * Creates a table for Nosto customer reference and registers backoffice hook.
+ *
+ * @param NostoTagging $object
+ * @return bool
+ */
+function upgrade_module_2_7_0($object)
+{
+    /* @var NostoTaggingHelperCustomer $helper_customer */
+    $helper_customer = Nosto::helper('nosto_tagging/customer');
+    $helper_customer->createCustomerReferenceTable();
 
-    // Init the iframe re-sizer.
-    $('#nostotagging_iframe').iFrameResize({heightCalculationMethod : 'bodyScroll'});
-});
+    if (_PS_VERSION_ < '1.5') {
+        return $object->registerHook('backOfficeFooter');
+    } else {
+        return $object->registerHook('displayBackOfficeTop');
+    }
+
+    /** @var NostoTaggingHelperConfig $helper_config */
+    $helper_config = Nosto::helper('nosto_tagging/config');
+    $helper_config->clearCache();
+}

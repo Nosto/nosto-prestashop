@@ -103,11 +103,6 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
     protected $brand;
 
     /**
-     * @var string the product publish date.
-     */
-    protected $date_published;
-
-    /**
      * @inheritdoc
      */
     public function getValidationRules()
@@ -137,22 +132,30 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
         $helper_config = Nosto::helper('nosto_tagging/config');
         /** @var NostoHelperPrice $helper_config */
         $nosto_helper_price = Nosto::helper('nosto/price');
-
+        /** @var NostoTaggingHelperImage $helper_image */
+        $helper_image = Nosto::helper('nosto_tagging/image');
         $base_currency = $helper_currency->getBaseCurrency($context);
-
         $id_lang = $context->language->id;
-        $id_shop = $context->shop->id;
+        $id_shop = null;
+        $id_shop_group = null;
+        if ($context->shop instanceof Shop) {
+            $id_shop = $context->shop->id;
+            $id_shop_group = $context->shop->id_shop_group;
+        }
 
-        if ($helper_config->useMultipleCurrencies($id_lang) === true) {
+        if ($helper_config->useMultipleCurrencies($id_lang, $id_shop_group, $id_shop) === true) {
             $this->variationId = $base_currency->iso_code;
             $tagging_currency = $base_currency;
         } else {
             $this->variationId = false;
             $tagging_currency= $context->currency;
         }
-
         $this->url = $url_helper->getProductUrl($product, $id_lang, $id_shop);
-        $this->image_url = $url_helper->getProductImageUrl($product);
+        $link = null;
+        if (Configuration::get('PS_SSL_ENABLED_EVERYWHERE')) {
+            $link = new Link('https://', 'https://');
+        }
+        $this->image_url = $helper_image->getProductImageUrl($product, $id_lang, $link);
         $this->product_id = (int)$product->id;
         $this->name = $product->name;
 
@@ -177,8 +180,7 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
         $this->categories = $this->buildCategories($product, $id_lang);
         $this->short_description = $product->description_short;
         $this->description = $product->description;
-        $this->brand = (!empty($product->manufacturer_name)) ? $product->manufacturer_name : null;
-        $this->date_published = Nosto::helper('date')->format($product->date_add);
+        $this->brand = $this->buildBrand($product);
 
         $this->dispatchHookActionLoadAfter(array(
             'nosto_product' => $this,
@@ -209,7 +211,9 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
      */
     protected function checkAvailability(Product $product)
     {
-        if (_PS_VERSION_ >= '1.5' && $product->visibility === 'none') {
+        if (
+            !$product->active
+            || (_PS_VERSION_ >= '1.5' && $product->visibility === 'none')) {
             return self::INVISIBLE;
         } else {
             return ($product->checkQty(1)) ? self::IN_STOCK : self::OUT_OF_STOCK;
@@ -255,13 +259,31 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
     protected function buildCategories(Product $product, $id_lang)
     {
         $categories = array();
-        foreach ($product->getCategories() as $category_id) {
+        $productCategories = $product->getCategories();
+        foreach ($productCategories as $category_id) {
             $category = NostoTaggingCategory::buildCategoryString($category_id, $id_lang);
             if (!empty($category)) {
                 $categories[] = $category;
             }
         }
         return $categories;
+    }
+
+    /**
+     * Builds the brand name from the product's manufacturer to and returns them.
+     *
+     * @param Product $product the product model.
+     * @return string the built brand name.
+     */
+    protected function buildBrand(Product $product)
+    {
+        $manufacturer = null;
+        if (empty($product->manufacturer_name) && !empty($product->id_manufacturer)) {
+            $manufacturer = Manufacturer::getNameById($product->id_manufacturer);
+        } else {
+            $manufacturer = $product->manufacturer_name;
+        }
+        return $manufacturer;
     }
 
     /**
@@ -423,16 +445,6 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
     }
     
     /**
-     * Returns the product publication date in the shop.
-     *
-     * @return string the date.
-     */
-    public function getDatePublished()
-    {
-        return $this->date_published;
-    }
-    
-    /**
      * Sets the product ID from given product.
      *
      * @param int $id the product ID.
@@ -460,16 +472,6 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
     public function setCurrencyCode($currency)
     {
         $this->currency_code = $currency;
-    }
-    
-    /**
-     * Sets the products published date.
-     *
-     * @param string $date the date.
-     */
-    public function setDatePublished($date)
-    {
-        $this->date_published = $date;
     }
     
     /**

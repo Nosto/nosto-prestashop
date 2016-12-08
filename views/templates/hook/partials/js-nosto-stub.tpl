@@ -21,12 +21,6 @@
 * @copyright 2013-2016 Nosto Solutions Ltd
 * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *}
-
-{if isset($nosto_customer) && is_object($nosto_customer)}
-	<div class="nosto_customer" style="display:none">
-		<span class="first_name">{$nosto_customer->first_name|escape:'htmlall':'UTF-8'}</span>
-		<span class="last_name">{$nosto_customer->last_name|escape:'htmlall':'UTF-8'}</span>
-		<span class="email">{$nosto_customer->email|escape:'htmlall':'UTF-8'}</span>
-		<span class="customer_reference">{$nosto_customer->customer_reference|escape:'htmlall':'UTF-8'}</span>
-	</div>
-{/if}
+<script type="text/javascript">
+{literal}(function(){var name="nostojs";window[name]=window[name]||function(cb){(window[name].q=window[name].q||[]).push(cb);};})();{/literal}
+</script>

@@ -39,17 +39,29 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
     {
         $context = $this->module->getContext();
         $collection = new NostoExportProductCollection();
-        foreach ($this->getProductIds() as $id_product) {
-            $product = new Product($id_product, true, $context->language->id, $context->shop->id);
-            if (!Validate::isLoadedObject($product)) {
-                continue;
-            }
+        // We need to forge the employee in order to get a price for a product
+        $context->employee = new Employee();
 
+        if (!empty(Tools::getValue('id'))) {
+            $product = new Product(Tools::getValue('id'), true, $context->language->id, $context->shop->id);
+            if (!Validate::isLoadedObject($product)) {
+                Tools::display404Error();
+            }
             $nosto_product = new NostoTaggingProduct();
             $nosto_product->loadData($context, $product);
             $collection[] = $nosto_product;
-        }
+        } else {
+            foreach ($this->getProductIds() as $id_product) {
+                $product = new Product($id_product, true, $context->language->id, $context->shop->id);
+                if (!Validate::isLoadedObject($product)) {
+                    continue;
+                }
 
+                $nosto_product = new NostoTaggingProduct();
+                $nosto_product->loadData($context, $product);
+                $collection[] = $nosto_product;
+            }
+        }
         $this->encryptOutput($collection);
     }
 

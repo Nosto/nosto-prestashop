@@ -28,6 +28,10 @@
  */
 class NostoTaggingHelperCurrency
 {
+    const CURRENCY_SYMBOL_MARKER = '¤';
+    const CURRENCY_GROUP_LENGTH = 3;
+    const CURRENCY_PRECISION = 2;
+
     /**
      * Fetches the base currency from the context.
      *
@@ -40,7 +44,12 @@ class NostoTaggingHelperCurrency
     {
         $id_lang = $context->language->id;
         $id_shop = $context->shop->id;
-        $id_shop_group = $context->shop->id_shop_group;
+        if (isset($context->shop->id_shop_group)) {
+            $id_shop_group = $context->shop->id_shop_group;
+        } else {
+            $id_shop_group = null;
+        }
+
         $base_id_currency = (int)Configuration::get('PS_CURRENCY_DEFAULT', $id_lang, $id_shop_group, $id_shop);
         if ($base_id_currency === 0) {
             $base_id_currency = (int)Configuration::get('PS_CURRENCY_DEFAULT', null, $id_shop_group, $id_shop);
@@ -63,78 +72,113 @@ class NostoTaggingHelperCurrency
      * Fetches all currencies defined in context.
      *
      * @param Context|ContextCore $context the context.
+     * @param boolean $only_active  if set to true, only active languages will be returned
      * @return array the found currencies.
      */
-    public function getCurrencies(Context $context)
+    public function getCurrencies(Context $context, $only_active = false)
     {
         $id_shop = (int)$context->shop->id;
         if (_PS_VERSION_ >= '1.5') {
-            return Currency::getCurrenciesByIdShop($id_shop);
+            $all_currencies = Currency::getCurrenciesByIdShop($id_shop);
         } else {
-            return Currency::getCurrencies();
+            $all_currencies = Currency::getCurrencies();
         }
+        if ($only_active === true) {
+            $currencies = array();
+            /* @var Currency $currency */
+            foreach ($all_currencies as $currency) {
+                if ($this->currencyActive($currency)) {
+                    $currencies[] = $currency;
+                }
+            }
+        } else {
+            $currencies = $all_currencies;
+        }
+
+        return $currencies;
     }
 
     /**
      * Parses a PS currency into a Nosto currency.
      *
      * @param array $currency the PS currency data.
+     * @param Context $context conteIs signup UI is broken? When xt where the currencies are used.
      * @return NostoCurrency the nosto currency.
      *
      * @throws NostoException if currency cannot be parsed.
      */
-    public function getNostoCurrency(array $currency)
+    public function getNostoCurrency(array $currency, Context $context = null)
     {
+        if (
+            $context instanceof Context
+            && (_PS_VERSION_ >= '1.7')
+        ) {
+            // In Prestashop 1.7 we use the CLDR
+            try {
+                $nosto_currency = self::createWithCldr($currency, $context);
+                return $nosto_currency;
+            } catch (Exception $e) {
+                Nosto::helper('nosto_tagging/logger')->error(
+                    sprintf(
+                        'Failed to resolve currency: %s (%s)',
+                        $e->getMessage(),
+                        $e->getCode()
+                    )
+                );
+            }
+        }
+        if (empty($currency['format'])) {
+            $currency['format'] = 2;  //Fallback to format 2
+        }
         switch ($currency['format']) {
             /* X 0,000.00 */
             case 1:
                 $group_symbol = ',';
                 $decimal_symbol = '.';
-                $group_length = 3;
-                $precision = 2;
                 $symbol_position = NostoCurrencySymbol::SYMBOL_POS_LEFT;
                 break;
             /* 0 000,00 X*/
             case 2:
                 $group_symbol = ' ';
                 $decimal_symbol = ',';
-                $group_length = 3;
-                $precision = 2;
                 $symbol_position = NostoCurrencySymbol::SYMBOL_POS_RIGHT;
                 break;
             /* X 0.000,00 */
             case 3:
                 $group_symbol = '.';
                 $decimal_symbol = ',';
-                $group_length = 3;
-                $precision = 2;
                 $symbol_position = NostoCurrencySymbol::SYMBOL_POS_LEFT;
                 break;
             /* 0,000.00 X */
             case 4:
                 $group_symbol = ',';
                 $decimal_symbol = '.';
-                $group_length = 3;
-                $precision = 2;
                 $symbol_position = NostoCurrencySymbol::SYMBOL_POS_RIGHT;
                 break;
             /* X 0'000.00 */
             case 5:
                 $group_symbol = '\'';
                 $decimal_symbol = '.';
-                $group_length = 3;
-                $precision = 2;
                 $symbol_position = NostoCurrencySymbol::SYMBOL_POS_LEFT;
                 break;
 
             default:
-                throw new NostoException(sprintf('Unsupported PrestaShop currency format %d.', $currency['format']));
+                throw new NostoException(
+                    sprintf(
+                        'Unsupported PrestaShop currency format %d.',
+                        $currency['format']
+                    )
+                );
         }
-
         return new NostoCurrency(
             new NostoCurrencyCode($currency['iso_code']),
             new NostoCurrencySymbol($currency['sign'], $symbol_position),
-            new NostoCurrencyFormat($group_symbol, $group_length, $decimal_symbol, $precision)
+            new NostoCurrencyFormat(
+                $group_symbol,
+                self::CURRENCY_GROUP_LENGTH,
+                $decimal_symbol,
+                self::CURRENCY_PRECISION
+            )
         );
     }
 
@@ -147,7 +191,7 @@ class NostoTaggingHelperCurrency
     public function getExchangeRateCollection(Context $context)
     {
         $base_currency_code = $this->getBaseCurrency($context)->iso_code;
-        $currencies = $this->getCurrencies($context);
+        $currencies = $this->getCurrencies($context, true);
         $exchange_rates = array();
         foreach ($currencies as $currency) {
             // Skip base currencyCode.
@@ -177,5 +221,102 @@ class NostoTaggingHelperCurrency
     public function getActiveCurrency(Context $context)
     {
         return $context->currency->iso_code;
+    }
+
+    /**
+     * Creates Nosto currency object using CLDR that was introduced in Prestashop 1.7
+     * @see https://github.com/ICanBoogie/CLDR
+     *
+     * @param array $currency Prestashop currency array
+     * @param Context $context
+     *
+     * @return NostoCurrency
+     */
+    public static function createWithCldr(array $currency, Context $context)
+    {
+        $cldr = Tools::getCldr(null, $context->language->language_code);
+        // @codingStandardsIgnoreLine
+        $cldr_currency = new \ICanBoogie\CLDR\Currency($cldr->getRepository(), $currency['iso_code']);
+        $localized_currency = $cldr_currency->localize($cldr->getCulture());
+        $pattern = $localized_currency->locale->numbers->currency_formats['standard'];
+        $symbols = $localized_currency->locale->numbers->symbols;
+        $symbol_pos = Tools::strpos($pattern, self::CURRENCY_SYMBOL_MARKER);
+        if ($symbol_pos === 0) {
+            $symbol_position = NostoCurrencySymbol::SYMBOL_POS_LEFT;
+        } else {
+            $symbol_position = NostoCurrencySymbol::SYMBOL_POS_RIGHT;
+        }
+        $currency_code = $currency['iso_code'];
+        $currency_symbol = $currency['sign'];
+        $group_symbol = isset($symbols['group']) ? $symbols['group'] : ',';
+        $decimal_symbol = isset($symbols['decimal']) ? $symbols['decimal'] : ',';
+
+        return new NostoCurrency(
+            new NostoCurrencyCode($currency_code),
+            new NostoCurrencySymbol($currency_symbol, $symbol_position),
+            new NostoCurrencyFormat(
+                $group_symbol,
+                self::CURRENCY_GROUP_LENGTH,
+                $decimal_symbol,
+                self::CURRENCY_PRECISION
+            )
+        );
+    }
+
+    /**
+     * Updates exchange rates for all stores and Nosto accounts
+     *
+     * @throws NostoException
+     * @return void
+     */
+    public function updateExchangeRatesForAllStores()
+    {
+        /** @var NostoTaggingHelperAccount $helper_account */
+        $helper_account = Nosto::helper('nosto_tagging/account');
+        /** @var NostoTaggingHelperContextFactory $context_factory */
+        $context_factory = Nosto::helper('nosto_tagging/context_factory');
+        /** @var NostoTaggingHelperConfig $helper_config*/
+        $helper_config = Nosto::helper('nosto_tagging/config');
+
+        foreach (Shop::getShops() as $shop) {
+            $id_shop = isset($shop['id_shop']) ? (int)$shop['id_shop'] : null;
+            $id_shop_group = isset($shop['id_shop_group']) ? (int)$shop['id_shop_group'] : null;
+            foreach (Language::getLanguages(true, $id_shop) as $language) {
+                $id_lang = (int)$language['id_lang'];
+                $use_multiple_currencies = $helper_config->useMultipleCurrencies($id_lang, $id_shop_group, $id_shop);
+                if ($use_multiple_currencies) {
+                    $nosto_account = $helper_account->find($id_lang, $id_shop_group, $id_shop);
+                    if (!is_null($nosto_account)) {
+                        $context = $context_factory->forgeContext($id_lang, $id_shop);
+                        if (!$helper_account->updateCurrencyExchangeRates(
+                            $nosto_account,
+                            $context
+                        )
+                        ) {
+                            throw new NostoException(
+                                sprintf(
+                                    'Exchange rate update failed for %s',
+                                    $nosto_account->getName()
+                                )
+                            );
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public function currencyActive(array $currency)
+    {
+        $active = true;
+        if (!$currency['active']) {
+            $active = false;
+        } else {
+            if (isset($currency['deleted']) && $currency['deleted']) {
+                $active = false;
+            }
+        }
+
+        return $active;
     }
 }

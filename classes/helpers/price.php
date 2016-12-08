@@ -95,7 +95,10 @@ class NostoTaggingHelperPrice
     protected function calcPrice($id_product, Currency $currency, Context $context, array $options = array())
     {
         // If the requested currency is not the one in the context, then set it.
-        if ($currency->iso_code !== $context->currency->iso_code) {
+        if (
+            $context->currency instanceof Currency
+            && $currency->iso_code !== $context->currency->iso_code
+        ) {
             /** @var Currency|CurrencyCore $old_currency */
             $old_currency = $context->currency;
             $context->currency = $currency;

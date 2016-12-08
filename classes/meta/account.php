@@ -69,7 +69,12 @@ class NostoTaggingMetaAccount extends NostoAccountMeta
         if (!Validate::isLoadedObject($context->country)) {
             $context->country = new Country((int)Configuration::get('PS_COUNTRY_DEFAULT'));
         }
-
+        $id_shop = null;
+        $id_shop_group = null;
+        if ($context->shop instanceof Shop) {
+            $id_shop = $context->shop->id;
+            $id_shop_group = $context->shop->id_shop_group;
+        }
         $this->setTitle(Configuration::get('PS_SHOP_NAME'));
         $this->setName(Tools::substr(sha1(rand()), 0, 8));
         $this->setFrontPageUrl($this->getContextShopUrl($context, $language));
@@ -81,8 +86,14 @@ class NostoTaggingMetaAccount extends NostoAccountMeta
         $this->billing = new NostoTaggingMetaAccountBilling();
         $this->billing->loadData($context);
         $this->setCurrencies($this->buildCurrencies($context));
-        if ($config_helper->useMultipleCurrencies($id_lang)) {
-            $this->setUseCurrencyExchangeRates($config_helper->useMultipleCurrencies($id_lang));
+        if ($config_helper->useMultipleCurrencies($id_lang, $id_shop_group, $id_shop)) {
+            $this->setUseCurrencyExchangeRates(
+                $config_helper->useMultipleCurrencies(
+                    $id_lang,
+                    $id_shop_group,
+                    $id_shop
+                )
+            );
             $this->setDefaultVariationId($currency_helper->getBaseCurrency($context)->iso_code);
         } else {
             $this->setUseCurrencyExchangeRates(false);
@@ -124,9 +135,9 @@ class NostoTaggingMetaAccount extends NostoAccountMeta
         $nosto_currencies = array();
         /** @var NostoTaggingHelperCurrency $currency_helper */
         $currency_helper = Nosto::helper('nosto_tagging/currency');
-        $currencies = $currency_helper->getCurrencies($context);
+        $currencies = $currency_helper->getCurrencies($context, true);
         foreach ($currencies as $currency) {
-            $nosto_currency = $currency_helper->getNostoCurrency($currency);
+            $nosto_currency = $currency_helper->getNostoCurrency($currency, $context);
             $nosto_currencies[] = $nosto_currency;
         }
 

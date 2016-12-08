@@ -42,6 +42,23 @@
     padding: 5px;
 }
 
+#content.bootstrap div.nostotagging_settings {
+    display:none;
+}
+
+#content.bootstrap div.nostotagging_iframe_container {
+    margin-top: 9px;
+    margin-bottom: 9px;
+}
+
+#content.bootstrap p.nostotagging_settings {
+    margin-right: 9px;
+}
+
+#content.bootstrap #nostotagging_iframe {
+    border-radius: 5px;
+}
+
 #content.bootstrap .nostotagging .col-xs-1, #content.bootstrap .nostotagging .col-sm-1,
 #content.bootstrap .nostotagging .col-md-1, #content.bootstrap .nostotagging .col-lg-1,
 #content.bootstrap .nostotagging .col-xs-2, #content.bootstrap .nostotagging .col-sm-2,

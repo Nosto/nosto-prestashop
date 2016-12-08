@@ -2,6 +2,21 @@
 All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
+## 2.7.0
+- Support for Prestashop 1.7
+- Fix non-active product saving
+- Add module version for Nosto calls
+- Add page type tagging
+- Add customer reference tagging
+- Remove date published from product tagging
+- Add possibility to choose the image for product tagging
+- Fix add to cart viewed product event
+- Use direct include for Nosto script
+- Fix product status issue when product visibility is changed
+- Add more error messages and warnings when settings are not correct or something goes wrong
+- Refactor auto slots logic so that recos are not loaded twice
+- Fix image urls to use https when SSL is enabled everywhere 
+
 ## 2.6.2
 - Make plug-in compatible with PHP 5.2
 

@@ -22,11 +22,6 @@
 * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *}
 
-{if isset($nosto_customer) && is_object($nosto_customer)}
-	<div class="nosto_customer" style="display:none">
-		<span class="first_name">{$nosto_customer->first_name|escape:'htmlall':'UTF-8'}</span>
-		<span class="last_name">{$nosto_customer->last_name|escape:'htmlall':'UTF-8'}</span>
-		<span class="email">{$nosto_customer->email|escape:'htmlall':'UTF-8'}</span>
-		<span class="customer_reference">{$nosto_customer->customer_reference|escape:'htmlall':'UTF-8'}</span>
-	</div>
+{if isset($nosto_page_type) && is_scalar($nosto_page_type)}
+  <div class="nosto_page_type" style="display:none">{$nosto_page_type|escape:'htmlall':'UTF-8'}</div>
 {/if}
