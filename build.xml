@@ -90,6 +90,7 @@
             <arg value="s/__DIR__/dir\(__FILE__\)/g" />
             <arg value="${buildsrc}/libs/autoload.php" />
         </exec>
+        <delete file="${buildsrc}/libs/autoload.php-e" />
         <echo msg="Making Prestashop validator compatibility hacks" />
         <exec executable="sed">
             <arg value="-i" />
@@ -103,6 +104,7 @@
             <arg value="s/$this->version = self::PLUGIN_VERSION/$this->version = '${version}'/g" />
             <arg value="${buildsrc}/nostotagging.php" />
         </exec>
+        <delete file="${buildsrc}/nostotagging.php-e" />
     </target>
 
     <target name="phpmd">
@@ -148,6 +150,7 @@
             <exclude name="**/*codeception*" />
             <exclude name="libs/**" />
             <exclude name="**/*package.json*" />
+            <exclude name="config.xml" />
         </patternset>
     </fileset>
 
