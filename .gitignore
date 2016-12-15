@@ -2,3 +2,4 @@ libs/
 build/package
 build/src
 NOSTO_DEBUG_LOG_FILE
+config.xml
