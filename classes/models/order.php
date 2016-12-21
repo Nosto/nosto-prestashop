@@ -451,6 +451,7 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
             return $product->getAttributeCombinationsById($id_product_attribute, $id_lang);
         }
 
+        $db_prefix = pSQL(_DB_PREFIX_);
         return Db::getInstance()->executeS(
             'SELECT
                 pa.*,
@@ -461,20 +462,20 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
                 a.`id_attribute`,
                 pa.`unit_price_impact`
             FROM
-              `'._DB_PREFIX_.'product_attribute` pa
+              `'. $db_prefix .'product_attribute` pa
             LEFT JOIN
-                `'._DB_PREFIX_.'product_attribute_combination` pac
+                `'. $db_prefix .'product_attribute_combination` pac
                 ON pac.`id_product_attribute` = pa.`id_product_attribute`
             LEFT JOIN
-                `'._DB_PREFIX_.'attribute` a ON a.`id_attribute` = pac.`id_attribute`
+                `'. $db_prefix .'attribute` a ON a.`id_attribute` = pac.`id_attribute`
             LEFT JOIN
-                `'._DB_PREFIX_.'attribute_group` ag
+                `'. $db_prefix .'attribute_group` ag
                 ON ag.`id_attribute_group` = a.`id_attribute_group`
             LEFT JOIN
-                `'._DB_PREFIX_.'attribute_lang` al
+                `'. $db_prefix .'attribute_lang` al
                 ON (a.`id_attribute` = al.`id_attribute` AND al.`id_lang` = '.(int)($id_lang).')
             LEFT JOIN
-                `'._DB_PREFIX_.'attribute_group_lang` agl
+                `'. $db_prefix .'attribute_group_lang` agl
                 ON (
                     ag.`id_attribute_group` = agl.`id_attribute_group`
                     AND agl.`id_lang` = '.(int)($id_lang).'
