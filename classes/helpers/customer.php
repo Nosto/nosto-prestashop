@@ -41,7 +41,7 @@ class NostoTaggingHelperCustomer
      */
     public static function getCustomerLinkTableName()
     {
-        return _DB_PREFIX_.self::TABLE_NAME_CUSTOMER_LINK;
+        return pSQL(_DB_PREFIX_.self::TABLE_NAME_CUSTOMER_LINK);
     }
 
     /**
@@ -171,9 +171,9 @@ class NostoTaggingHelperCustomer
     public function getCustomerReference(Customer $customer)
     {
         $sql = sprintf(
-            'SELECT `customer_reference` FROM `%s` WHERE `id_customer` = \'%s\'',
+            'SELECT `customer_reference` FROM `%s` WHERE `id_customer` = \'%d\'',
             self::getCustomerReferenceTableName(),
-            $customer->id
+            (int)$customer->id
         );
 
         return Db::getInstance()->getValue($sql);
@@ -191,15 +191,16 @@ class NostoTaggingHelperCustomer
     {
         $table = self::getCustomerReferenceTableName();
         $customer_reference = pSQL($reference);
+        $customer_id = (int)$customer->id;
         $data = array(
-            'id_customer' => $customer->id,
+            'id_customer' => $customer_id,
             'customer_reference' => $customer_reference
         );
         $existing_id = Db::getInstance()->getRow(
             sprintf(
-                'SELECT id_customer FROM `%s` WHERE id_customer = \'%s\'',
+                'SELECT id_customer FROM `%s` WHERE id_customer = \'%d\'',
                 $table,
-                $customer->id
+                $customer_id
             )
         );
         if (empty($existing_id)) {
@@ -211,8 +212,8 @@ class NostoTaggingHelperCustomer
         } else {
             unset($data['id_customer']);
             $where = sprintf(
-                'id_customer=\'%s\'',
-                $customer->id
+                'id_customer=\'%d\'',
+                $customer_id
             );
             if (_PS_VERSION_ >= '1.5') {
                 return Db::getInstance()->update($table, $data, $where, 0, false, true, false);

@@ -85,7 +85,7 @@ class NostoTaggingHelperUrl
             // Find a category that is active, not the root category and has a parent category.
                 $sql = '
                     SELECT `id_category`
-                    FROM `'._DB_PREFIX_.'category`
+                    FROM `'.pSQL(_DB_PREFIX_).'category`
                     WHERE `active` = 1
                     AND `id_parent` > 0
 				';
