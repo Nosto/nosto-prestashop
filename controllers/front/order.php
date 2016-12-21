@@ -98,7 +98,7 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
                 LIMIT %d
                 OFFSET %d
             ',
-            _DB_PREFIX_,
+            pSQL(_DB_PREFIX_),
             $where,
             $this->limit,
             $this->offset
@@ -109,6 +109,7 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
         foreach ($rows as $row) {
             $order_ids[] = (int)$row['id_order'];
         }
+
         return $order_ids;
     }
 }
