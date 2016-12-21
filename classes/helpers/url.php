@@ -45,7 +45,7 @@ class NostoTaggingHelperUrl
             // Find a product that is active and available for order.
                 $sql = '
                     SELECT `id_product`
-                    FROM `'._DB_PREFIX_.'product`
+                    FROM `'.pSQL(_DB_PREFIX_).'product`
                     WHERE `active` = 1
                     AND `available_for_order` = 1
                 ';

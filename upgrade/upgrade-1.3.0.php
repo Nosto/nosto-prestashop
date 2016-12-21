@@ -41,8 +41,8 @@ if (!defined('_PS_VERSION_')) {
 function upgrade_module_1_3_0($object)
 {
     // Purge the nosto configs the plugin have created so far and reload the config.
-    $config_table = _DB_PREFIX_.'configuration';
-    $config_lang_table = $config_table.'_lang';
+    $config_table = pSQL(_DB_PREFIX_.'configuration');
+    $config_lang_table = pSQL($config_table.'_lang');
     Db::getInstance()->execute('
 			DELETE `'.$config_lang_table.'` FROM `'.$config_lang_table.'`
 			LEFT JOIN `'.$config_table.'`

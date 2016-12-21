@@ -165,8 +165,8 @@ class NostoTaggingHelperConfig
             $context_restriction = '';
         }
 
-        $config_table = _DB_PREFIX_ . 'configuration';
-        $config_lang_table = $config_table . '_lang';
+        $config_table = pSQL(_DB_PREFIX_ . 'configuration');
+        $config_lang_table = pSQL($config_table . '_lang');
 
         if (!empty($id_lang)) {
             Db::getInstance()->execute(

@@ -51,7 +51,7 @@ class NostoTaggingHelperCustomer
      */
     public static function getCustomerReferenceTableName()
     {
-        return _DB_PREFIX_.self::TABLE_NAME_CUSTOMER_REFERENCE;
+        return pSQL(_DB_PREFIX_.self::TABLE_NAME_CUSTOMER_REFERENCE);
     }
 
     /**

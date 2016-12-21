@@ -61,7 +61,7 @@ class NostoTaggingHelperImage
         $definition = (_PS_VERSION_ >= '1.5') ? ObjectModel::getDefinition('ImageType') : array();
         $table_name = isset($definition['table']) ? $definition['table'] : 'image_type';
         $available_image_types = Db::getInstance()->executeS('
-			SELECT * FROM `'._DB_PREFIX_.pSQL($table_name).'`
+			SELECT * FROM `'.pSQL(_DB_PREFIX_.$table_name).'`
 			WHERE `products` = 1
 			ORDER BY `width` ASC
 		');
