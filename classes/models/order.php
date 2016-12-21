@@ -451,7 +451,7 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
             return $product->getAttributeCombinationsById($id_product_attribute, $id_lang);
         }
 
-        return Db::getInstance()->ExecuteS(
+        return Db::getInstance()->executeS(
             'SELECT
                 pa.*,
                 ag.`id_attribute_group`,
@@ -460,32 +460,32 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
                 al.`name` attribute_name,
                 a.`id_attribute`,
                 pa.`unit_price_impact`
-			FROM
-			  `'._DB_PREFIX_.'product_attribute` pa
-			LEFT JOIN
-			    `'._DB_PREFIX_.'product_attribute_combination` pac
-			    ON pac.`id_product_attribute` = pa.`id_product_attribute`
-			LEFT JOIN
-			    `'._DB_PREFIX_.'attribute` a ON a.`id_attribute` = pac.`id_attribute`
-			LEFT JOIN
-			    `'._DB_PREFIX_.'attribute_group` ag
-			    ON ag.`id_attribute_group` = a.`id_attribute_group`
-			LEFT JOIN
-			    `'._DB_PREFIX_.'attribute_lang` al
-			    ON (a.`id_attribute` = al.`id_attribute` AND al.`id_lang` = '.(int)($id_lang).')
-			LEFT JOIN
-			    `'._DB_PREFIX_.'attribute_group_lang` agl
-			    ON (
-			        ag.`id_attribute_group` = agl.`id_attribute_group`
-			        AND agl.`id_lang` = '.(int)($id_lang).'
-			    )
-			WHERE
-			    pa.`id_product` = '.(int)($product->id).'
-			AND
-			    pa.`id_product_attribute` = '.(int)$id_product_attribute.'
-			GROUP BY
-			    pa.`id_product_attribute`, ag.`id_attribute_group`
-			ORDER BY pa.`id_product_attribute`'
+            FROM
+              `'._DB_PREFIX_.'product_attribute` pa
+            LEFT JOIN
+                `'._DB_PREFIX_.'product_attribute_combination` pac
+                ON pac.`id_product_attribute` = pa.`id_product_attribute`
+            LEFT JOIN
+                `'._DB_PREFIX_.'attribute` a ON a.`id_attribute` = pac.`id_attribute`
+            LEFT JOIN
+                `'._DB_PREFIX_.'attribute_group` ag
+                ON ag.`id_attribute_group` = a.`id_attribute_group`
+            LEFT JOIN
+                `'._DB_PREFIX_.'attribute_lang` al
+                ON (a.`id_attribute` = al.`id_attribute` AND al.`id_lang` = '.(int)($id_lang).')
+            LEFT JOIN
+                `'._DB_PREFIX_.'attribute_group_lang` agl
+                ON (
+                    ag.`id_attribute_group` = agl.`id_attribute_group`
+                    AND agl.`id_lang` = '.(int)($id_lang).'
+                )
+            WHERE
+                pa.`id_product` = '.(int)($product->id).'
+            AND
+                pa.`id_product_attribute` = '.(int)$id_product_attribute.'
+            GROUP BY
+                pa.`id_product_attribute`, ag.`id_attribute_group`
+            ORDER BY pa.`id_product_attribute`'
         );
     }
 }

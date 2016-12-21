@@ -111,8 +111,8 @@ class NostoTaggingHelperConfig
      */
     public function purge()
     {
-        $config_table = _DB_PREFIX_ . 'configuration';
-        $config_lang_table = $config_table . '_lang';
+        $config_table = pSQL(_DB_PREFIX_ . 'configuration');
+        $config_lang_table = pSQL($config_table . '_lang');
 
         Db::getInstance()->execute(
             'DELETE `' . $config_lang_table . '` FROM `' . $config_lang_table . '`
