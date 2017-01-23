@@ -103,6 +103,7 @@ class NostoTaggingHelperNotification
                 $helper_currency = Nosto::helper('nosto_tagging/currency');
                 $forged_context = $context_factory->forgeContext($language->id, $shop->id);
                 $currencies = $helper_currency->getCurrencies($forged_context, true);
+                $context_factory->revertToOriginalContext();
                 if (count($currencies) > 1) {
                     $multicurrency_ok = false;
                 }
