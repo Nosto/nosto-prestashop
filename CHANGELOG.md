@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
+## 2.7.1
+- Fix the content forging to use cloned context
+
 ## 2.7.0
 - Support for Prestashop 1.7
 - Fix non-active product saving

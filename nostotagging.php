@@ -80,7 +80,7 @@ class NostoTagging extends Module
      * The version of the Nosto plug-in
      * @var string
      */
-    const PLUGIN_VERSION = '2.7.0';
+    const PLUGIN_VERSION = '2.7.1';
 
     /**
      * Internal name of the Nosto plug-in
