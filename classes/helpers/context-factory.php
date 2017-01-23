@@ -29,14 +29,25 @@
 class NostoTaggingHelperContextFactory
 {
     /**
-     * Forges a new context and replaces the current one.
+     * Holds the original shop id whever context is forged
+     * @var int
+     */
+    private $original_shop_id;
+
+    /**
+     * Forges a new context and returns the altered context
      *
      * @param int $id_lang the language ID to add to the new context.
      * @param int $id_shop the shop ID to add to the new context.
+     *
      * @return Context the new context.
      */
     public function forgeContext($id_lang, $id_shop)
     {
+        /* @var ContextCore $context */
+        $context = Context::getContext();
+        $this->saveOriginalContext($context);
+        $forged_context = $context->cloneContext();
         if (_PS_VERSION_ >= '1.5') {
             // Reset the shop context to be the current processed shop. This will fix the "friendly url" format of urls
             // generated through the Link class.
@@ -60,12 +71,33 @@ class NostoTaggingHelperContextFactory
             }
         }
 
-        $context = Context::getContext();
-        $context->language = new Language($id_lang);
-        $context->shop = new Shop($id_shop);
-        $context->link = new Link('http://', 'http://');
-        $context->currency = isset($currency) ? $currency : Currency::getDefaultCurrency();
+        $forged_context->language = new Language($id_lang);
+        $forged_context->shop = new Shop($id_shop);
+        $forged_context->link = new Link('http://', 'http://');
+        $forged_context->currency = isset($currency) ? $currency : Currency::getDefaultCurrency();
 
-        return $context;
+        return $forged_context;
+    }
+
+    /**
+     * Saves necessary parts of current context so those can be reverted
+     *
+     * @param Context $context
+     */
+    private function saveOriginalContext(Context $context)
+    {
+        if (isset($context->shop) && !empty($context->shop->id)) {
+            $this->original_shop_id = $context->shop->id;
+        }
+    }
+
+    /**
+     * Reverst the active context to the original one (before calling forgeContext)
+     */
+    public function revertToOriginalContext()
+    {
+        if (_PS_VERSION_ >= '1.5' && !empty($this->original_shop_id)) {
+            Shop::setContext(Shop::CONTEXT_SHOP, $this->original_shop_id);
+        }
     }
 }

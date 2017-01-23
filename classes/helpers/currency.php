@@ -299,6 +299,8 @@ class NostoTaggingHelperCurrency
                                     $nosto_account->getName()
                                 )
                             );
+                        } else {
+                            $context_factory->revertToOriginalContext();
                         }
                     }
                 }
