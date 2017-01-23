@@ -150,7 +150,7 @@
             <exclude name="**/*codeception*" />
             <exclude name="libs/**" />
             <exclude name="**/*package.json*" />
-            <exclude name="config.xml" />
+            <exclude name="config*.xml" />
         </patternset>
     </fileset>
 
