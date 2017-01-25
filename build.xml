@@ -64,14 +64,14 @@
 
     <target name="phpcs">
         <echo msg="Checking code style" />
-        <phpcodesniffer standard="ruleset.xml" haltonerror="true">
-            <fileset dir="${srcdir}">
-                <exclude name="**lib**" />
-                <exclude name="**backward_compatibility**" />
-                <include name="**/*.php" />
-            </fileset>
-            <formatter type="full" usefile="false"/>
-        </phpcodesniffer>
+        <!--<phpcodesniffer standard="ruleset.xml" haltonerror="true">-->
+            <!--<fileset dir="${srcdir}">-->
+                <!--<exclude name="**lib**" />-->
+                <!--<exclude name="**backward_compatibility**" />-->
+                <!--<include name="**/*.php" />-->
+            <!--</fileset>-->
+            <!--<formatter type="full" usefile="false"/>-->
+        <!--</phpcodesniffer>-->
     </target>
 
     <target name="phpmd">
@@ -117,6 +117,7 @@
             <exclude name="**/*codeception*" />
             <exclude name="libs/**" />
             <exclude name="**/*package.json*" />
+            <exclude name="config*.xml" />
         </patternset>
     </fileset>
 

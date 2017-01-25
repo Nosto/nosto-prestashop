@@ -362,6 +362,7 @@ class NostoTaggingHelperCurrency
                                 )
                             );
                         }
+                        $context_factory->revertToOriginalContext();
                     }
                 }
             }
