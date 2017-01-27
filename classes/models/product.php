@@ -219,10 +219,7 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
             $tagging_currency= $context->currency;
         }
         $this->url = $url_helper->getProductUrl($product, $id_lang, $id_shop);
-        $link = null;
-        if (Configuration::get('PS_SSL_ENABLED_EVERYWHERE')) {
-            $link = new Link('https://', 'https://');
-        }
+        $link = NostoTaggingHelperImage::getImageClass();
         $this->image_url = $helper_image->getProductImageUrl($product, $id_lang, $link);
         $this->product_id = (int)$product->id;
         $this->name = $product->name;
@@ -241,25 +238,22 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
                 $tagging_currency
             )
         );
-
         $supplier_cost = $helper_price->getProductWholesalePriceInclTax(
             $product,
             $context,
             $tagging_currency
         );
-
         if ($supplier_cost !== null && is_numeric($supplier_cost)) {
             $this->supplier_cost = $nosto_helper_price->format($supplier_cost);
         }
         $this->currency_code = Tools::strtoupper($tagging_currency->iso_code);
-
         $this->availability = $this->checkAvailability($product);
         $this->tags['tag1'] = $this->buildTags($product, $id_lang);
         $this->categories = $this->buildCategories($product, $id_lang);
         $this->short_description = $product->description_short;
         $this->description = $product->description;
         $this->brand = $this->buildBrand($product);
-
+        $this->amendAlternateImages($product, $id_lang);
         $this->dispatchHookActionLoadAfter(array(
             'nosto_product' => $this,
             'product' => $product,
@@ -267,6 +261,15 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
         ));
     }
 
+    protected function amendAlternateImages(Product $product, $id_lang)
+    {
+        /** @var NostoTaggingHelperImage $helper_image */
+        $helper_image = Nosto::helper('nosto_tagging/image');
+        $images = $helper_image->getAlternateProductImageUrls($product, $id_lang);
+        foreach ($images as $image_url) {
+            $this->alternate_image_urls[] = $image_url;
+        }
+    }
     /**
      * Assigns the product ID from given product.
      *
