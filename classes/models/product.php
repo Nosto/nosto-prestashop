@@ -103,6 +103,74 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
     protected $brand;
 
     /**
+     * @var float the price paid for the supplier
+     */
+    protected $supplier_cost;
+
+    /**
+     * @var int product stock
+     */
+    protected $inventoryLevel;
+
+    /**
+     * @var int the amount of reviews
+     */
+    protected $reviewCount;
+
+    /**
+     * @var float the value of the rating(s)
+     */
+    protected $ratingValue;
+
+    /**
+     * @var array alternative image urls
+     */
+    protected $alternate_image_urls;
+
+    /**
+     * @var string the condition of the product
+     */
+    protected $condition;
+
+    /**
+     * @var string the gender (target group) of the product
+     */
+    protected $gender;
+
+    /**
+     * @var string the the age group
+     */
+    protected $age_group;
+
+    /**
+     * @var string the barcode
+     */
+    protected $gtin;
+
+    /**
+     * @var string category used in Google's services
+     */
+    protected $google_category;
+
+    /**
+     * @var string the pricing measure of the product. Pricing measure for a
+     * 0.33 liter bottle for example is "0.33".
+     */
+    protected $unit_pricing_measure;
+
+    /**
+     * @var string the pricing base measure of the product. Pricing base measure
+     * for a 0.33l bottle is "1".
+     */
+    protected $unit_pricing_base_measure;
+
+    /**
+     * @var string the pricing unit of the product. Pricing unit for a 0.33l
+     * bottle is "l" (litre).
+     */
+    protected $unit_pricing_unit;
+    
+    /**
      * @inheritdoc
      */
     public function getValidationRules()
@@ -173,6 +241,16 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
                 $tagging_currency
             )
         );
+
+        $supplier_cost = $helper_price->getProductWholesalePriceInclTax(
+            $product,
+            $context,
+            $tagging_currency
+        );
+
+        if ($supplier_cost !== null && is_numeric($supplier_cost)) {
+            $this->supplier_cost = $nosto_helper_price->format($supplier_cost);
+        }
         $this->currency_code = Tools::strtoupper($tagging_currency->iso_code);
 
         $this->availability = $this->checkAvailability($product);
@@ -725,5 +803,213 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
     public function getVariationId()
     {
         return $this->variationId;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getSupplierCost()
+    {
+        return $this->supplier_cost;
+    }
+
+    /**
+     * @param float $supplier_cost
+     */
+    public function setSupplierCost($supplier_cost)
+    {
+        $this->supplier_cost = $supplier_cost;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getInventoryLevel()
+    {
+        return $this->inventoryLevel;
+    }
+
+    /**
+     * @param int $inventoryLevel
+     */
+    public function setInventoryLevel($inventoryLevel)
+    {
+        $this->inventoryLevel = $inventoryLevel;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getReviewCount()
+    {
+        return $this->reviewCount;
+    }
+
+    /**
+     * @param int $reviewCount
+     */
+    public function setReviewCount($reviewCount)
+    {
+        $this->reviewCount = $reviewCount;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getRatingValue()
+    {
+        return $this->ratingValue;
+    }
+
+    /**
+     * @param float $ratingValue
+     */
+    public function setRatingValue($ratingValue)
+    {
+        $this->ratingValue = $ratingValue;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getAlternateImageurls()
+    {
+        return $this->alternate_image_urls;
+    }
+
+    /**
+     * @param array $alternate_image_urls
+     */
+    public function setAlternateImageurls($alternate_image_urls)
+    {
+        $this->alternate_image_urls = $alternate_image_urls;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getCondition()
+    {
+        return $this->condition;
+    }
+
+    /**
+     * @param string $condition
+     */
+    public function setCondition($condition)
+    {
+        $this->condition = $condition;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getGender()
+    {
+        return $this->gender;
+    }
+
+    /**
+     * @param string $gender
+     */
+    public function setGender($gender)
+    {
+        $this->gender = $gender;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getAgeGroup()
+    {
+        return $this->age_group;
+    }
+
+    /**
+     * @param string $age_group
+     */
+    public function setAgeGroup($age_group)
+    {
+        $this->age_group = $age_group;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getGtin()
+    {
+        return $this->gtin;
+    }
+
+    /**
+     * @param string $gtin
+     */
+    public function setGtin($gtin)
+    {
+        $this->gtin = $gtin;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getGoogleCategory()
+    {
+        return $this->google_category;
+    }
+
+    /**
+     * @param string $google_category
+     */
+    public function setGoogleCategory($google_category)
+    {
+        $this->google_category = $google_category;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getUnitPricingmeasure()
+    {
+        return $this->unit_pricing_measure;
+    }
+
+    /**
+     * @param string $unit_pricing_measure
+     */
+    public function setUnitPricingmeasure($unit_pricing_measure)
+    {
+        $this->unit_pricing_measure = $unit_pricing_measure;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getUnitPricingbasemeasure()
+    {
+        return $this->unit_pricing_base_measure;
+    }
+
+    /**
+     * @param string $unit_pricing_base_measure
+     */
+    public function setUnitPricingbasemeasure($unit_pricing_base_measure)
+    {
+        $this->unit_pricing_base_measure = $unit_pricing_base_measure;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getUnitpricingUnit()
+    {
+        return $this->unit_pricing_unit;
+    }
+
+    /**
+     * @param string $unit_pricing_unit
+     */
+    public function setUnitpricingUnit($unit_pricing_unit)
+    {
+        $this->unit_pricing_unit = $unit_pricing_unit;
     }
 }
