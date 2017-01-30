@@ -286,7 +286,7 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
         $helper_image = Nosto::helper('nosto_tagging/image');
         $images = $helper_image->getAlternateProductImageUrls($product, $id_lang);
         foreach ($images as $image_url) {
-            $this->alternate_image_urls[] = $image_url;
+            $this->addAlternateImage($image_url);
         }
     }
     /**
@@ -1033,5 +1033,15 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
     public function setUnitpricingUnit($unit_pricing_unit)
     {
         $this->unit_pricing_unit = $unit_pricing_unit;
+    }
+
+    public function addAlternateImage($imageUrl)
+    {
+        if (
+            !in_array($imageUrl, $this->alternate_image_urls)
+            && $imageUrl != $this->image_url
+        ) {
+            $this->alternate_image_urls[] = $imageUrl;
+        }
     }
 }

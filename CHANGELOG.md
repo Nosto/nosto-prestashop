@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
+## 2.8.0
+- Send following attributes to Nosto
+    - inventory level
+    - supplier cost / wholesale price
+    - alternative images
+
 ## 2.7.1
 - Fix the content forging to use cloned context
 
