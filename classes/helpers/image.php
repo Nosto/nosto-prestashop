@@ -122,7 +122,7 @@ class NostoTaggingHelperImage
 
     public function getAlternateProductImageUrls(Product $product, $id_lang)
     {
-        $alternate_images = array();
+        $alternate_image_urls = array();
         $images = Image::getImages((int)$id_lang, (int)$product->id);
         foreach ($images as $image) {
             $link = self::getImageClass();

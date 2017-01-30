@@ -24,6 +24,7 @@
 
 {if isset($nosto_cart) && is_object($nosto_cart)}
 	<div class="nosto_cart" style="display:none">
+		<span class="hcid">{$nosto_hcid|escape:'htmlall':'UTF-8'}</span>
 		{foreach from=$nosto_cart->line_items item=line_item}
 			<div class="line_item">
 				<span class="product_id">{$line_item.product_id|escape:'htmlall':'UTF-8'}</span>

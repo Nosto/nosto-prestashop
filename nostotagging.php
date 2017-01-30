@@ -100,6 +100,21 @@ class NostoTagging extends Module
     const PAGE_TYPE_ORDER = 'order';
 
     /**
+     * Nosto cookie name
+     */
+    const COOKIE_NAME = '2c_cId';
+
+    /**
+     * Global cookie scope
+     */
+    const GLOBAL_COOKIES = '_COOKIE';
+
+    /**
+     * @var string the algorithm to use for hashing visitor id.
+     */
+    const VISITOR_HASH_ALGO = 'sha256';
+
+    /**
      * Keeps the state of Nosto default tagging
      *
      * @var boolean
@@ -1606,6 +1621,7 @@ class NostoTagging extends Module
 
         $this->getSmarty()->assign(array(
             'nosto_customer' => $nosto_customer,
+            'nosto_hcid' => self::getVisitorChecksum()
         ));
 
         return $this->display(__FILE__, 'views/templates/hook/top_customer-tagging.tpl');
@@ -1623,6 +1639,7 @@ class NostoTagging extends Module
 
         $this->getSmarty()->assign(array(
             'nosto_cart' => $nosto_cart,
+            'nosto_hcid' => self::getVisitorChecksum()
         ));
 
         return $this->display(__FILE__, 'views/templates/hook/top_cart-tagging.tpl');
@@ -1952,5 +1969,33 @@ class NostoTagging extends Module
                 break;
             default:
         }
+    }
+
+    public static function readNostoCookie()
+    {
+        // We use the $GLOBALS here, instead of the Prestashop cookie class, as we are accessing a
+        // nosto cookie that have been set by the JavaScript loaded from nosto.com. Accessing global $_COOKIE array
+        // is not allowed by Prestashop's new validation rules effective from April 2016.
+        // We read it to keep a mapping of the Nosto user ID and the Prestashop user ID so we can identify which user
+        // actually completed an order. We do this for tracking whether or not to send abandoned cart emails.
+        if ($GLOBALS[self::GLOBAL_COOKIES] && isset($GLOBALS[self::GLOBAL_COOKIES][self::COOKIE_NAME])) {
+            return $GLOBALS[self::GLOBAL_COOKIES][self::COOKIE_NAME];
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Return the checksum for visitor
+     *
+     * @return string
+     */
+    public function getVisitorChecksum()
+    {
+        $coo = self::readNostoCookie();
+        if ($coo) {
+            return hash(self::VISITOR_HASH_ALGO, $coo);
+        }
+        return null;
     }
 }
