@@ -110,22 +110,22 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
     /**
      * @var int product stock
      */
-    protected $inventoryLevel;
+    protected $inventory_level;
 
     /**
      * @var int the amount of reviews
      */
-    protected $reviewCount;
+    protected $review_count;
 
     /**
      * @var float the value of the rating(s)
      */
-    protected $ratingValue;
+    protected $rating_value;
 
     /**
      * @var array alternative image urls
      */
-    protected $alternate_image_urls;
+    protected $alternate_image_urls = array();
 
     /**
      * @var string the condition of the product
@@ -192,14 +192,10 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 
         /** @var NostoTaggingHelperUrl $url_helper */
         $url_helper = Nosto::helper('nosto_tagging/url');
-        /** @var NostoTaggingHelperPrice $helper_price */
-        $helper_price = Nosto::helper('nosto_tagging/price');
         /** @var NostoTaggingHelperCurrency $helper_currency */
         $helper_currency = Nosto::helper('nosto_tagging/currency');
         /** @var NostoTaggingHelperConfig $helper_config */
         $helper_config = Nosto::helper('nosto_tagging/config');
-        /** @var NostoHelperPrice $helper_config */
-        $nosto_helper_price = Nosto::helper('nosto/price');
         /** @var NostoTaggingHelperImage $helper_image */
         $helper_image = Nosto::helper('nosto_tagging/image');
         $base_currency = $helper_currency->getBaseCurrency($context);
@@ -224,36 +220,16 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
         $this->product_id = (int)$product->id;
         $this->name = $product->name;
 
-        $this->price = $nosto_helper_price->format(
-            $helper_price->getProductPriceInclTax(
-                $product,
-                $context,
-                $tagging_currency
-            )
-        );
-        $this->list_price = $nosto_helper_price->format(
-            $helper_price->getProductListPriceInclTax(
-                $product,
-                $context,
-                $tagging_currency
-            )
-        );
-        $supplier_cost = $helper_price->getProductWholesalePriceInclTax(
-            $product,
-            $context,
-            $tagging_currency
-        );
-        if ($supplier_cost !== null && is_numeric($supplier_cost)) {
-            $this->supplier_cost = $nosto_helper_price->format($supplier_cost);
-        }
         $this->currency_code = Tools::strtoupper($tagging_currency->iso_code);
         $this->availability = $this->checkAvailability($product);
         $this->tags['tag1'] = $this->buildTags($product, $id_lang);
         $this->categories = $this->buildCategories($product, $id_lang);
         $this->short_description = $product->description_short;
         $this->description = $product->description;
+        $this->inventory_level = (int)$product->quantity;
         $this->brand = $this->buildBrand($product);
         $this->amendAlternateImages($product, $id_lang);
+        $this->amendPrices($product, $context, $tagging_currency);
         $this->dispatchHookActionLoadAfter(array(
             'nosto_product' => $this,
             'product' => $product,
@@ -261,6 +237,49 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
         ));
     }
 
+    /**
+     * Sets the prices for the product
+     *
+     * @param Product $product
+     * @param Context $context
+     * @param Currency $currency
+     */
+    protected function amendPrices(Product $product, Context $context, Currency $currency)
+    {
+        /** @var NostoHelperPrice $helper_config */
+        $nosto_helper_price = Nosto::helper('nosto/price');
+        /** @var NostoTaggingHelperPrice $helper_price */
+        $helper_price = Nosto::helper('nosto_tagging/price');
+        $this->price = $nosto_helper_price->format(
+            $helper_price->getProductPriceInclTax(
+                $product,
+                $context,
+                $currency
+            )
+        );
+        $this->list_price = $nosto_helper_price->format(
+            $helper_price->getProductListPriceInclTax(
+                $product,
+                $context,
+                $currency
+            )
+        );
+        $supplier_cost = $helper_price->getProductWholesalePriceInclTax(
+            $product,
+            $context,
+            $currency
+        );
+        if ($supplier_cost !== null && is_numeric($supplier_cost)) {
+            $this->supplier_cost = $nosto_helper_price->format($supplier_cost);
+        }
+    }
+
+    /**
+     * Sets the alternate images for the product
+     *
+     * @param Product $product
+     * @param $id_lang
+     */
     protected function amendAlternateImages(Product $product, $id_lang)
     {
         /** @var NostoTaggingHelperImage $helper_image */
@@ -800,7 +819,7 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
         $this->variationId = $variationId;
     }
 
-    /*
+    /**
      * @inheritdoc
      */
     public function getVariationId()
@@ -829,15 +848,15 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
      */
     public function getInventoryLevel()
     {
-        return $this->inventoryLevel;
+        return $this->inventory_level;
     }
 
     /**
-     * @param int $inventoryLevel
+     * @param int $inventory_level
      */
-    public function setInventoryLevel($inventoryLevel)
+    public function setInventoryLevel($inventory_level)
     {
-        $this->inventoryLevel = $inventoryLevel;
+        $this->inventory_level = $inventory_level;
     }
 
     /**
@@ -845,15 +864,15 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
      */
     public function getReviewCount()
     {
-        return $this->reviewCount;
+        return $this->review_count;
     }
 
     /**
-     * @param int $reviewCount
+     * @param int $review_count
      */
-    public function setReviewCount($reviewCount)
+    public function setReviewCount($review_count)
     {
-        $this->reviewCount = $reviewCount;
+        $this->review_count = $review_count;
     }
 
     /**
@@ -861,15 +880,15 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
      */
     public function getRatingValue()
     {
-        return $this->ratingValue;
+        return $this->rating_value;
     }
 
     /**
-     * @param float $ratingValue
+     * @param float $rating_value
      */
-    public function setRatingValue($ratingValue)
+    public function setRatingValue($rating_value)
     {
-        $this->ratingValue = $ratingValue;
+        $this->rating_value = $rating_value;
     }
 
     /**
