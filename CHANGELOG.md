@@ -7,6 +7,7 @@ This project adheres to Semantic Versioning(http://semver.org/).
     - inventory level
     - supplier cost / wholesale price
     - alternative images
+- Add hcid tagging to handle caching cart and customer tagging 
 
 ## 2.7.1
 - Fix the content forging to use cloned context
