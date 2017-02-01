@@ -131,7 +131,6 @@ class NostoTaggingHelperImage
             if ($url) {
                 $alternate_image_urls[] = $url;
             }
-
         }
 
         return $alternate_image_urls;
