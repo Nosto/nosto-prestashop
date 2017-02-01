@@ -125,11 +125,13 @@ class NostoTaggingHelperImage
         $alternate_image_urls = array();
         $images = Image::getImages((int)$id_lang, (int)$product->id);
         foreach ($images as $image) {
+            $image_type = $this->getTaggingImageTypeName($id_lang);
             $link = self::getImageClass();
-            $url = $link->getImageLink($product->link_rewrite, $image['id_image']);
+            $url = $link->getImageLink($product->link_rewrite, $image['id_image'], $image_type);
             if ($url) {
                 $alternate_image_urls[] = $url;
             }
+
         }
 
         return $alternate_image_urls;
