@@ -55,6 +55,30 @@ class NostoTaggingHelperPrice
     }
 
     /**
+     * Returns the product wholesale price including taxes for the given currency.
+     *
+     * @param Product|ProductCore $product the product.
+     * @return NostoPrice the price.
+     */
+    public function getProductWholesalePriceInclTax(Product $product)
+    {
+        $wholesale_price_exc_taxes = $product->wholesale_price;
+        if ($wholesale_price_exc_taxes > 0) {
+            if ($product->tax_rate > 0) {
+                $wholesale_price_inc_taxes = $this->roundPrice(
+                    $wholesale_price_exc_taxes*(1+$product->tax_rate/100)
+                );
+            } else {
+                $wholesale_price_inc_taxes = $wholesale_price_exc_taxes;
+            }
+        } else {
+            $wholesale_price_inc_taxes = null;
+        }
+
+        return $wholesale_price_inc_taxes;
+    }
+
+    /**
      * Returns the cart item price including taxes for the given currency.
      *
      * @param Cart|CartCore $cart the cart.

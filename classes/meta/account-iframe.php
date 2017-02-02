@@ -94,6 +94,11 @@ class NostoTaggingMetaAccountIframe implements NostoAccountMetaDataIframeInterfa
     protected $shop_name;
 
     /**
+     * @var array installed modules
+     */
+    protected $modules;
+
+    /**
      * Loads the meta-data from context.
      *
      * @param Context $context the context to get the meta-data from.
@@ -361,5 +366,23 @@ class NostoTaggingMetaAccountIframe implements NostoAccountMetaDataIframeInterfa
     public function getShopName()
     {
         return $this->shop_name;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getModules()
+    {
+        return $this->modules;
+    }
+
+    /**
+     * Setter for the modules
+     *
+     * @param array $modules
+     */
+    public function setModules(array $modules)
+    {
+        $this->modules = $modules;
     }
 }

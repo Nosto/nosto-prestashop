@@ -61,7 +61,7 @@ class NostoTaggingHelperImage
         $definition = (_PS_VERSION_ >= '1.5') ? ObjectModel::getDefinition('ImageType') : array();
         $table_name = isset($definition['table']) ? $definition['table'] : 'image_type';
         $available_image_types = Db::getInstance()->executeS('
-			SELECT * FROM `'.pSQL(_DB_PREFIX_.$table_name).'`
+			SELECT * FROM `' . pSQL(_DB_PREFIX_ . $table_name) . '`
 			WHERE `products` = 1
 			ORDER BY `width` ASC
 		');
@@ -113,10 +113,43 @@ class NostoTaggingHelperImage
         if ((int)$image_id > 0) {
             $image_type = $this->getTaggingImageTypeName($id_lang);
             if (!empty($image_type)) {
-                return $link->getImageLink($product->link_rewrite, $product->id.'-'.$image_id, $image_type);
+                return $link->getImageLink($product->link_rewrite, $product->id . '-' . $image_id, $image_type);
             }
         }
 
         return '';
+    }
+
+    public function getAlternateProductImageUrls(Product $product, $id_lang)
+    {
+        $alternate_image_urls = array();
+        $images = Image::getImages((int)$id_lang, (int)$product->id);
+        foreach ($images as $image) {
+            $image_type = $this->getTaggingImageTypeName($id_lang);
+            $link = self::getImageClass();
+            $url = $link->getImageLink($product->link_rewrite, $image['id_image'], $image_type);
+            if ($url) {
+                $alternate_image_urls[] = $url;
+            }
+        }
+
+        return $alternate_image_urls;
+    }
+
+
+    /**
+     * Returns link class initialized with https or http
+     *
+     * @return Image
+     */
+    public static function getImageClass()
+    {
+        if (Configuration::get('PS_SSL_ENABLED_EVERYWHERE')) {
+            $link = new Link('https://', 'https://');
+        } else {
+            $link = new Link('http://', 'http://');
+        }
+
+        return $link;
     }
 }

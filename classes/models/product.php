@@ -103,6 +103,74 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
     protected $brand;
 
     /**
+     * @var float the price paid for the supplier
+     */
+    protected $supplier_cost;
+
+    /**
+     * @var int product stock
+     */
+    protected $inventory_level;
+
+    /**
+     * @var int the amount of reviews
+     */
+    protected $review_count;
+
+    /**
+     * @var float the value of the rating(s)
+     */
+    protected $rating_value;
+
+    /**
+     * @var array alternative image urls
+     */
+    protected $alternate_image_urls = array();
+
+    /**
+     * @var string the condition of the product
+     */
+    protected $condition;
+
+    /**
+     * @var string the gender (target group) of the product
+     */
+    protected $gender;
+
+    /**
+     * @var string the the age group
+     */
+    protected $age_group;
+
+    /**
+     * @var string the barcode
+     */
+    protected $gtin;
+
+    /**
+     * @var string category used in Google's services
+     */
+    protected $google_category;
+
+    /**
+     * @var string the pricing measure of the product. Pricing measure for a
+     * 0.33 liter bottle for example is "0.33".
+     */
+    protected $unit_pricing_measure;
+
+    /**
+     * @var string the pricing base measure of the product. Pricing base measure
+     * for a 0.33l bottle is "1".
+     */
+    protected $unit_pricing_base_measure;
+
+    /**
+     * @var string the pricing unit of the product. Pricing unit for a 0.33l
+     * bottle is "l" (litre).
+     */
+    protected $unit_pricing_unit;
+    
+    /**
      * @inheritdoc
      */
     public function getValidationRules()
@@ -124,14 +192,10 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
 
         /** @var NostoTaggingHelperUrl $url_helper */
         $url_helper = Nosto::helper('nosto_tagging/url');
-        /** @var NostoTaggingHelperPrice $helper_price */
-        $helper_price = Nosto::helper('nosto_tagging/price');
         /** @var NostoTaggingHelperCurrency $helper_currency */
         $helper_currency = Nosto::helper('nosto_tagging/currency');
         /** @var NostoTaggingHelperConfig $helper_config */
         $helper_config = Nosto::helper('nosto_tagging/config');
-        /** @var NostoHelperPrice $helper_config */
-        $nosto_helper_price = Nosto::helper('nosto/price');
         /** @var NostoTaggingHelperImage $helper_image */
         $helper_image = Nosto::helper('nosto_tagging/image');
         $base_currency = $helper_currency->getBaseCurrency($context);
@@ -151,37 +215,21 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
             $tagging_currency= $context->currency;
         }
         $this->url = $url_helper->getProductUrl($product, $id_lang, $id_shop);
-        $link = null;
-        if (Configuration::get('PS_SSL_ENABLED_EVERYWHERE')) {
-            $link = new Link('https://', 'https://');
-        }
+        $link = NostoTaggingHelperImage::getImageClass();
         $this->image_url = $helper_image->getProductImageUrl($product, $id_lang, $link);
         $this->product_id = (int)$product->id;
         $this->name = $product->name;
 
-        $this->price = $nosto_helper_price->format(
-            $helper_price->getProductPriceInclTax(
-                $product,
-                $context,
-                $tagging_currency
-            )
-        );
-        $this->list_price = $nosto_helper_price->format(
-            $helper_price->getProductListPriceInclTax(
-                $product,
-                $context,
-                $tagging_currency
-            )
-        );
         $this->currency_code = Tools::strtoupper($tagging_currency->iso_code);
-
         $this->availability = $this->checkAvailability($product);
         $this->tags['tag1'] = $this->buildTags($product, $id_lang);
         $this->categories = $this->buildCategories($product, $id_lang);
         $this->short_description = $product->description_short;
         $this->description = $product->description;
+        $this->inventory_level = (int)$product->quantity;
         $this->brand = $this->buildBrand($product);
-
+        $this->amendAlternateImages($product, $id_lang);
+        $this->amendPrices($product, $context, $tagging_currency);
         $this->dispatchHookActionLoadAfter(array(
             'nosto_product' => $this,
             'product' => $product,
@@ -189,6 +237,58 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
         ));
     }
 
+    /**
+     * Sets the prices for the product
+     *
+     * @param Product $product
+     * @param Context $context
+     * @param Currency $currency
+     */
+    protected function amendPrices(Product $product, Context $context, Currency $currency)
+    {
+        /** @var NostoHelperPrice $helper_config */
+        $nosto_helper_price = Nosto::helper('nosto/price');
+        /** @var NostoTaggingHelperPrice $helper_price */
+        $helper_price = Nosto::helper('nosto_tagging/price');
+        $this->price = $nosto_helper_price->format(
+            $helper_price->getProductPriceInclTax(
+                $product,
+                $context,
+                $currency
+            )
+        );
+        $this->list_price = $nosto_helper_price->format(
+            $helper_price->getProductListPriceInclTax(
+                $product,
+                $context,
+                $currency
+            )
+        );
+        $supplier_cost = $helper_price->getProductWholesalePriceInclTax(
+            $product,
+            $context,
+            $currency
+        );
+        if ($supplier_cost !== null && is_numeric($supplier_cost)) {
+            $this->supplier_cost = $nosto_helper_price->format($supplier_cost);
+        }
+    }
+
+    /**
+     * Sets the alternate images for the product
+     *
+     * @param Product $product
+     * @param $id_lang
+     */
+    protected function amendAlternateImages(Product $product, $id_lang)
+    {
+        /** @var NostoTaggingHelperImage $helper_image */
+        $helper_image = Nosto::helper('nosto_tagging/image');
+        $images = $helper_image->getAlternateProductImageUrls($product, $id_lang);
+        foreach ($images as $image_url) {
+            $this->addAlternateImage($image_url);
+        }
+    }
     /**
      * Assigns the product ID from given product.
      *
@@ -719,11 +819,229 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
         $this->variationId = $variationId;
     }
 
-    /*
+    /**
      * @inheritdoc
      */
     public function getVariationId()
     {
         return $this->variationId;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getSupplierCost()
+    {
+        return $this->supplier_cost;
+    }
+
+    /**
+     * @param float $supplier_cost
+     */
+    public function setSupplierCost($supplier_cost)
+    {
+        $this->supplier_cost = $supplier_cost;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getInventoryLevel()
+    {
+        return $this->inventory_level;
+    }
+
+    /**
+     * @param int $inventory_level
+     */
+    public function setInventoryLevel($inventory_level)
+    {
+        $this->inventory_level = $inventory_level;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getReviewCount()
+    {
+        return $this->review_count;
+    }
+
+    /**
+     * @param int $review_count
+     */
+    public function setReviewCount($review_count)
+    {
+        $this->review_count = $review_count;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getRatingValue()
+    {
+        return $this->rating_value;
+    }
+
+    /**
+     * @param float $rating_value
+     */
+    public function setRatingValue($rating_value)
+    {
+        $this->rating_value = $rating_value;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getAlternateImageurls()
+    {
+        return $this->alternate_image_urls;
+    }
+
+    /**
+     * @param array $alternate_image_urls
+     */
+    public function setAlternateImageurls($alternate_image_urls)
+    {
+        $this->alternate_image_urls = $alternate_image_urls;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getCondition()
+    {
+        return $this->condition;
+    }
+
+    /**
+     * @param string $condition
+     */
+    public function setCondition($condition)
+    {
+        $this->condition = $condition;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getGender()
+    {
+        return $this->gender;
+    }
+
+    /**
+     * @param string $gender
+     */
+    public function setGender($gender)
+    {
+        $this->gender = $gender;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getAgeGroup()
+    {
+        return $this->age_group;
+    }
+
+    /**
+     * @param string $age_group
+     */
+    public function setAgeGroup($age_group)
+    {
+        $this->age_group = $age_group;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getGtin()
+    {
+        return $this->gtin;
+    }
+
+    /**
+     * @param string $gtin
+     */
+    public function setGtin($gtin)
+    {
+        $this->gtin = $gtin;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getGoogleCategory()
+    {
+        return $this->google_category;
+    }
+
+    /**
+     * @param string $google_category
+     */
+    public function setGoogleCategory($google_category)
+    {
+        $this->google_category = $google_category;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getUnitPricingmeasure()
+    {
+        return $this->unit_pricing_measure;
+    }
+
+    /**
+     * @param string $unit_pricing_measure
+     */
+    public function setUnitPricingmeasure($unit_pricing_measure)
+    {
+        $this->unit_pricing_measure = $unit_pricing_measure;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getUnitPricingbasemeasure()
+    {
+        return $this->unit_pricing_base_measure;
+    }
+
+    /**
+     * @param string $unit_pricing_base_measure
+     */
+    public function setUnitPricingbasemeasure($unit_pricing_base_measure)
+    {
+        $this->unit_pricing_base_measure = $unit_pricing_base_measure;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getUnitpricingUnit()
+    {
+        return $this->unit_pricing_unit;
+    }
+
+    /**
+     * @param string $unit_pricing_unit
+     */
+    public function setUnitpricingUnit($unit_pricing_unit)
+    {
+        $this->unit_pricing_unit = $unit_pricing_unit;
+    }
+
+    public function addAlternateImage($imageUrl)
+    {
+        if (
+            !in_array($imageUrl, $this->alternate_image_urls)
+            && $imageUrl != $this->image_url
+        ) {
+            $this->alternate_image_urls[] = $imageUrl;
+        }
     }
 }
