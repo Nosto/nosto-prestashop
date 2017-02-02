@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
+## 2.7.E4
+- Fix tax based exchange rate calculation to compare list prices
+
 ## 2.7.E3
 - Fix the content forging to use cloned context
 

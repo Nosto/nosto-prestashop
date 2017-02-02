@@ -74,7 +74,7 @@ if ((basename(__FILE__) === 'nostotagging.php')) {
  */
 class NostoTagging extends Module
 {
-    const PLUGIN_VERSION = '2.7.E3';
+    const PLUGIN_VERSION = '2.7.E4';
 
     /**
      * Custom hooks to add for this module.
