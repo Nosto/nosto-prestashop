@@ -58,11 +58,9 @@ class NostoTaggingHelperPrice
      * Returns the product wholesale price including taxes for the given currency.
      *
      * @param Product|ProductCore $product the product.
-     * @param Context|ContextCore $context the context.
-     * @param Currency|CurrencyCore $currency the currency.
      * @return NostoPrice the price.
      */
-    public function getProductWholesalePriceInclTax(Product $product, Context $context, Currency $currency)
+    public function getProductWholesalePriceInclTax(Product $product)
     {
         $wholesale_price_exc_taxes = $product->wholesale_price;
         if ($wholesale_price_exc_taxes > 0) {
