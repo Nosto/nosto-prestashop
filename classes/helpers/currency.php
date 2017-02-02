@@ -202,7 +202,7 @@ class NostoTaggingHelperCurrency
 
         $tax_rule_countries = $this->getCountriesWithTaxRules($context_clone);
         $rates_array = array();
-        $base_price = $helper_price->getProductPriceInclTax(
+        $base_price = $helper_price->getProductListPriceInclTax(
             $product,
             $context_clone,
             $this->getBaseCurrency($context_clone)
