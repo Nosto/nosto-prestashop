@@ -57,6 +57,15 @@
 		{if $nosto_product->getVariationId()}
 			<span class="variation_id">{$nosto_product->getVariationId()|escape:'htmlall':'UTF-8'}</span>
 		{/if}
+		{foreach from=$nosto_product->getAlternateImageUrls() key=index item=imageUrl}
+			<span class="alternate_image_url">{$imageUrl|escape:'htmlall':'UTF-8'}</span>
+		{/foreach}
+		{if $nosto_product->getReviewCount() neq ''}
+			<span class="review_count">{$nosto_product->getReviewCount()|escape:'htmlall':'UTF-8'}</span>
+		{/if}
+		{if $nosto_product->getRatingValue() neq ''}
+			<span class="rating_value">{$nosto_product->getRatingValue()|escape:'htmlall':'UTF-8'}</span>
+		{/if}
 	</div>
 	{if isset($nosto_category) && is_object($nosto_category)}
 		<div class="nosto_category" style="display:none">{$nosto_category->category_string|escape:'htmlall':'UTF-8'}</div>

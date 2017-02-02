@@ -31,8 +31,6 @@ class NostoTaggingHelperCustomer
 {
     const TABLE_NAME_CUSTOMER_LINK = 'nostotagging_customer_link';
     const TABLE_NAME_CUSTOMER_REFERENCE = 'nostotagging_customer_reference';
-    const COOKIE_NAME = '2c_cId';
-    const GLOBAL_COOKIES = '_COOKIE';
 
     /**
      * Returns the customer link table name.
@@ -114,7 +112,7 @@ class NostoTaggingHelperCustomer
             return false;
         }
 
-        $id_nosto_customer = $this->readCookieValue();
+        $id_nosto_customer = NostoTagging::readNostoCookie();
         if (empty($id_nosto_customer)) {
             return false;
         }
@@ -220,25 +218,6 @@ class NostoTaggingHelperCustomer
             } else {
                 return Db::getInstance()->autoExecute($table, $data, 'UPDATE', $where);
             }
-        }
-    }
-
-    /**
-     * Reads the Nosto cookie value and returns it.
-     *
-     * @return null the cookie value, or null if not set.
-     */
-    protected function readCookieValue()
-    {
-        // We use the $GLOBALS here, instead of the Prestashop cookie class, as we are accessing a
-        // nosto cookie that have been set by the JavaScript loaded from nosto.com. Accessing global $_COOKIE array
-        // is not allowed by Prestashop's new validation rules effective from April 2016.
-        // We read it to keep a mapping of the Nosto user ID and the Prestashop user ID so we can identify which user
-        // actually completed an order. We do this for tracking whether or not to send abandoned cart emails.
-        if ($GLOBALS[self::GLOBAL_COOKIES] && isset($GLOBALS[self::GLOBAL_COOKIES][self::COOKIE_NAME])) {
-            return $GLOBALS[self::GLOBAL_COOKIES][self::COOKIE_NAME];
-        } else {
-            return null;
         }
     }
 
