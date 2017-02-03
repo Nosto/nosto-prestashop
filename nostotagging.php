@@ -44,7 +44,9 @@ if ((basename(__FILE__) === 'nostotagging.php')) {
     require_once($module_dir.'/classes/helpers/image.php');
     require_once($module_dir.'/classes/helpers/logger.php');
     require_once($module_dir.'/classes/helpers/notification.php');
+    require_once($module_dir.'/classes/helpers/nosto-operation.php');
     require_once($module_dir.'/classes/helpers/product-operation.php');
+    require_once($module_dir.'/classes/helpers/order-operation.php');
     require_once($module_dir.'/classes/helpers/updater.php');
     require_once($module_dir.'/classes/helpers/url.php');
     require_once($module_dir.'/classes/helpers/currency.php');
@@ -1272,31 +1274,20 @@ class NostoTagging extends Module
     {
         if (isset($params['id_order'])) {
             $order = new Order($params['id_order']);
-            if (!Validate::isLoadedObject($order)) {
+            if (!Validate::isLoadedObject($order) || $order instanceof Order) {
                 return;
             }
-
-            $nosto_order = new NostoTaggingOrder();
-            $nosto_order->loadData($this->context, $order);
-
-            // PS 1.4 does not have "id_shop_group" and "id_shop" properties in the order object.
-            $id_shop_group = isset($order->id_shop_group) ? $order->id_shop_group : null;
-            $id_shop = isset($order->id_shop) ? $order->id_shop : null;
-            // This is done out of context, so we need to specify the exact parameters to get the correct account.
-            /** @var NostoAccount $account */
-            $account = Nosto::helper('nosto_tagging/account')->find($order->id_lang, $id_shop_group, $id_shop);
-            if ($account !== null && $account->isConnectedToNosto()) {
-                try {
-                    $customer_id = Nosto::helper('nosto_tagging/customer')->getNostoId($order);
-                    NostoOrderConfirmation::send($nosto_order, $account, $customer_id);
-                } catch (NostoException $e) {
-                    Nosto::helper('nosto_tagging/logger')->error(
-                        __CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(),
-                        $e->getCode(),
-                        'Order',
-                        (int)$params['id_order']
-                    );
-                }
+            /* @var NostoTaggingHelperOrderOperation $order_operation*/
+            $order_operation = Nosto::helper('nosto_tagging/order-operation');
+            try {
+                $order_operation->send($order);
+            } catch (NostoException $e) {
+                /* @var NostoTaggingHelperLogger $logger */
+                $logger = Nosto::helper('nosto_tagging/logger');
+                $logger->error(
+                    'Failed to send order confirmation with error: %s',
+                    $e->getMessage()
+                );
             }
         }
     }
@@ -1351,7 +1342,7 @@ class NostoTagging extends Module
             if ($params['object'] instanceof Product) {
                 /* @var $nostoProductOperation NostoTaggingHelperProductOperation */
                 $nostoProductOperation = Nosto::helper('nosto_tagging/product_operation');
-                $nostoProductOperation->update($params['object']);
+                $nostoProductOperation->updateProduct($params['object']);
             }
         }
     }
