@@ -35,6 +35,19 @@ class NostoTaggingHelperContextFactory
     private $original_shop_id;
 
     /**
+     * Holds the original shop context type
+     * @see Shop
+     * @var int
+     */
+    private $original_shop_context;
+
+    /**
+     * Holds the original shop group
+     * @var int
+     */
+    private $original_shop_group;
+
+    /**
      * Forges a new context and returns the altered context
      *
      * @param int $id_lang the language ID to add to the new context.
@@ -86,18 +99,32 @@ class NostoTaggingHelperContextFactory
      */
     private function saveOriginalContext(Context $context)
     {
-        if (isset($context->shop) && !empty($context->shop->id)) {
-            $this->original_shop_id = $context->shop->id;
+        if (_PS_VERSION_ >= '1.5') {
+            if( isset( $context->shop ) && $context->shop instanceof Shop ) {
+                $this->original_shop_context = $context->shop->getContext();
+                if( $context->shop->getContextShopId() ) {
+                    $this->original_shop_id = $context->shop->getContextShopId();
+                }
+                if( ! empty( $context->shop->getContextShopGroupId() ) ) {
+                    $this->original_shop_group = $context->shop->getContextShopGroupId();
+                }
+            }
         }
     }
 
     /**
-     * Reverst the active context to the original one (before calling forgeContext)
+     * Revert the active context to the original one (before calling forgeContext)
      */
     public function revertToOriginalContext()
     {
-        if (_PS_VERSION_ >= '1.5' && !empty($this->original_shop_id)) {
-            Shop::setContext(Shop::CONTEXT_SHOP, $this->original_shop_id);
+        if (_PS_VERSION_ >= '1.5') {
+            if ($this->original_shop_context === Shop::CONTEXT_SHOP && !empty($this->original_shop_id)) {
+                Shop::setContext(Shop::CONTEXT_SHOP, $this->original_shop_id);
+            } elseif ($this->original_shop_context === Shop::CONTEXT_GROUP && !empty($this->original_shop_group)) {
+                Shop::setContext(Shop::CONTEXT_GROUP, $this->original_shop_group);
+            } elseif ($this->original_shop_context === Shop::CONTEXT_ALL) {
+                Shop::setContext(Shop::CONTEXT_ALL);
+            }
         }
     }
 }
