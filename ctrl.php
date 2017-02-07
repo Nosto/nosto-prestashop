@@ -25,8 +25,6 @@
 
 /*
  * This is a backwards compatibility script for running module front controllers in all supported Prestashop versions.
- * Version 1.5 and 1.6 does have it's own module controller system, but 1.4 does not. We use this for all versions
- * in order to keep it consistent across versions.
  * The script is meant to run outside of Prestashop, so if _PS_VERSION_ is already defined, we do nothing.
  */
 if (!defined('_PS_VERSION_')) {

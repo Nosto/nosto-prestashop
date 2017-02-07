@@ -310,7 +310,7 @@ class NostoTaggingHelperUrl
      * We created our own method due to the existing one in `LinkCore` behaving differently across PS versions.
      *
      * @param string $name the name of the module to create an url for.
-     * @param string $path the path of the module to create an url for (PS 1.4 only).
+     * @param string $path the path of the module to create an url for
      * @param string $controller the name of the controller.
      * @param int|null $id_lang the language ID (falls back on current context if not set).
      * @param int|null $id_shop the shop ID (falls back on current context if not set).

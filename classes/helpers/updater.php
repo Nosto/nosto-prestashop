@@ -25,8 +25,7 @@
 
 /**
  * Helper class for upgrading the module by running new upgrade scripts.
- * Prestashop 1.4. does not have any mechanism for auto-upgrade of modules and Prestashop < 1.5.4.0 has a bug that
- * causes the upgrade scripts to never run.
+ * Prestashop < 1.5.4.0 has a bug that causes the upgrade scripts to never run.
  * The upgrade scripts are ran 'silently' and does not output anything to the user.
  */
 class NostoTaggingHelperUpdater
@@ -51,7 +50,6 @@ class NostoTaggingHelperUpdater
             return;
         }
 
-        // Prestashop 1.4 does not have any auto-update mechanism.
         // Prestashop < 1.5.4.0 has a bug that causes the auto-update mechanism fail.
         if (version_compare(_PS_VERSION_, '1.5.4.0', '<')) {
         // If the module is already updated to the latest version, don't continue.

@@ -429,8 +429,6 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
     /**
      * Returns the product attribute combination by id_product_attribute.
      *
-     * For PS 1.4 we need to query the combinations manually, while newer version of PS provide a handy getter.
-     *
      * @param Product|ProductCore $product the product model.
      * @param int $id_product_attribute the product attribute ID.
      * @param int $id_lang the language ID.

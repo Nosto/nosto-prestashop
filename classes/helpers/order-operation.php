@@ -45,8 +45,6 @@ class NostoTaggingHelperOrderOperation extends NostoTaggingHelperOperation
     {
         $nosto_order = new NostoTaggingOrder();
         $nosto_order->loadData($context, $order);
-
-        // PS 1.4 does not have "id_shop_group" and "id_shop" properties in the order object.
         $id_shop_group = isset($order->id_shop_group) ? $order->id_shop_group : null;
         $id_shop = isset($order->id_shop) ? $order->id_shop : null;
         // This is done out of context, so we need to specify the exact parameters to get the correct account.

@@ -40,7 +40,6 @@ abstract class NostoTaggingModel
     {
         // We replace the "NostoTagging" part of the class
         // name with "Nosto", e.g. "NostoTaggingProduct" => "NostoProduct".
-        // This is done in order to keep the hook names within the 32 character limit in PS 1.4.
         $this->dispatchHook(
             'action'.str_replace('NostoTagging', 'Nosto', get_class($this)).'LoadAfter',
             $params

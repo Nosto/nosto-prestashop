@@ -206,8 +206,6 @@ class NostoTagging extends Module
      * Installs the module.
      *
      * Initializes config, adds custom hooks and registers used hooks.
-     * The hook names for PS 1.4 are used here as all superior versions have an hook alias table which they use as a
-     * lookup to check which PS 1.4 names correspond to the newer names.
      *
      * @return bool
      */
@@ -255,7 +253,7 @@ class NostoTagging extends Module
             if (!$this->initHooks()) {
                 $success = false;
             }
-            // For versions 1.4.0.1 - 1.5.3.1 we need to keep track of the currently installed version.
+            // For versions < 1.5.3.1 we need to keep track of the currently installed version.
             // This is to enable auto-update of the module by running its upgrade scripts.
             // This config value is updated in the NostoTaggingUpdater helper every time the module is updated.
             if ($success) {
@@ -573,7 +571,6 @@ class NostoTagging extends Module
             $this->name.'_account_authorized' => ($account !== null) ? $account->isConnectedToNosto() : false,
             $this->name.'_languages' => $languages,
             $this->name.'_current_language' => $current_language,
-            // Hack a few translations for the view as PS 1.4 does not support sprintf syntax in smarty "l" function.
             $this->name.'_translations' => array(
                 'installed_heading' => sprintf(
                     $this->l('You have installed Nosto to your %s shop'),
@@ -1369,7 +1366,7 @@ class NostoTagging extends Module
     }
 
     /**
-     * Hook called when a product is update with a new picture, right after said update. (Prestashop 1.4).
+     * Hook called when a product is update with a new picture, right after said update
      *
      * @see NostoTagging::hookActionObjectUpdateAfter
      * @param array $params
@@ -1382,7 +1379,7 @@ class NostoTagging extends Module
     }
 
     /**
-     * Hook called when a product is deleted, right before said deletion (Prestashop 1.4).
+     * Hook called when a product is deleted, right before said deletion
      *
      * @see NostoTagging::hookActionObjectDeleteAfter
      * @param array $params
@@ -1395,7 +1392,7 @@ class NostoTagging extends Module
     }
 
     /**
-     * Hook called when a product is added, right after said addition (Prestashop 1.4).
+     * Hook called when a product is added, right after said addition
      *
      * @see NostoTagging::hookActionObjectAddAfter
      * @param array $params
@@ -1409,7 +1406,7 @@ class NostoTagging extends Module
 
     /**
      * Hook called during an the validation of an order, the status of which being something other than
-     * "canceled" or "Payment error", for each of the order's items (Prestashop 1.4).
+     * "canceled" or "Payment error", for each of the order's item
      *
      * @see NostoTagging::hookActionObjectUpdateAfter
      * @param array $params
