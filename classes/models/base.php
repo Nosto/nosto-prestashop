@@ -57,11 +57,7 @@ abstract class NostoTaggingModel
      */
     private function dispatchHook($name, array $params)
     {
-        if (_PS_VERSION_ >= '1.5') {
-            Hook::exec($name, $params);
-        } else {
-            Module::hookExec($name, $params);
-        }
+        Hook::exec($name, $params);
     }
 
     /**

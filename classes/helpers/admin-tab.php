@@ -49,10 +49,6 @@ class NostoTaggingHelperAdminTab
      */
     public function install()
     {
-        if (_PS_VERSION_ < '1.5') {
-            return true;
-        }
-
         $languages = Language::getLanguages(true);
         if (empty($languages)) {
             return false;
@@ -106,15 +102,11 @@ class NostoTaggingHelperAdminTab
 
     /**
      * Uninstalls the Admin Tab from PS backend.
-     * Only for PS >= 1.5.
      *
      * @return bool true on success false otherwise.
      */
     public function uninstall()
     {
-        if (_PS_VERSION_ < '1.5') {
-            return true;
-        }
         $tabs = array(self::MAIN_MENU_ITEM_CLASS, self::SUB_MENU_ITEM_CLASS);
         foreach ($tabs as $tab_name) {
             $id_tab = (int)Tab::getIdFromClassName($tab_name);

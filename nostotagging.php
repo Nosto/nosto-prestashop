@@ -189,7 +189,7 @@ class NostoTagging extends Module
         $this->author = 'Nosto';
         $this->need_instance = 1;
         $this->bootstrap = true;
-        $this->ps_versions_compliancy = array('min' => '1.4', 'max' => _PS_VERSION_);
+        $this->ps_versions_compliancy = array('min' => '1.5', 'max' => _PS_VERSION_);
         $this->module_key = '8d80397cab6ca02dfe8ef681b48c37a3';
 
         parent::__construct();
@@ -198,11 +198,6 @@ class NostoTagging extends Module
             'Increase your conversion rate and average order value by delivering your customers personalized product
             recommendations throughout their shopping journey.'
         );
-
-        // Backward compatibility
-        if (_PS_VERSION_ < '1.5') {
-            require(_PS_MODULE_DIR_.$this->name.'/backward_compatibility/backward.php');
-        }
 
         NostoHttpRequest::buildUserAgent('Prestashop', _PS_VERSION_, $this->version);
     }
@@ -268,23 +263,12 @@ class NostoTagging extends Module
                     Nosto::helper('nosto_tagging/config')->saveInstalledVersion($this->version);
                 }
 
-                if (_PS_VERSION_ < '1.5') {
-                    // For PS 1.4 we need to register some additional hooks for the product create/update/delete.
-                    $success = $this->registerHook('updateproduct')
-                    && $this->registerHook('deleteproduct')
-                    && $this->registerHook('addproduct')
-                    && $this->registerHook('updateQuantity')
-                    && $this->registerHook('backOfficeFooter');
-                } else {
-                    // And for PS >= 1.5 we register the object specific hooks for the product create/update/delete.
-                    // Also register the back office header hook to add some CSS to the entire back office.
-                    $success = $this->registerHook('actionObjectUpdateAfter')
-                    && $this->registerHook('actionObjectDeleteAfter')
-                    && $this->registerHook('actionObjectAddAfter')
-                    && $this->registerHook('actionObjectCurrencyUpdateAfter')
-                    && $this->registerHook('displayBackOfficeTop')
-                    && $this->registerHook('displayBackOfficeHeader');
-                }
+                $success = $this->registerHook('actionObjectUpdateAfter')
+                && $this->registerHook('actionObjectDeleteAfter')
+                && $this->registerHook('actionObjectAddAfter')
+                && $this->registerHook('actionObjectCurrencyUpdateAfter')
+                && $this->registerHook('displayBackOfficeTop')
+                && $this->registerHook('displayBackOfficeHeader');
                 // New hooks in 1.7
                 if (version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
                     $this->registerHook('displayNav1');
@@ -344,7 +328,7 @@ class NostoTagging extends Module
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $language_id = (int)Tools::getValue($this->name.'_current_language');
             $current_language = $this->ensureAdminLanguage($languages, $language_id);
-            if (_PS_VERSION_ >= '1.5' && Shop::getContext() !== Shop::CONTEXT_SHOP) {
+            if (Shop::getContext() !== Shop::CONTEXT_SHOP) {
             // Do nothing.
                 // After the redirect this will be checked again and an error message is outputted.
             } elseif ($current_language['id_lang'] != $language_id) {
@@ -542,7 +526,7 @@ class NostoTagging extends Module
                 $output .= $this->displayError($flash_message);
             }
 
-            if (_PS_VERSION_ >= '1.5' && Shop::getContext() !== Shop::CONTEXT_SHOP) {
+            if (Shop::getContext() !== Shop::CONTEXT_SHOP) {
                 $output .= $this->displayError($this->l('Please choose a shop to configure Nosto for.'));
             }
         }
@@ -563,7 +547,11 @@ class NostoTagging extends Module
         ) {
             $missing_tokens = false;
         }
-        if ($account instanceof NostoAccountInterface === false) {
+        // When no account is found we will show the installation URL
+        if (
+            $account instanceof NostoAccountInterface === false
+            && Shop::getContext() === Shop::CONTEXT_SHOP
+        ) {
             $account_iframe = new NostoTaggingMetaAccountIframe();
             $account_iframe->loadData($this->context, $language_id);
             /* @var NostoHelperIframe $iframe_helper */
@@ -635,7 +623,11 @@ class NostoTagging extends Module
         ));
        // Try to login employee to Nosto in order to get a url to the internal setting pages,
         // which are then shown in an iframe on the module config page.
-        if ($account && $account->isConnectedToNosto()) {
+        if (
+            $account
+            && $account->isConnectedToNosto()
+            && Shop::getContext() === Shop::CONTEXT_SHOP
+        ) {
             try {
                 $meta = new NostoTaggingMetaAccountIframe();
                 $meta->setUniqueId($this->getUniqueInstallationId());
@@ -1514,26 +1506,16 @@ class NostoTagging extends Module
      */
     protected function isController($name)
     {
-        if (_PS_VERSION_ >= '1.5') {
+        $result = false;
         // For prestashop 1.5 and 1.6 we can in most cases access the current controllers php_self property.
-            if (!empty($this->context->controller->php_self)) {
-                return $this->context->controller->php_self === $name;
-            }
-
-            // But some prestashop 1.5 controllers are missing the php_self property.
-            if (($controller = Tools::getValue('controller')) !== false) {
-                return $controller === $name;
-            }
-        } else {
-            // For 1.4 we need to parse the current script name, as it uses different scripts per page.
-            // 1.4 does have a php_self property in the running controller, but there is no way to access the
-            // controller from modules.
-            $script_name = isset($_SERVER['SCRIPT_NAME']) ? $_SERVER['SCRIPT_NAME'] : '';
-            return basename($script_name) === ($name.'.php');
+        if (!empty($this->context->controller->php_self)) {
+            $result = $this->context->controller->php_self === $name;
+        } elseif (($controller = Tools::getValue('controller')) !== false) {
+            $result = $controller === $name;
         }
 
         // Fallback when controller cannot be recognised.
-        return false;
+        return $result;
     }
 
     /**

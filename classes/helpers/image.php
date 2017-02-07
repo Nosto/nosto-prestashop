@@ -58,7 +58,7 @@ class NostoTaggingHelperImage
      */
     public function chooseOptimalImageType()
     {
-        $definition = (_PS_VERSION_ >= '1.5') ? ObjectModel::getDefinition('ImageType') : array();
+        $definition = ObjectModel::getDefinition('ImageType');
         $table_name = isset($definition['table']) ? $definition['table'] : 'image_type';
         $available_image_types = Db::getInstance()->executeS('
 			SELECT * FROM `' . pSQL(_DB_PREFIX_ . $table_name) . '`
