@@ -38,10 +38,6 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_2_4_0($object)
 {
-    if (_PS_VERSION_ < '1.5') {
-        return true;
-    }
-
     return Nosto::helper('nosto_tagging/admin_tab')->install()
         && $object->registerHook('displayBackOfficeHeader');
 }

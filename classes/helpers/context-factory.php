@@ -48,6 +48,18 @@ class NostoTaggingHelperContextFactory
     private $original_shop_group;
 
     /**
+     * Holds the original language
+     * @var int
+     */
+    private $original_language;
+
+    /**
+     * Holds the original language
+     * @var int
+     */
+    private $original_currency;
+
+    /**
      * Forges a new context and returns the altered context
      *
      * @param int $id_lang the language ID to add to the new context.
@@ -61,26 +73,24 @@ class NostoTaggingHelperContextFactory
         $context = Context::getContext();
         $this->saveOriginalContext($context);
         $forged_context = $context->cloneContext();
-        if (_PS_VERSION_ >= '1.5') {
-            // Reset the shop context to be the current processed shop. This will fix the "friendly url" format of urls
-            // generated through the Link class.
-            Shop::setContext(Shop::CONTEXT_SHOP, $id_shop);
-            // Reset the dispatcher singleton instance so that the url rewrite setting is check on a shop basis when
-            // generating product urls. This will fix the issue of incorrectly formatted urls when one shop has the
-            // rewrite setting enabled and another does not.
-            Dispatcher::$instance = null;
-            if (method_exists('ShopUrl', 'resetMainDomainCache')) {
-                // Reset the shop url domain cache so that it is re-initialized on a shop basis when generating product
-                // image urls. This will fix the issue of the image urls having an incorrect shop base url when the
-                // shops are configured to use different domains.
-                ShopUrl::resetMainDomainCache();
-            }
+        // Reset the shop context to be the current processed shop. This will fix the "friendly url" format of urls
+        // generated through the Link class.
+        Shop::setContext(Shop::CONTEXT_SHOP, $id_shop);
+        // Reset the dispatcher singleton instance so that the url rewrite setting is check on a shop basis when
+        // generating product urls. This will fix the issue of incorrectly formatted urls when one shop has the
+        // rewrite setting enabled and another does not.
+        Dispatcher::$instance = null;
+        if (method_exists('ShopUrl', 'resetMainDomainCache')) {
+            // Reset the shop url domain cache so that it is re-initialized on a shop basis when generating product
+            // image urls. This will fix the issue of the image urls having an incorrect shop base url when the
+            // shops are configured to use different domains.
+            ShopUrl::resetMainDomainCache();
+        }
 
-            foreach (Currency::getCurrenciesByIdShop($id_shop) as $row) {
-                if ($row['deleted'] === '0' && $row['active'] === '1') {
-                    $currency = new Currency($row['id_currency']);
-                    break;
-                }
+        foreach (Currency::getCurrenciesByIdShop($id_shop) as $row) {
+            if ($row['deleted'] === '0' && $row['active'] === '1') {
+                $currency = new Currency($row['id_currency']);
+                break;
             }
         }
 
@@ -99,15 +109,19 @@ class NostoTaggingHelperContextFactory
      */
     private function saveOriginalContext(Context $context)
     {
-        if (_PS_VERSION_ >= '1.5') {
-            if( isset( $context->shop ) && $context->shop instanceof Shop ) {
-                $this->original_shop_context = $context->shop->getContext();
-                if( $context->shop->getContextShopId() ) {
-                    $this->original_shop_id = $context->shop->getContextShopId();
-                }
-                if( ! empty( $context->shop->getContextShopGroupId() ) ) {
-                    $this->original_shop_group = $context->shop->getContextShopGroupId();
-                }
+        if( isset( $context->shop ) && $context->shop instanceof Shop ) {
+            $this->original_shop_context = $context->shop->getContext();
+            if( $context->shop->getContextShopId() ) {
+                $this->original_shop_id = $context->shop->getContextShopId();
+            }
+            if( ! empty( $context->shop->getContextShopGroupId() ) ) {
+                $this->original_shop_group = $context->shop->getContextShopGroupId();
+            }
+            if (!empty($context->currency)) {
+                $this->original_currency = $context->currency;
+            }
+            if (!empty($context->language)) {
+                $this->original_language = $context->language;
             }
         }
     }
@@ -117,14 +131,26 @@ class NostoTaggingHelperContextFactory
      */
     public function revertToOriginalContext()
     {
-        if (_PS_VERSION_ >= '1.5') {
-            if ($this->original_shop_context === Shop::CONTEXT_SHOP && !empty($this->original_shop_id)) {
-                Shop::setContext(Shop::CONTEXT_SHOP, $this->original_shop_id);
-            } elseif ($this->original_shop_context === Shop::CONTEXT_GROUP && !empty($this->original_shop_group)) {
-                Shop::setContext(Shop::CONTEXT_GROUP, $this->original_shop_group);
-            } elseif ($this->original_shop_context === Shop::CONTEXT_ALL) {
-                Shop::setContext(Shop::CONTEXT_ALL);
+        $current_context = Context::getContext();
+
+        if (!empty($this->original_language)) {
+            $current_context->language = $this->original_language;
+        }
+        if (!empty($this->original_currency)) {
+            $current_context->currency= $this->original_currency;
+        }
+        if ($this->original_shop_context === Shop::CONTEXT_SHOP && !empty($this->original_shop_id)) {
+            Shop::setContext(Shop::CONTEXT_SHOP, $this->original_shop_id);
+            if (!empty($this->original_shop_id)) {
+                $current_context->shop= new Shop($this->original_shop_id);
             }
+        } elseif ($this->original_shop_context === Shop::CONTEXT_GROUP && !empty($this->original_shop_group)) {
+            Shop::setContext(Shop::CONTEXT_GROUP, $this->original_shop_group);
+        } elseif ($this->original_shop_context === Shop::CONTEXT_ALL) {
+            Shop::setContext(Shop::CONTEXT_ALL);
+        }
+        if (method_exists('ShopUrl', 'resetMainDomainCache')) {
+            ShopUrl::resetMainDomainCache();
         }
     }
 }

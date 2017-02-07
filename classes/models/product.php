@@ -313,7 +313,7 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
     {
         if (
             !$product->active
-            || (_PS_VERSION_ >= '1.5' && $product->visibility === 'none')) {
+            || $product->visibility === 'none') {
             return self::INVISIBLE;
         } else {
             return ($product->checkQty(1)) ? self::IN_STOCK : self::OUT_OF_STOCK;

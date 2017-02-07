@@ -107,7 +107,11 @@ class NostoTaggingMetaAccountIframe implements NostoAccountMetaDataIframeInterfa
     public function loadData($context, $id_lang)
     {
         $shop_language = new Language($id_lang);
-        if (!Validate::isLoadedObject($shop_language)) {
+        $shop_context = $context->shop->getContext();
+        if (
+            !Validate::isLoadedObject($shop_language)
+            || $shop_context !== Shop::CONTEXT_SHOP
+        ) {
             return;
         }
 

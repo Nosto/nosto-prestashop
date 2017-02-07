@@ -184,7 +184,7 @@ class NostoTaggingHelperProductOperation
      */
     protected function getContextShops()
     {
-        if (_PS_VERSION_ >= '1.5' && Shop::isFeatureActive() && Shop::getContext() !== Shop::CONTEXT_SHOP) {
+        if (Shop::isFeatureActive() && Shop::getContext() !== Shop::CONTEXT_SHOP) {
             if (Shop::getContext() === Shop::CONTEXT_GROUP) {
                 return Shop::getShops(true, Shop::getContextShopGroupID());
             } else {
@@ -232,7 +232,7 @@ class NostoTaggingHelperProductOperation
     protected function makeContextSnapshot()
     {
         $this->contextSnapshot = array(
-            'shop_context' => (_PS_VERSION_ >= '1.5') ? Shop::getContext() : null,
+            'shop_context' => Shop::getContext(),
             'context_object' => Context::getContext()->cloneContext()
         );
     }
@@ -253,12 +253,10 @@ class NostoTaggingHelperProductOperation
             $current_context->link = $original_context->link;
             $current_context->currency = $original_context->currency;
 
-            if (_PS_VERSION_ >= '1.5') {
-                Shop::setContext($shop_context, $current_context->shop->id);
-                Dispatcher::$instance = null;
-                if (method_exists('ShopUrl', 'resetMainDomainCache')) {
-                    ShopUrl::resetMainDomainCache();
-                }
+            Shop::setContext($shop_context, $current_context->shop->id);
+            Dispatcher::$instance = null;
+            if (method_exists('ShopUrl', 'resetMainDomainCache')) {
+                ShopUrl::resetMainDomainCache();
             }
         }
     }
@@ -276,26 +274,24 @@ class NostoTaggingHelperProductOperation
      */
     protected function makeContext($id_lang, $id_shop)
     {
-        if (_PS_VERSION_ >= '1.5') {
         // Reset the shop context to be the current processed shop. This will fix the "friendly url" format of urls
-            // generated through the Link class.
-            Shop::setContext(Shop::CONTEXT_SHOP, $id_shop);
-            // Reset the dispatcher singleton instance so that the url rewrite setting is check on a shop basis when
-            // generating product urls. This will fix the issue of incorrectly formatted urls when one shop has the
-            // rewrite setting enabled and another does not.
-            Dispatcher::$instance = null;
-            if (method_exists('ShopUrl', 'resetMainDomainCache')) {
-            // Reset the shop url domain cache so that it is re-initialized on a shop basis when generating product
-                // image urls. This will fix the issue of the image urls having an incorrect shop base url when the
-                // shops are configured to use different domains.
-                ShopUrl::resetMainDomainCache();
-            }
+        // generated through the Link class.
+        Shop::setContext(Shop::CONTEXT_SHOP, $id_shop);
+        // Reset the dispatcher singleton instance so that the url rewrite setting is check on a shop basis when
+        // generating product urls. This will fix the issue of incorrectly formatted urls when one shop has the
+        // rewrite setting enabled and another does not.
+        Dispatcher::$instance = null;
+        if (method_exists('ShopUrl', 'resetMainDomainCache')) {
+        // Reset the shop url domain cache so that it is re-initialized on a shop basis when generating product
+            // image urls. This will fix the issue of the image urls having an incorrect shop base url when the
+            // shops are configured to use different domains.
+            ShopUrl::resetMainDomainCache();
+        }
 
-            foreach (Currency::getCurrenciesByIdShop($id_shop) as $row) {
-                if ($row['deleted'] === '0' && $row['active'] === '1') {
-                    $currency = new Currency($row['id_currency']);
-                    break;
-                }
+        foreach (Currency::getCurrenciesByIdShop($id_shop) as $row) {
+            if ($row['deleted'] === '0' && $row['active'] === '1') {
+                $currency = new Currency($row['id_currency']);
+                break;
             }
         }
 
