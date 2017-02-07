@@ -52,17 +52,26 @@ class NostoTaggingHelperOrderOperation extends NostoTaggingHelperOperation
         $account = Nosto::helper('nosto_tagging/account')->find($order->id_lang, $id_shop_group, $id_shop);
         if ($account !== null && $account->isConnectedToNosto()) {
             $customer_id = Nosto::helper('nosto_tagging/customer')->getNostoId($order);
-            NostoOrderConfirmation::send($nosto_order, $account, $customer_id);
             try {
-                $this->syncInventoryLevel($nosto_order);
+                NostoOrderConfirmation::send($nosto_order, $account, $customer_id);
+                try {
+                    $this->syncInventoryLevel($nosto_order);
+                } catch (NostoException $e) {
+                    /* @var NostoTaggingHelperLogger $logger */
+                    $logger = Nosto::helper('nosto_tagging/logger');
+                    $logger->error(
+                        'Failed to synchronize products after order: %s',
+                        $e->getMessage()
+                    );
+
+                }
             } catch (NostoException $e) {
                 /* @var NostoTaggingHelperLogger $logger */
                 $logger = Nosto::helper('nosto_tagging/logger');
                 $logger->error(
-                    'Failed to send order confirmation with error: %s',
+                    'Failed to send order confirmation: %s',
                     $e->getMessage()
                 );
-
             }
         }
     }
@@ -72,7 +81,7 @@ class NostoTaggingHelperOrderOperation extends NostoTaggingHelperOperation
      *
      * @param NostoTaggingOrder $order
      */
-    public function syncInventoryLevel(NostoTaggingOrder $order)
+    private function syncInventoryLevel(NostoTaggingOrder $order)
     {
         if (self::$syncInventoriesAfterOrder === true) {
             $purchasedtems = $order->getPurchasedItems();
@@ -88,11 +97,9 @@ class NostoTaggingHelperOrderOperation extends NostoTaggingHelperOperation
                     $products[] = $product;
                 }
             }
-            if (count($products) > 0) {
-                /* @var $nostoProductOperation NostoTaggingHelperProductOperation */
-                $nostoProductOperation = Nosto::helper('nosto_tagging/product_operation');
-                $nostoProductOperation->updateBatch($products);
-            }
+            /* @var $nostoProductOperation NostoTaggingHelperProductOperation */
+            $nostoProductOperation = Nosto::helper('nosto_tagging/product_operation');
+            $nostoProductOperation->updateBatch($products);
         }
     }
 }

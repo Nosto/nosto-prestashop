@@ -116,9 +116,10 @@ class NostoTaggingHelperProductOperation extends NostoTaggingHelperOperation
                     )
                 );
             }
-
+            if(in_array($product->id, self::$processedProducts)) {
+                continue;
+            }
             self::$processedProducts[] = $product->id;
-
             foreach ($this->getAccountData() as $data) {
                 list($account, $id_shop, $id_lang) = $data;
                 $account_name = $account->getName();

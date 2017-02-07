@@ -1268,17 +1268,8 @@ class NostoTagging extends Module
             }
             /* @var NostoTaggingHelperOrderOperation $order_operation*/
             $order_operation = Nosto::helper('nosto_tagging/order_operation');
-            try {
-                $context = $this->getContext();
-                $order_operation->send($order, $context);
-            } catch (NostoException $e) {
-                /* @var NostoTaggingHelperLogger $logger */
-                $logger = Nosto::helper('nosto_tagging/logger');
-                $logger->error(
-                    'Failed to send order confirmation with error: %s',
-                    $e->getMessage()
-                );
-            }
+            $context = $this->getContext();
+            $order_operation->send($order, $context);
         }
     }
 
