@@ -1266,13 +1266,14 @@ class NostoTagging extends Module
     {
         if (isset($params['id_order'])) {
             $order = new Order($params['id_order']);
-            if (!Validate::isLoadedObject($order) || $order instanceof Order) {
+            if ($order instanceof Order === false) {
                 return;
             }
             /* @var NostoTaggingHelperOrderOperation $order_operation*/
-            $order_operation = Nosto::helper('nosto_tagging/order-operation');
+            $order_operation = Nosto::helper('nosto_tagging/order_operation');
             try {
-                $order_operation->send($order);
+                $context = $this->getContext();
+                $order_operation->send($order, $context);
             } catch (NostoException $e) {
                 /* @var NostoTaggingHelperLogger $logger */
                 $logger = Nosto::helper('nosto_tagging/logger');

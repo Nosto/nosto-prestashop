@@ -39,8 +39,9 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
         $context = $this->module->getContext();
         $collection = new NostoExportOrderCollection();
 
-        if (!empty(Tools::getValue('id'))) {
-            $orders = Order::getByReference(Tools::getValue('id'));
+        $id = Tools::getValue('id');
+        if (!empty($id)) {
+            $orders = Order::getByReference($id);
             if (empty($orders)) {
                 Tools::display404Error();
             }
@@ -53,12 +54,24 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
                 if (!Validate::isLoadedObject($order)) {
                     continue;
                 }
-
                 $nosto_order = new NostoTaggingOrder();
                 $nosto_order->include_special_items = true;
                 $nosto_order->loadData($this->module->getContext(), $order);
                 $collection[] = $nosto_order;
             }
+        }
+
+        /* @var NostoTaggingHelperOrderOperation $order_operation*/
+        $order_operation = Nosto::helper('nosto_tagging/order_operation');
+        try {
+            $order_operation->send($order, $this->module->getContext());
+        } catch (NostoException $e) {
+            /* @var NostoTaggingHelperLogger $logger */
+            $logger = Nosto::helper('nosto_tagging/logger');
+            $logger->error(
+                'Failed to send order confirmation with error: %s',
+                $e->getMessage()
+            );
         }
 
         $this->encryptOutput($collection);

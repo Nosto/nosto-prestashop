@@ -43,7 +43,16 @@ class NostoTaggingHelperProductOperation extends NostoTaggingHelperOperation
      */
     public static $apiWaitTimeout = 60;
 
+    /**
+     * Array key for data
+     * @var string
+     */
     const KEY_DATA = 'data';
+
+    /**
+     * Array key for account
+     * @var string
+     */
     const KEY_ACCOUNT = 'account';
 
     /**
@@ -72,10 +81,6 @@ class NostoTaggingHelperProductOperation extends NostoTaggingHelperOperation
      */
     public function updateProduct(Product $product)
     {
-        if (!Validate::isLoadedObject($product) || in_array($product->id, self::$processedProducts)) {
-            return;
-        }
-
         return $this->update(array($product));
     }
 
@@ -98,15 +103,22 @@ class NostoTaggingHelperProductOperation extends NostoTaggingHelperOperation
                 ++$batch;
             }
             ++$counter;
-            if ($product instanceof Product === false) {
+            if (
+                $product instanceof Product === false
+                || !Validate::isLoadedObject($product)
+            ) {
                 Nosto::throwException(
                     sprintf(
-                        'Invalid data type, expecting Mage_Catalog_Model_Product' .
-                        ', got %s',
-                        get_class($product)
+                        'Invalid data type or not loaded objec, expecting Product' .
+                        ', got %s with id %s',
+                        get_class($product),
+                        $product->id
                     )
                 );
             }
+
+            self::$processedProducts[] = $product->id;
+
             foreach ($this->getAccountData() as $data) {
                 list($account, $id_shop, $id_lang) = $data;
                 $account_name = $account->getName();

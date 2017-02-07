@@ -39,6 +39,7 @@ class NostoTaggingHelperOrderOperation extends NostoTaggingHelperOperation
      * Sends order data to Nosto.
      *
      * @param Order $order
+     * @param Context $context
      */
     public function send(Order $order, Context $context)
     {
@@ -54,7 +55,6 @@ class NostoTaggingHelperOrderOperation extends NostoTaggingHelperOperation
         if ($account !== null && $account->isConnectedToNosto()) {
             $customer_id = Nosto::helper('nosto_tagging/customer')->getNostoId($order);
             NostoOrderConfirmation::send($nosto_order, $account, $customer_id);
-
             try {
                 $this->syncInventoryLevel($nosto_order);
             } catch (NostoException $e) {
