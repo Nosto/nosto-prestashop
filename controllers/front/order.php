@@ -61,19 +61,6 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
             }
         }
 
-        /* @var NostoTaggingHelperOrderOperation $order_operation*/
-        $order_operation = Nosto::helper('nosto_tagging/order_operation');
-        try {
-            $order_operation->send($order, $this->module->getContext());
-        } catch (NostoException $e) {
-            /* @var NostoTaggingHelperLogger $logger */
-            $logger = Nosto::helper('nosto_tagging/logger');
-            $logger->error(
-                'Failed to send order confirmation with error: %s',
-                $e->getMessage()
-            );
-        }
-
         $this->encryptOutput($collection);
     }
 
