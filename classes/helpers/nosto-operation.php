@@ -75,7 +75,7 @@ abstract class NostoTaggingHelperOperation
      */
     protected function getContextShops()
     {
-        if (_PS_VERSION_ >= '1.5' && Shop::isFeatureActive() && Shop::getContext() !== Shop::CONTEXT_SHOP) {
+        if (Shop::isFeatureActive() && Shop::getContext() !== Shop::CONTEXT_SHOP) {
             if (Shop::getContext() === Shop::CONTEXT_GROUP) {
                 return Shop::getShops(true, Shop::getContextShopGroupID());
             } else {

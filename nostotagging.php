@@ -716,7 +716,7 @@ class NostoTagging extends Module
             return '';
         }
         /** @var LinkCore $link */
-        $link = new Link();
+        $link = self::buildLinkClass();
         $hidden_recommendation_elements = $this->getHiddenRecommendationElements();
         $this->getSmarty()->assign(array(
             'server_address' => $server_address,
@@ -1970,5 +1970,21 @@ class NostoTagging extends Module
             return hash(self::VISITOR_HASH_ALGO, $coo);
         }
         return null;
+    }
+
+    /**
+     * Returns link class initialized with https or http
+     *
+     * @return Link
+     */
+    public static function buildLinkClass()
+    {
+        if (Configuration::get('PS_SSL_ENABLED_EVERYWHERE')) {
+            $link = new Link('https://', 'https://');
+        } else {
+            $link = new Link('http://', 'http://');
+        }
+
+        return $link;
     }
 }
