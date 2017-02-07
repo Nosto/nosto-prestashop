@@ -202,10 +202,12 @@ class NostoTaggingHelperProductOperation extends NostoTaggingHelperOperation
         if (!Validate::isLoadedObject($product)) {
             return null;
         }
-        $this->makeContextSnapshot();
+        /* @var NostoTaggingHelperContextFactory $context_factory */
+        $context_factory = Nosto::helper('nosto_tagging/context_factory');
+        $forged_context = $context_factory->forgeContext($id_lang, $id_shop);
         $nosto_product = new NostoTaggingProduct();
-        $nosto_product->loadData($this->makeContext($id_lang, $id_shop), $product);
-        $this->restoreContextSnapshot();
+        $nosto_product->loadData($forged_context, $product);
+        $context_factory->revertToOriginalContext();
 
         return $nosto_product;
     }
