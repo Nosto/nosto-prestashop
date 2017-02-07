@@ -49,42 +49,37 @@ class NostoTaggingCart extends NostoTaggingModel
             return;
         }
 
-        // Cart rules are available from prestashop 1.5 onwards.
-        if (_PS_VERSION_ >= '1.5') {
-            $cart_rules = (array)$cart->getCartRules(CartRule::FILTER_ACTION_GIFT);
+        $cart_rules = (array)$cart->getCartRules(CartRule::FILTER_ACTION_GIFT);
 
-            $gift_products = array();
-            foreach ($cart_rules as $cart_rule) {
-                if ((int)$cart_rule['gift_product']) {
-                    foreach ($products as $key => &$product) {
-                        if (empty($product['gift'])
-                        && (int)$product['id_product'] === (int)$cart_rule['gift_product']
-                        && (int)$product['id_product_attribute'] === (int)$cart_rule['gift_product_attribute']) {
-                            $product['cart_quantity'] = (int)$product['cart_quantity'];
-                            $product['cart_quantity']--;
+        $gift_products = array();
+        foreach ($cart_rules as $cart_rule) {
+            if ((int)$cart_rule['gift_product']) {
+                foreach ($products as $key => &$product) {
+                    if (empty($product['gift'])
+                    && (int)$product['id_product'] === (int)$cart_rule['gift_product']
+                    && (int)$product['id_product_attribute'] === (int)$cart_rule['gift_product_attribute']) {
+                        $product['cart_quantity'] = (int)$product['cart_quantity'];
+                        $product['cart_quantity']--;
 
-                            if (!($product['cart_quantity'] > 0)) {
-                                unset($products[$key]);
-                            }
-
-                            $gift_product = $product;
-                            $gift_product['cart_quantity'] = 1;
-                            $gift_product['price_wt'] = 0;
-                            $gift_product['gift'] = true;
-
-                            $gift_products[] = $gift_product;
-
-                            break; // One gift product per cart rule
+                        if (!($product['cart_quantity'] > 0)) {
+                            unset($products[$key]);
                         }
-                    }
-                    unset($product);
-                }
-            }
 
-            $items = array_merge($products, $gift_products);
-        } else {
-            $items = $products;
+                        $gift_product = $product;
+                        $gift_product['cart_quantity'] = 1;
+                        $gift_product['price_wt'] = 0;
+                        $gift_product['gift'] = true;
+
+                        $gift_products[] = $gift_product;
+
+                        break; // One gift product per cart rule
+                    }
+                }
+                unset($product);
+            }
         }
+
+        $items = array_merge($products, $gift_products);
 
         /** @var NostoHelperPrice $helper_config */
         $nosto_helper_price = Nosto::helper('nosto/price');

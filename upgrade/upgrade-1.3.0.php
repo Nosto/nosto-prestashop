@@ -53,23 +53,7 @@ function upgrade_module_1_3_0($object)
 			WHERE `'.$config_table.'`.`name` LIKE "NOSTOTAGGING_%"');
     Configuration::loadConfiguration();
 
-    // Backward compatibility
-    if (_PS_VERSION_ < '1.5') {
-        $object->registerHook('header');
-        $object->registerHook('top');
-        $object->registerHook('footer');
-        $object->registerHook('productfooter');
-        $object->registerHook('shoppingCart');
-        $object->registerHook('orderConfirmation');
-        $object->registerHook('paymentConfirm');
-        $object->registerHook('paymentTop');
-        $object->registerHook('home');
-        $object->registerHook('updateproduct');
-        $object->registerHook('deleteproduct');
-        $object->registerHook('updateQuantity');
-    } else {
-        $object->registerHook('actionObjectUpdateAfter');
-    }
+    $object->registerHook('actionObjectUpdateAfter');
 
     $object->unregisterHook('displayLeftColumn');
     $object->unregisterHook('displayRightColumn');

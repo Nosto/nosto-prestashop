@@ -135,10 +135,6 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
      */
     protected function notFound()
     {
-        if (_PS_VERSION_ < '1.5') {
-            Tools::display404Error();
-        } else {
-            Controller::getController('PageNotFoundController')->run();
-        }
+        Controller::getController('PageNotFoundController')->run();
     }
 }

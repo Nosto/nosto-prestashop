@@ -72,23 +72,14 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
     protected function getOrderIds()
     {
         $context = $this->module->getContext();
-        if (_PS_VERSION_ > '1.5') {
-            $where = strtr(
-                '`id_shop_group` = {g} AND `id_shop` = {s} AND `id_lang` = {l}',
-                array(
-                    '{g}' => pSQL($context->shop->id_shop_group),
-                    '{s}' => pSQL($context->shop->id),
-                    '{l}' => pSQL($context->language->id),
-                )
-            );
-        } else {
-            $where = strtr(
-                '`id_lang` = {l}',
-                array(
-                    '{l}' => pSQL($context->language->id),
-                )
-            );
-        }
+        $where = strtr(
+            '`id_shop_group` = {g} AND `id_shop` = {s} AND `id_lang` = {l}',
+            array(
+                '{g}' => pSQL($context->shop->id_shop_group),
+                '{s}' => pSQL($context->shop->id),
+                '{l}' => pSQL($context->language->id),
+            )
+        );
 
         $sql = sprintf(
             '

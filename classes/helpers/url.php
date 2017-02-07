@@ -88,11 +88,8 @@ class NostoTaggingHelperUrl
                     FROM `'.pSQL(_DB_PREFIX_).'category`
                     WHERE `active` = 1
                     AND `id_parent` > 0
+                    AND `is_root_category` = 0
 				';
-                // There is not "is_root_category" in PS 1.4, but in >= 1.5 we want to skip the root.
-                if (_PS_VERSION_ >= '1.5') {
-                    $sql .= ' AND `is_root_category` = 0';
-                }
                 $row = Db::getInstance()->getRow($sql);
                 $id_category = isset($row['id_category']) ? (int)$row['id_category'] : 0;
             }
@@ -360,9 +357,6 @@ class NostoTaggingHelperUrl
     public function getBaseUrl($id_shop = null)
     {
         $ssl = Configuration::get('PS_SSL_ENABLED');
-        if (_PS_VERSION_ < '1.5') {
-            return ($ssl ? _PS_BASE_URL_SSL_ : _PS_BASE_URL_);
-        }
 
         if (Configuration::get('PS_MULTISHOP_FEATURE_ACTIVE') && !is_null($id_shop)) {
             $shop = new Shop($id_shop);
