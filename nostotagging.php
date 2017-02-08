@@ -44,7 +44,9 @@ if ((basename(__FILE__) === 'nostotagging.php')) {
     require_once($module_dir.'/classes/helpers/image.php');
     require_once($module_dir.'/classes/helpers/logger.php');
     require_once($module_dir.'/classes/helpers/notification.php');
+    require_once($module_dir.'/classes/helpers/nosto-operation.php');
     require_once($module_dir.'/classes/helpers/product-operation.php');
+    require_once($module_dir.'/classes/helpers/order-operation.php');
     require_once($module_dir.'/classes/helpers/updater.php');
     require_once($module_dir.'/classes/helpers/url.php');
     require_once($module_dir.'/classes/helpers/currency.php');
@@ -204,8 +206,6 @@ class NostoTagging extends Module
      * Installs the module.
      *
      * Initializes config, adds custom hooks and registers used hooks.
-     * The hook names for PS 1.4 are used here as all superior versions have an hook alias table which they use as a
-     * lookup to check which PS 1.4 names correspond to the newer names.
      *
      * @return bool
      */
@@ -253,7 +253,7 @@ class NostoTagging extends Module
             if (!$this->initHooks()) {
                 $success = false;
             }
-            // For versions 1.4.0.1 - 1.5.3.1 we need to keep track of the currently installed version.
+            // For versions < 1.5.3.1 we need to keep track of the currently installed version.
             // This is to enable auto-update of the module by running its upgrade scripts.
             // This config value is updated in the NostoTaggingUpdater helper every time the module is updated.
             if ($success) {
@@ -571,7 +571,6 @@ class NostoTagging extends Module
             $this->name.'_account_authorized' => ($account !== null) ? $account->isConnectedToNosto() : false,
             $this->name.'_languages' => $languages,
             $this->name.'_current_language' => $current_language,
-            // Hack a few translations for the view as PS 1.4 does not support sprintf syntax in smarty "l" function.
             $this->name.'_translations' => array(
                 'installed_heading' => sprintf(
                     $this->l('You have installed Nosto to your %s shop'),
@@ -714,7 +713,7 @@ class NostoTagging extends Module
             return '';
         }
         /** @var LinkCore $link */
-        $link = new Link();
+        $link = self::buildLinkClass();
         $hidden_recommendation_elements = $this->getHiddenRecommendationElements();
         $this->getSmarty()->assign(array(
             'server_address' => $server_address,
@@ -1264,32 +1263,13 @@ class NostoTagging extends Module
     {
         if (isset($params['id_order'])) {
             $order = new Order($params['id_order']);
-            if (!Validate::isLoadedObject($order)) {
+            if ($order instanceof Order === false) {
                 return;
             }
-
-            $nosto_order = new NostoTaggingOrder();
-            $nosto_order->loadData($this->context, $order);
-
-            // PS 1.4 does not have "id_shop_group" and "id_shop" properties in the order object.
-            $id_shop_group = isset($order->id_shop_group) ? $order->id_shop_group : null;
-            $id_shop = isset($order->id_shop) ? $order->id_shop : null;
-            // This is done out of context, so we need to specify the exact parameters to get the correct account.
-            /** @var NostoAccount $account */
-            $account = Nosto::helper('nosto_tagging/account')->find($order->id_lang, $id_shop_group, $id_shop);
-            if ($account !== null && $account->isConnectedToNosto()) {
-                try {
-                    $customer_id = Nosto::helper('nosto_tagging/customer')->getNostoId($order);
-                    NostoOrderConfirmation::send($nosto_order, $account, $customer_id);
-                } catch (NostoException $e) {
-                    Nosto::helper('nosto_tagging/logger')->error(
-                        __CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(),
-                        $e->getCode(),
-                        'Order',
-                        (int)$params['id_order']
-                    );
-                }
-            }
+            /* @var NostoTaggingHelperOrderOperation $order_operation*/
+            $order_operation = Nosto::helper('nosto_tagging/order_operation');
+            $context = $this->getContext();
+            $order_operation->send($order, $context);
         }
     }
 
@@ -1343,7 +1323,7 @@ class NostoTagging extends Module
             if ($params['object'] instanceof Product) {
                 /* @var $nostoProductOperation NostoTaggingHelperProductOperation */
                 $nostoProductOperation = Nosto::helper('nosto_tagging/product_operation');
-                $nostoProductOperation->update($params['object']);
+                $nostoProductOperation->updateProduct($params['object']);
             }
         }
     }
@@ -1377,7 +1357,7 @@ class NostoTagging extends Module
     }
 
     /**
-     * Hook called when a product is update with a new picture, right after said update. (Prestashop 1.4).
+     * Hook called when a product is update with a new picture, right after said update
      *
      * @see NostoTagging::hookActionObjectUpdateAfter
      * @param array $params
@@ -1390,7 +1370,7 @@ class NostoTagging extends Module
     }
 
     /**
-     * Hook called when a product is deleted, right before said deletion (Prestashop 1.4).
+     * Hook called when a product is deleted, right before said deletion
      *
      * @see NostoTagging::hookActionObjectDeleteAfter
      * @param array $params
@@ -1403,7 +1383,7 @@ class NostoTagging extends Module
     }
 
     /**
-     * Hook called when a product is added, right after said addition (Prestashop 1.4).
+     * Hook called when a product is added, right after said addition
      *
      * @see NostoTagging::hookActionObjectAddAfter
      * @param array $params
@@ -1417,7 +1397,7 @@ class NostoTagging extends Module
 
     /**
      * Hook called during an the validation of an order, the status of which being something other than
-     * "canceled" or "Payment error", for each of the order's items (Prestashop 1.4).
+     * "canceled" or "Payment error", for each of the order's item
      *
      * @see NostoTagging::hookActionObjectUpdateAfter
      * @param array $params
@@ -1979,5 +1959,21 @@ class NostoTagging extends Module
             return hash(self::VISITOR_HASH_ALGO, $coo);
         }
         return null;
+    }
+
+    /**
+     * Returns link class initialized with https or http
+     *
+     * @return Link
+     */
+    public static function buildLinkClass()
+    {
+        if (Configuration::get('PS_SSL_ENABLED_EVERYWHERE')) {
+            $link = new Link('https://', 'https://');
+        } else {
+            $link = new Link('http://', 'http://');
+        }
+
+        return $link;
     }
 }

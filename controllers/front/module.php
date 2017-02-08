@@ -24,7 +24,7 @@
  */
 
 /**
- * Front controller base class for modules. This is a drop in replacement in prestashop 1.4 where this does not exist.
+ * Front controller base class for modules
  */
 abstract class ModuleFrontController extends FrontController
 {

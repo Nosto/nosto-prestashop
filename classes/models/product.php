@@ -215,7 +215,7 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
             $tagging_currency= $context->currency;
         }
         $this->url = $url_helper->getProductUrl($product, $id_lang, $id_shop);
-        $link = NostoTaggingHelperImage::getImageClass();
+        $link = NostoTagging::buildLinkClass();
         $this->image_url = $helper_image->getProductImageUrl($product, $id_lang, $link);
         $this->product_id = (int)$product->id;
         $this->name = $product->name;

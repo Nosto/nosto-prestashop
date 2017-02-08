@@ -126,7 +126,7 @@ class NostoTaggingHelperImage
         $images = Image::getImages((int)$id_lang, (int)$product->id);
         foreach ($images as $image) {
             $image_type = $this->getTaggingImageTypeName($id_lang);
-            $link = self::getImageClass();
+            $link = NostoTagging::buildLinkClass();
             $url = $link->getImageLink($product->link_rewrite, $image['id_image'], $image_type);
             if ($url) {
                 $alternate_image_urls[] = $url;
@@ -134,22 +134,5 @@ class NostoTaggingHelperImage
         }
 
         return $alternate_image_urls;
-    }
-
-
-    /**
-     * Returns link class initialized with https or http
-     *
-     * @return Image
-     */
-    public static function getImageClass()
-    {
-        if (Configuration::get('PS_SSL_ENABLED_EVERYWHERE')) {
-            $link = new Link('https://', 'https://');
-        } else {
-            $link = new Link('http://', 'http://');
-        }
-
-        return $link;
     }
 }

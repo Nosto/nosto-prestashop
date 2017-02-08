@@ -43,7 +43,6 @@ class NostoTaggingHelperAdminTab
 
     /**
      * Installs the Admin Tab in PS backend.
-     * Only for PS >= 1.5.
      *
      * @return bool true on success, false otherwise.
      */

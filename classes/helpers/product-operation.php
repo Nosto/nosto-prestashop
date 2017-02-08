@@ -26,8 +26,35 @@
 /**
  * Helper class for sending product create/update/delete events to Nosto.
  */
-class NostoTaggingHelperProductOperation
+class NostoTaggingHelperProductOperation extends NostoTaggingHelperOperation
 {
+    /**
+     * Maxmium batch size. If exceeded the batches will be splitted into smaller
+     * ones.
+     *
+     * @var int
+     */
+    public static $maxBatchSize = 500;
+
+    /**
+     * Max time to wait for Nosto's API response
+     *
+     * @var int
+     */
+    public static $apiWaitTimeout = 60;
+
+    /**
+     * Array key for data
+     * @var string
+     */
+    const KEY_DATA = 'data';
+
+    /**
+     * Array key for account
+     * @var string
+     */
+    const KEY_ACCOUNT = 'account';
+
     /**
      * @var array runtime cache for products that have already been processed during this request to avoid sending the
      * info to Nosto many times during the same request. This will otherwise happen as PrestaShop will sometime invoke
@@ -36,80 +63,109 @@ class NostoTaggingHelperProductOperation
     private static $processedProducts = array();
 
     /**
-     * @var array stores a snapshot of the context object and shop context so it can be restored between processing all
-     * accounts. This is important as the accounts belong to different shops and languages and the context, that
-     * contains this information, is used internally in PrestaShop when generating urls.
+     * Updates a batch of products to Nosto
+     *
+     * @param Product[] $products
+     * @return bool
      */
-    private $contextSnapshot;
+    public function updateBatch(array $products)
+    {
+        return $this->update($products);
+    }
+
+    /**
+     * Updates a single product to Nosto
+     *
+     * @param Product $product
+     * @return bool
+     */
+    public function updateProduct(Product $product)
+    {
+        return $this->update(array($product));
+    }
+
+    /**
+     * Sends a product update to Nosto for all stores and installed Nosto
+     * accounts
+     *
+     * @param Product[] $products
+     * @return bool
+     * @throws NostoException
+     */
+    private function update(array $products)
+    {
+        NostoHttpRequest::$responseTimeout = self::$apiWaitTimeout;
+        $products_in_store = array();
+        $counter = 0;
+        $batch = 1;
+        foreach ($products as $product) {
+            if ($counter > 0 && $counter % self::$maxBatchSize === 0) {
+                ++$batch;
+            }
+            ++$counter;
+            if (
+                $product instanceof Product === false
+                || !Validate::isLoadedObject($product)
+            ) {
+                Nosto::throwException(
+                    sprintf(
+                        'Invalid data type or not loaded objec, expecting Product' .
+                        ', got %s with id %s',
+                        get_class($product),
+                        $product->id
+                    )
+                );
+            }
+            if(in_array($product->id, self::$processedProducts)) {
+                continue;
+            }
+            self::$processedProducts[] = $product->id;
+            foreach ($this->getAccountData() as $data) {
+                list($account, $id_shop, $id_lang) = $data;
+                $account_name = $account->getName();
+                $nosto_product = $this->loadNostoProduct($product->id, $id_lang, $id_shop);
+                if ($nosto_product instanceof NostoTaggingProduct === false) {
+                    continue;
+                }
+                if (!isset($products_in_store[$account_name])) {
+                    $products_in_store[$account_name] = array();
+                }
+                if (!isset($products_in_store[$account_name][self::KEY_ACCOUNT])) {
+                    $products_in_store[$account_name][self::KEY_ACCOUNT] = $account;
+                }
+                if (!isset($products_in_store[$account_name][self::KEY_DATA])) {
+                    $products_in_store[$account_name][self::KEY_DATA] = array();
+                }
+
+                if (!isset($products_in_store[$account_name][self::KEY_DATA][$batch])) {
+                    $products_in_store[$account_name][self::KEY_DATA][$batch] = array();
+                }
+                $products_in_store[$account_name][self::KEY_DATA][$batch][] = $nosto_product;
+            }
+        }
+        foreach ($products_in_store as $nosto_account_name => $data) {
+            $nosto_account = $data[self::KEY_ACCOUNT];
+            foreach ($data[self::KEY_DATA] as $batchIndex => $batches) {
+                $op = new NostoOperationProduct($nosto_account);
+                foreach ($batches as $product) {
+                    $op->addProduct($product);
+                }
+                $op->upsert();
+            }
+        }
+
+        return true;
+    }
 
     /**
      * Sends a product create API request to Nosto.
      *
      * @param Product $product the product that has been created.
+     * @return self::updateProduct()
      */
     public function create(Product $product)
     {
-        if (!Validate::isLoadedObject($product) || in_array($product->id, self::$processedProducts)) {
-            return;
-        }
-
-        self::$processedProducts[] = $product->id;
-        foreach ($this->getAccountData() as $data) {
-            list($account, $id_shop, $id_lang) = $data;
-
-            $nosto_product = $this->loadNostoProduct((int)$product->id, $id_lang, $id_shop);
-            if (is_null($nosto_product)) {
-                continue;
-            }
-
-            try {
-                $op = new NostoOperationProduct($account);
-                $op->addProduct($nosto_product);
-                $op->upsert();
-            } catch (NostoException $e) {
-                Nosto::helper('nosto_tagging/logger')->error(
-                    __CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(),
-                    $e->getCode(),
-                    get_class($product),
-                    (int)$product->id
-                );
-            }
-        }
-    }
-
-    /**
-     * Sends a product update API request to Nosto.
-     *
-     * @param Product $product the product that has been updated.
-     */
-    public function update(Product $product)
-    {
-        if (!Validate::isLoadedObject($product) || in_array($product->id, self::$processedProducts)) {
-            return;
-        }
-
-        self::$processedProducts[] = $product->id;
-        foreach ($this->getAccountData() as $data) {
-            list($account, $id_shop, $id_lang) = $data;
-
-            $nosto_product = $this->loadNostoProduct((int)$product->id, $id_lang, $id_shop);
-            if (is_null($nosto_product)) {
-                continue;
-            }
-
-            try {
-                $op = new NostoOperationProduct($account);
-                $op->addProduct($nosto_product);
-                $op->upsert();
-            } catch (NostoException $e) {
-                Nosto::helper('nosto_tagging/logger')->error(
-                    __CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(),
-                    $e->getCode(),
-                    get_class($product),
-                    (int)$product->id
-                );
-            }
-        }
+        return $this->updateProduct($product);
     }
 
     /**
@@ -146,62 +202,6 @@ class NostoTaggingHelperProductOperation
     }
 
     /**
-     * Returns Nosto accounts based on active shops.
-     *
-     * The result is formatted as follows:
-     *
-     * array(
-     *   array(object(NostoAccount), int(id_shop), int(id_lang))
-     * )
-     *
-     * @return NostoAccount[] the account data.
-     */
-    protected function getAccountData()
-    {
-        $data = array();
-        /** @var NostoTaggingHelperAccount $account_helper */
-        $account_helper = Nosto::helper('nosto_tagging/account');
-        foreach ($this->getContextShops() as $shop) {
-            $id_shop = (int)$shop['id_shop'];
-            $id_shop_group = (int)$shop['id_shop_group'];
-            foreach (LanguageCore::getLanguages(true, $id_shop) as $language) {
-                $id_lang = (int)$language['id_lang'];
-                $account = $account_helper->find($id_lang, $id_shop_group, $id_shop);
-                if ($account === null || !$account->isConnectedToNosto()) {
-                    continue;
-                }
-
-                $data[] = array($account, $id_shop, $id_lang);
-            }
-        }
-        return $data;
-    }
-
-    /**
-     * Returns the shops that are affected by the current context.
-     *
-     * @return array list of shop data.
-     */
-    protected function getContextShops()
-    {
-        if (Shop::isFeatureActive() && Shop::getContext() !== Shop::CONTEXT_SHOP) {
-            if (Shop::getContext() === Shop::CONTEXT_GROUP) {
-                return Shop::getShops(true, Shop::getContextShopGroupID());
-            } else {
-                return Shop::getShops(true);
-            }
-        } else {
-            $ctx = Context::getContext();
-            return array(
-                (int)$ctx->shop->id => array(
-                    'id_shop' => (int)$ctx->shop->id,
-                    'id_shop_group' => (int)$ctx->shop->id_shop_group,
-                ),
-            );
-        }
-    }
-
-    /**
      * Loads a Nosto product model for given PS product ID, language ID and shop ID.
      *
      * @param int $id_product the PS product ID.
@@ -215,92 +215,13 @@ class NostoTaggingHelperProductOperation
         if (!Validate::isLoadedObject($product)) {
             return null;
         }
-
-        $this->makeContextSnapshot();
-
+        /* @var NostoTaggingHelperContextFactory $context_factory */
+        $context_factory = Nosto::helper('nosto_tagging/context_factory');
+        $forged_context = $context_factory->forgeContext($id_lang, $id_shop);
         $nosto_product = new NostoTaggingProduct();
-        $nosto_product->loadData($this->makeContext($id_lang, $id_shop), $product);
-
-        $this->restoreContextSnapshot();
+        $nosto_product->loadData($forged_context, $product);
+        $context_factory->revertToOriginalContext();
 
         return $nosto_product;
-    }
-
-    /**
-     * Stores a snapshot of the current context.
-     */
-    protected function makeContextSnapshot()
-    {
-        $this->contextSnapshot = array(
-            'shop_context' => Shop::getContext(),
-            'context_object' => Context::getContext()->cloneContext()
-        );
-    }
-
-    /**
-     * Restore the context snapshot to the current context.
-     */
-    protected function restoreContextSnapshot()
-    {
-        if (!empty($this->contextSnapshot)) {
-            $original_context = $this->contextSnapshot['context_object'];
-            $shop_context = $this->contextSnapshot['shop_context'];
-            $this->contextSnapshot = null;
-
-            $current_context = Context::getContext();
-            $current_context->language = $original_context->language;
-            $current_context->shop = $original_context->shop;
-            $current_context->link = $original_context->link;
-            $current_context->currency = $original_context->currency;
-
-            Shop::setContext($shop_context, $current_context->shop->id);
-            Dispatcher::$instance = null;
-            if (method_exists('ShopUrl', 'resetMainDomainCache')) {
-                ShopUrl::resetMainDomainCache();
-            }
-        }
-    }
-
-    /**
-     * Modifies the current context and replaces the info related to shop, link, language and currency.
-     *
-     * We need this when generating the product data for the different shops and languages.
-     * The currency will be the first found for the shop, but it defaults to the PS default currency
-     * if no shop specific one is found.
-     *
-     * @param int $id_lang the language ID to add to the new context.
-     * @param int $id_shop the shop ID to add to the new context.
-     * @return Context the new context.
-     */
-    protected function makeContext($id_lang, $id_shop)
-    {
-        // Reset the shop context to be the current processed shop. This will fix the "friendly url" format of urls
-        // generated through the Link class.
-        Shop::setContext(Shop::CONTEXT_SHOP, $id_shop);
-        // Reset the dispatcher singleton instance so that the url rewrite setting is check on a shop basis when
-        // generating product urls. This will fix the issue of incorrectly formatted urls when one shop has the
-        // rewrite setting enabled and another does not.
-        Dispatcher::$instance = null;
-        if (method_exists('ShopUrl', 'resetMainDomainCache')) {
-        // Reset the shop url domain cache so that it is re-initialized on a shop basis when generating product
-            // image urls. This will fix the issue of the image urls having an incorrect shop base url when the
-            // shops are configured to use different domains.
-            ShopUrl::resetMainDomainCache();
-        }
-
-        foreach (Currency::getCurrenciesByIdShop($id_shop) as $row) {
-            if ($row['deleted'] === '0' && $row['active'] === '1') {
-                $currency = new Currency($row['id_currency']);
-                break;
-            }
-        }
-
-        $context = Context::getContext();
-        $context->language = new Language($id_lang);
-        $context->shop = new Shop($id_shop);
-        $context->link = new Link('http://', 'http://');
-        $context->currency = isset($currency) ? $currency : Currency::getDefaultCurrency();
-
-        return $context;
     }
 }

@@ -39,8 +39,9 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
         $context = $this->module->getContext();
         $collection = new NostoExportOrderCollection();
 
-        if (!empty(Tools::getValue('id'))) {
-            $orders = Order::getByReference(Tools::getValue('id'));
+        $id = Tools::getValue('id');
+        if (!empty($id)) {
+            $orders = Order::getByReference($id);
             if (empty($orders)) {
                 Tools::display404Error();
             }
@@ -53,7 +54,6 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
                 if (!Validate::isLoadedObject($order)) {
                     continue;
                 }
-
                 $nosto_order = new NostoTaggingOrder();
                 $nosto_order->include_special_items = true;
                 $nosto_order->loadData($this->module->getContext(), $order);
