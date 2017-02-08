@@ -63,7 +63,6 @@ class NostoTaggingHelperOrderOperation extends NostoTaggingHelperOperation
                         'Failed to synchronize products after order: %s',
                         $e->getMessage()
                     );
-
                 }
             } catch (NostoException $e) {
                 /* @var NostoTaggingHelperLogger $logger */
@@ -92,7 +91,7 @@ class NostoTaggingHelperOrderOperation extends NostoTaggingHelperOperation
                 if (empty($productId) || $productId < 0) {
                     continue;
                 }
-                $product= new Product($productId);
+                $product = new Product($productId);
                 if ($product instanceof Product) {
                     $products[] = $product;
                 }

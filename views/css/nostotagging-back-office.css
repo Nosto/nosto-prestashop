@@ -22,6 +22,44 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-.icon-AdminNosto:before {
-    content: "\f12e";
+@font-face {
+    font-family: 'nosto';
+    src:  url('../fonts/nosto.eot?rrnqb6');
+    src:  url('../fonts/nosto.eot?rrnqb6#iefix') format('embedded-opentype'),
+    url('../fonts/nosto.ttf?rrnqb6') format('truetype'),
+    url('../fonts/nosto.woff?rrnqb6') format('woff'),
+    url('../fonts/nosto.svg?rrnqb6#nosto') format('svg');
+    font-weight: normal;
+    font-style: normal;
 }
+#subtab-AdminNostoPersonalization .material-icons:before {
+    /* use !important to prevent issues with browser extensions that change fonts */
+    font-family: 'nosto' !important;
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: "\e900";
+}
+.icon-AdminNosto:before {
+    font-family: 'nosto' !important;
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: "\e900";
+}
+
+

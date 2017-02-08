@@ -116,7 +116,7 @@ class NostoTaggingHelperProductOperation extends NostoTaggingHelperOperation
                     )
                 );
             }
-            if(in_array($product->id, self::$processedProducts)) {
+            if (in_array($product->id, self::$processedProducts)) {
                 continue;
             }
             self::$processedProducts[] = $product->id;
@@ -192,7 +192,7 @@ class NostoTaggingHelperProductOperation extends NostoTaggingHelperOperation
                 $op->delete();
             } catch (NostoException $e) {
                 Nosto::helper('nosto_tagging/logger')->error(
-                    __CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(),
+                    __CLASS__ . '::' . __FUNCTION__ . ' - ' . $e->getMessage(),
                     $e->getCode(),
                     get_class($product),
                     (int)$product->id

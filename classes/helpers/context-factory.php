@@ -109,12 +109,12 @@ class NostoTaggingHelperContextFactory
      */
     private function saveOriginalContext(Context $context)
     {
-        if( isset( $context->shop ) && $context->shop instanceof Shop ) {
+        if (isset($context->shop) && $context->shop instanceof Shop) {
             $this->original_shop_context = $context->shop->getContext();
-            if( $context->shop->getContextShopId() ) {
+            if ($context->shop->getContextShopId()) {
                 $this->original_shop_id = $context->shop->getContextShopId();
             }
-            if( ! empty( $context->shop->getContextShopGroupId() ) ) {
+            if (!empty($context->shop->getContextShopGroupId())) {
                 $this->original_shop_group = $context->shop->getContextShopGroupId();
             }
             if (!empty($context->currency)) {
@@ -137,12 +137,12 @@ class NostoTaggingHelperContextFactory
             $current_context->language = $this->original_language;
         }
         if (!empty($this->original_currency)) {
-            $current_context->currency= $this->original_currency;
+            $current_context->currency = $this->original_currency;
         }
         if ($this->original_shop_context === Shop::CONTEXT_SHOP && !empty($this->original_shop_id)) {
             Shop::setContext(Shop::CONTEXT_SHOP, $this->original_shop_id);
             if (!empty($this->original_shop_id)) {
-                $current_context->shop= new Shop($this->original_shop_id);
+                $current_context->shop = new Shop($this->original_shop_id);
             }
         } elseif ($this->original_shop_context === Shop::CONTEXT_GROUP && !empty($this->original_shop_group)) {
             Shop::setContext(Shop::CONTEXT_GROUP, $this->original_shop_group);
