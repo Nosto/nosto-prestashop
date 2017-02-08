@@ -78,11 +78,7 @@ class NostoTaggingHelperCurrency
     public function getCurrencies(Context $context, $only_active = false)
     {
         $id_shop = (int)$context->shop->id;
-        if (_PS_VERSION_ >= '1.5') {
-            $all_currencies = Currency::getCurrenciesByIdShop($id_shop);
-        } else {
-            $all_currencies = Currency::getCurrencies();
-        }
+        $all_currencies = Currency::getCurrenciesByIdShop($id_shop);
         if ($only_active === true) {
             $currencies = array();
             /* @var Currency $currency */

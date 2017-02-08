@@ -25,8 +25,6 @@
 
 /*
  * This is a backwards compatibility script for running module front controllers in all supported Prestashop versions.
- * Version 1.5 and 1.6 does have it's own module controller system, but 1.4 does not. We use this for all versions
- * in order to keep it consistent across versions.
  * The script is meant to run outside of Prestashop, so if _PS_VERSION_ is already defined, we do nothing.
  */
 if (!defined('_PS_VERSION_')) {
@@ -56,12 +54,6 @@ if (!defined('_PS_VERSION_')) {
     $controller_dir = $ps_dir.'/modules/nostotagging/controllers/front';
 
     require_once($ps_dir.'/config/config.inc.php');
-    /*
-	 * The "ModuleFrontController" class won't be defined in prestashop 1.4, so define it.
-	 */
-    if (_PS_VERSION_ < '1.5') {
-        require_once($controller_dir.'/module.php');
-    }
     $controller = Tools::strtolower((string)Tools::getValue('controller'));
     if (!empty($controller)
         && in_array(Tools::strtolower($controller), $controller_white_list)

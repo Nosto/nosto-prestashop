@@ -215,7 +215,7 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
             $tagging_currency= $context->currency;
         }
         $this->url = $url_helper->getProductUrl($product, $id_lang, $id_shop);
-        $link = NostoTaggingHelperImage::getImageClass();
+        $link = NostoTagging::buildLinkClass();
         $this->image_url = $helper_image->getProductImageUrl($product, $id_lang, $link);
         $this->product_id = (int)$product->id;
         $this->name = $product->name;
@@ -313,7 +313,7 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
     {
         if (
             !$product->active
-            || (_PS_VERSION_ >= '1.5' && $product->visibility === 'none')) {
+            || $product->visibility === 'none') {
             return self::INVISIBLE;
         } else {
             return ($product->checkQty(1)) ? self::IN_STOCK : self::OUT_OF_STOCK;

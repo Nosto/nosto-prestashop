@@ -126,11 +126,6 @@ class NostoTaggingHelperPrice
             /** @var Currency|CurrencyCore $old_currency */
             $old_currency = $context->currency;
             $context->currency = $currency;
-            // PS 1.4 has the currency stored in the cookie.
-            if (isset($context->cookie, $context->cookie->id_currency)) {
-                $context->cookie->id_currency = $currency->id;
-                $context->cart->id_currency = $currency->id;
-            }
         }
 
         $options = array_merge(array(
@@ -175,11 +170,6 @@ class NostoTaggingHelperPrice
         // If currency was replaced in context, restore the old one.
         if (isset($old_currency)) {
             $context->currency = $old_currency;
-            // PS 1.4 has the currency stored in the cookie.
-            if (isset($context->cookie, $context->cookie->id_currency)) {
-                $context->cookie->id_currency = $old_currency->id;
-                $context->cart->id_currency = $old_currency->id;
-            }
         }
 
         return $this->roundPrice($value);

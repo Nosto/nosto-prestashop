@@ -37,9 +37,5 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_2_2_0($object)
 {
-    if (_PS_VERSION_ < '1.5') {
-        return $object->registerHook('addproduct');
-    } else {
-        return $object->registerHook('actionObjectAddAfter');
-    }
+    return $object->registerHook('actionObjectAddAfter');
 }

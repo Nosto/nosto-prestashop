@@ -75,7 +75,6 @@ class NostoTaggingCustomer extends NostoTaggingModel
 
     /**
      * Check if the customer is logged in or not.
-     * We need to check the cookie if PS version is 1.4 as the CustomerBackwardModule::isLogged() method does not work.
      *
      * @param Context $context the context object.
      * @param Customer $customer the customer object to check.
@@ -87,20 +86,7 @@ class NostoTaggingCustomer extends NostoTaggingModel
             return false;
         }
 
-        if (_PS_VERSION_ >= '1.5') {
-            return $customer->isLogged();
-        }
-
-        if (!isset($context->cookie)) {
-            return false;
-        }
-
-        // Double check that the given customer object has the same id as the cookie's id_customer property,
-        // before checking if the cookie is logged in.
-        return (!empty($context->cookie->id_customer)
-            && !empty($customer->id)
-            && ($context->cookie->id_customer == $customer->id)
-            && $context->cookie->isLogged());
+        return $customer->isLogged();
     }
 
     /**

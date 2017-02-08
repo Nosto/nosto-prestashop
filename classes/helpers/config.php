@@ -116,13 +116,14 @@ class NostoTaggingHelperConfig
 
         Db::getInstance()->execute(
             'DELETE `' . $config_lang_table . '` FROM `' . $config_lang_table . '`
-			LEFT JOIN `' . $config_table . '`
-			ON `' . $config_lang_table . '`.`id_configuration` = `' . $config_table . '`.`id_configuration`
-			WHERE `' . $config_table . '`.`name` LIKE "NOSTOTAGGING_%"'
+            LEFT JOIN `' . $config_table . '`
+            ON `' . $config_lang_table . '`.`id_configuration` = `' . $config_table . '`.`id_configuration`
+            WHERE `' . $config_table . '`.`name` LIKE "NOSTOTAGGING_%"'
         );
-        Db::getInstance()->execute('
-			DELETE FROM `' . $config_table . '`
-			WHERE `' . $config_table . '`.`name` LIKE "NOSTOTAGGING_%"');
+        Db::getInstance()->execute(
+            'DELETE FROM `' . $config_table . '`
+            WHERE `' . $config_table . '`.`name` LIKE "NOSTOTAGGING_%"'
+        );
 
         // Reload the config.
         Configuration::loadConfiguration();
@@ -140,29 +141,25 @@ class NostoTaggingHelperConfig
      */
     public function deleteAllFromContext($id_lang = null, $id_shop_group = null, $id_shop = null)
     {
-        if (_PS_VERSION_ >= '1.5') {
-            if ($id_shop === null) {
-                $id_shop = (int)Shop::getContextShopID(true);
-            }
-            if ($id_shop_group === null) {
-                $id_shop_group = (int)Shop::getContextShopGroupID(true);
-            }
+        if ($id_shop === null) {
+            $id_shop = (int)Shop::getContextShopID(true);
+        }
+        if ($id_shop_group === null) {
+            $id_shop_group = (int)Shop::getContextShopGroupID(true);
+        }
 
-            if ($id_shop) {
-                $context_restriction = ' AND `id_shop` = ' . $id_shop;
-            } elseif ($id_shop_group) {
-                $context_restriction = '
-                    AND `id_shop_group` = ' . $id_shop_group . '
-                    AND (`id_shop` IS NULL OR `id_shop` = 0)
-                ';
-            } else {
-                $context_restriction = '
-                    AND (`id_shop_group` IS NULL OR `id_shop_group` = 0)
-                    AND (`id_shop` IS NULL OR `id_shop` = 0)
-                ';
-            }
+        if ($id_shop) {
+            $context_restriction = ' AND `id_shop` = ' . $id_shop;
+        } elseif ($id_shop_group) {
+            $context_restriction = '
+                AND `id_shop_group` = ' . $id_shop_group . '
+                AND (`id_shop` IS NULL OR `id_shop` = 0)
+            ';
         } else {
-            $context_restriction = '';
+            $context_restriction = '
+                AND (`id_shop_group` IS NULL OR `id_shop_group` = 0)
+                AND (`id_shop` IS NULL OR `id_shop` = 0)
+            ';
         }
 
         $config_table = pSQL(_DB_PREFIX_ . 'configuration');
@@ -171,23 +168,13 @@ class NostoTaggingHelperConfig
         if (!empty($id_lang)) {
             Db::getInstance()->execute(
                 'DELETE `' . $config_lang_table . '` FROM `' . $config_lang_table . '`
-				INNER JOIN `' . $config_table . '`
-				ON `' . $config_lang_table . '`.`id_configuration` = `' . $config_table . '`.`id_configuration`
-				WHERE `' . $config_table . '`.`name` LIKE "NOSTOTAGGING_%"
-				AND `id_lang` = ' . (int)$id_lang
+                INNER JOIN `' . $config_table . '`
+                ON `' . $config_lang_table . '`.`id_configuration` = `' . $config_table . '`.`id_configuration`
+                WHERE `' . $config_table . '`.`name` LIKE "NOSTOTAGGING_%"
+                AND `id_lang` = ' . (int)$id_lang
                 . $context_restriction
             );
         }
-        // We do not actually delete the main config entries, just set them to NULL, as there might me other language
-        // specific entries tied to them. The main entries are not used anyways if there are languages defined.
-        /* todo: this breaks PS 1.4, apparently you cannot update a value that is NULL in PS 1.4.
-		Db::getInstance()->execute('
-			UPDATE `'.$config_table.'`
-			SET `value` = NULL
-			WHERE `name` LIKE "NOSTOTAGGING_%"'
-			.$context_restriction
-		);*/
-
         // Reload the config.
         Configuration::loadConfiguration();
 
@@ -365,7 +352,7 @@ class NostoTaggingHelperConfig
     public function getNostotaggingRenderPosition($id_lang, $id_shop_group = null, $id_shop = null)
     {
         $position = $this->read(self::NOSTOTAGGING_POSITION, $id_lang, true, $id_shop_group, $id_shop);
-        return !empty($position) ? $position: self::NOSTOTAGGING_POSITION_TOP;
+        return !empty($position) ? $position : self::NOSTOTAGGING_POSITION_TOP;
     }
 
     /**

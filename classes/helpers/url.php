@@ -88,11 +88,8 @@ class NostoTaggingHelperUrl
                     FROM `'.pSQL(_DB_PREFIX_).'category`
                     WHERE `active` = 1
                     AND `id_parent` > 0
+                    AND `is_root_category` = 0
 				';
-                // There is not "is_root_category" in PS 1.4, but in >= 1.5 we want to skip the root.
-                if (_PS_VERSION_ >= '1.5') {
-                    $sql .= ' AND `is_root_category` = 0';
-                }
                 $row = Db::getInstance()->getRow($sql);
                 $id_category = isset($row['id_category']) ? (int)$row['id_category'] : 0;
             }
@@ -201,7 +198,7 @@ class NostoTaggingHelperUrl
 
         if (version_compare(_PS_VERSION_, '1.5.0.0') === -1 || version_compare(_PS_VERSION_, '1.5.5.0') >= 0) {
             /** @var LinkCore $link */
-            $link = new Link();
+            $link = NostoTagging::buildLinkClass();
             $url = $link->getProductLink($product, null, null, null, $id_lang, $id_shop);
         } else {
             // For PS versions 1.5.0.0 - 1.5.4.1 we always hard-code the urls to be in non-friendly format and fetch
@@ -244,7 +241,7 @@ class NostoTaggingHelperUrl
 
         if (version_compare(_PS_VERSION_, '1.5.0.0') === -1 || version_compare(_PS_VERSION_, '1.5.5.0') >= 0) {
             /** @var LinkCore $link */
-            $link = new Link();
+            $link = NostoTagging::buildLinkClass();
             $url = $link->getCategoryLink($category, null, $id_lang, null, $id_shop);
         } else {
             // For PS versions 1.5.0.0 - 1.5.4.1 we always hard-code the urls to be in non-friendly format and fetch
@@ -287,7 +284,7 @@ class NostoTaggingHelperUrl
 
         if (version_compare(_PS_VERSION_, '1.5.0.0') === -1 || version_compare(_PS_VERSION_, '1.5.5.0') >= 0) {
             /** @var LinkCore $link */
-            $link = new Link();
+            $link = NostoTagging::buildLinkClass();
             $url = $link->getPageLink($controller, true, $id_lang, null, false, $id_shop);
         } else {
             // For PS versions 1.5.0.0 - 1.5.4.1 we always hard-code the urls to be in non-friendly format and fetch
@@ -313,7 +310,7 @@ class NostoTaggingHelperUrl
      * We created our own method due to the existing one in `LinkCore` behaving differently across PS versions.
      *
      * @param string $name the name of the module to create an url for.
-     * @param string $path the path of the module to create an url for (PS 1.4 only).
+     * @param string $path the path of the module to create an url for
      * @param string $controller the name of the controller.
      * @param int|null $id_lang the language ID (falls back on current context if not set).
      * @param int|null $id_shop the shop ID (falls back on current context if not set).
@@ -346,7 +343,7 @@ class NostoTaggingHelperUrl
             return $this->getBaseUrl($id_shop).'index.php?'.http_build_query($params);
         } else {
             /** @var LinkCore $link */
-            $link = new Link();
+            $link = NostoTagging::buildLinkClass();
             return $link->getModuleLink($name, $controller, $params, null, $id_lang, $id_shop);
         }
     }
@@ -360,9 +357,6 @@ class NostoTaggingHelperUrl
     public function getBaseUrl($id_shop = null)
     {
         $ssl = Configuration::get('PS_SSL_ENABLED');
-        if (_PS_VERSION_ < '1.5') {
-            return ($ssl ? _PS_BASE_URL_SSL_ : _PS_BASE_URL_);
-        }
 
         if (Configuration::get('PS_MULTISHOP_FEATURE_ACTIVE') && !is_null($id_shop)) {
             $shop = new Shop($id_shop);

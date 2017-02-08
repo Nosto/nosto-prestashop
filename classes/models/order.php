@@ -276,77 +276,68 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
         $total_wrapping_tax_incl = 0;
         $total_gift_tax_incl = 0;
 
-        // Cart rules and split orders are available from prestashop 1.5 onwards.
-        if (_PS_VERSION_ >= '1.5') {
         // One order can be split into multiple orders, so we need to combine their data.
-            $order_collection = Order::getByReference($order->reference);
-            foreach ($order_collection as $item) {
-                /** @var $item Order */
-                $products = array_merge($products, $item->getProducts());
-                $total_discounts_tax_incl = Tools::ps_round(
-                    $total_discounts_tax_incl + $item->total_discounts_tax_incl,
-                    2
-                );
-                $total_shipping_tax_incl = Tools::ps_round(
-                    $total_shipping_tax_incl + $item->total_shipping_tax_incl,
-                    2
-                );
-                $total_wrapping_tax_incl = Tools::ps_round(
-                    $total_wrapping_tax_incl + $item->total_wrapping_tax_incl,
-                    2
-                );
-            }
-
-            // We need the cart rules used for the order to check for gift products and free shipping.
-            // The cart is the same even if the order is split into many objects.
-            $cart = new Cart($order->id_cart);
-            if (Validate::isLoadedObject($cart)) {
-                $cart_rules = (array)$cart->getCartRules();
-            } else {
-                $cart_rules = array();
-            }
-
-            $gift_products = array();
-            foreach ($cart_rules as $cart_rule) {
-                if ((int)$cart_rule['gift_product']) {
-                    foreach ($products as $key => &$product) {
-                        if (empty($product['gift'])
-                        && (int)$product['product_id'] === (int)$cart_rule['gift_product']
-                        && (int)$product['product_attribute_id'] === (int)$cart_rule['gift_product_attribute']) {
-                            $product['product_quantity'] = (int)$product['product_quantity'];
-                            $product['product_quantity']--;
-                            if (!($product['product_quantity'] > 0)) {
-                                unset($products[$key]);
-                            }
-                            if (isset($product['product_price_wt'])) {
-                                $product_price_wt = $product['product_price_wt'];
-                            } else {
-                                $product_price_wt = 0;
-                            }
-                            $total_gift_tax_incl = Tools::ps_round(
-                                $total_gift_tax_incl + $product_price_wt,
-                                2
-                            );
-                            $gift_product = $product;
-                            $gift_product['product_quantity'] = 1;
-                            $gift_product['product_price_wt'] = 0;
-                            $gift_product['gift'] = true;
-                            $gift_products[] = $gift_product;
-
-                            break; // One gift product per cart rule
-                        }
-                    }
-                    unset($product);
-                }
-            }
-            $items = array_merge($products, $gift_products);
-        } else {
-            $products = $order->getProducts();
-            $total_discounts_tax_incl = $order->total_discounts;
-            $total_shipping_tax_incl = $order->total_shipping;
-            $total_wrapping_tax_incl = $order->total_wrapping;
-            $items = $products;
+        $order_collection = Order::getByReference($order->reference);
+        foreach ($order_collection as $item) {
+            /** @var $item Order */
+            $products = array_merge($products, $item->getProducts());
+            $total_discounts_tax_incl = Tools::ps_round(
+                $total_discounts_tax_incl + $item->total_discounts_tax_incl,
+                2
+            );
+            $total_shipping_tax_incl = Tools::ps_round(
+                $total_shipping_tax_incl + $item->total_shipping_tax_incl,
+                2
+            );
+            $total_wrapping_tax_incl = Tools::ps_round(
+                $total_wrapping_tax_incl + $item->total_wrapping_tax_incl,
+                2
+            );
         }
+
+        // We need the cart rules used for the order to check for gift products and free shipping.
+        // The cart is the same even if the order is split into many objects.
+        $cart = new Cart($order->id_cart);
+        if (Validate::isLoadedObject($cart)) {
+            $cart_rules = (array)$cart->getCartRules();
+        } else {
+            $cart_rules = array();
+        }
+
+        $gift_products = array();
+        foreach ($cart_rules as $cart_rule) {
+            if ((int)$cart_rule['gift_product']) {
+                foreach ($products as $key => &$product) {
+                    if (empty($product['gift'])
+                    && (int)$product['product_id'] === (int)$cart_rule['gift_product']
+                    && (int)$product['product_attribute_id'] === (int)$cart_rule['gift_product_attribute']) {
+                        $product['product_quantity'] = (int)$product['product_quantity'];
+                        $product['product_quantity']--;
+                        if (!($product['product_quantity'] > 0)) {
+                            unset($products[$key]);
+                        }
+                        if (isset($product['product_price_wt'])) {
+                            $product_price_wt = $product['product_price_wt'];
+                        } else {
+                            $product_price_wt = 0;
+                        }
+                        $total_gift_tax_incl = Tools::ps_round(
+                            $total_gift_tax_incl + $product_price_wt,
+                            2
+                        );
+                        $gift_product = $product;
+                        $gift_product['product_quantity'] = 1;
+                        $gift_product['product_price_wt'] = 0;
+                        $gift_product['gift'] = true;
+                        $gift_products[] = $gift_product;
+
+                        break; // One gift product per cart rule
+                    }
+                }
+                unset($product);
+            }
+        }
+        $items = array_merge($products, $gift_products);
 
         if (!$context) {
             $context = Context::getContext();
@@ -438,8 +429,6 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
     /**
      * Returns the product attribute combination by id_product_attribute.
      *
-     * For PS 1.4 we need to query the combinations manually, while newer version of PS provide a handy getter.
-     *
      * @param Product|ProductCore $product the product model.
      * @param int $id_product_attribute the product attribute ID.
      * @param int $id_lang the language ID.
@@ -447,46 +436,6 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
      */
     protected function getProductAttributeCombinationsById($product, $id_product_attribute, $id_lang)
     {
-        if (_PS_VERSION_ >= '1.5') {
-            return $product->getAttributeCombinationsById($id_product_attribute, $id_lang);
-        }
-
-        $db_prefix = pSQL(_DB_PREFIX_);
-        return Db::getInstance()->executeS(
-            'SELECT
-                pa.*,
-                ag.`id_attribute_group`,
-                ag.`is_color_group`,
-                agl.`name` group_name,
-                al.`name` attribute_name,
-                a.`id_attribute`,
-                pa.`unit_price_impact`
-            FROM
-              `'. $db_prefix .'product_attribute` pa
-            LEFT JOIN
-                `'. $db_prefix .'product_attribute_combination` pac
-                ON pac.`id_product_attribute` = pa.`id_product_attribute`
-            LEFT JOIN
-                `'. $db_prefix .'attribute` a ON a.`id_attribute` = pac.`id_attribute`
-            LEFT JOIN
-                `'. $db_prefix .'attribute_group` ag
-                ON ag.`id_attribute_group` = a.`id_attribute_group`
-            LEFT JOIN
-                `'. $db_prefix .'attribute_lang` al
-                ON (a.`id_attribute` = al.`id_attribute` AND al.`id_lang` = '.(int)($id_lang).')
-            LEFT JOIN
-                `'. $db_prefix .'attribute_group_lang` agl
-                ON (
-                    ag.`id_attribute_group` = agl.`id_attribute_group`
-                    AND agl.`id_lang` = '.(int)($id_lang).'
-                )
-            WHERE
-                pa.`id_product` = '.(int)($product->id).'
-            AND
-                pa.`id_product_attribute` = '.(int)$id_product_attribute.'
-            GROUP BY
-                pa.`id_product_attribute`, ag.`id_attribute_group`
-            ORDER BY pa.`id_product_attribute`'
-        );
+        return $product->getAttributeCombinationsById($id_product_attribute, $id_lang);
     }
 }

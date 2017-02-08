@@ -43,7 +43,8 @@ shop. This is as easy as clicking a button, so read on.
 
 The module comes bundled with PrestaShop 1.5 and 1.6. For PrestaShop 1.4 you wll need to fetch the module archive from
 the [addons page](http://addons.prestashop.com/en/advertising-marketing-newsletter-modules/18349-nostotagging.html) and
-upload the archive in the backend of your PrestaShop installation.
+upload the archive in the backend of your PrestaShop installation. Please note that this version of Nosto module is only 
+compatible with Prestashop > 1.5. The latest module version where Prestashop < 1.5 is supported is 2.7.1.   
 
 To install the module in PrestaShop, navigate to the "Modules" section in the backend and locate the module under the
 "Advertising & Marketing" section. Then just click the "Install" button next to the module in the list. That's it.
@@ -103,4 +104,4 @@ Academic Free License ("AFL") v. 3.0
 
 ## Dependencies
 
-PrestaShop version 1.4.x - 1.6.x
+PrestaShop version 1.5.x - 1.6.x

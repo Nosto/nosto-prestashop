@@ -39,8 +39,9 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
         $context = $this->module->getContext();
         $collection = new NostoExportOrderCollection();
 
-        if (!empty(Tools::getValue('id'))) {
-            $orders = Order::getByReference(Tools::getValue('id'));
+        $id = Tools::getValue('id');
+        if (!empty($id)) {
+            $orders = Order::getByReference($id);
             if (empty($orders)) {
                 Tools::display404Error();
             }
@@ -53,7 +54,6 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
                 if (!Validate::isLoadedObject($order)) {
                     continue;
                 }
-
                 $nosto_order = new NostoTaggingOrder();
                 $nosto_order->include_special_items = true;
                 $nosto_order->loadData($this->module->getContext(), $order);
@@ -72,23 +72,14 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
     protected function getOrderIds()
     {
         $context = $this->module->getContext();
-        if (_PS_VERSION_ > '1.5') {
-            $where = strtr(
-                '`id_shop_group` = {g} AND `id_shop` = {s} AND `id_lang` = {l}',
-                array(
-                    '{g}' => pSQL($context->shop->id_shop_group),
-                    '{s}' => pSQL($context->shop->id),
-                    '{l}' => pSQL($context->language->id),
-                )
-            );
-        } else {
-            $where = strtr(
-                '`id_lang` = {l}',
-                array(
-                    '{l}' => pSQL($context->language->id),
-                )
-            );
-        }
+        $where = strtr(
+            '`id_shop_group` = {g} AND `id_shop` = {s} AND `id_lang` = {l}',
+            array(
+                '{g}' => pSQL($context->shop->id_shop_group),
+                '{s}' => pSQL($context->shop->id),
+                '{l}' => pSQL($context->language->id),
+            )
+        );
 
         $sql = sprintf(
             '
