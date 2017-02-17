@@ -128,6 +128,13 @@ class NostoTaggingHelperPrice
             $context->currency = $currency;
         }
 
+        if (
+            !isset($context->employee)
+            || empty($context->employee)
+        ) {
+            $context->employee = new Employee();
+        }
+
         $options = array_merge(array(
             'include_tax' => true,
             'id_product_attribute' => null,
