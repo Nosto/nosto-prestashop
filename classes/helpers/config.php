@@ -109,7 +109,7 @@ class NostoTaggingHelperConfig
      *
      * @return bool always true.
      */
-    public function purge()
+    public static function purge()
     {
         $config_table = pSQL(_DB_PREFIX_ . 'configuration');
         $config_lang_table = pSQL($config_table . '_lang');

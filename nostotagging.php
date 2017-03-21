@@ -256,7 +256,9 @@ class NostoTagging extends Module
             // This config value is updated in the NostoTaggingUpdater helper every time the module is updated.
             if ($success) {
                 if (version_compare(_PS_VERSION_, '1.5.4.0', '<')) {
-                    Nosto::helper('nosto_tagging/config')->saveInstalledVersion($this->version);
+                    /** @var NostoTaggingHelperConfig $config_helper */
+                    $config_helper = Nosto::helper('nosto_tagging/config');
+                    $config_helper->saveInstalledVersion($this->version);
                 }
 
                 $success = $this->registerHook('actionObjectUpdateAfter')
@@ -287,8 +289,8 @@ class NostoTagging extends Module
     {
         return parent::uninstall()
             && NostoTaggingHelperAccount::deleteAll()
-            && Nosto::helper('nosto_tagging/config')->purge()
-            && Nosto::helper('nosto_tagging/customer')->dropTables()
+            && NostoTaggingHelperConfig::purge()
+            && NostoTaggingHelperCustomer::dropTables()
             && NostoTaggingHelperAdminTab::uninstall();
     }
 

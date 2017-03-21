@@ -53,6 +53,7 @@ if (!defined('_PS_VERSION_')) {
 
     $controller_dir = $ps_dir.'/modules/nostotagging/controllers/front';
 
+    /** @noinspection PhpIncludeInspection */
     require_once($ps_dir.'/config/config.inc.php');
     $controller = Tools::strtolower((string)Tools::getValue('controller'));
     if (!empty($controller)
