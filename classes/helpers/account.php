@@ -121,7 +121,9 @@ class NostoTaggingHelperAccount
     {
         if ($context->shop instanceof Shop) {
             return self::find(
-                $context->language->id, $context->shop->id_shop_group, $context->shop->id
+                $context->language->id,
+                $context->shop->id_shop_group,
+                $context->shop->id
             );
         } else {
             return self::find($context->language->id);
@@ -172,7 +174,9 @@ class NostoTaggingHelperAccount
     {
         if ($context->shop instanceof Shop) {
             return self::existsAndIsConnected(
-                $context->language->id, $context->shop->id_shop_group, $context->shop->id
+                $context->language->id,
+                $context->shop->id_shop_group,
+                $context->shop->id
             );
         } else {
             return self::existsAndIsConnected($context->language->id);

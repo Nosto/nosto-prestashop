@@ -1061,8 +1061,7 @@ class NostoTagging extends Module
      * @param array $params
      * @return string The HTML to output
      */
-    public function hookDisplayFooterProduct(
-        /** @noinspection PhpUnusedParameterInspection */
+    public function hookDisplayFooterProduct(/** @noinspection PhpUnusedParameterInspection */
         array $params
     ) {
         if (!NostoTaggingHelperAccount::isContextConnected($this->context)) {
@@ -1127,8 +1126,7 @@ class NostoTagging extends Module
      * @param array $params
      * @return string The HTML to output
      */
-    public function hookDisplayOrderConfirmation(
-        /** @noinspection PhpUnusedParameterInspection */
+    public function hookDisplayOrderConfirmation(/** @noinspection PhpUnusedParameterInspection */
         array $params
     ) {
         if (!NostoTaggingHelperAccount::isContextConnected($this->context)) {
@@ -1787,8 +1785,7 @@ class NostoTagging extends Module
      *
      * @param array $params
      */
-    public function hookDisplayBackOfficeTop(
-        /** @noinspection PhpUnusedParameterInspection */
+    public function hookDisplayBackOfficeTop(/** @noinspection PhpUnusedParameterInspection */
         array $params
     ) {
         $this->checkNotifications();
@@ -1797,8 +1794,7 @@ class NostoTagging extends Module
     /**
      * @param array $params
      */
-    public function hookBackOfficeFooter(
-        /** @noinspection PhpUnusedParameterInspection */
+    public function hookBackOfficeFooter(/** @noinspection PhpUnusedParameterInspection */
         array $params
     ) {
         return $this->updateExhangeRatesIfNeeded(false);
@@ -1842,8 +1838,7 @@ class NostoTagging extends Module
      *
      * @param array $params
      */
-    public function hookActionObjectCurrencyUpdateAfter(
-        /** @noinspection PhpUnusedParameterInspection */
+    public function hookActionObjectCurrencyUpdateAfter(/** @noinspection PhpUnusedParameterInspection */
         array $params
     ) {
         return $this->updateExhangeRatesIfNeeded(true);
