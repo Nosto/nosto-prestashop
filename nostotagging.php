@@ -1334,7 +1334,9 @@ class NostoTagging extends Module
     {
         if (isset($params['object'])) {
             if ($params['object'] instanceof Product) {
-                Nosto::helper('nosto_tagging/product_operation')->delete($params['object']);
+                /** @var NostoTaggingHelperProductOperation $operation */
+                $operation = Nosto::helper('nosto_tagging/product_operation');
+                $operation->delete($params['object']);
             }
         }
     }
@@ -1348,7 +1350,9 @@ class NostoTagging extends Module
     {
         if (isset($params['object'])) {
             if ($params['object'] instanceof Product) {
-                Nosto::helper('nosto_tagging/product_operation')->create($params['object']);
+                /** @var NostoTaggingHelperProductOperation $operation */
+                $operation = Nosto::helper('nosto_tagging/product_operation');
+                $operation->create($params['object']);
             }
         }
     }

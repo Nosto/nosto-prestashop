@@ -81,7 +81,6 @@ class NostoTaggingHelperCurrency
         $all_currencies = Currency::getCurrenciesByIdShop($id_shop);
         if ($only_active === true) {
             $currencies = array();
-            /* @var Currency $currency */
             foreach ($all_currencies as $currency) {
                 if ($this->currencyActive($currency)) {
                     $currencies[] = $currency;
