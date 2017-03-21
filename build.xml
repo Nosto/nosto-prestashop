@@ -24,6 +24,7 @@
   ~ @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
   -->
 
+<!--suppress XmlUnboundNsPrefix -->
 <project name="nostotagging" default="dist">
     <php expression="include('${composerDir}/vendor/autoload.php')"/>
     <property name="package"  value="${phing.project.name}" override="true" />

@@ -34,20 +34,16 @@ class NostoTaggingHelperNotification
      *
      * @param Shop $shop
      * @param Language $language
-     * @return array
+     * @return boolean
      */
     public function checkTokens(Shop $shop, Language $language)
     {
         $id_shop_group = isset($shop->id_shop_group) ? $shop->id_shop_group : null;
-        /* @var NostoTaggingHelperAccount $helper_account */
-        $helper_account = Nosto::helper('nosto_tagging/account');
         $tokens_ok = true;
-        $connected = $helper_account->existsAndIsConnected($language->id, $id_shop_group, $shop->id);
+        $connected = NostoTaggingHelperAccount::existsAndIsConnected($language->id, $id_shop_group, $shop->id);
         if ($connected) {
-            /** @var NostoTaggingHelperAccount $helper_account */
-            $helper_account = Nosto::helper('nosto_tagging/account');
             /** @var NostoAccount $account */
-            $account = $helper_account->find($language->id);
+            $account = NostoTaggingHelperAccount::find($language->id);
             if ($account instanceof NostoAccountInterface && $account->hasMissingTokens()) {
                 $tokens_ok = false;
             }
@@ -67,9 +63,7 @@ class NostoTaggingHelperNotification
     {
         $is_installed = true;
         $id_shop_group = isset($shop->id_shop_group) ? $shop->id_shop_group : null;
-        /* @var NostoTaggingHelperAccount $helper_account */
-        $helper_account = Nosto::helper('nosto_tagging/account');
-        $connected = $helper_account->existsAndIsConnected($language->id, $id_shop_group, $shop->id);
+        $connected = NostoTaggingHelperAccount::existsAndIsConnected($language->id, $id_shop_group, $shop->id);
         if (!$connected) {
             $is_installed = false;
         }
@@ -88,12 +82,8 @@ class NostoTaggingHelperNotification
     {
         $multicurrency_ok = true;
         $id_shop_group = isset($shop->id_shop_group) ? $shop->id_shop_group : null;
-        /* @var NostoTaggingHelperAccount $helper_account */
-        $helper_account = Nosto::helper('nosto_tagging/account');
-        $connected = $helper_account->existsAndIsConnected($language->id, $id_shop_group, $shop->id);
+        $connected = NostoTaggingHelperAccount::existsAndIsConnected($language->id, $id_shop_group, $shop->id);
         if ($connected) {
-            /** @var NostoTaggingHelperAccount $helper_account */
-            $helper_account = Nosto::helper('nosto_tagging/account');
             /** @var NostoTaggingHelperConfig $helper_config */
             $helper_config = Nosto::helper('nosto_tagging/config');
             if (!$helper_config->useMultipleCurrencies($language->id, $id_shop_group, $shop->id)) {

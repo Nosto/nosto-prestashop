@@ -52,9 +52,7 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
                 $meta->loadData($this->module->getContext(), $id_lang);
                 $account = NostoAccount::syncFromNosto($meta, $code);
 
-                /* @var NostoTaggingHelperAccount $helper_account */
-                $helper_account = Nosto::helper('nosto_tagging/account');
-                if (!$helper_account->save($account, $id_lang, $id_shop_group, $id_shop)) {
+                if (!NostoTaggingHelperAccount::save($account, $id_lang, $id_shop_group, $id_shop)) {
                     throw new NostoException('Failed to save account.');
                 }
                 $helper_config->clearCache();
@@ -64,7 +62,9 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
                     'oauth_success' => sprintf($msg, $account->getName()),
                 ));
             } catch (NostoException $e) {
-                Nosto::helper('nosto_tagging/logger')->error(
+                /* @var NostoTaggingHelperLogger $logger */
+                $logger = Nosto::helper('nosto_tagging/logger');
+                $logger->error(
                     __CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(),
                     $e->getCode()
                 );
@@ -86,7 +86,9 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
             if (($error_description = Tools::getValue('error_description')) !== false) {
                 $message_parts[] = urldecode($error_description);
             }
-            Nosto::helper('nosto_tagging/logger')->error(
+            /* @var NostoTaggingHelperLogger $logger */
+            $logger = Nosto::helper('nosto_tagging/logger');
+            $logger->error(
                 __CLASS__.'::'.__FUNCTION__.' - '.implode(' - ', $message_parts),
                 200
             );

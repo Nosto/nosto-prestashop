@@ -53,7 +53,9 @@ class NostoTaggingHelperUpdater
         // Prestashop < 1.5.4.0 has a bug that causes the auto-update mechanism fail.
         if (version_compare(_PS_VERSION_, '1.5.4.0', '<')) {
         // If the module is already updated to the latest version, don't continue.
-            $installed_version = (string)Nosto::helper('nosto_tagging/config')->getInstalledVersion();
+            /** @var NostoTaggingHelperConfig $helper_config */
+            $helper_config = Nosto::helper('nosto_tagging/config');
+            $installed_version = (string)$helper_config->getInstalledVersion();
             if (version_compare($installed_version, $module->version, '=')) {
                 return;
             }
@@ -61,6 +63,7 @@ class NostoTaggingHelperUpdater
             foreach ($this->findUpgradeScripts($module) as $script) {
                 if (file_exists($script['file']) && is_readable($script['file'])) {
                 // Run the script and update the currently installed module version so future updates can work.
+                    /** @noinspection PhpIncludeInspection */
                     include_once $script['file'];
                     call_user_func($script['upgrade_function'], $module);
                 }
@@ -68,7 +71,7 @@ class NostoTaggingHelperUpdater
 
             // Always update the installed version so that we can check it during the next requests in order
             // to avoid reading the file system for upgrade script all the time.
-            Nosto::helper('nosto_tagging/config')->saveInstalledVersion($module->version);
+            $helper_config->saveInstalledVersion($module->version);
         }
 
         // Prestashop >= 1.5.4.0 handles the auto-update mechanism.
@@ -83,9 +86,11 @@ class NostoTaggingHelperUpdater
      */
     protected function findUpgradeScripts($module)
     {
+        /** @var NostoTaggingHelperConfig $helper_config */
+        $helper_config = Nosto::helper('nosto_tagging/config');
         $scripts = array();
         $path = _PS_MODULE_DIR_.$module->name.'/upgrade/';
-        $installed_version = (string)Nosto::helper('nosto_tagging/config')->getInstalledVersion();
+        $installed_version = (string)$helper_config->getInstalledVersion();
         $new_version = $module->version;
 
         if (file_exists($path) && ($files = scandir($path))) {

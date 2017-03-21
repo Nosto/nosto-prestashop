@@ -169,9 +169,9 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
      *
      * The item object must implement the NostoOrderItemInterface interface.
      *
-     * @param NostoOrderItemInterface $purchased_item the item object.
+     * @param NostoOrderPurchasedItemInterface $purchased_item the item object.
      */
-    public function addPurchasedItem(NostoOrderItemInterface $purchased_item)
+    public function addPurchasedItem(NostoOrderPurchasedItemInterface $purchased_item)
     {
         $this->purchased_items[] = $purchased_item;
     }
@@ -220,6 +220,9 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
             return;
         }
 
+        /** @var NostoHelperDate $nosto_helper_date */
+        $nosto_helper_date = Nosto::helper('nosto/date');
+
         $customer = new Customer((int)$order->id_customer);
         // The order reference was introduced in prestashop 1.5 where orders can be split into multiple ones.
         if (isset($order->reference)) {
@@ -231,7 +234,7 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
         $this->order_number = isset($order->reference) ? (string)$order->reference : $order->id;
         $this->buyer_info = new NostoTaggingOrderBuyer();
         $this->buyer_info->loadData($customer);
-        $this->created_date = Nosto::helper('date')->format($order->date_add);
+        $this->created_date = $nosto_helper_date->format($order->date_add);
         $this->purchased_items = $this->findPurchasedItems($context, $order);
         $this->payment_provider = 'unknown';
 
@@ -343,7 +346,7 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
             $context = Context::getContext();
         }
 
-        /** @var NostoHelperPrice $helper_config */
+        /** @var NostoHelperPrice $nosto_helper_price */
         $nosto_helper_price = Nosto::helper('nosto/price');
 
         $id_lang = (int)$context->language->id;

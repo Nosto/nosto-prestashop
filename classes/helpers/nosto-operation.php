@@ -49,14 +49,12 @@ abstract class NostoTaggingHelperOperation
     protected function getAccountData()
     {
         $data = array();
-        /** @var NostoTaggingHelperAccount $account_helper */
-        $account_helper = Nosto::helper('nosto_tagging/account');
         foreach ($this->getContextShops() as $shop) {
             $id_shop = (int)$shop['id_shop'];
             $id_shop_group = (int)$shop['id_shop_group'];
             foreach (LanguageCore::getLanguages(true, $id_shop) as $language) {
                 $id_lang = (int)$language['id_lang'];
-                $account = $account_helper->find($id_lang, $id_shop_group, $id_shop);
+                $account = NostoTaggingHelperAccount::find($id_lang, $id_shop_group, $id_shop);
                 if ($account === null || !$account->isConnectedToNosto()) {
                     continue;
                 }
