@@ -624,7 +624,7 @@ a.tw-bs .bg-danger:hover {
 .tw-bs blockquote {
     padding: 10px 20px;
     margin: 0 0 20px;
-    font-size: 17.5px;
+    font-size: 18px;
     border-left: 5px solid #eeeeee;
 }
 .tw-bs blockquote p:last-child,
@@ -702,7 +702,7 @@ a.tw-bs .bg-danger:hover {
 }
 .tw-bs pre {
     display: block;
-    padding: 9.5px;
+    padding: 10px;
     margin: 0 0 10px;
     font-size: 13px;
     line-height: 1.42857143;
@@ -1819,7 +1819,7 @@ select[multiple].tw-bs .input-lg {
     position: relative;
 }
 .tw-bs .has-feedback .form-control {
-    padding-right: 42.5px;
+    padding-right: 43px;
 }
 .tw-bs .has-feedback .form-control-feedback {
     position: absolute;
@@ -3770,7 +3770,7 @@ select[multiple].tw-bs .input-group-sm > .input-group-btn > .btn {
     }
 }
 .tw-bs .navbar-nav {
-    margin: 7.5px -15px;
+    margin: 8px -15px;
 }
 .tw-bs .navbar-nav > li > a {
     padding-top: 10px;
@@ -5134,7 +5134,7 @@ button.tw-bs .close {
 .tw-bs .modal-header {
     padding: 15px;
     border-bottom: 1px solid #e5e5e5;
-    min-height: 16.42857143px;
+    min-height: 16px;
 }
 .tw-bs .modal-header .close {
     margin-top: -2px;
