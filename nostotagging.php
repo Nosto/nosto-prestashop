@@ -303,7 +303,10 @@ class NostoTagging extends Module
         // Always update the url to the module admin page when we access it.
         // This can then later be used by the oauth2 controller to redirect the user back.
         $admin_url = $this->getAdminUrl();
-        Nosto::helper('nosto_tagging/config')->saveAdminUrl($admin_url);
+
+        /** @var NostoTaggingHelperConfig $config_helper */
+        $config_helper = Nosto::helper('nosto_tagging/config');
+        $config_helper->saveAdminUrl($admin_url);
         $output = '';
         $languages = Language::getLanguages(true, $this->context->shop->id);
         /** @var EmployeeCore $employee */
@@ -702,7 +705,9 @@ class NostoTagging extends Module
             return '';
         }
 
-        $server_address = Nosto::helper('nosto_tagging/url')->getServerAddress();
+        /** @var NostoTaggingHelperUrl $url_helper */
+        $url_helper = Nosto::helper('nosto_tagging/url');
+        $server_address = $url_helper->getServerAddress();
         /** @var LinkCore $link */
         $link = self::buildLinkClass();
         $hidden_recommendation_elements = $this->getHiddenRecommendationElements();
@@ -1085,7 +1090,9 @@ class NostoTagging extends Module
     public function hookDisplayShoppingCartFooter()
     {
         // Update the link between nosto users and prestashop customers.
-        Nosto::helper('nosto_tagging/customer')->updateNostoId();
+        /* @var NostoTaggingHelperCustomer $customer_helper */
+        $customer_helper = Nosto::helper('nosto_tagging/customer');
+        $customer_helper->updateNostoId();
 
         if (!NostoTaggingHelperAccount::isContextConnected($this->context)) {
             return '';
@@ -1226,7 +1233,9 @@ class NostoTagging extends Module
      */
     public function hookDisplayPaymentTop()
     {
-        Nosto::helper('nosto_tagging/customer')->updateNostoId();
+        /* @var NostoTaggingHelperCustomer $customer_helper */
+        $customer_helper = Nosto::helper('nosto_tagging/customer');
+        $customer_helper->updateNostoId();
     }
 
     /**

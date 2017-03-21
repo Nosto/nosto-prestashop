@@ -353,7 +353,7 @@ class NostoTaggingHelperConfig
      */
     public function getNostotaggingRenderPosition($id_lang, $id_shop_group = null, $id_shop = null)
     {
-        $position = $this->read(self::NOSTOTAGGING_POSITION, $id_lang, true, $id_shop_group, $id_shop);
+        $position = $this->read(self::NOSTOTAGGING_POSITION, $id_lang, $id_shop_group, $id_shop);
         return !empty($position) ? $position : self::NOSTOTAGGING_POSITION_TOP;
     }
 
