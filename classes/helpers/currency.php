@@ -81,7 +81,6 @@ class NostoTaggingHelperCurrency
         $all_currencies = Currency::getCurrenciesByIdShop($id_shop);
         if ($only_active === true) {
             $currencies = array();
-            /* @var Currency $currency */
             foreach ($all_currencies as $currency) {
                 if ($this->currencyActive($currency)) {
                     $currencies[] = $currency;
@@ -114,7 +113,9 @@ class NostoTaggingHelperCurrency
                 $nosto_currency = self::createWithCldr($currency, $context);
                 return $nosto_currency;
             } catch (Exception $e) {
-                Nosto::helper('nosto_tagging/logger')->error(
+                /* @var NostoTaggingHelperLogger $logger */
+                $logger = Nosto::helper('nosto_tagging/logger');
+                $logger->error(
                     sprintf(
                         'Failed to resolve currency: %s (%s)',
                         $e->getMessage(),
@@ -267,8 +268,6 @@ class NostoTaggingHelperCurrency
      */
     public function updateExchangeRatesForAllStores()
     {
-        /** @var NostoTaggingHelperAccount $helper_account */
-        $helper_account = Nosto::helper('nosto_tagging/account');
         /** @var NostoTaggingHelperContextFactory $context_factory */
         $context_factory = Nosto::helper('nosto_tagging/context_factory');
         /** @var NostoTaggingHelperConfig $helper_config*/
@@ -281,10 +280,10 @@ class NostoTaggingHelperCurrency
                 $id_lang = (int)$language['id_lang'];
                 $use_multiple_currencies = $helper_config->useMultipleCurrencies($id_lang, $id_shop_group, $id_shop);
                 if ($use_multiple_currencies) {
-                    $nosto_account = $helper_account->find($id_lang, $id_shop_group, $id_shop);
+                    $nosto_account = NostoTaggingHelperAccount::find($id_lang, $id_shop_group, $id_shop);
                     if (!is_null($nosto_account)) {
                         $context = $context_factory->forgeContext($id_lang, $id_shop);
-                        if (!$helper_account->updateCurrencyExchangeRates(
+                        if (!NostoTaggingHelperAccount::updateCurrencyExchangeRates(
                             $nosto_account,
                             $context
                         )

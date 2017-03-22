@@ -246,7 +246,7 @@ class NostoTaggingProduct extends NostoTaggingModel implements NostoProductInter
      */
     protected function amendPrices(Product $product, Context $context, Currency $currency)
     {
-        /** @var NostoHelperPrice $helper_config */
+        /** @var NostoHelperPrice $nosto_helper_price */
         $nosto_helper_price = Nosto::helper('nosto/price');
         /** @var NostoTaggingHelperPrice $helper_price */
         $helper_price = Nosto::helper('nosto_tagging/price');

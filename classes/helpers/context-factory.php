@@ -64,12 +64,11 @@ class NostoTaggingHelperContextFactory
      *
      * @param int $id_lang the language ID to add to the new context.
      * @param int $id_shop the shop ID to add to the new context.
-     *
      * @return Context the new context.
      */
     public function forgeContext($id_lang, $id_shop)
     {
-        /* @var ContextCore $context */
+        /* @var Context $context */
         $context = Context::getContext();
         $this->saveOriginalContext($context);
         $forged_context = $context->cloneContext();
@@ -111,11 +110,11 @@ class NostoTaggingHelperContextFactory
     {
         if (isset($context->shop) && $context->shop instanceof Shop) {
             $this->original_shop_context = $context->shop->getContext();
-            if ($context->shop->getContextShopId()) {
-                $this->original_shop_id = $context->shop->getContextShopId();
+            if ($context->shop->getContextShopID()) {
+                $this->original_shop_id = $context->shop->getContextShopID();
             }
-            if (!empty($context->shop->getContextShopGroupId())) {
-                $this->original_shop_group = $context->shop->getContextShopGroupId();
+            if (!empty($context->shop->getContextShopGroupID())) {
+                $this->original_shop_group = $context->shop->getContextShopGroupID();
             }
             if (!empty($context->currency)) {
                 $this->original_currency = $context->currency;

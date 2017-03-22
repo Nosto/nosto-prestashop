@@ -6,7 +6,9 @@
   },
   "require-dev": {
     "phing/phing": "2.*",
-    "phpmd/phpmd" : "@stable"
+    "phpmd/phpmd" : "@stable",
+    "squizlabs/php_codesniffer": "2.*",
+    "wimg/php-compatibility": "^7.1"
   },
   "config": {
     "vendor-dir": "libs"

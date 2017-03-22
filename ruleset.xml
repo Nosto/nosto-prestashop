@@ -25,6 +25,7 @@
 
 <!--suppress XmlUnboundNsPrefix -->
 <ruleset name="Prestashop">
+    <config name="installed_paths" value="libs/wimg/php-compatibility/" />
     <description>Prestashop coding standard.</description>
     <rule ref="PSR2">
         <exclude name="PSR1.Classes.ClassDeclaration.MissingNamespace"/>
@@ -34,19 +35,12 @@
         <exclude name="PSR2.ControlStructures.ControlStructureSpacing.SpacingAfterOpenBrace"/>
     </rule>
     <config name="testVersion" value="5.2"/>
-    <rule ref="PHPCompatibility" />
-    <exclude-pattern>/libs/composer/</exclude-pattern>
-    <exclude-pattern>/libs/nosto/</exclude-pattern>
-    <exclude-pattern>/libs/pdepend/</exclude-pattern>
-    <exclude-pattern>/libs/phing/</exclude-pattern>
-    <exclude-pattern>/libs/phpmd/</exclude-pattern>
-    <exclude-pattern>/libs/symfony/</exclude-pattern>
-    <exclude-pattern>backward_compatibility/Context.php</exclude-pattern>
+    <exclude-pattern>/build/</exclude-pattern>
+    <exclude-pattern>/libs/</exclude-pattern>
+    <exclude-pattern>/.phan/</exclude-pattern>
     <exclude-pattern>de.php</exclude-pattern>
     <exclude-pattern>en.php</exclude-pattern>
     <exclude-pattern>es.php</exclude-pattern>
     <exclude-pattern>fr.php</exclude-pattern>
     <exclude-pattern>*.js</exclude-pattern>
-    <exclude-pattern>*.css</exclude-pattern>
-    <exclude-pattern>*.html</exclude-pattern>
 </ruleset>

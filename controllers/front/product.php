@@ -45,7 +45,7 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
         if (!empty(Tools::getValue('id'))) {
             $product = new Product(Tools::getValue('id'), true, $context->language->id, $context->shop->id);
             if (!Validate::isLoadedObject($product)) {
-                Tools::display404Error();
+                Controller::getController('PageNotFoundController')->run();
             }
             $nosto_product = new NostoTaggingProduct();
             $nosto_product->loadData($context, $product);

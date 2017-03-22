@@ -65,7 +65,7 @@ abstract class NostoTaggingApiModuleFrontController extends ModuleFrontControlle
     public function encryptOutput(NostoExportCollectionInterface $collection)
     {
         /** @var NostoAccount $account */
-        $account = Nosto::helper('nosto_tagging/account')->find($this->module->getContext()->language->id);
+        $account = NostoTaggingHelperAccount::findByContext($this->module->getContext());
         if ($account && $account->isConnectedToNosto()) {
             $cipher_text = NostoExporter::export($account, $collection);
             echo $cipher_text;

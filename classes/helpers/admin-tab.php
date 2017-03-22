@@ -46,7 +46,7 @@ class NostoTaggingHelperAdminTab
      *
      * @return bool true on success, false otherwise.
      */
-    public function install()
+    public static function install()
     {
         $languages = Language::getLanguages(true);
         if (empty($languages)) {
@@ -104,7 +104,7 @@ class NostoTaggingHelperAdminTab
      *
      * @return bool true on success false otherwise.
      */
-    public function uninstall()
+    public static function uninstall()
     {
         $tabs = array(self::MAIN_MENU_ITEM_CLASS, self::SUB_MENU_ITEM_CLASS);
         foreach ($tabs as $tab_name) {
