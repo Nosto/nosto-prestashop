@@ -221,8 +221,8 @@ class NostoTaggingHelperConfig
      * @param string $token_name the name of the token.
      * @param string $token_value the value of the token.
      * @param int $id_lang the language to save the token for.
-     * @param null $id_shop_group
-     * @param null $id_shop
+     * @param int|null $id_shop_group
+     * @param int|null $id_shop
      * @return bool true if saved correctly, false otherwise.
      */
     public function saveToken($token_name, $token_value, $id_lang, $id_shop_group = null, $id_shop = null)
