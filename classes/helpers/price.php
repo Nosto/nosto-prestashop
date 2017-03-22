@@ -34,7 +34,7 @@ class NostoTaggingHelperPrice
      * @param Product|ProductCore $product the product.
      * @param Context|ContextCore $context the context.
      * @param Currency|CurrencyCore $currency the currency.
-     * @return NostoPrice the price.
+     * @return float the price.
      */
     public function getProductPriceInclTax(Product $product, Context $context, Currency $currency)
     {
@@ -47,7 +47,7 @@ class NostoTaggingHelperPrice
      * @param Product|ProductCore $product the product.
      * @param Context|ContextCore $context the context.
      * @param Currency|CurrencyCore $currency the currency.
-     * @return NostoPrice the price.
+     * @return float the price.
      */
     public function getProductListPriceInclTax(Product $product, Context $context, Currency $currency)
     {
@@ -58,7 +58,7 @@ class NostoTaggingHelperPrice
      * Returns the product wholesale price including taxes for the given currency.
      *
      * @param Product|ProductCore $product the product.
-     * @return NostoPrice the price.
+     * @return float the price.
      */
     public function getProductWholesalePriceInclTax(Product $product)
     {
@@ -85,7 +85,7 @@ class NostoTaggingHelperPrice
      * @param array $item the cart item.
      * @param Context $context the context.
      * @param Currency $currency the currency.
-     * @return NostoPrice the price.
+     * @return float the price.
      */
     public function getCartItemPriceInclTax(Cart $cart, array $item, Context $context, Currency $currency)
     {
@@ -114,7 +114,7 @@ class NostoTaggingHelperPrice
      * @param Currency|CurrencyCore $currency the currency object.
      * @param Context $context the context object.
      * @param array $options options for the Product::getPriceStatic method.
-     * @return NostoPrice the price.
+     * @return float the price.
      */
     protected function calcPrice($id_product, Currency $currency, Context $context, array $options = array())
     {

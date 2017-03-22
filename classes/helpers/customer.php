@@ -93,7 +93,7 @@ class NostoTaggingHelperCustomer
      *
      * @return bool
      */
-    public function dropCustomerLinkTable()
+    public static function dropCustomerLinkTable()
     {
         $table = self::getCustomerLinkTableName();
 
@@ -246,10 +246,10 @@ class NostoTaggingHelperCustomer
      *
      * @return bool
      */
-    public function dropTables()
+    public static function dropTables()
     {
         $success = true;
-        if (!$this->dropCustomerLinkTable()) {
+        if (!self::dropCustomerLinkTable()) {
             $success = false;
         }
 

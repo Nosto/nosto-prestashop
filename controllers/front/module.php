@@ -45,9 +45,4 @@ abstract class ModuleFrontController extends FrontController
         }
         $this->initContent();
     }
-
-    /**
-     * Initializes the content.
-     */
-    abstract public function initContent();
 }

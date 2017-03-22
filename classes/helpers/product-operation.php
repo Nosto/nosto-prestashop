@@ -121,6 +121,7 @@ class NostoTaggingHelperProductOperation extends NostoTaggingHelperOperation
             }
             self::$processedProducts[] = $product->id;
             foreach ($this->getAccountData() as $data) {
+                /** @var NostoAccount $account */
                 list($account, $id_shop, $id_lang) = $data;
                 $account_name = $account->getName();
                 $nosto_product = $this->loadNostoProduct($product->id, $id_lang, $id_shop);
@@ -191,7 +192,9 @@ class NostoTaggingHelperProductOperation extends NostoTaggingHelperOperation
                 $op->addProduct($nosto_product);
                 $op->delete();
             } catch (NostoException $e) {
-                Nosto::helper('nosto_tagging/logger')->error(
+                /* @var NostoTaggingHelperLogger $logger */
+                $logger = Nosto::helper('nosto_tagging/logger');
+                $logger->error(
                     __CLASS__ . '::' . __FUNCTION__ . ' - ' . $e->getMessage(),
                     $e->getCode(),
                     get_class($product),

@@ -25,10 +25,10 @@
 
 /**
  * Helper class for managing Nosto accounts.
- *
  */
 class NostoTaggingHelperAccount
 {
+
     /**
      * Saves a Nosto account to PS config.
      * Also handles any attached API tokens.
@@ -39,7 +39,7 @@ class NostoTaggingHelperAccount
      * @param null|int $id_shop the ID of the shop.
      * @return bool true if the save was successful, false otherwise.
      */
-    public function save(NostoAccount $account, $id_lang, $id_shop_group = null, $id_shop = null)
+    public static function save(NostoAccount $account, $id_lang, $id_shop_group = null, $id_shop = null)
     {
         /** @var NostoTaggingHelperConfig $helper_config */
         $helper_config = Nosto::helper('nosto_tagging/config');
@@ -73,7 +73,7 @@ class NostoTaggingHelperAccount
      * @param null|int $id_shop the ID of the shop.
      * @return bool true if successful, false otherwise.
      */
-    public function delete(NostoAccount $account, $id_lang, $id_shop_group = null, $id_shop = null)
+    public static function delete(NostoAccount $account, $id_lang, $id_shop_group = null, $id_shop = null)
     {
         /** @var NostoTaggingHelperConfig $helper_config */
         $helper_config = Nosto::helper('nosto_tagging/config');
@@ -84,7 +84,9 @@ class NostoTaggingHelperAccount
                 try {
                     $account->delete();
                 } catch (NostoException $e) {
-                    Nosto::helper('nosto_tagging/logger')->error(
+                    /* @var NostoTaggingHelperLogger $logger */
+                    $logger = Nosto::helper('nosto_tagging/logger');
+                    $logger->error(
                         __CLASS__ . '::' . __FUNCTION__ . ' - ' . $e->getMessage(),
                         $e->getCode()
                     );
@@ -99,20 +101,33 @@ class NostoTaggingHelperAccount
      *
      * @return bool
      */
-    public function deleteAll()
+    public static function deleteAll()
     {
         foreach (Shop::getShops() as $shop) {
             $id_shop = isset($shop['id_shop']) ? $shop['id_shop'] : null;
             foreach (Language::getLanguages(true, $id_shop) as $language) {
                 $id_shop_group = isset($shop['id_shop_group']) ? $shop['id_shop_group'] : null;
-                $account = $this->find($language['id_lang'], $id_shop_group, $id_shop);
+                $account = self::find($language['id_lang'], $id_shop_group, $id_shop);
                 if ($account === null) {
                     continue;
                 }
-                $this->delete($account, $language['id_lang'], $id_shop_group, $id_shop);
+                self::delete($account, $language['id_lang'], $id_shop_group, $id_shop);
             }
         }
         return true;
+    }
+
+    public static function findByContext(Context $context)
+    {
+        if ($context->shop instanceof Shop) {
+            return self::find(
+                $context->language->id,
+                $context->shop->id_shop_group,
+                $context->shop->id
+            );
+        } else {
+            return self::find($context->language->id);
+        }
     }
 
     /**
@@ -123,7 +138,7 @@ class NostoTaggingHelperAccount
      * @param null|int $id_shop the ID of the shop.
      * @return NostoAccount|null the account with loaded API tokens, or null if not found.
      */
-    public function find($lang_id = null, $id_shop_group = null, $id_shop = null)
+    public static function find($lang_id = null, $id_shop_group = null, $id_shop = null)
     {
         /** @var NostoTaggingHelperConfig $helper_config */
         $helper_config = Nosto::helper('nosto_tagging/config');
@@ -150,6 +165,25 @@ class NostoTaggingHelperAccount
     }
 
     /**
+     * Checks if Nosto is installed to a given store and language
+     *
+     * @param Context $context
+     * @return bool
+     */
+    public static function isContextConnected(Context $context)
+    {
+        if ($context->shop instanceof Shop) {
+            return self::existsAndIsConnected(
+                $context->language->id,
+                $context->shop->id_shop_group,
+                $context->shop->id
+            );
+        } else {
+            return self::existsAndIsConnected($context->language->id);
+        }
+    }
+
+    /**
      * Checks if an account exists and is "connected to Nosto" for given criteria.
      *
      * @param null|int $lang_id the ID of the language.
@@ -157,9 +191,9 @@ class NostoTaggingHelperAccount
      * @param null|int $id_shop the ID of the shop.
      * @return bool true if it does, false otherwise.
      */
-    public function existsAndIsConnected($lang_id = null, $id_shop_group = null, $id_shop = null)
+    public static function existsAndIsConnected($lang_id = null, $id_shop_group = null, $id_shop = null)
     {
-        $account = $this->find($lang_id, $id_shop_group, $id_shop);
+        $account = self::find($lang_id, $id_shop_group, $id_shop);
         return ($account !== null && $account->isConnectedToNosto());
     }
 
@@ -171,14 +205,14 @@ class NostoTaggingHelperAccount
      * @param Context|ContextCore $context
      * @return bool
      */
-    public function updateCurrencyExchangeRates(NostoAccount $account, Context $context)
+    public static function updateCurrencyExchangeRates(NostoAccount $account, Context $context)
     {
         /** @var NostoTaggingHelperCurrency $currency_helper */
         $currency_helper = Nosto::helper('nosto_tagging/currency');
         try {
             $exchangeRates = $currency_helper->getExchangeRateCollection($context);
             $service = new NostoOperationExchangeRate($account, $exchangeRates);
-            return $service->update($exchangeRates);
+            return $service->update();
         } catch (NostoException $e) {
             /** @var NostoTaggingHelperLogger $logger */
             $logger = Nosto::helper('nosto_tagging/logger');
@@ -194,7 +228,7 @@ class NostoTaggingHelperAccount
      * @param NostoTaggingMetaAccount $accountMetaData
      * @return bool
      */
-    public function updateSettings(NostoAccount $account, NostoTaggingMetaAccount $accountMetaData)
+    public static function updateSettings(NostoAccount $account, NostoTaggingMetaAccount $accountMetaData)
     {
         $service = new NostoOperationAccount($account, $accountMetaData);
         return $service->update();

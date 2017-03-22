@@ -79,6 +79,8 @@ class NostoTaggingHelperImage
      * Returns the image type to be used in product image tagging
      *
      * @param $id_lang
+     * @param null $id_shop_group
+     * @param null $id_shop
      * @return string
      */
     public function getTaggingImageTypeName($id_lang, $id_shop_group = null, $id_shop = null)

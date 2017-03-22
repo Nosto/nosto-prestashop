@@ -51,12 +51,11 @@ class NostoTaggingCustomer extends NostoTaggingModel
     /**
      * Loads the customer data from supplied context and customer objects.
      *
-     * @param Context $context the context object.
      * @param Customer $customer the customer object.
      */
-    public function loadData(Context $context, Customer $customer)
+    public function loadData(Customer $customer)
     {
-        if (!$this->isCustomerLoggedIn($context, $customer)) {
+        if (!$this->isCustomerLoggedIn($customer)) {
             return;
         }
 
@@ -66,7 +65,9 @@ class NostoTaggingCustomer extends NostoTaggingModel
         try {
             $this->populateCustomerReference($customer);
         } catch (Exception $e) {
-            Nosto::helper('nosto_tagging/logger')->error(
+            /* @var NostoTaggingHelperLogger $logger */
+            $logger = Nosto::helper('nosto_tagging/logger');
+            $logger->error(
                 __CLASS__ . '::' . __FUNCTION__ . ' - ' . $e->getMessage(),
                 $e->getCode()
             );
@@ -76,11 +77,10 @@ class NostoTaggingCustomer extends NostoTaggingModel
     /**
      * Check if the customer is logged in or not.
      *
-     * @param Context $context the context object.
      * @param Customer $customer the customer object to check.
      * @return bool true if the customer is logged in, false otherwise.
      */
-    public function isCustomerLoggedIn(Context $context, Customer $customer)
+    public function isCustomerLoggedIn(Customer $customer)
     {
         if (!Validate::isLoadedObject($customer)) {
             return false;

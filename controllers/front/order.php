@@ -43,7 +43,7 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
         if (!empty($id)) {
             $orders = Order::getByReference($id);
             if (empty($orders)) {
-                Tools::display404Error();
+                Controller::getController('PageNotFoundController')->run();
             }
             $nosto_order = new NostoTaggingOrder();
             $nosto_order->loadData($context, $orders[0]);

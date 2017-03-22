@@ -49,9 +49,11 @@ class NostoTaggingHelperOrderOperation extends NostoTaggingHelperOperation
         $id_shop = isset($order->id_shop) ? $order->id_shop : null;
         // This is done out of context, so we need to specify the exact parameters to get the correct account.
         /** @var NostoAccount $account */
-        $account = Nosto::helper('nosto_tagging/account')->find($order->id_lang, $id_shop_group, $id_shop);
+        $account = NostoTaggingHelperAccount::find($order->id_lang, $id_shop_group, $id_shop);
         if ($account !== null && $account->isConnectedToNosto()) {
-            $customer_id = Nosto::helper('nosto_tagging/customer')->getNostoId($order);
+            /* @var NostoTaggingHelperCustomer $helper_customer */
+            $helper_customer = Nosto::helper('nosto_tagging/customer');
+            $customer_id = $helper_customer->getNostoId($order);
             try {
                 NostoOrderConfirmation::send($nosto_order, $account, $customer_id);
                 try {
@@ -85,7 +87,7 @@ class NostoTaggingHelperOrderOperation extends NostoTaggingHelperOperation
         if (self::$syncInventoriesAfterOrder === true) {
             $purchasedtems = $order->getPurchasedItems();
             $products = array();
-            /* @var Nosto_Tagging_Model_Meta_Order_Item $item */
+            /* @var NostoOrderPurchasedItem $item */
             foreach ($purchasedtems as $item) {
                 $productId = $item->getProductId();
                 if (empty($productId) || $productId < 0) {

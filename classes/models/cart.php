@@ -81,7 +81,7 @@ class NostoTaggingCart extends NostoTaggingModel
 
         $items = array_merge($products, $gift_products);
 
-        /** @var NostoHelperPrice $helper_config */
+        /** @var NostoHelperPrice $nosto_helper_price */
         $nosto_helper_price = Nosto::helper('nosto/price');
 
         foreach ($items as $item) {

@@ -53,12 +53,14 @@ if (!defined('_PS_VERSION_')) {
 
     $controller_dir = $ps_dir.'/modules/nostotagging/controllers/front';
 
+    /** @noinspection PhpIncludeInspection */
     require_once($ps_dir.'/config/config.inc.php');
     $controller = Tools::strtolower((string)Tools::getValue('controller'));
     if (!empty($controller)
         && in_array(Tools::strtolower($controller), $controller_white_list)
     ) {
         $class_file = $controller_dir.'/'.$controller.'.php';
+        /** @noinspection PhpIncludeInspection */
         require_once($class_file);
         // ControllerFactory is deprecated since Prestashop 1.5 and was removed in 1.7
         if (!method_exists('ControllerFactory', 'getController')) {
