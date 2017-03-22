@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
+## 2.8.1
+- Fixed the handling of accounts in multi-store mode
+- Inspection fixes and other code cleanup
 
 ## 2.8.0
 - Send following attributes to Nosto
