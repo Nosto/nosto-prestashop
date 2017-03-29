@@ -151,7 +151,16 @@ class NostoTaggingHelperProductOperation extends NostoTaggingHelperOperation
                 foreach ($batches as $product) {
                     $op->addProduct($product);
                 }
-                $op->upsert();
+                try {
+                    $op->upsert();
+                } catch (Exception $e) {
+                    /* @var NostoTaggingHelperLogger $logger */
+                    $logger = Nosto::helper('nosto_tagging/logger');
+                    $logger->error(
+                        __CLASS__ . '::' . __FUNCTION__ . ' - ' . $e->getMessage(),
+                        $e->getCode()
+                    );
+                }
             }
         }
 
