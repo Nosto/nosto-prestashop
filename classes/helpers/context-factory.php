@@ -113,8 +113,9 @@ class NostoTaggingHelperContextFactory
             if ($context->shop->getContextShopID()) {
                 $this->original_shop_id = $context->shop->getContextShopID();
             }
-            if (!empty($context->shop->getContextShopGroupID())) {
-                $this->original_shop_group = $context->shop->getContextShopGroupID();
+            $contextShopGroupID = $context->shop->getContextShopGroupID();
+            if (!empty($contextShopGroupID)) {
+                $this->original_shop_group = $contextShopGroupID;
             }
             if (!empty($context->currency)) {
                 $this->original_currency = $context->currency;
