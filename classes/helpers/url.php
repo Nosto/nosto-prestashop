@@ -173,7 +173,7 @@ class NostoTaggingHelperUrl
      */
     public function getServerAddress()
     {
-        return isset($_ENV['NOSTO_SERVER_URL']) ? $_ENV['NOSTO_SERVER_URL'] : self::DEFAULT_SERVER_ADDRESS;
+        return Nosto::getEnvVariable('NOSTO_SERVER_URL', self::DEFAULT_SERVER_ADDRESS);
     }
 
     /**
@@ -376,11 +376,6 @@ class NostoTaggingHelperUrl
      */
     public function getIframeOrigin()
     {
-        $origin = self::DEFAULT_IFRAME_ORIGIN_REGEXP;
-        if (isset($_ENV['NOSTO_IFRAME_ORIGIN_REGEXP'])) {
-            $origin = $_ENV['NOSTO_IFRAME_ORIGIN_REGEXP'];
-        }
-
-        return $origin;
+        return Nosto::getEnvVariable('NOSTO_IFRAME_ORIGIN_REGEXP', self::DEFAULT_IFRAME_ORIGIN_REGEXP);
     }
 }
