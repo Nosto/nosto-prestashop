@@ -99,6 +99,21 @@ class NostoTaggingMetaAccountIframe implements NostoAccountMetaDataIframeInterfa
     protected $modules;
 
     /**
+     * @var string main currency of the shop
+     */
+    protected $currency;
+
+    /**
+     * @var string visits in past 30 days
+     */
+    protected $recentVisits;
+
+    /**
+     * @var string sales in past 30 days
+     */
+    protected $recentSales;
+
+    /**
      * Loads the meta-data from context.
      *
      * @param Context $context the context to get the meta-data from.
@@ -130,6 +145,32 @@ class NostoTaggingMetaAccountIframe implements NostoAccountMetaDataIframeInterfa
         $this->preview_url_front = $url_helper->getPreviewUrlHome($id_lang);
         $this->shop_name = $shop_language->name;
         $this->version_module = NostoTagging::PLUGIN_VERSION;
+
+        try {
+            //check the recent visits and sales
+            //get the shop traffic for the qualification check
+            if (class_exists("AdminStatsControllerCore")) {
+                $today = date("Y-m-d");
+                $daysBack = new DateTime();
+                $beginDate = $daysBack->sub(new DateInterval("P30D"))->format("Y-m-d");
+                $sales = AdminStatsControllerCore::getTotalSales($beginDate, $today);
+                $visits = AdminStatsControllerCore::getVisits(false, $beginDate, $today);
+                $this->setRecentVisits(strval($visits));
+                $this->setRecentSales(number_format($sales));
+                $currency = $context->currency;
+                if ($currency instanceof Currency) {
+                    $this->setCurrency($currency->iso_code);
+                }
+            }
+        } catch (Exception $e) {
+            //AdminStatsControllerCore is none public api. Add a try/catch incase it has been removed or changed.
+            /* @var NostoTaggingHelperLogger $logger */
+            $logger = Nosto::helper('nosto_tagging/logger');
+            $logger->error(
+                __CLASS__ . '::' . __FUNCTION__ . ' - ' . $e->getMessage(),
+                $e->getCode()
+            );
+        }
     }
 
     /**
@@ -388,5 +429,65 @@ class NostoTaggingMetaAccountIframe implements NostoAccountMetaDataIframeInterfa
     public function setModules(array $modules)
     {
         $this->modules = $modules;
+    }
+
+    /**
+     * Return visits in last 30 days
+     *
+     * @return string
+     */
+    public function getRecentVisits()
+    {
+        return $this->recentVisits;
+    }
+
+    /**
+     * Set visits in last 30 days
+     *
+     * @param string $recentVisits
+     */
+    public function setRecentVisits($recentVisits)
+    {
+        $this->recentVisits = $recentVisits;
+    }
+
+    /**
+     * Get sales in last 30 days
+     *
+     * @return string
+     */
+    public function getRecentSales()
+    {
+        return $this->recentSales;
+    }
+
+    /**
+     * Set sales in last 30 days
+     *
+     * @param string $recentSales
+     */
+    public function setRecentSales($recentSales)
+    {
+        $this->recentSales = $recentSales;
+    }
+
+    /**
+     * Get main currency of the shop
+     *
+     * @return string $currency
+     */
+    public function getCurrency()
+    {
+        return $this->currency;
+    }
+
+    /**
+     * Set main currency of the shop
+     *
+     * @param string $currency
+     */
+    public function setCurrency($currency)
+    {
+        $this->currency = $currency;
     }
 }

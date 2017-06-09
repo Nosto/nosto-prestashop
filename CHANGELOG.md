@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
+## 2.8.4
+- Add qualification check based on traffic
+
 ## 2.8.3
 - Bug fix to make extension work with PHP < 5.5
 
