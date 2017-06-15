@@ -149,13 +149,16 @@ class NostoTaggingMetaAccountIframe implements NostoAccountMetaDataIframeInterfa
         try {
             //check the recent visits and sales
             //get the shop traffic for the qualification check
-            if (class_exists("AdminStatsControllerCore")) {
+            if (class_exists("AdminStatsControllerCore")
+                && method_exists('AdminStatsControllerCore', 'getTotalSales')
+                && method_exists('AdminStatsControllerCore', 'getVisits')
+            ) {
                 $today = date("Y-m-d");
                 $daysBack = new DateTime();
                 $beginDate = $daysBack->sub(new DateInterval("P30D"))->format("Y-m-d");
                 $sales = AdminStatsControllerCore::getTotalSales($beginDate, $today);
                 $visits = AdminStatsControllerCore::getVisits(false, $beginDate, $today);
-                $this->setRecentVisits(strval($visits));
+                $this->setRecentVisits((string)($visits));
                 $this->setRecentSales(number_format($sales));
                 $currency = $context->currency;
                 if ($currency instanceof Currency) {
