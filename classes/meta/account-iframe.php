@@ -159,7 +159,7 @@ class NostoTaggingMetaAccountIframe implements NostoAccountMetaDataIframeInterfa
                 $sales = AdminStatsControllerCore::getTotalSales($beginDate, $today);
                 $visits = AdminStatsControllerCore::getVisits(false, $beginDate, $today);
                 $this->setRecentVisits((string)($visits));
-                $this->setRecentSales(number_format($sales));
+                $this->setRecentSales((string)$sales);
                 $currency = $context->currency;
                 if ($currency instanceof Currency) {
                     $this->setCurrency($currency->iso_code);
