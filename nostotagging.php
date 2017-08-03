@@ -1888,6 +1888,23 @@ class NostoTagging extends Module
     }
 
     /**
+     * Override method.
+     * Check smarty before calling Module.display()
+     *
+     * @param $file
+     * @param $template
+     * @param null $cache_id
+     * @param null $compile_id
+     */
+    public function display($file, $template, $cache_id = null, $compile_id = null)
+    {
+        if ($this->smarty == null && is_object($this->context->smarty)) {
+            $this->smarty = $this->context->smarty->createData($this->context->smarty);
+        }
+        parent::display($file, $template, $cache_id, $compile_id);
+    }
+
+    /**
      * Render page type tagging
      *
      * @param string $page_type
