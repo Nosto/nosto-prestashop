@@ -1891,10 +1891,10 @@ class NostoTagging extends Module
      * Override method.
      * Check smarty before calling Module.display()
      *
-     * @param $file
-     * @param $template
-     * @param null $cache_id
-     * @param null $compile_id
+     * @param string $file
+     * @param string $template
+     * @param string|null $cache_id
+     * @param string|null $compile_id
      * @return
      */
     public function display($file, $template, $cache_id = null, $compile_id = null)
