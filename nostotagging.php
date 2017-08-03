@@ -1895,13 +1895,15 @@ class NostoTagging extends Module
      * @param $template
      * @param null $cache_id
      * @param null $compile_id
+     * @return
      */
     public function display($file, $template, $cache_id = null, $compile_id = null)
     {
-        if ($this->smarty == null && is_object($this->context->smarty)) {
-            $this->smarty = $this->context->smarty->createData($this->context->smarty);
+        if ($this->smarty == null) {
+            return null;
         }
-        parent::display($file, $template, $cache_id, $compile_id);
+
+        return parent::display($file, $template, $cache_id, $compile_id);
     }
 
     /**
