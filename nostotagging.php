@@ -541,7 +541,7 @@ class NostoTagging extends Module
         }
         // When no account is found we will show the installation URL
         if (
-            $account instanceof NostoAccountInterface === false
+            $account instanceof Nosto\Object\Signup\Account === false
             && Shop::getContext() === Shop::CONTEXT_SHOP
         ) {
             $currentUser = NostoTaggingCurrentUser::loadData($this->context);
@@ -618,8 +618,9 @@ class NostoTagging extends Module
             && Shop::getContext() === Shop::CONTEXT_SHOP
         ) {
             try {
+                $currentUser = NostoTaggingCurrentUser::loadData($this->context);
                 $meta = NostoTaggingMetaAccountIframe::loadData($this->context, $language_id, $this->getUniqueInstallationId());
-                $url = \Nosto\Helper\IframeHelper::getUrl($meta);
+                $url = \Nosto\Helper\IframeHelper::getUrl($meta, $account, $currentUser);
                 if (!empty($url)) {
                     $this->getSmarty()->assign(array('iframe_url' => $url));
                 }

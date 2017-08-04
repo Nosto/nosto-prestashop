@@ -32,7 +32,7 @@
 		{/if}
 		<span class="price">{$nosto_product->getPrice()|escape:'htmlall':'UTF-8'}</span>
         <span class="list_price">{$nosto_product->getListPrice()|escape:'htmlall':'UTF-8'}</span>
-		<span class="price_currency_code">{$nosto_product->getCurrencyCode()|escape:'htmlall':'UTF-8'}</span>
+		<span class="price_currency_code">{$nosto_product->getPriceCurrencyCode()|escape:'htmlall':'UTF-8'}</span>
 		<span class="availability">{$nosto_product->getAvailability()|escape:'htmlall':'UTF-8'}</span>
 		{foreach from=$nosto_product->getCategories() item=category}
 			<span class="category">{$category|escape:'htmlall':'UTF-8'}</span>
@@ -43,17 +43,21 @@
 		{if $nosto_product->getBrand() neq ''}
 			<span class="brand">{$nosto_product->getBrand()|escape:'htmlall':'UTF-8'}</span>
 		{/if}
-		{foreach from=$nosto_product->getTags() key=tagName item=tags}
-            {if $tags|is_array}
-                {foreach from=$tags item=tagValue}
-                    <span class="{$tagName|escape:'quotes'}">{$tagValue|escape:'htmlall':'UTF-8'}</span>
-                {/foreach}
-            {else}
-                {if $tags neq ''}
-                    <span class="tag1">{$tags|escape:'htmlall':'UTF-8'}</span>
-                {/if}
-            {/if}
-		{/foreach}
+		{if $nosto_product->getTag1()|is_array}
+			{foreach from=$nosto_product->getTag1() item=tagValue}
+				<span class="tag1">{$tagValue|escape:'htmlall':'UTF-8'}</span>
+			{/foreach}
+		{/if}
+        {if $nosto_product->getTag2()|is_array}
+            {foreach from=$nosto_product->getTag2() item=tagValue}
+				<span class="tag1">{$tagValue|escape:'htmlall':'UTF-8'}</span>
+            {/foreach}
+        {/if}
+        {if $nosto_product->getTag3()|is_array}
+            {foreach from=$nosto_product->getTag3() item=tagValue}
+				<span class="tag1">{$tagValue|escape:'htmlall':'UTF-8'}</span>
+            {/foreach}
+        {/if}
 		{if $nosto_product->getVariationId()}
 			<span class="variation_id">{$nosto_product->getVariationId()|escape:'htmlall':'UTF-8'}</span>
 		{/if}
