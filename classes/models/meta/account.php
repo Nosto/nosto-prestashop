@@ -133,7 +133,7 @@ class NostoTaggingMetaAccount extends \Nosto\Object\Signup\Signup
         $currencies = $currency_helper->getCurrencies($context, true);
         foreach ($currencies as $currency) {
             $nosto_currency = $currency_helper->getNostoCurrency($currency, $context);
-            $nosto_currencies[] = $nosto_currency;
+            $nosto_currencies[$currency['iso_code']] = $nosto_currency;
         }
 
         return $nosto_currencies;

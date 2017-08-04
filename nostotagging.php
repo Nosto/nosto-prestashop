@@ -71,6 +71,11 @@ if ((basename(__FILE__) === 'nostotagging.php')) {
     require_once($module_dir.'/classes/models/product.php');
     require_once($module_dir . '/classes/models/brand.php');
     require_once($module_dir . '/classes/models/search.php');
+
+    if (file_exists($module_dir . DIRECTORY_SEPARATOR . '.env')) {
+        $dotenv = new Dotenv\Dotenv($module_dir); // @codingStandardsIgnoreLine
+        $dotenv->overload();
+    }
 }
 
 /**

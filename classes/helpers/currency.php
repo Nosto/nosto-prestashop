@@ -98,9 +98,8 @@ class NostoTaggingHelperCurrency
      *
      * @param array $currency the PS currency data.
      * @param Context $context conteIs signup UI is broken? When xt where the currencies are used.
-     * @return NostoCurrency the nosto currency.
-     *
-     * @throws NostoException if currency cannot be parsed.
+     * @return \Nosto\Object\Format
+     * @throws \Nosto\NostoException
      */
     public function getNostoCurrency(array $currency, Context $context = null)
     {
@@ -132,31 +131,31 @@ class NostoTaggingHelperCurrency
             case 1:
                 $group_symbol = ',';
                 $decimal_symbol = '.';
-                $symbol_position = NostoCurrencySymbol::SYMBOL_POS_LEFT;
+                $symbol_position = true;
                 break;
             /* 0 000,00 X*/
             case 2:
                 $group_symbol = ' ';
                 $decimal_symbol = ',';
-                $symbol_position = NostoCurrencySymbol::SYMBOL_POS_RIGHT;
+                $symbol_position = false;
                 break;
             /* X 0.000,00 */
             case 3:
                 $group_symbol = '.';
                 $decimal_symbol = ',';
-                $symbol_position = NostoCurrencySymbol::SYMBOL_POS_LEFT;
+                $symbol_position = true;
                 break;
             /* 0,000.00 X */
             case 4:
                 $group_symbol = ',';
                 $decimal_symbol = '.';
-                $symbol_position = NostoCurrencySymbol::SYMBOL_POS_RIGHT;
+                $symbol_position = false;
                 break;
             /* X 0'000.00 */
             case 5:
                 $group_symbol = '\'';
                 $decimal_symbol = '.';
-                $symbol_position = NostoCurrencySymbol::SYMBOL_POS_LEFT;
+                $symbol_position = true;
                 break;
 
             default:
@@ -167,15 +166,12 @@ class NostoTaggingHelperCurrency
                     )
                 );
         }
-        return new NostoCurrency(
-            new NostoCurrencyCode($currency['iso_code']),
-            new NostoCurrencySymbol($currency['sign'], $symbol_position),
-            new NostoCurrencyFormat(
-                $group_symbol,
-                self::CURRENCY_GROUP_LENGTH,
-                $decimal_symbol,
-                self::CURRENCY_PRECISION
-            )
+        return new Nosto\Object\Format(
+            $symbol_position,
+            $group_symbol,
+            self::CURRENCY_GROUP_LENGTH,
+            $decimal_symbol,
+            self::CURRENCY_PRECISION
         );
     }
 
@@ -190,12 +186,13 @@ class NostoTaggingHelperCurrency
 
     /**
      * Creates Nosto currency object using CLDR that was introduced in Prestashop 1.7
+     *
      * @see https://github.com/ICanBoogie/CLDR
      *
      * @param array $currency Prestashop currency array
      * @param Context $context
      *
-     * @return NostoCurrency
+     * @return \Nosto\Object\Format
      */
     public static function createWithCldr(array $currency, Context $context)
     {
@@ -206,33 +203,25 @@ class NostoTaggingHelperCurrency
         $pattern = $localized_currency->locale->numbers->currency_formats['standard'];
         $symbols = $localized_currency->locale->numbers->symbols;
         $symbol_pos = Tools::strpos($pattern, self::CURRENCY_SYMBOL_MARKER);
-        if ($symbol_pos === 0) {
-            $symbol_position = NostoCurrencySymbol::SYMBOL_POS_LEFT;
-        } else {
-            $symbol_position = NostoCurrencySymbol::SYMBOL_POS_RIGHT;
-        }
-        $currency_code = $currency['iso_code'];
-        $currency_symbol = $currency['sign'];
+
+        // Check if the currency symbol is before or after the amount.
+        $symbol_position = $symbol_pos === 0;
         $group_symbol = isset($symbols['group']) ? $symbols['group'] : ',';
         $decimal_symbol = isset($symbols['decimal']) ? $symbols['decimal'] : ',';
 
-        return new NostoCurrency(
-            new NostoCurrencyCode($currency_code),
-            new NostoCurrencySymbol($currency_symbol, $symbol_position),
-            new NostoCurrencyFormat(
-                $group_symbol,
-                self::CURRENCY_GROUP_LENGTH,
-                $decimal_symbol,
-                self::CURRENCY_PRECISION
-            )
+        return new Nosto\Object\Format(
+            $symbol_position,
+            $group_symbol,
+            self::CURRENCY_GROUP_LENGTH,
+            $decimal_symbol,
+            self::CURRENCY_PRECISION
         );
     }
 
     /**
      * Updates exchange rates for all stores and Nosto accounts
      *
-     * @throws NostoException
-     * @return void
+     * @throws \Nosto\NostoException
      */
     public function updateExchangeRatesForAllStores()
     {

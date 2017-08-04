@@ -69,6 +69,7 @@ class NostoTaggingMetaAccountIframe extends Nosto\Object\Iframe
         $iframe->setVersionModule(NostoTagging::PLUGIN_VERSION);
         $iframe->setVersionPlatform(_PS_VERSION_);
         $iframe->setUniqueId($uniqueId);
+        $iframe->setPlatform('prestashop');
 
         try {
             //check the recent visits and sales

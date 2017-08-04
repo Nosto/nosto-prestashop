@@ -79,11 +79,15 @@ class NostoTaggingProduct extends Nosto\Object\Product\Product
         $this->setBrand($this->buildBrand($product));
         $this->amendAlternateImages($product, $id_lang);
         $this->amendPrices($product, $context, $tagging_currency);
-        $this->dispatchHookActionLoadAfter(array(
-            'nosto_product' => $this,
-            'product' => $product,
-            'context' => $context
-        ));
+
+        Hook::exec(
+            'action'.str_replace('NostoTagging', 'Nosto', get_class($this)).'LoadAfter',
+            array(
+                'nosto_product' => $this,
+                'product' => $product,
+                'context' => $context
+            )
+        );
     }
 
     /**

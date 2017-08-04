@@ -65,11 +65,14 @@ class NostoTaggingOrder extends \Nosto\Object\Order\Order
 
         $this->setOrderStatus(NostoTaggingOrderStatus::loadData($order));
 
-        $this->dispatchHookActionLoadAfter(array(
-            'nosto_order' => $this,
-            'order' => $order,
-            'context' => $context
-        ));
+        Hook::exec(
+            'action'.str_replace('NostoTagging', 'Nosto', get_class($this)).'LoadAfter',
+            array(
+                'nosto_order' => $this,
+                'order' => $order,
+                'context' => $context
+            )
+        );
     }
 
     /**
