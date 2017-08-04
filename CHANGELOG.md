@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
+## 2.8.6
+- Add a workaround for occasionally missing smarty before assigning variables
+
 ## 2.8.5
 - Fix a bug that it doesn't work with certain prestashop version 
 

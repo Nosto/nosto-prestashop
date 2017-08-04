@@ -82,7 +82,7 @@ class NostoTagging extends Module
      * The version of the Nosto plug-in
      * @var string
      */
-    const PLUGIN_VERSION = '2.8.5';
+    const PLUGIN_VERSION = '2.8.6';
 
     /**
      * Internal name of the Nosto plug-in
@@ -1885,6 +1885,25 @@ class NostoTagging extends Module
         }
 
         return $logged_in;
+    }
+
+    /**
+     * Override method.
+     * Check smarty before calling Module.display()
+     *
+     * @param string $file
+     * @param string $template
+     * @param string|null $cache_id
+     * @param string|null $compile_id
+     * @return
+     */
+    public function display($file, $template, $cache_id = null, $compile_id = null)
+    {
+        if ($this->smarty == null) {
+            return null;
+        }
+
+        return parent::display($file, $template, $cache_id, $compile_id);
     }
 
     /**
