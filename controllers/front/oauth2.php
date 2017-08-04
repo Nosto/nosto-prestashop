@@ -62,7 +62,12 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
      */
     public function getMeta()
     {
-        return NostoTaggingMetaOauth::loadData($this->module->getContext(), $this->id_lang, $this->module->name, $this->module->getPath());
+        return NostoTaggingMetaOauth::loadData(
+            $this->module->getContext(),
+            $this->id_lang,
+            $this->module->name,
+            $this->module->getPath()
+        );
     }
 
     /**

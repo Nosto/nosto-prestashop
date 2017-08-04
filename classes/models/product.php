@@ -109,9 +109,9 @@ class NostoTaggingProduct extends Nosto\Object\Product\Product
             )
         );
         $this->setListPrice($helper_price->getProductListPriceInclTax(
-                $product,
-                $context,
-                $currency
+            $product,
+            $context,
+            $currency
         ));
         $supplier_cost = $helper_price->getProductWholesalePriceInclTax($product);
         if ($supplier_cost !== null && is_numeric($supplier_cost)) {

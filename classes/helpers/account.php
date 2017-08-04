@@ -39,8 +39,12 @@ class NostoTaggingHelperAccount
      * @param null|int $id_shop the ID of the shop.
      * @return bool true if the save was successful, false otherwise.
      */
-    public static function save(Nosto\Types\Signup\AccountInterface $account, $id_lang, $id_shop_group = null, $id_shop = null)
-    {
+    public static function save(
+        Nosto\Types\Signup\AccountInterface $account,
+        $id_lang,
+        $id_shop_group = null,
+        $id_shop = null
+    ) {
         /** @var NostoTaggingHelperConfig $helper_config */
         $helper_config = Nosto::helper('nosto_tagging/config');
         $success = $helper_config->saveAccountName(
@@ -74,8 +78,13 @@ class NostoTaggingHelperAccount
      * @param $context
      * @return bool true if successful, false otherwise.
      */
-    public static function delete(Nosto\Object\Signup\Account $account, $id_lang, $id_shop_group = null, $id_shop = null, $context)
-    {
+    public static function delete(
+        $context,
+        Nosto\Object\Signup\Account $account,
+        $id_lang,
+        $id_shop_group = null,
+        $id_shop = null
+    ) {
         /** @var NostoTaggingHelperConfig $helper_config */
         $helper_config = Nosto::helper('nosto_tagging/config');
         $success = $helper_config->deleteAllFromContext($id_lang, $id_shop_group, $id_shop);

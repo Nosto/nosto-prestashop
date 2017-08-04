@@ -345,11 +345,15 @@ class NostoTagging extends Module
             ) {
                 $account_email = (string)Tools::getValue($this->name.'_account_email');
                 if (empty($account_email)) {
-                    NostoTaggingHelperFlashMessage::add('error',
-                        $this->l('Email cannot be empty.'));
+                    NostoTaggingHelperFlashMessage::add(
+                        'error',
+                        $this->l('Email cannot be empty.')
+                    );
                 } elseif (!Validate::isEmail($account_email)) {
-                    NostoTaggingHelperFlashMessage::add('error',
-                        $this->l('Email is not a valid email address.'));
+                    NostoTaggingHelperFlashMessage::add(
+                        'error',
+                        $this->l('Email is not a valid email address.')
+                    );
                 } else {
                     try {
                         if (Tools::isSubmit('nostotagging_account_details')) {
@@ -411,7 +415,7 @@ class NostoTagging extends Module
             ) {
                 $account = NostoTaggingHelperAccount::findByContext($this->context);
                 $helper_config->clearCache();
-                NostoTaggingHelperAccount::delete($account, $language_id, null, $this->context);
+                NostoTaggingHelperAccount::delete($this->context, $account, $language_id, null);
             } elseif (Tools::isSubmit('submit_nostotagging_update_exchange_rates')) {
                 $nosto_account = NostoTaggingHelperAccount::find($language_id, $id_shop_group, $id_shop);
                 $operation = new RatesService($nosto_account, $this->context);
@@ -476,8 +480,10 @@ class NostoTagging extends Module
                 try {
                     $operation = new SettingsService($account);
                     $operation->update($account_meta);
-                    NostoTaggingHelperFlashMessage::add('success',
-                        $this->l('The settings have been saved.'));
+                    NostoTaggingHelperFlashMessage::add(
+                        'success',
+                        $this->l('The settings have been saved.')
+                    );
                 } catch (NostoException $e) {
                     /* @var NostoTaggingHelperLogger $logger */
                     $logger = Nosto::helper('nosto_tagging/logger');
@@ -501,7 +507,14 @@ class NostoTagging extends Module
             }
 
             // Refresh the page after every POST to get rid of form re-submission errors.
-            Tools::redirect(Nosto\Request\Http\HttpRequest::replaceQueryParamInUrl('language_id', $language_id, $admin_url), '');
+            Tools::redirect(
+                Nosto\Request\Http\HttpRequest::replaceQueryParamInUrl(
+                    'language_id',
+                    $language_id,
+                    $admin_url
+                ),
+                ''
+            );
             die;
         } else {
             $language_id = (int)Tools::getValue('language_id', 0);
@@ -545,8 +558,17 @@ class NostoTagging extends Module
             && Shop::getContext() === Shop::CONTEXT_SHOP
         ) {
             $currentUser = NostoTaggingCurrentUser::loadData($this->context);
-            $account_iframe = NostoTaggingMetaAccountIframe::loadData($this->context, $language_id, $this->getUniqueInstallationId());
-            $iframe_installation_url = \Nosto\Helper\IframeHelper::getUrl($account_iframe, $account, $currentUser, array('v'=>1));
+            $account_iframe = NostoTaggingMetaAccountIframe::loadData(
+                $this->context,
+                $language_id,
+                $this->getUniqueInstallationId()
+            );
+            $iframe_installation_url = \Nosto\Helper\IframeHelper::getUrl(
+                $account_iframe,
+                $account,
+                $currentUser,
+                array('v'=>1)
+            );
         } else {
             $iframe_installation_url = null;
         }
@@ -619,7 +641,11 @@ class NostoTagging extends Module
         ) {
             try {
                 $currentUser = NostoTaggingCurrentUser::loadData($this->context);
-                $meta = NostoTaggingMetaAccountIframe::loadData($this->context, $language_id, $this->getUniqueInstallationId());
+                $meta = NostoTaggingMetaAccountIframe::loadData(
+                    $this->context,
+                    $language_id,
+                    $this->getUniqueInstallationId()
+                );
                 $url = \Nosto\Helper\IframeHelper::getUrl($meta, $account, $currentUser);
                 if (!empty($url)) {
                     $this->getSmarty()->assign(array('iframe_url' => $url));

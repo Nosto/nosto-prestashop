@@ -25,5 +25,4 @@ class SettingsService
         }
         return false;
     }
-
 }
