@@ -26,26 +26,9 @@
 /**
  * Model for tagging customers.
  */
-class NostoTaggingCustomer extends NostoTaggingModel
+class NostoTaggingCustomer extends \Nosto\Object\User
 {
-    /**
-     * @var string the customer first name.
-     */
-    public $first_name;
 
-    /**
-     * @var string the customer last name.
-     */
-    public $last_name;
-
-    /**
-     * @var string the customer email address.
-     */
-    public $email;
-
-    /**
-     * @var string the customer customer reference.
-     */
     public $customer_reference;
 
     /**
@@ -59,9 +42,9 @@ class NostoTaggingCustomer extends NostoTaggingModel
             return;
         }
 
-        $this->first_name = $customer->firstname;
-        $this->last_name = $customer->lastname;
-        $this->email = $customer->email;
+        $this->setFirstName($customer->firstname);
+        $this->setLastName($customer->lastname);
+        $this->setEmail($customer->email);
         try {
             $this->populateCustomerReference($customer);
         } catch (Exception $e) {

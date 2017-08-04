@@ -24,39 +24,24 @@
  */
 
 /**
- * Created by PhpStorm.
- * User: hannupolonen
- * Date: 18/05/16
- * Time: 12:52
+ * Meta data class for account owner related information needed when creating new accounts.
  */
-
-/**
- * Meta data class for account related information needed when creating new accounts.
- */
-class NostoTaggingCollectionExchangeRates extends NostoExchangeRateCollection
+class NostoTaggingCurrentUser extends \Nosto\Object\User
 {
-    public function __construct($input, $flags = 0, $iterator_class = "ArrayIterator")
-    {
-        parent::__construct($input, $flags, $iterator_class);
-        
-        $this->dispatchHook(
-            'actionNostoExchangeRatesLoadAfter',
-            array(
-                'nosto_exchange_rates' => $this,
-            )
-        );
-    }
-
     /**
-     * Executes a PS hook by name.
+     * Loads the meta data from the given context.
      *
-     * Abstracts the differences between PS versions.
-     *
-     * @param string $name the hook name.
-     * @param array $params the hook params.
+     * @param Context $context the context to use as data source.
+     * @return NostoTaggingCurrentUser
      */
-    private function dispatchHook($name, array $params)
+    public static function loadData($context)
     {
-        Hook::exec($name, $params);
+        $owner = new NostoTaggingCurrentUser();
+        if (!empty($context->employee)) {
+            $owner->setFirstName($context->employee->firstname);
+            $owner->setLastName($context->employee->lastname);
+            $owner->setEmail($context->employee->email);
+        }
+        return $owner;
     }
 }

@@ -60,14 +60,13 @@ abstract class NostoTaggingApiModuleFrontController extends ModuleFrontControlle
      * Encrypts and outputs the data and ends the application flow.
      * Only send the response if we can encrypt it, i.e. we have an shared encryption secret with nosto.
      *
-     * @param NostoExportCollectionInterface $collection the data collection to output as encrypted response.
+     * @param Nosto\Object\AbstractCollection $collection the data collection to output as encrypted response.
      */
-    public function encryptOutput(NostoExportCollectionInterface $collection)
+    public function encryptOutput(Nosto\Object\AbstractCollection $collection)
     {
-        /** @var NostoAccount $account */
         $account = NostoTaggingHelperAccount::findByContext($this->module->getContext());
         if ($account && $account->isConnectedToNosto()) {
-            $cipher_text = NostoExporter::export($account, $collection);
+            $cipher_text = Nosto\Helper\ExportHelper::export($account, $collection);
             echo $cipher_text;
         }
         // It is important to stop the script execution after the export,

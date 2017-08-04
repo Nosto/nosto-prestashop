@@ -81,9 +81,6 @@ class NostoTaggingCart extends NostoTaggingModel
 
         $items = array_merge($products, $gift_products);
 
-        /** @var NostoHelperPrice $nosto_helper_price */
-        $nosto_helper_price = Nosto::helper('nosto/price');
-
         foreach ($items as $item) {
             $name = $item['name'];
             if (isset($item['attributes_small'])) {
@@ -94,7 +91,7 @@ class NostoTaggingCart extends NostoTaggingModel
                 'product_id' => (int)$item['id_product'],
                 'quantity' => (int)$item['cart_quantity'],
                 'name' => (string)$name,
-                'unit_price' => $nosto_helper_price->format($item['price_wt']),
+                'unit_price' => $item['price_wt'],
                 'price_currency_code' => (string)$currency->iso_code,
             );
         }

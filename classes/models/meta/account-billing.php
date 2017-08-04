@@ -24,24 +24,20 @@
  */
 
 /**
- * PS 1.6 admin controller for the Nosto admin tab.
+ * Meta data class for account billing related information needed when creating new accounts.
  */
-class AdminNostoController extends ModuleAdminController
+class NostoTaggingMetaAccountBilling extends \Nosto\Object\Signup\Billing
 {
     /**
-     * @inheritdoc
+     * Loads the meta data from the given context.
+     *
+     * @param Context $context the context to use as data source.
+     * @return \Nosto\Object\Signup\Billing
      */
-    public function initContent()
+    public static function loadData($context)
     {
-        if (!$this->viewAccess()) {
-            $this->errors[] = Tools::displayError('You do not have permission to view this.');
-            return;
-        }
-
-        $id_tab = (int)Tab::getIdFromClassName('AdminModules');
-        /** @noinspection PhpUndefinedFieldInspection */
-        $id_employee = (int)$this->context->cookie->id_employee;
-        $token = Tools::getAdminToken('AdminModules'.$id_tab.$id_employee);
-        Tools::redirectAdmin('index.php?controller=AdminModules&configure=nostotagging&token='.$token);
+        $billing = new \Nosto\Object\Signup\Billing();
+        $billing->setCountry($context->country->iso_code);
+        return $billing;
     }
 }

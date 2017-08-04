@@ -24,8 +24,8 @@
 <script type="text/javascript">
   var nostoRecosLoaded = false;
   nostojs(function(api){
-    api.listen('postrender', function(api){
-      nostoRecosLoaded = true;
+      api.listen('postrender', function () {
+          nostoRecosLoaded = true;
     });
     if (window.jQuery) {
       var $center_column = jQuery('#center_column, #content-wrapper');

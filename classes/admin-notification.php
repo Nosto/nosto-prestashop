@@ -26,7 +26,7 @@
 /**
  * Class for constructing Nosto related admin notifications.
  */
-class NostoTaggingAdminNotification extends NostoNotification
+class NostoTaggingAdminNotification extends Nosto\Object\Notification
 {
     public function __construct(
         Shop $shop,

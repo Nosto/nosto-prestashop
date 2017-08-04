@@ -26,56 +26,20 @@
 /**
  * Buyer info model used bu the order model.
  */
-class NostoTaggingOrderBuyer implements NostoOrderBuyerInterface
+class NostoTaggingOrderBuyer extends \Nosto\Object\Order\Buyer
 {
-    /**
-     * @var string the first name of the one who placed the order.
-     */
-    protected $first_name;
-
-    /**
-     * @var string the last name of the one who placed the order.
-     */
-    protected $last_name;
-
-    /**
-     * @var string the email address of the one who placed the order.
-     */
-    protected $email;
-
-    /**
-     * @inheritdoc
-     */
-    public function getFirstName()
-    {
-        return $this->first_name;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getLastName()
-    {
-        return $this->last_name;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getEmail()
-    {
-        return $this->email;
-    }
-
     /**
      * Loads the buyer data from the customer object.
      *
      * @param Customer $customer the customer object.
+     * @return NostoTaggingOrderBuyer
      */
-    public function loadData(Customer $customer)
+    public static function loadData(Customer $customer)
     {
-        $this->first_name = $customer->firstname;
-        $this->last_name = $customer->lastname;
-        $this->email = $customer->email;
+        $buyer = new NostoTaggingOrderBuyer();
+        $buyer->setFirstName($customer->firstname);
+        $buyer->setLastName($customer->lastname);
+        $buyer->setEmail($customer->email);
+        return $buyer;
     }
 }

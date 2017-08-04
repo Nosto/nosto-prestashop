@@ -26,7 +26,7 @@
 /**
  * Model for order status.
  */
-class NostoTaggingOrderStatus implements NostoOrderStatusInterface
+class NostoTaggingOrderStatus extends \Nosto\Object\Order\OrderStatus
 {
     /**
      * @var string the order status code.
@@ -42,9 +42,11 @@ class NostoTaggingOrderStatus implements NostoOrderStatusInterface
      * Loads the order status data from the order model.
      *
      * @param Order $order the model.
+     * @return NostoTaggingOrderStatus
      */
-    public function loadData(Order $order)
+    public static function loadData(Order $order)
     {
+        $status = new NostoTaggingOrderStatus();
         // We prefer to use the English state name for the status code, as we use it as an unique identifier of that
         // particular order status. The status label will primarily be in the language of the order.
         $id_lang = (int)Language::getIdByIso('en');
@@ -55,15 +57,16 @@ class NostoTaggingOrderStatus implements NostoOrderStatusInterface
         $state = $order->getCurrentStateFull($id_lang);
         if (!empty($state['name'])) {
             $state_name = $state['name'];
-            $this->code = $this->convertNameToCode($state_name);
+            $status->setCode(self::convertNameToCode($state_name));
             if ($id_lang !== (int)$order->id_lang) {
                 $state = $order->getCurrentStateFull((int)$order->id_lang);
                 if (!empty($state['name'])) {
                     $state_name = $state['name'];
                 }
             }
-            $this->label = $state_name;
+            $status->setLabel($state_name);
         }
+        return $status;
     }
 
     /**
@@ -89,7 +92,7 @@ class NostoTaggingOrderStatus implements NostoOrderStatusInterface
      * @param string $name the name to convert.
      * @return string the converted name.
      */
-    protected function convertNameToCode($name)
+    private static function convertNameToCode($name)
     {
         $pattern = array('/[^a-zA-Z0-9]+/', '/_+/', '/^_+/', '/_+$/');
         $replacement = array('_', '_', '', '');

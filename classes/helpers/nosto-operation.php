@@ -44,7 +44,7 @@ abstract class NostoTaggingHelperOperation
      *   array(object(NostoAccount), int(id_shop), int(id_lang))
      * )
      *
-     * @return NostoAccount[] the account data.
+     * @return array the account data.
      */
     protected function getAccountData()
     {

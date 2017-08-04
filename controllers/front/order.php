@@ -37,7 +37,7 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
     public function initContent()
     {
         $context = $this->module->getContext();
-        $collection = new NostoExportOrderCollection();
+        $collection = new Nosto\Object\Order\OrderCollection();
 
         $id = Tools::getValue('id');
         if (!empty($id)) {
@@ -46,8 +46,9 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
                 Controller::getController('PageNotFoundController')->run();
             }
             $nosto_order = new NostoTaggingOrder();
+            /** @noinspection PhpParamsInspection */
             $nosto_order->loadData($context, $orders[0]);
-            $collection[] = $nosto_order;
+            $collection->append($nosto_order);
         } else {
             foreach ($this->getOrderIds() as $id_order) {
                 $order = new Order($id_order);
@@ -55,9 +56,8 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
                     continue;
                 }
                 $nosto_order = new NostoTaggingOrder();
-                $nosto_order->include_special_items = true;
                 $nosto_order->loadData($this->module->getContext(), $order);
-                $collection[] = $nosto_order;
+                $collection->append($nosto_order);
             }
         }
 
@@ -81,6 +81,7 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
             )
         );
 
+        /** @noinspection SqlNoDataSourceInspection */
         $sql = sprintf(
             '
                 SELECT id_order

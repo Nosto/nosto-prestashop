@@ -77,6 +77,7 @@ if (!defined('_PS_VERSION_')) {
 
             $nosto_controller->initContent();
         } else {
+            /** @noinspection PhpDeprecationInspection */
             ControllerFactory::getController(
                 'NostoTagging' . Tools::ucfirst($controller) . 'ModuleFrontController'
             )->run();

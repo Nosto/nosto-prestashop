@@ -40,7 +40,7 @@ class NostoTaggingHelperCurrency
      *
      * @throws NostoException if the currency cannot be found, we require it.
      */
-    public function getBaseCurrency(Context $context)
+    public static function getBaseCurrency(Context $context)
     {
         $id_lang = $context->language->id;
         $id_shop = $context->shop->id;
@@ -75,14 +75,14 @@ class NostoTaggingHelperCurrency
      * @param boolean $only_active  if set to true, only active languages will be returned
      * @return array the found currencies.
      */
-    public function getCurrencies(Context $context, $only_active = false)
+    public static function getCurrencies(Context $context, $only_active = false)
     {
         $id_shop = (int)$context->shop->id;
         $all_currencies = Currency::getCurrenciesByIdShop($id_shop);
         if ($only_active === true) {
             $currencies = array();
             foreach ($all_currencies as $currency) {
-                if ($this->currencyActive($currency)) {
+                if (self::currencyActive($currency)) {
                     $currencies[] = $currency;
                 }
             }
@@ -180,38 +180,6 @@ class NostoTaggingHelperCurrency
     }
 
     /**
-     * Returns a collection of all currency exchange rates for the context.
-     *
-     * @param Context $context the context.
-     * @return NostoTaggingCollectionExchangeRates
-     */
-    public function getExchangeRateCollection(Context $context)
-    {
-        $base_currency_code = $this->getBaseCurrency($context)->iso_code;
-        $currencies = $this->getCurrencies($context, true);
-        $exchange_rates = array();
-        foreach ($currencies as $currency) {
-            // Skip base currencyCode.
-            if (
-                $currency['iso_code'] === $base_currency_code
-                || $currency['deleted'] == 1
-            ) {
-                continue;
-            }
-            
-            $exchange_rates[] = new NostoExchangeRate(
-                $currency['iso_code'],
-                $currency['iso_code'],
-                $currency['conversion_rate']
-            );
-        }
-
-        $rates = new NostoTaggingCollectionExchangeRates($exchange_rates);
-        return $rates;
-    }
-
-
-    /**
      * @param Context $context
      * @return string Currency code in ISO 4217
      */
@@ -283,11 +251,8 @@ class NostoTaggingHelperCurrency
                     $nosto_account = NostoTaggingHelperAccount::find($id_lang, $id_shop_group, $id_shop);
                     if (!is_null($nosto_account)) {
                         $context = $context_factory->forgeContext($id_lang, $id_shop);
-                        if (!NostoTaggingHelperAccount::updateCurrencyExchangeRates(
-                            $nosto_account,
-                            $context
-                        )
-                        ) {
+                        $operation = new RatesService($nosto_account, $context);
+                        if (!$operation->updateCurrencyExchangeRates()) {
                             throw new NostoException(
                                 sprintf(
                                     'Exchange rate update failed for %s',
@@ -303,7 +268,7 @@ class NostoTaggingHelperCurrency
         }
     }
 
-    public function currencyActive(array $currency)
+    public static function currencyActive(array $currency)
     {
         $active = true;
         if (!$currency['active']) {

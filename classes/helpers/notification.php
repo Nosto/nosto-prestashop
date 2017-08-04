@@ -42,7 +42,6 @@ class NostoTaggingHelperNotification
         $tokens_ok = true;
         $connected = NostoTaggingHelperAccount::existsAndIsConnected($language->id, $id_shop_group, $shop->id);
         if ($connected) {
-            /** @var NostoAccount $account */
             $account = NostoTaggingHelperAccount::find($language->id);
             if ($account instanceof NostoAccountInterface && $account->hasMissingTokens()) {
                 $tokens_ok = false;
@@ -59,7 +58,7 @@ class NostoTaggingHelperNotification
      * @param Language $language
      * @return bool
      */
-    protected function checkNostoIstalled(Shop $shop, Language $language)
+    protected function checkNostoInstalled(Shop $shop, Language $language)
     {
         $is_installed = true;
         $id_shop_group = isset($shop->id_shop_group) ? $shop->id_shop_group : null;
@@ -115,7 +114,7 @@ class NostoTaggingHelperNotification
             $shop = new Shop($shopArray['id_shop']);
             foreach (Language::getLanguages(true, $shop->id) as $languageArray) {
                 $language = new Language($languageArray['id_lang']);
-                if ($this->checkNostoIstalled($shop, $language) == false) {
+                if ($this->checkNostoInstalled($shop, $language) == false) {
                     $notification = new NostoTaggingAdminNotification(
                         $shop,
                         $language,

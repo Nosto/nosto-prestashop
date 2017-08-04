@@ -121,7 +121,7 @@ class NostoTaggingHelperProductOperation extends NostoTaggingHelperOperation
             }
             self::$processedProducts[] = $product->id;
             foreach ($this->getAccountData() as $data) {
-                /** @var NostoAccount $account */
+                /** @var Nosto\Object\Signup\Account $account */
                 list($account, $id_shop, $id_lang) = $data;
                 $account_name = $account->getName();
                 $nosto_product = $this->loadNostoProduct($product->id, $id_lang, $id_shop);
@@ -147,7 +147,7 @@ class NostoTaggingHelperProductOperation extends NostoTaggingHelperOperation
         foreach ($products_in_store as $nosto_account_name => $data) {
             $nosto_account = $data[self::KEY_ACCOUNT];
             foreach ($data[self::KEY_DATA] as $batchIndex => $batches) {
-                $op = new NostoOperationProduct($nosto_account);
+                $op = new Nosto\Operation\UpsertProduct($nosto_account);
                 foreach ($batches as $product) {
                     $op->addProduct($product);
                 }
@@ -171,11 +171,10 @@ class NostoTaggingHelperProductOperation extends NostoTaggingHelperOperation
      * Sends a product create API request to Nosto.
      *
      * @param Product $product the product that has been created.
-     * @return self::updateProduct()
      */
     public function create(Product $product)
     {
-        return $this->updateProduct($product);
+        $this->updateProduct($product);
     }
 
     /**
@@ -197,9 +196,10 @@ class NostoTaggingHelperProductOperation extends NostoTaggingHelperOperation
             $nosto_product->assignId($product);
 
             try {
-                $op = new NostoOperationProduct($account);
+                $op = new \Nosto\Operation\UpsertProduct($account);
+                $nosto_product->setAvailability(ProductInterface::DISCONTINUED);
                 $op->addProduct($nosto_product);
-                $op->delete();
+                $op->upsert();
             } catch (NostoException $e) {
                 /* @var NostoTaggingHelperLogger $logger */
                 $logger = Nosto::helper('nosto_tagging/logger');

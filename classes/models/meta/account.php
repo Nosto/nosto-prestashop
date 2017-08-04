@@ -26,7 +26,7 @@
 /**
  * Meta data class for account related information needed when creating new accounts.
  */
-class NostoTaggingMetaAccount extends NostoAccountMeta
+class NostoTaggingMetaAccount extends \Nosto\Object\Signup\Signup
 {
     /**
      * @var string the API token used to identify an account creation.
@@ -46,10 +46,11 @@ class NostoTaggingMetaAccount extends NostoAccountMeta
      *
      * @param Context $context the context to use as data source.
      * @param int $id_lang the language to use as data source.
+     * @return NostoTaggingMetaAccount
      */
-    public function loadData($context, $id_lang)
+    public static function loadData($context, $id_lang)
     {
-
+        $signup = new NostoTaggingMetaAccount();
         /** @var NostoTaggingHelperCurrency $currency_helper */
         $currency_helper = Nosto::helper('nosto_tagging/currency');
         /** @var NostoTaggingHelperConfig $config_helper */
@@ -57,7 +58,7 @@ class NostoTaggingMetaAccount extends NostoAccountMeta
 
         $language = new Language($id_lang);
         if (!Validate::isLoadedObject($language)) {
-            return;
+            return null;
         }
 
         if (!Validate::isLoadedObject($context->language)) {
@@ -75,29 +76,28 @@ class NostoTaggingMetaAccount extends NostoAccountMeta
             $id_shop = $context->shop->id;
             $id_shop_group = $context->shop->id_shop_group;
         }
-        $this->setTitle(Configuration::get('PS_SHOP_NAME'));
-        $this->setName(Tools::substr(sha1(rand()), 0, 8));
-        $this->setFrontPageUrl($this->getContextShopUrl($context, $language));
-        $this->setCurrencyCode($context->currency->iso_code);
-        $this->setLanguageCode($context->language->iso_code);
-        $this->setOwnerLanguageCode($language->iso_code);
-        $this->owner = new NostoTaggingMetaAccountOwner();
-        $this->owner->loadData($context);
-        $this->billing = new NostoTaggingMetaAccountBilling();
-        $this->billing->loadData($context);
-        $this->setCurrencies($this->buildCurrencies($context));
+        $signup->setTitle(Configuration::get('PS_SHOP_NAME'));
+        $signup->setName(Tools::substr(sha1(rand()), 0, 8));
+        $signup->setFrontPageUrl(self::getContextShopUrl($context, $language));
+        $signup->setCurrencyCode($context->currency->iso_code);
+        $signup->setLanguageCode($context->language->iso_code);
+        $signup->setOwnerLanguageCode($language->iso_code);
+        $signup->setOwner(NostoTaggingMetaAccountOwner::loadData($context));
+        $signup->setBillingDetails(NostoTaggingMetaAccountBilling::loadData($context));
+        $signup->setCurrencies(self::buildCurrencies($context));
         if ($config_helper->useMultipleCurrencies($id_lang, $id_shop_group, $id_shop)) {
-            $this->setUseCurrencyExchangeRates(
+            $signup->setUseCurrencyExchangeRates(
                 $config_helper->useMultipleCurrencies(
                     $id_lang,
                     $id_shop_group,
                     $id_shop
                 )
             );
-            $this->setDefaultVariationId($currency_helper->getBaseCurrency($context)->iso_code);
+            $signup->setDefaultVariantId($currency_helper->getBaseCurrency($context)->iso_code);
         } else {
-            $this->setUseCurrencyExchangeRates(false);
+            $signup->setUseCurrencyExchangeRates(false);
         }
+        return $signup;
     }
 
     /**
@@ -107,7 +107,7 @@ class NostoTaggingMetaAccount extends NostoAccountMeta
      * @param Language $language the language.
      * @return string the absolute url.
      */
-    protected function getContextShopUrl($context, $language)
+    protected static function getContextShopUrl($context, $language)
     {
         $shop = $context->shop;
         $ssl = Configuration::get('PS_SSL_ENABLED');
@@ -125,7 +125,7 @@ class NostoTaggingMetaAccount extends NostoAccountMeta
         return $base.$lang;
     }
 
-    protected function buildCurrencies(Context $context)
+    protected static function buildCurrencies(Context $context)
     {
         $nosto_currencies = array();
         /** @var NostoTaggingHelperCurrency $currency_helper */

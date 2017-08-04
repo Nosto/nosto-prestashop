@@ -26,188 +26,8 @@
 /**
  * Model for tagging orders.
  */
-class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
+class NostoTaggingOrder extends \Nosto\Object\Order\Order
 {
-    /**
-     * @var bool if we should include special line items such as discounts and shipping costs.
-     */
-    public $include_special_items = true;
-
-    /**
-     * @var string the order number.
-     */
-    protected $order_number;
-
-    /**
-     * @var NostoTaggingOrderBuyer buyer info.
-     */
-    protected $buyer_info = array();
-
-    /**
-     * @var string the order creation date.
-     */
-    protected $created_date;
-
-    /**
-     * @var NostoTaggingOrderPurchasedItem[] purchased items in the order.
-     */
-    protected $purchased_items = array();
-
-    /**
-     * @var string the payment provider module and version used in the order.
-     */
-    protected $payment_provider;
-
-    /**
-     * @var string external order reference.
-     */
-    protected $external_order_ref;
-
-    /**
-     * @var NostoTaggingOrderStatus the order status.
-     */
-    protected $order_status;
-
-    /**
-     * @inheritdoc
-     */
-    public function getOrderNumber()
-    {
-        return $this->order_number;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getCreatedDate()
-    {
-        return $this->created_date;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getPaymentProvider()
-    {
-        return $this->payment_provider;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getBuyerInfo()
-    {
-        return $this->buyer_info;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getPurchasedItems()
-    {
-        return $this->purchased_items;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getOrderStatus()
-    {
-        return $this->order_status;
-    }
-
-    /**
-     * Sets the unique order number identifying the order.
-     *
-     * The number must be a non-empty value.
-     *
-     * @param string|int $order_number the order number.
-     */
-    public function setOrderNumber($order_number)
-    {
-        $this->order_number = $order_number;
-    }
-
-    /**
-     * Sets the date when the order was placed.
-     *
-     * The date must be an instance of the NostoDate class.
-     *
-     * @param string $created_date the creation date.
-     */
-    public function setCreatedDate($created_date)
-    {
-        $this->created_date = $created_date;
-    }
-
-    /**
-     * Sets the payment provider used for placing the order.
-     *
-     * The provider must be a non-empty string value. Preferred formatting is "[provider name] [provider version]".
-     *
-     * @param string $payment_provider the payment provider.
-     */
-    public function setPaymentProvider($payment_provider)
-    {
-        $this->payment_provider = $payment_provider;
-    }
-
-    /**
-     * Sets the buyer info of the user who placed the order.
-     *
-     * The info object must implement the NostoOrderBuyerInterface interface.
-     *
-     * @param NostoOrderBuyerInterface $buyer_info the buyer info object.
-     */
-    public function setBuyerInfo(NostoOrderBuyerInterface $buyer_info)
-    {
-        $this->buyer_info = $buyer_info;
-    }
-
-    /**
-     * Adds a purchased item to the order.
-     *
-     * The item object must implement the NostoOrderItemInterface interface.
-     *
-     * @param NostoOrderPurchasedItemInterface $purchased_item the item object.
-     */
-    public function addPurchasedItem(NostoOrderPurchasedItemInterface $purchased_item)
-    {
-        $this->purchased_items[] = $purchased_item;
-    }
-
-    /**
-     * Sets the order status.
-     *
-     * The status object must implement the NostoOrderStatusInterface interface.
-     *
-     * @param NostoOrderStatusInterface $order_status the status object.
-     */
-    public function setOrderStatus(NostoOrderStatusInterface $order_status)
-    {
-        $this->order_status = $order_status;
-    }
-
-    /**
-     * Gets the external order ref
-     *
-     * @return string
-     */
-    public function getExternalOrderRef()
-    {
-        return $this->external_order_ref;
-    }
-
-    /**
-     * Sets the external order ref
-     *
-     * @param string $external_order_ref
-     */
-    public function setExternalOrderRef($external_order_ref)
-    {
-        $this->external_order_ref = $external_order_ref;
-    }
-
     /**
      * Loads the order data from supplied context and order objects.
      *
@@ -220,35 +40,30 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
             return;
         }
 
-        /** @var NostoHelperDate $nosto_helper_date */
-        $nosto_helper_date = Nosto::helper('nosto/date');
-
         $customer = new Customer((int)$order->id_customer);
         // The order reference was introduced in prestashop 1.5 where orders can be split into multiple ones.
         if (isset($order->reference)) {
-            $this->order_number = $order->reference;
-            $this->external_order_ref = $order->id;
+            $this->setOrderNumber($order->reference);
+            $this->setExternalOrderRef($order->id);
         } else {
-            $this->order_number = $order->id;
+            $this->setOrderNumber($order->id);
         }
-        $this->order_number = isset($order->reference) ? (string)$order->reference : $order->id;
-        $this->buyer_info = new NostoTaggingOrderBuyer();
-        $this->buyer_info->loadData($customer);
-        $this->created_date = $nosto_helper_date->format($order->date_add);
-        $this->purchased_items = $this->findPurchasedItems($context, $order);
-        $this->payment_provider = 'unknown';
+        $this->setOrderNumber(isset($order->reference) ? (string)$order->reference : $order->id);
+        $this->setCustomer(NostoTaggingOrderBuyer::loadData($customer));
+        $this->setCreatedAt(DateTime::createFromFormat('Y-m-d', $order->date_add));
+        $this->setPurchasedItems($this->findPurchasedItems($context, $order));
+        $this->setPaymentProvider('unknown');
 
         if (!empty($order->module)) {
             $payment_module = Module::getInstanceByName($order->module);
             if ($payment_module !== false && isset($payment_module->version)) {
-                $this->payment_provider = $order->module.' ['.$payment_module->version.']';
+                $this->setPaymentProvider($order->module.' ['.$payment_module->version.']');
             } else {
-                $this->payment_provider = $order->module.' [unknown]';
+                $this->setPaymentProvider($order->module.' [unknown]');
             }
         }
 
-        $this->order_status = new NostoTaggingOrderStatus();
-        $this->order_status->loadData($order);
+        $this->setOrderStatus(NostoTaggingOrderStatus::loadData($order));
 
         $this->dispatchHookActionLoadAfter(array(
             'nosto_order' => $this,
@@ -346,9 +161,6 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
             $context = Context::getContext();
         }
 
-        /** @var NostoHelperPrice $nosto_helper_price */
-        $nosto_helper_price = Nosto::helper('nosto/price');
-
         $id_lang = (int)$context->language->id;
         foreach ($items as $item) {
             $p = new Product($item['product_id'], false, $context->language->id);
@@ -370,13 +182,13 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
                 $purchased_item->setProductId((int)$p->id);
                 $purchased_item->setQuantity((int)$item['product_quantity']);
                 $purchased_item->setName((string)$product_name);
-                $purchased_item->setUnitPrice($nosto_helper_price->format($item['product_price_wt']));
-                $purchased_item->setCurrencyCode((string)$currency->iso_code);
+                $purchased_item->setPrice($item['product_price_wt']);
+                $purchased_item->setPriceCurrencyCode((string)$currency->iso_code);
                 $purchased_items[] = $purchased_item;
             }
         }
 
-        if ($this->include_special_items && !empty($purchased_items)) {
+        if (!empty($purchased_items)) {
         // Add special items for discounts, shipping and gift wrapping.
 
             if ($total_discounts_tax_incl > 0) {
@@ -388,8 +200,8 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
                     $purchased_item->setQuantity(1);
                     $purchased_item->setName('Discount');
                     // Note the negative value.
-                    $purchased_item->setUnitPrice($nosto_helper_price->format(-$total_discounts_tax_incl));
-                    $purchased_item->setCurrencyCode((string)$currency->iso_code);
+                    $purchased_item->setPrice(-$total_discounts_tax_incl);
+                    $purchased_item->setPriceCurrencyCode((string)$currency->iso_code);
                     $purchased_items[] = $purchased_item;
                 }
             }
@@ -410,8 +222,8 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
                 $purchased_item->setProductId(-1);
                 $purchased_item->setQuantity(1);
                 $purchased_item->setName('Shipping');
-                $purchased_item->setUnitPrice($nosto_helper_price->format($total_shipping_tax_incl));
-                $purchased_item->setCurrencyCode((string)$currency->iso_code);
+                $purchased_item->setPrice($total_shipping_tax_incl);
+                $purchased_item->setPriceCurrencyCode((string)$currency->iso_code);
                 $purchased_items[] = $purchased_item;
             }
 
@@ -420,8 +232,8 @@ class NostoTaggingOrder extends NostoTaggingModel implements NostoOrderInterface
                 $purchased_item->setProductId(-1);
                 $purchased_item->setQuantity(1);
                 $purchased_item->setName('Gift Wrapping');
-                $purchased_item->setUnitPrice($nosto_helper_price->format($total_wrapping_tax_incl));
-                $purchased_item->setCurrencyCode((string)$currency->iso_code);
+                $purchased_item->setPrice($total_wrapping_tax_incl);
+                $purchased_item->setPriceCurrencyCode((string)$currency->iso_code);
                 $purchased_items[] = $purchased_item;
             }
         }

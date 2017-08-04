@@ -38,7 +38,7 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
     public function initContent()
     {
         $context = $this->module->getContext();
-        $collection = new NostoExportProductCollection();
+        $collection = new Nosto\Object\Product\ProductCollection();
         // We need to forge the employee in order to get a price for a product
         $context->employee = new Employee();
 
@@ -49,7 +49,7 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
             }
             $nosto_product = new NostoTaggingProduct();
             $nosto_product->loadData($context, $product);
-            $collection[] = $nosto_product;
+            $collection->append($nosto_product);
         } else {
             foreach ($this->getProductIds() as $id_product) {
                 $product = new Product($id_product, true, $context->language->id, $context->shop->id);
@@ -59,7 +59,7 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
 
                 $nosto_product = new NostoTaggingProduct();
                 $nosto_product->loadData($context, $product);
-                $collection[] = $nosto_product;
+                $collection->append($nosto_product);
             }
         }
         $this->encryptOutput($collection);
@@ -73,6 +73,7 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
     protected function getProductIds()
     {
         $product_ids = array();
+        /** @noinspection SqlNoDataSourceInspection */
         $sql = sprintf(
             '
                 SELECT id_product

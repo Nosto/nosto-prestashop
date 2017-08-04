@@ -28,106 +28,67 @@
  */
 class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
 {
+    use Nosto\Mixins\OauthTrait {
+        Nosto\Mixins\OauthTrait::redirect as redirectTo;
+    }
+
+    private $id_shop;
+    private $id_shop_group;
+    private $id_lang;
+
     /**
-     * @inheritdoc
+     * Handles the redirect from Nosto oauth2 authorization server when an existing account is
+     * connected to a store. This is handled in the front end as the oauth2 server validates the
+     * "return_url" sent in the first step of the authorization cycle, and requires it to be from
+     * the same domain that the account is configured for and only redirects to that domain.
+     *
+     * @return void
      */
     public function initContent()
     {
-        $id_lang = (int)Tools::getValue('language_id', $this->module->getContext()->language->id);
-        if (($code = Tools::getValue('code')) !== false) {
-        // The user accepted the authorization request.
-            // The authorization server responded with a code that can be used to exchange for the access token.
-            try {
-                $id_shop = null;
-                $id_shop_group = null;
-                if ($this->module->getContext()->shop instanceof Shop) {
-                    $id_shop = $this->context->shop->id;
-                    $id_shop_group = $this->context->shop->id_shop_group;
-                }
-                /** @var NostoTaggingHelperConfig $helper_config */
-                $helper_config = Nosto::helper('nosto_tagging/config');
-                $meta = new NostoTaggingMetaOauth();
-                $meta->setModuleName($this->module->name);
-                $meta->setModulePath($this->module->getPath());
-                $meta->loadData($this->module->getContext(), $id_lang);
-                $account = NostoAccount::syncFromNosto($meta, $code);
-
-                if (!NostoTaggingHelperAccount::save($account, $id_lang, $id_shop_group, $id_shop)) {
-                    throw new NostoException('Failed to save account.');
-                }
-                $helper_config->clearCache();
-                $msg = $this->module->l('Account %s successfully connected to Nosto.', 'oauth2');
-                $this->redirectToModuleAdmin(array(
-                    'language_id' => $id_lang,
-                    'oauth_success' => sprintf($msg, $account->getName()),
-                ));
-            } catch (NostoException $e) {
-                /* @var NostoTaggingHelperLogger $logger */
-                $logger = Nosto::helper('nosto_tagging/logger');
-                $logger->error(
-                    __CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(),
-                    $e->getCode()
-                );
-
-                $msg = $this->module->l(
-                    'Account could not be connected to Nosto. Please contact Nosto support.',
-                    'oauth2'
-                );
-                $this->redirectToModuleAdmin(array(
-                    'language_id' => $id_lang,
-                    'oauth_error' => $msg,
-                ));
-            }
-        } elseif (($error = Tools::getValue('error')) !== false) {
-            $message_parts = array($error);
-            if (($error_reason = Tools::getValue('error_reason')) !== false) {
-                $message_parts[] = $error_reason;
-            }
-            if (($error_description = Tools::getValue('error_description')) !== false) {
-                $message_parts[] = urldecode($error_description);
-            }
-            /* @var NostoTaggingHelperLogger $logger */
-            $logger = Nosto::helper('nosto_tagging/logger');
-            $logger->error(
-                __CLASS__.'::'.__FUNCTION__.' - '.implode(' - ', $message_parts),
-                200
-            );
-            // Prefer to show the error description sent from Nosto to the user when something is wrong.
-            // These messages are localized to users current back office language.
-            if (!empty($error_description)) {
-                $msg = urldecode($error_description);
-            } elseif (!empty($error_reason) && $error_reason === 'user_denied') {
-                $msg = $this->module->l(
-                    'Account could not be connected to Nosto. You rejected the connection request.',
-                    'oauth2'
-                );
-            } else {
-                $msg = $this->module->l(
-                    'Account could not be connected to Nosto. Please contact Nosto support.',
-                    'oauth2'
-                );
-            }
-            $this->redirectToModuleAdmin(array(
-                'language_id' => $id_lang,
-                'oauth_error' => $msg,
-            ));
+        $this->id_lang = (int)Tools::getValue('language_id', $this->module->getContext()->language->id);
+        if ($this->module->getContext()->shop instanceof Shop) {
+            $this->id_shop = $this->context->shop->id;
+            $this->id_shop_group = $this->context->shop->id_shop_group;
         }
-        $this->notFound();
+        self::connect();
     }
 
     /**
-     * Redirects the user to the module admin url if the current user is logged in as an admin in the back office.
-     * If the url cannot be found, then show the 404 page.
+     * Implemented trait method that is responsible for fetching the OAuth parameters used for all
+     * OAuth operations
      *
-     * @param array $query_params
+     * @return Nosto\Oauth the OAuth parameters for the operations
      */
-    protected function redirectToModuleAdmin(array $query_params)
+    public function getMeta()
+    {
+        return NostoTaggingMetaOauth::loadData($this->module->getContext(), $this->id_lang, $this->module->name, $this->module->getPath());
+    }
+
+    /**
+     * Implemented trait method that is responsible for saving an account with the all tokens for
+     * the current store view (as defined by the parameter.)
+     *
+     * @param Nosto\Types\Signup\AccountInterface $account the account to save
+     */
+    public function save(Nosto\Types\Signup\AccountInterface $account)
+    {
+        NostoTaggingHelperAccount::save($account, $this->id_lang, $this->id_shop_group, $this->id_shop);
+    }
+
+    /**
+     * Implemented trait method that redirects the user with the authentication params to the
+     * admin controller.
+     *
+     * @param array $params the parameters to be used when building the redirect
+     */
+    public function redirectTo(array $params)
     {
         /** @var NostoTaggingHelperConfig $config_helper */
         $config_helper = Nosto::helper('nosto_tagging/config');
         $admin_url = $config_helper->getAdminUrl();
         if (!empty($admin_url)) {
-            $admin_url = NostoHttpRequest::replaceQueryParamsInUrl($query_params, $admin_url);
+            $admin_url = NostoHttpRequest::replaceQueryParamsInUrl($params, $admin_url);
             Tools::redirect($admin_url, '');
             die;
         }
@@ -135,9 +96,38 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
     }
 
     /**
-     * Shows the 404 page to the user.
+     * Implemented trait method that is a utility responsible for fetching a specified query
+     * parameter from the GET request.
+     *
+     * @param string $name the name of the query parameter to fetch
+     * @return string the value of the specified query parameter
      */
-    protected function notFound()
+    public function getParam($name)
+    {
+        return Tools::getValue($name);
+    }
+
+    /**
+     * Implemented trait method that is responsible for logging an exception to the Magento error
+     * log when an error occurs.
+     *
+     * @param Exception $e the exception to be logged
+     */
+    public function logError(Exception $e)
+    {
+        /* @var NostoTaggingHelperLogger $logger */
+        $logger = Nosto::helper('nosto_tagging/logger');
+        $logger->error(
+            __CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(),
+            $e->getCode()
+        );
+    }
+
+    /**
+     * Implemented trait method that is responsible for redirecting the user to a 404 page when
+     * the authorization code is invalid.
+     */
+    public function notFound()
     {
         Controller::getController('PageNotFoundController')->run();
     }

@@ -33,13 +33,13 @@ class NostoTaggingHelperAccount
      * Saves a Nosto account to PS config.
      * Also handles any attached API tokens.
      *
-     * @param NostoAccount $account the account to save.
+     * @param Nosto\Types\Signup\AccountInterface $account the account to save.
      * @param null|int $id_lang the ID of the language to set the account name for.
      * @param null|int $id_shop_group the ID of the shop context.
      * @param null|int $id_shop the ID of the shop.
      * @return bool true if the save was successful, false otherwise.
      */
-    public static function save(NostoAccount $account, $id_lang, $id_shop_group = null, $id_shop = null)
+    public static function save(Nosto\Types\Signup\AccountInterface $account, $id_lang, $id_shop_group = null, $id_shop = null)
     {
         /** @var NostoTaggingHelperConfig $helper_config */
         $helper_config = Nosto::helper('nosto_tagging/config');
@@ -67,22 +67,25 @@ class NostoTaggingHelperAccount
      * Deletes a Nosto account from the PS config.
      * Also sends a notification to Nosto that the account has been deleted.
      *
-     * @param NostoAccount $account the account to delete.
+     * @param Nosto\Object\Signup\Account $account the account to delete.
      * @param int $id_lang the ID of the language model to delete the account for.
      * @param null|int $id_shop_group the ID of the shop context.
      * @param null|int $id_shop the ID of the shop.
+     * @param $context
      * @return bool true if successful, false otherwise.
      */
-    public static function delete(NostoAccount $account, $id_lang, $id_shop_group = null, $id_shop = null)
+    public static function delete(Nosto\Object\Signup\Account $account, $id_lang, $id_shop_group = null, $id_shop = null, $context)
     {
         /** @var NostoTaggingHelperConfig $helper_config */
         $helper_config = Nosto::helper('nosto_tagging/config');
         $success = $helper_config->deleteAllFromContext($id_lang, $id_shop_group, $id_shop);
+        $currentUser = NostoTaggingCurrentUser::loadData($context);
         if ($success) {
             $token = $account->getApiToken('sso');
             if ($token) {
                 try {
-                    $account->delete();
+                    $service = new Nosto\Operation\UninstallAccount($account);
+                    $service->delete($currentUser);
                 } catch (NostoException $e) {
                     /* @var NostoTaggingHelperLogger $logger */
                     $logger = Nosto::helper('nosto_tagging/logger');
@@ -136,7 +139,7 @@ class NostoTaggingHelperAccount
      * @param null|int $lang_id the ID of the language.
      * @param null|int $id_shop_group the ID of the shop context.
      * @param null|int $id_shop the ID of the shop.
-     * @return NostoAccount|null the account with loaded API tokens, or null if not found.
+     * @return Nosto\Object\Signup\Account|null the account with loaded API tokens, or null if not found.
      */
     public static function find($lang_id = null, $id_shop_group = null, $id_shop = null)
     {
@@ -144,7 +147,7 @@ class NostoTaggingHelperAccount
         $helper_config = Nosto::helper('nosto_tagging/config');
         $account_name = $helper_config->getAccountName($lang_id, $id_shop_group, $id_shop);
         if (!empty($account_name)) {
-            $account = new NostoAccount($account_name);
+            $account = new Nosto\Object\Signup\Account($account_name);
             $tokens = array();
             foreach (NostoApiToken::getApiTokenNames() as $token_name) {
                 $token_value = $helper_config->getToken($token_name, $lang_id, $id_shop_group, $id_shop);
@@ -155,7 +158,7 @@ class NostoTaggingHelperAccount
 
             if (!empty($tokens)) {
                 foreach ($tokens as $name => $value) {
-                    $account->addApiToken(new NostoApiToken($name, $value));
+                    $account->addApiToken(new Nosto\Request\Api\Token($name, $value));
                 }
             }
 
@@ -195,42 +198,5 @@ class NostoTaggingHelperAccount
     {
         $account = self::find($lang_id, $id_shop_group, $id_shop);
         return ($account !== null && $account->isConnectedToNosto());
-    }
-
-
-    /**
-     * Sends a currency exchange rate update request to Nosto via API.
-     *
-     * @param NostoAccount $account
-     * @param Context|ContextCore $context
-     * @return bool
-     */
-    public static function updateCurrencyExchangeRates(NostoAccount $account, Context $context)
-    {
-        /** @var NostoTaggingHelperCurrency $currency_helper */
-        $currency_helper = Nosto::helper('nosto_tagging/currency');
-        try {
-            $exchangeRates = $currency_helper->getExchangeRateCollection($context);
-            $service = new NostoOperationExchangeRate($account, $exchangeRates);
-            return $service->update();
-        } catch (NostoException $e) {
-            /** @var NostoTaggingHelperLogger $logger */
-            $logger = Nosto::helper('nosto_tagging/logger');
-            $logger->error(__CLASS__ . '::' . __FUNCTION__ . ' - ' . $e->getMessage(), $e->getCode());
-        }
-        return false;
-    }
-
-    /**
-     * Sends account settings update request to Nosto via API.
-     *
-     * @param NostoAccount $account
-     * @param NostoTaggingMetaAccount $accountMetaData
-     * @return bool
-     */
-    public static function updateSettings(NostoAccount $account, NostoTaggingMetaAccount $accountMetaData)
-    {
-        $service = new NostoOperationAccount($account, $accountMetaData);
-        return $service->update();
     }
 }

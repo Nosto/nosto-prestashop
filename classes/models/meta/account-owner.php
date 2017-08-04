@@ -24,42 +24,24 @@
  */
 
 /**
- * Meta data class for account billing related information needed when creating new accounts.
+ * Meta data class for account owner related information needed when creating new accounts.
  */
-class NostoTaggingMetaAccountBilling implements NostoAccountMetaDataBillingDetailsInterface
+class NostoTaggingMetaAccountOwner extends \Nosto\Object\Signup\Owner
 {
-    /**
-     * @var string country ISO (ISO 3166-1 alpha-2) code for billing details.
-     */
-    protected $country;
-
     /**
      * Loads the meta data from the given context.
      *
      * @param Context $context the context to use as data source.
+     * @return NostoTaggingMetaAccountOwner
      */
-    public function loadData($context)
+    public static function loadData($context)
     {
-        $this->country = $context->country->iso_code;
-    }
-
-    /**
-     * Sets the account billing details country ISO (ISO 3166-1 alpha-2) code.
-     *
-     * @param string $country the country ISO code.
-     */
-    public function setCountry($country)
-    {
-        $this->country = $country;
-    }
-
-    /**
-     * The 2-letter ISO code (ISO 3166-1 alpha-2) for billing details country.
-     *
-     * @return string the country ISO code.
-     */
-    public function getCountry()
-    {
-        return $this->country;
+        $owner = new NostoTaggingMetaAccountOwner();
+        if (!empty($context->employee)) {
+            $owner->setFirstName($context->employee->firstname);
+            $owner->setLastName($context->employee->lastname);
+            $owner->setEmail($context->employee->email);
+        }
+        return $owner;
     }
 }

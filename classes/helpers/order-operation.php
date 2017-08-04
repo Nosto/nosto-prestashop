@@ -28,37 +28,37 @@
  */
 class NostoTaggingHelperOrderOperation extends NostoTaggingHelperOperation
 {
-    /**
-     * Flag for disabling inventory sync for slow connections
-     *
-     * @var bool
-     */
     public static $syncInventoriesAfterOrder = true;
+    private $context;
+
+    public function __construct(Context $context)
+    {
+        $this->context = $context;
+    }
 
     /**
      * Sends order data to Nosto.
      *
      * @param Order $order
-     * @param Context $context
      */
-    public function send(Order $order, Context $context)
+    public function send(Order $order)
     {
         $nosto_order = new NostoTaggingOrder();
-        $nosto_order->loadData($context, $order);
+        $nosto_order->loadData($this->context, $order);
         $id_shop_group = isset($order->id_shop_group) ? $order->id_shop_group : null;
         $id_shop = isset($order->id_shop) ? $order->id_shop : null;
         // This is done out of context, so we need to specify the exact parameters to get the correct account.
-        /** @var NostoAccount $account */
         $account = NostoTaggingHelperAccount::find($order->id_lang, $id_shop_group, $id_shop);
         if ($account !== null && $account->isConnectedToNosto()) {
             /* @var NostoTaggingHelperCustomer $helper_customer */
             $helper_customer = Nosto::helper('nosto_tagging/customer');
             $customer_id = $helper_customer->getNostoId($order);
             try {
-                NostoOrderConfirmation::send($nosto_order, $account, $customer_id);
+                $operation = new \Nosto\Operation\OrderConfirm($account);
+                $operation->send($nosto_order, $customer_id);
                 try {
                     $this->syncInventoryLevel($nosto_order);
-                } catch (NostoException $e) {
+                } catch (Exception $e) {
                     /* @var NostoTaggingHelperLogger $logger */
                     $logger = Nosto::helper('nosto_tagging/logger');
                     $logger->error(
@@ -66,7 +66,7 @@ class NostoTaggingHelperOrderOperation extends NostoTaggingHelperOperation
                         $e->getMessage()
                     );
                 }
-            } catch (NostoException $e) {
+            } catch (Exception $e) {
                 /* @var NostoTaggingHelperLogger $logger */
                 $logger = Nosto::helper('nosto_tagging/logger');
                 $logger->error(
@@ -85,10 +85,9 @@ class NostoTaggingHelperOrderOperation extends NostoTaggingHelperOperation
     private function syncInventoryLevel(NostoTaggingOrder $order)
     {
         if (self::$syncInventoriesAfterOrder === true) {
-            $purchasedtems = $order->getPurchasedItems();
+            $purchasedItems = $order->getPurchasedItems();
             $products = array();
-            /* @var NostoOrderPurchasedItem $item */
-            foreach ($purchasedtems as $item) {
+            foreach ($purchasedItems as $item) {
                 $productId = $item->getProductId();
                 if (empty($productId) || $productId < 0) {
                     continue;

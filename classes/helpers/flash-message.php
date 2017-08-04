@@ -38,7 +38,7 @@ class NostoTaggingHelperFlashMessage
      * @param string $type the type of message (use class constants).
      * @param string $message the message.
      */
-    public function add($type, $message)
+    public static function add($type, $message)
     {
         $cookie = Context::getContext()->cookie;
         $cookie_data = isset($cookie->nostotagging) ? Tools::jsonDecode($cookie->nostotagging, true) : array();
@@ -58,7 +58,7 @@ class NostoTaggingHelperFlashMessage
      * @param string $type the type of messages (use class constants).
      * @return array the message array.
      */
-    public function getList($type)
+    public static function getList($type)
     {
         $flash_messages = array();
         $cookie = Context::getContext()->cookie;
