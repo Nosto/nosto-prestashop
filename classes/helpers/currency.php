@@ -56,7 +56,7 @@ class NostoTaggingHelperCurrency
         }
         $base_currency = new Currency($base_id_currency);
         if (!Validate::isLoadedObject($base_currency)) {
-            throw new NostoException(
+            throw new Nosto\NostoException(
                 sprintf(
                     'Failed to find base currency for shop #%s and lang #%s.',
                     $id_shop,
@@ -160,7 +160,7 @@ class NostoTaggingHelperCurrency
                 break;
 
             default:
-                throw new NostoException(
+                throw new Nosto\NostoException(
                     sprintf(
                         'Unsupported PrestaShop currency format %d.',
                         $currency['format']
@@ -253,7 +253,7 @@ class NostoTaggingHelperCurrency
                         $context = $context_factory->forgeContext($id_lang, $id_shop);
                         $operation = new RatesService($nosto_account, $context);
                         if (!$operation->updateCurrencyExchangeRates()) {
-                            throw new NostoException(
+                            throw new Nosto\NostoException(
                                 sprintf(
                                     'Exchange rate update failed for %s',
                                     $nosto_account->getName()

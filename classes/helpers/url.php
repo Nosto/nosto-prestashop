@@ -216,7 +216,7 @@ class NostoTaggingHelperUrl
             $params['id_lang'] = $id_lang;
         }
 
-        return NostoHttpRequest::replaceQueryParamsInUrl($params, $url);
+        return Nosto\Request\Http\HttpRequest::replaceQueryParamsInUrl($params, $url);
     }
 
     /**
@@ -259,7 +259,7 @@ class NostoTaggingHelperUrl
             $params['id_lang'] = $id_lang;
         }
 
-        return NostoHttpRequest::replaceQueryParamsInUrl($params, $url);
+        return Nosto\Request\Http\HttpRequest::replaceQueryParamsInUrl($params, $url);
     }
 
     /**
@@ -301,7 +301,7 @@ class NostoTaggingHelperUrl
             $params['id_lang'] = $id_lang;
         }
 
-        return NostoHttpRequest::replaceQueryParamsInUrl($params, $url);
+        return Nosto\Request\Http\HttpRequest::replaceQueryParamsInUrl($params, $url);
     }
 
     /**

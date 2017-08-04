@@ -200,7 +200,7 @@ class NostoTaggingHelperProductOperation extends NostoTaggingHelperOperation
                 $nosto_product->setAvailability(ProductInterface::DISCONTINUED);
                 $op->addProduct($nosto_product);
                 $op->upsert();
-            } catch (NostoException $e) {
+            } catch (Nosto\NostoException $e) {
                 /* @var NostoTaggingHelperLogger $logger */
                 $logger = Nosto::helper('nosto_tagging/logger');
                 $logger->error(

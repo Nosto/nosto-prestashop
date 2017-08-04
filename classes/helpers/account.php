@@ -86,7 +86,7 @@ class NostoTaggingHelperAccount
                 try {
                     $service = new Nosto\Operation\UninstallAccount($account);
                     $service->delete($currentUser);
-                } catch (NostoException $e) {
+                } catch (Nosto\NostoException $e) {
                     /* @var NostoTaggingHelperLogger $logger */
                     $logger = Nosto::helper('nosto_tagging/logger');
                     $logger->error(
@@ -149,7 +149,7 @@ class NostoTaggingHelperAccount
         if (!empty($account_name)) {
             $account = new Nosto\Object\Signup\Account($account_name);
             $tokens = array();
-            foreach (NostoApiToken::getApiTokenNames() as $token_name) {
+            foreach (Nosto\Request\Api\Token::getApiTokenNames() as $token_name) {
                 $token_value = $helper_config->getToken($token_name, $lang_id, $id_shop_group, $id_shop);
                 if (!empty($token_value)) {
                     $tokens[$token_name] = $token_value;

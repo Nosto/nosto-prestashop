@@ -34,6 +34,7 @@ if (!defined('_PS_VERSION_')) {
 if ((basename(__FILE__) === 'nostotagging.php')) {
     $module_dir = dirname(__FILE__);
     require_once($module_dir.'/libs/autoload.php');
+    require_once($module_dir.'/classes/nosto.php');
     require_once($module_dir.'/classes/admin-notification.php');
     require_once($module_dir.'/classes/models/rates.php');
     require_once($module_dir.'/classes/helpers/account.php');
@@ -52,6 +53,7 @@ if ((basename(__FILE__) === 'nostotagging.php')) {
     require_once($module_dir.'/classes/helpers/currency.php');
     require_once($module_dir.'/classes/helpers/context-factory.php');
     require_once($module_dir.'/classes/helpers/price.php');
+    require_once($module_dir . '/classes/models/current-user.php');
     require_once($module_dir . '/classes/models/meta/account.php');
     require_once($module_dir . '/classes/models/meta/account-billing.php');
     require_once($module_dir . '/classes/models/meta/account-iframe.php');
@@ -199,7 +201,7 @@ class NostoTagging extends Module
             recommendations throughout their shopping journey.'
         );
 
-        NostoHttpRequest::buildUserAgent('Prestashop', _PS_VERSION_, $this->version);
+        \Nosto\Request\Http\HttpRequest::buildUserAgent('Prestashop', _PS_VERSION_, $this->version);
     }
 
     /**
@@ -416,7 +418,7 @@ class NostoTagging extends Module
                         )
                     );
                 } else {
-                    if (!$nosto_account->getApiToken(NostoApiToken::API_EXCHANGE_RATES)) {
+                    if (!$nosto_account->getApiToken(Nosto\Request\Api\Token::API_EXCHANGE_RATES)) {
                         $message = 'Failed to update exchange rates to Nosto due to a missing API token. 
                             Please, reconnect your account with Nosto';
                     } else {
@@ -457,7 +459,7 @@ class NostoTagging extends Module
                 // Make sure we Nosto is installed for the current store
                 if (empty($account) || !$account->isConnectedToNosto()) {
                     Tools::redirect(
-                        NostoHttpRequest::replaceQueryParamInUrl(
+                        Nosto\Request\Http\HttpRequest::replaceQueryParamInUrl(
                             'language_id',
                             $language_id,
                             $admin_url
@@ -494,7 +496,7 @@ class NostoTagging extends Module
             }
 
             // Refresh the page after every POST to get rid of form re-submission errors.
-            Tools::redirect(NostoHttpRequest::replaceQueryParamInUrl('language_id', $language_id, $admin_url), '');
+            Tools::redirect(Nosto\Request\Http\HttpRequest::replaceQueryParamInUrl('language_id', $language_id, $admin_url), '');
             die;
         } else {
             $language_id = (int)Tools::getValue('language_id', 0);
@@ -527,8 +529,8 @@ class NostoTagging extends Module
         $missing_tokens = true;
         if (
             $account instanceof Nosto\Types\Signup\AccountInterface
-            && $account->getApiToken(NostoApiToken::API_EXCHANGE_RATES)
-            && $account->getApiToken(NostoApiToken::API_SETTINGS)
+            && $account->getApiToken(Nosto\Request\Api\Token::API_EXCHANGE_RATES)
+            && $account->getApiToken(Nosto\Request\Api\Token::API_SETTINGS)
         ) {
             $missing_tokens = false;
         }
@@ -539,7 +541,7 @@ class NostoTagging extends Module
         ) {
             $currentUser = NostoTaggingCurrentUser::loadData($this->context);
             $account_iframe = NostoTaggingMetaAccountIframe::loadData($this->context, $language_id, $this->getUniqueInstallationId());
-            $iframe_installation_url = \Nosto\Helper\IframeHelper::getUrl($account_iframe, $currentUser, array('v'=>1));
+            $iframe_installation_url = \Nosto\Helper\IframeHelper::getUrl($account_iframe, $account, $currentUser, array('v'=>1));
         } else {
             $iframe_installation_url = null;
         }
@@ -1515,8 +1517,8 @@ class NostoTagging extends Module
     protected function getAdminUrl()
     {
         $current_url = Tools::getHttpHost(true).(isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '');
-        $parsed_url = NostoHttpRequest::parseUrl($current_url);
-        $parsed_query_string = NostoHttpRequest::parseQueryString($parsed_url['query']);
+        $parsed_url = Nosto\Request\Http\HttpRequest::parseUrl($current_url);
+        $parsed_query_string = Nosto\Request\Http\HttpRequest::parseQueryString($parsed_url['query']);
         $valid_params = array(
             'controller',
             'token',
@@ -1532,7 +1534,7 @@ class NostoTagging extends Module
             }
         }
         $parsed_url['query'] = http_build_query($query_params);
-        return NostoHttpRequest::buildUrl($parsed_url);
+        return Nosto\Request\Http\HttpRequest::buildUrl($parsed_url);
     }
 
     /**

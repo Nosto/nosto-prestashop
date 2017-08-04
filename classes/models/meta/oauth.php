@@ -50,7 +50,7 @@ class NostoTaggingMetaOauth extends Nosto\OAuth
         $oauthParams = new NostoTaggingMetaOauth();
 
         try {
-            $oauthParams->setScopes(NostoApiToken::getApiTokenNames());
+            $oauthParams->setScopes(Nosto\Request\Api\Token::getApiTokenNames());
             /** @var NostoTaggingHelperUrl $url_helper */
             $url_helper = Nosto::helper('nosto_tagging/url');
 
