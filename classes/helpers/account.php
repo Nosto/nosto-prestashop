@@ -71,15 +71,15 @@ class NostoTaggingHelperAccount
      * Deletes a Nosto account from the PS config.
      * Also sends a notification to Nosto that the account has been deleted.
      *
+     * @param $context
      * @param Nosto\Object\Signup\Account $account the account to delete.
      * @param int $id_lang the ID of the language model to delete the account for.
      * @param null|int $id_shop_group the ID of the shop context.
      * @param null|int $id_shop the ID of the shop.
-     * @param $context
      * @return bool true if successful, false otherwise.
      */
     public static function delete(
-        $context,
+        Context $context,
         Nosto\Object\Signup\Account $account,
         $id_lang,
         $id_shop_group = null,
@@ -123,7 +123,7 @@ class NostoTaggingHelperAccount
                 if ($account === null) {
                     continue;
                 }
-                self::delete($account, $language['id_lang'], $id_shop_group, $id_shop);
+                self::delete(Context::getContext(), $account, $language['id_lang'], $id_shop_group, $id_shop);
             }
         }
         return true;

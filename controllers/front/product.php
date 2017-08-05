@@ -37,7 +37,7 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
      */
     public function initContent()
     {
-        $context = $this->module->getContext();
+        $context = Context::getContext();
         $collection = new Nosto\Object\Product\ProductCollection();
         // We need to forge the employee in order to get a price for a product
         $context->employee = new Employee();

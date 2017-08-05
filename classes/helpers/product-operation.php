@@ -90,7 +90,7 @@ class NostoTaggingHelperProductOperation extends NostoTaggingHelperOperation
      *
      * @param Product[] $products
      * @return bool
-     * @throws NostoException
+     * @throws \Nosto\NostoException
      */
     private function update(array $products)
     {
@@ -107,7 +107,7 @@ class NostoTaggingHelperProductOperation extends NostoTaggingHelperOperation
                 $product instanceof Product === false
                 || !Validate::isLoadedObject($product)
             ) {
-                Nosto::throwException(
+                throw new Nosto\NostoException(
                     sprintf(
                         'Invalid data type or not loaded objec, expecting Product' .
                         ', got %s with id %s',
@@ -197,7 +197,7 @@ class NostoTaggingHelperProductOperation extends NostoTaggingHelperOperation
 
             try {
                 $op = new \Nosto\Operation\UpsertProduct($account);
-                $nosto_product->setAvailability(ProductInterface::DISCONTINUED);
+                $nosto_product->setAvailability(\Nosto\Types\Product\ProductInterface::DISCONTINUED);
                 $op->addProduct($nosto_product);
                 $op->upsert();
             } catch (Nosto\NostoException $e) {

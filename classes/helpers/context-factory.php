@@ -49,13 +49,13 @@ class NostoTaggingHelperContextFactory
 
     /**
      * Holds the original language
-     * @var int
+     * @var Language
      */
     private $original_language;
 
     /**
      * Holds the original language
-     * @var int
+     * @var Currency
      */
     private $original_currency;
 

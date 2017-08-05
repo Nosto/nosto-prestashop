@@ -46,8 +46,8 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
      */
     public function initContent()
     {
-        $this->id_lang = (int)Tools::getValue('language_id', $this->module->getContext()->language->id);
-        if ($this->module->getContext()->shop instanceof Shop) {
+        $this->id_lang = (int)Tools::getValue('language_id', Context::getContext()->language->id);
+        if (Context::getContext()->shop instanceof Shop) {
             $this->id_shop = $this->context->shop->id;
             $this->id_shop_group = $this->context->shop->id_shop_group;
         }
@@ -59,11 +59,12 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
      * OAuth operations
      *
      * @return Nosto\Oauth the OAuth parameters for the operations
+     * @suppress PhanUndeclaredMethod
      */
     public function getMeta()
     {
         return NostoTaggingMetaOauth::loadData(
-            $this->module->getContext(),
+            Context::getContext(),
             $this->id_lang,
             $this->module->name,
             $this->module->getPath()
@@ -93,7 +94,7 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
         $config_helper = Nosto::helper('nosto_tagging/config');
         $admin_url = $config_helper->getAdminUrl();
         if (!empty($admin_url)) {
-            $admin_url = NostoHttpRequest::replaceQueryParamsInUrl($params, $admin_url);
+            $admin_url = \Nosto\Request\Http\HttpRequest::replaceQueryParamsInUrl($params, $admin_url);
             Tools::redirect($admin_url, '');
             die;
         }

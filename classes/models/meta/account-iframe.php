@@ -38,7 +38,7 @@ class NostoTaggingMetaAccountIframe extends Nosto\Object\Iframe
      * @param Context $context the context to get the meta-data from.
      * @param int $id_lang the language ID of the shop for which to get the meta-data.
      * @param $uniqueId
-     * @return NostoTaggingMetaAccountIframe
+     * @return NostoTaggingMetaAccountIframe|null
      */
     public static function loadData($context, $id_lang, $uniqueId)
     {
@@ -81,7 +81,7 @@ class NostoTaggingMetaAccountIframe extends Nosto\Object\Iframe
                 $sales = AdminStatsControllerCore::getTotalSales($beginDate, $today);
                 $visits = AdminStatsControllerCore::getVisits(false, $beginDate, $today);
                 $iframe->setRecentVisits(strval($visits));
-                $iframe->setRecentSales(number_format($sales));
+                $iframe->setRecentSales(number_format((float)$sales));
                 $currency = $context->currency;
                 if ($currency instanceof Currency) {
                     $iframe->setCurrency($currency->iso_code);

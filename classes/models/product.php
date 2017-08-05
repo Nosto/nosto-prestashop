@@ -61,13 +61,12 @@ class NostoTaggingProduct extends Nosto\Object\Product\Product
             $this->setVariationId($base_currency->iso_code);
             $tagging_currency = $base_currency;
         } else {
-            $this->setVariationId(false);
             $tagging_currency= $context->currency;
         }
         $this->setUrl($url_helper->getProductUrl($product, $id_lang, $id_shop));
         $link = NostoTagging::buildLinkClass();
         $this->setImageUrl($helper_image->getProductImageUrl($product, $id_lang, $link));
-        $this->setProductId((int)$product->id);
+        $this->setProductId((string)$product->id);
         $this->setName($product->name);
 
         $this->setPriceCurrencyCode(Tools::strtoupper($tagging_currency->iso_code));
@@ -143,7 +142,7 @@ class NostoTaggingProduct extends Nosto\Object\Product\Product
      */
     public function assignId(Product $product)
     {
-        $this->setProductId((int)$product->id);
+        $this->setProductId((string)$product->id);
     }
 
     /**

@@ -23,35 +23,25 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-/**
- * Base controller for all Nosto CRON controllers.
- *
- * @property NostoTagging $module
- */
-abstract class NostoTaggingCronModuleFrontController extends ModuleFrontController
-{
-    /**
-     * @inheritdoc
-     */
-    public function init()
-    {
-        parent::init();
-
-        if (!$this->validateToken(Tools::getValue('token'))) {
-            header('HTTP/1.1 403 Forbidden');
-            exit('Access forbidden');
-        }
-    }
+class NostoTaggingHelperCron {
 
     /**
-     * Validates an access token.
-     * This is used to prevent unauthorized use of the cron controller.
+     * Returns the access token needed to validate requests to the cron controllers.
+     * The access token is stored in the db config, and will be renewed if the module
+     * is re-installed or the db entry is removed.
      *
-     * @param string $token the access token.
-     * @return bool if the token is valid.
+     * @return string the access token.
      */
-    protected function validateToken($token)
+    public static function getCronAccessToken()
     {
-        return ($token === NostoTaggingHelperCron::getCronAccessToken());
+        /** @var NostoTaggingHelperConfig $helper_config */
+        $helper_config = Nosto::helper('nosto_tagging/config');
+        $token = $helper_config->getCronAccessToken();
+        if (empty($token)) {
+            // Running bin2hex() will make the string length 32 characters.
+            $token = bin2hex(phpseclib\Crypt\Random::string(16));
+            $helper_config->saveCronAccessToken($token);
+        }
+        return $token;
     }
 }

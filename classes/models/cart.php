@@ -34,6 +34,15 @@ class NostoTaggingCart extends NostoTaggingModel
     public $line_items = array();
 
     /**
+     * @param $id_currency
+     * @return Currency
+     * @suppress PhanTypeMismatchArgument
+     */
+    private static function loadCurrency($id_currency) {
+        return new Currency($id_currency);
+    }
+
+    /**
      * Loads the cart data from supplied cart object.
      *
      * @param Cart $cart the cart object.
@@ -44,7 +53,7 @@ class NostoTaggingCart extends NostoTaggingModel
             return;
         }
 
-        $currency = new Currency($cart->id_currency);
+        $currency = self::loadCurrency($cart->id_currency);
         if (!Validate::isLoadedObject($currency)) {
             return;
         }

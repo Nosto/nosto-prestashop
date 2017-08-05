@@ -34,6 +34,16 @@ class NostoTaggingCategory extends NostoTaggingModel
     public $category_string;
 
     /**
+     * @param $id_category
+     * @param $id_lang
+     * @return Category
+     * @suppress PhanTypeMismatchArgument
+     */
+    private static function loadCategory($id_category, $id_lang) {
+        return new Category((int)$id_category, $id_lang);
+    }
+
+    /**
      * Loads the category data from supplied context and category objects.
      *
      * @param Context $context the context object.
@@ -59,8 +69,7 @@ class NostoTaggingCategory extends NostoTaggingModel
     {
         $category_list = array();
 
-        $category = new Category((int)$id_category, $id_lang);
-
+        $category = self::loadCategory($id_category, $id_lang);
         if (Validate::isLoadedObject($category) && (int)$category->active === 1) {
             foreach ($category->getParentsCategories($id_lang) as $parent_category) {
                 if (isset($parent_category['name'], $parent_category['active'])
@@ -75,6 +84,6 @@ class NostoTaggingCategory extends NostoTaggingModel
             return '';
         }
 
-        return DS.implode(DS, array_reverse($category_list));
+        return DIRECTORY_SEPARATOR.implode(DIRECTORY_SEPARATOR, array_reverse($category_list));
     }
 }

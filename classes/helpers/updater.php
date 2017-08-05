@@ -46,17 +46,13 @@ class NostoTaggingHelperUpdater
      */
     public function checkForUpdates($module)
     {
-        if (!Module::isInstalled($module->name)) {
-            return;
-        }
-
         // Prestashop < 1.5.4.0 has a bug that causes the auto-update mechanism fail.
-        if (version_compare(_PS_VERSION_, '1.5.4.0', '<')) {
+        if (self::isModuleInstalled($module) && version_compare(_PS_VERSION_, '1.5.4.0', '<')) {
         // If the module is already updated to the latest version, don't continue.
             /** @var NostoTaggingHelperConfig $helper_config */
             $helper_config = Nosto::helper('nosto_tagging/config');
             $installed_version = (string)$helper_config->getInstalledVersion();
-            if (version_compare($installed_version, $module->version, '=')) {
+            if (version_compare($installed_version, (string)$module->version, '=')) {
                 return;
             }
 
@@ -91,7 +87,7 @@ class NostoTaggingHelperUpdater
         $scripts = array();
         $path = _PS_MODULE_DIR_.$module->name.'/upgrade/';
         $installed_version = (string)$helper_config->getInstalledVersion();
-        $new_version = $module->version;
+        $new_version = (string) $module->version;
 
         if (file_exists($path) && ($files = scandir($path))) {
             foreach ($files as $file) {
@@ -115,6 +111,15 @@ class NostoTaggingHelperUpdater
 
         usort($scripts, array('NostoTaggingHelperUpdater', 'sortUpgradeScriptsByVersion'));
         return $scripts;
+    }
+
+    /**
+     * @param Module $module
+     * @return bool
+     * @suppress PhanDeprecatedFunction
+     */
+    private static function isModuleInstalled(Module $module) {
+        return Module::isInstalled($module->name);
     }
 
     /**

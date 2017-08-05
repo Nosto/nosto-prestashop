@@ -28,6 +28,16 @@
  */
 class NostoTaggingAdminNotification extends Nosto\Object\Notification
 {
+    /**
+     * NostoTaggingAdminNotification constructor.
+     *
+     * @param Shop $shop
+     * @param Language $language
+     * @param $type
+     * @param $severity
+     * @param $message
+     * @suppress PhanTypeMismatchArgument
+     */
     public function __construct(
         Shop $shop,
         Language $language,

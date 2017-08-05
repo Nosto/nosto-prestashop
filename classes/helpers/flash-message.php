@@ -37,6 +37,7 @@ class NostoTaggingHelperFlashMessage
      *
      * @param string $type the type of message (use class constants).
      * @param string $message the message.
+     * @suppress PhanDeprecatedFunction
      */
     public static function add($type, $message)
     {
@@ -57,6 +58,7 @@ class NostoTaggingHelperFlashMessage
      *
      * @param string $type the type of messages (use class constants).
      * @return array the message array.
+     * @suppress PhanDeprecatedFunction
      */
     public static function getList($type)
     {

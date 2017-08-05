@@ -28,6 +28,25 @@
  */
 class NostoTaggingOrder extends \Nosto\Object\Order\Order
 {
+
+    /**
+     * @param Order $order
+     * @return Customer
+     * @suppress PhanTypeMismatchArgument
+     */
+    private static function loadCustomer(Order $order) {
+        return new Customer((string)$order->id_customer);
+    }
+
+    /**
+     * @param Order $order
+     * @return Currency
+     * @suppress PhanTypeMismatchArgument
+     */
+    private static function loadCurrency(Order $order) {
+        return new Currency((string)$order->id_currency);
+    }
+
     /**
      * Loads the order data from supplied context and order objects.
      *
@@ -40,13 +59,14 @@ class NostoTaggingOrder extends \Nosto\Object\Order\Order
             return;
         }
 
-        $customer = new Customer((int)$order->id_customer);
+        $customer = self::loadCustomer($order);
+
         // The order reference was introduced in prestashop 1.5 where orders can be split into multiple ones.
         if (isset($order->reference)) {
             $this->setOrderNumber($order->reference);
-            $this->setExternalOrderRef($order->id);
+            $this->setExternalOrderRef((string)$order->id);
         } else {
-            $this->setOrderNumber($order->id);
+            $this->setOrderNumber((string)$order->id);
         }
         $this->setOrderNumber(isset($order->reference) ? (string)$order->reference : $order->id);
         $this->setCustomer(NostoTaggingOrderBuyer::loadData($customer));
@@ -86,7 +106,7 @@ class NostoTaggingOrder extends \Nosto\Object\Order\Order
     {
         $purchased_items = array();
 
-        $currency = new Currency($order->id_currency);
+        $currency = self::loadCurrency($order);
         if (!Validate::isLoadedObject($currency)) {
             return $purchased_items;
         }
@@ -182,7 +202,7 @@ class NostoTaggingOrder extends \Nosto\Object\Order\Order
                 }
 
                 $purchased_item = new NostoTaggingOrderPurchasedItem();
-                $purchased_item->setProductId((int)$p->id);
+                $purchased_item->setProductId((string)$p->id);
                 $purchased_item->setQuantity((int)$item['product_quantity']);
                 $purchased_item->setName((string)$product_name);
                 $purchased_item->setPrice($item['product_price_wt']);
@@ -199,7 +219,7 @@ class NostoTaggingOrder extends \Nosto\Object\Order\Order
                 $total_discounts_tax_incl = Tools::ps_round($total_discounts_tax_incl - $total_gift_tax_incl, 2);
                 if ($total_discounts_tax_incl > 0) {
                     $purchased_item = new NostoTaggingOrderPurchasedItem();
-                    $purchased_item->setProductId(-1);
+                    $purchased_item->setProductId("-1");
                     $purchased_item->setQuantity(1);
                     $purchased_item->setName('Discount');
                     // Note the negative value.
@@ -222,7 +242,7 @@ class NostoTaggingOrder extends \Nosto\Object\Order\Order
 
             if (!$free_shipping && $total_shipping_tax_incl > 0) {
                 $purchased_item = new NostoTaggingOrderPurchasedItem();
-                $purchased_item->setProductId(-1);
+                $purchased_item->setProductId("-1");
                 $purchased_item->setQuantity(1);
                 $purchased_item->setName('Shipping');
                 $purchased_item->setPrice($total_shipping_tax_incl);
@@ -232,7 +252,7 @@ class NostoTaggingOrder extends \Nosto\Object\Order\Order
 
             if ($total_wrapping_tax_incl > 0) {
                 $purchased_item = new NostoTaggingOrderPurchasedItem();
-                $purchased_item->setProductId(-1);
+                $purchased_item->setProductId("-1");
                 $purchased_item->setQuantity(1);
                 $purchased_item->setName('Gift Wrapping');
                 $purchased_item->setPrice($total_wrapping_tax_incl);

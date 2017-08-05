@@ -44,6 +44,6 @@ class NostoTaggingBrand extends NostoTaggingModel
             return;
         }
 
-        $this->brand_string = DS.$manufacturer->name;
+        $this->brand_string = DIRECTORY_SEPARATOR.$manufacturer->name;
     }
 }

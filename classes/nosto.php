@@ -46,23 +46,11 @@ class Nosto
     private static $registry = array();
 
     /**
-     * Return environment variable.
-     *
-     * @param string $name the name of the variable.
-     * @param null $default the default value to return if the env variable cannot be found.
-     * @return mixed the env variable or null.
-     */
-    public static function getEnvVariable($name, $default = null)
-    {
-        return getenv($name) ? getenv($name) : $default;
-    }
-
-    /**
      * Gets a helper class instance by name.
      *
      * @param string $helper the name of the helper class to get.
-     * @return NostoHelper the helper instance.
-     * @throws NostoException if helper cannot be found.
+     * @return mixed if helper cannot be found.
+     * @throws \Nosto\NostoException
      */
     public static function helper($helper)
     {
@@ -96,7 +84,7 @@ class Nosto
      *
      * @param string $key the key to register the variable for.
      * @param mixed $value the variable to register.
-     * @throws NostoException if the key is already registered.
+     * @throws \Nosto\NostoException
      */
     public static function register($key, $value)
     {
@@ -106,61 +94,6 @@ class Nosto
         self::$registry[$key] = $value;
     }
 
-    /**
-     * Throws a new NostoHttpException exception with info about both the
-     * request and response.
-     *
-     * @param string $message the error message.
-     * @param NostoHttpRequest $request the request object to take additional info from.
-     * @param NostoHttpResponse $response the response object to take additional info from.
-     * @throws NostoHttpException|NostoApiResponseException the exception.
-     */
-    public static function throwHttpException($message, NostoHttpRequest $request, NostoHttpResponse $response)
-    {
-        $jsonResponse = $response->getJsonResult();
-
-        if (
-            isset($jsonResponse->type)
-            && isset($jsonResponse->message)
-        ) {
-            if (isset($jsonResponse->message)) {
-                $message .= '. ' . $jsonResponse->message;
-            }
-            throw new NostoApiResponseException(
-                $message,
-                $response->getCode(), // http status code
-                null,
-                $request,
-                $response
-            );
-        } else {
-            if ($response->getMessage()) {
-                $message .= '. ' . $response->getMessage();
-            }
-            throw new NostoHttpException(
-                $message,
-                $response->getCode(),
-                null,
-                $request,
-                $response
-            );
-        }
-    }
-
-    /**
-     * Throws a new NostoException exception
-     *
-     * @param string $message the error message
-     * @param int $code the code
-     * @throws NostoException the exception
-     */
-    public static function throwException($message, $code = null)
-    {
-        throw new Nosto\NostoException(
-            $message,
-            $code
-        );
-    }
 
     /**
      * Converts a helper class name reference name to a real class name.

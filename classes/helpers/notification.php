@@ -43,7 +43,7 @@ class NostoTaggingHelperNotification
         $connected = NostoTaggingHelperAccount::existsAndIsConnected($language->id, $id_shop_group, $shop->id);
         if ($connected) {
             $account = NostoTaggingHelperAccount::find($language->id);
-            if ($account instanceof NostoAccountInterface && $account->hasMissingTokens()) {
+            if ($account instanceof \Nosto\Types\Signup\AccountInterface && $account->hasMissingTokens()) {
                 $tokens_ok = false;
             }
         }
@@ -118,8 +118,8 @@ class NostoTaggingHelperNotification
                     $notification = new NostoTaggingAdminNotification(
                         $shop,
                         $language,
-                        NostoNotificationInterface::TYPE_MISSING_INSTALLATION,
-                        NostoNotificationInterface::SEVERITY_INFO,
+                        \Nosto\Object\Notification::TYPE_MISSING_INSTALLATION,
+                        \Nosto\Object\Notification::SEVERITY_INFO,
                         'Nosto account is not installed to shop %s and language %s'
                     );
                     $notifications[] = $notification;
@@ -128,8 +128,8 @@ class NostoTaggingHelperNotification
                     $notification = new NostoTaggingAdminNotification(
                         $shop,
                         $language,
-                        NostoNotificationInterface::TYPE_MISSING_TOKENS,
-                        NostoNotificationInterface::SEVERITY_WARNING,
+                        \Nosto\Object\Notification::TYPE_MISSING_TOKENS,
+                        \Nosto\Object\Notification::SEVERITY_WARNING,
                         'One or more Nosto API tokens are missing for shop %s and language %s'
                     );
                     $notifications[] = $notification;
@@ -138,8 +138,8 @@ class NostoTaggingHelperNotification
                     $notification = new NostoTaggingAdminNotification(
                         $shop,
                         $language,
-                        NostoNotificationInterface::TYPE_MULTI_CURRENCY_DISABLED,
-                        NostoNotificationInterface::SEVERITY_WARNING,
+                        \Nosto\Object\Notification::TYPE_MULTI_CURRENCY_DISABLED,
+                        \Nosto\Object\Notification::SEVERITY_WARNING,
                         'Your shop %s with language %s is using multiple currencies but' .
                         ' the multi-currency feature for Nosto is disabled'
                     );

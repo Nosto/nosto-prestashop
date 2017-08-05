@@ -36,7 +36,7 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
      */
     public function initContent()
     {
-        $context = $this->module->getContext();
+        $context = Context::getContext();
         $collection = new Nosto\Object\Order\OrderCollection();
 
         $id = Tools::getValue('id');
@@ -56,7 +56,7 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
                     continue;
                 }
                 $nosto_order = new NostoTaggingOrder();
-                $nosto_order->loadData($this->module->getContext(), $order);
+                $nosto_order->loadData(Context::getContext(), $order);
                 $collection->append($nosto_order);
             }
         }
@@ -71,13 +71,13 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
      */
     protected function getOrderIds()
     {
-        $context = $this->module->getContext();
+        $context = Context::getContext();
         $where = strtr(
             '`id_shop_group` = {g} AND `id_shop` = {s} AND `id_lang` = {l}',
             array(
-                '{g}' => pSQL($context->shop->id_shop_group),
-                '{s}' => pSQL($context->shop->id),
-                '{l}' => pSQL($context->language->id),
+                '{g}' => pSQL((string)$context->shop->id_shop_group),
+                '{s}' => pSQL((string)$context->shop->id),
+                '{l}' => pSQL((string)$context->language->id),
             )
         );
 

@@ -33,12 +33,20 @@ class NostoTaggingHelperCurrency
     const CURRENCY_PRECISION = 2;
 
     /**
+     * @param $id
+     * @return Currency
+     * @suppress PhanTypeMismatchArgument
+     */
+    private static function loadCurrency($id) {
+        return new Currency((string)$id);
+    }
+
+    /**
      * Fetches the base currency from the context.
      *
      * @param Context|ContextCore $context the context.
      * @return Currency
-     *
-     * @throws NostoException if the currency cannot be found, we require it.
+     * @throws \Nosto\NostoException
      */
     public static function getBaseCurrency(Context $context)
     {
@@ -54,7 +62,7 @@ class NostoTaggingHelperCurrency
         if ($base_id_currency === 0) {
             $base_id_currency = (int)Configuration::get('PS_CURRENCY_DEFAULT', null, $id_shop_group, $id_shop);
         }
-        $base_currency = new Currency($base_id_currency);
+        $base_currency = self::loadCurrency($base_id_currency);
         if (!Validate::isLoadedObject($base_currency)) {
             throw new Nosto\NostoException(
                 sprintf(
@@ -186,13 +194,12 @@ class NostoTaggingHelperCurrency
 
     /**
      * Creates Nosto currency object using CLDR that was introduced in Prestashop 1.7
-     *
      * @see https://github.com/ICanBoogie/CLDR
      *
      * @param array $currency Prestashop currency array
      * @param Context $context
-     *
      * @return \Nosto\Object\Format
+     * @suppress PhanTypeMismatchArgument
      */
     public static function createWithCldr(array $currency, Context $context)
     {

@@ -42,11 +42,35 @@ class NostoTaggingMetaAccount extends \Nosto\Object\Signup\Signup
     }
 
     /**
+     * @return Language
+     * @suppress PhanTypeMismatchArgument
+     */
+    private static function loadLanguage() {
+        return new Language((int)Configuration::get('PS_LANG_DEFAULT'));
+    }
+
+    /**
+     * @return Currency
+     * @suppress PhanTypeMismatchArgument
+     */
+    private static function loadCurrency() {
+        return new Currency((int)Configuration::get('PS_CURRENCY_DEFAULT'));
+    }
+
+    /**
+     * @return Country
+     * @suppress PhanTypeMismatchArgument
+     */
+    private static function loadCountry() {
+        return new Country((int)Configuration::get('PS_COUNTRY_DEFAULT'));
+    }
+
+    /**
      * Loads the meta data for the context and given language.
      *
      * @param Context $context the context to use as data source.
      * @param int $id_lang the language to use as data source.
-     * @return NostoTaggingMetaAccount
+     * @return NostoTaggingMetaAccount|null
      */
     public static function loadData($context, $id_lang)
     {
@@ -62,13 +86,13 @@ class NostoTaggingMetaAccount extends \Nosto\Object\Signup\Signup
         }
 
         if (!Validate::isLoadedObject($context->language)) {
-            $context->language = new Language((int)Configuration::get('PS_LANG_DEFAULT'));
+            $context->language = self::loadLanguage();
         }
         if (!Validate::isLoadedObject($context->currency)) {
-            $context->currency = new Currency((int)Configuration::get('PS_CURRENCY_DEFAULT'));
+            $context->currency = self::loadCurrency();
         }
         if (!Validate::isLoadedObject($context->country)) {
-            $context->country = new Country((int)Configuration::get('PS_COUNTRY_DEFAULT'));
+            $context->country = self::loadCountry();
         }
         $id_shop = null;
         $id_shop_group = null;
@@ -77,7 +101,7 @@ class NostoTaggingMetaAccount extends \Nosto\Object\Signup\Signup
             $id_shop_group = $context->shop->id_shop_group;
         }
         $signup->setTitle(Configuration::get('PS_SHOP_NAME'));
-        $signup->setName(Tools::substr(sha1(rand()), 0, 8));
+        $signup->setName(Tools::substr(sha1((string)rand()), 0, 8));
         $signup->setFrontPageUrl(self::getContextShopUrl($context, $language));
         $signup->setCurrencyCode($context->currency->iso_code);
         $signup->setLanguageCode($context->language->iso_code);

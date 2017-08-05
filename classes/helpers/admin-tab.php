@@ -42,9 +42,22 @@ class NostoTaggingHelperAdminTab
     );
 
     /**
+     * @param $class
+     * @suppress PhanDeprecatedFunction
+     * @return int
+     */
+    public static function getAdminTabId($class)
+    {
+        $class = preg_replace('/Controller$/', '', $class);
+        /** @noinspection PhpDeprecationInspection */
+        return (int)Tab::getIdFromClassName($class);
+    }
+
+    /**
      * Installs the Admin Tab in PS backend.
      *
      * @return bool true on success, false otherwise.
+     * @suppress PhanTypeMismatchProperty
      */
     public static function install()
     {
@@ -53,13 +66,13 @@ class NostoTaggingHelperAdminTab
             return false;
         }
 
-        $id_tab = (int)Tab::getIdFromClassName(self::MAIN_MENU_ITEM_CLASS);
+        $id_tab = self::getAdminTabId(AdminNostoController::class);
         if ($id_tab) {
             $mainTabAdded = new Tab($id_tab);
         } else {
             /** @var TabCore $tab */
             $tab = new Tab();
-            $tab->active = 1;
+            $tab->active = true;
             $tab->class_name = self::MAIN_MENU_ITEM_CLASS;
             $tab->name = array();
             foreach ($languages as $lang) {
@@ -73,12 +86,12 @@ class NostoTaggingHelperAdminTab
 
         // For PS 1.6 it is enough to have the main menu, for PS 1.5 and 1.7 we need a sub-menu.
         if ($mainTabAdded && (_PS_VERSION_ < '1.6' || _PS_VERSION_ >= '1.7')) {
-            $id_tab = (int)Tab::getIdFromClassName(self::SUB_MENU_ITEM_CLASS);
+            $id_tab = self::getAdminTabId(AdminNostoPersonalizationController::class);
             if ($id_tab) {
                 $subTabAdded = new Tab($id_tab);
             } else {
                 $tab = new Tab();
-                $tab->active = 1;
+                $tab->active = true;
                 $tab->class_name = self::SUB_MENU_ITEM_CLASS;
                 $tab->name = array();
                 foreach ($languages as $lang) {
@@ -88,7 +101,7 @@ class NostoTaggingHelperAdminTab
                         $tab->name[$lang['id_lang']] = 'Personalization';
                     }
                 }
-                $tab->id_parent = (int)Tab::getIdFromClassName(self::MAIN_MENU_ITEM_CLASS);
+                $tab->id_parent = self::getAdminTabId(AdminNostoController::class);
                 $tab->module = NostoTagging::MODULE_NAME;
                 $subTabAdded = $tab->add();
             }
@@ -106,9 +119,9 @@ class NostoTaggingHelperAdminTab
      */
     public static function uninstall()
     {
-        $tabs = array(self::MAIN_MENU_ITEM_CLASS, self::SUB_MENU_ITEM_CLASS);
+        $tabs = array(AdminNostoController::class, AdminNostoPersonalizationController::class);
         foreach ($tabs as $tab_name) {
-            $id_tab = (int)Tab::getIdFromClassName($tab_name);
+            $id_tab = self::getAdminTabId($tab_name);
             if ($id_tab) {
                 /** @var TabCore $tab */
                 $tab = new Tab($id_tab);

@@ -173,7 +173,7 @@ class NostoTaggingHelperUrl
      */
     public function getServerAddress()
     {
-        return Nosto::getEnvVariable('NOSTO_SERVER_URL', self::DEFAULT_SERVER_ADDRESS);
+        return \Nosto\Nosto::getEnvVariable('NOSTO_SERVER_URL', self::DEFAULT_SERVER_ADDRESS);
     }
 
     /**

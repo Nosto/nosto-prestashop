@@ -187,6 +187,7 @@ class NostoTagging extends Module
      * Constructor.
      *
      * Defines module attributes.
+     * @suppress PhanTypeMismatchProperty
      */
     public function __construct()
     {
@@ -195,7 +196,6 @@ class NostoTagging extends Module
         $this->version = self::PLUGIN_VERSION;
         $this->author = 'Nosto';
         $this->need_instance = 1;
-        $this->bootstrap = true;
         $this->ps_versions_compliancy = array('min' => '1.5', 'max' => _PS_VERSION_);
         $this->module_key = '8d80397cab6ca02dfe8ef681b48c37a3';
 
@@ -206,7 +206,7 @@ class NostoTagging extends Module
             recommendations throughout their shopping journey.'
         );
 
-        \Nosto\Request\Http\HttpRequest::buildUserAgent('Prestashop', _PS_VERSION_, $this->version);
+        \Nosto\Request\Http\HttpRequest::buildUserAgent('Prestashop', _PS_VERSION_, (string)$this->version);
     }
 
     /**
@@ -306,6 +306,7 @@ class NostoTagging extends Module
      * Also handles the form submit action.
      *
      * @return string The HTML to output.
+     * @suppress PhanDeprecatedFunction
      */
     public function getContent()
     {
@@ -357,7 +358,7 @@ class NostoTagging extends Module
                 } else {
                     try {
                         if (Tools::isSubmit('nostotagging_account_details')) {
-                            $account_details = Tools::jsonDecode(Tools::getValue('nostotagging_account_details'));
+                            $account_details = (object) Tools::jsonDecode(Tools::getValue('nostotagging_account_details'));
                         } else {
                             $account_details = false;
                         }
@@ -370,7 +371,7 @@ class NostoTagging extends Module
                                 . ' password for your new account within three days.'
                             )
                         );
-                    } catch (NostoApiResponseException $e) {
+                    } catch (\Nosto\Request\Api\Exception\ApiResponseException $e) {
                         NostoTaggingHelperFlashMessage::add(
                             'error',
                             $this->l(
@@ -484,7 +485,7 @@ class NostoTagging extends Module
                         'success',
                         $this->l('The settings have been saved.')
                     );
-                } catch (NostoException $e) {
+                } catch (\Nosto\NostoException $e) {
                     /* @var NostoTaggingHelperLogger $logger */
                     $logger = Nosto::helper('nosto_tagging/logger');
                     $logger->error(
@@ -606,7 +607,7 @@ class NostoTagging extends Module
                         'cronRates',
                         $current_language['id_lang'],
                         $id_shop,
-                        array('token' => $this->getCronAccessToken())
+                        array('token' => NostoTaggingHelperCron::getCronAccessToken())
                     )
                 ),
             ),
@@ -650,7 +651,7 @@ class NostoTagging extends Module
                 if (!empty($url)) {
                     $this->getSmarty()->assign(array('iframe_url' => $url));
                 }
-            } catch (NostoException $e) {
+            } catch (\Nosto\NostoException $e) {
                 /* @var NostoTaggingHelperLogger $logger */
                 $logger = Nosto::helper('nosto_tagging/logger');
                 $logger->error(
@@ -692,8 +693,6 @@ class NostoTagging extends Module
         $signupParams = NostoTaggingMetaAccount::loadData($this->context, $id_lang);
         if ($signupParams->getOwner()->getEmail() !== $email) {
             $accountOwner = new NostoTaggingMetaAccountOwner();
-            $accountOwner->setFirstName(null);
-            $accountOwner->setLastName(null);
             $accountOwner->setEmail($email);
             $signupParams->setOwner($accountOwner);
         }
@@ -823,26 +822,16 @@ class NostoTagging extends Module
         $html .= $this->getCartTagging();
         $html .= $this->getPriceVariationTagging();
         if ($this->isController('category')) {
-            // The "getCategory" method is available from Prestashop 1.5.6.0 upwards.
-            if (method_exists($this->context->controller, 'getCategory')) {
-                $category = $this->context->controller->getCategory();
-            } else {
-                $category = new Category((int)Tools::getValue('id_category'), $this->context->language->id);
-            }
+            $category = $this->resolveCategoryInContext();
 
-            if (Validate::isLoadedObject($category)) {
+            if ($category instanceof Category) {
                 $html .= $this->getCategoryTagging($category);
                 $html .= $this->getPageTypeTagging(self::PAGE_TYPE_CATEGORY);
             }
         } elseif ($this->isController('manufacturer')) {
-            // The "getManufacturer" method is available from Prestashop 1.5.6.0 upwards.
-            if (method_exists($this->context->controller, 'getManufacturer')) {
-                $manufacturer = $this->context->controller->getManufacturer();
-            } else {
-                $manufacturer = new Manufacturer((int)Tools::getValue('id_manufacturer'), $this->context->language->id);
-            }
+            $manufacturer = $this->resolveManufacturerInContext();
 
-            if (Validate::isLoadedObject($manufacturer)) {
+            if ($manufacturer instanceof Manufacturer) {
                 $html .= $this->getBrandTagging($manufacturer);
             }
         } elseif ($this->isController('search')) {
@@ -896,9 +885,41 @@ class NostoTagging extends Module
     }
 
     /**
+     * Tries to resolve current / active manufacturer in context
+     *
+     * @return Manufacturer|null
+     * @suppress PhanUndeclaredMethod
+     */
+    protected function resolveManufacturerInContext()
+    {
+        $manufacturer = null;
+        if (method_exists($this->context->controller, 'getManufacturer')) {
+            $manufacturer = $this->context->controller->getManufacturer();
+        }
+        if ($manufacturer instanceof Manufacturer == false) {
+            $id_manufacturer = null;
+            if (Tools::getValue('id_manufacturer')) {
+                $id_manufacturer = Tools::getValue('id_manufacturer');
+            }
+            if ($id_manufacturer) {
+                $manufacturer = new Manufacturer((int)$id_manufacturer, $this->context->language->id);
+            }
+        }
+        if (
+            $manufacturer instanceof Manufacturer === false
+            || !Validate::isLoadedObject($manufacturer)
+        ) {
+            $manufacturer = null;
+        }
+
+        return $manufacturer;
+    }
+
+    /**
      * Tries to resolve current / active category in context
      *
      * @return Category|null
+     * @suppress PhanUndeclaredMethod
      */
     protected function resolveCategoryInContext()
     {
@@ -908,7 +929,7 @@ class NostoTagging extends Module
         }
         if ($category instanceof Category == false) {
             $id_category = null;
-            if (Tools::getValue('id_cateogry')) {
+            if (Tools::getValue('id_category')) {
                 $id_category = Tools::getValue('id_category');
             } /** @noinspection PhpUndefinedFieldInspection */ elseif (
                 isset($this->context->cookie)
@@ -935,6 +956,7 @@ class NostoTagging extends Module
      * Tries to resolve current / active product in context
      *
      * @return null|Product
+     * @suppress PhanUndeclaredMethod
      */
     protected function resolveProductInContext()
     {
@@ -1740,7 +1762,7 @@ class NostoTagging extends Module
      * Method for resolving correct smarty object
      *
      * @return Smarty|Smarty_Data
-     * @throws NostoException
+     * @throws \Nosto\NostoException
      */
     protected function getSmarty()
     {
@@ -1754,7 +1776,7 @@ class NostoTagging extends Module
             return $this->context->smarty;
         }
 
-        throw new NostoException('Could not find smarty');
+        throw new \Nosto\NostoException('Could not find smarty');
     }
 
     /**
@@ -1789,26 +1811,6 @@ class NostoTagging extends Module
     }
 
     /**
-     * Returns the access token needed to validate requests to the cron controllers.
-     * The access token is stored in the db config, and will be renewed if the module
-     * is re-installed or the db entry is removed.
-     *
-     * @return string the access token.
-     */
-    public function getCronAccessToken()
-    {
-        /** @var NostoTaggingHelperConfig $helper_config */
-        $helper_config = Nosto::helper('nosto_tagging/config');
-        $token = $helper_config->getCronAccessToken();
-        if (empty($token)) {
-            // Running bin2hex() will make the string length 32 characters.
-            $token = bin2hex(NostoCryptRandom::getRandomString(16));
-            $helper_config->saveCronAccessToken($token);
-        }
-        return $token;
-    }
-
-    /**
      * Updates the exchange rates to Nosto when user logs in or logs out
      *
      * @param array $params
@@ -1828,13 +1830,13 @@ class NostoTagging extends Module
         return $this->updateExhangeRatesIfNeeded(false);
     }
     /**
-     * Defines exhange rates updated for current session
+     * Defines exchange rates updated for current session
      */
     public function defineExchangeRatesAsUpdated()
     {
         if ($this->getContext()->cookie && $this->adminLoggedIn()) {
             /** @noinspection PhpUndefinedFieldInspection */
-            $this->getContext()->cookie->nostoExchangeRatesUpdated = true;
+            $this->getContext()->cookie->nostoExchangeRatesUpdated = (string)true;
         }
     }
 
@@ -1888,7 +1890,7 @@ class NostoTagging extends Module
             try {
                 $currency_helper->updateExchangeRatesForAllStores();
                 $this->defineExchangeRatesAsUpdated();
-            } catch (NostoException $e) {
+            } catch (\Nosto\NostoException $e) {
                 /* @var NostoTaggingHelperLogger $logger */
                 $logger = Nosto::helper('nosto_tagging/logger');
                 $logger->error(
@@ -1943,7 +1945,7 @@ class NostoTagging extends Module
             /* @var NostoTaggingAdminNotification $notification */
             foreach ($notifications as $notification) {
                 if (
-                    $notification->getNotificationType() === NostoNotificationInterface::TYPE_MISSING_INSTALLATION
+                    $notification->getNotificationType() === \Nosto\Object\Notification::TYPE_MISSING_INSTALLATION
                     && !$this->isController('AdminModules')
                 ) {
                     continue;
@@ -1961,10 +1963,10 @@ class NostoTagging extends Module
     protected function addPrestashopNotification(NostoTaggingAdminNotification $notification)
     {
         switch ($notification->getNotificationSeverity()) {
-            case NostoNotificationInterface::SEVERITY_INFO:
+            case \Nosto\Object\Notification::SEVERITY_INFO:
                 $this->adminDisplayInformation($notification->getFormattedMessage());
                 break;
-            case NostoNotificationInterface::SEVERITY_WARNING:
+            case \Nosto\Object\Notification::SEVERITY_WARNING:
                 $this->adminDisplayWarning($notification->getFormattedMessage());
                 break;
             default:
@@ -1996,7 +1998,7 @@ class NostoTagging extends Module
         if ($coo) {
             return hash(self::VISITOR_HASH_ALGO, $coo);
         }
-        return null;
+        return '';
     }
 
     /**
