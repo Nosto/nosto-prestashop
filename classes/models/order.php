@@ -34,7 +34,8 @@ class NostoTaggingOrder extends \Nosto\Object\Order\Order
      * @return Customer
      * @suppress PhanTypeMismatchArgument
      */
-    private static function loadCustomer(Order $order) {
+    private static function loadCustomer(Order $order)
+    {
         return new Customer((string)$order->id_customer);
     }
 
@@ -43,7 +44,8 @@ class NostoTaggingOrder extends \Nosto\Object\Order\Order
      * @return Currency
      * @suppress PhanTypeMismatchArgument
      */
-    private static function loadCurrency(Order $order) {
+    private static function loadCurrency(Order $order)
+    {
         return new Currency((string)$order->id_currency);
     }
 
@@ -77,16 +79,16 @@ class NostoTaggingOrder extends \Nosto\Object\Order\Order
         if (!empty($order->module)) {
             $payment_module = Module::getInstanceByName($order->module);
             if ($payment_module !== false && isset($payment_module->version)) {
-                $this->setPaymentProvider($order->module.' ['.$payment_module->version.']');
+                $this->setPaymentProvider($order->module . ' [' . $payment_module->version . ']');
             } else {
-                $this->setPaymentProvider($order->module.' [unknown]');
+                $this->setPaymentProvider($order->module . ' [unknown]');
             }
         }
 
         $this->setOrderStatus(NostoTaggingOrderStatus::loadData($order));
 
         Hook::exec(
-            'action'.str_replace('NostoTagging', 'Nosto', get_class($this)).'LoadAfter',
+            'action' . str_replace('NostoTagging', 'Nosto', get_class($this)) . 'LoadAfter',
             array(
                 'nosto_order' => $this,
                 'order' => $order,
@@ -150,8 +152,9 @@ class NostoTaggingOrder extends \Nosto\Object\Order\Order
             if ((int)$cart_rule['gift_product']) {
                 foreach ($products as $key => &$product) {
                     if (empty($product['gift'])
-                    && (int)$product['product_id'] === (int)$cart_rule['gift_product']
-                    && (int)$product['product_attribute_id'] === (int)$cart_rule['gift_product_attribute']) {
+                        && (int)$product['product_id'] === (int)$cart_rule['gift_product']
+                        && (int)$product['product_attribute_id'] === (int)$cart_rule['gift_product_attribute']
+                    ) {
                         $product['product_quantity'] = (int)$product['product_quantity'];
                         $product['product_quantity']--;
                         if (!($product['product_quantity'] > 0)) {
@@ -190,14 +193,15 @@ class NostoTaggingOrder extends \Nosto\Object\Order\Order
             if (Validate::isLoadedObject($p)) {
                 $product_name = $p->name;
                 $id_attribute = (int)$item['product_attribute_id'];
-                $attribute_combinations = $this->getProductAttributeCombinationsById($p, $id_attribute, $id_lang);
+                $attribute_combinations = $this->getProductAttributeCombinationsById($p,
+                    $id_attribute, $id_lang);
                 if (!empty($attribute_combinations)) {
                     $attribute_combination_names = array();
                     foreach ($attribute_combinations as $attribute_combination) {
                         $attribute_combination_names[] = $attribute_combination['attribute_name'];
                     }
                     if (!empty($attribute_combination_names)) {
-                        $product_name .= ' ('.implode(', ', $attribute_combination_names).')';
+                        $product_name .= ' (' . implode(', ', $attribute_combination_names) . ')';
                     }
                 }
 
@@ -212,11 +216,12 @@ class NostoTaggingOrder extends \Nosto\Object\Order\Order
         }
 
         if (!empty($purchased_items)) {
-        // Add special items for discounts, shipping and gift wrapping.
+            // Add special items for discounts, shipping and gift wrapping.
 
             if ($total_discounts_tax_incl > 0) {
-            // Subtract possible gift product price from total as gifts are tagged with price zero (0).
-                $total_discounts_tax_incl = Tools::ps_round($total_discounts_tax_incl - $total_gift_tax_incl, 2);
+                // Subtract possible gift product price from total as gifts are tagged with price zero (0).
+                $total_discounts_tax_incl = Tools::ps_round($total_discounts_tax_incl - $total_gift_tax_incl,
+                    2);
                 if ($total_discounts_tax_incl > 0) {
                     $purchased_item = new NostoTaggingOrderPurchasedItem();
                     $purchased_item->setProductId("-1");
@@ -272,8 +277,11 @@ class NostoTaggingOrder extends \Nosto\Object\Order\Order
      * @param int $id_lang the language ID.
      * @return array the attribute combinations.
      */
-    protected function getProductAttributeCombinationsById($product, $id_product_attribute, $id_lang)
-    {
+    protected function getProductAttributeCombinationsById(
+        $product,
+        $id_product_attribute,
+        $id_lang
+    ) {
         return $product->getAttributeCombinationsById($id_product_attribute, $id_lang);
     }
 }

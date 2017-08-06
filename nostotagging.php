@@ -954,15 +954,8 @@ class NostoTagging extends Module
      */
     public function hookActionOrderStatusPostUpdate(array $params)
     {
-        if (isset($params['id_order'])) {
-            $order = new Order($params['id_order']);
-            if ($order instanceof Order === false) {
-                return;
-            }
-            /* @var NostoTaggingHelperOrderOperation $order_operation */
-            $order_operation = Nosto::helper('nosto_tagging/order_operation');
-            $order_operation->send($order);
-        }
+        $operation = new NostoTaggingHelperOrderOperation(Context::getContext());
+        $operation->send($params);
     }
 
     /**
@@ -1121,12 +1114,15 @@ class NostoTagging extends Module
             // The product page.
             return $this->display(__FILE__,
                 'views/templates/hook/footer-product_hidden-nosto-elements.tpl');
-        } elseif (NostoTaggingHelperController::isController('order') && (int)Tools::getValue('step', 0) === 0) {
+        } elseif (NostoTaggingHelperController::isController('order') && (int)Tools::getValue('step',
+                0) === 0
+        ) {
             // The cart summary page.
             return $this->display(__FILE__,
                 'views/templates/hook/shopping-cart-footer_hidden-nosto-elements.tpl');
         } elseif (NostoTaggingHelperController::isController('category')
-            || NostoTaggingHelperController::isController('manufacturer')) {
+            || NostoTaggingHelperController::isController('manufacturer')
+        ) {
             // The category/manufacturer page.
             return $this->display(__FILE__,
                 'views/templates/hook/category-footer_hidden-nosto-elements.tpl');
@@ -1135,7 +1131,8 @@ class NostoTagging extends Module
             return $this->display(__FILE__,
                 'views/templates/hook/search_hidden-nosto-elements.tpl');
         } elseif (NostoTaggingHelperController::isController('pagenotfound')
-            || NostoTaggingHelperController::isController('404')) {
+            || NostoTaggingHelperController::isController('404')
+        ) {
             // The search page.
             return $this->display(__FILE__, 'views/templates/hook/404_hidden_nosto-elements.tpl');
         } elseif (NostoTaggingHelperController::isController('order-confirmation')) {

@@ -56,12 +56,12 @@ class NostoTaggingHelperAccount
         if ($success) {
             foreach ($account->getTokens() as $token) {
                 $success = $success && $helper_config->saveToken(
-                    $token->getName(),
-                    $token->getValue(),
-                    $id_lang,
-                    $id_shop_group,
-                    $id_shop
-                );
+                        $token->getName(),
+                        $token->getValue(),
+                        $id_lang,
+                        $id_shop_group,
+                        $id_shop
+                    );
             }
         }
         return $success;
@@ -121,7 +121,8 @@ class NostoTaggingHelperAccount
                 if ($account === null) {
                     continue;
                 }
-                self::delete(Context::getContext(), $account, $language['id_lang'], $id_shop_group, $id_shop);
+                self::delete(Context::getContext(), $account, $language['id_lang'], $id_shop_group,
+                    $id_shop);
             }
         }
         return true;
@@ -146,7 +147,8 @@ class NostoTaggingHelperAccount
      * @param null|int $lang_id the ID of the language.
      * @param null|int $id_shop_group the ID of the shop context.
      * @param null|int $id_shop the ID of the shop.
-     * @return Nosto\Object\Signup\Account|null the account with loaded API tokens, or null if not found.
+     * @return Nosto\Object\Signup\Account|null the account with loaded API tokens, or null if not
+     *     found.
      */
     public static function find($lang_id = null, $id_shop_group = null, $id_shop = null)
     {
@@ -157,7 +159,8 @@ class NostoTaggingHelperAccount
             $account = new Nosto\Object\Signup\Account($account_name);
             $tokens = array();
             foreach (Nosto\Request\Api\Token::getApiTokenNames() as $token_name) {
-                $token_value = $helper_config->getToken($token_name, $lang_id, $id_shop_group, $id_shop);
+                $token_value = $helper_config->getToken($token_name, $lang_id, $id_shop_group,
+                    $id_shop);
                 if (!empty($token_value)) {
                     $tokens[$token_name] = $token_value;
                 }
@@ -201,8 +204,11 @@ class NostoTaggingHelperAccount
      * @param null|int $id_shop the ID of the shop.
      * @return bool true if it does, false otherwise.
      */
-    public static function existsAndIsConnected($lang_id = null, $id_shop_group = null, $id_shop = null)
-    {
+    public static function existsAndIsConnected(
+        $lang_id = null,
+        $id_shop_group = null,
+        $id_shop = null
+    ) {
         $account = self::find($lang_id, $id_shop_group, $id_shop);
         return ($account !== null && $account->isConnectedToNosto());
     }

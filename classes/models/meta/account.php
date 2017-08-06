@@ -45,7 +45,8 @@ class NostoTaggingMetaAccount extends \Nosto\Object\Signup\Signup
      * @return Language
      * @suppress PhanTypeMismatchArgument
      */
-    private static function loadLanguage() {
+    private static function loadLanguage()
+    {
         return new Language((int)Configuration::get('PS_LANG_DEFAULT'));
     }
 
@@ -53,7 +54,8 @@ class NostoTaggingMetaAccount extends \Nosto\Object\Signup\Signup
      * @return Currency
      * @suppress PhanTypeMismatchArgument
      */
-    private static function loadCurrency() {
+    private static function loadCurrency()
+    {
         return new Currency((int)Configuration::get('PS_CURRENCY_DEFAULT'));
     }
 
@@ -61,7 +63,8 @@ class NostoTaggingMetaAccount extends \Nosto\Object\Signup\Signup
      * @return Country
      * @suppress PhanTypeMismatchArgument
      */
-    private static function loadCountry() {
+    private static function loadCountry()
+    {
         return new Country((int)Configuration::get('PS_COUNTRY_DEFAULT'));
     }
 
@@ -137,16 +140,16 @@ class NostoTaggingMetaAccount extends \Nosto\Object\Signup\Signup
         $ssl = Configuration::get('PS_SSL_ENABLED');
         $rewrite = (int)Configuration::get('PS_REWRITING_SETTINGS', null, null, $shop->id);
         $multi_lang = (Language::countActiveLanguages($shop->id) > 1);
-        $base = ($ssl ? 'https://'.$shop->domain_ssl : 'http://'.$shop->domain).$shop->getBaseURI();
+        $base = ($ssl ? 'https://' . $shop->domain_ssl : 'http://' . $shop->domain) . $shop->getBaseURI();
         $lang = '';
         if ($multi_lang) {
             if ($rewrite) {
-                $lang = $language->iso_code.'/';
+                $lang = $language->iso_code . '/';
             } else {
-                $lang = '?id_lang='.$language->id;
+                $lang = '?id_lang=' . $language->id;
             }
         }
-        return $base.$lang;
+        return $base . $lang;
     }
 
     protected static function buildCurrencies(Context $context)

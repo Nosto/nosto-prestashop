@@ -46,8 +46,8 @@
  * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
-
-class CategoryTagging {
+class CategoryTagging
+{
 
     /**
      * Tries to resolve current / active category in context
@@ -73,7 +73,8 @@ class CategoryTagging {
                 $id_category = Context::getContext()->cookie->last_visited_category;
             }
             if ($id_category) {
-                $category = new Category($id_category, Context::getContext()->language->id, Context::getContext()->shop->id);
+                $category = new Category($id_category, Context::getContext()->language->id,
+                    Context::getContext()->shop->id);
             }
         }
         if (

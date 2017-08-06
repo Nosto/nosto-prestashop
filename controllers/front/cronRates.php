@@ -28,8 +28,8 @@ require_once(dirname(__FILE__) . '/cron.php');
 /**
  * Cron controller to update currency exchange rates in Nosto.
  *
- * This controller can be called directly from the servers cron tab or, using the PS "cronjob" module.
- * The authentication is
+ * This controller can be called directly from the servers cron tab or, using the PS "cronjob"
+ * module. The authentication is
  */
 class NostoTaggingCronRatesModuleFrontController extends NostoTaggingCronModuleFrontController
 {

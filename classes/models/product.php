@@ -61,7 +61,7 @@ class NostoTaggingProduct extends Nosto\Object\Product\Product
             $this->setVariationId($base_currency->iso_code);
             $tagging_currency = $base_currency;
         } else {
-            $tagging_currency= $context->currency;
+            $tagging_currency = $context->currency;
         }
         $this->setUrl($url_helper->getProductUrl($product, $id_lang, $id_shop));
         $link = NostoTaggingHelperLink::getLink();
@@ -80,7 +80,7 @@ class NostoTaggingProduct extends Nosto\Object\Product\Product
         $this->amendPrices($product, $context, $tagging_currency);
 
         Hook::exec(
-            'action'.str_replace('NostoTagging', 'Nosto', get_class($this)).'LoadAfter',
+            'action' . str_replace('NostoTagging', 'Nosto', get_class($this)) . 'LoadAfter',
             array(
                 'nosto_product' => $this,
                 'product' => $product,
@@ -133,6 +133,7 @@ class NostoTaggingProduct extends Nosto\Object\Product\Product
             $this->addAlternateImageUrls($image_url);
         }
     }
+
     /**
      * Assigns the product ID from given product.
      *
@@ -157,7 +158,8 @@ class NostoTaggingProduct extends Nosto\Object\Product\Product
     {
         if (
             !$product->active
-            || $product->visibility === 'none') {
+            || $product->visibility === 'none'
+        ) {
             return self::INVISIBLE;
         } else {
             return ($product->checkQty(1)) ? self::IN_STOCK : self::OUT_OF_STOCK;
@@ -167,9 +169,10 @@ class NostoTaggingProduct extends Nosto\Object\Product\Product
     /**
      * Builds the tag list for the product.
      *
-     * Also includes the custom "add-to-cart" tag if the product can be added to the shopping cart directly without
-     * any action from the user, e.g. the product cannot have any variations or choices. This tag is then used in the
-     * recommendations to render the "Add to cart" button for the product when it is recommended to a user.
+     * Also includes the custom "add-to-cart" tag if the product can be added to the shopping cart
+     * directly without any action from the user, e.g. the product cannot have any variations or
+     * choices. This tag is then used in the recommendations to render the "Add to cart" button for
+     * the product when it is recommended to a user.
      *
      * @param Product $product the product model.
      * @param int $id_lang for which language ID to fetch the product tags.

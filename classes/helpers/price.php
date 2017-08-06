@@ -49,9 +49,13 @@ class NostoTaggingHelperPrice
      * @param Currency|CurrencyCore $currency the currency.
      * @return float the price.
      */
-    public function getProductListPriceInclTax(Product $product, Context $context, Currency $currency)
-    {
-        return $this->calcPrice($product->id, $currency, $context, array('user_reduction' => false));
+    public function getProductListPriceInclTax(
+        Product $product,
+        Context $context,
+        Currency $currency
+    ) {
+        return $this->calcPrice($product->id, $currency, $context,
+            array('user_reduction' => false));
     }
 
     /**
@@ -66,7 +70,7 @@ class NostoTaggingHelperPrice
         if ($wholesale_price_exc_taxes > 0) {
             if ($product->tax_rate > 0) {
                 $wholesale_price_inc_taxes = $this->roundPrice(
-                    $wholesale_price_exc_taxes*(1+$product->tax_rate/100)
+                    $wholesale_price_exc_taxes * (1 + $product->tax_rate / 100)
                 );
             } else {
                 $wholesale_price_inc_taxes = $wholesale_price_exc_taxes;
@@ -87,8 +91,12 @@ class NostoTaggingHelperPrice
      * @param Currency $currency the currency.
      * @return float the price.
      */
-    public function getCartItemPriceInclTax(Cart $cart, array $item, Context $context, Currency $currency)
-    {
+    public function getCartItemPriceInclTax(
+        Cart $cart,
+        array $item,
+        Context $context,
+        Currency $currency
+    ) {
         if (Configuration::get('PS_TAX_ADDRESS_TYPE') == 'id_address_invoice') {
             $id_address = (int)$cart->id_address_invoice;
         } else {
@@ -98,7 +106,7 @@ class NostoTaggingHelperPrice
         return $this->calcPrice((int)$item['id_product'], $currency, $context, array(
             'user_reduction' => true,
             'id_product_attribute' => (
-                isset($item['id_product_attribute']) ? (int)$item['id_product_attribute'] : null
+            isset($item['id_product_attribute']) ? (int)$item['id_product_attribute'] : null
             ),
             'id_customer' => ((int)$cart->id_customer ? (int)$cart->id_customer : null),
             'id_cart' => (int)$cart->id,
@@ -116,8 +124,12 @@ class NostoTaggingHelperPrice
      * @param array $options options for the Product::getPriceStatic method.
      * @return float the price.
      */
-    protected function calcPrice($id_product, Currency $currency, Context $context, array $options = array())
-    {
+    protected function calcPrice(
+        $id_product,
+        Currency $currency,
+        Context $context,
+        array $options = array()
+    ) {
         // If the requested currency is not the one in the context, then set it.
         if (
             $context->currency instanceof Currency

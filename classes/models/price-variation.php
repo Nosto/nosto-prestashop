@@ -30,12 +30,14 @@ class NostoTaggingPriceVariation extends NostoTaggingModel
 {
     /**
      * The id of the variation
+     *
      * @var mixed variation id
      */
     private $variationId;
 
     /**
      * Constructor
+     *
      * @param null $variationId
      */
     public function __construct($variationId = null)

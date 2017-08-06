@@ -39,7 +39,7 @@ class NostoTaggingHelperCustomer
      */
     public static function getCustomerLinkTableName()
     {
-        return pSQL(_DB_PREFIX_.self::TABLE_NAME_CUSTOMER_LINK);
+        return pSQL(_DB_PREFIX_ . self::TABLE_NAME_CUSTOMER_LINK);
     }
 
     /**
@@ -49,7 +49,7 @@ class NostoTaggingHelperCustomer
      */
     public static function getCustomerReferenceTableName()
     {
-        return pSQL(_DB_PREFIX_.self::TABLE_NAME_CUSTOMER_REFERENCE);
+        return pSQL(_DB_PREFIX_ . self::TABLE_NAME_CUSTOMER_REFERENCE);
     }
 
     /**
@@ -60,13 +60,13 @@ class NostoTaggingHelperCustomer
     public function createCustomerLinkTable()
     {
         $table = self::getCustomerLinkTableName();
-        $sql = 'CREATE TABLE IF NOT EXISTS `'.$table.'` (
+        $sql = 'CREATE TABLE IF NOT EXISTS `' . $table . '` (
 			`id_cart` INT(10) UNSIGNED NOT NULL,
 			`id_nosto_customer` VARCHAR(64) NOT NULL,
 			`date_add` DATETIME NOT NULL,
 			`date_upd` DATETIME NULL,
 			PRIMARY KEY (`id_cart`, `id_nosto_customer`)
-		) ENGINE '._MYSQL_ENGINE_;
+		) ENGINE ' . _MYSQL_ENGINE_;
 
         return Db::getInstance()->execute($sql);
     }
@@ -79,11 +79,11 @@ class NostoTaggingHelperCustomer
     public function createCustomerReferenceTable()
     {
         $table = self::getCustomerReferenceTableName();
-        $sql = 'CREATE TABLE IF NOT EXISTS `'.$table.'` (
+        $sql = 'CREATE TABLE IF NOT EXISTS `' . $table . '` (
 			`id_customer` INT(10) UNSIGNED NOT NULL,
 			`customer_reference` VARCHAR(32) NOT NULL,
 			PRIMARY KEY (`id_customer`)
-		) ENGINE '._MYSQL_ENGINE_;
+		) ENGINE ' . _MYSQL_ENGINE_;
 
         return Db::getInstance()->execute($sql);
     }
@@ -97,7 +97,7 @@ class NostoTaggingHelperCustomer
     {
         $table = self::getCustomerLinkTableName();
 
-        return Db::getInstance()->execute('DROP TABLE IF EXISTS `'.$table.'`');
+        return Db::getInstance()->execute('DROP TABLE IF EXISTS `' . $table . '`');
     }
 
     /**
@@ -120,15 +120,15 @@ class NostoTaggingHelperCustomer
         $table = self::getCustomerLinkTableName();
         $id_cart = (int)$context->cart->id;
         $id_nosto_customer = pSQL($id_nosto_customer);
-        $where = '`id_cart` = '.$id_cart.' AND `id_nosto_customer` = "'.$id_nosto_customer.'"';
-        $existing_link = Db::getInstance()->getRow('SELECT * FROM `'.$table.'` WHERE '.$where);
+        $where = '`id_cart` = ' . $id_cart . ' AND `id_nosto_customer` = "' . $id_nosto_customer . '"';
+        $existing_link = Db::getInstance()->getRow('SELECT * FROM `' . $table . '` WHERE ' . $where);
         if (empty($existing_link)) {
             $data = array(
                 'id_cart' => $id_cart,
                 'id_nosto_customer' => $id_nosto_customer,
                 'date_add' => date('Y-m-d H:i:s')
             );
-                return Db::getInstance()->insert($table, $data, false, true, Db::INSERT, false);
+            return Db::getInstance()->insert($table, $data, false, true, Db::INSERT, false);
         } else {
             $data = array(
                 'date_upd' => date('Y-m-d H:i:s')
@@ -147,7 +147,7 @@ class NostoTaggingHelperCustomer
     {
         $table = self::getCustomerLinkTableName();
         $id_cart = (int)$order->id_cart;
-        $sql = 'SELECT `id_nosto_customer` FROM `'.$table.'` WHERE `id_cart` = '.$id_cart.' ORDER BY `date_add` ASC';
+        $sql = 'SELECT `id_nosto_customer` FROM `' . $table . '` WHERE `id_cart` = ' . $id_cart . ' ORDER BY `date_add` ASC';
 
         return Db::getInstance()->getValue($sql);
     }
@@ -213,7 +213,7 @@ class NostoTaggingHelperCustomer
      */
     public function generateCustomerReference(Customer $customer)
     {
-        $hash = md5($customer->id.$customer->email);
+        $hash = md5($customer->id . $customer->email);
         $uuid = uniqid(
             Tools::substr($hash, 0, 8),
             true

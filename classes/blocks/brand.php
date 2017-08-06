@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 2013-2017 Nosto Solutions Ltd
  *
@@ -22,8 +23,8 @@
  * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
-
-class BrandTagging {
+class BrandTagging
+{
 
     /**
      * Tries to resolve current / active manufacturer in context
@@ -43,7 +44,8 @@ class BrandTagging {
                 $id_manufacturer = Tools::getValue('id_manufacturer');
             }
             if ($id_manufacturer) {
-                $manufacturer = new Manufacturer((int)$id_manufacturer, Context::getContext()->language->id);
+                $manufacturer = new Manufacturer((int)$id_manufacturer,
+                    Context::getContext()->language->id);
             }
         }
         if (

@@ -24,7 +24,8 @@
  */
 
 /**
- * Meta data class for account iframe related information needed when showing the admin iframe on module settings page.
+ * Meta data class for account iframe related information needed when showing the admin iframe on
+ * module settings page.
  */
 class NostoTaggingMetaAccountIframe extends Nosto\Object\Iframe
 {

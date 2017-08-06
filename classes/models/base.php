@@ -32,7 +32,8 @@ abstract class NostoTaggingModel
     /**
      * Dispatches the hook `action{MODEL}LoadAfter`.
      *
-     * This method can be called last in the tagging model loadData() methods, to allow overriding of model data.
+     * This method can be called last in the tagging model loadData() methods, to allow overriding
+     * of model data.
      *
      * @param array $params the hook params.
      */
@@ -41,7 +42,7 @@ abstract class NostoTaggingModel
         // We replace the "NostoTagging" part of the class
         // name with "Nosto", e.g. "NostoTaggingProduct" => "NostoProduct".
         $this->dispatchHook(
-            'action'.str_replace('NostoTagging', 'Nosto', get_class($this)).'LoadAfter',
+            'action' . str_replace('NostoTagging', 'Nosto', get_class($this)) . 'LoadAfter',
             $params
         );
     }
@@ -70,7 +71,7 @@ abstract class NostoTaggingModel
      */
     public function __get($name)
     {
-        $getter = 'get'.str_replace('_', '', $name);
+        $getter = 'get' . str_replace('_', '', $name);
         if (method_exists($this, $getter)) {
             return $this->{$getter}();
         }

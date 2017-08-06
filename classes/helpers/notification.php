@@ -40,7 +40,8 @@ class NostoTaggingHelperNotification
     {
         $id_shop_group = isset($shop->id_shop_group) ? $shop->id_shop_group : null;
         $tokens_ok = true;
-        $connected = NostoTaggingHelperAccount::existsAndIsConnected($language->id, $id_shop_group, $shop->id);
+        $connected = NostoTaggingHelperAccount::existsAndIsConnected($language->id, $id_shop_group,
+            $shop->id);
         if ($connected) {
             $account = NostoTaggingHelperAccount::find($language->id);
             if ($account instanceof \Nosto\Types\Signup\AccountInterface && $account->hasMissingTokens()) {
@@ -62,7 +63,8 @@ class NostoTaggingHelperNotification
     {
         $is_installed = true;
         $id_shop_group = isset($shop->id_shop_group) ? $shop->id_shop_group : null;
-        $connected = NostoTaggingHelperAccount::existsAndIsConnected($language->id, $id_shop_group, $shop->id);
+        $connected = NostoTaggingHelperAccount::existsAndIsConnected($language->id, $id_shop_group,
+            $shop->id);
         if (!$connected) {
             $is_installed = false;
         }
@@ -81,7 +83,8 @@ class NostoTaggingHelperNotification
     {
         $multicurrency_ok = true;
         $id_shop_group = isset($shop->id_shop_group) ? $shop->id_shop_group : null;
-        $connected = NostoTaggingHelperAccount::existsAndIsConnected($language->id, $id_shop_group, $shop->id);
+        $connected = NostoTaggingHelperAccount::existsAndIsConnected($language->id, $id_shop_group,
+            $shop->id);
         if ($connected) {
             /** @var NostoTaggingHelperConfig $helper_config */
             $helper_config = Nosto::helper('nosto_tagging/config');

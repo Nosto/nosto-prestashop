@@ -29,9 +29,10 @@
 abstract class NostoTaggingHelperOperation
 {
     /**
-     * @var array stores a snapshot of the context object and shop context so it can be restored between processing all
-     * accounts. This is important as the accounts belong to different shops and languages and the context, that
-     * contains this information, is used internally in PrestaShop when generating urls.
+     * @var array stores a snapshot of the context object and shop context so it can be restored
+     *     between processing all accounts. This is important as the accounts belong to different
+     *     shops and languages and the context, that contains this information, is used internally
+     *     in PrestaShop when generating urls.
      */
     protected $contextSnapshot;
 

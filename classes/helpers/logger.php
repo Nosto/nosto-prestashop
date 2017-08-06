@@ -51,9 +51,11 @@ class NostoTaggingHelperLogger
     ) {
         $logger = (class_exists('PrestaShopLogger') ? 'PrestaShopLogger' : (class_exists('Logger') ? 'Logger' : null));
         if (!empty($logger)) {
-        // The log message is not allowed to contain certain characters, so we url encode them before saving.
-            $message = str_replace(array('{', '}', '<', '>'), array('%7B', '%7D', '%3C', '%3E'), $message);
-            call_user_func(array($logger, 'addLog'), $message, $severity, $error_code, $object_type, $object_id, true);
+            // The log message is not allowed to contain certain characters, so we url encode them before saving.
+            $message = str_replace(array('{', '}', '<', '>'), array('%7B', '%7D', '%3C', '%3E'),
+                $message);
+            call_user_func(array($logger, 'addLog'), $message, $severity, $error_code, $object_type,
+                $object_id, true);
         }
     }
 
@@ -65,8 +67,12 @@ class NostoTaggingHelperLogger
      * @param null|string $object_type the object type affected.
      * @param null|int $object_id the object id affected.
      */
-    public static function error($message, $error_code = null, $object_type = null, $object_id = null)
-    {
+    public static function error(
+        $message,
+        $error_code = null,
+        $object_type = null,
+        $object_id = null
+    ) {
         NostoTaggingHelperLogger::log($message, self::SEVERITY_ERROR, $error_code, $object_type,
             $object_id);
     }

@@ -38,7 +38,8 @@ class NostoTaggingCart extends NostoTaggingModel
      * @return Currency
      * @suppress PhanTypeMismatchArgument
      */
-    private static function loadCurrency($id_currency) {
+    private static function loadCurrency($id_currency)
+    {
         return new Currency($id_currency);
     }
 
@@ -65,8 +66,9 @@ class NostoTaggingCart extends NostoTaggingModel
             if ((int)$cart_rule['gift_product']) {
                 foreach ($products as $key => &$product) {
                     if (empty($product['gift'])
-                    && (int)$product['id_product'] === (int)$cart_rule['gift_product']
-                    && (int)$product['id_product_attribute'] === (int)$cart_rule['gift_product_attribute']) {
+                        && (int)$product['id_product'] === (int)$cart_rule['gift_product']
+                        && (int)$product['id_product_attribute'] === (int)$cart_rule['gift_product_attribute']
+                    ) {
                         $product['cart_quantity'] = (int)$product['cart_quantity'];
                         $product['cart_quantity']--;
 
@@ -93,7 +95,7 @@ class NostoTaggingCart extends NostoTaggingModel
         foreach ($items as $item) {
             $name = $item['name'];
             if (isset($item['attributes_small'])) {
-                $name .= ' ('.$item['attributes_small'].')';
+                $name .= ' (' . $item['attributes_small'] . ')';
             }
 
             $this->line_items[] = array(

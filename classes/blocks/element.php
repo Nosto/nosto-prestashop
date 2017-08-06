@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 2013-2017 Nosto Solutions Ltd
  *
@@ -22,12 +23,13 @@
  * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
-
-class NostoRecommendationElement {
+class NostoRecommendationElement
+{
 
     const ELEMENT = "<div class=\"nosto_element\" id=\"%s\"></div>";
 
-    public static function get($id) {
+    public static function get($id)
+    {
         if (!NostoTaggingHelperAccount::isContextConnected(Context::getContext())) {
             return '';
         }

@@ -45,20 +45,23 @@ class NostoTaggingHelperProductOperation extends NostoTaggingHelperOperation
 
     /**
      * Array key for data
+     *
      * @var string
      */
     const KEY_DATA = 'data';
 
     /**
      * Array key for account
+     *
      * @var string
      */
     const KEY_ACCOUNT = 'account';
 
     /**
-     * @var array runtime cache for products that have already been processed during this request to avoid sending the
-     * info to Nosto many times during the same request. This will otherwise happen as PrestaShop will sometime invoke
-     * the hook callback methods multiple times when saving a product.
+     * @var array runtime cache for products that have already been processed during this request
+     *     to avoid sending the info to Nosto many times during the same request. This will
+     *     otherwise happen as PrestaShop will sometime invoke the hook callback methods multiple
+     *     times when saving a product.
      */
     private static $processedProducts = array();
 
@@ -195,8 +198,11 @@ class NostoTaggingHelperProductOperation extends NostoTaggingHelperOperation
         }
     }
 
-    private function deleteProduct(Product $product) {
-        if (!Validate::isLoadedObject($product) || in_array($product->id, self::$processedProducts)) {
+    private function deleteProduct(Product $product)
+    {
+        if (!Validate::isLoadedObject($product) || in_array($product->id,
+                self::$processedProducts)
+        ) {
             return;
         }
 

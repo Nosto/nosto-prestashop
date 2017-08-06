@@ -23,7 +23,7 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-require_once(dirname(__FILE__).'/api.php');
+require_once(dirname(__FILE__) . '/api.php');
 
 /**
  * Front controller for gathering all products from the shop and sending the meta-data to Nosto.
@@ -43,7 +43,8 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
         $context->employee = new Employee();
 
         if (!empty(Tools::getValue('id'))) {
-            $product = new Product(Tools::getValue('id'), true, $context->language->id, $context->shop->id);
+            $product = new Product(Tools::getValue('id'), true, $context->language->id,
+                $context->shop->id);
             if (!Validate::isLoadedObject($product)) {
                 Controller::getController('PageNotFoundController')->run();
             }
@@ -52,7 +53,8 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
             $collection->append($nosto_product);
         } else {
             foreach ($this->getProductIds() as $id_product) {
-                $product = new Product($id_product, true, $context->language->id, $context->shop->id);
+                $product = new Product($id_product, true, $context->language->id,
+                    $context->shop->id);
                 if (!Validate::isLoadedObject($product)) {
                     continue;
                 }

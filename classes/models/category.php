@@ -39,7 +39,8 @@ class NostoTaggingCategory extends NostoTaggingModel
      * @return Category
      * @suppress PhanTypeMismatchArgument
      */
-    private static function loadCategory($id_category, $id_lang) {
+    private static function loadCategory($id_category, $id_lang)
+    {
         return new Category((int)$id_category, $id_lang);
     }
 
@@ -84,6 +85,6 @@ class NostoTaggingCategory extends NostoTaggingModel
             return '';
         }
 
-        return DIRECTORY_SEPARATOR.implode(DIRECTORY_SEPARATOR, array_reverse($category_list));
+        return DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, array_reverse($category_list));
     }
 }

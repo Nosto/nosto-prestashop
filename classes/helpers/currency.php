@@ -37,7 +37,8 @@ class NostoTaggingHelperCurrency
      * @return Currency
      * @suppress PhanTypeMismatchArgument
      */
-    private static function loadCurrency($id) {
+    private static function loadCurrency($id)
+    {
         return new Currency((string)$id);
     }
 
@@ -58,9 +59,11 @@ class NostoTaggingHelperCurrency
             $id_shop_group = null;
         }
 
-        $base_id_currency = (int)Configuration::get('PS_CURRENCY_DEFAULT', $id_lang, $id_shop_group, $id_shop);
+        $base_id_currency = (int)Configuration::get('PS_CURRENCY_DEFAULT', $id_lang, $id_shop_group,
+            $id_shop);
         if ($base_id_currency === 0) {
-            $base_id_currency = (int)Configuration::get('PS_CURRENCY_DEFAULT', null, $id_shop_group, $id_shop);
+            $base_id_currency = (int)Configuration::get('PS_CURRENCY_DEFAULT', null, $id_shop_group,
+                $id_shop);
         }
         $base_currency = self::loadCurrency($base_id_currency);
         if (!Validate::isLoadedObject($base_currency)) {
@@ -80,7 +83,7 @@ class NostoTaggingHelperCurrency
      * Fetches all currencies defined in context.
      *
      * @param Context|ContextCore $context the context.
-     * @param boolean $only_active  if set to true, only active languages will be returned
+     * @param boolean $only_active if set to true, only active languages will be returned
      * @return array the found currencies.
      */
     public static function getCurrencies(Context $context, $only_active = false)
@@ -192,6 +195,7 @@ class NostoTaggingHelperCurrency
 
     /**
      * Creates Nosto currency object using CLDR that was introduced in Prestashop 1.7
+     *
      * @see https://github.com/ICanBoogie/CLDR
      *
      * @param array $currency Prestashop currency array
@@ -203,7 +207,8 @@ class NostoTaggingHelperCurrency
     {
         $cldr = Tools::getCldr(null, $context->language->language_code);
         // @codingStandardsIgnoreLine
-        $cldr_currency = new \ICanBoogie\CLDR\Currency($cldr->getRepository(), $currency['iso_code']);
+        $cldr_currency = new \ICanBoogie\CLDR\Currency($cldr->getRepository(),
+            $currency['iso_code']);
         $localized_currency = $cldr_currency->localize($cldr->getCulture());
         $pattern = $localized_currency->locale->numbers->currency_formats['standard'];
         $symbols = $localized_currency->locale->numbers->symbols;
@@ -232,7 +237,7 @@ class NostoTaggingHelperCurrency
     {
         /** @var NostoTaggingHelperContextFactory $context_factory */
         $context_factory = Nosto::helper('nosto_tagging/context_factory');
-        /** @var NostoTaggingHelperConfig $helper_config*/
+        /** @var NostoTaggingHelperConfig $helper_config */
         $helper_config = Nosto::helper('nosto_tagging/config');
 
         foreach (Shop::getShops() as $shop) {
@@ -240,9 +245,11 @@ class NostoTaggingHelperCurrency
             $id_shop_group = isset($shop['id_shop_group']) ? (int)$shop['id_shop_group'] : null;
             foreach (Language::getLanguages(true, $id_shop) as $language) {
                 $id_lang = (int)$language['id_lang'];
-                $use_multiple_currencies = $helper_config->useMultipleCurrencies($id_lang, $id_shop_group, $id_shop);
+                $use_multiple_currencies = $helper_config->useMultipleCurrencies($id_lang,
+                    $id_shop_group, $id_shop);
                 if ($use_multiple_currencies) {
-                    $nosto_account = NostoTaggingHelperAccount::find($id_lang, $id_shop_group, $id_shop);
+                    $nosto_account = NostoTaggingHelperAccount::find($id_lang, $id_shop_group,
+                        $id_shop);
                     if (!is_null($nosto_account)) {
                         $context = $context_factory->forgeContext($id_lang, $id_shop);
                         $operation = new RatesService($nosto_account, $context);

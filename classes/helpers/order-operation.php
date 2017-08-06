@@ -36,12 +36,23 @@ class NostoTaggingHelperOrderOperation extends NostoTaggingHelperOperation
         $this->context = $context;
     }
 
+    public function send($params)
+    {
+        if (isset($params['id_order'])) {
+            $order = new Order($params['id_order']);
+            if ($order instanceof Order === false) {
+                return;
+            }
+            $this->send($order);
+        }
+    }
+
     /**
      * Sends order data to Nosto.
      *
      * @param Order $order
      */
-    public function send(Order $order)
+    public function sendOrder(Order $order)
     {
         $nosto_order = new NostoTaggingOrder();
         $nosto_order->loadData($this->context, $order);

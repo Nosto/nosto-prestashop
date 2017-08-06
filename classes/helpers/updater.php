@@ -33,14 +33,16 @@ class NostoTaggingHelperUpdater
     /**
      * @var string the updater only runs upgrade scripts >= to this version.
      *
-     * This is needed as otherwise the updater would run all found upgrade scripts the first time the module is updated,
-     * as there would be no `installed version` written to the config yet.
+     * This is needed as otherwise the updater would run all found upgrade scripts the first time
+     *     the module is updated, as there would be no `installed version` written to the config
+     *     yet.
      */
     protected static $from_version = '2.1.0';
 
     /**
      * Checks if the module has new upgrade scripts and applies them.
-     * These scripts located in the modules `upgrade` directory, with versions above the current installed version.
+     * These scripts located in the modules `upgrade` directory, with versions above the current
+     * installed version.
      *
      * @param Module $module the module to check and apply the updates for.
      */
@@ -48,7 +50,7 @@ class NostoTaggingHelperUpdater
     {
         // Prestashop < 1.5.4.0 has a bug that causes the auto-update mechanism fail.
         if (self::isModuleInstalled($module) && version_compare(_PS_VERSION_, '1.5.4.0', '<')) {
-        // If the module is already updated to the latest version, don't continue.
+            // If the module is already updated to the latest version, don't continue.
             /** @var NostoTaggingHelperConfig $helper_config */
             $helper_config = Nosto::helper('nosto_tagging/config');
             $installed_version = (string)$helper_config->getInstalledVersion();
@@ -58,7 +60,7 @@ class NostoTaggingHelperUpdater
 
             foreach ($this->findUpgradeScripts($module) as $script) {
                 if (file_exists($script['file']) && is_readable($script['file'])) {
-                // Run the script and update the currently installed module version so future updates can work.
+                    // Run the script and update the currently installed module version so future updates can work.
                     /** @noinspection PhpIncludeInspection */
                     include_once $script['file'];
                     call_user_func($script['upgrade_function'], $module);
@@ -75,7 +77,8 @@ class NostoTaggingHelperUpdater
 
     /**
      * Reads the file system and finds any new upgrade scripts that can be applied for the module.
-     * These scripts located in the modules `upgrade` directory, with versions above the current installed version.
+     * These scripts located in the modules `upgrade` directory, with versions above the current
+     * installed version.
      *
      * @param Module $module the module to find the upgrade files for.
      * @return array the list of upgrade scripts.
@@ -85,9 +88,9 @@ class NostoTaggingHelperUpdater
         /** @var NostoTaggingHelperConfig $helper_config */
         $helper_config = Nosto::helper('nosto_tagging/config');
         $scripts = array();
-        $path = _PS_MODULE_DIR_.$module->name.'/upgrade/';
+        $path = _PS_MODULE_DIR_ . $module->name . '/upgrade/';
         $installed_version = (string)$helper_config->getInstalledVersion();
-        $new_version = (string) $module->version;
+        $new_version = (string)$module->version;
 
         if (file_exists($path) && ($files = scandir($path))) {
             foreach ($files as $file) {
@@ -95,14 +98,16 @@ class NostoTaggingHelperUpdater
                     $parts = explode('-', $file);
                     $script_version = isset($parts[1]) ? basename($parts[1], '.php') : '';
                     if (count($parts) == 2
-                    && !empty($script_version)
-                    && version_compare($script_version, self::$from_version, '>=')
-                    && version_compare($script_version, $new_version, '<=')
-                    && version_compare($script_version, $installed_version, '>')) {
+                        && !empty($script_version)
+                        && version_compare($script_version, self::$from_version, '>=')
+                        && version_compare($script_version, $new_version, '<=')
+                        && version_compare($script_version, $installed_version, '>')
+                    ) {
                         $scripts[] = array(
-                        'file' => $path.$file,
-                        'version' => $script_version,
-                        'upgrade_function' => 'upgrade_module_'.str_replace('.', '_', $script_version)
+                            'file' => $path . $file,
+                            'version' => $script_version,
+                            'upgrade_function' => 'upgrade_module_' . str_replace('.', '_',
+                                    $script_version)
                         );
                     }
                 }
@@ -118,7 +123,8 @@ class NostoTaggingHelperUpdater
      * @return bool
      * @suppress PhanDeprecatedFunction
      */
-    private static function isModuleInstalled(Module $module) {
+    private static function isModuleInstalled(Module $module)
+    {
         return Module::isInstalled($module->name);
     }
 

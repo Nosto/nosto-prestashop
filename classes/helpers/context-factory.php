@@ -30,12 +30,14 @@ class NostoTaggingHelperContextFactory
 {
     /**
      * Holds the original shop id whever context is forged
+     *
      * @var int
      */
     private $original_shop_id;
 
     /**
      * Holds the original shop context type
+     *
      * @see Shop
      * @var int
      */
@@ -43,18 +45,21 @@ class NostoTaggingHelperContextFactory
 
     /**
      * Holds the original shop group
+     *
      * @var int
      */
     private $original_shop_group;
 
     /**
      * Holds the original language
+     *
      * @var Language
      */
     private $original_language;
 
     /**
      * Holds the original language
+     *
      * @var Currency
      */
     private $original_currency;
