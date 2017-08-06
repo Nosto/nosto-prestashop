@@ -63,13 +63,6 @@ class NostoTagging extends Module
     const VISITOR_HASH_ALGO = 'sha256';
 
     /**
-     * Keeps the state of Nosto default tagging
-     *
-     * @var boolean
-     */
-    private static $tagging_rendered = false;
-
-    /**
      * Custom hooks to add for this module.
      *
      * @var array
@@ -498,7 +491,7 @@ class NostoTagging extends Module
             $account_iframe = NostoTaggingMetaAccountIframe::loadData(
                 $this->context,
                 $language_id,
-                $this->getUniqueInstallationId()
+                ''
             );
             $iframe_installation_url = \Nosto\Helper\IframeHelper::getUrl(
                 $account_iframe,
@@ -582,7 +575,7 @@ class NostoTagging extends Module
                 $meta = NostoTaggingMetaAccountIframe::loadData(
                     $this->context,
                     $language_id,
-                    $this->getUniqueInstallationId()
+                    ''
                 );
                 $url = \Nosto\Helper\IframeHelper::getUrl($meta, $account, $currentUser);
                 if (!empty($url)) {
@@ -613,16 +606,6 @@ class NostoTagging extends Module
         }
 
         return $template_file;
-    }
-
-    /**
-     * Returns a unique ID that identifies this PS installation.
-     *
-     * @return string the unique ID.
-     */
-    public function getUniqueInstallationId()
-    {
-        return sha1($this->name . _COOKIE_KEY_);
     }
 
     /**
@@ -669,54 +652,6 @@ class NostoTagging extends Module
     }
 
     /**
-     * Generates and renders the defualt tagging if not already added to the
-     * page
-     *
-     * @return string
-     */
-    public function getDefaultTagging()
-    {
-        $html = '';
-        if (
-            NostoTaggingHelperAccount::isContextConnected($this->context)
-            && self::$tagging_rendered === false
-        ) {
-            $html = $this->generateDefaultTagging();
-        }
-        self::$tagging_rendered = true;
-
-        return $html;
-    }
-
-    /**
-     * Generates the tagging based on controller
-     *
-     * @return string
-     */
-    public function generateDefaultTagging()
-    {
-        $html = '';
-        $html .= $this->display(__FILE__, CustomerTagging::get());
-        $html .= $this->display(__FILE__, CartTagging::get());
-        $html .= $this->display(__FILE__, VariationTagging::get());
-        if (NostoTaggingHelperController::isController('category')) {
-            $html .= $this->display(__FILE__, CategoryTagging::get());
-        } elseif (NostoTaggingHelperController::isController('manufacturer')) {
-            $html .= $this->display(__FILE__, BrandTagging::get());
-        } elseif (NostoTaggingHelperController::isController('search')) {
-            $html .= $this->display(__FILE__, SearchTagging::get());
-        } elseif (NostoTaggingHelperController::isController('product')) {
-            $html .= $this->display(__FILE__, ProductTagging::get());
-        } elseif (NostoTaggingHelperController::isController('order-confirmation')) {
-            $html .= $this->display(__FILE__, OrderTagging::get());
-        }
-        $html .= $this->display(__FILE__, 'views/templates/hook/top_nosto-elements.tpl');
-        $html .= $this->getHiddenRecommendationElements();
-
-        return $html;
-    }
-
-    /**
      * Hook for adding content to the top of every page.
      *
      * Adds customer and cart tagging.
@@ -726,7 +661,7 @@ class NostoTagging extends Module
      */
     public function hookDisplayTop()
     {
-        return $this->getDefaultTagging();
+        return DefaultTagging::get();
     }
 
     /**
@@ -740,7 +675,7 @@ class NostoTagging extends Module
      */
     public function hookDisplayNav1()
     {
-        return $this->getDefaultTagging();
+        return DefaultTagging::get();
     }
 
     /**
@@ -763,10 +698,7 @@ class NostoTagging extends Module
      */
     public function hookDisplayFooter()
     {
-        if (!NostoTaggingHelperAccount::isContextConnected($this->context)) {
-            return '';
-        }
-        $html = $this->getDefaultTagging();
+        $html = DefaultTagging::get();
         $html .= NostoRecommendationElement::get("nosto-page-footer");
         return $html;
     }
@@ -1046,7 +978,6 @@ class NostoTagging extends Module
 
     /**
      * Hook for adding content to the home page.
-     *
      * Adds nosto elements.
      *
      * @return string The HTML to output
@@ -1304,23 +1235,14 @@ class NostoTagging extends Module
 
     /**
      * Updates the exchange rates to Nosto when user logs in or logs out
-     *
-     * @param array $params
      */
-    public function hookDisplayBackOfficeTop(
-        /** @noinspection PhpUnusedParameterInspection */
-        array $params
-    ) {
+    public function hookDisplayBackOfficeTop()
+    {
         $this->checkNotifications();
     }
 
-    /**
-     * @param array $params
-     */
-    public function hookBackOfficeFooter(
-        /** @noinspection PhpUnusedParameterInspection */
-        array $params
-    ) {
+    public function hookBackOfficeFooter()
+    {
         return $this->updateExhangeRatesIfNeeded(false);
     }
 

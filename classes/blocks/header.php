@@ -41,8 +41,7 @@ class NostoHeaderContent {
             'server_address' => $server_address,
             'account_name' => $account->getName(),
             'nosto_version' => $this->version,
-            'nosto_unique_id' => $this->getUniqueInstallationId(),
-            'nosto_language' => Tools::strtolower($this->context->language->iso_code),
+            'nosto_language' => Tools::strtolower(Context::getContext()->language->iso_code),
             'add_to_cart_url' => $link->getPageLink('cart.php'),
             'static_token' => Tools::getToken(false),
             'disable_autoload' => (bool)!empty($hidden_recommendation_elements)
