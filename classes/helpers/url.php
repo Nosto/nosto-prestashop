@@ -198,7 +198,7 @@ class NostoTaggingHelperUrl
 
         if (version_compare(_PS_VERSION_, '1.5.0.0') === -1 || version_compare(_PS_VERSION_, '1.5.5.0') >= 0) {
             /** @var LinkCore $link */
-            $link = NostoTagging::buildLinkClass();
+            $link = NostoTaggingHelperLink::getLink();
             $url = $link->getProductLink($product, null, null, null, $id_lang, $id_shop);
         } else {
             // For PS versions 1.5.0.0 - 1.5.4.1 we always hard-code the urls to be in non-friendly format and fetch
@@ -241,7 +241,7 @@ class NostoTaggingHelperUrl
 
         if (version_compare(_PS_VERSION_, '1.5.0.0') === -1 || version_compare(_PS_VERSION_, '1.5.5.0') >= 0) {
             /** @var LinkCore $link */
-            $link = NostoTagging::buildLinkClass();
+            $link = NostoTaggingHelperLink::getLink();
             $url = $link->getCategoryLink($category, null, $id_lang, null, $id_shop);
         } else {
             // For PS versions 1.5.0.0 - 1.5.4.1 we always hard-code the urls to be in non-friendly format and fetch
@@ -284,7 +284,7 @@ class NostoTaggingHelperUrl
 
         if (version_compare(_PS_VERSION_, '1.5.0.0') === -1 || version_compare(_PS_VERSION_, '1.5.5.0') >= 0) {
             /** @var LinkCore $link */
-            $link = NostoTagging::buildLinkClass();
+            $link = NostoTaggingHelperLink::getLink();
             $url = $link->getPageLink($controller, true, $id_lang, null, false, $id_shop);
         } else {
             // For PS versions 1.5.0.0 - 1.5.4.1 we always hard-code the urls to be in non-friendly format and fetch
@@ -343,7 +343,7 @@ class NostoTaggingHelperUrl
             return $this->getBaseUrl($id_shop).'index.php?'.http_build_query($params);
         } else {
             /** @var LinkCore $link */
-            $link = NostoTagging::buildLinkClass();
+            $link = NostoTaggingHelperLink::getLink();
             return $link->getModuleLink($name, $controller, $params, null, $id_lang, $id_shop);
         }
     }

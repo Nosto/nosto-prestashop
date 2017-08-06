@@ -95,7 +95,7 @@ class NostoTaggingHelperContextFactory
 
         $forged_context->language = new Language($id_lang);
         $forged_context->shop = new Shop($id_shop);
-        $forged_context->link = NostoTagging::buildLinkClass();
+        $forged_context->link = NostoTaggingHelperLink::getLink();
         $forged_context->currency = isset($currency) ? $currency : Currency::getDefaultCurrency();
 
         return $forged_context;

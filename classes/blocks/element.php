@@ -23,24 +23,15 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-class PageTypeTagging {
+class NostoRecommendationElement {
 
-    /**
-     * Render page type tagging
-     *
-     * @param string $page_type
-     * @return string the rendered HTML
-     */
-    public static function get($page_type)
-    {
+    const ELEMENT = "<div class=\"nosto_element\" id=\"%s\"></div>";
+
+    public static function get($id) {
         if (!NostoTaggingHelperAccount::isContextConnected(Context::getContext())) {
             return '';
         }
 
-        Context::getContext()->smarty->assign(array(
-            'nosto_page_type' => $page_type,
-        ));
-
-        return 'views/templates/hook/top_page_type-tagging.tpl';
+        return sprintf(self::ELEMENT, $id);
     }
 }

@@ -23,24 +23,15 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-class PageTypeTagging {
+class NostoTaggingHelperLink {
 
-    /**
-     * Render page type tagging
-     *
-     * @param string $page_type
-     * @return string the rendered HTML
-     */
-    public static function get($page_type)
-    {
-        if (!NostoTaggingHelperAccount::isContextConnected(Context::getContext())) {
-            return '';
+    public static function getLink() {
+        if (Configuration::get('PS_SSL_ENABLED_EVERYWHERE')) {
+            $link = new Link('https://', 'https://');
+        } else {
+            $link = new Link('http://', 'http://');
         }
 
-        Context::getContext()->smarty->assign(array(
-            'nosto_page_type' => $page_type,
-        ));
-
-        return 'views/templates/hook/top_page_type-tagging.tpl';
+        return $link;
     }
 }

@@ -648,7 +648,7 @@ class NostoTagging extends Module
         $url_helper = Nosto::helper('nosto_tagging/url');
         $server_address = $url_helper->getServerAddress();
         /** @var LinkCore $link */
-        $link = self::buildLinkClass();
+        $link = NostoTaggingHelperLink::getLink();
         $hidden_recommendation_elements = $this->getHiddenRecommendationElements();
         $this->getSmarty()->assign(array(
             'server_address' => $server_address,
@@ -806,7 +806,7 @@ class NostoTagging extends Module
             return '';
         }
         $html = $this->getDefaultTagging();
-        $html .= $this->display(__FILE__, 'views/templates/hook/footer_nosto-elements.tpl');
+        $html .= NostoRecommendationElement::get("nosto-page-footer");
         return $html;
     }
 
@@ -830,11 +830,7 @@ class NostoTagging extends Module
      */
     public function hookDisplayLeftColumn()
     {
-        if (!NostoTaggingHelperAccount::isContextConnected($this->context)) {
-            return '';
-        }
-
-        return $this->display(__FILE__, 'views/templates/hook/left-column_nosto-elements.tpl');
+        return NostoRecommendationElement::get("nosto-column-left");
     }
 
     /**
@@ -857,11 +853,7 @@ class NostoTagging extends Module
      */
     public function hookDisplayRightColumn()
     {
-        if (!NostoTaggingHelperAccount::isContextConnected($this->context)) {
-            return '';
-        }
-
-        return $this->display(__FILE__, 'views/templates/hook/right-column_nosto-elements.tpl');
+        return NostoRecommendationElement::get("nosto-column-right");
     }
 
     /**
@@ -887,11 +879,11 @@ class NostoTagging extends Module
     public function hookDisplayFooterProduct(/** @noinspection PhpUnusedParameterInspection */
         array $params
     ) {
-        if (!NostoTaggingHelperAccount::isContextConnected($this->context)) {
-            return '';
-        }
-
-        return $this->display(__FILE__, 'views/templates/hook/footer-product_nosto-elements.tpl');
+        $html = '';
+        $html .= NostoRecommendationElement::get("nosto-page-product1");
+        $html .= NostoRecommendationElement::get("nosto-page-product2");
+        $html .= NostoRecommendationElement::get("nosto-page-product3");
+        return $html;
     }
 
     /**
@@ -920,11 +912,10 @@ class NostoTagging extends Module
         $customer_helper = Nosto::helper('nosto_tagging/customer');
         $customer_helper->updateNostoId();
 
-        if (!NostoTaggingHelperAccount::isContextConnected($this->context)) {
-            return '';
-        }
-
-        $html = $this->display(__FILE__, 'views/templates/hook/shopping-cart-footer_nosto-elements.tpl');
+        $html = '';
+        $html .= NostoRecommendationElement::get("nosto-page-cart1");
+        $html .= NostoRecommendationElement::get("nosto-page-cart2");
+        $html .= NostoRecommendationElement::get("nosto-page-cart3");
         $html .= $this->display(__FILE__, PageTypeTagging::get(self::PAGE_TYPE_CART));
         return $html;
     }
@@ -985,11 +976,7 @@ class NostoTagging extends Module
      */
     public function hookDisplayCategoryTop()
     {
-        if (!NostoTaggingHelperAccount::isContextConnected($this->context)) {
-            return '';
-        }
-
-        return $this->display(__FILE__, 'views/templates/hook/category-top_nosto-elements.tpl');
+        return NostoRecommendationElement::get("nosto-page-category1");
     }
 
     /**
@@ -1006,11 +993,7 @@ class NostoTagging extends Module
      */
     public function hookDisplayCategoryFooter()
     {
-        if (!NostoTaggingHelperAccount::isContextConnected($this->context)) {
-            return '';
-        }
-
-        return $this->display(__FILE__, 'views/templates/hook/category-footer_nosto-elements.tpl');
+        return NostoRecommendationElement::get("nosto-page-category2");
     }
 
     /**
@@ -1027,11 +1010,7 @@ class NostoTagging extends Module
      */
     public function hookDisplaySearchTop()
     {
-        if (!NostoTaggingHelperAccount::isContextConnected($this->context)) {
-            return '';
-        }
-
-        return $this->display(__FILE__, 'views/templates/hook/search-top_nosto-elements.tpl');
+        return NostoRecommendationElement::get("nosto-page-search1");
     }
 
     /**
@@ -1048,11 +1027,7 @@ class NostoTagging extends Module
      */
     public function hookDisplaySearchFooter()
     {
-        if (!NostoTaggingHelperAccount::isContextConnected($this->context)) {
-            return '';
-        }
-
-        return $this->display(__FILE__, 'views/templates/hook/search-footer_nosto-elements.tpl');
+        return NostoRecommendationElement::get("nosto-page-search2");
     }
 
     /**
@@ -1116,10 +1091,11 @@ class NostoTagging extends Module
      */
     public function hookDisplayHome()
     {
-        if (!NostoTaggingHelperAccount::isContextConnected($this->context)) {
-            return '';
-        }
-        $html = $this->display(__FILE__, 'views/templates/hook/home_nosto-elements.tpl');
+        $html = '';
+        $html .= NostoRecommendationElement::get("frontpage-nosto-1");
+        $html .= NostoRecommendationElement::get("frontpage-nosto-2");
+        $html .= NostoRecommendationElement::get("frontpage-nosto-3");
+        $html .= NostoRecommendationElement::get("frontpage-nosto-4");
         $html .= $this->display(__FILE__, PageTypeTagging::get(self::PAGE_TYPE_FRONT_PAGE));
         return $html;
     }
@@ -1516,21 +1492,5 @@ class NostoTagging extends Module
                 break;
             default:
         }
-    }
-
-    /**
-     * Returns link class initialized with https or http
-     *
-     * @return Link
-     */
-    public static function buildLinkClass()
-    {
-        if (Configuration::get('PS_SSL_ENABLED_EVERYWHERE')) {
-            $link = new Link('https://', 'https://');
-        } else {
-            $link = new Link('http://', 'http://');
-        }
-
-        return $link;
     }
 }
