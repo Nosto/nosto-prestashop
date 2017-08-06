@@ -23,35 +23,26 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-class PageTypeTagging {
-
-    private static $controllers = array(
-        "category" => "category",
-        "manufacturer" => "category",
-        "search" => "search",
-        "product" => "product",
-        "order-confirmation" => "order",
-        "pagenotfound" => "notfound",
-        "404" => "notfound",
-        "index" => "front",
-        "cart" => "cart"
-    );
+class NostoTaggingHelperController {
 
     /**
-     * Render page type tagging
+     * Checks if the given controller is the current one.
      *
-     * @return string the rendered HTML
+     * @param string $name the controller name
+     * @return bool true if the given name is the same as the controllers php_self variable, false
+     *     otherwise.
      */
-    public static function get()
+    public static function isController($name)
     {
-        if (!NostoTaggingHelperAccount::isContextConnected(Context::getContext())) {
-            return '';
+        $result = false;
+        // For prestashop 1.5 and 1.6 we can in most cases access the current controllers php_self property.
+        if (!empty(Context::getContext()->controller->php_self)) {
+            $result = Context::getContext()->controller->php_self === $name;
+        } elseif (($controller = Tools::getValue('controller')) !== false) {
+            $result = $controller === $name;
         }
 
-        Context::getContext()->smarty->assign(array(
-            'nosto_page_type' => self::$controllers[''],
-        ));
-
-        return 'views/templates/hook/top_page_type-tagging.tpl';
+        // Fallback when controller cannot be recognised.
+        return $result;
     }
 }

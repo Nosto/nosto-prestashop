@@ -58,17 +58,6 @@ class NostoTagging extends Module
     const MODULE_NAME = 'nostotagging';
 
     /**
-     * Page type constants
-     */
-    const PAGE_TYPE_FRONT_PAGE = 'front';
-    const PAGE_TYPE_CART = 'cart';
-    const PAGE_TYPE_PRODUCT = 'product';
-    const PAGE_TYPE_CATEGORY = 'category';
-    const PAGE_TYPE_SEARCH = 'search';
-    const PAGE_TYPE_NOTFOUND = 'notfound';
-    const PAGE_TYPE_ORDER = 'order';
-
-    /**
      * @var string the algorithm to use for hashing visitor id.
      */
     const VISITOR_HASH_ALGO = 'sha256';
@@ -638,40 +627,13 @@ class NostoTagging extends Module
 
     /**
      * Hook for adding content to the <head> section of the HTML pages.
-     *
      * Adds the Nosto embed script.
      *
      * @return string The HTML to output
      */
     public function hookDisplayHeader()
     {
-        $account = NostoTaggingHelperAccount::findByContext($this->context);
-        if ($account === null) {
-            return '';
-        }
-
-        /** @var NostoTaggingHelperUrl $url_helper */
-        $url_helper = Nosto::helper('nosto_tagging/url');
-        $server_address = $url_helper->getServerAddress();
-        /** @var LinkCore $link */
-        $link = NostoTaggingHelperLink::getLink();
-        $hidden_recommendation_elements = $this->getHiddenRecommendationElements();
-        $this->getSmarty()->assign(array(
-            'server_address' => $server_address,
-            'account_name' => $account->getName(),
-            'nosto_version' => $this->version,
-            'nosto_unique_id' => $this->getUniqueInstallationId(),
-            'nosto_language' => Tools::strtolower($this->context->language->iso_code),
-            'add_to_cart_url' => $link->getPageLink('cart.php'),
-            'static_token' => Tools::getToken(false),
-            'disable_autoload' => (bool)!empty($hidden_recommendation_elements)
-        ));
-
-        $html = $this->display(__FILE__, 'views/templates/hook/header_meta-tags.tpl');
-        $html .= $this->display(__FILE__, 'views/templates/hook/header_embed-script.tpl');
-        $html .= $this->display(__FILE__, 'views/templates/hook/header_add-to-cart.tpl');
-
-        return $html;
+        return NostoHeaderContent::get();
     }
 
     /**
@@ -737,24 +699,16 @@ class NostoTagging extends Module
         $html .= $this->display(__FILE__, CustomerTagging::get());
         $html .= $this->display(__FILE__, CartTagging::get());
         $html .= $this->display(__FILE__, VariationTagging::get());
-        if ($this->isController('category')) {
-
+        if (NostoTaggingHelperController::isController('category')) {
             $html .= $this->display(__FILE__, CategoryTagging::get());
-            $html .= $this->display(__FILE__, PageTypeTagging::get(self::PAGE_TYPE_CATEGORY));
-        } elseif ($this->isController('manufacturer')) {
+        } elseif (NostoTaggingHelperController::isController('manufacturer')) {
             $html .= $this->display(__FILE__, BrandTagging::get());
-            $html .= $this->display(__FILE__, PageTypeTagging::get(self::PAGE_TYPE_CATEGORY));
-        } elseif ($this->isController('search')) {
+        } elseif (NostoTaggingHelperController::isController('search')) {
             $html .= $this->display(__FILE__, SearchTagging::get());
-            $html .= $this->display(__FILE__, PageTypeTagging::get(self::PAGE_TYPE_SEARCH));
-        } elseif ($this->isController('product')) {
+        } elseif (NostoTaggingHelperController::isController('product')) {
             $html .= $this->display(__FILE__, ProductTagging::get());
-            $html .= $this->display(__FILE__, PageTypeTagging::get(self::PAGE_TYPE_PRODUCT));
-        } elseif ($this->isController('order-confirmation')) {
+        } elseif (NostoTaggingHelperController::isController('order-confirmation')) {
             $html .= $this->display(__FILE__, OrderTagging::get());
-            $html .= $this->display(__FILE__, PageTypeTagging::get(self::PAGE_TYPE_ORDER));
-        } elseif ($this->isController('pagenotfound') || $this->isController('404')) {
-            $html .= $this->display(__FILE__, PageTypeTagging::get(self::PAGE_TYPE_NOTFOUND));
         }
         $html .= $this->display(__FILE__, 'views/templates/hook/top_nosto-elements.tpl');
         $html .= $this->getHiddenRecommendationElements();
@@ -880,7 +834,6 @@ class NostoTagging extends Module
      * Adds product tagging.
      * Adds nosto elements.
      *
-     * @param array $params
      * @return string The HTML to output
      */
     public function hookDisplayFooterProduct()
@@ -921,7 +874,6 @@ class NostoTagging extends Module
         $html .= NostoRecommendationElement::get("nosto-page-cart1");
         $html .= NostoRecommendationElement::get("nosto-page-cart2");
         $html .= NostoRecommendationElement::get("nosto-page-cart3");
-        $html .= $this->display(__FILE__, PageTypeTagging::get(self::PAGE_TYPE_CART));
         return $html;
     }
 
@@ -1106,7 +1058,6 @@ class NostoTagging extends Module
         $html .= NostoRecommendationElement::get("frontpage-nosto-2");
         $html .= NostoRecommendationElement::get("frontpage-nosto-3");
         $html .= NostoRecommendationElement::get("frontpage-nosto-4");
-        $html .= $this->display(__FILE__, PageTypeTagging::get(self::PAGE_TYPE_FRONT_PAGE));
         return $html;
     }
 
@@ -1232,29 +1183,31 @@ class NostoTagging extends Module
      */
     protected function getHiddenRecommendationElements()
     {
-        if ($this->isController('index')) {
+        if (NostoTaggingHelperController::isController('index')) {
             // The home page.
             return $this->display(__FILE__, 'views/templates/hook/home_hidden-nosto-elements.tpl');
-        } elseif ($this->isController('product')) {
+        } elseif (NostoTaggingHelperController::isController('product')) {
             // The product page.
             return $this->display(__FILE__,
                 'views/templates/hook/footer-product_hidden-nosto-elements.tpl');
-        } elseif ($this->isController('order') && (int)Tools::getValue('step', 0) === 0) {
+        } elseif (NostoTaggingHelperController::isController('order') && (int)Tools::getValue('step', 0) === 0) {
             // The cart summary page.
             return $this->display(__FILE__,
                 'views/templates/hook/shopping-cart-footer_hidden-nosto-elements.tpl');
-        } elseif ($this->isController('category') || $this->isController('manufacturer')) {
+        } elseif (NostoTaggingHelperController::isController('category')
+            || NostoTaggingHelperController::isController('manufacturer')) {
             // The category/manufacturer page.
             return $this->display(__FILE__,
                 'views/templates/hook/category-footer_hidden-nosto-elements.tpl');
-        } elseif ($this->isController('search')) {
+        } elseif (NostoTaggingHelperController::isController('search')) {
             // The search page.
             return $this->display(__FILE__,
                 'views/templates/hook/search_hidden-nosto-elements.tpl');
-        } elseif ($this->isController('pagenotfound') || $this->isController('404')) {
+        } elseif (NostoTaggingHelperController::isController('pagenotfound')
+            || NostoTaggingHelperController::isController('404')) {
             // The search page.
             return $this->display(__FILE__, 'views/templates/hook/404_hidden_nosto-elements.tpl');
-        } elseif ($this->isController('order-confirmation')) {
+        } elseif (NostoTaggingHelperController::isController('order-confirmation')) {
             // The search page.
             return $this->display(__FILE__,
                 'views/templates/hook/order-confirmation_hidden_nosto-elements.tpl');
@@ -1262,27 +1215,6 @@ class NostoTagging extends Module
             // If the current page is not one of the ones we want to show recommendations on, just return empty.
             return '';
         }
-    }
-
-    /**
-     * Checks if the given controller is the current one.
-     *
-     * @param string $name the controller name
-     * @return bool true if the given name is the same as the controllers php_self variable, false
-     *     otherwise.
-     */
-    protected function isController($name)
-    {
-        $result = false;
-        // For prestashop 1.5 and 1.6 we can in most cases access the current controllers php_self property.
-        if (!empty($this->context->controller->php_self)) {
-            $result = $this->context->controller->php_self === $name;
-        } elseif (($controller = Tools::getValue('controller')) !== false) {
-            $result = $controller === $name;
-        }
-
-        // Fallback when controller cannot be recognised.
-        return $result;
     }
 
     /**
@@ -1493,7 +1425,7 @@ class NostoTagging extends Module
             foreach ($notifications as $notification) {
                 if (
                     $notification->getNotificationType() === \Nosto\Object\Notification::TYPE_MISSING_INSTALLATION
-                    && !$this->isController('AdminModules')
+                    && !NostoTaggingHelperController::isController('AdminModules')
                 ) {
                     continue;
                 }
