@@ -45,12 +45,14 @@ class NostoTagging extends Module
 {
     /**
      * The version of the Nosto plug-in
+     *
      * @var string
      */
     const PLUGIN_VERSION = '2.8.3';
 
     /**
      * Internal name of the Nosto plug-in
+     *
      * @var string
      */
     const MODULE_NAME = 'nostotagging';
@@ -135,6 +137,7 @@ class NostoTagging extends Module
      * Constructor.
      *
      * Defines module attributes.
+     *
      * @suppress PhanTypeMismatchProperty
      */
     public function __construct()
@@ -215,11 +218,11 @@ class NostoTagging extends Module
                 }
 
                 $success = $this->registerHook('actionObjectUpdateAfter')
-                && $this->registerHook('actionObjectDeleteAfter')
-                && $this->registerHook('actionObjectAddAfter')
-                && $this->registerHook('actionObjectCurrencyUpdateAfter')
-                && $this->registerHook('displayBackOfficeTop')
-                && $this->registerHook('displayBackOfficeHeader');
+                    && $this->registerHook('actionObjectDeleteAfter')
+                    && $this->registerHook('actionObjectAddAfter')
+                    && $this->registerHook('actionObjectCurrencyUpdateAfter')
+                    && $this->registerHook('displayBackOfficeTop')
+                    && $this->registerHook('displayBackOfficeHeader');
                 // New hooks in 1.7
                 if (version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
                     $this->registerHook('displayNav1');
@@ -279,10 +282,10 @@ class NostoTagging extends Module
             $id_shop_group = $this->context->shop->id_shop_group;
         }
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $language_id = (int)Tools::getValue($this->name.'_current_language');
+            $language_id = (int)Tools::getValue($this->name . '_current_language');
             $current_language = $this->ensureAdminLanguage($languages, $language_id);
             if (Shop::getContext() !== Shop::CONTEXT_SHOP) {
-            // Do nothing.
+                // Do nothing.
                 // After the redirect this will be checked again and an error message is outputted.
             } elseif ($current_language['id_lang'] != $language_id) {
                 NostoTaggingHelperFlashMessage::add('error', $this->l('Language cannot be empty.'));
@@ -290,7 +293,7 @@ class NostoTagging extends Module
                 Tools::isSubmit('submit_nostotagging_new_account')
                 || Tools::getValue('nostotagging_account_action') === 'newAccount'
             ) {
-                $account_email = (string)Tools::getValue($this->name.'_account_email');
+                $account_email = (string)Tools::getValue($this->name . '_account_email');
                 if (empty($account_email)) {
                     NostoTaggingHelperFlashMessage::add(
                         'error',
@@ -304,7 +307,7 @@ class NostoTagging extends Module
                 } else {
                     try {
                         if (Tools::isSubmit('nostotagging_account_details')) {
-                            $account_details = (object) Tools::jsonDecode(Tools::getValue('nostotagging_account_details'));
+                            $account_details = (object)Tools::jsonDecode(Tools::getValue('nostotagging_account_details'));
                         } else {
                             $account_details = false;
                         }
@@ -351,7 +354,8 @@ class NostoTagging extends Module
                 || Tools::getValue('nostotagging_account_action') === 'connectAccount'
                 || Tools::getValue('nostotagging_account_action') === 'syncAccount'
             ) {
-                $meta = NostoTaggingMetaOauth::loadData($this->context, $language_id, $this->name, $this->_path);
+                $meta = NostoTaggingMetaOauth::loadData($this->context, $language_id, $this->name,
+                    $this->_path);
                 Tools::redirect(Nosto\Helper\OAuthHelper::getAuthorizationUrl($meta), '');
                 die();
             } elseif (
@@ -362,7 +366,8 @@ class NostoTagging extends Module
                 $helper_config->clearCache();
                 NostoTaggingHelperAccount::delete($this->context, $account, $language_id, null);
             } elseif (Tools::isSubmit('submit_nostotagging_update_exchange_rates')) {
-                $nosto_account = NostoTaggingHelperAccount::find($language_id, $id_shop_group, $id_shop);
+                $nosto_account = NostoTaggingHelperAccount::find($language_id, $id_shop_group,
+                    $id_shop);
                 $operation = new RatesService($nosto_account, $this->context);
                 if ($nosto_account && $operation->updateCurrencyExchangeRates()) {
                     NostoTaggingHelperFlashMessage::add(
@@ -510,7 +515,7 @@ class NostoTagging extends Module
                 $account_iframe,
                 $account,
                 $currentUser,
-                array('v'=>1)
+                array('v' => 1)
             );
         } else {
             $iframe_installation_url = null;
@@ -518,17 +523,17 @@ class NostoTagging extends Module
         /** @var NostoTaggingHelperImage $helper_images */
         $helper_images = Nosto::helper('nosto_tagging/image');
         $this->getSmarty()->assign(array(
-            $this->name.'_form_action' => $this->getAdminUrl(),
-            $this->name.'_create_account' => $this->getAdminUrl(),
-            $this->name.'_delete_account' => $this->getAdminUrl(),
-            $this->name.'_connect_account' => $this->getAdminUrl(),
-            $this->name.'_has_account' => ($account !== null),
-            $this->name.'_account_name' => ($account !== null) ? $account->getName() : null,
-            $this->name.'_account_email' => $account_email,
-            $this->name.'_account_authorized' => ($account !== null) ? $account->isConnectedToNosto() : false,
-            $this->name.'_languages' => $languages,
-            $this->name.'_current_language' => $current_language,
-            $this->name.'_translations' => array(
+            $this->name . '_form_action' => $this->getAdminUrl(),
+            $this->name . '_create_account' => $this->getAdminUrl(),
+            $this->name . '_delete_account' => $this->getAdminUrl(),
+            $this->name . '_connect_account' => $this->getAdminUrl(),
+            $this->name . '_has_account' => ($account !== null),
+            $this->name . '_account_name' => ($account !== null) ? $account->getName() : null,
+            $this->name . '_account_email' => $account_email,
+            $this->name . '_account_authorized' => ($account !== null) ? $account->isConnectedToNosto() : false,
+            $this->name . '_languages' => $languages,
+            $this->name . '_current_language' => $current_language,
+            $this->name . '_translations' => array(
                 'installed_heading' => sprintf(
                     $this->l('You have installed Nosto to your %s shop'),
                     $current_language['name']
@@ -541,7 +546,7 @@ class NostoTagging extends Module
                     $this->l('Install Nosto to your %s shop'),
                     $current_language['name']
                 ),
-                'exchange_rate_crontab_example' =>sprintf(
+                'exchange_rate_crontab_example' => sprintf(
                     '0 0 * * * curl --silent %s > /dev/null 2>&1',
                     $helper_url->getModuleUrl(
                         $this->name,
@@ -563,7 +568,8 @@ class NostoTagging extends Module
                 $id_shop_group,
                 $id_shop
             ),
-            $this->name.'_ps_version_class' => 'ps-'.str_replace('.', '', Tools::substr(_PS_VERSION_, 0, 3)),
+            $this->name . '_ps_version_class' => 'ps-' . str_replace('.', '',
+                    Tools::substr(_PS_VERSION_, 0, 3)),
             'missing_tokens' => $missing_tokens,
             'iframe_installation_url' => $iframe_installation_url,
             'iframe_origin' => $helper_url->getIframeOrigin(),
@@ -575,7 +581,7 @@ class NostoTagging extends Module
                 $id_shop
             )
         ));
-       // Try to login employee to Nosto in order to get a url to the internal setting pages,
+        // Try to login employee to Nosto in order to get a url to the internal setting pages,
         // which are then shown in an iframe on the module config page.
         if (
             $account
@@ -614,7 +620,7 @@ class NostoTagging extends Module
     {
         $template_file = 'views/templates/admin/config-bootstrap.tpl';
         if (_PS_VERSION_ < '1.6') {
-            $template_file  = 'views/templates/admin/legacy-config-bootstrap.tpl';
+            $template_file = 'views/templates/admin/legacy-config-bootstrap.tpl';
         }
 
         return $template_file;
@@ -627,7 +633,7 @@ class NostoTagging extends Module
      */
     public function getUniqueInstallationId()
     {
-        return sha1($this->name._COOKIE_KEY_);
+        return sha1($this->name . _COOKIE_KEY_);
     }
 
     /**
@@ -695,7 +701,7 @@ class NostoTagging extends Module
         // Nosto menu item in PS >= 1.6.
         $ctrl = $this->context->controller;
         if ($ctrl instanceof AdminController && method_exists($ctrl, 'addCss')) {
-            $ctrl->addCss($this->_path.'views/css/nostotagging-back-office.css');
+            $ctrl->addCss($this->_path . 'views/css/nostotagging-back-office.css');
         }
         $this->updateExhangeRatesIfNeeded(false);
     }
@@ -774,6 +780,7 @@ class NostoTagging extends Module
      *
      * Adds customer and cart tagging.
      * Adds nosto elements.
+     *
      * @since Prestashop 1.7.0.0
      * @return string The HTML to output
      */
@@ -876,9 +883,8 @@ class NostoTagging extends Module
      * @param array $params
      * @return string The HTML to output
      */
-    public function hookDisplayFooterProduct(/** @noinspection PhpUnusedParameterInspection */
-        array $params
-    ) {
+    public function hookDisplayFooterProduct()
+    {
         $html = '';
         $html .= NostoRecommendationElement::get("nosto-page-product1");
         $html .= NostoRecommendationElement::get("nosto-page-product2");
@@ -907,7 +913,6 @@ class NostoTagging extends Module
      */
     public function hookDisplayShoppingCartFooter()
     {
-        // Update the link between nosto users and prestashop customers.
         /* @var NostoTaggingHelperCustomer $customer_helper */
         $customer_helper = Nosto::helper('nosto_tagging/customer');
         $customer_helper->updateNostoId();
@@ -940,9 +945,8 @@ class NostoTagging extends Module
      * @param array $params
      * @return string The HTML to output
      */
-    public function hookDisplayOrderConfirmation(/** @noinspection PhpUnusedParameterInspection */
-        array $params
-    ) {
+    public function hookDisplayOrderConfirmation()
+    {
         if (!NostoTaggingHelperAccount::isContextConnected($this->context)) {
             return '';
         }
@@ -967,7 +971,8 @@ class NostoTagging extends Module
      *
      * Adds nosto elements.
      *
-     * Please note that in order for this hook to be executed, it will have to be added to the theme category.tpl file.
+     * Please note that in order for this hook to be executed, it will have to be added to the
+     * theme category.tpl file.
      *
      * - Theme category.tpl: add the below line to the top of the file
      *   {hook h='displayCategoryTop'}
@@ -984,7 +989,8 @@ class NostoTagging extends Module
      *
      * Adds nosto elements.
      *
-     * Please note that in order for this hook to be executed, it will have to be added to the theme category.tpl file.
+     * Please note that in order for this hook to be executed, it will have to be added to the
+     * theme category.tpl file.
      *
      * - Theme category.tpl: add the below line to the end of the file
      *   {hook h='displayCategoryFooter'}
@@ -1001,7 +1007,8 @@ class NostoTagging extends Module
      *
      * Adds nosto elements.
      *
-     * Please note that in order for this hook to be executed, it will have to be added to the theme search.tpl file.
+     * Please note that in order for this hook to be executed, it will have to be added to the
+     * theme search.tpl file.
      *
      * - Theme search.tpl: add the below line to the top of the file
      *   {hook h='displaySearchTop'}
@@ -1018,7 +1025,8 @@ class NostoTagging extends Module
      *
      * Adds nosto elements.
      *
-     * Please note that in order for this hook to be executed, it will have to be added to the theme search.tpl file.
+     * Please note that in order for this hook to be executed, it will have to be added to the
+     * theme search.tpl file.
      *
      * - Theme search.tpl: add the below line to the end of the file
      *   {hook h='displaySearchFooter'}
@@ -1031,7 +1039,8 @@ class NostoTagging extends Module
     }
 
     /**
-     * Hook for updating the customer link table with the Prestashop customer id and the Nosto customer id.
+     * Hook for updating the customer link table with the Prestashop customer id and the Nosto
+     * customer id.
      */
     public function hookDisplayPaymentTop()
     {
@@ -1053,8 +1062,9 @@ class NostoTagging extends Module
     /**
      * Hook for sending order confirmations to Nosto via the API.
      *
-     * This is a fallback for the regular order tagging on the "order confirmation page", as there are cases when
-     * the customer does not get redirected back to the shop after the payment is completed.
+     * This is a fallback for the regular order tagging on the "order confirmation page", as there
+     * are cases when the customer does not get redirected back to the shop after the payment is
+     * completed.
      *
      * @param array $params
      */
@@ -1065,7 +1075,7 @@ class NostoTagging extends Module
             if ($order instanceof Order === false) {
                 return;
             }
-            /* @var NostoTaggingHelperOrderOperation $order_operation*/
+            /* @var NostoTaggingHelperOrderOperation $order_operation */
             $order_operation = Nosto::helper('nosto_tagging/order_operation');
             $order_operation->send($order);
         }
@@ -1178,7 +1188,8 @@ class NostoTagging extends Module
     }
 
     /**
-     * Hook called during an the validation of an order, the status of which being something other than
+     * Hook called during an the validation of an order, the status of which being something other
+     * than
      * "canceled" or "Payment error", for each of the order's item
      *
      * @see NostoTagging::hookActionObjectUpdateAfter
@@ -1213,34 +1224,40 @@ class NostoTagging extends Module
 
     /**
      * Returns hidden nosto recommendation elements for the current controller.
-     * These are used as a fallback for showing recommendations if the appropriate hooks are not present in the theme.
-     * The hidden elements are put into place and shown in the shop with JavaScript.
+     * These are used as a fallback for showing recommendations if the appropriate hooks are not
+     * present in the theme. The hidden elements are put into place and shown in the shop with
+     * JavaScript.
      *
      * @return string the html.
      */
     protected function getHiddenRecommendationElements()
     {
         if ($this->isController('index')) {
-        // The home page.
+            // The home page.
             return $this->display(__FILE__, 'views/templates/hook/home_hidden-nosto-elements.tpl');
         } elseif ($this->isController('product')) {
-        // The product page.
-            return $this->display(__FILE__, 'views/templates/hook/footer-product_hidden-nosto-elements.tpl');
+            // The product page.
+            return $this->display(__FILE__,
+                'views/templates/hook/footer-product_hidden-nosto-elements.tpl');
         } elseif ($this->isController('order') && (int)Tools::getValue('step', 0) === 0) {
-        // The cart summary page.
-            return $this->display(__FILE__, 'views/templates/hook/shopping-cart-footer_hidden-nosto-elements.tpl');
+            // The cart summary page.
+            return $this->display(__FILE__,
+                'views/templates/hook/shopping-cart-footer_hidden-nosto-elements.tpl');
         } elseif ($this->isController('category') || $this->isController('manufacturer')) {
-        // The category/manufacturer page.
-            return $this->display(__FILE__, 'views/templates/hook/category-footer_hidden-nosto-elements.tpl');
+            // The category/manufacturer page.
+            return $this->display(__FILE__,
+                'views/templates/hook/category-footer_hidden-nosto-elements.tpl');
         } elseif ($this->isController('search')) {
-        // The search page.
-            return $this->display(__FILE__, 'views/templates/hook/search_hidden-nosto-elements.tpl');
+            // The search page.
+            return $this->display(__FILE__,
+                'views/templates/hook/search_hidden-nosto-elements.tpl');
         } elseif ($this->isController('pagenotfound') || $this->isController('404')) {
-        // The search page.
+            // The search page.
             return $this->display(__FILE__, 'views/templates/hook/404_hidden_nosto-elements.tpl');
         } elseif ($this->isController('order-confirmation')) {
-        // The search page.
-            return $this->display(__FILE__, 'views/templates/hook/order-confirmation_hidden_nosto-elements.tpl');
+            // The search page.
+            return $this->display(__FILE__,
+                'views/templates/hook/order-confirmation_hidden_nosto-elements.tpl');
         } else {
             // If the current page is not one of the ones we want to show recommendations on, just return empty.
             return '';
@@ -1251,7 +1268,8 @@ class NostoTagging extends Module
      * Checks if the given controller is the current one.
      *
      * @param string $name the controller name
-     * @return bool true if the given name is the same as the controllers php_self variable, false otherwise.
+     * @return bool true if the given name is the same as the controllers php_self variable, false
+     *     otherwise.
      */
     protected function isController($name)
     {
@@ -1269,13 +1287,14 @@ class NostoTagging extends Module
 
     /**
      * Returns the admin url.
-     * Note the url is parsed from the current url, so this can only work if called when on the admin page.
+     * Note the url is parsed from the current url, so this can only work if called when on the
+     * admin page.
      *
      * @return string the url.
      */
     protected function getAdminUrl()
     {
-        $current_url = Tools::getHttpHost(true).(isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '');
+        $current_url = Tools::getHttpHost(true) . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '');
         $parsed_url = Nosto\Request\Http\HttpRequest::parseUrl($current_url);
         $parsed_query_string = Nosto\Request\Http\HttpRequest::parseQueryString($parsed_url['query']);
         $valid_params = array(
@@ -1308,7 +1327,10 @@ class NostoTagging extends Module
         $success = true;
         if (!empty(self::$custom_hooks)) {
             foreach (self::$custom_hooks as $hook) {
-                $callback = array('Hook', (method_exists('Hook', 'getIdByName')) ? 'getIdByName' : 'get');
+                $callback = array(
+                    'Hook',
+                    (method_exists('Hook', 'getIdByName')) ? 'getIdByName' : 'get'
+                );
                 $id_hook = call_user_func($callback, $hook['name']);
                 if (empty($id_hook)) {
                     $new_hook = new Hook();
@@ -1353,7 +1375,8 @@ class NostoTagging extends Module
      *
      * @param array $params
      */
-    public function hookDisplayBackOfficeTop(/** @noinspection PhpUnusedParameterInspection */
+    public function hookDisplayBackOfficeTop(
+        /** @noinspection PhpUnusedParameterInspection */
         array $params
     ) {
         $this->checkNotifications();
@@ -1362,11 +1385,13 @@ class NostoTagging extends Module
     /**
      * @param array $params
      */
-    public function hookBackOfficeFooter(/** @noinspection PhpUnusedParameterInspection */
+    public function hookBackOfficeFooter(
+        /** @noinspection PhpUnusedParameterInspection */
         array $params
     ) {
         return $this->updateExhangeRatesIfNeeded(false);
     }
+
     /**
      * Defines exchange rates updated for current session
      */
@@ -1407,7 +1432,8 @@ class NostoTagging extends Module
      *
      * @param array $params
      */
-    public function hookActionObjectCurrencyUpdateAfter(/** @noinspection PhpUnusedParameterInspection */
+    public function hookActionObjectCurrencyUpdateAfter(
+        /** @noinspection PhpUnusedParameterInspection */
         array $params
     ) {
         return $this->updateExhangeRatesIfNeeded(true);
@@ -1462,7 +1488,7 @@ class NostoTagging extends Module
         /* @var NostoTaggingHelperNotification $helper_notification */
         $helper_notification = Nosto::helper('nosto_tagging/notification');
         $notifications = $helper_notification->getAll();
-        if (is_array($notifications) && count($notifications)>0) {
+        if (is_array($notifications) && count($notifications) > 0) {
             /* @var NostoTaggingAdminNotification $notification */
             foreach ($notifications as $notification) {
                 if (
