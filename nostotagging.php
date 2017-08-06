@@ -109,16 +109,6 @@ class NostoTagging extends Module
     const PAGE_TYPE_ORDER = 'order';
 
     /**
-     * Nosto cookie name
-     */
-    const COOKIE_NAME = '2c_cId';
-
-    /**
-     * Global cookie scope
-     */
-    const GLOBAL_COOKIES = '_COOKIE';
-
-    /**
      * @var string the algorithm to use for hashing visitor id.
      */
     const VISITOR_HASH_ALGO = 'sha256';
@@ -818,170 +808,32 @@ class NostoTagging extends Module
     public function generateDefaultTagging()
     {
         $html = '';
-        $html .= $this->getCustomerTagging();
-        $html .= $this->getCartTagging();
-        $html .= $this->getPriceVariationTagging();
+        $html .= $this->display(__FILE__, CustomerTagging::get());
+        $html .= $this->display(__FILE__, CartTagging::get());
+        $html .= $this->display(__FILE__, VariationTagging::get());
         if ($this->isController('category')) {
-            $category = $this->resolveCategoryInContext();
 
-            if ($category instanceof Category) {
-                $html .= $this->getCategoryTagging($category);
-                $html .= $this->getPageTypeTagging(self::PAGE_TYPE_CATEGORY);
-            }
+            $html .= $this->display(__FILE__, CategoryTagging::get());
+            $html .= $this->display(__FILE__, PageTypeTagging::get(self::PAGE_TYPE_CATEGORY));
         } elseif ($this->isController('manufacturer')) {
-            $manufacturer = $this->resolveManufacturerInContext();
-
-            if ($manufacturer instanceof Manufacturer) {
-                $html .= $this->getBrandTagging($manufacturer);
-            }
+            $html .= $this->display(__FILE__, BrandTagging::get());
+            $html .= $this->display(__FILE__, PageTypeTagging::get(self::PAGE_TYPE_CATEGORY));
         } elseif ($this->isController('search')) {
-            $search_term = Tools::getValue('search_query', Tools::getValue('s'));
-            if (!is_null($search_term)) {
-                $html .= $this->getSearchTagging($search_term);
-                $html .= $this->getPageTypeTagging(self::PAGE_TYPE_SEARCH);
-            }
+            $html .= $this->display(__FILE__, SearchTagging::get());
+            $html .= $this->display(__FILE__, PageTypeTagging::get(self::PAGE_TYPE_SEARCH));
         } elseif ($this->isController('product')) {
-            $product = $this->resolveProductInContext();
-            $category = $this->resolveCategoryInContext();
-
-            if ($product instanceof Product) {
-                $html .= $this->getProductTagging($product, $category);
-                $html .= $this->getPageTypeTagging(self::PAGE_TYPE_PRODUCT);
-            }
+            $html .= $this->display(__FILE__, ProductTagging::get());
+            $html .= $this->display(__FILE__, PageTypeTagging::get(self::PAGE_TYPE_PRODUCT));
         } elseif ($this->isController('order-confirmation')) {
-            $order = $this->resolveOrderInContext();
-            if ($order instanceof Order) {
-                $html .= $this->getOrderTagging($order);
-                $html .= $this->getPageTypeTagging(self::PAGE_TYPE_ORDER);
-            }
+            $html .= $this->display(__FILE__, OrderTagging::get());
+            $html .= $this->display(__FILE__, PageTypeTagging::get(self::PAGE_TYPE_ORDER));
         } elseif ($this->isController('pagenotfound') || $this->isController('404')) {
-            $html .= $this->getPageTypeTagging(self::PAGE_TYPE_NOTFOUND);
+            $html .= $this->display(__FILE__, PageTypeTagging::get(self::PAGE_TYPE_NOTFOUND));
         }
         $html .= $this->display(__FILE__, 'views/templates/hook/top_nosto-elements.tpl');
         $html .= $this->getHiddenRecommendationElements();
 
         return $html;
-    }
-
-    /**
-     * Tries to resolve current / active order confirmation in context
-     *
-     * @return Order|null
-     */
-    protected function resolveOrderInContext()
-    {
-        $order = null;
-        if ($id_order = (int)Tools::getValue('id_order')) {
-            $order = new Order($id_order);
-        }
-        if (
-            $order instanceof Order === false
-            || !Validate::isLoadedObject($order)
-        ) {
-            $order = null;
-        }
-
-        return $order;
-    }
-
-    /**
-     * Tries to resolve current / active manufacturer in context
-     *
-     * @return Manufacturer|null
-     * @suppress PhanUndeclaredMethod
-     */
-    protected function resolveManufacturerInContext()
-    {
-        $manufacturer = null;
-        if (method_exists($this->context->controller, 'getManufacturer')) {
-            $manufacturer = $this->context->controller->getManufacturer();
-        }
-        if ($manufacturer instanceof Manufacturer == false) {
-            $id_manufacturer = null;
-            if (Tools::getValue('id_manufacturer')) {
-                $id_manufacturer = Tools::getValue('id_manufacturer');
-            }
-            if ($id_manufacturer) {
-                $manufacturer = new Manufacturer((int)$id_manufacturer, $this->context->language->id);
-            }
-        }
-        if (
-            $manufacturer instanceof Manufacturer === false
-            || !Validate::isLoadedObject($manufacturer)
-        ) {
-            $manufacturer = null;
-        }
-
-        return $manufacturer;
-    }
-
-    /**
-     * Tries to resolve current / active category in context
-     *
-     * @return Category|null
-     * @suppress PhanUndeclaredMethod
-     */
-    protected function resolveCategoryInContext()
-    {
-        $category = null;
-        if (method_exists($this->context->controller, 'getCategory')) {
-            $category = $this->context->controller->getCategory();
-        }
-        if ($category instanceof Category == false) {
-            $id_category = null;
-            if (Tools::getValue('id_category')) {
-                $id_category = Tools::getValue('id_category');
-            } /** @noinspection PhpUndefinedFieldInspection */ elseif (
-                isset($this->context->cookie)
-                && ($this->context->cookie->last_visited_category)
-            ) {
-                /** @noinspection PhpUndefinedFieldInspection */
-                $id_category = $this->context->cookie->last_visited_category;
-            }
-            if ($id_category) {
-                $category = new Category($id_category, $this->context->language->id, $this->context->shop->id);
-            }
-        }
-        if (
-            $category instanceof Category === false
-            || !Validate::isLoadedObject($category)
-        ) {
-            $category = null;
-        }
-
-        return $category;
-    }
-
-    /**
-     * Tries to resolve current / active product in context
-     *
-     * @return null|Product
-     * @suppress PhanUndeclaredMethod
-     */
-    protected function resolveProductInContext()
-    {
-        $product = null;
-        if (method_exists($this->context->controller, 'getProduct')) {
-            $product = $this->context->controller->getProduct();
-        }
-        // If product is not set try to get use parameters (mostly for Prestashop < 1.5)
-        if ($product instanceof Product == false) {
-            $id_product = null;
-            if (Tools::getValue('id_product')) {
-                $id_product = Tools::getValue('id_product');
-            }
-            if ($id_product) {
-                $product = new Product($id_product, true, $this->context->language->id);
-            }
-        }
-        if (
-            $product instanceof Product == false
-            || !Validate::isLoadedObject($product)
-        ) {
-            $product = null;
-        }
-
-        return $product;
     }
 
     /**
@@ -1153,7 +1005,7 @@ class NostoTagging extends Module
         }
 
         $html = $this->display(__FILE__, 'views/templates/hook/shopping-cart-footer_nosto-elements.tpl');
-        $html .= $this->getPageTypeTagging(self::PAGE_TYPE_CART);
+        $html .= $this->display(__FILE__, PageTypeTagging::get(self::PAGE_TYPE_CART));
         return $html;
     }
 
@@ -1184,7 +1036,7 @@ class NostoTagging extends Module
             return '';
         }
 
-        return '';
+        return ''; //TODO: Nothing rendered here?!?!
     }
 
     /**
@@ -1348,7 +1200,7 @@ class NostoTagging extends Module
             return '';
         }
         $html = $this->display(__FILE__, 'views/templates/hook/home_nosto-elements.tpl');
-        $html .= $this->getPageTypeTagging(self::PAGE_TYPE_FRONT_PAGE);
+        $html .= $this->display(__FILE__, PageTypeTagging::get(self::PAGE_TYPE_FRONT_PAGE));
         return $html;
     }
 
@@ -1462,26 +1314,6 @@ class NostoTagging extends Module
         if (isset($params['product'])) {
             $this->hookActionObjectUpdateAfter(array('object' => $params['product']));
         }
-    }
-
-    /**
-     * Returns the current context.
-     *
-     * @return Context
-     */
-    public function getContext()
-    {
-        return $this->context;
-    }
-
-    /**
-     * Returns the modules path.
-     *
-     * @return string
-     */
-    public function getPath()
-    {
-        return $this->_path;
     }
 
     /**
@@ -1623,142 +1455,6 @@ class NostoTagging extends Module
     }
 
     /**
-     * Render meta-data (tagging) for the logged in customer.
-     *
-     * @return string The rendered HTML
-     */
-    protected function getCustomerTagging()
-    {
-        $nosto_customer = new NostoTaggingCustomer();
-        if (!$nosto_customer->isCustomerLoggedIn($this->context->customer)) {
-            return '';
-        }
-
-        $nosto_customer->loadData($this->context->customer);
-
-        $this->getSmarty()->assign(array(
-            'nosto_customer' => $nosto_customer,
-            'nosto_hcid' => self::getVisitorChecksum()
-        ));
-
-        return $this->display(__FILE__, 'views/templates/hook/top_customer-tagging.tpl');
-    }
-
-    /**
-     * Render meta-data (tagging) for the shopping cart.
-     *
-     * @return string The rendered HTML
-     */
-    protected function getCartTagging()
-    {
-        $nosto_cart = new NostoTaggingCart();
-        $nosto_cart->loadData($this->context->cart);
-
-        $this->getSmarty()->assign(array(
-            'nosto_cart' => $nosto_cart,
-            'nosto_hcid' => self::getVisitorChecksum()
-        ));
-
-        return $this->display(__FILE__, 'views/templates/hook/top_cart-tagging.tpl');
-    }
-
-    /**
-     * Render meta-data (tagging) for a product.
-     *
-     * @param Product $product
-     * @param Category $category
-     * @return string The rendered HTML
-     */
-    protected function getProductTagging(Product $product, Category $category = null)
-    {
-        $nosto_product = new NostoTaggingProduct();
-        $nosto_product->loadData($this->context, $product);
-
-        $params = array('nosto_product' => $nosto_product);
-
-        if (Validate::isLoadedObject($category)) {
-            $nosto_category = new NostoTaggingCategory();
-            $nosto_category->loadData($this->context, $category);
-            $params['nosto_category'] = $nosto_category;
-        }
-
-        $this->getSmarty()->assign($params);
-        return $this->display(__FILE__, 'views/templates/hook/footer-product_product-tagging.tpl');
-    }
-
-    /**
-     * Render meta-data (tagging) for a completed order.
-     *
-     * @param Order $order
-     * @return string The rendered HTML
-     */
-    protected function getOrderTagging(Order $order)
-    {
-        $nosto_order = new NostoTaggingOrder();
-        $nosto_order->loadData($this->context, $order);
-
-        $this->getSmarty()->assign(array(
-            'nosto_order' => $nosto_order,
-        ));
-
-        return $this->display(__FILE__, 'views/templates/hook/order-confirmation_order-tagging.tpl');
-    }
-
-    /**
-     * Render meta-data (tagging) for a category.
-     *
-     * @param Category $category
-     * @return string The rendered HTML
-     */
-    protected function getCategoryTagging(Category $category)
-    {
-        $nosto_category = new NostoTaggingCategory();
-        $nosto_category->loadData($this->context, $category);
-
-        $this->getSmarty()->assign(array(
-            'nosto_category' => $nosto_category,
-        ));
-
-        return $this->display(__FILE__, 'views/templates/hook/category-footer_category-tagging.tpl');
-    }
-
-    /**
-     * Render meta-data (tagging) for a manufacturer.
-     *
-     * @param Manufacturer $manufacturer
-     * @return string The rendered HTML
-     */
-    protected function getBrandTagging($manufacturer)
-    {
-        $nosto_brand = new NostoTaggingBrand();
-        $nosto_brand->loadData($manufacturer);
-
-        $this->getSmarty()->assign(array(
-            'nosto_brand' => $nosto_brand,
-        ));
-
-        return $this->display(__FILE__, 'views/templates/hook/manufacturer-footer_brand-tagging.tpl');
-    }
-
-    /**
-     * Render meta-data (tagging) for a search term.
-     *
-     * @param string $search_term the search term to tag.
-     * @return string the rendered HTML
-     */
-    protected function getSearchTagging($search_term)
-    {
-        $nosto_search = new NostoTaggingSearch();
-        $nosto_search->setSearchTerm($search_term);
-
-        $this->getSmarty()->assign(array(
-            'nosto_search' => $nosto_search,
-        ));
-
-        return $this->display(__FILE__, 'views/templates/hook/top_search-tagging.tpl');
-    }
-
-    /**
      * Method for resolving correct smarty object
      *
      * @return Smarty|Smarty_Data
@@ -1777,37 +1473,6 @@ class NostoTagging extends Module
         }
 
         throw new \Nosto\NostoException('Could not find smarty');
-    }
-
-    /**
-     * Render meta-data (tagging) for the price variation in use.
-     *
-     * This is needed for the multi currency features.
-     *
-     * @return string The rendered HTML
-     */
-    protected function getPriceVariationTagging()
-    {
-        /* @var $currencyHelper NostoTaggingHelperCurrency */
-        $currencyHelper = Nosto::helper('nosto_tagging/currency');
-        /** @var NostoTaggingHelperConfig $helper_config */
-        $helper_config = Nosto::helper('nosto_tagging/config');
-        $id_lang = $this->context->language->id;
-        $id_shop = null;
-        $id_shop_group = null;
-        if ($this->context->shop instanceof Shop) {
-            $id_shop = $this->context->shop->id;
-            $id_shop_group = $this->context->shop->id_shop_group;
-        }
-        if ($helper_config->useMultipleCurrencies($id_lang, $id_shop_group, $id_shop)) {
-            $defaultVariationId = $currencyHelper->getActiveCurrency($this->context);
-            $priceVariation = new NostoTaggingPriceVariation($defaultVariationId);
-            $this->getSmarty()->assign(array('nosto_price_variation' => $priceVariation));
-
-            return $this->display(__FILE__, 'views/templates/hook/top_price_variation-tagging.tpl');
-        }
-
-        return '';
     }
 
     /**
@@ -1834,9 +1499,9 @@ class NostoTagging extends Module
      */
     public function defineExchangeRatesAsUpdated()
     {
-        if ($this->getContext()->cookie && $this->adminLoggedIn()) {
+        if (Context::getContext()->cookie && $this->adminLoggedIn()) {
             /** @noinspection PhpUndefinedFieldInspection */
-            $this->getContext()->cookie->nostoExchangeRatesUpdated = (string)true;
+            Context::getContext()->cookie->nostoExchangeRatesUpdated = (string)true;
         }
     }
 
@@ -1852,7 +1517,7 @@ class NostoTagging extends Module
             return false;
         }
 
-        $cookie = $this->getContext()->cookie;
+        $cookie = Context::getContext()->cookie;
         if (
             isset($cookie->nostoExchangeRatesUpdated)
             && $cookie->nostoExchangeRatesUpdated == true //@codingStandardsIgnoreLine
@@ -1919,21 +1584,6 @@ class NostoTagging extends Module
     }
 
     /**
-     * Render page type tagging
-     *
-     * @param string $page_type
-     * @return string the rendered HTML
-     */
-    protected function getPageTypeTagging($page_type)
-    {
-        $this->getSmarty()->assign(array(
-            'nosto_page_type' => $page_type,
-        ));
-
-        return $this->display(__FILE__, 'views/templates/hook/top_page_type-tagging.tpl');
-    }
-
-    /**
      * Checks all Nosto notifications and adds them as an admin notification
      */
     public function checkNotifications()
@@ -1971,34 +1621,6 @@ class NostoTagging extends Module
                 break;
             default:
         }
-    }
-
-    public static function readNostoCookie()
-    {
-        // We use the $GLOBALS here, instead of the Prestashop cookie class, as we are accessing a
-        // nosto cookie that have been set by the JavaScript loaded from nosto.com. Accessing global $_COOKIE array
-        // is not allowed by Prestashop's new validation rules effective from April 2016.
-        // We read it to keep a mapping of the Nosto user ID and the Prestashop user ID so we can identify which user
-        // actually completed an order. We do this for tracking whether or not to send abandoned cart emails.
-        if ($GLOBALS[self::GLOBAL_COOKIES] && isset($GLOBALS[self::GLOBAL_COOKIES][self::COOKIE_NAME])) {
-            return $GLOBALS[self::GLOBAL_COOKIES][self::COOKIE_NAME];
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * Return the checksum for visitor
-     *
-     * @return string
-     */
-    public function getVisitorChecksum()
-    {
-        $coo = self::readNostoCookie();
-        if ($coo) {
-            return hash(self::VISITOR_HASH_ALGO, $coo);
-        }
-        return '';
     }
 
     /**
