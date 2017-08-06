@@ -154,9 +154,7 @@ class NostoTaggingHelperProductOperation extends NostoTaggingHelperOperation
                 try {
                     $op->upsert();
                 } catch (Exception $e) {
-                    /* @var NostoTaggingHelperLogger $logger */
-                    $logger = Nosto::helper('nosto_tagging/logger');
-                    $logger->error(
+                    NostoTaggingHelperLogger::error(
                         __CLASS__ . '::' . __FUNCTION__ . ' - ' . $e->getMessage(),
                         $e->getCode()
                     );
@@ -170,20 +168,34 @@ class NostoTaggingHelperProductOperation extends NostoTaggingHelperOperation
     /**
      * Sends a product create API request to Nosto.
      *
-     * @param Product $product the product that has been created.
+     * @param $params
      */
-    public function create(Product $product)
+    public function upsert($params)
     {
-        $this->updateProduct($product);
+        if (isset($params['object'])) {
+            $object = $params['object'];
+            if ($object instanceof Product) {
+                $this->updateProduct($object);
+            }
+        }
     }
 
     /**
      * Sends a product delete API request to Nosto.
      *
-     * @param Product $product the product that has been deleted.
+     * @param array $params the product that has been deleted.
      */
-    public function delete(Product $product)
+    public function delete($params)
     {
+        if (isset($params['object'])) {
+            $object = $params['object'];
+            if ($object instanceof Product) {
+                $this->deleteProduct($object);
+            }
+        }
+    }
+
+    private function deleteProduct(Product $product) {
         if (!Validate::isLoadedObject($product) || in_array($product->id, self::$processedProducts)) {
             return;
         }
@@ -201,9 +213,7 @@ class NostoTaggingHelperProductOperation extends NostoTaggingHelperOperation
                 $op->addProduct($nosto_product);
                 $op->upsert();
             } catch (Nosto\NostoException $e) {
-                /* @var NostoTaggingHelperLogger $logger */
-                $logger = Nosto::helper('nosto_tagging/logger');
-                $logger->error(
+                NostoTaggingHelperLogger::error(
                     __CLASS__ . '::' . __FUNCTION__ . ' - ' . $e->getMessage(),
                     $e->getCode(),
                     get_class($product),

@@ -42,7 +42,7 @@ class NostoTaggingHelperLogger
      * @param null|string $object_type the object type affected.
      * @param null|int $object_id the object id affected.
      */
-    public function log(
+    public static function log(
         $message,
         $severity = self::SEVERITY_INFO,
         $error_code = null,
@@ -65,9 +65,10 @@ class NostoTaggingHelperLogger
      * @param null|string $object_type the object type affected.
      * @param null|int $object_id the object id affected.
      */
-    public function error($message, $error_code = null, $object_type = null, $object_id = null)
+    public static function error($message, $error_code = null, $object_type = null, $object_id = null)
     {
-        $this->log($message, self::SEVERITY_ERROR, $error_code, $object_type, $object_id);
+        NostoTaggingHelperLogger::log($message, self::SEVERITY_ERROR, $error_code, $object_type,
+            $object_id);
     }
 
     /**
@@ -76,8 +77,8 @@ class NostoTaggingHelperLogger
      * @param $message
      * @return void
      */
-    public function info($message)
+    public static function info($message)
     {
-        $this->log($message, self::SEVERITY_INFO);
+        NostoTaggingHelperLogger::log($message, self::SEVERITY_INFO);
     }
 }

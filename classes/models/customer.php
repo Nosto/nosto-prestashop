@@ -48,9 +48,7 @@ class NostoTaggingCustomer extends \Nosto\Object\User
         try {
             $this->populateCustomerReference($customer);
         } catch (Exception $e) {
-            /* @var NostoTaggingHelperLogger $logger */
-            $logger = Nosto::helper('nosto_tagging/logger');
-            $logger->error(
+            NostoTaggingHelperLogger::error(
                 __CLASS__ . '::' . __FUNCTION__ . ' - ' . $e->getMessage(),
                 $e->getCode()
             );

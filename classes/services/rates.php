@@ -26,9 +26,8 @@ class RatesService
             $service = new SyncRates($this->account);
             return $service->update($exchangeRates);
         } catch (Exception $e) {
-            /** @var NostoTaggingHelperLogger $logger */
-            $logger = Nosto::helper('nosto_tagging/logger');
-            $logger->error(__CLASS__ . '::' . __FUNCTION__ . ' - ' . $e->getMessage(), $e->getCode());
+            NostoTaggingHelperLogger::error(__CLASS__ . '::' . __FUNCTION__ . ' - ' . $e->getMessage(),
+                $e->getCode());
         }
         return false;
     }

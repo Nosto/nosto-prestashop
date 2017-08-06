@@ -59,17 +59,13 @@ class NostoTaggingHelperOrderOperation extends NostoTaggingHelperOperation
                 try {
                     $this->syncInventoryLevel($nosto_order);
                 } catch (Exception $e) {
-                    /* @var NostoTaggingHelperLogger $logger */
-                    $logger = Nosto::helper('nosto_tagging/logger');
-                    $logger->error(
+                    NostoTaggingHelperLogger::error(
                         'Failed to synchronize products after order: %s',
                         $e->getMessage()
                     );
                 }
             } catch (Exception $e) {
-                /* @var NostoTaggingHelperLogger $logger */
-                $logger = Nosto::helper('nosto_tagging/logger');
-                $logger->error(
+                NostoTaggingHelperLogger::error(
                     'Failed to send order confirmation: %s',
                     $e->getMessage()
                 );

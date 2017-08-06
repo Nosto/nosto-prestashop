@@ -28,7 +28,4 @@ require_once 'AdminNostoController.php';
 /**
  * PS 1.5 admin controller for the Nosto admin tab.
  */
-class AdminNostoPersonalizationController extends AdminNostoController
-{
-
-}
+class AdminNostoPersonalizationController extends AdminNostoController {}

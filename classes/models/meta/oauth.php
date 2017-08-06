@@ -68,10 +68,8 @@ class NostoTaggingMetaOauth extends Nosto\OAuth
             $oauthParams->setRedirectUrl($redirectUrl);
             $oauthParams->setLanguageIsoCode($language->iso_code);
         } catch (Nosto\NostoException $e) {
-            /* @var NostoTaggingHelperLogger $logger */
-            $logger = Nosto::helper('nosto_tagging/logger');
-            $logger->error(
-                __CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(),
+            NostoTaggingHelperLogger::error(
+                __CLASS__ . '::' . __FUNCTION__ . ' - ' . $e->getMessage(),
                 $e->getCode()
             );
         }
