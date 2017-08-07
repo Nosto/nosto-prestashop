@@ -38,5 +38,5 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_2_4_0($object)
 {
-    return NostoTaggingHelperAdminTab::install() && $object->registerHook('displayBackOfficeHeader');
+    return NostoAdminTabManager::install() && $object->registerHook('displayBackOfficeHeader');
 }

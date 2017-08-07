@@ -180,7 +180,7 @@ class NostoTagging extends Module
                     'Failed to create Nosto customer table'
                 );
             }
-            if (!NostoTaggingHelperAdminTab::install()) {
+            if (!NostoAdminTabManager::install()) {
                 $success = false;
                 $this->_errors[] = $this->l(
                     'Failed to create Nosto admin tab'
@@ -229,7 +229,7 @@ class NostoTagging extends Module
             && NostoTaggingHelperAccount::deleteAll()
             && NostoTaggingHelperConfig::purge()
             && NostoTaggingHelperCustomer::dropTables()
-            && NostoTaggingHelperAdminTab::uninstall();
+            && NostoAdminTabManager::uninstall();
     }
 
     /**
@@ -487,7 +487,7 @@ class NostoTagging extends Module
             $account instanceof Nosto\Object\Signup\Account === false
             && Shop::getContext() === Shop::CONTEXT_SHOP
         ) {
-            $currentUser = NostoTaggingCurrentUser::loadData($this->context);
+            $currentUser = NostoCurrentUser::loadData($this->context);
             $account_iframe = NostoTaggingMetaAccountIframe::loadData(
                 $this->context,
                 $language_id,
@@ -536,7 +536,7 @@ class NostoTagging extends Module
                         'cronRates',
                         $current_language['id_lang'],
                         $id_shop,
-                        array('token' => NostoTaggingHelperCron::getCronAccessToken())
+                        array('token' => NostoHelperCron::getCronAccessToken())
                     )
                 ),
             ),
@@ -571,7 +571,7 @@ class NostoTagging extends Module
             && Shop::getContext() === Shop::CONTEXT_SHOP
         ) {
             try {
-                $currentUser = NostoTaggingCurrentUser::loadData($this->context);
+                $currentUser = NostoCurrentUser::loadData($this->context);
                 $meta = NostoTaggingMetaAccountIframe::loadData(
                     $this->context,
                     $language_id,
@@ -1107,35 +1107,35 @@ class NostoTagging extends Module
      */
     protected function getHiddenRecommendationElements()
     {
-        if (NostoTaggingHelperController::isController('index')) {
+        if (NostoHelperController::isController('index')) {
             // The home page.
             return $this->display(__FILE__, 'views/templates/hook/home_hidden-nosto-elements.tpl');
-        } elseif (NostoTaggingHelperController::isController('product')) {
+        } elseif (NostoHelperController::isController('product')) {
             // The product page.
             return $this->display(__FILE__,
                 'views/templates/hook/footer-product_hidden-nosto-elements.tpl');
-        } elseif (NostoTaggingHelperController::isController('order') && (int)Tools::getValue('step',
+        } elseif (NostoHelperController::isController('order') && (int)Tools::getValue('step',
                 0) === 0
         ) {
             // The cart summary page.
             return $this->display(__FILE__,
                 'views/templates/hook/shopping-cart-footer_hidden-nosto-elements.tpl');
-        } elseif (NostoTaggingHelperController::isController('category')
-            || NostoTaggingHelperController::isController('manufacturer')
+        } elseif (NostoHelperController::isController('category')
+            || NostoHelperController::isController('manufacturer')
         ) {
             // The category/manufacturer page.
             return $this->display(__FILE__,
                 'views/templates/hook/category-footer_hidden-nosto-elements.tpl');
-        } elseif (NostoTaggingHelperController::isController('search')) {
+        } elseif (NostoHelperController::isController('search')) {
             // The search page.
             return $this->display(__FILE__,
                 'views/templates/hook/search_hidden-nosto-elements.tpl');
-        } elseif (NostoTaggingHelperController::isController('pagenotfound')
-            || NostoTaggingHelperController::isController('404')
+        } elseif (NostoHelperController::isController('pagenotfound')
+            || NostoHelperController::isController('404')
         ) {
             // The search page.
             return $this->display(__FILE__, 'views/templates/hook/404_hidden_nosto-elements.tpl');
-        } elseif (NostoTaggingHelperController::isController('order-confirmation')) {
+        } elseif (NostoHelperController::isController('order-confirmation')) {
             // The search page.
             return $this->display(__FILE__,
                 'views/templates/hook/order-confirmation_hidden_nosto-elements.tpl');
@@ -1339,11 +1339,11 @@ class NostoTagging extends Module
         $helper_notification = Nosto::helper('nosto_tagging/notification');
         $notifications = $helper_notification->getAll();
         if (is_array($notifications) && count($notifications) > 0) {
-            /* @var NostoTaggingAdminNotification $notification */
+            /* @var NostoAdminNotification $notification */
             foreach ($notifications as $notification) {
                 if (
                     $notification->getNotificationType() === \Nosto\Object\Notification::TYPE_MISSING_INSTALLATION
-                    && !NostoTaggingHelperController::isController('AdminModules')
+                    && !NostoHelperController::isController('AdminModules')
                 ) {
                     continue;
                 }
@@ -1355,9 +1355,9 @@ class NostoTagging extends Module
     /**
      * Adds a Prestashop admin notification
      *
-     * @param NostoTaggingAdminNotification $notification
+     * @param NostoAdminNotification $notification
      */
-    protected function addPrestashopNotification(NostoTaggingAdminNotification $notification)
+    protected function addPrestashopNotification(NostoAdminNotification $notification)
     {
         switch ($notification->getNotificationSeverity()) {
             case \Nosto\Object\Notification::SEVERITY_INFO:

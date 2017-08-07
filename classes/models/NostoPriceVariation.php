@@ -1,5 +1,4 @@
 <?php
-
 /**
  * 2013-2016 Nosto Solutions Ltd
  *
@@ -23,26 +22,45 @@
  * @copyright 2013-2016 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
-class NostoTaggingHelperCron
+
+/**
+ * Model for the price variation
+ */
+class NostoPriceVariation extends NostoTaggingModel
 {
+    /**
+     * The id of the variation
+     *
+     * @var mixed variation id
+     */
+    private $variationId;
 
     /**
-     * Returns the access token needed to validate requests to the cron controllers.
-     * The access token is stored in the db config, and will be renewed if the module
-     * is re-installed or the db entry is removed.
+     * Constructor
      *
-     * @return string the access token.
+     * @param null $variationId
      */
-    public static function getCronAccessToken()
+    public function __construct($variationId = null)
     {
-        /** @var NostoTaggingHelperConfig $helper_config */
-        $helper_config = Nosto::helper('nosto_tagging/config');
-        $token = $helper_config->getCronAccessToken();
-        if (empty($token)) {
-            // Running bin2hex() will make the string length 32 characters.
-            $token = bin2hex(phpseclib\Crypt\Random::string(16));
-            $helper_config->saveCronAccessToken($token);
-        }
-        return $token;
+        $this->setVariationId($variationId);
+        $this->dispatchHookActionLoadAfter(array(
+            'nosto_price_variation' => $this
+        ));
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getVariationId()
+    {
+        return $this->variationId;
+    }
+
+    /**
+     * @param mixed $variationId
+     */
+    public function setVariationId($variationId)
+    {
+        $this->variationId = $variationId;
     }
 }

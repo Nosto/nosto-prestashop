@@ -1,7 +1,6 @@
 <?php
-
 /**
- * 2013-2017 Nosto Solutions Ltd
+ * 2013-2016 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -20,30 +19,29 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2017 Nosto Solutions Ltd
+ * @copyright 2013-2016 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
-class NostoTaggingHelperController
+
+/**
+ * Meta data class for account owner related information needed when creating new accounts.
+ */
+class NostoCurrentUser extends \Nosto\Object\User
 {
-
     /**
-     * Checks if the given controller is the current one.
+     * Loads the meta data from the given context.
      *
-     * @param string $name the controller name
-     * @return bool true if the given name is the same as the controllers php_self variable, false
-     *     otherwise.
+     * @param Context $context the context to use as data source.
+     * @return NostoCurrentUser
      */
-    public static function isController($name)
+    public static function loadData($context)
     {
-        $result = false;
-        // For prestashop 1.5 and 1.6 we can in most cases access the current controllers php_self property.
-        if (!empty(Context::getContext()->controller->php_self)) {
-            $result = Context::getContext()->controller->php_self === $name;
-        } elseif (($controller = Tools::getValue('controller')) !== false) {
-            $result = $controller === $name;
+        $owner = new NostoCurrentUser();
+        if (!empty($context->employee)) {
+            $owner->setFirstName($context->employee->firstname);
+            $owner->setLastName($context->employee->lastname);
+            $owner->setEmail($context->employee->email);
         }
-
-        // Fallback when controller cannot be recognised.
-        return $result;
+        return $owner;
     }
 }

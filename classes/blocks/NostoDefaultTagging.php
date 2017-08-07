@@ -65,15 +65,15 @@ class NostoDefaultTagging
         $html .= $this->display(__FILE__, NostoCustomerTagging::get());
         $html .= $this->display(__FILE__, NostoCartTagging::get());
         $html .= $this->display(__FILE__, NostoVariationTagging::get());
-        if (NostoTaggingHelperController::isController('category')) {
+        if (NostoHelperController::isController('category')) {
             $html .= $this->display(__FILE__, NostoCategoryTagging::get());
-        } elseif (NostoTaggingHelperController::isController('manufacturer')) {
+        } elseif (NostoHelperController::isController('manufacturer')) {
             $html .= $this->display(__FILE__, NostoBrandTagging::get());
-        } elseif (NostoTaggingHelperController::isController('search')) {
+        } elseif (NostoHelperController::isController('search')) {
             $html .= $this->display(__FILE__, NostoSearchTagging::get());
-        } elseif (NostoTaggingHelperController::isController('product')) {
+        } elseif (NostoHelperController::isController('product')) {
             $html .= $this->display(__FILE__, NostoProductTagging::get());
-        } elseif (NostoTaggingHelperController::isController('order-confirmation')) {
+        } elseif (NostoHelperController::isController('order-confirmation')) {
             $html .= $this->display(__FILE__, OrderTagging::get());
         }
         $html .= $this->display(__FILE__, 'views/templates/hook/top_nosto-elements.tpl');

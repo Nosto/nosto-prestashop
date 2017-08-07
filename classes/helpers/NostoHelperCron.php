@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 2013-2016 Nosto Solutions Ltd
  *
@@ -22,26 +23,26 @@
  * @copyright 2013-2016 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
-
-/**
- * Meta data class for account owner related information needed when creating new accounts.
- */
-class NostoTaggingCurrentUser extends \Nosto\Object\User
+class NostoHelperCron
 {
+
     /**
-     * Loads the meta data from the given context.
+     * Returns the access token needed to validate requests to the cron controllers.
+     * The access token is stored in the db config, and will be renewed if the module
+     * is re-installed or the db entry is removed.
      *
-     * @param Context $context the context to use as data source.
-     * @return NostoTaggingCurrentUser
+     * @return string the access token.
      */
-    public static function loadData($context)
+    public static function getCronAccessToken()
     {
-        $owner = new NostoTaggingCurrentUser();
-        if (!empty($context->employee)) {
-            $owner->setFirstName($context->employee->firstname);
-            $owner->setLastName($context->employee->lastname);
-            $owner->setEmail($context->employee->email);
+        /** @var NostoTaggingHelperConfig $helper_config */
+        $helper_config = Nosto::helper('nosto_tagging/config');
+        $token = $helper_config->getCronAccessToken();
+        if (empty($token)) {
+            // Running bin2hex() will make the string length 32 characters.
+            $token = bin2hex(phpseclib\Crypt\Random::string(16));
+            $helper_config->saveCronAccessToken($token);
         }
-        return $owner;
+        return $token;
     }
 }

@@ -1,6 +1,7 @@
 <?php
+
 /**
- * 2013-2016 Nosto Solutions Ltd
+ * 2013-2017 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,48 +20,30 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2016 Nosto Solutions Ltd
+ * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
-
-/**
- * Model for the price variation
- */
-class NostoTaggingPriceVariation extends NostoTaggingModel
+class NostoHelperController
 {
+
     /**
-     * The id of the variation
+     * Checks if the given controller is the current one.
      *
-     * @var mixed variation id
+     * @param string $name the controller name
+     * @return bool true if the given name is the same as the controllers php_self variable, false
+     *     otherwise.
      */
-    private $variationId;
-
-    /**
-     * Constructor
-     *
-     * @param null $variationId
-     */
-    public function __construct($variationId = null)
+    public static function isController($name)
     {
-        $this->setVariationId($variationId);
-        $this->dispatchHookActionLoadAfter(array(
-            'nosto_price_variation' => $this
-        ));
-    }
+        $result = false;
+        // For prestashop 1.5 and 1.6 we can in most cases access the current controllers php_self property.
+        if (!empty(Context::getContext()->controller->php_self)) {
+            $result = Context::getContext()->controller->php_self === $name;
+        } elseif (($controller = Tools::getValue('controller')) !== false) {
+            $result = $controller === $name;
+        }
 
-    /**
-     * @return mixed
-     */
-    public function getVariationId()
-    {
-        return $this->variationId;
-    }
-
-    /**
-     * @param mixed $variationId
-     */
-    public function setVariationId($variationId)
-    {
-        $this->variationId = $variationId;
+        // Fallback when controller cannot be recognised.
+        return $result;
     }
 }

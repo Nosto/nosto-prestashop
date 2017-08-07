@@ -28,7 +28,7 @@ class NostoBootstrap {
     public static function init($moduleDir) {
         require_once($moduleDir . '/libs/autoload.php');
         require_once($moduleDir . '/classes/nosto.php');
-        require_once($moduleDir . '/classes/admin-notification.php');
+        require_once($moduleDir . '/classes/NostoAdminNotification.php');
         require_once($moduleDir . '/classes/models/rates.php');
         require_once($moduleDir . '/classes/helpers/account.php');
         require_once($moduleDir . '/classes/helpers/admin-tab.php');
@@ -46,7 +46,7 @@ class NostoBootstrap {
         require_once($moduleDir . '/classes/helpers/currency.php');
         require_once($moduleDir . '/classes/helpers/context-factory.php');
         require_once($moduleDir . '/classes/helpers/price.php');
-        require_once($moduleDir . '/classes/models/current-user.php');
+        require_once($moduleDir . '/classes/models/NostoCurrentUser.php');
         require_once($moduleDir . '/classes/models/meta/account.php');
         require_once($moduleDir . '/classes/models/meta/account-billing.php');
         require_once($moduleDir . '/classes/models/meta/account-iframe.php');
@@ -58,12 +58,12 @@ class NostoBootstrap {
         require_once($moduleDir . '/classes/models/customer.php');
         require_once($moduleDir . '/classes/models/NostoOrderTagging.php');
         require_once($moduleDir . '/classes/models/order/order-buyer.php');
-        require_once($moduleDir . '/classes/models/price-variation.php');
+        require_once($moduleDir . '/classes/models/NostoPriceVariation.php');
         require_once($moduleDir . '/classes/models/order/order-purchased-item.php');
         require_once($moduleDir . '/classes/models/order/order-status.php');
         require_once($moduleDir . '/classes/models/product.php');
-        require_once($moduleDir . '/classes/models/brand.php');
-        require_once($moduleDir . '/classes/models/search.php');
+        require_once($moduleDir . '/classes/models/NostoTaggingBrand.php');
+        require_once($moduleDir . '/classes/models/NostoTaggingSearch.php');
 
         if (file_exists($moduleDir . DIRECTORY_SEPARATOR . '.env')) {
             $dotenv = new Dotenv\Dotenv($moduleDir); // @codingStandardsIgnoreLine

@@ -88,7 +88,7 @@ class NostoTaggingHelperAccount
         /** @var NostoTaggingHelperConfig $helper_config */
         $helper_config = Nosto::helper('nosto_tagging/config');
         $success = $helper_config->deleteAllFromContext($id_lang, $id_shop_group, $id_shop);
-        $currentUser = NostoTaggingCurrentUser::loadData($context);
+        $currentUser = NostoCurrentUser::loadData($context);
         if ($success) {
             $token = $account->getApiToken('sso');
             if ($token) {
