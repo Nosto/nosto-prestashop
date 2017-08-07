@@ -26,17 +26,17 @@
 /**
  * Model for order status.
  */
-class NostoTaggingOrderStatus extends \Nosto\Object\Order\OrderStatus
+class NostoOrderStatus extends \Nosto\Object\Order\OrderStatus
 {
     /**
      * Loads the order status data from the order model.
      *
      * @param Order $order the model.
-     * @return NostoTaggingOrderStatus
+     * @return NostoOrderStatus
      */
     public static function loadData(Order $order)
     {
-        $status = new NostoTaggingOrderStatus();
+        $status = new NostoOrderStatus();
         // We prefer to use the English state name for the status code, as we
         // use it as an unique identifier of that particular order status.
         // The status label will primarily be in the language of the order.
