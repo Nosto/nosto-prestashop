@@ -26,7 +26,7 @@
 /**
  * Model for tagging categories.
  */
-class NostoTaggingCategory extends NostoTaggingModel
+class AbstractNostoCategory extends AbstractNostoModel
 {
     /**
      * @var string the built category string.

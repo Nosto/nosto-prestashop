@@ -99,7 +99,7 @@ class NostoCategoryTagging
             return null;
         }
 
-        $nosto_category = new NostoTaggingCategory();
+        $nosto_category = new AbstractNostoCategory();
         $nosto_category->loadData(Context::getContext(), $category);
 
         Context::getContext()->smarty->assign(array(

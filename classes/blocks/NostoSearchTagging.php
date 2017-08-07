@@ -38,7 +38,7 @@ class NostoSearchTagging
             return null;
         }
 
-        $nosto_search = new NostoTaggingSearch();
+        $nosto_search = new AbstractNostoSearch();
         $nosto_search->setSearchTerm($search_term);
 
         Context::getContext()->smarty->assign(array(

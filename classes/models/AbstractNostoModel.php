@@ -26,7 +26,7 @@
 /**
  * Base model for all tagging model classes.
  */
-abstract class NostoTaggingModel
+abstract class AbstractNostoModel
 {
 
     /**

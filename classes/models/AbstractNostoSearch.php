@@ -24,43 +24,32 @@
  */
 
 /**
- * Model for the price variation
+ * Model for tagging search terms.
  */
-class NostoPriceVariation extends NostoTaggingModel
+class AbstractNostoSearch extends AbstractNostoModel
 {
     /**
-     * The id of the variation
-     *
-     * @var mixed variation id
+     * @var string the search term.
      */
-    private $variationId;
+    protected $search_term;
 
     /**
-     * Constructor
+     * Setter for the search term.
      *
-     * @param null $variationId
+     * @param string $search_term the term.
      */
-    public function __construct($variationId = null)
+    public function setSearchTerm($search_term)
     {
-        $this->setVariationId($variationId);
-        $this->dispatchHookActionLoadAfter(array(
-            'nosto_price_variation' => $this
-        ));
+        $this->search_term = $search_term;
     }
 
     /**
-     * @return mixed
+     * Getter for the search term.
+     *
+     * @return string the term.
      */
-    public function getVariationId()
+    public function getSearchTerm()
     {
-        return $this->variationId;
-    }
-
-    /**
-     * @param mixed $variationId
-     */
-    public function setVariationId($variationId)
-    {
-        $this->variationId = $variationId;
+        return $this->search_term;
     }
 }

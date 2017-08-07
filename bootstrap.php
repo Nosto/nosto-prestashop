@@ -52,18 +52,18 @@ class NostoBootstrap {
         require_once($moduleDir . '/classes/models/meta/account-iframe.php');
         require_once($moduleDir . '/classes/models/meta/NostoAccountOwner.php');
         require_once($moduleDir . '/classes/models/meta/oauth.php');
-        require_once($moduleDir . '/classes/models/base.php');
+        require_once($moduleDir . '/classes/models/AbstractNostoModel.php');
         require_once($moduleDir . '/classes/models/cart.php');
         require_once($moduleDir . '/classes/models/category.php');
         require_once($moduleDir . '/classes/models/customer.php');
         require_once($moduleDir . '/classes/models/NostoOrderTagging.php');
         require_once($moduleDir . '/classes/models/order/NostoOrderBuyer.php');
-        require_once($moduleDir . '/classes/models/NostoPriceVariation.php');
+        require_once($moduleDir . '/classes/models/AbstractNostoPriceVariation.php');
         require_once($moduleDir . '/classes/models/order/NostoOrderPurchasedItem.php');
         require_once($moduleDir . '/classes/models/order/order-status.php');
         require_once($moduleDir . '/classes/models/product.php');
-        require_once($moduleDir . '/classes/models/NostoTaggingBrand.php');
-        require_once($moduleDir . '/classes/models/NostoTaggingSearch.php');
+        require_once($moduleDir . '/classes/models/AbstractNostoBrand.php');
+        require_once($moduleDir . '/classes/models/AbstractNostoSearch.php');
 
         if (file_exists($moduleDir . DIRECTORY_SEPARATOR . '.env')) {
             $dotenv = new Dotenv\Dotenv($moduleDir); // @codingStandardsIgnoreLine

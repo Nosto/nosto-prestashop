@@ -71,7 +71,7 @@ class NostoVariationTagging
         }
         if ($helper_config->useMultipleCurrencies($id_lang, $id_shop_group, $id_shop)) {
             $defaultVariationId = $currencyHelper->getActiveCurrency(Context::getContext());
-            $priceVariation = new NostoPriceVariation($defaultVariationId);
+            $priceVariation = new AbstractNostoPriceVariation($defaultVariationId);
             Context::getContext()->smarty->assign(array(
                 'nosto_price_variation' => $priceVariation
             ));

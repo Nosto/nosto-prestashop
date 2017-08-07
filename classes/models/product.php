@@ -208,7 +208,7 @@ class NostoTaggingProduct extends Nosto\Object\Product\Product
         $categories = array();
         $productCategories = $product->getCategories();
         foreach ($productCategories as $category_id) {
-            $category = NostoTaggingCategory::buildCategoryString($category_id, $id_lang);
+            $category = AbstractNostoCategory::buildCategoryString($category_id, $id_lang);
             if (!empty($category)) {
                 $categories[] = $category;
             }

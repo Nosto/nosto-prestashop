@@ -76,7 +76,7 @@ class NostoProductTagging
         $params = array('nosto_product' => $nosto_product);
 
         if (Validate::isLoadedObject($category)) {
-            $nosto_category = new NostoTaggingCategory();
+            $nosto_category = new AbstractNostoCategory();
             $nosto_category->loadData(Context::getContext(), $category);
             $params['nosto_category'] = $nosto_category;
         }

@@ -1335,7 +1335,7 @@ class NostoTagging extends Module
      */
     public function checkNotifications()
     {
-        /* @var NostoTaggingHelperNotification $helper_notification */
+        /* @var NostoNotificationManager $helper_notification */
         $helper_notification = Nosto::helper('nosto_tagging/notification');
         $notifications = $helper_notification->getAll();
         if (is_array($notifications) && count($notifications) > 0) {
