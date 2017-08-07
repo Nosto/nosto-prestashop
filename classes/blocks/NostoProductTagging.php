@@ -23,6 +23,7 @@
  * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
+
 class NostoProductTagging extends NostoCategoryTagging
 {
     /**
@@ -37,14 +38,14 @@ class NostoProductTagging extends NostoCategoryTagging
             return null;
         }
 
-        $nosto_product = NostoProduct::loadData(Context::getContext(), $product);
-        $params = array('nosto_product' => $nosto_product);
+        $nostoProduct = NostoProduct::loadData(Context::getContext(), $product);
+        $params = array('nosto_product' => $nostoProduct);
 
 
-        $nosto_category = parent::resolveCategoryInContext();
-        if (Validate::isLoadedObject($nosto_category)) {
-            $nosto_category = NostoCategory::loadData(Context::getContext(), $nosto_category);
-            $params['nosto_category'] = $nosto_category;
+        $category = NostoHelperController::resolveObject("id_category", Category::class, "getCategory");
+        if (Validate::isLoadedObject($category)) {
+            $nostoCategory = NostoCategory::loadData(Context::getContext(), $category);
+            $params['nosto_category'] = $nostoCategory;
         }
 
         Context::getContext()->smarty->assign($params);
