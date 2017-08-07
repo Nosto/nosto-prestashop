@@ -24,7 +24,7 @@
  */
 
 use \Nosto\NostoException as NostoSDKException;
-use \Nosto\Object\Signup\Account as NostoSDKSignupAccount;
+use \Nosto\Types\Signup\AccountInterface as NostoSDKSignupAccountInterface;
 use \Nosto\Request\Api\Token as NostoSDKAPIToken;
 use \Nosto\Operation\UninstallAccount as NostoSDKUninstallAccountOperation;
 
@@ -38,7 +38,7 @@ class NostoHelperAccount
      * Saves a Nosto account to PS config.
      * Also handles any attached API tokens.
      *
-     * @param NostoSDKSignupAccount $account the account to save.
+     * @param NostoSDKSignupAccountInterface $account the account to save.
      * @param null|int $id_lang the ID of the language to set the account name for.
      * @param null|int $id_shop_group the ID of the shop context.
      * @param null|int $id_shop the ID of the shop.

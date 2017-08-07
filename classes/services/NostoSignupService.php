@@ -31,10 +31,10 @@ class NostoSignupService
     /**
      * Creates a new Nosto account for given shop language.
      *
-     * @param int $id_lang the language ID for which to create the account.
+     * @param int $id_lang the language-id for which to create the account.
      * @param string $email the account owner email address.
      * @param stdClass|string $account_details the details for the account.
-     * @return bool true if account was created, false otherwise.
+     * @return bool true if successful, false otherwise.
      */
     public function createAccount($id_lang, $email, $account_details = "")
     {
