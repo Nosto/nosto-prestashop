@@ -24,22 +24,9 @@
  */
 
 /**
- * Buyer info model used bu the order model.
+ * Purchased item model used by the order model.
  */
-class NostoTaggingOrderBuyer extends \Nosto\Object\Order\Buyer
+class NostoOrderPurchasedItem extends \Nosto\Object\Cart\LineItem
 {
-    /**
-     * Loads the buyer data from the customer object.
-     *
-     * @param Customer $customer the customer object.
-     * @return NostoTaggingOrderBuyer
-     */
-    public static function loadData(Customer $customer)
-    {
-        $buyer = new NostoTaggingOrderBuyer();
-        $buyer->setFirstName($customer->firstname);
-        $buyer->setLastName($customer->lastname);
-        $buyer->setEmail($customer->email);
-        return $buyer;
-    }
+
 }

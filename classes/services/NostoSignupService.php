@@ -37,7 +37,7 @@ class NostoSignupService
     {
         $signupParams = NostoTaggingMetaAccount::loadData(Context::getContext(), $id_lang);
         if ($signupParams->getOwner()->getEmail() !== $email) {
-            $accountOwner = new NostoTaggingMetaAccountOwner();
+            $accountOwner = new NostoAccountOwner();
             $accountOwner->setEmail($email);
             $signupParams->setOwner($accountOwner);
         }

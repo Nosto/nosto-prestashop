@@ -71,7 +71,7 @@ class NostoTaggingOrder extends \Nosto\Object\Order\Order
             $this->setOrderNumber((string)$order->id);
         }
         $this->setOrderNumber(isset($order->reference) ? (string)$order->reference : $order->id);
-        $this->setCustomer(NostoTaggingOrderBuyer::loadData($customer));
+        $this->setCustomer(NostoOrderBuyer::loadData($customer));
         $this->setCreatedAt(DateTime::createFromFormat('Y-m-d', $order->date_add));
         $this->setPurchasedItems($this->findPurchasedItems($context, $order));
         $this->setPaymentProvider('unknown');
@@ -102,7 +102,7 @@ class NostoTaggingOrder extends \Nosto\Object\Order\Order
      *
      * @param Context $context the context.
      * @param Order $order the order object.
-     * @return NostoTaggingOrderPurchasedItem[] the purchased items.
+     * @return NostoOrderPurchasedItem[] the purchased items.
      */
     protected function findPurchasedItems(Context $context, Order $order)
     {
@@ -205,7 +205,7 @@ class NostoTaggingOrder extends \Nosto\Object\Order\Order
                     }
                 }
 
-                $purchased_item = new NostoTaggingOrderPurchasedItem();
+                $purchased_item = new NostoOrderPurchasedItem();
                 $purchased_item->setProductId((string)$p->id);
                 $purchased_item->setQuantity((int)$item['product_quantity']);
                 $purchased_item->setName((string)$product_name);
@@ -223,7 +223,7 @@ class NostoTaggingOrder extends \Nosto\Object\Order\Order
                 $total_discounts_tax_incl = Tools::ps_round($total_discounts_tax_incl - $total_gift_tax_incl,
                     2);
                 if ($total_discounts_tax_incl > 0) {
-                    $purchased_item = new NostoTaggingOrderPurchasedItem();
+                    $purchased_item = new NostoOrderPurchasedItem();
                     $purchased_item->setProductId("-1");
                     $purchased_item->setQuantity(1);
                     $purchased_item->setName('Discount');
@@ -246,7 +246,7 @@ class NostoTaggingOrder extends \Nosto\Object\Order\Order
             }
 
             if (!$free_shipping && $total_shipping_tax_incl > 0) {
-                $purchased_item = new NostoTaggingOrderPurchasedItem();
+                $purchased_item = new NostoOrderPurchasedItem();
                 $purchased_item->setProductId("-1");
                 $purchased_item->setQuantity(1);
                 $purchased_item->setName('Shipping');
@@ -256,7 +256,7 @@ class NostoTaggingOrder extends \Nosto\Object\Order\Order
             }
 
             if ($total_wrapping_tax_incl > 0) {
-                $purchased_item = new NostoTaggingOrderPurchasedItem();
+                $purchased_item = new NostoOrderPurchasedItem();
                 $purchased_item->setProductId("-1");
                 $purchased_item->setQuantity(1);
                 $purchased_item->setName('Gift Wrapping');

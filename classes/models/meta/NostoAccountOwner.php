@@ -24,9 +24,24 @@
  */
 
 /**
- * Purchased item model used by the order model.
+ * Meta data class for account owner related information needed when creating new accounts.
  */
-class NostoTaggingOrderPurchasedItem extends \Nosto\Object\Cart\LineItem
+class NostoAccountOwner extends \Nosto\Object\Signup\Owner
 {
-
+    /**
+     * Loads the meta data from the given context.
+     *
+     * @param Context $context the context to use as data source.
+     * @return NostoAccountOwner
+     */
+    public static function loadData($context)
+    {
+        $owner = new NostoAccountOwner();
+        if (!empty($context->employee)) {
+            $owner->setFirstName($context->employee->firstname);
+            $owner->setLastName($context->employee->lastname);
+            $owner->setEmail($context->employee->email);
+        }
+        return $owner;
+    }
 }

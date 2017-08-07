@@ -24,24 +24,22 @@
  */
 
 /**
- * Meta data class for account owner related information needed when creating new accounts.
+ * Buyer info model used bu the order model.
  */
-class NostoTaggingMetaAccountOwner extends \Nosto\Object\Signup\Owner
+class NostoOrderBuyer extends \Nosto\Object\Order\Buyer
 {
     /**
-     * Loads the meta data from the given context.
+     * Loads the buyer data from the customer object.
      *
-     * @param Context $context the context to use as data source.
-     * @return NostoTaggingMetaAccountOwner
+     * @param Customer $customer the customer object.
+     * @return NostoOrderBuyer
      */
-    public static function loadData($context)
+    public static function loadData(Customer $customer)
     {
-        $owner = new NostoTaggingMetaAccountOwner();
-        if (!empty($context->employee)) {
-            $owner->setFirstName($context->employee->firstname);
-            $owner->setLastName($context->employee->lastname);
-            $owner->setEmail($context->employee->email);
-        }
-        return $owner;
+        $buyer = new NostoOrderBuyer();
+        $buyer->setFirstName($customer->firstname);
+        $buyer->setLastName($customer->lastname);
+        $buyer->setEmail($customer->email);
+        return $buyer;
     }
 }

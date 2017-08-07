@@ -26,7 +26,7 @@
 /**
  * Meta data class for account billing related information needed when creating new accounts.
  */
-class NostoTaggingMetaAccountBilling extends \Nosto\Object\Signup\Billing
+class NostoAccountBilling extends \Nosto\Object\Signup\Billing
 {
     /**
      * Loads the meta data from the given context.

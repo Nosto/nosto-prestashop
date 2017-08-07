@@ -109,8 +109,8 @@ class NostoTaggingMetaAccount extends \Nosto\Object\Signup\Signup
         $signup->setCurrencyCode($context->currency->iso_code);
         $signup->setLanguageCode($context->language->iso_code);
         $signup->setOwnerLanguageCode($language->iso_code);
-        $signup->setOwner(NostoTaggingMetaAccountOwner::loadData($context));
-        $signup->setBillingDetails(NostoTaggingMetaAccountBilling::loadData($context));
+        $signup->setOwner(NostoAccountOwner::loadData($context));
+        $signup->setBillingDetails(NostoAccountBilling::loadData($context));
         $signup->setCurrencies(self::buildCurrencies($context));
         if ($config_helper->useMultipleCurrencies($id_lang, $id_shop_group, $id_shop)) {
             $signup->setUseCurrencyExchangeRates(
