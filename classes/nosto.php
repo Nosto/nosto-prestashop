@@ -34,10 +34,8 @@
  *
  */
 
-/**
- * Main SDK class.
- * Provides common functionality for the SDK.
- */
+use Nosto\NostoException as NostoSDKException;
+
 class Nosto
 {
     /**
@@ -50,7 +48,7 @@ class Nosto
      *
      * @param string $helper the name of the helper class to get.
      * @return mixed if helper cannot be found.
-     * @throws \Nosto\NostoException
+     * @throws NostoSDKException
      */
     public static function helper($helper)
     {
@@ -58,7 +56,7 @@ class Nosto
         if (!self::registry($registryKey)) {
             $helperClass = self::getHelperClassName($helper);
             if (!class_exists($helperClass)) {
-                throw new Nosto\NostoException(sprintf('Unknown helper class %s', $helperClass));
+                throw new NostoSDKException(sprintf('Unknown helper class %s', $helperClass));
             }
             self::register($registryKey, new $helperClass);
         }
@@ -84,12 +82,12 @@ class Nosto
      *
      * @param string $key the key to register the variable for.
      * @param mixed $value the variable to register.
-     * @throws \Nosto\NostoException
+     * @throws NostoSDKException
      */
     public static function register($key, $value)
     {
         if (isset(self::$registry[$key])) {
-            throw new Nosto\NostoException(sprintf('Nosto registry key %s already exists', $key));
+            throw new NostoSDKException(sprintf('Nosto registry key %s already exists', $key));
         }
         self::$registry[$key] = $value;
     }

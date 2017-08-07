@@ -23,6 +23,9 @@
  * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
+
+use Nosto\Operation\AccountSignup as NostoSDKAccountSignupOperation;
+
 class NostoSignupService
 {
     /**
@@ -43,7 +46,7 @@ class NostoSignupService
         }
         $signupParams->setDetails($account_details);
 
-        $operation = new Nosto\Operation\AccountSignup($signupParams);
+        $operation = new NostoSDKAccountSignupOperation($signupParams);
         $account = $operation->create();
         $id_shop = null;
         $id_shop_group = null;
