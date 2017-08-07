@@ -193,10 +193,6 @@ class NostoTagging extends Module
             // This is to enable auto-update of the module by running its upgrade scripts.
             // This config value is updated in the NostoTaggingUpdater helper every time the module is updated.
             if ($success) {
-                if (version_compare(_PS_VERSION_, '1.5.4.0', '<')) {
-                    NostoHelperConfig::saveInstalledVersion($this->version);
-                }
-
                 $success = $this->registerHook('actionObjectUpdateAfter')
                     && $this->registerHook('actionObjectDeleteAfter')
                     && $this->registerHook('actionObjectAddAfter')

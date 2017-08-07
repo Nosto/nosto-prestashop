@@ -51,7 +51,7 @@ class NostoHelperConfig
      * @param int|null $id_shop the shop id the config entry is saved for.
      * @return mixed
      */
-    public static function read($name, $lang_id = null, $id_shop_group = null, $id_shop = null)
+    private static function read($name, $lang_id = null, $id_shop_group = null, $id_shop = null)
     {
         return Configuration::get($name, $lang_id, $id_shop_group, $id_shop);
     }
@@ -67,7 +67,7 @@ class NostoHelperConfig
      * @param null|int $id_shop
      * @return bool true is saved, false otherwise.
      */
-    public static function write(
+    private static function write(
         $name,
         $value,
         $lang_id = null,
@@ -94,21 +94,6 @@ class NostoHelperConfig
             $return = call_user_func($callback, (string)$name, $value);
         }
         return $return;
-    }
-
-    /**
-     * Checks if a config entry exists for the given criteria.
-     *
-     * @param string $name the name of the config entry.
-     * @param int|null $lang_id the language id it should be saved for.
-     * @param int|null $id_shop_group the shop group id it should be saved for.
-     * @param int|null $id_shop the shop id it should be saved for.
-     * @return bool true if it exists and false otherwise.
-     */
-    public static function exists($name, $lang_id = null, $id_shop_group = null, $id_shop = null)
-    {
-        $value = self::read($name, $lang_id, $id_shop_group, $id_shop);
-        return ($value !== false && $value !== null && $value !== '');
     }
 
     /**
@@ -286,29 +271,6 @@ class NostoHelperConfig
     public static function getAdminUrl()
     {
         return self::read(self::ADMIN_URL);
-    }
-
-    /**
-     * Saves the installed module version to the config.
-     * Used for PS <= 1.5.4.0 only.
-     *
-     * @param string $version the version.
-     * @return bool true if saved successfully, false otherwise.
-     */
-    public static function saveInstalledVersion($version)
-    {
-        return self::write(self::INSTALLED_VERSION, $version, null, true);
-    }
-
-    /**
-     * Get the installed module version.
-     * Used for PS <= 1.5.4.0 only.
-     *
-     * @return mixed
-     */
-    public static function getInstalledVersion()
-    {
-        return self::read(self::INSTALLED_VERSION);
     }
 
     /**
