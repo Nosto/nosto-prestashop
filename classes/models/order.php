@@ -193,8 +193,7 @@ class NostoTaggingOrder extends \Nosto\Object\Order\Order
             if (Validate::isLoadedObject($p)) {
                 $product_name = $p->name;
                 $id_attribute = (int)$item['product_attribute_id'];
-                $attribute_combinations = $this->getProductAttributeCombinationsById($p,
-                    $id_attribute, $id_lang);
+                $attribute_combinations = $p->getAttributeCombinationsById($id_attribute, $id_lang);
                 if (!empty($attribute_combinations)) {
                     $attribute_combination_names = array();
                     foreach ($attribute_combinations as $attribute_combination) {
@@ -267,21 +266,5 @@ class NostoTaggingOrder extends \Nosto\Object\Order\Order
         }
 
         return $purchased_items;
-    }
-
-    /**
-     * Returns the product attribute combination by id_product_attribute.
-     *
-     * @param Product|ProductCore $product the product model.
-     * @param int $id_product_attribute the product attribute ID.
-     * @param int $id_lang the language ID.
-     * @return array the attribute combinations.
-     */
-    protected function getProductAttributeCombinationsById(
-        $product,
-        $id_product_attribute,
-        $id_lang
-    ) {
-        return $product->getAttributeCombinationsById($id_product_attribute, $id_lang);
     }
 }
