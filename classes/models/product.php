@@ -64,8 +64,6 @@ class NostoTaggingProduct extends Nosto\Object\Product\Product
             $tagging_currency = $context->currency;
         }
         $this->setUrl($url_helper->getProductUrl($product, $id_lang, $id_shop));
-        $link = NostoHelperLink::getLink();
-        $this->setImageUrl($helper_image->getProductImageUrl($product, $id_lang, $link));
         $this->setProductId((string)$product->id);
         $this->setName($product->name);
 
@@ -76,6 +74,7 @@ class NostoTaggingProduct extends Nosto\Object\Product\Product
         $this->setDescription($product->description_short . $product->description);
         $this->setInventoryLevel((int)$product->quantity);
         $this->setBrand($this->buildBrand($product));
+        $this->amendImage($product, $id_lang);
         $this->amendAlternateImages($product, $id_lang);
         $this->amendPrices($product, $context, $tagging_currency);
 
@@ -126,11 +125,41 @@ class NostoTaggingProduct extends Nosto\Object\Product\Product
      */
     protected function amendAlternateImages(Product $product, $id_lang)
     {
-        /** @var NostoTaggingHelperImage $helper_image */
-        $helper_image = Nosto::helper('nosto_tagging/image');
-        $images = $helper_image->getAlternateProductImageUrls($product, $id_lang);
-        foreach ($images as $image_url) {
-            $this->addAlternateImageUrls($image_url);
+        $images = Image::getImages((int)$id_lang, (int)$product->id);
+        foreach ($images as $image) {
+            $image_type = NostoTaggingHelperImage::getTaggingImageTypeName($id_lang);
+            if (empty($image_type)) {
+                return;
+            }
+
+            $link = NostoHelperLink::getLink();
+            $url = $link->getImageLink($product->link_rewrite, $image['id_image'], $image_type);
+            if ($url) {
+                $this->addAlternateImageUrls($url);
+            }
+        }
+    }
+
+    /**
+     * Returns the absolute product image url of the primary image.
+     *
+     * @param Product|ProductCore $product the product model.
+     * @param int $id_lang language id of the context
+     */
+    protected function amendImage($product, $id_lang)
+    {
+        $image_id = $product->getCoverWs();
+        if ((int)$image_id > 0) {
+            $image_type = NostoTaggingHelperImage::getTaggingImageTypeName($id_lang);
+            if (empty($image_type)) {
+                return;
+            }
+
+            $link = NostoHelperLink::getLink();
+            $url = $link->getImageLink($product->link_rewrite, $product->id . '-' . $image_id, $image_type);
+            if ($url) {
+                $this->setImageUrl($url);
+            }
         }
     }
 

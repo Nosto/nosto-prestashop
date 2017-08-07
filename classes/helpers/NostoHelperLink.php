@@ -26,6 +26,14 @@
 class NostoHelperLink
 {
 
+    /**
+     * Returns a secure link object if SSL is enabled else falls back to the unsecured
+     * link. The link object from the context is never used as that would cause the
+     * URLs to flip-flop between secured and unsecured depending upon whether the
+     * site is being viewed in a secured or unsecured mode.
+     *
+     * @return Link the secured or unsecured link object for all site URLs
+     */
     public static function getLink()
     {
         if (Configuration::get('PS_SSL_ENABLED_EVERYWHERE')) {

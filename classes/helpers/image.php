@@ -55,9 +55,9 @@ class NostoTaggingHelperImage
      * The type is chosen based on which image type has a width closest to
      * `self::OPTIMAL_PRODUCT_IMAGE_WIDTH`.
      *
-     * @return string|false the image type name or false if not found.
+     * @return false|string the image type name or false if not found.
      */
-    public function chooseOptimalImageType()
+    public static function chooseOptimalImageType()
     {
         $definition = ObjectModel::getDefinition('ImageType');
         $table_name = isset($definition['table']) ? $definition['table'] : 'image_type';
@@ -84,7 +84,7 @@ class NostoTaggingHelperImage
      * @param null $id_shop
      * @return string
      */
-    public function getTaggingImageTypeName($id_lang, $id_shop_group = null, $id_shop = null)
+    public static function getTaggingImageTypeName($id_lang, $id_shop_group = null, $id_shop = null)
     {
         /* @var NostoTaggingHelperConfig $helper_config */
         $helper_config = Nosto::helper('nosto_tagging/config');
@@ -93,51 +93,9 @@ class NostoTaggingHelperImage
             $image_type = new ImageType($saved_image_type_id);
             $image_type_name = $image_type->name;
         } else {
-            $image_type_name = $this->chooseOptimalImageType();
+            $image_type_name = NostoTaggingHelperImage::chooseOptimalImageType();
         }
 
         return $image_type_name;
-    }
-
-    /**
-     * Returns the absolute product image url of the primary image.
-     *
-     * @param Product|ProductCore $product the product model.
-     * @param int $id_lang language id of the context
-     * @param Link|LinkCore $link optional link instance to use instead of the one in current
-     *     context.
-     * @return string the url or empty string if could not be generated.
-     */
-    public function getProductImageUrl($product, $id_lang, $link = null)
-    {
-        if (is_null($link)) {
-            $link = Context::getContext()->link;
-        }
-        $image_id = $product->getCoverWs();
-        if ((int)$image_id > 0) {
-            $image_type = $this->getTaggingImageTypeName($id_lang);
-            if (!empty($image_type)) {
-                return $link->getImageLink($product->link_rewrite, $product->id . '-' . $image_id,
-                    $image_type);
-            }
-        }
-
-        return '';
-    }
-
-    public function getAlternateProductImageUrls(Product $product, $id_lang)
-    {
-        $alternate_image_urls = array();
-        $images = Image::getImages((int)$id_lang, (int)$product->id);
-        foreach ($images as $image) {
-            $image_type = $this->getTaggingImageTypeName($id_lang);
-            $link = NostoHelperLink::getLink();
-            $url = $link->getImageLink($product->link_rewrite, $image['id_image'], $image_type);
-            if ($url) {
-                $alternate_image_urls[] = $url;
-            }
-        }
-
-        return $alternate_image_urls;
     }
 }
