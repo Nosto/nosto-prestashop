@@ -4,7 +4,7 @@ use Nosto\Operation\UpdateSettings;
 use Nosto\Types\SettingsInterface;
 use Nosto\Types\Signup\AccountInterface;
 
-class SettingsService
+class NostoSettingsService
 {
     private $account;
 

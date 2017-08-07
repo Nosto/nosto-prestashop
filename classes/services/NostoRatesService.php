@@ -3,7 +3,7 @@
 use Nosto\Operation\SyncRates;
 use Nosto\Types\Signup\AccountInterface;
 
-class RatesService
+class NostoRatesService
 {
     /**
      * Updates exchange rates for all stores and Nosto accounts

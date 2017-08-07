@@ -293,7 +293,7 @@ class NostoTagging extends Module
                         } else {
                             $account_details = false;
                         }
-                        $service = new NostoTaggingSignupService();
+                        $service = new NostoSignupService();
                         $service->createAccount($language_id, $account_email, $account_details);
 
                         $helper_config->clearCache();
@@ -350,7 +350,7 @@ class NostoTagging extends Module
             } elseif (Tools::isSubmit('submit_nostotagging_update_exchange_rates')) {
                 $nosto_account = NostoTaggingHelperAccount::find($language_id, $id_shop_group,
                     $id_shop);
-                $operation = new RatesService();
+                $operation = new NostoRatesService();
                 if ($nosto_account && $operation->updateCurrencyExchangeRates($nosto_account, $this->context)) {
                     NostoTaggingHelperFlashMessage::add(
                         'success',
@@ -410,7 +410,7 @@ class NostoTagging extends Module
                     die;
                 }
                 try {
-                    $operation = new SettingsService($account);
+                    $operation = new NostoSettingsService($account);
                     $operation->update($account_meta);
                     NostoTaggingHelperFlashMessage::add(
                         'success',
@@ -431,7 +431,7 @@ class NostoTagging extends Module
                 }
                 // Also update the exchange rates if multi currency is used
                 if ($account_meta->getUseExchangeRates()) {
-                    $operation = new RatesService();
+                    $operation = new NostoRatesService();
                     $operation->updateCurrencyExchangeRates($account, $this->context);
                 }
             }
@@ -648,7 +648,7 @@ class NostoTagging extends Module
         if ($ctrl instanceof AdminController && method_exists($ctrl, 'addCss')) {
             $ctrl->addCss($this->_path . 'views/css/nostotagging-back-office.css');
         }
-        $this->updateExhangeRatesIfNeeded(false);
+        $this->updateExchangeRatesIfNeeded(false);
     }
 
     /**
@@ -954,7 +954,7 @@ class NostoTagging extends Module
      */
     public function hookActionOrderStatusPostUpdate(array $params)
     {
-        $operation = new NostoTaggingHelperOrderOperation(Context::getContext());
+        $operation = new AbstractNostoService(Context::getContext());
         $operation->send($params);
     }
 
@@ -1003,7 +1003,7 @@ class NostoTagging extends Module
      */
     public function hookActionObjectUpdateAfter(array $params)
     {
-        $operation = new NostoTaggingHelperProductOperation();
+        $operation = new AbstractNostoService();
         $operation->upsert($params);
     }
 
@@ -1014,7 +1014,7 @@ class NostoTagging extends Module
      */
     public function hookActionObjectDeleteAfter(array $params)
     {
-        $operation = new NostoTaggingHelperProductOperation();
+        $operation = new AbstractNostoService();
         $operation->delete($params);
     }
 
@@ -1025,7 +1025,7 @@ class NostoTagging extends Module
      */
     public function hookActionObjectAddAfter(array $params)
     {
-        $operation = new NostoTaggingHelperProductOperation();
+        $operation = new AbstractNostoService();
         $operation->upsert($params);
     }
 
@@ -1240,7 +1240,7 @@ class NostoTagging extends Module
 
     public function hookBackOfficeFooter()
     {
-        return $this->updateExhangeRatesIfNeeded(false);
+        return $this->updateExchangeRatesIfNeeded(false);
     }
 
     /**
@@ -1287,7 +1287,7 @@ class NostoTagging extends Module
         /** @noinspection PhpUnusedParameterInspection */
         array $params
     ) {
-        return $this->updateExhangeRatesIfNeeded(true);
+        return $this->updateExchangeRatesIfNeeded(true);
     }
 
     /**
@@ -1296,14 +1296,13 @@ class NostoTagging extends Module
      * @param boolean $force if set to true cookie check is ignored
      * @internal param array $params
      */
-    public function updateExhangeRatesIfNeeded($force = false)
+    public function updateExchangeRatesIfNeeded($force = false)
     {
         if ($this->exchangeRatesShouldBeUpdated() || $force === true) {
             $this->defineExchangeRatesAsUpdated(); // This ensures we only try this at once
-            /** @var NostoTaggingHelperCurrency $currency_helper */
-            $currency_helper = Nosto::helper('nosto_tagging/currency');
             try {
-                $currency_helper->updateExchangeRatesForAllStores();
+                $operation = new NostoRatesService();
+                $operation->updateExchangeRatesForAllStores();
                 $this->defineExchangeRatesAsUpdated();
             } catch (\Nosto\NostoException $e) {
                 NostoTaggingHelperLogger::error(
