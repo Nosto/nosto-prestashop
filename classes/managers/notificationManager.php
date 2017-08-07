@@ -64,10 +64,10 @@ class NostoNotificationManager
     {
         $id_shop_group = isset($shop->id_shop_group) ? $shop->id_shop_group : null;
         $tokens_ok = true;
-        $connected = NostoTaggingHelperAccount::existsAndIsConnected($language->id, $id_shop_group,
+        $connected = NostoHelperAccount::existsAndIsConnected($language->id, $id_shop_group,
             $shop->id);
         if ($connected) {
-            $account = NostoTaggingHelperAccount::find($language->id);
+            $account = NostoHelperAccount::find($language->id);
             if ($account instanceof \Nosto\Types\Signup\AccountInterface && $account->hasMissingTokens()) {
                 $tokens_ok = false;
             }
@@ -87,7 +87,7 @@ class NostoNotificationManager
     {
         $is_installed = true;
         $id_shop_group = isset($shop->id_shop_group) ? $shop->id_shop_group : null;
-        $connected = NostoTaggingHelperAccount::existsAndIsConnected($language->id, $id_shop_group,
+        $connected = NostoHelperAccount::existsAndIsConnected($language->id, $id_shop_group,
             $shop->id);
         if (!$connected) {
             $is_installed = false;
@@ -107,18 +107,16 @@ class NostoNotificationManager
     {
         $multicurrency_ok = true;
         $id_shop_group = isset($shop->id_shop_group) ? $shop->id_shop_group : null;
-        $connected = NostoTaggingHelperAccount::existsAndIsConnected($language->id, $id_shop_group,
+        $connected = NostoHelperAccount::existsAndIsConnected($language->id, $id_shop_group,
             $shop->id);
         if ($connected) {
-            if (!NostoTaggingHelperConfig::useMultipleCurrencies($language->id, $id_shop_group,
+            if (!NostoHelperConfig::useMultipleCurrencies($language->id, $id_shop_group,
                 $shop->id)
             ) {
-                /* @var NostoTaggingHelperContextFactory $context_factory */
+                /* @var NostoHelperContextFactory $context_factory */
                 $context_factory = Nosto::helper('nosto_tagging/context_factory');
-                /* @var NostoTaggingHelperCurrency $helper_currency */
-                $helper_currency = Nosto::helper('nosto_tagging/currency');
                 $forged_context = $context_factory->forgeContext($language->id, $shop->id);
-                $currencies = $helper_currency->getCurrencies($forged_context, true);
+                $currencies = NostoHelperCurrency::getCurrencies($forged_context, true);
                 $context_factory->revertToOriginalContext();
                 if (count($currencies) > 1) {
                     $multicurrency_ok = false;

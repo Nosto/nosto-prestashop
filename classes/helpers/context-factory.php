@@ -26,7 +26,7 @@
 /**
  * Context factory helper for creating and replacing PS contexts.
  */
-class NostoTaggingHelperContextFactory
+class NostoHelperContextFactory
 {
     /**
      * Holds the original shop id whever context is forged

@@ -67,7 +67,7 @@ function upgrade_module_2_6_0()
         }
     }
 
-    NostoTaggingHelperConfig::clearCache();
+    NostoHelperConfig::clearCache();
 
     return $success;
 }

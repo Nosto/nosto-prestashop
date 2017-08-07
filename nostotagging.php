@@ -194,7 +194,7 @@ class NostoTagging extends Module
             // This config value is updated in the NostoTaggingUpdater helper every time the module is updated.
             if ($success) {
                 if (version_compare(_PS_VERSION_, '1.5.4.0', '<')) {
-                    NostoTaggingHelperConfig::saveInstalledVersion($this->version);
+                    NostoHelperConfig::saveInstalledVersion($this->version);
                 }
 
                 $success = $this->registerHook('actionObjectUpdateAfter')
@@ -224,8 +224,8 @@ class NostoTagging extends Module
     public function uninstall()
     {
         return parent::uninstall()
-            && NostoTaggingHelperAccount::deleteAll()
-            && NostoTaggingHelperConfig::purge()
+            && NostoHelperAccount::deleteAll()
+            && NostoHelperConfig::purge()
             && NostoCustomerManager::dropTables()
             && NostoAdminTabManager::uninstall();
     }
@@ -243,14 +243,12 @@ class NostoTagging extends Module
         // This can then later be used by the oauth2 controller to redirect the user back.
         $admin_url = $this->getAdminUrl();
 
-        NostoTaggingHelperConfig::saveAdminUrl($admin_url);
+        NostoHelperConfig::saveAdminUrl($admin_url);
         $output = '';
         $languages = Language::getLanguages(true, $this->context->shop->id);
         /** @var EmployeeCore $employee */
         $employee = $this->context->employee;
         $account_email = $employee->email;
-        /** @var NostoTaggingHelperUrl $helper_url */
-        $helper_url = Nosto::helper('nosto_tagging/url');
         $id_shop = null;
         $id_shop_group = null;
         if ($this->context->shop instanceof Shop) {
@@ -290,7 +288,7 @@ class NostoTagging extends Module
                         $service = new NostoSignupService();
                         $service->createAccount($language_id, $account_email, $account_details);
 
-                        NostoTaggingHelperConfig::clearCache();
+                        NostoHelperConfig::clearCache();
                         NostoHelperFlash::add(
                             'success',
                             $this->l(
@@ -338,11 +336,11 @@ class NostoTagging extends Module
                 Tools::isSubmit('submit_nostotagging_reset_account')
                 || Tools::getValue('nostotagging_account_action') === 'removeAccount'
             ) {
-                $account = NostoTaggingHelperAccount::findByContext($this->context);
-                NostoTaggingHelperConfig::clearCache();
-                NostoTaggingHelperAccount::delete($this->context, $account, $language_id, null);
+                $account = NostoHelperAccount::findByContext($this->context);
+                NostoHelperConfig::clearCache();
+                NostoHelperAccount::delete($this->context, $account, $language_id, null);
             } elseif (Tools::isSubmit('submit_nostotagging_update_exchange_rates')) {
-                $nosto_account = NostoTaggingHelperAccount::find($language_id, $id_shop_group,
+                $nosto_account = NostoHelperAccount::find($language_id, $id_shop_group,
                     $id_shop);
                 $operation = new NostoRatesService();
                 if ($nosto_account && $operation->updateCurrencyExchangeRates($nosto_account, $this->context)) {
@@ -369,25 +367,25 @@ class NostoTagging extends Module
                 Tools::isSubmit('submit_nostotagging_advanced_settings')
                 && Tools::isSubmit('multi_currency_method')
             ) {
-                NostoTaggingHelperConfig::saveMultiCurrencyMethod(
+                NostoHelperConfig::saveMultiCurrencyMethod(
                     Tools::getValue('multi_currency_method'),
                     $language_id,
                     $id_shop_group,
                     $id_shop
                 );
-                NostoTaggingHelperConfig::saveNostoTaggingRenderPosition(
+                NostoHelperConfig::saveNostoTaggingRenderPosition(
                     Tools::getValue('nostotagging_position'),
                     $language_id,
                     $id_shop_group,
                     $id_shop
                 );
-                NostoTaggingHelperConfig::saveImageType(
+                NostoHelperConfig::saveImageType(
                     Tools::getValue('image_type'),
                     $language_id,
                     $id_shop_group,
                     $id_shop
                 );
-                $account = NostoTaggingHelperAccount::find($language_id, $id_shop_group, $id_shop);
+                $account = NostoHelperAccount::find($language_id, $id_shop_group, $id_shop);
                 $account_meta = NostoTaggingMetaAccount::loadData($this->context, $language_id);
                 // Make sure we Nosto is installed for the current store
                 if (empty($account) || !$account->isConnectedToNosto()) {
@@ -465,7 +463,7 @@ class NostoTagging extends Module
             $language_id = (int)$current_language['id_lang'];
         }
         /** @var NostoAccount $account */
-        $account = NostoTaggingHelperAccount::find($language_id, $id_shop_group, $id_shop);
+        $account = NostoHelperAccount::find($language_id, $id_shop_group, $id_shop);
         $missing_tokens = true;
         if (
             $account instanceof Nosto\Types\Signup\AccountInterface
@@ -520,7 +518,7 @@ class NostoTagging extends Module
                 ),
                 'exchange_rate_crontab_example' => sprintf(
                     '0 0 * * * curl --silent %s > /dev/null 2>&1',
-                    $helper_url->getModuleUrl(
+                    NostoHelperUrl::getModuleUrl(
                         $this->name,
                         $this->_path,
                         'cronRates',
@@ -530,12 +528,12 @@ class NostoTagging extends Module
                     )
                 ),
             ),
-            'multi_currency_method' => NostoTaggingHelperConfig::getMultiCurrencyMethod(
+            'multi_currency_method' => NostoHelperConfig::getMultiCurrencyMethod(
                 $current_language['id_lang'],
                 $id_shop_group,
                 $id_shop
             ),
-            'nostotagging_position' => NostoTaggingHelperConfig::getNostotaggingRenderPosition(
+            'nostotagging_position' => NostoHelperConfig::getNostotaggingRenderPosition(
                 $current_language['id_lang'],
                 $id_shop_group,
                 $id_shop
@@ -544,10 +542,10 @@ class NostoTagging extends Module
                     Tools::substr(_PS_VERSION_, 0, 3)),
             'missing_tokens' => $missing_tokens,
             'iframe_installation_url' => $iframe_installation_url,
-            'iframe_origin' => $helper_url->getIframeOrigin(),
+            'iframe_origin' => NostoHelperUrl::getIframeOrigin(),
             'module_path' => $this->_path,
             'image_types' => NostoHelperImage::getProductImageTypes(),
-            'current_image_type' => NostoTaggingHelperConfig::getImageType(
+            'current_image_type' => NostoHelperConfig::getImageType(
                 $current_language['id_lang'],
                 $id_shop_group,
                 $id_shop
@@ -821,7 +819,7 @@ class NostoTagging extends Module
      */
     public function hookDisplayOrderConfirmation()
     {
-        if (!NostoTaggingHelperAccount::isContextConnected($this->context)) {
+        if (!NostoHelperAccount::isContextConnected($this->context)) {
             return '';
         }
 

@@ -52,6 +52,6 @@ class NostoSignupService
             $id_shop_group = Context::getContext()->shop->id_shop_group;
         }
 
-        return NostoTaggingHelperAccount::save($account, $id_lang, $id_shop_group, $id_shop);
+        return NostoHelperAccount::save($account, $id_lang, $id_shop_group, $id_shop);
     }
 }

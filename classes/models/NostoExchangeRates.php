@@ -11,8 +11,8 @@ class NostoExchangeRates extends ExchangeRateCollection
      */
     public static function loadData(Context $context)
     {
-        $base_currency_code = NostoTaggingHelperCurrency::getBaseCurrency($context)->iso_code;
-        $currencies = NostoTaggingHelperCurrency::getCurrencies($context, true);
+        $base_currency_code = NostoHelperCurrency::getBaseCurrency($context)->iso_code;
+        $currencies = NostoHelperCurrency::getCurrencies($context, true);
         $rates = new NostoExchangeRates();
         foreach ($currencies as $currency) {
             // Skip base currencyCode.

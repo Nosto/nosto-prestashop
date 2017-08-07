@@ -57,7 +57,7 @@ class NostoDefaultTagging
      */
     private function generateDefaultTagging()
     {
-        if (!NostoTaggingHelperAccount::isContextConnected(Context::getContext())) {
+        if (!NostoHelperAccount::isContextConnected(Context::getContext())) {
             return '';
         }
 

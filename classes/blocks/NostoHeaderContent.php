@@ -28,14 +28,12 @@ class NostoHeaderContent
 
     public static function get()
     {
-        $account = NostoTaggingHelperAccount::findByContext(Context::getContext());
+        $account = NostoHelperAccount::findByContext(Context::getContext());
         if ($account === null) {
             return '';
         }
 
-        /** @var NostoTaggingHelperUrl $url_helper */
-        $url_helper = Nosto::helper('nosto_tagging/url');
-        $server_address = $url_helper->getServerAddress();
+        $server_address = NostoHelperUrl::getServerAddress();
         /** @var LinkCore $link */
         $link = NostoHelperLink::getLink();
         $hidden_recommendation_elements = $this->getHiddenRecommendationElements();

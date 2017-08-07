@@ -26,7 +26,7 @@
 /**
  * Helper class for currency related tasks.
  */
-class NostoTaggingHelperCurrency
+class NostoHelperCurrency
 {
     const CURRENCY_SYMBOL_MARKER = '¤';
     const CURRENCY_GROUP_LENGTH = 3;
@@ -112,7 +112,7 @@ class NostoTaggingHelperCurrency
      * @return \Nosto\Object\Format
      * @throws \Nosto\NostoException
      */
-    public function getNostoCurrency(array $currency, Context $context = null)
+    public static function getNostoCurrency(array $currency, Context $context = null)
     {
         if (
             $context instanceof Context
@@ -194,7 +194,7 @@ class NostoTaggingHelperCurrency
      * @return \Nosto\Object\Format
      * @suppress PhanTypeMismatchArgument
      */
-    public static function createWithCldr(array $currency, Context $context)
+    private static function createWithCldr(array $currency, Context $context)
     {
         $cldr = Tools::getCldr(null, $context->language->language_code);
         // @codingStandardsIgnoreLine
@@ -219,7 +219,7 @@ class NostoTaggingHelperCurrency
         );
     }
 
-    public static function currencyActive(array $currency)
+    private static function currencyActive(array $currency)
     {
         $active = true;
         if (!$currency['active']) {

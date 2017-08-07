@@ -83,7 +83,7 @@ class NostoOrderService extends AbstractNostoService
         $id_shop_group = isset($order->id_shop_group) ? $order->id_shop_group : null;
         $id_shop = isset($order->id_shop) ? $order->id_shop : null;
         // This is done out of context, so we need to specify the exact parameters to get the correct account.
-        $account = NostoTaggingHelperAccount::find($order->id_lang, $id_shop_group, $id_shop);
+        $account = NostoHelperAccount::find($order->id_lang, $id_shop_group, $id_shop);
         if ($account !== null && $account->isConnectedToNosto()) {
             /* @var NostoCustomerManager $helper_customer */
             $helper_customer = Nosto::helper('nosto_tagging/customer');

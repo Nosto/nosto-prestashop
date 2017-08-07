@@ -30,7 +30,7 @@ class NostoRecommendationElement
 
     public static function get($id)
     {
-        if (!NostoTaggingHelperAccount::isContextConnected(Context::getContext())) {
+        if (!NostoHelperAccount::isContextConnected(Context::getContext())) {
             return '';
         }
 

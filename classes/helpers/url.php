@@ -26,7 +26,7 @@
 /**
  * Helper class for managing urls.
  */
-class NostoTaggingHelperUrl
+class NostoHelperUrl
 {
     const DEFAULT_SERVER_ADDRESS = 'connect.nosto.com';
     const DEFAULT_IFRAME_ORIGIN_REGEXP = '(https:\/\/(.*)\.hub\.nosto\.com)|(https:\/\/my\.nosto\.com)';
@@ -38,7 +38,7 @@ class NostoTaggingHelperUrl
      * @param int|null $id_lang optional language ID if a specific language is needed.
      * @return string the url.
      */
-    public function getPreviewUrlProduct($id_product = null, $id_lang = null)
+    public static function getPreviewUrlProduct($id_product = null, $id_lang = null)
     {
         try {
             if (!$id_product) {
@@ -64,7 +64,7 @@ class NostoTaggingHelperUrl
             }
 
             $params = array('nostodebug' => 'true');
-            return $this->getProductUrl($product, $id_lang, null, $params);
+            return NostoHelperUrl::getProductUrl($product, $id_lang, null, $params);
         } catch (Exception $e) {
             // Return empty on failure
             return '';
@@ -78,7 +78,7 @@ class NostoTaggingHelperUrl
      * @param int|null $id_lang optional language ID if a specific language is needed.
      * @return string the url.
      */
-    public function getPreviewUrlCategory($id_category = null, $id_lang = null)
+    public static function getPreviewUrlCategory($id_category = null, $id_lang = null)
     {
         try {
             if (!$id_category) {
@@ -104,7 +104,7 @@ class NostoTaggingHelperUrl
             }
 
             $params = array('nostodebug' => 'true');
-            return $this->getCategoryUrl($category, $id_lang, null, $params);
+            return NostoHelperUrl::getCategoryUrl($category, $id_lang, null, $params);
         } catch (Exception $e) {
             // Return empty on failure
             return '';
@@ -117,7 +117,7 @@ class NostoTaggingHelperUrl
      * @param int|null $id_lang optional language ID if a specific language is needed.
      * @return string the url.
      */
-    public function getPreviewUrlSearch($id_lang = null)
+    public static function getPreviewUrlSearch($id_lang = null)
     {
         try {
             $params = array(
@@ -125,7 +125,7 @@ class NostoTaggingHelperUrl
                 'search_query' => 'nosto',
                 'nostodebug' => 'true',
             );
-            return $this->getPageUrl('NostoSearch.php', $id_lang, null, $params);
+            return NostoHelperUrl::getPageUrl('NostoSearch.php', $id_lang, null, $params);
         } catch (Exception $e) {
             // Return empty on failure
             return '';
@@ -138,11 +138,12 @@ class NostoTaggingHelperUrl
      * @param int|null $id_lang optional language ID if a specific language is needed.
      * @return string the url.
      */
-    public function getPreviewUrlCart($id_lang = null)
+    public static function getPreviewUrlCart($id_lang = null)
     {
         try {
             $params = array('nostodebug' => 'true');
-            return $this->getPageUrl('NostoOrderTagging.php', $id_lang, null, $params);
+            return NostoHelperUrl::getPageUrl('NostoOrderTagging.php', $id_lang, null,
+                $params);
         } catch (Exception $e) {
             // Return empty on failure
             return '';
@@ -155,11 +156,11 @@ class NostoTaggingHelperUrl
      * @param int|null $id_lang optional language ID if a specific language is needed.
      * @return string the url.
      */
-    public function getPreviewUrlHome($id_lang = null)
+    public static function getPreviewUrlHome($id_lang = null)
     {
         try {
             $params = array('nostodebug' => 'true');
-            return $this->getPageUrl('index.php', $id_lang, null, $params);
+            return NostoHelperUrl::getPageUrl('index.php', $id_lang, null, $params);
         } catch (Exception $e) {
             // Return empty on failure
             return '';
@@ -171,7 +172,7 @@ class NostoTaggingHelperUrl
      *
      * @return string the url.
      */
-    public function getServerAddress()
+    public static function getServerAddress()
     {
         return \Nosto\Nosto::getEnvVariable('NOSTO_SERVER_URL', self::DEFAULT_SERVER_ADDRESS);
     }
@@ -188,7 +189,7 @@ class NostoTaggingHelperUrl
      * @param array $params additional params to add to the url.
      * @return string the product page url.
      */
-    public function getProductUrl(
+    public static function getProductUrl(
         $product,
         $id_lang = null,
         $id_shop = null,
@@ -216,7 +217,7 @@ class NostoTaggingHelperUrl
                 'controller' => 'product',
                 'id_lang' => $id_lang,
             );
-            $url = $this->getBaseUrl($id_shop) . 'index.php?' . http_build_query($query_params);
+            $url = NostoHelperUrl::getBaseUrl($id_shop) . 'index.php?' . http_build_query($query_params);
         }
 
         if ((int)Configuration::get('PS_REWRITING_SETTINGS') === 0) {
@@ -238,7 +239,7 @@ class NostoTaggingHelperUrl
      * @param array $params additional params to add to the url.
      * @return string the category page url.
      */
-    public function getCategoryUrl(
+    public static function getCategoryUrl(
         $category,
         $id_lang = null,
         $id_shop = null,
@@ -266,7 +267,7 @@ class NostoTaggingHelperUrl
                 'controller' => 'category',
                 'id_lang' => $id_lang,
             );
-            $url = $this->getBaseUrl($id_shop) . 'index.php?' . http_build_query($query_params);
+            $url = NostoHelperUrl::getBaseUrl($id_shop) . 'index.php?' . http_build_query($query_params);
         }
 
         if ((int)Configuration::get('PS_REWRITING_SETTINGS') === 0) {
@@ -288,7 +289,7 @@ class NostoTaggingHelperUrl
      * @param array $params additional params to add to the url.
      * @return string the page url.
      */
-    public function getPageUrl(
+    public static function getPageUrl(
         $controller,
         $id_lang = null,
         $id_shop = null,
@@ -315,7 +316,7 @@ class NostoTaggingHelperUrl
                 'controller' => Tools::strReplaceFirst('.php', '', $controller),
                 'id_lang' => $id_lang,
             );
-            $url = $this->getBaseUrl($id_shop) . 'index.php?' . http_build_query($query_params);
+            $url = NostoHelperUrl::getBaseUrl($id_shop) . 'index.php?' . http_build_query($query_params);
         }
 
         if ((int)Configuration::get('PS_REWRITING_SETTINGS') === 0) {
@@ -339,7 +340,7 @@ class NostoTaggingHelperUrl
      * @param array $params additional params to add to the url.
      * @return string the url.
      */
-    public function getModuleUrl(
+    public static function getModuleUrl(
         $name,
         $path,
         $controller,
@@ -359,7 +360,7 @@ class NostoTaggingHelperUrl
 
         if (version_compare(_PS_VERSION_, '1.5.0.0') === -1) {
             $params['id_lang'] = $id_lang;
-            return $this->getBaseUrl($id_shop) . $path . 'ctrl.php?' . http_build_query($params);
+            return NostoHelperUrl::getBaseUrl($id_shop) . $path . 'ctrl.php?' . http_build_query($params);
         } elseif (version_compare(_PS_VERSION_, '1.5.5.0') === -1) {
             // For PS versions 1.5.0.0 - 1.5.4.1 we always hard-code the urls to be in non-friendly format and fetch
             // the shops base url ourselves. This is a workaround to all the bugs related to url building in these
@@ -368,7 +369,7 @@ class NostoTaggingHelperUrl
             $params['module'] = $name;
             $params['controller'] = $controller;
             $params['id_lang'] = $id_lang;
-            return $this->getBaseUrl($id_shop) . 'index.php?' . http_build_query($params);
+            return NostoHelperUrl::getBaseUrl($id_shop) . 'index.php?' . http_build_query($params);
         } else {
             /** @var LinkCore $link */
             $link = NostoHelperLink::getLink();
@@ -382,7 +383,7 @@ class NostoTaggingHelperUrl
      * @param null $id_shop the shop ID (falls back on current context if not set).
      * @return string the base url.
      */
-    public function getBaseUrl($id_shop = null)
+    private static function getBaseUrl($id_shop = null)
     {
         $ssl = Configuration::get('PS_SSL_ENABLED');
 
@@ -400,9 +401,9 @@ class NostoTaggingHelperUrl
     /**
      * Returns the iframe origin where messages are allowed
      *
-     * @return string|false
+     * @return false|string
      */
-    public function getIframeOrigin()
+    public static function getIframeOrigin()
     {
         return Nosto\Nosto::getEnvVariable('NOSTO_IFRAME_ORIGIN_REGEXP',
             self::DEFAULT_IFRAME_ORIGIN_REGEXP);

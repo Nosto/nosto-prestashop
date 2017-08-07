@@ -267,7 +267,7 @@ class NostoProductService extends AbstractNostoService
         if (!Validate::isLoadedObject($product)) {
             return null;
         }
-        /* @var NostoTaggingHelperContextFactory $context_factory */
+        /* @var NostoHelperContextFactory $context_factory */
         $context_factory = Nosto::helper('nosto_tagging/context_factory');
         $forged_context = $context_factory->forgeContext($id_lang, $id_shop);
         $nosto_product = NostoProduct::loadData($forged_context, $product);

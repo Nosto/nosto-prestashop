@@ -12,7 +12,7 @@ class NostoRatesService
      */
     public function updateExchangeRatesForAllStores()
     {
-        /** @var NostoTaggingHelperContextFactory $context_factory */
+        /** @var NostoHelperContextFactory $context_factory */
         $context_factory = Nosto::helper('nosto_tagging/context_factory');
 
         foreach (Shop::getShops() as $shop) {
@@ -20,10 +20,10 @@ class NostoRatesService
             $id_shop_group = isset($shop['id_shop_group']) ? (int)$shop['id_shop_group'] : null;
             foreach (Language::getLanguages(true, $id_shop) as $language) {
                 $id_lang = (int)$language['id_lang'];
-                $use_multiple_currencies = NostoTaggingHelperConfig::useMultipleCurrencies($id_lang,
+                $use_multiple_currencies = NostoHelperConfig::useMultipleCurrencies($id_lang,
                     $id_shop_group, $id_shop);
                 if ($use_multiple_currencies) {
-                    $nosto_account = NostoTaggingHelperAccount::find($id_lang, $id_shop_group,
+                    $nosto_account = NostoHelperAccount::find($id_lang, $id_shop_group,
                         $id_shop);
                     if (!is_null($nosto_account)) {
                         $context = $context_factory->forgeContext($id_lang, $id_shop);

@@ -26,7 +26,7 @@
 /**
  * Helper class for managing Nosto accounts.
  */
-class NostoTaggingHelperAccount
+class NostoHelperAccount
 {
 
     /**
@@ -45,7 +45,7 @@ class NostoTaggingHelperAccount
         $id_shop_group = null,
         $id_shop = null
     ) {
-        $success = NostoTaggingHelperConfig::saveAccountName(
+        $success = NostoHelperConfig::saveAccountName(
             $account->getName(),
             $id_lang,
             $id_shop_group,
@@ -53,7 +53,7 @@ class NostoTaggingHelperAccount
         );
         if ($success) {
             foreach ($account->getTokens() as $token) {
-                $success = $success && NostoTaggingHelperConfig::saveToken(
+                $success = $success && NostoHelperConfig::saveToken(
                         $token->getName(),
                         $token->getValue(),
                         $id_lang,
@@ -83,7 +83,7 @@ class NostoTaggingHelperAccount
         $id_shop_group = null,
         $id_shop = null
     ) {
-        $success = NostoTaggingHelperConfig::deleteAllFromContext($id_lang, $id_shop_group,
+        $success = NostoHelperConfig::deleteAllFromContext($id_lang, $id_shop_group,
             $id_shop);
         $currentUser = NostoCurrentUser::loadData($context);
         if ($success) {
@@ -149,13 +149,13 @@ class NostoTaggingHelperAccount
      */
     public static function find($lang_id = null, $id_shop_group = null, $id_shop = null)
     {
-        $account_name = NostoTaggingHelperConfig::getAccountName($lang_id, $id_shop_group,
+        $account_name = NostoHelperConfig::getAccountName($lang_id, $id_shop_group,
             $id_shop);
         if (!empty($account_name)) {
             $account = new Nosto\Object\Signup\Account($account_name);
             $tokens = array();
             foreach (Nosto\Request\Api\Token::getApiTokenNames() as $token_name) {
-                $token_value = NostoTaggingHelperConfig::getToken($token_name, $lang_id,
+                $token_value = NostoHelperConfig::getToken($token_name, $lang_id,
                     $id_shop_group,
                     $id_shop);
                 if (!empty($token_value)) {

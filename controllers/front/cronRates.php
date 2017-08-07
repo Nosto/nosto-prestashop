@@ -39,13 +39,10 @@ class NostoTaggingCronRatesModuleFrontController extends NostoTaggingCronModuleF
      */
     public function initContent()
     {
-        /** @var NostoTaggingHelperCurrency $currency_helper */
-        $currency_helper = Nosto::helper('nosto_tagging/currency');
-
         NostoHelperLogger::info('NOSTO CRON - exchange rate sync started');
 
         try {
-            $currency_helper->updateExchangeRatesForAllStores();
+            NostoHelperCurrency::updateExchangeRatesForAllStores();
         } catch (\Nosto\NostoException $e) {
             NostoHelperLogger::error(
                 'NOSTO CRON - exchange rate sync failed with error: %s',

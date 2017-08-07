@@ -26,7 +26,7 @@
 /**
  * Helper class for managing config values.
  */
-class NostoTaggingHelperConfig
+class NostoHelperConfig
 {
     const ACCOUNT_NAME = 'NOSTOTAGGING_ACCOUNT_NAME';
     const ADMIN_URL = 'NOSTOTAGGING_ADMIN_URL';

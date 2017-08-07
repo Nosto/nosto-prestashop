@@ -29,8 +29,8 @@
  */
 class NostoTaggingMetaAccountIframe extends Nosto\Object\Iframe
 {
-    protected $recentVisits;
-    protected $recentSales;
+    private $recentVisits;
+    private $recentSales;
     private $currency;
 
     /**
@@ -53,19 +53,16 @@ class NostoTaggingMetaAccountIframe extends Nosto\Object\Iframe
             return null;
         }
 
-        /** @var NostoTaggingHelperUrl $url_helper */
-        $url_helper = Nosto::helper('nosto_tagging/url');
-
         $iframe->setFirstName($context->employee->firstname);
         $iframe->setLastName($context->employee->lastname);
         $iframe->setEmail($context->employee->email);
         $iframe->setLanguageIsoCode($context->language->iso_code);
         $iframe->setLanguageIsoCodeShop($shop_language->iso_code);
-        $iframe->setPreviewUrlProduct($url_helper->getPreviewUrlProduct(null, $id_lang));
-        $iframe->setPreviewUrlCategory($url_helper->getPreviewUrlCategory(null, $id_lang));
-        $iframe->setPreviewUrlSearch($url_helper->getPreviewUrlSearch($id_lang));
-        $iframe->setPreviewUrlCart($url_helper->getPreviewUrlCart($id_lang));
-        $iframe->setPreviewUrlFront($url_helper->getPreviewUrlHome($id_lang));
+        $iframe->setPreviewUrlProduct(NostoHelperUrl::getPreviewUrlProduct(null, $id_lang));
+        $iframe->setPreviewUrlCategory(NostoHelperUrl::getPreviewUrlCategory(null, $id_lang));
+        $iframe->setPreviewUrlSearch(NostoHelperUrl::getPreviewUrlSearch($id_lang));
+        $iframe->setPreviewUrlCart(NostoHelperUrl::getPreviewUrlCart($id_lang));
+        $iframe->setPreviewUrlFront(NostoHelperUrl::getPreviewUrlHome($id_lang));
         $iframe->setShopName($shop_language->name);
         $iframe->setVersionModule(NostoTagging::PLUGIN_VERSION);
         $iframe->setVersionPlatform(_PS_VERSION_);

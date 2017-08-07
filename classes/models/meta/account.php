@@ -78,8 +78,6 @@ class NostoTaggingMetaAccount extends \Nosto\Object\Signup\Signup
     public static function loadData($context, $id_lang)
     {
         $signup = new NostoTaggingMetaAccount();
-        /** @var NostoTaggingHelperCurrency $currency_helper */
-        $currency_helper = Nosto::helper('nosto_tagging/currency');
 
         $language = new Language($id_lang);
         if (!Validate::isLoadedObject($language)) {
@@ -110,15 +108,15 @@ class NostoTaggingMetaAccount extends \Nosto\Object\Signup\Signup
         $signup->setOwner(NostoAccountOwner::loadData($context));
         $signup->setBillingDetails(NostoAccountBilling::loadData($context));
         $signup->setCurrencies(self::buildCurrencies($context));
-        if (NostoTaggingHelperConfig::useMultipleCurrencies($id_lang, $id_shop_group, $id_shop)) {
+        if (NostoHelperConfig::useMultipleCurrencies($id_lang, $id_shop_group, $id_shop)) {
             $signup->setUseCurrencyExchangeRates(
-                NostoTaggingHelperConfig::useMultipleCurrencies(
+                NostoHelperConfig::useMultipleCurrencies(
                     $id_lang,
                     $id_shop_group,
                     $id_shop
                 )
             );
-            $signup->setDefaultVariantId($currency_helper->getBaseCurrency($context)->iso_code);
+            $signup->setDefaultVariantId(NostoHelperCurrency::getBaseCurrency($context)->iso_code);
         } else {
             $signup->setUseCurrencyExchangeRates(false);
         }
@@ -153,11 +151,9 @@ class NostoTaggingMetaAccount extends \Nosto\Object\Signup\Signup
     protected static function buildCurrencies(Context $context)
     {
         $nosto_currencies = array();
-        /** @var NostoTaggingHelperCurrency $currency_helper */
-        $currency_helper = Nosto::helper('nosto_tagging/currency');
-        $currencies = $currency_helper->getCurrencies($context, true);
+        $currencies = NostoHelperCurrency::getCurrencies($context, true);
         foreach ($currencies as $currency) {
-            $nosto_currency = $currency_helper->getNostoCurrency($currency, $context);
+            $nosto_currency = NostoHelperCurrency::getNostoCurrency($currency, $context);
             $nosto_currencies[$currency['iso_code']] = $nosto_currency;
         }
 

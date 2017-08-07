@@ -45,7 +45,7 @@ class NostoPagetypeTagging
      */
     public static function get()
     {
-        if (!NostoTaggingHelperAccount::isContextConnected(Context::getContext())) {
+        if (!NostoHelperAccount::isContextConnected(Context::getContext())) {
             return '';
         }
 

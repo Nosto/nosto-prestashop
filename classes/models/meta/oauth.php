@@ -51,10 +51,8 @@ class NostoTaggingMetaOauth extends Nosto\OAuth
 
         try {
             $oauthParams->setScopes(Nosto\Request\Api\Token::getApiTokenNames());
-            /** @var NostoTaggingHelperUrl $url_helper */
-            $url_helper = Nosto::helper('nosto_tagging/url');
 
-            $redirectUrl = $url_helper->getModuleUrl(
+            $redirectUrl = NostoHelperUrl::getModuleUrl(
                 $moduleName,
                 $modulePath,
                 'oauth2',

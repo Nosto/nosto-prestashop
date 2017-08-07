@@ -41,13 +41,9 @@ class NostoProduct extends Nosto\Object\Product\Product
             return null;
         }
 
-        /** @var NostoTaggingHelperUrl $url_helper */
-        $url_helper = Nosto::helper('nosto_tagging/url');
-        /** @var NostoTaggingHelperCurrency $helper_currency */
-        $helper_currency = Nosto::helper('nosto_tagging/currency');
 
         $nostoProduct = new NostoProduct();
-        $base_currency = $helper_currency->getBaseCurrency($context);
+        $base_currency = NostoHelperCurrency::getBaseCurrency($context);
         $id_lang = $context->language->id;
         $id_shop = null;
         $id_shop_group = null;
@@ -56,13 +52,13 @@ class NostoProduct extends Nosto\Object\Product\Product
             $id_shop_group = $context->shop->id_shop_group;
         }
 
-        if (NostoTaggingHelperConfig::useMultipleCurrencies($id_lang, $id_shop_group, $id_shop) === true) {
+        if (NostoHelperConfig::useMultipleCurrencies($id_lang, $id_shop_group, $id_shop) === true) {
             $nostoProduct->setVariationId($base_currency->iso_code);
             $tagging_currency = $base_currency;
         } else {
             $tagging_currency = $context->currency;
         }
-        $nostoProduct->setUrl($url_helper->getProductUrl($product, $id_lang, $id_shop));
+        $nostoProduct->setUrl(NostoHelperUrl::getProductUrl($product, $id_lang, $id_shop));
         $nostoProduct->setProductId((string)$product->id);
         $nostoProduct->setName($product->name);
         $nostoProduct->setPriceCurrencyCode(Tools::strtoupper($tagging_currency->iso_code));
