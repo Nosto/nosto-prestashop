@@ -185,15 +185,6 @@ class NostoTaggingHelperCurrency
     }
 
     /**
-     * @param Context $context
-     * @return string Currency code in ISO 4217
-     */
-    public function getActiveCurrency(Context $context)
-    {
-        return $context->currency->iso_code;
-    }
-
-    /**
      * Creates Nosto currency object using CLDR that was introduced in Prestashop 1.7
      *
      * @see https://github.com/ICanBoogie/CLDR
