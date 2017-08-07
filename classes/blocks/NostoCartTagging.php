@@ -33,8 +33,7 @@ class NostoCartTagging
      */
     public static function get()
     {
-        $nosto_cart = new NostoTaggingCart();
-        $nosto_cart->loadData(Context::getContext()->cart);
+        $nosto_cart = NostoTaggingCart::loadData(Context::getContext()->cart);
 
         $cid = NostoHelperCookie::readNostoCookie();
         $hcid = $cid ? hash(NostoTagging::VISITOR_HASH_ALGO, $cid) : '';

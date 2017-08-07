@@ -26,13 +26,8 @@
 /**
  * Model for tagging carts.
  */
-class NostoTaggingCart extends NostoTaggingModel
+class NostoTaggingCart extends \Nosto\Object\Cart\Cart
 {
-    /**
-     * @var array line items in the cart.
-     */
-    public $line_items = array();
-
     /**
      * @param $id_currency
      * @return Currency
@@ -48,7 +43,7 @@ class NostoTaggingCart extends NostoTaggingModel
      *
      * @param Cart $cart the cart object.
      */
-    public function loadData(Cart $cart)
+    public static function loadData(Cart $cart)
     {
         if (!Validate::isLoadedObject($cart) || ($products = $cart->getProducts()) === array()) {
             return;
@@ -59,6 +54,7 @@ class NostoTaggingCart extends NostoTaggingModel
             return;
         }
 
+        $nostoCart = new \Nosto\Object\Cart\Cart();
         $cart_rules = (array)$cart->getCartRules(CartRule::FILTER_ACTION_GIFT);
 
         $gift_products = array();
@@ -98,13 +94,13 @@ class NostoTaggingCart extends NostoTaggingModel
                 $name .= ' (' . $item['attributes_small'] . ')';
             }
 
-            $this->line_items[] = array(
-                'product_id' => (int)$item['id_product'],
-                'quantity' => (int)$item['cart_quantity'],
-                'name' => (string)$name,
-                'unit_price' => $item['price_wt'],
-                'price_currency_code' => (string)$currency->iso_code,
-            );
+            $nostoLineItem = new \Nosto\Object\Cart\LineItem();
+            $nostoLineItem->setProductId($item['id_product']);
+            $nostoLineItem->setQuantity((int)$item['cart_quantity']);
+            $nostoLineItem->setName((string)$name);
+            $nostoLineItem->setPrice($item['price_wt']);
+            $nostoLineItem->setPriceCurrencyCode((string)$currency->iso_code);
+            $nostoCart->addItem($nostoLineItem);
         }
     }
 }
