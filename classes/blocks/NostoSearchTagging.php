@@ -25,7 +25,6 @@
  */
 class NostoSearchTagging
 {
-
     /**
      * Renders the current search term tagging by checking if the controller either has
      * the search_query or the s parameter (as it differs between versions.)
@@ -39,11 +38,9 @@ class NostoSearchTagging
             return null;
         }
 
-        $nosto_search = new NostoSearch();
-        $nosto_search->setSearchTerm($search_term);
-
+        $nostoQuery = new NostoSearch($search_term);
         Context::getContext()->smarty->assign(array(
-            'nosto_search' => $nosto_search,
+            'nosto_search' => $nostoQuery,
         ));
 
         return 'views/templates/hook/top_search-tagging.tpl';

@@ -28,19 +28,11 @@
  */
 class NostoSearch extends AbstractNostoModel
 {
-    /**
-     * @var string the search term.
-     */
-    protected $search_term;
+    protected $searchTerm;
 
-    /**
-     * Setter for the search term.
-     *
-     * @param string $search_term the term.
-     */
-    public function setSearchTerm($search_term)
+    public function __construct($searchTerm)
     {
-        $this->search_term = $search_term;
+        $this->searchTerm = $searchTerm;
     }
 
     /**
@@ -50,6 +42,6 @@ class NostoSearch extends AbstractNostoModel
      */
     public function getSearchTerm()
     {
-        return $this->search_term;
+        return $this->searchTerm;
     }
 }

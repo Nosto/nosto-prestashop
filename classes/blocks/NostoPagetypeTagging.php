@@ -25,7 +25,6 @@
  */
 class NostoPagetypeTagging
 {
-
     private static $controllers = array(
         "category" => "category",
         "manufacturer" => "category",
@@ -39,9 +38,10 @@ class NostoPagetypeTagging
     );
 
     /**
-     * Render page type tagging
+     * Renders the page-type tagging by checking the current controller's name against a list
+     * of pre-defined page type and controller-name mappings
      *
-     * @return string the rendered HTML
+     * @return string the tagging
      */
     public static function get()
     {
@@ -50,7 +50,7 @@ class NostoPagetypeTagging
         }
 
         Context::getContext()->smarty->assign(array(
-            'nosto_page_type' => self::$controllers[''],
+            'nosto_page_type' => self::$controllers[''], //TODO
         ));
 
         return 'views/templates/hook/top_page_type-tagging.tpl';

@@ -25,21 +25,19 @@
  */
 class NostoCartTagging
 {
-
     /**
-     * Render meta-data (tagging) for the shopping cart.
+     * Renders the cart tagging by checking the cart contents
      *
-     * @return string The rendered HTML
+     * @return string the tagging
      */
     public static function get()
     {
-        $nosto_cart = NostoTaggingCart::loadData(Context::getContext()->cart);
-
         $cid = NostoHelperCookie::readNostoCookie();
         $hcid = $cid ? hash(NostoTagging::VISITOR_HASH_ALGO, $cid) : '';
 
+        $nostoCart = NostoTaggingCart::loadData(Context::getContext()->cart);
         Context::getContext()->smarty->assign(array(
-            'nosto_cart' => $nosto_cart,
+            'nosto_cart' => $nostoCart,
             'nosto_hcid' => $hcid
         ));
 

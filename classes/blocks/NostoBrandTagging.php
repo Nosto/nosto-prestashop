@@ -38,10 +38,9 @@ class NostoBrandTagging
             return null;
         }
 
-        $nosto_brand = NostoBrand::loadData($brand);
-
+        $nostoBrand = NostoBrand::loadData($brand);
         Context::getContext()->smarty->assign(array(
-            'nosto_brand' => $nosto_brand,
+            'nosto_brand' => $nostoBrand,
         ));
 
         return 'views/templates/hook/manufacturer-footer_brand-tagging.tpl';

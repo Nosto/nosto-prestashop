@@ -26,11 +26,10 @@
 
 class NostoCustomerTagging
 {
-
     /**
-     * Render meta-data (tagging) for the logged in customer.
+     * Renders the customer tagging by checking if the customer if currently logged in
      *
-     * @return string The rendered HTML
+     * @return string the tagging
      */
     public static function get()
     {
@@ -38,12 +37,12 @@ class NostoCustomerTagging
             return '';
         }
 
-        $nosto_customer = NostoCustomer::loadData(Context::getContext()->customer);
         $cid = NostoHelperCookie::readNostoCookie();
         $hcid = $cid ? hash(NostoTagging::VISITOR_HASH_ALGO, $cid) : '';
 
+        $nostoCustomer = NostoCustomer::loadData(Context::getContext()->customer);
         Context::getContext()->smarty->assign(array(
-            'nosto_customer' => $nosto_customer,
+            'nosto_customer' => $nostoCustomer,
             'nosto_hcid' => $hcid
         ));
 
