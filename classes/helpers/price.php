@@ -29,37 +29,6 @@
 class NostoHelperPrice
 {
     /**
-     * Returns the product price including discounts and taxes for the given currency.
-     *
-     * @param Product|ProductCore $product the product.
-     * @param Context|ContextCore $context the context.
-     * @param Currency|CurrencyCore $currency the currency.
-     * @return float the price.
-     */
-    public static function getProductPriceInclTax(Product $product, Context $context, Currency $currency)
-    {
-        return NostoHelperPrice::calcPrice($product->id, $currency, $context,
-            array('user_reduction' => true));
-    }
-
-    /**
-     * Returns the product list price including taxes for the given currency.
-     *
-     * @param Product|ProductCore $product the product.
-     * @param Context|ContextCore $context the context.
-     * @param Currency|CurrencyCore $currency the currency.
-     * @return float the price.
-     */
-    public static function getProductListPriceInclTax(
-        Product $product,
-        Context $context,
-        Currency $currency
-    ) {
-        return NostoHelperPrice::calcPrice($product->id, $currency, $context,
-            array('user_reduction' => false));
-    }
-
-    /**
      * Returns the product wholesale price including taxes for the given currency.
      *
      * @param Product|ProductCore $product the product.
@@ -126,7 +95,7 @@ class NostoHelperPrice
      * @param array $options options for the Product::getPriceStatic method.
      * @return float the price.
      */
-    protected static function calcPrice(
+    public static function calcPrice(
         $id_product,
         Currency $currency,
         Context $context,

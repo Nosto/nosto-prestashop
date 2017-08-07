@@ -96,13 +96,13 @@ class NostoTaggingProduct extends Nosto\Object\Product\Product
     protected function amendPrices(Product $product, Context $context, Currency $currency)
     {
         $this->setPrice(
-            NostoHelperPrice::getProductPriceInclTax(
+            $this->getProductPriceInclTax(
                 $product,
                 $context,
                 $currency
             )
         );
-        $this->setListPrice(NostoHelperPrice::getProductListPriceInclTax(
+        $this->setListPrice($this->getProductListPriceInclTax(
             $product,
             $context,
             $currency
@@ -186,6 +186,34 @@ class NostoTaggingProduct extends Nosto\Object\Product\Product
         } else {
             return ($product->checkQty(1)) ? self::IN_STOCK : self::OUT_OF_STOCK;
         }
+    }
+
+    /**
+     * Returns the product price including discounts and taxes for the given currency.
+     *
+     * @param Product|ProductCore $product the product.
+     * @param Context|ContextCore $context the context.
+     * @param Currency|CurrencyCore $currency the currency.
+     * @return float the price.
+     */
+    public function getProductPriceInclTax(Product $product, Context $context, Currency $currency)
+    {
+        return NostoHelperPrice::calcPrice($product->id, $currency, $context,
+            array('user_reduction' => true));
+    }
+
+    /**
+     * Returns the product list price including taxes for the given currency.
+     *
+     * @param Product|ProductCore $product the product.
+     * @param Context|ContextCore $context the context.
+     * @param Currency|CurrencyCore $currency the currency.
+     * @return float the price.
+     */
+    public function getProductListPriceInclTax(Product $product, Context $context, Currency $currency)
+    {
+        return NostoHelperPrice::calcPrice($product->id, $currency, $context,
+            array('user_reduction' => false));
     }
 
     /**
