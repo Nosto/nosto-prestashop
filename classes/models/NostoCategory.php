@@ -22,10 +22,6 @@
  * @copyright 2013-2016 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
-
-/**
- * Model for tagging categories.
- */
 class NostoCategory extends AbstractNostoModel
 {
     /**

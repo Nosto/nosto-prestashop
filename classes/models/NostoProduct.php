@@ -23,10 +23,9 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-/**
- * Model for tagging products.
- */
-class NostoProduct extends Nosto\Object\Product\Product
+use Nosto\Object\Product\Product as NostoSDKProduct;
+
+class NostoProduct extends NostoSDKProduct
 {
     /**
      * Loads the product data from supplied context and product objects.

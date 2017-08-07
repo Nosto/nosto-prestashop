@@ -23,9 +23,6 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-/**
- * Model for the price variation
- */
 class NostoVariation extends AbstractNostoModel
 {
     /**

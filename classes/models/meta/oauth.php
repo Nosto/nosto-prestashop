@@ -23,10 +23,11 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-/**
- * Meta data class for oauth related information needed when connecting accounts to Nosto.
- */
-class NostoTaggingMetaOauth extends Nosto\OAuth
+use Nosto\NostoException as NostoSDKException;
+use Nosto\Request\Api\Token as NostoSDKAPIToken;
+use Nosto\OAuth as NostoSDKOAuth;
+
+class NostoTaggingMetaOauth extends NostoSDKOAuth
 {
     /**
      * Loads meta data from the given context and language.
@@ -50,7 +51,7 @@ class NostoTaggingMetaOauth extends Nosto\OAuth
         $oauthParams = new NostoTaggingMetaOauth();
 
         try {
-            $oauthParams->setScopes(Nosto\Request\Api\Token::getApiTokenNames());
+            $oauthParams->setScopes(NostoSDKAPIToken::getApiTokenNames());
 
             $redirectUrl = NostoHelperUrl::getModuleUrl(
                 $moduleName,
@@ -65,7 +66,7 @@ class NostoTaggingMetaOauth extends Nosto\OAuth
             $oauthParams->setClientSecret('prestashop');
             $oauthParams->setRedirectUrl($redirectUrl);
             $oauthParams->setLanguageIsoCode($language->iso_code);
-        } catch (Nosto\NostoException $e) {
+        } catch (NostoSDKException $e) {
             NostoHelperLogger::error(
                 __CLASS__ . '::' . __FUNCTION__ . ' - ' . $e->getMessage(),
                 $e->getCode()

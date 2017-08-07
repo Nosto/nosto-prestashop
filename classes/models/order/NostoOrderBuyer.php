@@ -23,10 +23,9 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-/**
- * Buyer info model used bu the order model.
- */
-class NostoOrderBuyer extends \Nosto\Object\Order\Buyer
+use \Nosto\Object\Order\Buyer as NostoSDKOrderBuyer;
+
+class NostoOrderBuyer extends NostoSDKOrderBuyer
 {
     /**
      * Loads the buyer data from the customer object.

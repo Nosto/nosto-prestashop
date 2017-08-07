@@ -23,10 +23,9 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-/**
- * Meta data class for account owner related information needed when creating new accounts.
- */
-class NostoCurrentUser extends \Nosto\Object\User
+use \Nosto\Object\User as NostoSDKUser;
+
+class NostoCurrentUser extends NostoSDKUser
 {
     /**
      * Loads the meta data from the given context.

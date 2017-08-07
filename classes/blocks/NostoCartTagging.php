@@ -35,7 +35,7 @@ class NostoCartTagging
         $cid = NostoHelperCookie::readNostoCookie();
         $hcid = $cid ? hash(NostoTagging::VISITOR_HASH_ALGO, $cid) : '';
 
-        $nostoCart = NostoTaggingCart::loadData(Context::getContext()->cart);
+        $nostoCart = NostoCart::loadData(Context::getContext()->cart);
         Context::getContext()->smarty->assign(array(
             'nosto_cart' => $nostoCart,
             'nosto_hcid' => $hcid

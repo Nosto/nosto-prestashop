@@ -35,7 +35,7 @@ class NostoSignupService
      */
     public function createAccount($id_lang, $email, $account_details = "")
     {
-        $signupParams = NostoTaggingMetaAccount::loadData(Context::getContext(), $id_lang);
+        $signupParams = NostoAccountSignup::loadData(Context::getContext(), $id_lang);
         if ($signupParams->getOwner()->getEmail() !== $email) {
             $accountOwner = new NostoAccountOwner();
             $accountOwner->setEmail($email);

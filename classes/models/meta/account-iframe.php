@@ -23,11 +23,9 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-/**
- * Meta data class for account iframe related information needed when showing the admin iframe on
- * module settings page.
- */
-class NostoTaggingMetaAccountIframe extends Nosto\Object\Iframe
+use Nosto\Object\Iframe as NostoSDKIframe;
+
+class NostoTaggingMetaAccountIframe extends NostoSDKIframe
 {
     private $recentVisits;
     private $recentSales;

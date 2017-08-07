@@ -23,20 +23,19 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-/**
- * Meta data class for account billing related information needed when creating new accounts.
- */
-class NostoAccountBilling extends \Nosto\Object\Signup\Billing
+use \Nosto\Object\Signup\Billing as NostoSDKSignupBilling;
+
+class NostoAccountBilling extends NostoSDKSignupBilling
 {
     /**
      * Loads the meta data from the given context.
      *
      * @param Context $context the context to use as data source.
-     * @return \Nosto\Object\Signup\Billing
+     * @return NostoAccountBilling
      */
     public static function loadData($context)
     {
-        $billing = new \Nosto\Object\Signup\Billing();
+        $billing = new NostoAccountBilling();
         $billing->setCountry($context->country->iso_code);
         return $billing;
     }

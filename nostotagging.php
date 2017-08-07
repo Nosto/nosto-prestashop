@@ -386,7 +386,7 @@ class NostoTagging extends Module
                     $id_shop
                 );
                 $account = NostoHelperAccount::find($language_id, $id_shop_group, $id_shop);
-                $account_meta = NostoTaggingMetaAccount::loadData($this->context, $language_id);
+                $account_meta = NostoAccountSignup::loadData($this->context, $language_id);
                 // Make sure we Nosto is installed for the current store
                 if (empty($account) || !$account->isConnectedToNosto()) {
                     Tools::redirect(

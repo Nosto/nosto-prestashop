@@ -23,10 +23,9 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-/**
- * Model for tagging orders.
- */
-class NostoTaggingOrder extends \Nosto\Object\Order\Order
+use \Nosto\Object\Order\Order as NostoSDKOrder;
+
+class NostoTaggingOrder extends NostoSDKOrder
 {
 
     /**

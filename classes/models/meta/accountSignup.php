@@ -23,10 +23,9 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-/**
- * Meta data class for account related information needed when creating new accounts.
- */
-class NostoTaggingMetaAccount extends \Nosto\Object\Signup\Signup
+use \Nosto\Object\Signup\Signup as NostoSDKAccountSignup;
+
+class NostoAccountSignup extends NostoSDKAccountSignup
 {
     /**
      * @var string the API token used to identify an account creation.
@@ -34,7 +33,7 @@ class NostoTaggingMetaAccount extends \Nosto\Object\Signup\Signup
     protected $sign_up_api_token = 'JRtgvoZLMl4NPqO9XWhRdvxkTMtN82ITTJij8U7necieJPCvjtZjm5C4fpNrYJ81';
 
     /**
-     * NostoTaggingMetaAccount constructor.
+     * NostoAccountSignup constructor.
      */
     public function __construct()
     {
@@ -73,11 +72,11 @@ class NostoTaggingMetaAccount extends \Nosto\Object\Signup\Signup
      *
      * @param Context $context the context to use as data source.
      * @param int $id_lang the language to use as data source.
-     * @return NostoTaggingMetaAccount|null
+     * @return NostoAccountSignup|null
      */
     public static function loadData($context, $id_lang)
     {
-        $signup = new NostoTaggingMetaAccount();
+        $signup = new NostoAccountSignup();
 
         $language = new Language($id_lang);
         if (!Validate::isLoadedObject($language)) {

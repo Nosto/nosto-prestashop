@@ -23,34 +23,9 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-/**
- * 2013-2016 Nosto Solutions Ltd
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Academic Free License (AFL 3.0)
- * that is bundled with this package in the file LICENSE.txt.
- * It is also available through the world-wide-web at this URL:
- * http://opensource.org/licenses/afl-3.0.php
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to contact@nosto.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
- *
- * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2016 Nosto Solutions Ltd
- * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
- */
+use \Nosto\Object\Notification as NostoSDKNotification;
+use \Nosto\Types\Signup\AccountInterface as NostoSDKAccount;
 
-/**
- * Helper class for managing notifications related to Nosto module.
- *
- */
 class NostoNotificationManager
 {
     /**
@@ -68,7 +43,7 @@ class NostoNotificationManager
             $shop->id);
         if ($connected) {
             $account = NostoHelperAccount::find($language->id);
-            if ($account instanceof \Nosto\Types\Signup\AccountInterface && $account->hasMissingTokens()) {
+            if ($account instanceof NostoSDKAccount && $account->hasMissingTokens()) {
                 $tokens_ok = false;
             }
         }
@@ -143,8 +118,8 @@ class NostoNotificationManager
                     $notification = new NostoNotification(
                         $shop,
                         $language,
-                        \Nosto\Object\Notification::TYPE_MISSING_INSTALLATION,
-                        \Nosto\Object\Notification::SEVERITY_INFO,
+                        NostoSDKNotification::TYPE_MISSING_INSTALLATION,
+                        NostoSDKNotification::SEVERITY_INFO,
                         'Nosto account is not installed to shop %s and language %s'
                     );
                     $notifications[] = $notification;
@@ -153,8 +128,8 @@ class NostoNotificationManager
                     $notification = new NostoNotification(
                         $shop,
                         $language,
-                        \Nosto\Object\Notification::TYPE_MISSING_TOKENS,
-                        \Nosto\Object\Notification::SEVERITY_WARNING,
+                        NostoSDKNotification::TYPE_MISSING_TOKENS,
+                        NostoSDKNotification::SEVERITY_WARNING,
                         'One or more Nosto API tokens are missing for shop %s and language %s'
                     );
                     $notifications[] = $notification;
@@ -163,8 +138,8 @@ class NostoNotificationManager
                     $notification = new NostoNotification(
                         $shop,
                         $language,
-                        \Nosto\Object\Notification::TYPE_MULTI_CURRENCY_DISABLED,
-                        \Nosto\Object\Notification::SEVERITY_WARNING,
+                        NostoSDKNotification::TYPE_MULTI_CURRENCY_DISABLED,
+                        NostoSDKNotification::SEVERITY_WARNING,
                         'Your shop %s with language %s is using multiple currencies but' .
                         ' the multi-currency feature for Nosto is disabled'
                     );

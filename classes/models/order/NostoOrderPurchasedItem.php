@@ -23,10 +23,9 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-/**
- * Purchased item model used by the order model.
- */
-class NostoOrderPurchasedItem extends \Nosto\Object\Cart\LineItem
+use \Nosto\Object\Cart\LineItem as NostoSDKCartItem;
+
+class NostoOrderPurchasedItem extends NostoSDKCartItem
 {
 
 }

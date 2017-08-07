@@ -23,10 +23,10 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-/**
- * Model for tagging carts.
- */
-class NostoTaggingCart extends \Nosto\Object\Cart\Cart
+use \Nosto\Object\Cart\Cart as NostoSDKCart;
+use \Nosto\Object\Cart\LineItem as NostoSDKCartItem;
+
+class NostoCart extends NostoSDKCart
 {
     /**
      * @param $id_currency
@@ -54,7 +54,7 @@ class NostoTaggingCart extends \Nosto\Object\Cart\Cart
             return;
         }
 
-        $nostoCart = new \Nosto\Object\Cart\Cart();
+        $nostoCart = new NostoCart();
         $cart_rules = (array)$cart->getCartRules(CartRule::FILTER_ACTION_GIFT);
 
         $gift_products = array();
@@ -94,7 +94,7 @@ class NostoTaggingCart extends \Nosto\Object\Cart\Cart
                 $name .= ' (' . $item['attributes_small'] . ')';
             }
 
-            $nostoLineItem = new \Nosto\Object\Cart\LineItem();
+            $nostoLineItem = new NostoSDKCartItem();
             $nostoLineItem->setProductId($item['id_product']);
             $nostoLineItem->setQuantity((int)$item['cart_quantity']);
             $nostoLineItem->setName((string)$name);

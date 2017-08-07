@@ -23,10 +23,9 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-/**
- * Model for order status.
- */
-class NostoOrderStatus extends \Nosto\Object\Order\OrderStatus
+use \Nosto\Object\Order\OrderStatus as NostoSDKOrderStatus;
+
+class NostoOrderStatus extends NostoSDKOrderStatus
 {
     /**
      * Loads the order status data from the order model.

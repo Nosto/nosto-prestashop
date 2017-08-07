@@ -23,9 +23,6 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-/**
- * Model for tagging search terms.
- */
 class NostoSearch extends AbstractNostoModel
 {
     protected $searchTerm;
