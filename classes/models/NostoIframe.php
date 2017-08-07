@@ -1,5 +1,29 @@
 <?php
 /**
+ * 2013-2017 Nosto Solutions Ltd
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to contact@nosto.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
+ * versions in the future. If you wish to customize PrestaShop for your
+ * needs please refer to http://www.prestashop.com for more information.
+ *
+ * @author    Nosto Solutions Ltd <contact@nosto.com>
+ * @copyright 2013-2017 Nosto Solutions Ltd
+ * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+
+/**
  * 2013-2016 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
@@ -25,7 +49,7 @@
 
 use Nosto\Object\Iframe as NostoSDKIframe;
 
-class NostoTaggingMetaAccountIframe extends NostoSDKIframe
+class NostoIframe extends NostoSDKIframe
 {
     private $recentVisits;
     private $recentSales;
@@ -37,11 +61,11 @@ class NostoTaggingMetaAccountIframe extends NostoSDKIframe
      * @param Context $context the context to get the meta-data from.
      * @param int $id_lang the language ID of the shop for which to get the meta-data.
      * @param $uniqueId
-     * @return NostoTaggingMetaAccountIframe|null
+     * @return NostoIframe|null
      */
     public static function loadData($context, $id_lang, $uniqueId)
     {
-        $iframe = new NostoTaggingMetaAccountIframe();
+        $iframe = new NostoIframe();
         $shop_language = new Language($id_lang);
         $shop_context = $context->shop->getContext();
         if (
@@ -68,8 +92,7 @@ class NostoTaggingMetaAccountIframe extends NostoSDKIframe
         $iframe->setPlatform('prestashop');
 
         try {
-            //check the recent visits and sales
-            //get the shop traffic for the qualification check
+            //Check the recent visits and sales and get the shop traffic for the qualification
             if (class_exists("AdminStatsControllerCore")) {
                 $today = date("Y-m-d");
                 $daysBack = new DateTime();
@@ -84,7 +107,8 @@ class NostoTaggingMetaAccountIframe extends NostoSDKIframe
                 }
             }
         } catch (Exception $e) {
-            //AdminStatsControllerCore is none public api. Add a try/catch incase it has been removed or changed.
+            //AdminStatsControllerCore is not a public API. Adding a try-catch in case it has been
+            //removed or changed.
             NostoHelperLogger::error(
                 __CLASS__ . '::' . __FUNCTION__ . ' - ' . $e->getMessage(),
                 $e->getCode()

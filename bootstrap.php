@@ -49,7 +49,7 @@ class NostoBootstrap {
         require_once($moduleDir . '/classes/models/NostoCurrentUser.php');
         require_once($moduleDir . '/classes/models/meta/account.php');
         require_once($moduleDir . '/classes/models/meta/NostoAccountBilling.php');
-        require_once($moduleDir . '/classes/models/meta/account-iframe.php');
+        require_once($moduleDir . '/classes/models/meta/NostoIframe.php');
         require_once($moduleDir . '/classes/models/meta/NostoAccountOwner.php');
         require_once($moduleDir . '/classes/models/meta/oauth.php');
         require_once($moduleDir . '/classes/models/AbstractNostoModel.php');

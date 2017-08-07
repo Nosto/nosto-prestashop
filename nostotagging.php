@@ -478,7 +478,7 @@ class NostoTagging extends Module
             && Shop::getContext() === Shop::CONTEXT_SHOP
         ) {
             $currentUser = NostoCurrentUser::loadData($this->context);
-            $account_iframe = NostoTaggingMetaAccountIframe::loadData(
+            $account_iframe = NostoIframe::loadData(
                 $this->context,
                 $language_id,
                 ''
@@ -560,7 +560,7 @@ class NostoTagging extends Module
         ) {
             try {
                 $currentUser = NostoCurrentUser::loadData($this->context);
-                $meta = NostoTaggingMetaAccountIframe::loadData(
+                $meta = NostoIframe::loadData(
                     $this->context,
                     $language_id,
                     ''
