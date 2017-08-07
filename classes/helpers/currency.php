@@ -126,13 +126,7 @@ class NostoHelperCurrency
                 $nosto_currency = self::createWithCldr($currency, $context);
                 return $nosto_currency;
             } catch (Exception $e) {
-                NostoHelperLogger::error(
-                    sprintf(
-                        'Failed to resolve currency: %s (%s)',
-                        $e->getMessage(),
-                        $e->getCode()
-                    )
-                );
+                NostoHelperLogger::error($e);
             }
         }
         if (empty($currency['format'])) {

@@ -45,10 +45,7 @@ class NostoCustomer extends NostoSDKUser
         try {
             $user->populateCustomerReference($customer);
         } catch (Exception $e) {
-            NostoHelperLogger::error(
-                __CLASS__ . '::' . __FUNCTION__ . ' - ' . $e->getMessage(),
-                $e->getCode()
-            );
+            NostoHelperLogger::error($e);
         }
 
         return $user;

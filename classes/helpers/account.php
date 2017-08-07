@@ -98,10 +98,7 @@ class NostoHelperAccount
                     $service = new NostoSDKUninstallAccountOperation($account);
                     $service->delete($currentUser);
                 } catch (NostoSDKException $e) {
-                    NostoHelperLogger::error(
-                        __CLASS__ . '::' . __FUNCTION__ . ' - ' . $e->getMessage(),
-                        $e->getCode()
-                    );
+                    NostoHelperLogger::error($e);
                 }
             }
         }

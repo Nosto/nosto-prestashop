@@ -19,8 +19,7 @@ class NostoSettingsService
             $service = new NostoSDKUpdateSettingsOperation($this->account);
             return $service->update($settings);
         } catch (Exception $e) {
-            NostoHelperLogger::error(__CLASS__ . '::' . __FUNCTION__ . ' - ' . $e->getMessage(),
-                $e->getCode());
+            NostoHelperLogger::error($e);
         }
         return false;
     }

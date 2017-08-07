@@ -60,28 +60,22 @@ class NostoHelperLogger
     }
 
     /**
-     * Logs an error to the PS log.
+     * Logs an error message to log.
+     * If an exception is passed, the the exception code and message code are used too.
      *
-     * @param string $message the message.
-     * @param null|int $error_code the error code.
-     * @param null|string $object_type the object type affected.
-     * @param null|int $object_id the object id affected.
+     * @param Exception $e the exception whose message and code are to be logged
+     * @param string|null $message the message to log
      */
-    public static function error(
-        $message,
-        $error_code = null,
-        $object_type = null,
-        $object_id = null
-    ) {
-        NostoHelperLogger::log($message, self::SEVERITY_ERROR, $error_code, $object_type,
-            $object_id);
+    public static function error(Exception $e, $message = '')
+    {
+        $message = !empty($message)? $message . ": " . $e->getMessage() : $e->getMessage();
+        NostoHelperLogger::log($message, self::SEVERITY_ERROR, $e->getCode());
     }
 
     /**
      * Logs info message into the PS log
      *
-     * @param $message
-     * @return void
+     * @param string|null $message the message to log
      */
     public static function info($message)
     {

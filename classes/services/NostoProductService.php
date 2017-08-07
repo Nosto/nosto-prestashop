@@ -161,10 +161,7 @@ class NostoProductService extends AbstractNostoService
                 try {
                     $op->upsert();
                 } catch (Exception $e) {
-                    NostoHelperLogger::error(
-                        __CLASS__ . '::' . __FUNCTION__ . ' - ' . $e->getMessage(),
-                        $e->getCode()
-                    );
+                    NostoHelperLogger::error($e);
                 }
             }
         }
@@ -223,12 +220,7 @@ class NostoProductService extends AbstractNostoService
                 $op->addProduct($nosto_product);
                 $op->upsert();
             } catch (NostoSDKException $e) {
-                NostoHelperLogger::error(
-                    __CLASS__ . '::' . __FUNCTION__ . ' - ' . $e->getMessage(),
-                    $e->getCode(),
-                    get_class($product),
-                    (int)$product->id
-                );
+                NostoHelperLogger::error($e, sprintf("Failed to upsert product %s", $product->id));
             }
         }
     }

@@ -80,8 +80,7 @@ class NostoRatesService
             $service = new NostoSDKSyncRatesOperation($account);
             return $service->update($exchangeRates);
         } catch (Exception $e) {
-            NostoHelperLogger::error(__CLASS__ . '::' . __FUNCTION__ . ' - ' . $e->getMessage(),
-                $e->getCode());
+            NostoHelperLogger::error($e);
         }
         return false;
     }

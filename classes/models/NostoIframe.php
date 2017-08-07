@@ -109,10 +109,7 @@ class NostoIframe extends NostoSDKIframe
         } catch (Exception $e) {
             //AdminStatsControllerCore is not a public API. Adding a try-catch in case it has been
             //removed or changed.
-            NostoHelperLogger::error(
-                __CLASS__ . '::' . __FUNCTION__ . ' - ' . $e->getMessage(),
-                $e->getCode()
-            );
+            NostoHelperLogger::error($e);
         }
 
         return $iframe;

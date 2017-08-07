@@ -72,16 +72,10 @@ class NostoOrderService extends AbstractNostoService
                 try {
                     $this->syncInventoryLevel($nosto_order);
                 } catch (Exception $e) {
-                    NostoHelperLogger::error(
-                        'Failed to synchronize products after order: %s',
-                        $e->getMessage()
-                    );
+                    NostoHelperLogger::error($e, 'Failed to synchronize products after order');
                 }
             } catch (Exception $e) {
-                NostoHelperLogger::error(
-                    'Failed to send order confirmation: %s',
-                    $e->getMessage()
-                );
+                NostoHelperLogger::error($e, 'Failed to send order confirmation');
             }
         }
     }

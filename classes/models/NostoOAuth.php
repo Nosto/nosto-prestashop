@@ -68,10 +68,7 @@ class NostoOAuth extends NostoSDKOAuth
             $nostoOAuth->setRedirectUrl($redirectUrl);
             $nostoOAuth->setLanguageIsoCode($language->iso_code);
         } catch (NostoSDKException $e) {
-            NostoHelperLogger::error(
-                __CLASS__ . '::' . __FUNCTION__ . ' - ' . $e->getMessage(),
-                $e->getCode()
-            );
+            NostoHelperLogger::error($e);
         }
 
         return $nostoOAuth;
