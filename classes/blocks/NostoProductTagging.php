@@ -70,7 +70,7 @@ class NostoProductTagging
             return null;
         }
 
-        $nosto_product = new NostoTaggingProduct();
+        $nosto_product = new NostoProduct();
         $nosto_product->loadData(Context::getContext(), $product);
 
         $params = array('nosto_product' => $nosto_product);

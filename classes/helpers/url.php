@@ -125,7 +125,7 @@ class NostoTaggingHelperUrl
                 'search_query' => 'nosto',
                 'nostodebug' => 'true',
             );
-            return $this->getPageUrl('AbstractNostoSearch.php', $id_lang, null, $params);
+            return $this->getPageUrl('NostoSearch.php', $id_lang, null, $params);
         } catch (Exception $e) {
             // Return empty on failure
             return '';

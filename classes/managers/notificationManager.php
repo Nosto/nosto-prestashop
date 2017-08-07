@@ -132,7 +132,7 @@ class NostoNotificationManager
     /**
      * Checks and returns all notification for the Prestashop installation
      *
-     * @return array of NostoAdminNotification objects
+     * @return array of NostoNotification objects
      */
     public function getAll()
     {
@@ -142,7 +142,7 @@ class NostoNotificationManager
             foreach (Language::getLanguages(true, $shop->id) as $languageArray) {
                 $language = new Language($languageArray['id_lang']);
                 if ($this->checkNostoInstalled($shop, $language) == false) {
-                    $notification = new NostoAdminNotification(
+                    $notification = new NostoNotification(
                         $shop,
                         $language,
                         \Nosto\Object\Notification::TYPE_MISSING_INSTALLATION,
@@ -152,7 +152,7 @@ class NostoNotificationManager
                     $notifications[] = $notification;
                 }
                 if ($this->checkTokens($shop, $language) == false) {
-                    $notification = new NostoAdminNotification(
+                    $notification = new NostoNotification(
                         $shop,
                         $language,
                         \Nosto\Object\Notification::TYPE_MISSING_TOKENS,
@@ -162,7 +162,7 @@ class NostoNotificationManager
                     $notifications[] = $notification;
                 }
                 if ($this->checkMulticurrencyEnabled($shop, $language) == false) {
-                    $notification = new NostoAdminNotification(
+                    $notification = new NostoNotification(
                         $shop,
                         $language,
                         \Nosto\Object\Notification::TYPE_MULTI_CURRENCY_DISABLED,

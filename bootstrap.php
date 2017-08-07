@@ -28,12 +28,12 @@ class NostoBootstrap {
     public static function init($moduleDir) {
         require_once($moduleDir . '/libs/autoload.php');
         require_once($moduleDir . '/classes/nosto.php');
-        require_once($moduleDir . '/classes/NostoAdminNotification.php');
+        require_once($moduleDir . '/classes/NostoNotification.php');
         require_once($moduleDir . '/classes/models/rates.php');
         require_once($moduleDir . '/classes/helpers/account.php');
         require_once($moduleDir . '/classes/helpers/admin-tab.php');
         require_once($moduleDir . '/classes/helpers/config.php');
-        require_once($moduleDir . '/classes/helpers/customer.php');
+        require_once($moduleDir . '/classes/helpers/NostoCustomer.php');
         require_once($moduleDir . '/classes/helpers/flash-message.php');
         require_once($moduleDir . '/classes/helpers/NostoHelperImage.php');
         require_once($moduleDir . '/classes/helpers/NostoHelperLogger.php');
@@ -55,15 +55,15 @@ class NostoBootstrap {
         require_once($moduleDir . '/classes/models/AbstractNostoModel.php');
         require_once($moduleDir . '/classes/models/cart.php');
         require_once($moduleDir . '/classes/models/category.php');
-        require_once($moduleDir . '/classes/models/customer.php');
+        require_once($moduleDir . '/classes/models/NostoCustomer.php');
         require_once($moduleDir . '/classes/models/NostoOrderTagging.php');
         require_once($moduleDir . '/classes/models/order/NostoOrderBuyer.php');
-        require_once($moduleDir . '/classes/models/AbstractNostoPriceVariation.php');
+        require_once($moduleDir . '/classes/models/NostoVariation.php');
         require_once($moduleDir . '/classes/models/order/NostoOrderPurchasedItem.php');
         require_once($moduleDir . '/classes/models/order/NostoOrderStatus.php');
-        require_once($moduleDir . '/classes/models/NostoTaggingProduct.php');
-        require_once($moduleDir . '/classes/models/AbstractNostoBrand.php');
-        require_once($moduleDir . '/classes/models/AbstractNostoSearch.php');
+        require_once($moduleDir . '/classes/models/NostoProduct.php');
+        require_once($moduleDir . '/classes/models/NostoBrand.php');
+        require_once($moduleDir . '/classes/models/NostoSearch.php');
 
         if (file_exists($moduleDir . DIRECTORY_SEPARATOR . '.env')) {
             $dotenv = new Dotenv\Dotenv($moduleDir); // @codingStandardsIgnoreLine

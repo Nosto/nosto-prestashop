@@ -34,12 +34,11 @@ class NostoCustomerTagging
      */
     public static function get()
     {
-        $nosto_customer = new NostoTaggingCustomer();
-        if (!$nosto_customer->isCustomerLoggedIn(Context::getContext()->customer)) {
+        if (!self::isCustomerLoggedIn(Context::getContext()->customer)) {
             return '';
         }
 
-        $nosto_customer->loadData(Context::getContext()->customer);
+        $nosto_customer = NostoCustomer::loadData(Context::getContext()->customer);
         $cid = NostoHelperCookie::readNostoCookie();
         $hcid = $cid ? hash(NostoTagging::VISITOR_HASH_ALGO, $cid) : '';
 
@@ -49,5 +48,20 @@ class NostoCustomerTagging
         ));
 
         return 'views/templates/hook/top_customer-tagging.tpl';
+    }
+
+    /**
+     * Check if the customer is logged in or not.
+     *
+     * @param Customer $customer the customer object to check.
+     * @return bool true if the customer is logged in, false otherwise.
+     */
+    public static function isCustomerLoggedIn(Customer $customer)
+    {
+        if (!Validate::isLoadedObject($customer)) {
+            return false;
+        }
+
+        return $customer->isLogged();
     }
 }

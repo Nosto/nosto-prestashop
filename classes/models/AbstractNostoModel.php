@@ -40,7 +40,7 @@ abstract class AbstractNostoModel
     protected function dispatchHookActionLoadAfter(array $params)
     {
         // We replace the "NostoTagging" part of the class
-        // name with "Nosto", e.g. "NostoTaggingProduct" => "NostoProduct".
+        // name with "Nosto", e.g. "NostoProduct" => "NostoProduct".
         $this->dispatchHook(
             'action' . str_replace('NostoTagging', 'Nosto', get_class($this)) . 'LoadAfter',
             $params

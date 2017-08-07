@@ -1337,7 +1337,7 @@ class NostoTagging extends Module
         $helper_notification = Nosto::helper('nosto_tagging/notification');
         $notifications = $helper_notification->getAll();
         if (is_array($notifications) && count($notifications) > 0) {
-            /* @var NostoAdminNotification $notification */
+            /* @var NostoNotification $notification */
             foreach ($notifications as $notification) {
                 if (
                     $notification->getNotificationType() === \Nosto\Object\Notification::TYPE_MISSING_INSTALLATION
@@ -1353,9 +1353,9 @@ class NostoTagging extends Module
     /**
      * Adds a Prestashop admin notification
      *
-     * @param NostoAdminNotification $notification
+     * @param NostoNotification $notification
      */
-    protected function addPrestashopNotification(NostoAdminNotification $notification)
+    protected function addPrestashopNotification(NostoNotification $notification)
     {
         switch ($notification->getNotificationSeverity()) {
             case \Nosto\Object\Notification::SEVERITY_INFO:

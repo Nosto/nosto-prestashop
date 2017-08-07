@@ -70,7 +70,7 @@ class NostoBrandTagging
             return null;
         }
 
-        $nosto_brand = new AbstractNostoBrand();
+        $nosto_brand = new NostoBrand();
         $nosto_brand->loadData($manufacturer);
 
         Context::getContext()->smarty->assign(array(

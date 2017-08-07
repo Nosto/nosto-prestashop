@@ -26,7 +26,7 @@
 /**
  * Model for tagging customers.
  */
-class NostoTaggingCustomer extends \Nosto\Object\User
+class NostoCustomer extends \Nosto\Object\User
 {
 
     public $customer_reference;
@@ -35,39 +35,24 @@ class NostoTaggingCustomer extends \Nosto\Object\User
      * Loads the customer data from supplied context and customer objects.
      *
      * @param Customer $customer the customer object.
+     * @return NostoCustomer
      */
-    public function loadData(Customer $customer)
+    public static function loadData(Customer $customer)
     {
-        if (!$this->isCustomerLoggedIn($customer)) {
-            return;
-        }
-
-        $this->setFirstName($customer->firstname);
-        $this->setLastName($customer->lastname);
-        $this->setEmail($customer->email);
+        $user = new NostoCustomer();
+        $user->setFirstName($customer->firstname);
+        $user->setLastName($customer->lastname);
+        $user->setEmail($customer->email);
         try {
-            $this->populateCustomerReference($customer);
+            $user->populateCustomerReference($customer);
         } catch (Exception $e) {
             NostoHelperLogger::error(
                 __CLASS__ . '::' . __FUNCTION__ . ' - ' . $e->getMessage(),
                 $e->getCode()
             );
         }
-    }
 
-    /**
-     * Check if the customer is logged in or not.
-     *
-     * @param Customer $customer the customer object to check.
-     * @return bool true if the customer is logged in, false otherwise.
-     */
-    public function isCustomerLoggedIn(Customer $customer)
-    {
-        if (!Validate::isLoadedObject($customer)) {
-            return false;
-        }
-
-        return $customer->isLogged();
+        return $user;
     }
 
     /**

@@ -50,10 +50,10 @@
 /**
  * Class for constructing Nosto related admin notifications.
  */
-class NostoAdminNotification extends Nosto\Object\Notification
+class NostoNotification extends Nosto\Object\Notification
 {
     /**
-     * NostoAdminNotification constructor.
+     * NostoNotification constructor.
      *
      * @param Shop $shop
      * @param Language $language

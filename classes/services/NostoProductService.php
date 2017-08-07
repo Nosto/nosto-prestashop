@@ -152,7 +152,7 @@ class NostoProductService extends AbstractNostoService
                 list($account, $id_shop, $id_lang) = $data;
                 $account_name = $account->getName();
                 $nosto_product = $this->loadNostoProduct($product->id, $id_lang, $id_shop);
-                if ($nosto_product instanceof NostoTaggingProduct === false) {
+                if ($nosto_product instanceof NostoProduct === false) {
                     continue;
                 }
                 if (!isset($products_in_store[$account_name])) {
@@ -234,7 +234,7 @@ class NostoProductService extends AbstractNostoService
         foreach ($this->getAccountData() as $data) {
             list($account) = $data;
 
-            $nosto_product = new NostoTaggingProduct();
+            $nosto_product = new NostoProduct();
             $nosto_product->assignId($product);
 
             try {
@@ -259,7 +259,7 @@ class NostoProductService extends AbstractNostoService
      * @param int $id_product the PS product ID.
      * @param int $id_lang the language ID.
      * @param int $id_shop the shop ID.
-     * @return NostoTaggingProduct|null the product or null if could not be loaded.
+     * @return NostoProduct|null the product or null if could not be loaded.
      */
     protected function loadNostoProduct($id_product, $id_lang, $id_shop)
     {
@@ -270,7 +270,7 @@ class NostoProductService extends AbstractNostoService
         /* @var NostoTaggingHelperContextFactory $context_factory */
         $context_factory = Nosto::helper('nosto_tagging/context_factory');
         $forged_context = $context_factory->forgeContext($id_lang, $id_shop);
-        $nosto_product = new NostoTaggingProduct();
+        $nosto_product = new NostoProduct();
         $nosto_product->loadData($forged_context, $product);
         $context_factory->revertToOriginalContext();
 

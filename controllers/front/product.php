@@ -48,7 +48,7 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
             if (!Validate::isLoadedObject($product)) {
                 Controller::getController('PageNotFoundController')->run();
             }
-            $nosto_product = new NostoTaggingProduct();
+            $nosto_product = new NostoProduct();
             $nosto_product->loadData($context, $product);
             $collection->append($nosto_product);
         } else {
@@ -59,7 +59,7 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
                     continue;
                 }
 
-                $nosto_product = new NostoTaggingProduct();
+                $nosto_product = new NostoProduct();
                 $nosto_product->loadData($context, $product);
                 $collection->append($nosto_product);
             }

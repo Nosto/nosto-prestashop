@@ -26,7 +26,7 @@
 /**
  * Model for the price variation
  */
-class AbstractNostoPriceVariation extends AbstractNostoModel
+class NostoVariation extends AbstractNostoModel
 {
     /**
      * The id of the variation

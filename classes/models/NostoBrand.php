@@ -26,7 +26,7 @@
 /**
  * Model for tagging manufacturers (brands).
  */
-class AbstractNostoBrand extends AbstractNostoModel
+class NostoBrand extends AbstractNostoModel
 {
     /**
      * @var string the built brand string.

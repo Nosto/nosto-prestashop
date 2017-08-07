@@ -26,7 +26,7 @@
 /**
  * Model for tagging products.
  */
-class NostoTaggingProduct extends Nosto\Object\Product\Product
+class NostoProduct extends Nosto\Object\Product\Product
 {
     /**
      * Loads the product data from supplied context and product objects.
@@ -140,7 +140,8 @@ class NostoTaggingProduct extends Nosto\Object\Product\Product
             }
 
             $link = NostoHelperLink::getLink();
-            $url = $link->getImageLink($product->link_rewrite, $product->id . '-' . $image_id, $image_type);
+            $url = $link->getImageLink($product->link_rewrite, $product->id . '-' . $image_id,
+                $image_type);
             if ($url) {
                 $this->setImageUrl($url);
             }

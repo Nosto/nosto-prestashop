@@ -26,7 +26,7 @@
 /**
  * Model for tagging search terms.
  */
-class AbstractNostoSearch extends AbstractNostoModel
+class NostoSearch extends AbstractNostoModel
 {
     /**
      * @var string the search term.
