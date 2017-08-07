@@ -95,21 +95,19 @@ class NostoTaggingProduct extends Nosto\Object\Product\Product
      */
     protected function amendPrices(Product $product, Context $context, Currency $currency)
     {
-        /** @var NostoTaggingHelperPrice $helper_price */
-        $helper_price = Nosto::helper('nosto_tagging/price');
         $this->setPrice(
-            $helper_price->getProductPriceInclTax(
+            NostoHelperPrice::getProductPriceInclTax(
                 $product,
                 $context,
                 $currency
             )
         );
-        $this->setListPrice($helper_price->getProductListPriceInclTax(
+        $this->setListPrice(NostoHelperPrice::getProductListPriceInclTax(
             $product,
             $context,
             $currency
         ));
-        $supplier_cost = $helper_price->getProductWholesalePriceInclTax($product);
+        $supplier_cost = NostoHelperPrice::getProductWholesalePriceInclTax($product);
         if ($supplier_cost !== null && is_numeric($supplier_cost)) {
             $this->setSupplierCost($supplier_cost);
         }
@@ -183,10 +181,7 @@ class NostoTaggingProduct extends Nosto\Object\Product\Product
      */
     protected function checkAvailability(Product $product)
     {
-        if (
-            !$product->active
-            || $product->visibility === 'none'
-        ) {
+        if (!$product->active || $product->visibility === 'none') {
             return self::INVISIBLE;
         } else {
             return ($product->checkQty(1)) ? self::IN_STOCK : self::OUT_OF_STOCK;
@@ -212,7 +207,8 @@ class NostoTaggingProduct extends Nosto\Object\Product\Product
             $tags = explode(', ', $product_tags);
         }
 
-        // If the product has no attributes (color, size etc.), then we mark it as possible to add directly to cart.
+        // If the product has no attributes (color, size etc.), then we mark
+        // it as possible to add directly to cart.
         $product_attributes = $product->getAttributesGroups($id_lang);
         if (empty($product_attributes)) {
             $tags[] = self::ADD_TO_CART;

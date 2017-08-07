@@ -26,7 +26,7 @@
 /**
  * Helper class for price operations.
  */
-class NostoTaggingHelperPrice
+class NostoHelperPrice
 {
     /**
      * Returns the product price including discounts and taxes for the given currency.
@@ -36,9 +36,10 @@ class NostoTaggingHelperPrice
      * @param Currency|CurrencyCore $currency the currency.
      * @return float the price.
      */
-    public function getProductPriceInclTax(Product $product, Context $context, Currency $currency)
+    public static function getProductPriceInclTax(Product $product, Context $context, Currency $currency)
     {
-        return $this->calcPrice($product->id, $currency, $context, array('user_reduction' => true));
+        return NostoHelperPrice::calcPrice($product->id, $currency, $context,
+            array('user_reduction' => true));
     }
 
     /**
@@ -49,12 +50,12 @@ class NostoTaggingHelperPrice
      * @param Currency|CurrencyCore $currency the currency.
      * @return float the price.
      */
-    public function getProductListPriceInclTax(
+    public static function getProductListPriceInclTax(
         Product $product,
         Context $context,
         Currency $currency
     ) {
-        return $this->calcPrice($product->id, $currency, $context,
+        return NostoHelperPrice::calcPrice($product->id, $currency, $context,
             array('user_reduction' => false));
     }
 
@@ -64,12 +65,12 @@ class NostoTaggingHelperPrice
      * @param Product|ProductCore $product the product.
      * @return float the price.
      */
-    public function getProductWholesalePriceInclTax(Product $product)
+    public static function getProductWholesalePriceInclTax(Product $product)
     {
         $wholesale_price_exc_taxes = $product->wholesale_price;
         if ($wholesale_price_exc_taxes > 0) {
             if ($product->tax_rate > 0) {
-                $wholesale_price_inc_taxes = $this->roundPrice(
+                $wholesale_price_inc_taxes = NostoHelperPrice::roundPrice(
                     $wholesale_price_exc_taxes * (1 + $product->tax_rate / 100)
                 );
             } else {
@@ -103,15 +104,16 @@ class NostoTaggingHelperPrice
             $id_address = (int)$item['id_address_delivery'];
         }
 
-        return $this->calcPrice((int)$item['id_product'], $currency, $context, array(
-            'user_reduction' => true,
-            'id_product_attribute' => (
-            isset($item['id_product_attribute']) ? (int)$item['id_product_attribute'] : null
-            ),
-            'id_customer' => ((int)$cart->id_customer ? (int)$cart->id_customer : null),
-            'id_cart' => (int)$cart->id,
-            'id_address' => (Address::addressExists($id_address) ? (int)$id_address : null),
-        ));
+        return NostoHelperPrice::calcPrice((int)$item['id_product'], $currency, $context,
+            array(
+                'user_reduction' => true,
+                'id_product_attribute' => (
+                isset($item['id_product_attribute']) ? (int)$item['id_product_attribute'] : null
+                ),
+                'id_customer' => ((int)$cart->id_customer ? (int)$cart->id_customer : null),
+                'id_cart' => (int)$cart->id,
+                'id_address' => (Address::addressExists($id_address) ? (int)$id_address : null),
+            ));
     }
 
     /**
@@ -124,7 +126,7 @@ class NostoTaggingHelperPrice
      * @param array $options options for the Product::getPriceStatic method.
      * @return float the price.
      */
-    protected function calcPrice(
+    protected static function calcPrice(
         $id_product,
         Currency $currency,
         Context $context,
@@ -191,7 +193,7 @@ class NostoTaggingHelperPrice
             $context->currency = $old_currency;
         }
 
-        return $this->roundPrice($value);
+        return NostoHelperPrice::roundPrice($value);
     }
 
     /**
@@ -200,7 +202,7 @@ class NostoTaggingHelperPrice
      * @param float $price the price to round.
      * @return float the rounded price.
      */
-    protected function roundPrice($price)
+    protected static function roundPrice($price)
     {
         return Tools::ps_round($price, 2);
     }
