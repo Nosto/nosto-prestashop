@@ -51,7 +51,7 @@ class NostoTaggingHelperConfig
      * @param int|null $id_shop the shop id the config entry is saved for.
      * @return mixed
      */
-    public function read($name, $lang_id = null, $id_shop_group = null, $id_shop = null)
+    public static function read($name, $lang_id = null, $id_shop_group = null, $id_shop = null)
     {
         return Configuration::get($name, $lang_id, $id_shop_group, $id_shop);
     }
@@ -107,7 +107,7 @@ class NostoTaggingHelperConfig
      */
     public function exists($name, $lang_id = null, $id_shop_group = null, $id_shop = null)
     {
-        $value = self::read($name, $lang_id, $id_shop_group, $id_shop);
+        $value = NostoTaggingHelperConfig::read($name, $lang_id, $id_shop_group, $id_shop);
         return ($value !== false && $value !== null && $value !== '');
     }
 
@@ -221,7 +221,8 @@ class NostoTaggingHelperConfig
      */
     public function getAccountName($id_lang, $id_shop_group = null, $id_shop = null)
     {
-        return $this->read(self::ACCOUNT_NAME, $id_lang, $id_shop_group, $id_shop);
+        return NostoTaggingHelperConfig::read(self::ACCOUNT_NAME, $id_lang, $id_shop_group,
+            $id_shop);
     }
 
     /**
@@ -263,7 +264,8 @@ class NostoTaggingHelperConfig
      */
     public function getToken($token_name, $id_lang, $id_shop_group = null, $id_shop = null)
     {
-        return $this->read(self::getTokenConfigKey($token_name), $id_lang, $id_shop_group,
+        return NostoTaggingHelperConfig::read(self::getTokenConfigKey($token_name), $id_lang,
+            $id_shop_group,
             $id_shop);
     }
 
@@ -285,7 +287,7 @@ class NostoTaggingHelperConfig
      */
     public function getAdminUrl()
     {
-        return $this->read(self::ADMIN_URL);
+        return NostoTaggingHelperConfig::read(self::ADMIN_URL);
     }
 
     /**
@@ -308,7 +310,7 @@ class NostoTaggingHelperConfig
      */
     public function getInstalledVersion()
     {
-        return $this->read(self::INSTALLED_VERSION);
+        return NostoTaggingHelperConfig::read(self::INSTALLED_VERSION);
     }
 
     /**
@@ -330,7 +332,7 @@ class NostoTaggingHelperConfig
      */
     public function getCronAccessToken()
     {
-        return $this->read(self::CRON_ACCESS_TOKEN);
+        return NostoTaggingHelperConfig::read(self::CRON_ACCESS_TOKEN);
     }
 
     /**
@@ -355,7 +357,8 @@ class NostoTaggingHelperConfig
      */
     public function getMultiCurrencyMethod($id_lang, $id_shop_group = null, $id_shop = null)
     {
-        $method = $this->read(self::MULTI_CURRENCY_METHOD, $id_lang, $id_shop_group, $id_shop);
+        $method = NostoTaggingHelperConfig::read(self::MULTI_CURRENCY_METHOD, $id_lang,
+            $id_shop_group, $id_shop);
         return !empty($method) ? $method : self::MULTI_CURRENCY_METHOD_DISABLED;
     }
 
@@ -369,7 +372,8 @@ class NostoTaggingHelperConfig
      */
     public function getNostotaggingRenderPosition($id_lang, $id_shop_group = null, $id_shop = null)
     {
-        $position = $this->read(self::NOSTOTAGGING_POSITION, $id_lang, $id_shop_group, $id_shop);
+        $position = NostoTaggingHelperConfig::read(self::NOSTOTAGGING_POSITION, $id_lang,
+            $id_shop_group, $id_shop);
         return !empty($position) ? $position : self::NOSTOTAGGING_POSITION_TOP;
     }
 
@@ -467,9 +471,9 @@ class NostoTaggingHelperConfig
      * @param null|int $id_shop
      * @return int
      */
-    public function getImageType($id_lang, $id_shop_group = null, $id_shop = null)
+    public static function getImageType($id_lang, $id_shop_group = null, $id_shop = null)
     {
-        $type = $this->read(
+        $type = NostoTaggingHelperConfig::read(
             self::NOSTOTAGGING_IMAGE_TYPE,
             $id_lang,
             $id_shop_group,

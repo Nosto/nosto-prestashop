@@ -502,8 +502,6 @@ class NostoTagging extends Module
         } else {
             $iframe_installation_url = null;
         }
-        /** @var NostoTaggingHelperImage $helper_images */
-        $helper_images = Nosto::helper('nosto_tagging/image');
         $this->getSmarty()->assign(array(
             $this->name . '_form_action' => $this->getAdminUrl(),
             $this->name . '_create_account' => $this->getAdminUrl(),
@@ -556,8 +554,8 @@ class NostoTagging extends Module
             'iframe_installation_url' => $iframe_installation_url,
             'iframe_origin' => $helper_url->getIframeOrigin(),
             'module_path' => $this->_path,
-            'image_types' => $helper_images->getProductImageTypes(),
-            'current_image_type' => $helper_config->getImageType(
+            'image_types' => NostoHelperImage::getProductImageTypes(),
+            'current_image_type' => NostoTaggingHelperConfig::getImageType(
                 $current_language['id_lang'],
                 $id_shop_group,
                 $id_shop

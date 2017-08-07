@@ -46,8 +46,6 @@ class NostoTaggingProduct extends Nosto\Object\Product\Product
         $helper_currency = Nosto::helper('nosto_tagging/currency');
         /** @var NostoTaggingHelperConfig $helper_config */
         $helper_config = Nosto::helper('nosto_tagging/config');
-        /** @var NostoTaggingHelperImage $helper_image */
-        $helper_image = Nosto::helper('nosto_tagging/image');
         $base_currency = $helper_currency->getBaseCurrency($context);
         $id_lang = $context->language->id;
         $id_shop = null;
@@ -127,7 +125,7 @@ class NostoTaggingProduct extends Nosto\Object\Product\Product
     {
         $images = Image::getImages((int)$id_lang, (int)$product->id);
         foreach ($images as $image) {
-            $image_type = NostoTaggingHelperImage::getTaggingImageTypeName($id_lang);
+            $image_type = NostoHelperImage::getTaggingImageTypeName($id_lang);
             if (empty($image_type)) {
                 return;
             }
@@ -150,7 +148,7 @@ class NostoTaggingProduct extends Nosto\Object\Product\Product
     {
         $image_id = $product->getCoverWs();
         if ((int)$image_id > 0) {
-            $image_type = NostoTaggingHelperImage::getTaggingImageTypeName($id_lang);
+            $image_type = NostoHelperImage::getTaggingImageTypeName($id_lang);
             if (empty($image_type)) {
                 return;
             }

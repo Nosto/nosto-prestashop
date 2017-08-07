@@ -27,7 +27,7 @@
  * Helper class for managing images.
  *
  */
-class NostoTaggingHelperImage
+class NostoHelperImage
 {
     const OPTIMAL_PRODUCT_IMAGE_WIDTH = 800;
 
@@ -36,7 +36,7 @@ class NostoTaggingHelperImage
      *
      * @return array
      */
-    public function getProductImageTypes()
+    public static function getProductImageTypes()
     {
         $product_images = array();
         $image_types = ImageType::getImagesTypes();
@@ -86,14 +86,13 @@ class NostoTaggingHelperImage
      */
     public static function getTaggingImageTypeName($id_lang, $id_shop_group = null, $id_shop = null)
     {
-        /* @var NostoTaggingHelperConfig $helper_config */
-        $helper_config = Nosto::helper('nosto_tagging/config');
-        $saved_image_type_id = $helper_config->getImageType($id_lang, $id_shop_group, $id_shop);
+        $saved_image_type_id = NostoTaggingHelperConfig::getImageType($id_lang, $id_shop_group,
+            $id_shop);
         if ($saved_image_type_id) {
             $image_type = new ImageType($saved_image_type_id);
             $image_type_name = $image_type->name;
         } else {
-            $image_type_name = NostoTaggingHelperImage::chooseOptimalImageType();
+            $image_type_name = NostoHelperImage::chooseOptimalImageType();
         }
 
         return $image_type_name;
