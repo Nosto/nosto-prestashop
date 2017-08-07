@@ -24,30 +24,6 @@
  */
 
 /**
- * 2013-2016 Nosto Solutions Ltd
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Academic Free License (AFL 3.0)
- * that is bundled with this package in the file LICENSE.txt.
- * It is also available through the world-wide-web at this URL:
- * http://opensource.org/licenses/afl-3.0.php
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to contact@nosto.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
- *
- * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2016 Nosto Solutions Ltd
- * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
- */
-
-/**
  * Helper class for managing the link between Prestashop shopping carts and Nosto users.
  * This link is used to create server side order confirmations through the Nosto REST API.
  */
@@ -57,9 +33,10 @@ class NostoCustomerManager
     const TABLE_NAME_CUSTOMER_REFERENCE = 'nostotagging_customer_reference';
 
     /**
-     * Returns the customer link table name.
+     * Returns the name of the customer link table name with the database prefix. The value
+     * is not stored as constant as the prefix can be customised
      *
-     * @return string
+     * @return string the prefixed name of the table
      */
     private static function getCustomerLinkTableName()
     {
@@ -67,9 +44,10 @@ class NostoCustomerManager
     }
 
     /**
-     * Returns the customer reference table name.
+     * Returns the name of the customer reference table name with the database prefix. The value
+     * is not stored as constant as the prefix can be customised
      *
-     * @return string
+     * @return string the prefixed name of the table
      */
     private static function getCustomerReferenceTableName()
     {
@@ -77,9 +55,10 @@ class NostoCustomerManager
     }
 
     /**
-     * Creates the customer link table in db if it does not exist.
+     * Creates the customer-link table in DB if it does not exist. The customer-link table stores
+     * the value of the 2c.cid cookie issued by Nosto for identify API conversions correctly
      *
-     * @return bool
+     * @return bool if the creation of the table was successful
      */
     public function createCustomerLinkTable()
     {
@@ -96,9 +75,10 @@ class NostoCustomerManager
     }
 
     /**
-     * Creates the customer reference table in db if it does not exist.
+     * Creates the customer-reference table in DB if it does not exist. The customer-reference table
+     * stores a unique reference for each customer used when generating the restore-cart link.
      *
-     * @return bool
+     * @return bool if the creation of the table was successful
      */
     public function createCustomerReferenceTable()
     {
@@ -110,18 +90,6 @@ class NostoCustomerManager
 		) ENGINE ' . _MYSQL_ENGINE_;
 
         return Db::getInstance()->execute($sql);
-    }
-
-    /**
-     * Drops the customer link table from db if it exists.
-     *
-     * @return bool
-     */
-    public static function dropCustomerLinkTable()
-    {
-        $table = self::getCustomerLinkTableName();
-
-        return Db::getInstance()->execute('DROP TABLE IF EXISTS `' . $table . '`');
     }
 
     /**
@@ -162,33 +130,33 @@ class NostoCustomerManager
     }
 
     /**
-     * Returns the customers Nosto ID.
+     * Returns the Nosto customer id for a given order by using the order's cart identifier
+     * as the key
      *
-     * @param Order $order the order to get the customer from.
-     * @return bool|string the customers Nosto ID or false if not found.
+     * @param Order $order the order whose 2c.cid cookie to look up
+     * @return bool|string the customers Nosto id or false if not found.
      */
     public function getNostoId(Order $order)
     {
         $table = self::getCustomerLinkTableName();
-        $id_cart = (int)$order->id_cart;
-        $sql = 'SELECT `id_nosto_customer` FROM `' . $table . '` WHERE `id_cart` = ' . $id_cart . ' ORDER BY `date_add` ASC';
+        $cartId = (int)$order->id_cart;
+        $sql = 'SELECT `id_nosto_customer` FROM `' . $table . '` WHERE `id_cart` = ' . $cartId . ' ORDER BY `date_add` ASC';
 
         return Db::getInstance()->getValue($sql);
     }
 
     /**
-     * Returns the customer reference.
+     * Returns the customer reference associated with a customer by using the customer's identifier
+     * as the key
      *
-     * @param Customer $customer
-     * @return bool|string the customer reference
+     * @param Customer $customer the customer whose reference to look up
+     * @return bool|string the customers reference or false if not found.
      */
     public function getCustomerReference(Customer $customer)
     {
-        $sql = sprintf(
-            'SELECT `customer_reference` FROM `%s` WHERE `id_customer` = \'%d\'',
-            self::getCustomerReferenceTableName(),
-            (int)$customer->id
-        );
+        $table = self::getCustomerReferenceTableName();
+        $customerId = (int)$customer->id;
+        $sql = 'SELECT `customer_reference` FROM `' . $table . '` WHERE `id_customer` = ' . $customerId;
 
         return Db::getInstance()->getValue($sql);
     }
@@ -238,45 +206,44 @@ class NostoCustomerManager
     public function generateCustomerReference(Customer $customer)
     {
         $hash = md5($customer->id . $customer->email);
-        $uuid = uniqid(
-            Tools::substr($hash, 0, 8),
-            true
-        );
+        $uuid = uniqid(Tools::substr($hash, 0, 8), true);
 
         return $uuid;
     }
 
     /**
-     * Creates tables needed for the Nosto plug-in
+     * Drops the customer-link table from db if it exists. There is no corresponding method
+     * for the customer-reference table.
      *
-     * @return bool
+     * @return bool if the dropping of the table was successful
      */
-    public function createTables()
+    private static function dropCustomerLinkTable()
     {
-        $success = true;
-        if (!$this->createCustomerLinkTable()) {
-            $success = false;
-        }
-        if (!$success || !$this->createCustomerReferenceTable()) {
-            $success = false;
-        }
+        $table = self::getCustomerLinkTableName();
 
-        return $success;
+        return Db::getInstance()->execute('DROP TABLE IF EXISTS `' . $table . '`');
     }
 
     /**
-     * Drop tables created by Nosto plug-in. Note that table
-     * nosto_customer_reference is not dropped during the uninstall.
+     * Creates both the the customer reference table and the customer link table needed by the
+     * Nosto plug-in
      *
-     * @return bool
+     * @return bool if the creation of both tables was successful
+     */
+    public function createTables()
+    {
+        return $this->createCustomerLinkTable() && $this->createCustomerReferenceTable();
+    }
+
+    /**
+     * Drop tables created by Nosto plug-in. Note that table customer-reference is not dropped
+     * during the uninstall as the merchant may upgrade the plugin and we want to preserve
+     * all existing references
+     *
+     * @return bool if the dropping of the table was successful
      */
     public static function dropTables()
     {
-        $success = true;
-        if (!self::dropCustomerLinkTable()) {
-            $success = false;
-        }
-
-        return $success;
+        return self::dropCustomerLinkTable();
     }
 }
