@@ -185,14 +185,7 @@ class NostoHelperConfig
      */
     public static function saveAccountName($account_name, $id_lang, $id_shop_group = null, $id_shop = null)
     {
-        return self::write(
-            self::ACCOUNT_NAME,
-            $account_name,
-            $id_lang,
-            false,
-            $id_shop_group,
-            $id_shop
-        );
+        return self::write(self::ACCOUNT_NAME, $account_name, $id_lang, false, $id_shop_group, $id_shop);
     }
 
     /**
@@ -206,8 +199,7 @@ class NostoHelperConfig
      */
     public static function getAccountName($id_lang, $id_shop_group = null, $id_shop = null)
     {
-        return self::read(self::ACCOUNT_NAME, $id_lang, $id_shop_group,
-            $id_shop);
+        return self::read(self::ACCOUNT_NAME, $id_lang, $id_shop_group, $id_shop);
     }
 
     /**
@@ -220,21 +212,8 @@ class NostoHelperConfig
      * @param int|null $id_shop
      * @return bool true if saved correctly, false otherwise.
      */
-    public static function saveToken(
-        $token_name,
-        $token_value,
-        $id_lang,
-        $id_shop_group = null,
-        $id_shop = null
-    ) {
-        return self::write(
-            self::getTokenConfigKey($token_name),
-            $token_value,
-            $id_lang,
-            false,
-            $id_shop_group,
-            $id_shop
-        );
+    public static function saveToken($token_name, $token_value, $id_lang, $id_shop_group = null, $id_shop = null) {
+        return self::write(self::getTokenConfigKey($token_name), $token_value, $id_lang, false, $id_shop_group, $id_shop);
     }
 
     /**
@@ -346,20 +325,8 @@ class NostoHelperConfig
      * @param null|int $id_shop
      * @return bool
      */
-    public static function saveMultiCurrencyMethod(
-        $method,
-        $id_lang,
-        $id_shop_group = null,
-        $id_shop = null
-    ) {
-        return self::write(
-            self::MULTI_CURRENCY_METHOD,
-            $method,
-            $id_lang,
-            false,
-            $id_shop_group,
-            $id_shop
-        );
+    public static function saveMultiCurrencyMethod($method, $id_lang, $id_shop_group = null, $id_shop = null) {
+        return self::write(self::MULTI_CURRENCY_METHOD, $method, $id_lang, false, $id_shop_group, $id_shop);
     }
 
     /**
@@ -371,20 +338,8 @@ class NostoHelperConfig
      * @param null|int $id_shop
      * @return bool
      */
-    public static function saveNostoTaggingRenderPosition(
-        $method,
-        $id_lang,
-        $id_shop_group = null,
-        $id_shop = null
-    ) {
-        return self::write(
-            self::NOSTOTAGGING_POSITION,
-            $method,
-            $id_lang,
-            false,
-            $id_shop_group,
-            $id_shop
-        );
+    public static function saveNostoTaggingRenderPosition($method, $id_lang, $id_shop_group = null, $id_shop = null) {
+        return self::write(self::NOSTOTAGGING_POSITION, $method, $id_lang, false, $id_shop_group, $id_shop);
     }
 
     /**
@@ -397,8 +352,7 @@ class NostoHelperConfig
      */
     public static function useMultipleCurrencies($id_lang, $id_shop_group = null, $id_shop = null)
     {
-        return self::getMultiCurrencyMethod($id_lang, $id_shop_group, $id_shop)
-            !== self::MULTI_CURRENCY_METHOD_DISABLED;
+        return self::getMultiCurrencyMethod($id_lang, $id_shop_group, $id_shop) !== self::MULTI_CURRENCY_METHOD_DISABLED;
     }
 
     /**
@@ -439,13 +393,6 @@ class NostoHelperConfig
      */
     public static function saveImageType($type, $id_lang, $id_shop_group = null, $id_shop = null)
     {
-        return self::write(
-            self::NOSTOTAGGING_IMAGE_TYPE,
-            $type,
-            $id_lang,
-            false,
-            $id_shop_group,
-            $id_shop
-        );
+        return self::write(self::NOSTOTAGGING_IMAGE_TYPE, $type, $id_lang, false, $id_shop_group, $id_shop);
     }
 }
