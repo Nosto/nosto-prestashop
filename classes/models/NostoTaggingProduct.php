@@ -68,13 +68,15 @@ class NostoTaggingProduct extends Nosto\Object\Product\Product
         $this->setPriceCurrencyCode(Tools::strtoupper($tagging_currency->iso_code));
         $this->setAvailability($this->checkAvailability($product));
         $this->setTag1($this->buildTags($product, $id_lang));
-        $this->setCategories($this->buildCategories($product, $id_lang));
+        $this->amendCategories($product, $id_lang);
         $this->setDescription($product->description_short . $product->description);
         $this->setInventoryLevel((int)$product->quantity);
-        $this->setBrand($this->buildBrand($product, $id_lang));
+        $this->setPrice($this->getPriceInclTax($product, $context, $tagging_currency));
+        $this->setListPrice($this->getListPriceInclTax($product, $context, $tagging_currency));
+        $this->amendBrand($product, $id_lang);
         $this->amendImage($product, $id_lang);
         $this->amendAlternateImages($product, $id_lang);
-        $this->amendPrices($product, $context, $tagging_currency);
+        $this->amendPrices($product);
 
         Hook::exec(
             'action' . str_replace('NostoTagging', 'Nosto', get_class($this)) . 'LoadAfter',
@@ -90,23 +92,9 @@ class NostoTaggingProduct extends Nosto\Object\Product\Product
      * Sets the prices for the product
      *
      * @param Product $product
-     * @param Context $context
-     * @param Currency $currency
      */
-    protected function amendPrices(Product $product, Context $context, Currency $currency)
+    protected function amendPrices(Product $product)
     {
-        $this->setPrice(
-            $this->getProductPriceInclTax(
-                $product,
-                $context,
-                $currency
-            )
-        );
-        $this->setListPrice($this->getProductListPriceInclTax(
-            $product,
-            $context,
-            $currency
-        ));
         $supplier_cost = NostoHelperPrice::getProductWholesalePriceInclTax($product);
         if ($supplier_cost !== null && is_numeric($supplier_cost)) {
             $this->setSupplierCost($supplier_cost);
@@ -196,7 +184,7 @@ class NostoTaggingProduct extends Nosto\Object\Product\Product
      * @param Currency|CurrencyCore $currency the currency.
      * @return float the price.
      */
-    public function getProductPriceInclTax(Product $product, Context $context, Currency $currency)
+    public function getPriceInclTax(Product $product, Context $context, Currency $currency)
     {
         return NostoHelperPrice::calcPrice($product->id, $currency, $context,
             array('user_reduction' => true));
@@ -210,7 +198,7 @@ class NostoTaggingProduct extends Nosto\Object\Product\Product
      * @param Currency|CurrencyCore $currency the currency.
      * @return float the price.
      */
-    public function getProductListPriceInclTax(Product $product, Context $context, Currency $currency)
+    public function getListPriceInclTax(Product $product, Context $context, Currency $currency)
     {
         return NostoHelperPrice::calcPrice($product->id, $currency, $context,
             array('user_reduction' => false));
@@ -252,19 +240,16 @@ class NostoTaggingProduct extends Nosto\Object\Product\Product
      *
      * @param Product $product the product model.
      * @param int $id_lang for which language ID to fetch the categories.
-     * @return array the built category paths.
      */
-    protected function buildCategories(Product $product, $id_lang)
+    protected function amendCategories(Product $product, $id_lang)
     {
-        $categories = array();
         $productCategories = $product->getCategories();
         foreach ($productCategories as $category_id) {
             $category = AbstractNostoCategory::buildCategoryString($category_id, $id_lang);
             if (!empty($category)) {
-                $categories[] = $category;
+                $this->addCategory($category);
             }
         }
-        return $categories;
     }
 
     /**
@@ -272,19 +257,16 @@ class NostoTaggingProduct extends Nosto\Object\Product\Product
      *
      * @param Product $product the product model.
      * @param int $id_lang for which language ID to fetch the categories.
-     * @return string the built brand name.
      */
-    protected function buildBrand(Product $product, $id_lang)
+    protected function amendBrand(Product $product, $id_lang)
     {
-        $brand = null;
         if (empty($product->manufacturer_name) && !empty($product->id_manufacturer)) {
             $manufacturer = new Manufacturer($product->id_manufacturer, $id_lang);
             if (!empty($manufacturer)) {
-                $brand = $manufacturer->name;
+                $this->setBrand($manufacturer->name);
             }
         } else {
-            $brand = $product->manufacturer_name;
+            $this->setBrand($product->manufacturer_name);
         }
-        return $brand;
     }
 }
