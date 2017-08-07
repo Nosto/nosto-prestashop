@@ -51,9 +51,7 @@ class NostoTaggingHelperUpdater
         // Prestashop < 1.5.4.0 has a bug that causes the auto-update mechanism fail.
         if (self::isModuleInstalled($module) && version_compare(_PS_VERSION_, '1.5.4.0', '<')) {
             // If the module is already updated to the latest version, don't continue.
-            /** @var NostoTaggingHelperConfig $helper_config */
-            $helper_config = Nosto::helper('nosto_tagging/config');
-            $installed_version = (string)$helper_config->getInstalledVersion();
+            $installed_version = (string)NostoTaggingHelperConfig::getInstalledVersion();
             if (version_compare($installed_version, (string)$module->version, '=')) {
                 return;
             }
@@ -69,7 +67,7 @@ class NostoTaggingHelperUpdater
 
             // Always update the installed version so that we can check it during the next requests in order
             // to avoid reading the file system for upgrade script all the time.
-            $helper_config->saveInstalledVersion($module->version);
+            NostoTaggingHelperConfig::saveInstalledVersion($module->version);
         }
 
         // Prestashop >= 1.5.4.0 handles the auto-update mechanism.
@@ -85,11 +83,9 @@ class NostoTaggingHelperUpdater
      */
     protected function findUpgradeScripts($module)
     {
-        /** @var NostoTaggingHelperConfig $helper_config */
-        $helper_config = Nosto::helper('nosto_tagging/config');
         $scripts = array();
         $path = _PS_MODULE_DIR_ . $module->name . '/upgrade/';
-        $installed_version = (string)$helper_config->getInstalledVersion();
+        $installed_version = (string)NostoTaggingHelperConfig::getInstalledVersion();
         $new_version = (string)$module->version;
 
         if (file_exists($path) && ($files = scandir($path))) {

@@ -194,9 +194,7 @@ class NostoTagging extends Module
             // This config value is updated in the NostoTaggingUpdater helper every time the module is updated.
             if ($success) {
                 if (version_compare(_PS_VERSION_, '1.5.4.0', '<')) {
-                    /** @var NostoTaggingHelperConfig $config_helper */
-                    $config_helper = Nosto::helper('nosto_tagging/config');
-                    $config_helper->saveInstalledVersion($this->version);
+                    NostoTaggingHelperConfig::saveInstalledVersion($this->version);
                 }
 
                 $success = $this->registerHook('actionObjectUpdateAfter')
@@ -245,9 +243,7 @@ class NostoTagging extends Module
         // This can then later be used by the oauth2 controller to redirect the user back.
         $admin_url = $this->getAdminUrl();
 
-        /** @var NostoTaggingHelperConfig $config_helper */
-        $config_helper = Nosto::helper('nosto_tagging/config');
-        $config_helper->saveAdminUrl($admin_url);
+        NostoTaggingHelperConfig::saveAdminUrl($admin_url);
         $output = '';
         $languages = Language::getLanguages(true, $this->context->shop->id);
         /** @var EmployeeCore $employee */
@@ -255,8 +251,6 @@ class NostoTagging extends Module
         $account_email = $employee->email;
         /** @var NostoTaggingHelperUrl $helper_url */
         $helper_url = Nosto::helper('nosto_tagging/url');
-        /** @var NostoTaggingHelperConfig $helper_config */
-        $helper_config = Nosto::helper('nosto_tagging/config');
         $id_shop = null;
         $id_shop_group = null;
         if ($this->context->shop instanceof Shop) {
@@ -296,7 +290,7 @@ class NostoTagging extends Module
                         $service = new NostoSignupService();
                         $service->createAccount($language_id, $account_email, $account_details);
 
-                        $helper_config->clearCache();
+                        NostoTaggingHelperConfig::clearCache();
                         NostoHelperFlash::add(
                             'success',
                             $this->l(
@@ -345,7 +339,7 @@ class NostoTagging extends Module
                 || Tools::getValue('nostotagging_account_action') === 'removeAccount'
             ) {
                 $account = NostoTaggingHelperAccount::findByContext($this->context);
-                $helper_config->clearCache();
+                NostoTaggingHelperConfig::clearCache();
                 NostoTaggingHelperAccount::delete($this->context, $account, $language_id, null);
             } elseif (Tools::isSubmit('submit_nostotagging_update_exchange_rates')) {
                 $nosto_account = NostoTaggingHelperAccount::find($language_id, $id_shop_group,
@@ -375,21 +369,19 @@ class NostoTagging extends Module
                 Tools::isSubmit('submit_nostotagging_advanced_settings')
                 && Tools::isSubmit('multi_currency_method')
             ) {
-                /** @var NostoTaggingHelperConfig $helper_config */
-                $helper_config = Nosto::helper('nosto_tagging/config');
-                $helper_config->saveMultiCurrencyMethod(
+                NostoTaggingHelperConfig::saveMultiCurrencyMethod(
                     Tools::getValue('multi_currency_method'),
                     $language_id,
                     $id_shop_group,
                     $id_shop
                 );
-                $helper_config->saveNostoTaggingRenderPosition(
+                NostoTaggingHelperConfig::saveNostoTaggingRenderPosition(
                     Tools::getValue('nostotagging_position'),
                     $language_id,
                     $id_shop_group,
                     $id_shop
                 );
-                $helper_config->saveImageType(
+                NostoTaggingHelperConfig::saveImageType(
                     Tools::getValue('image_type'),
                     $language_id,
                     $id_shop_group,
@@ -543,7 +535,7 @@ class NostoTagging extends Module
                 $id_shop_group,
                 $id_shop
             ),
-            'nostotagging_position' => $helper_config->getNostotaggingRenderPosition(
+            'nostotagging_position' => NostoTaggingHelperConfig::getNostotaggingRenderPosition(
                 $current_language['id_lang'],
                 $id_shop_group,
                 $id_shop

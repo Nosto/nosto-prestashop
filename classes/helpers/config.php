@@ -62,12 +62,12 @@ class NostoTaggingHelperConfig
      * @param string $name the name of the config entry to save.
      * @param mixed $value the value to save.
      * @param null|int $lang_id the language id to save it for.
+     * @param bool $global if it should be saved for all shops or in current context.
      * @param null|int $id_shop_group
      * @param null|int $id_shop
-     * @param bool $global if it should be saved for all shops or in current context.
      * @return bool true is saved, false otherwise.
      */
-    public function write(
+    public static function write(
         $name,
         $value,
         $lang_id = null,
@@ -105,9 +105,9 @@ class NostoTaggingHelperConfig
      * @param int|null $id_shop the shop id it should be saved for.
      * @return bool true if it exists and false otherwise.
      */
-    public function exists($name, $lang_id = null, $id_shop_group = null, $id_shop = null)
+    public static function exists($name, $lang_id = null, $id_shop_group = null, $id_shop = null)
     {
-        $value = NostoTaggingHelperConfig::read($name, $lang_id, $id_shop_group, $id_shop);
+        $value = self::read($name, $lang_id, $id_shop_group, $id_shop);
         return ($value !== false && $value !== null && $value !== '');
     }
 
@@ -146,7 +146,7 @@ class NostoTaggingHelperConfig
      * @param null|int $id_shop the ID of the shop.
      * @return bool
      */
-    public function deleteAllFromContext($id_lang = null, $id_shop_group = null, $id_shop = null)
+    public static function deleteAllFromContext($id_lang = null, $id_shop_group = null, $id_shop = null)
     {
         if ($id_shop === null) {
             $id_shop = (int)Shop::getContextShopID(true);
@@ -198,9 +198,9 @@ class NostoTaggingHelperConfig
      * @param null|int $id_shop the shop to get the account for (defaults to current context).
      * @return bool true if saved correctly, false otherwise.
      */
-    public function saveAccountName($account_name, $id_lang, $id_shop_group = null, $id_shop = null)
+    public static function saveAccountName($account_name, $id_lang, $id_shop_group = null, $id_shop = null)
     {
-        return $this->write(
+        return self::write(
             self::ACCOUNT_NAME,
             $account_name,
             $id_lang,
@@ -219,9 +219,9 @@ class NostoTaggingHelperConfig
      * @param null|int $id_shop the shop to get the account for (defaults to current context).
      * @return mixed
      */
-    public function getAccountName($id_lang, $id_shop_group = null, $id_shop = null)
+    public static function getAccountName($id_lang, $id_shop_group = null, $id_shop = null)
     {
-        return NostoTaggingHelperConfig::read(self::ACCOUNT_NAME, $id_lang, $id_shop_group,
+        return self::read(self::ACCOUNT_NAME, $id_lang, $id_shop_group,
             $id_shop);
     }
 
@@ -235,15 +235,15 @@ class NostoTaggingHelperConfig
      * @param int|null $id_shop
      * @return bool true if saved correctly, false otherwise.
      */
-    public function saveToken(
+    public static function saveToken(
         $token_name,
         $token_value,
         $id_lang,
         $id_shop_group = null,
         $id_shop = null
     ) {
-        return $this->write(
-            $this->getTokenConfigKey($token_name),
+        return self::write(
+            self::getTokenConfigKey($token_name),
             $token_value,
             $id_lang,
             false,
@@ -262,11 +262,9 @@ class NostoTaggingHelperConfig
      * @param null|int $id_shop the shop to get the token for (defaults to current context).
      * @return mixed
      */
-    public function getToken($token_name, $id_lang, $id_shop_group = null, $id_shop = null)
+    public static function getToken($token_name, $id_lang, $id_shop_group = null, $id_shop = null)
     {
-        return NostoTaggingHelperConfig::read(self::getTokenConfigKey($token_name), $id_lang,
-            $id_shop_group,
-            $id_shop);
+        return self::read(self::getTokenConfigKey($token_name), $id_lang, $id_shop_group, $id_shop);
     }
 
     /**
@@ -275,9 +273,9 @@ class NostoTaggingHelperConfig
      * @param string $url the url.
      * @return bool true if saved successfully, false otherwise.
      */
-    public function saveAdminUrl($url)
+    public static function saveAdminUrl($url)
     {
-        return $this->write(self::ADMIN_URL, $url);
+        return self::write(self::ADMIN_URL, $url);
     }
 
     /**
@@ -285,9 +283,9 @@ class NostoTaggingHelperConfig
      *
      * @return mixed
      */
-    public function getAdminUrl()
+    public static function getAdminUrl()
     {
-        return NostoTaggingHelperConfig::read(self::ADMIN_URL);
+        return self::read(self::ADMIN_URL);
     }
 
     /**
@@ -297,9 +295,9 @@ class NostoTaggingHelperConfig
      * @param string $version the version.
      * @return bool true if saved successfully, false otherwise.
      */
-    public function saveInstalledVersion($version)
+    public static function saveInstalledVersion($version)
     {
-        return $this->write(self::INSTALLED_VERSION, $version, null, true);
+        return self::write(self::INSTALLED_VERSION, $version, null, true);
     }
 
     /**
@@ -308,9 +306,9 @@ class NostoTaggingHelperConfig
      *
      * @return mixed
      */
-    public function getInstalledVersion()
+    public static function getInstalledVersion()
     {
-        return NostoTaggingHelperConfig::read(self::INSTALLED_VERSION);
+        return self::read(self::INSTALLED_VERSION);
     }
 
     /**
@@ -319,7 +317,7 @@ class NostoTaggingHelperConfig
      * @param string $name the name of the token.
      * @return string the fully qualified config key.
      */
-    protected function getTokenConfigKey($name)
+    protected static function getTokenConfigKey($name)
     {
         return self::TOKEN_CONFIG_PREFIX . Tools::strtoupper($name);
     }
@@ -328,11 +326,11 @@ class NostoTaggingHelperConfig
      * Returns the access token for the cron controllers.
      * This token is stored globally for all stores and languages.
      *
-     * @return string|bool the token or false if not found.
+     * @return bool|string the token or false if not found.
      */
-    public function getCronAccessToken()
+    public static function getCronAccessToken()
     {
-        return NostoTaggingHelperConfig::read(self::CRON_ACCESS_TOKEN);
+        return self::read(self::CRON_ACCESS_TOKEN);
     }
 
     /**
@@ -342,9 +340,9 @@ class NostoTaggingHelperConfig
      * @param string $token the token.
      * @return bool true if saved successfully, false otherwise.
      */
-    public function saveCronAccessToken($token)
+    public static function saveCronAccessToken($token)
     {
-        return $this->write(self::CRON_ACCESS_TOKEN, $token, null, true);
+        return self::write(self::CRON_ACCESS_TOKEN, $token, null, true);
     }
 
     /**
@@ -357,7 +355,7 @@ class NostoTaggingHelperConfig
      */
     public static function getMultiCurrencyMethod($id_lang, $id_shop_group = null, $id_shop = null)
     {
-        $method = NostoTaggingHelperConfig::read(self::MULTI_CURRENCY_METHOD, $id_lang,
+        $method = self::read(self::MULTI_CURRENCY_METHOD, $id_lang,
             $id_shop_group, $id_shop);
         return !empty($method) ? $method : self::MULTI_CURRENCY_METHOD_DISABLED;
     }
@@ -370,9 +368,9 @@ class NostoTaggingHelperConfig
      * @param null|int $id_shop
      * @return string
      */
-    public function getNostotaggingRenderPosition($id_lang, $id_shop_group = null, $id_shop = null)
+    public static function getNostotaggingRenderPosition($id_lang, $id_shop_group = null, $id_shop = null)
     {
-        $position = NostoTaggingHelperConfig::read(self::NOSTOTAGGING_POSITION, $id_lang,
+        $position = self::read(self::NOSTOTAGGING_POSITION, $id_lang,
             $id_shop_group, $id_shop);
         return !empty($position) ? $position : self::NOSTOTAGGING_POSITION_TOP;
     }
@@ -386,13 +384,13 @@ class NostoTaggingHelperConfig
      * @param null|int $id_shop
      * @return bool
      */
-    public function saveMultiCurrencyMethod(
+    public static function saveMultiCurrencyMethod(
         $method,
         $id_lang,
         $id_shop_group = null,
         $id_shop = null
     ) {
-        return $this->write(
+        return self::write(
             self::MULTI_CURRENCY_METHOD,
             $method,
             $id_lang,
@@ -409,16 +407,15 @@ class NostoTaggingHelperConfig
      * @param int $id_lang the language.
      * @param null|int $id_shop_group
      * @param null|int $id_shop
-     *
      * @return bool
      */
-    public function saveNostoTaggingRenderPosition(
+    public static function saveNostoTaggingRenderPosition(
         $method,
         $id_lang,
         $id_shop_group = null,
         $id_shop = null
     ) {
-        return $this->write(
+        return self::write(
             self::NOSTOTAGGING_POSITION,
             $method,
             $id_lang,
@@ -439,7 +436,7 @@ class NostoTaggingHelperConfig
     public static function useMultipleCurrencies($id_lang, $id_shop_group = null, $id_shop = null)
     {
         if (
-            NostoTaggingHelperConfig::getMultiCurrencyMethod(
+            self::getMultiCurrencyMethod(
                 $id_lang,
                 $id_shop_group,
                 $id_shop
@@ -456,7 +453,7 @@ class NostoTaggingHelperConfig
      *
      * @param $smarty
      */
-    public function clearCache($smarty = null)
+    public static function clearCache($smarty = null)
     {
         if (method_exists('Tools', 'clearCompile')) {
             Tools::clearCompile($smarty);
@@ -473,7 +470,7 @@ class NostoTaggingHelperConfig
      */
     public static function getImageType($id_lang, $id_shop_group = null, $id_shop = null)
     {
-        $type = NostoTaggingHelperConfig::read(
+        $type = self::read(
             self::NOSTOTAGGING_IMAGE_TYPE,
             $id_lang,
             $id_shop_group,
@@ -486,15 +483,15 @@ class NostoTaggingHelperConfig
     /**
      * Saves the image type to be used for Nosto tagging
      *
-     * @param int $id_lang the language.
      * @param int $type the image type id
+     * @param int $id_lang the language.
      * @param null|int $id_shop_group
      * @param null|int $id_shop
-     * @return boolean
+     * @return bool
      */
-    public function saveImageType($type, $id_lang, $id_shop_group = null, $id_shop = null)
+    public static function saveImageType($type, $id_lang, $id_shop_group = null, $id_shop = null)
     {
-        return $this->write(
+        return self::write(
             self::NOSTOTAGGING_IMAGE_TYPE,
             $type,
             $id_lang,

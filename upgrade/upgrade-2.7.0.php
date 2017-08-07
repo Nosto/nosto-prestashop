@@ -41,9 +41,7 @@ function upgrade_module_2_7_0($object)
     $helper_customer = Nosto::helper('nosto_tagging/customer');
     $helper_customer->createCustomerReferenceTable();
     $success = $object->registerHook('displayBackOfficeTop');
-    /** @var NostoTaggingHelperConfig $helper_config */
-    $helper_config = Nosto::helper('nosto_tagging/config');
-    $helper_config->clearCache();
+    NostoTaggingHelperConfig::clearCache();
 
     return $success;
 }

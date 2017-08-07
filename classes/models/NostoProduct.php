@@ -45,8 +45,6 @@ class NostoProduct extends Nosto\Object\Product\Product
         $url_helper = Nosto::helper('nosto_tagging/url');
         /** @var NostoTaggingHelperCurrency $helper_currency */
         $helper_currency = Nosto::helper('nosto_tagging/currency');
-        /** @var NostoTaggingHelperConfig $helper_config */
-        $helper_config = Nosto::helper('nosto_tagging/config');
 
         $nostoProduct = new NostoProduct();
         $base_currency = $helper_currency->getBaseCurrency($context);

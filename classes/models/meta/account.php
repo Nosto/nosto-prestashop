@@ -80,8 +80,6 @@ class NostoTaggingMetaAccount extends \Nosto\Object\Signup\Signup
         $signup = new NostoTaggingMetaAccount();
         /** @var NostoTaggingHelperCurrency $currency_helper */
         $currency_helper = Nosto::helper('nosto_tagging/currency');
-        /** @var NostoTaggingHelperConfig $config_helper */
-        $config_helper = Nosto::helper('nosto_tagging/config');
 
         $language = new Language($id_lang);
         if (!Validate::isLoadedObject($language)) {

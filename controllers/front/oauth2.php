@@ -91,9 +91,7 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
      */
     public function redirectTo(array $params)
     {
-        /** @var NostoTaggingHelperConfig $config_helper */
-        $config_helper = Nosto::helper('nosto_tagging/config');
-        $admin_url = $config_helper->getAdminUrl();
+        $admin_url = NostoTaggingHelperConfig::getAdminUrl();
         if (!empty($admin_url)) {
             $admin_url = \Nosto\Request\Http\HttpRequest::replaceQueryParamsInUrl($params,
                 $admin_url);

@@ -45,9 +45,7 @@ class NostoTaggingHelperAccount
         $id_shop_group = null,
         $id_shop = null
     ) {
-        /** @var NostoTaggingHelperConfig $helper_config */
-        $helper_config = Nosto::helper('nosto_tagging/config');
-        $success = $helper_config->saveAccountName(
+        $success = NostoTaggingHelperConfig::saveAccountName(
             $account->getName(),
             $id_lang,
             $id_shop_group,
@@ -55,7 +53,7 @@ class NostoTaggingHelperAccount
         );
         if ($success) {
             foreach ($account->getTokens() as $token) {
-                $success = $success && $helper_config->saveToken(
+                $success = $success && NostoTaggingHelperConfig::saveToken(
                         $token->getName(),
                         $token->getValue(),
                         $id_lang,
@@ -85,9 +83,8 @@ class NostoTaggingHelperAccount
         $id_shop_group = null,
         $id_shop = null
     ) {
-        /** @var NostoTaggingHelperConfig $helper_config */
-        $helper_config = Nosto::helper('nosto_tagging/config');
-        $success = $helper_config->deleteAllFromContext($id_lang, $id_shop_group, $id_shop);
+        $success = NostoTaggingHelperConfig::deleteAllFromContext($id_lang, $id_shop_group,
+            $id_shop);
         $currentUser = NostoCurrentUser::loadData($context);
         if ($success) {
             $token = $account->getApiToken('sso');
@@ -152,14 +149,14 @@ class NostoTaggingHelperAccount
      */
     public static function find($lang_id = null, $id_shop_group = null, $id_shop = null)
     {
-        /** @var NostoTaggingHelperConfig $helper_config */
-        $helper_config = Nosto::helper('nosto_tagging/config');
-        $account_name = $helper_config->getAccountName($lang_id, $id_shop_group, $id_shop);
+        $account_name = NostoTaggingHelperConfig::getAccountName($lang_id, $id_shop_group,
+            $id_shop);
         if (!empty($account_name)) {
             $account = new Nosto\Object\Signup\Account($account_name);
             $tokens = array();
             foreach (Nosto\Request\Api\Token::getApiTokenNames() as $token_name) {
-                $token_value = $helper_config->getToken($token_name, $lang_id, $id_shop_group,
+                $token_value = NostoTaggingHelperConfig::getToken($token_name, $lang_id,
+                    $id_shop_group,
                     $id_shop);
                 if (!empty($token_value)) {
                     $tokens[$token_name] = $token_value;

@@ -110,8 +110,6 @@ class NostoNotificationManager
         $connected = NostoTaggingHelperAccount::existsAndIsConnected($language->id, $id_shop_group,
             $shop->id);
         if ($connected) {
-            /** @var NostoTaggingHelperConfig $helper_config */
-            $helper_config = Nosto::helper('nosto_tagging/config');
             if (!NostoTaggingHelperConfig::useMultipleCurrencies($language->id, $id_shop_group,
                 $shop->id)
             ) {
