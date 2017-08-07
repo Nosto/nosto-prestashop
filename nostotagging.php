@@ -350,8 +350,8 @@ class NostoTagging extends Module
             } elseif (Tools::isSubmit('submit_nostotagging_update_exchange_rates')) {
                 $nosto_account = NostoTaggingHelperAccount::find($language_id, $id_shop_group,
                     $id_shop);
-                $operation = new RatesService($nosto_account, $this->context);
-                if ($nosto_account && $operation->updateCurrencyExchangeRates()) {
+                $operation = new RatesService();
+                if ($nosto_account && $operation->updateCurrencyExchangeRates($nosto_account, $this->context)) {
                     NostoTaggingHelperFlashMessage::add(
                         'success',
                         $this->l(
@@ -431,8 +431,8 @@ class NostoTagging extends Module
                 }
                 // Also update the exchange rates if multi currency is used
                 if ($account_meta->getUseExchangeRates()) {
-                    $operation = new RatesService($account, $this->context);
-                    $operation->updateCurrencyExchangeRates();
+                    $operation = new RatesService();
+                    $operation->updateCurrencyExchangeRates($account, $this->context);
                 }
             }
 
