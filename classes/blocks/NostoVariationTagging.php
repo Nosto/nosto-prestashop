@@ -50,18 +50,13 @@ class NostoVariationTagging
 {
 
     /**
-     * Render meta-data (tagging) for the price variation in use.
+     * Renders the current variation tagging by checking if multiples currencies are
+     * used on the site and the active currency is different from the base currency.
      *
-     * This is needed for the multi currency features.
-     *
-     * @return string The rendered HTML
+     * @return string the tagging
      */
     public static function get()
     {
-        /* @var $currencyHelper NostoTaggingHelperCurrency */
-        $currencyHelper = Nosto::helper('nosto_tagging/currency');
-        /** @var NostoTaggingHelperConfig $helper_config */
-        $helper_config = Nosto::helper('nosto_tagging/config');
         $id_lang = Context::getContext()->language->id;
         $id_shop = null;
         $id_shop_group = null;
@@ -69,8 +64,8 @@ class NostoVariationTagging
             $id_shop = Context::getContext()->shop->id;
             $id_shop_group = Context::getContext()->shop->id_shop_group;
         }
-        if ($helper_config->useMultipleCurrencies($id_lang, $id_shop_group, $id_shop)) {
-            $defaultVariationId = $currencyHelper->getActiveCurrency(Context::getContext());
+        if (NostoTaggingHelperConfig::useMultipleCurrencies($id_lang, $id_shop_group, $id_shop)) {
+            $defaultVariationId = Context::getContext()->currency->iso_code;
             $priceVariation = new NostoVariation($defaultVariationId);
             Context::getContext()->smarty->assign(array(
                 'nosto_price_variation' => $priceVariation

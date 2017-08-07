@@ -27,9 +27,10 @@ class NostoSearchTagging
 {
 
     /**
-     * Render meta-data (tagging) for a search term.
+     * Renders the current search term tagging by checking if the controller either has
+     * the search_query or the s parameter (as it differs between versions.)
      *
-     * @return string the rendered HTML
+     * @return string the tagging
      */
     public static function get()
     {

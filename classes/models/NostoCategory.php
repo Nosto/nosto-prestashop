@@ -39,7 +39,7 @@ class NostoCategory extends AbstractNostoModel
      * @return Category
      * @suppress PhanTypeMismatchArgument
      */
-    public static function loadCategory($id_category, $id_lang)
+    public static function loadId($id_category, $id_lang)
     {
         return new Category((int)$id_category, $id_lang);
     }

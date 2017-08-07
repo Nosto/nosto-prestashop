@@ -48,61 +48,31 @@
  */
 class NostoCategoryTagging
 {
-
     /**
-     * Tries to resolve current / active category in context
+     * Renders the current category tagging by checking if the underlying controller has
+     * an accessor for it and if not, it falls back to using the identifier
      *
-     * @return Category|null
-     * @suppress PhanUndeclaredMethod
-     */
-    protected static function resolveCategoryInContext()
-    {
-        $category = null;
-        if (method_exists(Context::getContext()->controller, 'getCategory')) {
-            $category = Context::getContext()->controller->getCategory();
-        }
-        if ($category instanceof Category == false) {
-            $id_category = null;
-            if (Tools::getValue('id_category')) {
-                $id_category = Tools::getValue('id_category');
-            } /** @noinspection PhpUndefinedFieldInspection */ elseif (
-                isset(Context::getContext()->cookie)
-                && (Context::getContext()->cookie->last_visited_category)
-            ) {
-                /** @noinspection PhpUndefinedFieldInspection */
-                $id_category = Context::getContext()->cookie->last_visited_category;
-            }
-            if ($id_category) {
-                $category = new Category($id_category, Context::getContext()->language->id,
-                    Context::getContext()->shop->id);
-            }
-        }
-        if (
-            $category instanceof Category === false
-            || !Validate::isLoadedObject($category)
-        ) {
-            $category = null;
-        }
-
-        return $category;
-    }
-
-    /**
-     * Render meta-data (tagging) for a category.
-     *
-     * @return string The rendered HTML
+     * @return string the tagging
      */
     public static function get()
     {
-        $category = self::resolveCategoryInContext();
+        $category = NostoHelperController::resolveObject("id_category", Category::class, "getCategory");
         if (!$category instanceof Category) {
-            return null;
+            // An edge-case for this tagging block that if the category isn't found, it will use
+            // the last viewed category
+            /** @noinspection PhpUndefinedFieldInspection */
+            if (!isset(Context::getContext()->cookie) && !Context::getContext()->cookie->last_visited_category) {
+                return null;
+            }
+
+            /** @noinspection PhpUndefinedFieldInspection */
+            $idCategory = Context::getContext()->cookie->last_visited_category;
+            $category = NostoCategory::loadId($idCategory, Context::getContext()->language->id);
         }
 
-        $nosto_category = NostoCategory::loadData(Context::getContext(), $category);
-
+        $nostoCategory = NostoCategory::loadData(Context::getContext(), $category);
         Context::getContext()->smarty->assign(array(
-            'nosto_category' => $nosto_category,
+            'nosto_category' => $nostoCategory,
         ));
 
         return 'views/templates/hook/category-footer_category-tagging.tpl';

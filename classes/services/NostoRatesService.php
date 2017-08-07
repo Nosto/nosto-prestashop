@@ -22,7 +22,7 @@ class NostoRatesService
             $id_shop_group = isset($shop['id_shop_group']) ? (int)$shop['id_shop_group'] : null;
             foreach (Language::getLanguages(true, $id_shop) as $language) {
                 $id_lang = (int)$language['id_lang'];
-                $use_multiple_currencies = $helper_config->useMultipleCurrencies($id_lang,
+                $use_multiple_currencies = NostoTaggingHelperConfig::useMultipleCurrencies($id_lang,
                     $id_shop_group, $id_shop);
                 if ($use_multiple_currencies) {
                     $nosto_account = NostoTaggingHelperAccount::find($id_lang, $id_shop_group,

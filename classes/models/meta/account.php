@@ -112,9 +112,9 @@ class NostoTaggingMetaAccount extends \Nosto\Object\Signup\Signup
         $signup->setOwner(NostoAccountOwner::loadData($context));
         $signup->setBillingDetails(NostoAccountBilling::loadData($context));
         $signup->setCurrencies(self::buildCurrencies($context));
-        if ($config_helper->useMultipleCurrencies($id_lang, $id_shop_group, $id_shop)) {
+        if (NostoTaggingHelperConfig::useMultipleCurrencies($id_lang, $id_shop_group, $id_shop)) {
             $signup->setUseCurrencyExchangeRates(
-                $config_helper->useMultipleCurrencies(
+                NostoTaggingHelperConfig::useMultipleCurrencies(
                     $id_lang,
                     $id_shop_group,
                     $id_shop

@@ -355,7 +355,7 @@ class NostoTaggingHelperConfig
      * @param null|int $id_shop
      * @return string the multi currency method.
      */
-    public function getMultiCurrencyMethod($id_lang, $id_shop_group = null, $id_shop = null)
+    public static function getMultiCurrencyMethod($id_lang, $id_shop_group = null, $id_shop = null)
     {
         $method = NostoTaggingHelperConfig::read(self::MULTI_CURRENCY_METHOD, $id_lang,
             $id_shop_group, $id_shop);
@@ -434,12 +434,12 @@ class NostoTaggingHelperConfig
      * @param int $id_lang the language.
      * @param null|int $id_shop_group
      * @param null|int $id_shop
-     * @return boolean the multi currency method.
+     * @return bool the multi currency method.
      */
-    public function useMultipleCurrencies($id_lang, $id_shop_group = null, $id_shop = null)
+    public static function useMultipleCurrencies($id_lang, $id_shop_group = null, $id_shop = null)
     {
         if (
-            $this->getMultiCurrencyMethod(
+            NostoTaggingHelperConfig::getMultiCurrencyMethod(
                 $id_lang,
                 $id_shop_group,
                 $id_shop

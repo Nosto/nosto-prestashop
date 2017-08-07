@@ -25,39 +25,6 @@
  */
 class NostoProductTagging extends NostoCategoryTagging
 {
-
-    /**
-     * Tries to resolve current / active product in context
-     *
-     * @return null|Product
-     * @suppress PhanUndeclaredMethod
-     */
-    private static function resolveProductInContext()
-    {
-        $product = null;
-        if (method_exists(Context::getContext()->controller, 'getProduct')) {
-            $product = Context::getContext()->controller->getProduct();
-        }
-        // If product is not set try to get use parameters (mostly for Prestashop < 1.5)
-        if ($product instanceof Product == false) {
-            $id_product = null;
-            if (Tools::getValue('id_product')) {
-                $id_product = Tools::getValue('id_product');
-            }
-            if ($id_product) {
-                $product = new Product($id_product, true, Context::getContext()->language->id);
-            }
-        }
-        if (
-            $product instanceof Product == false
-            || !Validate::isLoadedObject($product)
-        ) {
-            $product = null;
-        }
-
-        return $product;
-    }
-
     /**
      * Render meta-data (tagging) for a product.
      *
@@ -65,7 +32,7 @@ class NostoProductTagging extends NostoCategoryTagging
      */
     public static function get()
     {
-        $product = self::resolveProductInContext();
+        $product = NostoHelperController::resolveObject("id_product", Product::class, "getProduct");
         if (!$product instanceof Product) {
             return null;
         }

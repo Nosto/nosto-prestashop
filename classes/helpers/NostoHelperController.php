@@ -46,4 +46,41 @@ class NostoHelperController
         // Fallback when controller cannot be recognised.
         return $result;
     }
+
+    /**
+     * Tries to resolve current object by inspecting the underlying controller or checking for an
+     * identifier. Assuming that a field called object needs to be accessed, this method will
+     * first look if the controller has a method called getObject, if not, it will check if the
+     * current request has a parameter called id_object and then use that identifier to instantiate
+     * the object
+     *
+     * @return mixed the resolved object or null
+     */
+    public static function resolveObject($id_name, $klass, $method)
+    {
+        $object = null;
+        if (method_exists(Context::getContext()->controller, $method)) {
+            $object = Context::getContext()->controller->$method();
+        }
+        if ($object instanceof $klass == false) {
+            $id = null;
+            if (Tools::getValue($id_name)) {
+                $id = Tools::getValue($id_name);
+            }
+            if ($id) {
+                $object = new $klass
+                (
+                    (int)$id,
+                    Context::getContext()->language->id,
+                    Context::getContext()->shop->id
+                );
+            }
+        }
+
+        if ($object instanceof $klass === false || !Validate::isLoadedObject($object)) {
+            $object = null;
+        }
+
+        return $object;
+    }
 }

@@ -58,7 +58,7 @@ class NostoProduct extends Nosto\Object\Product\Product
             $id_shop_group = $context->shop->id_shop_group;
         }
 
-        if ($helper_config->useMultipleCurrencies($id_lang, $id_shop_group, $id_shop) === true) {
+        if (NostoTaggingHelperConfig::useMultipleCurrencies($id_lang, $id_shop_group, $id_shop) === true) {
             $nostoProduct->setVariationId($base_currency->iso_code);
             $tagging_currency = $base_currency;
         } else {

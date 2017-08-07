@@ -25,53 +25,20 @@
  */
 class NostoBrandTagging
 {
-
     /**
-     * Tries to resolve current / active manufacturer in context
+     * Renders the brand tagging by checking if the underlying controller has an accessor
+     * for it and if not, it falls back to using the identifier
      *
-     * @return Manufacturer|null
-     * @suppress PhanUndeclaredMethod
-     */
-    private static function resolveManufacturerInContext()
-    {
-        $manufacturer = null;
-        if (method_exists(Context::getContext()->controller, 'getManufacturer')) {
-            $manufacturer = Context::getContext()->controller->getManufacturer();
-        }
-        if ($manufacturer instanceof Manufacturer == false) {
-            $id_manufacturer = null;
-            if (Tools::getValue('id_manufacturer')) {
-                $id_manufacturer = Tools::getValue('id_manufacturer');
-            }
-            if ($id_manufacturer) {
-                $manufacturer = new Manufacturer((int)$id_manufacturer,
-                    Context::getContext()->language->id);
-            }
-        }
-        if (
-            $manufacturer instanceof Manufacturer === false
-            || !Validate::isLoadedObject($manufacturer)
-        ) {
-            $manufacturer = null;
-        }
-
-        return $manufacturer;
-    }
-
-    /**
-     * Render meta-data (tagging) for a manufacturer.
-     *
-     * @return string The rendered HTML
+     * @return string the tagging
      */
     public static function get()
     {
-        $manufacturer = self::resolveManufacturerInContext();
-        if (!$manufacturer instanceof Manufacturer) {
+        $brand = NostoHelperController::resolveObject("id_manufacturer", Manufacturer::class, "getManufacturer");
+        if (!$brand instanceof Manufacturer) {
             return null;
         }
 
-        $nosto_brand = new NostoBrand();
-        $nosto_brand->loadData($manufacturer);
+        $nosto_brand = NostoBrand::loadData($brand);
 
         Context::getContext()->smarty->assign(array(
             'nosto_brand' => $nosto_brand,

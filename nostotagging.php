@@ -538,7 +538,7 @@ class NostoTagging extends Module
                     )
                 ),
             ),
-            'multi_currency_method' => $helper_config->getMultiCurrencyMethod(
+            'multi_currency_method' => NostoTaggingHelperConfig::getMultiCurrencyMethod(
                 $current_language['id_lang'],
                 $id_shop_group,
                 $id_shop

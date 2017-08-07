@@ -37,13 +37,16 @@ class NostoBrand extends AbstractNostoModel
      * Loads the brand data from supplied manufacturer object.
      *
      * @param Manufacturer $manufacturer the manufacturer object.
+     * @return NostoBrand
      */
-    public function loadData(Manufacturer $manufacturer)
+    public static function loadData(Manufacturer $manufacturer)
     {
         if (!Validate::isLoadedObject($manufacturer)) {
-            return;
+            return null;
         }
 
-        $this->brand_string = DIRECTORY_SEPARATOR . $manufacturer->name;
+        $nostoBrand = new NostoBrand();
+        $nostoBrand->brand_string = DIRECTORY_SEPARATOR . $manufacturer->name;
+        return $nostoBrand;
     }
 }
