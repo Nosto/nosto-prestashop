@@ -1,6 +1,7 @@
 <?php
+
 /**
- * 2013-2016 Nosto Solutions Ltd
+ * 2013-2017 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,7 +20,7 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2016 Nosto Solutions Ltd
+ * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
@@ -27,7 +28,7 @@ use \Nosto\NostoException as NostoSDKException;
 use \Nosto\Request\Api\Token as NostoSDKAPIToken;
 use \Nosto\OAuth as NostoSDKOAuth;
 
-class NostoTaggingMetaOauth extends NostoSDKOAuth
+class NostoOAuth extends NostoSDKOAuth
 {
     /**
      * Loads meta data from the given context and language.
@@ -36,7 +37,7 @@ class NostoTaggingMetaOauth extends NostoSDKOAuth
      * @param int $id_lang the language to use as data source.
      * @param $moduleName
      * @param $modulePath
-     * @return NostoTaggingMetaOauth|null
+     * @return NostoOAuth|null
      */
     public static function loadData($context, $id_lang, $moduleName, $modulePath)
     {
@@ -48,10 +49,10 @@ class NostoTaggingMetaOauth extends NostoSDKOAuth
         $id_lang = (int)$context->language->id;
         $id_shop = (int)$context->shop->id;
 
-        $oauthParams = new NostoTaggingMetaOauth();
+        $nostoOAuth = new NostoOAuth();
 
         try {
-            $oauthParams->setScopes(NostoSDKAPIToken::getApiTokenNames());
+            $nostoOAuth->setScopes(NostoSDKAPIToken::getApiTokenNames());
 
             $redirectUrl = NostoHelperUrl::getModuleUrl(
                 $moduleName,
@@ -62,10 +63,10 @@ class NostoTaggingMetaOauth extends NostoSDKOAuth
                 array('language_id' => (int)$language->id)
             );
 
-            $oauthParams->setClientId('prestashop');
-            $oauthParams->setClientSecret('prestashop');
-            $oauthParams->setRedirectUrl($redirectUrl);
-            $oauthParams->setLanguageIsoCode($language->iso_code);
+            $nostoOAuth->setClientId('prestashop');
+            $nostoOAuth->setClientSecret('prestashop');
+            $nostoOAuth->setRedirectUrl($redirectUrl);
+            $nostoOAuth->setLanguageIsoCode($language->iso_code);
         } catch (NostoSDKException $e) {
             NostoHelperLogger::error(
                 __CLASS__ . '::' . __FUNCTION__ . ' - ' . $e->getMessage(),
@@ -73,6 +74,6 @@ class NostoTaggingMetaOauth extends NostoSDKOAuth
             );
         }
 
-        return $oauthParams;
+        return $nostoOAuth;
     }
 }

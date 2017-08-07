@@ -324,7 +324,7 @@ class NostoTagging extends Module
                 || Tools::getValue('nostotagging_account_action') === 'connectAccount'
                 || Tools::getValue('nostotagging_account_action') === 'syncAccount'
             ) {
-                $meta = NostoTaggingMetaOauth::loadData($this->context, $language_id, $this->name,
+                $meta = NostoOAuth::loadData($this->context, $language_id, $this->name,
                     $this->_path);
                 Tools::redirect(Nosto\Helper\OAuthHelper::getAuthorizationUrl($meta), '');
                 die();
