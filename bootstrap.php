@@ -61,7 +61,7 @@ class NostoBootstrap {
         require_once($moduleDir . '/classes/models/AbstractNostoPriceVariation.php');
         require_once($moduleDir . '/classes/models/order/NostoOrderPurchasedItem.php');
         require_once($moduleDir . '/classes/models/order/NostoOrderStatus.php');
-        require_once($moduleDir . '/classes/models/product.php');
+        require_once($moduleDir . '/classes/models/NostoTaggingProduct.php');
         require_once($moduleDir . '/classes/models/AbstractNostoBrand.php');
         require_once($moduleDir . '/classes/models/AbstractNostoSearch.php');
 

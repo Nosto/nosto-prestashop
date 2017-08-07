@@ -71,7 +71,7 @@ class NostoTaggingProduct extends Nosto\Object\Product\Product
         $this->setCategories($this->buildCategories($product, $id_lang));
         $this->setDescription($product->description_short . $product->description);
         $this->setInventoryLevel((int)$product->quantity);
-        $this->setBrand($this->buildBrand($product));
+        $this->setBrand($this->buildBrand($product, $id_lang));
         $this->amendImage($product, $id_lang);
         $this->amendAlternateImages($product, $id_lang);
         $this->amendPrices($product, $context, $tagging_currency);
@@ -271,16 +271,20 @@ class NostoTaggingProduct extends Nosto\Object\Product\Product
      * Builds the brand name from the product's manufacturer to and returns them.
      *
      * @param Product $product the product model.
+     * @param int $id_lang for which language ID to fetch the categories.
      * @return string the built brand name.
      */
-    protected function buildBrand(Product $product)
+    protected function buildBrand(Product $product, $id_lang)
     {
-        $manufacturer = null;
+        $brand = null;
         if (empty($product->manufacturer_name) && !empty($product->id_manufacturer)) {
-            $manufacturer = Manufacturer::getNameById($product->id_manufacturer);
+            $manufacturer = new Manufacturer($product->id_manufacturer, $id_lang);
+            if (!empty($manufacturer)) {
+                $brand = $manufacturer->name;
+            }
         } else {
-            $manufacturer = $product->manufacturer_name;
+            $brand = $product->manufacturer_name;
         }
-        return $manufacturer;
+        return $brand;
     }
 }
