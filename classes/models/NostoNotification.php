@@ -37,13 +37,7 @@ class NostoNotification extends NostoSDKNotification
      * @param $message
      * @suppress PhanTypeMismatchArgument
      */
-    public function __construct(
-        Shop $shop,
-        Language $language,
-        $type,
-        $severity,
-        $message
-    ) {
+    public function __construct(Shop $shop, Language $language, $type, $severity, $message) {
         $this->setStoreId($shop->id);
         $this->setStoreName($shop->name);
         $this->setLanguageId($language->id);
