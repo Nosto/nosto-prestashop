@@ -23,7 +23,7 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use Nosto\Object\Notification as NostoSDKNotification;
+use \Nosto\Object\Notification as NostoSDKNotification;
 
 class NostoNotification extends NostoSDKNotification
 {

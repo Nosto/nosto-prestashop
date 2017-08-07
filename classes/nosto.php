@@ -34,7 +34,7 @@
  *
  */
 
-use Nosto\NostoException as NostoSDKException;
+use \Nosto\NostoException as NostoSDKException;
 
 class Nosto
 {

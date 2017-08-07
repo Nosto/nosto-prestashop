@@ -47,7 +47,7 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use Nosto\Object\Iframe as NostoSDKIframe;
+use \Nosto\Object\Iframe as NostoSDKIframe;
 
 class NostoIframe extends NostoSDKIframe
 {
