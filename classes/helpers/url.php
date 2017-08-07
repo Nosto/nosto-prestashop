@@ -142,7 +142,7 @@ class NostoTaggingHelperUrl
     {
         try {
             $params = array('nostodebug' => 'true');
-            return $this->getPageUrl('order.php', $id_lang, null, $params);
+            return $this->getPageUrl('NostoOrderTagging.php', $id_lang, null, $params);
         } catch (Exception $e) {
             // Return empty on failure
             return '';

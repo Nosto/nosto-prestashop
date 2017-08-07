@@ -23,36 +23,31 @@
  * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
-class PageTypeTagging
+
+class NostoCustomerTagging
 {
 
-    private static $controllers = array(
-        "category" => "category",
-        "manufacturer" => "category",
-        "search" => "search",
-        "product" => "product",
-        "order-confirmation" => "order",
-        "pagenotfound" => "notfound",
-        "404" => "notfound",
-        "index" => "front",
-        "cart" => "cart"
-    );
-
     /**
-     * Render page type tagging
+     * Render meta-data (tagging) for the logged in customer.
      *
-     * @return string the rendered HTML
+     * @return string The rendered HTML
      */
     public static function get()
     {
-        if (!NostoTaggingHelperAccount::isContextConnected(Context::getContext())) {
+        $nosto_customer = new NostoTaggingCustomer();
+        if (!$nosto_customer->isCustomerLoggedIn(Context::getContext()->customer)) {
             return '';
         }
 
+        $nosto_customer->loadData(Context::getContext()->customer);
+        $cid = NostoTaggingHelperCookie::readNostoCookie();
+        $hcid = $cid ? hash(NostoTagging::VISITOR_HASH_ALGO, $cid) : '';
+
         Context::getContext()->smarty->assign(array(
-            'nosto_page_type' => self::$controllers[''],
+            'nosto_customer' => $nosto_customer,
+            'nosto_hcid' => $hcid
         ));
 
-        return 'views/templates/hook/top_page_type-tagging.tpl';
+        return 'views/templates/hook/top_customer-tagging.tpl';
     }
 }

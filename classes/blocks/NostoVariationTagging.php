@@ -46,66 +46,39 @@
  * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
-class CategoryTagging
+class NostoVariationTagging
 {
 
     /**
-     * Tries to resolve current / active category in context
+     * Render meta-data (tagging) for the price variation in use.
      *
-     * @return Category|null
-     * @suppress PhanUndeclaredMethod
-     */
-    private static function resolveCategoryInContext()
-    {
-        $category = null;
-        if (method_exists(Context::getContext()->controller, 'getCategory')) {
-            $category = Context::getContext()->controller->getCategory();
-        }
-        if ($category instanceof Category == false) {
-            $id_category = null;
-            if (Tools::getValue('id_category')) {
-                $id_category = Tools::getValue('id_category');
-            } /** @noinspection PhpUndefinedFieldInspection */ elseif (
-                isset(Context::getContext()->cookie)
-                && (Context::getContext()->cookie->last_visited_category)
-            ) {
-                /** @noinspection PhpUndefinedFieldInspection */
-                $id_category = Context::getContext()->cookie->last_visited_category;
-            }
-            if ($id_category) {
-                $category = new Category($id_category, Context::getContext()->language->id,
-                    Context::getContext()->shop->id);
-            }
-        }
-        if (
-            $category instanceof Category === false
-            || !Validate::isLoadedObject($category)
-        ) {
-            $category = null;
-        }
-
-        return $category;
-    }
-
-    /**
-     * Render meta-data (tagging) for a category.
+     * This is needed for the multi currency features.
      *
      * @return string The rendered HTML
      */
     public static function get()
     {
-        $category = self::resolveCategoryInContext();
-        if (!$category instanceof Category) {
-            return null;
+        /* @var $currencyHelper NostoTaggingHelperCurrency */
+        $currencyHelper = Nosto::helper('nosto_tagging/currency');
+        /** @var NostoTaggingHelperConfig $helper_config */
+        $helper_config = Nosto::helper('nosto_tagging/config');
+        $id_lang = Context::getContext()->language->id;
+        $id_shop = null;
+        $id_shop_group = null;
+        if (Context::getContext()->shop instanceof Shop) {
+            $id_shop = Context::getContext()->shop->id;
+            $id_shop_group = Context::getContext()->shop->id_shop_group;
+        }
+        if ($helper_config->useMultipleCurrencies($id_lang, $id_shop_group, $id_shop)) {
+            $defaultVariationId = $currencyHelper->getActiveCurrency(Context::getContext());
+            $priceVariation = new NostoTaggingPriceVariation($defaultVariationId);
+            Context::getContext()->smarty->assign(array(
+                'nosto_price_variation' => $priceVariation
+            ));
+
+            return 'views/templates/hook/top_price_variation-tagging.tpl';
         }
 
-        $nosto_category = new NostoTaggingCategory();
-        $nosto_category->loadData(Context::getContext(), $category);
-
-        Context::getContext()->smarty->assign(array(
-            'nosto_category' => $nosto_category,
-        ));
-
-        return 'views/templates/hook/category-footer_category-tagging.tpl';
+        return null;
     }
 }

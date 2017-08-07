@@ -23,7 +23,7 @@
  * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
-class DefaultTagging
+class NostoDefaultTagging
 {
 
     /**
@@ -62,17 +62,17 @@ class DefaultTagging
         }
 
         $html = '';
-        $html .= $this->display(__FILE__, CustomerTagging::get());
-        $html .= $this->display(__FILE__, CartTagging::get());
-        $html .= $this->display(__FILE__, VariationTagging::get());
+        $html .= $this->display(__FILE__, NostoCustomerTagging::get());
+        $html .= $this->display(__FILE__, NostoCartTagging::get());
+        $html .= $this->display(__FILE__, NostoVariationTagging::get());
         if (NostoTaggingHelperController::isController('category')) {
-            $html .= $this->display(__FILE__, CategoryTagging::get());
+            $html .= $this->display(__FILE__, NostoCategoryTagging::get());
         } elseif (NostoTaggingHelperController::isController('manufacturer')) {
-            $html .= $this->display(__FILE__, BrandTagging::get());
+            $html .= $this->display(__FILE__, NostoBrandTagging::get());
         } elseif (NostoTaggingHelperController::isController('search')) {
-            $html .= $this->display(__FILE__, SearchTagging::get());
+            $html .= $this->display(__FILE__, NostoSearchTagging::get());
         } elseif (NostoTaggingHelperController::isController('product')) {
-            $html .= $this->display(__FILE__, ProductTagging::get());
+            $html .= $this->display(__FILE__, NostoProductTagging::get());
         } elseif (NostoTaggingHelperController::isController('order-confirmation')) {
             $html .= $this->display(__FILE__, OrderTagging::get());
         }

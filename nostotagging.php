@@ -661,7 +661,7 @@ class NostoTagging extends Module
      */
     public function hookDisplayTop()
     {
-        return DefaultTagging::get();
+        return NostoDefaultTagging::get();
     }
 
     /**
@@ -675,7 +675,7 @@ class NostoTagging extends Module
      */
     public function hookDisplayNav1()
     {
-        return DefaultTagging::get();
+        return NostoDefaultTagging::get();
     }
 
     /**
@@ -698,7 +698,7 @@ class NostoTagging extends Module
      */
     public function hookDisplayFooter()
     {
-        $html = DefaultTagging::get();
+        $html = NostoDefaultTagging::get();
         $html .= NostoRecommendationElement::get("nosto-page-footer");
         return $html;
     }

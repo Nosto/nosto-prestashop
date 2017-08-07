@@ -23,27 +23,36 @@
  * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
-class CartTagging
+class NostoPagetypeTagging
 {
 
+    private static $controllers = array(
+        "category" => "category",
+        "manufacturer" => "category",
+        "search" => "search",
+        "product" => "product",
+        "order-confirmation" => "order",
+        "pagenotfound" => "notfound",
+        "404" => "notfound",
+        "index" => "front",
+        "cart" => "cart"
+    );
+
     /**
-     * Render meta-data (tagging) for the shopping cart.
+     * Render page type tagging
      *
-     * @return string The rendered HTML
+     * @return string the rendered HTML
      */
     public static function get()
     {
-        $nosto_cart = new NostoTaggingCart();
-        $nosto_cart->loadData(Context::getContext()->cart);
-
-        $cid = NostoTaggingHelperCookie::readNostoCookie();
-        $hcid = $cid ? hash(NostoTagging::VISITOR_HASH_ALGO, $cid) : '';
+        if (!NostoTaggingHelperAccount::isContextConnected(Context::getContext())) {
+            return '';
+        }
 
         Context::getContext()->smarty->assign(array(
-            'nosto_cart' => $nosto_cart,
-            'nosto_hcid' => $hcid
+            'nosto_page_type' => self::$controllers[''],
         ));
 
-        return 'views/templates/hook/top_cart-tagging.tpl';
+        return 'views/templates/hook/top_page_type-tagging.tpl';
     }
 }

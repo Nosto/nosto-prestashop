@@ -23,30 +23,27 @@
  * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
-class CustomerTagging
+class NostoCartTagging
 {
 
     /**
-     * Render meta-data (tagging) for the logged in customer.
+     * Render meta-data (tagging) for the shopping cart.
      *
      * @return string The rendered HTML
      */
     public static function get()
     {
-        $nosto_customer = new NostoTaggingCustomer();
-        if (!$nosto_customer->isCustomerLoggedIn(Context::getContext()->customer)) {
-            return '';
-        }
+        $nosto_cart = new NostoTaggingCart();
+        $nosto_cart->loadData(Context::getContext()->cart);
 
-        $nosto_customer->loadData(Context::getContext()->customer);
         $cid = NostoTaggingHelperCookie::readNostoCookie();
         $hcid = $cid ? hash(NostoTagging::VISITOR_HASH_ALGO, $cid) : '';
 
         Context::getContext()->smarty->assign(array(
-            'nosto_customer' => $nosto_customer,
+            'nosto_cart' => $nosto_cart,
             'nosto_hcid' => $hcid
         ));
 
-        return 'views/templates/hook/top_customer-tagging.tpl';
+        return 'views/templates/hook/top_cart-tagging.tpl';
     }
 }
