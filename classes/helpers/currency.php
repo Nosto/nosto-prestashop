@@ -23,6 +23,9 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
+use \Nosto\NostoException as NostoSDKException;
+use \Nosto\Object\Format as NostoSDKCurrencyFormat;
+
 /**
  * Helper class for currency related tasks.
  */
@@ -47,7 +50,7 @@ class NostoHelperCurrency
      *
      * @param Context|ContextCore $context the context.
      * @return Currency
-     * @throws \Nosto\NostoException
+     * @throws NostoSDKException
      */
     public static function getBaseCurrency(Context $context)
     {
@@ -67,7 +70,7 @@ class NostoHelperCurrency
         }
         $base_currency = self::loadCurrency($base_id_currency);
         if (!Validate::isLoadedObject($base_currency)) {
-            throw new Nosto\NostoException(
+            throw new NostoSDKException(
                 sprintf(
                     'Failed to find base currency for shop #%s and lang #%s.',
                     $id_shop,
@@ -109,8 +112,8 @@ class NostoHelperCurrency
      *
      * @param array $currency the PS currency data.
      * @param Context $context conteIs signup UI is broken? When xt where the currencies are used.
-     * @return \Nosto\Object\Format
-     * @throws \Nosto\NostoException
+     * @return NostoSDKCurrencyFormat
+     * @throws NostoSDKException
      */
     public static function getNostoCurrency(array $currency, Context $context = null)
     {
@@ -168,14 +171,14 @@ class NostoHelperCurrency
                 break;
 
             default:
-                throw new Nosto\NostoException(
+                throw new NostoSDKException(
                     sprintf(
                         'Unsupported PrestaShop currency format %d.',
                         $currency['format']
                     )
                 );
         }
-        return new Nosto\Object\Format(
+        return new NostoSDKCurrencyFormat(
             $symbol_position,
             $group_symbol,
             self::CURRENCY_GROUP_LENGTH,
@@ -191,15 +194,14 @@ class NostoHelperCurrency
      *
      * @param array $currency Prestashop currency array
      * @param Context $context
-     * @return \Nosto\Object\Format
+     * @return NostoSDKCurrencyFormat
      * @suppress PhanTypeMismatchArgument
      */
     private static function createWithCldr(array $currency, Context $context)
     {
         $cldr = Tools::getCldr(null, $context->language->language_code);
         // @codingStandardsIgnoreLine
-        $cldr_currency = new \ICanBoogie\CLDR\Currency($cldr->getRepository(),
-            $currency['iso_code']);
+        $cldr_currency = new \ICanBoogie\CLDR\Currency($cldr->getRepository(), $currency['iso_code']);
         $localized_currency = $cldr_currency->localize($cldr->getCulture());
         $pattern = $localized_currency->locale->numbers->currency_formats['standard'];
         $symbols = $localized_currency->locale->numbers->symbols;
@@ -210,7 +212,7 @@ class NostoHelperCurrency
         $group_symbol = isset($symbols['group']) ? $symbols['group'] : ',';
         $decimal_symbol = isset($symbols['decimal']) ? $symbols['decimal'] : ',';
 
-        return new Nosto\Object\Format(
+        return new NostoSDKCurrencyFormat(
             $symbol_position,
             $group_symbol,
             self::CURRENCY_GROUP_LENGTH,

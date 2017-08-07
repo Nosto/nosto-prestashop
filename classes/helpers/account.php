@@ -23,6 +23,11 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
+use \Nosto\NostoException as NostoSDKException;
+use \Nosto\Object\Signup\Account as NostoSDKSignupAccount;
+use \Nosto\Request\Api\Token as NostoSDKAPIToken;
+use \Nosto\Operation\UninstallAccount as NostoSDKUninstallAccountOperation;
+
 /**
  * Helper class for managing Nosto accounts.
  */
@@ -33,14 +38,14 @@ class NostoHelperAccount
      * Saves a Nosto account to PS config.
      * Also handles any attached API tokens.
      *
-     * @param Nosto\Types\Signup\AccountInterface $account the account to save.
+     * @param NostoSDKSignupAccount $account the account to save.
      * @param null|int $id_lang the ID of the language to set the account name for.
      * @param null|int $id_shop_group the ID of the shop context.
      * @param null|int $id_shop the ID of the shop.
      * @return bool true if the save was successful, false otherwise.
      */
     public static function save(
-        Nosto\Types\Signup\AccountInterface $account,
+        NostoSDKSignupAccount $account,
         $id_lang,
         $id_shop_group = null,
         $id_shop = null
@@ -70,7 +75,7 @@ class NostoHelperAccount
      * Also sends a notification to Nosto that the account has been deleted.
      *
      * @param $context
-     * @param Nosto\Object\Signup\Account $account the account to delete.
+     * @param NostoSDKSignupAccount $account the account to delete.
      * @param int $id_lang the ID of the language model to delete the account for.
      * @param null|int $id_shop_group the ID of the shop context.
      * @param null|int $id_shop the ID of the shop.
@@ -78,7 +83,7 @@ class NostoHelperAccount
      */
     public static function delete(
         Context $context,
-        Nosto\Object\Signup\Account $account,
+        NostoSDKSignupAccount $account,
         $id_lang,
         $id_shop_group = null,
         $id_shop = null
@@ -90,9 +95,9 @@ class NostoHelperAccount
             $token = $account->getApiToken('sso');
             if ($token) {
                 try {
-                    $service = new Nosto\Operation\UninstallAccount($account);
+                    $service = new NostoSDKUninstallAccountOperation($account);
                     $service->delete($currentUser);
-                } catch (Nosto\NostoException $e) {
+                } catch (NostoSDKException $e) {
                     NostoHelperLogger::error(
                         __CLASS__ . '::' . __FUNCTION__ . ' - ' . $e->getMessage(),
                         $e->getCode()
@@ -144,7 +149,7 @@ class NostoHelperAccount
      * @param null|int $lang_id the ID of the language.
      * @param null|int $id_shop_group the ID of the shop context.
      * @param null|int $id_shop the ID of the shop.
-     * @return Nosto\Object\Signup\Account|null the account with loaded API tokens, or null if not
+     * @return NostoSDKSignupAccount|null the account with loaded API tokens, or null if not
      *     found.
      */
     public static function find($lang_id = null, $id_shop_group = null, $id_shop = null)
@@ -152,9 +157,9 @@ class NostoHelperAccount
         $account_name = NostoHelperConfig::getAccountName($lang_id, $id_shop_group,
             $id_shop);
         if (!empty($account_name)) {
-            $account = new Nosto\Object\Signup\Account($account_name);
+            $account = new NostoSDKSignupAccount($account_name);
             $tokens = array();
-            foreach (Nosto\Request\Api\Token::getApiTokenNames() as $token_name) {
+            foreach (NostoSDKAPIToken::getApiTokenNames() as $token_name) {
                 $token_value = NostoHelperConfig::getToken($token_name, $lang_id,
                     $id_shop_group,
                     $id_shop);
@@ -165,7 +170,7 @@ class NostoHelperAccount
 
             if (!empty($tokens)) {
                 foreach ($tokens as $name => $value) {
-                    $account->addApiToken(new Nosto\Request\Api\Token($name, $value));
+                    $account->addApiToken(new NostoSDKAPIToken($name, $value));
                 }
             }
 

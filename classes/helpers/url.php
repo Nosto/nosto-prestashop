@@ -23,6 +23,9 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
+use \Nosto\Request\Http\HttpRequest as NostoSDKHttpRequest;
+use \Nosto\Nosto as NostoSDK;
+
 /**
  * Helper class for managing urls.
  */
@@ -174,7 +177,7 @@ class NostoHelperUrl
      */
     public static function getServerAddress()
     {
-        return \Nosto\Nosto::getEnvVariable('NOSTO_SERVER_URL', self::DEFAULT_SERVER_ADDRESS);
+        return NostoSDK::getEnvVariable('NOSTO_SERVER_URL', self::DEFAULT_SERVER_ADDRESS);
     }
 
     /**
@@ -224,7 +227,7 @@ class NostoHelperUrl
             $params['id_lang'] = $id_lang;
         }
 
-        return Nosto\Request\Http\HttpRequest::replaceQueryParamsInUrl($params, $url);
+        return NostoSDKHttpRequest::replaceQueryParamsInUrl($params, $url);
     }
 
     /**
@@ -274,7 +277,7 @@ class NostoHelperUrl
             $params['id_lang'] = $id_lang;
         }
 
-        return Nosto\Request\Http\HttpRequest::replaceQueryParamsInUrl($params, $url);
+        return NostoSDKHttpRequest::replaceQueryParamsInUrl($params, $url);
     }
 
     /**
@@ -323,7 +326,7 @@ class NostoHelperUrl
             $params['id_lang'] = $id_lang;
         }
 
-        return Nosto\Request\Http\HttpRequest::replaceQueryParamsInUrl($params, $url);
+        return NostoSDKHttpRequest::replaceQueryParamsInUrl($params, $url);
     }
 
     /**
@@ -405,7 +408,7 @@ class NostoHelperUrl
      */
     public static function getIframeOrigin()
     {
-        return Nosto\Nosto::getEnvVariable('NOSTO_IFRAME_ORIGIN_REGEXP',
+        return NostoSDK::getEnvVariable('NOSTO_IFRAME_ORIGIN_REGEXP',
             self::DEFAULT_IFRAME_ORIGIN_REGEXP);
     }
 }
