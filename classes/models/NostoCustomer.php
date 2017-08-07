@@ -28,8 +28,7 @@
  */
 class NostoCustomer extends \Nosto\Object\User
 {
-
-    public $customer_reference;
+    private $customer_reference;
 
     /**
      * Loads the customer data from supplied context and customer objects.

@@ -23,7 +23,7 @@
  * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
-class NostoProductTagging
+class NostoProductTagging extends NostoCategoryTagging
 {
 
     /**
@@ -66,18 +66,17 @@ class NostoProductTagging
     public static function get()
     {
         $product = self::resolveProductInContext();
-        if (!$product instanceof Category) {
+        if (!$product instanceof Product) {
             return null;
         }
 
-        $nosto_product = new NostoProduct();
-        $nosto_product->loadData(Context::getContext(), $product);
-
+        $nosto_product = NostoProduct::loadData(Context::getContext(), $product);
         $params = array('nosto_product' => $nosto_product);
 
-        if (Validate::isLoadedObject($category)) {
-            $nosto_category = new AbstractNostoCategory();
-            $nosto_category->loadData(Context::getContext(), $category);
+
+        $nosto_category = parent::resolveCategoryInContext();
+        if (Validate::isLoadedObject($nosto_category)) {
+            $nosto_category = NostoCategory::loadData(Context::getContext(), $nosto_category);
             $params['nosto_category'] = $nosto_category;
         }
 

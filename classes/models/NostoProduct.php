@@ -33,11 +33,12 @@ class NostoProduct extends Nosto\Object\Product\Product
      *
      * @param Context $context the context object.
      * @param Product $product the product object.
+     * @return NostoProduct
      */
-    public function loadData(Context $context, Product $product)
+    public static function loadData(Context $context, Product $product)
     {
         if (!Validate::isLoadedObject($product)) {
-            return;
+            return null;
         }
 
         /** @var NostoTaggingHelperUrl $url_helper */
@@ -46,6 +47,8 @@ class NostoProduct extends Nosto\Object\Product\Product
         $helper_currency = Nosto::helper('nosto_tagging/currency');
         /** @var NostoTaggingHelperConfig $helper_config */
         $helper_config = Nosto::helper('nosto_tagging/config');
+
+        $nostoProduct = new NostoProduct();
         $base_currency = $helper_currency->getBaseCurrency($context);
         $id_lang = $context->language->id;
         $id_shop = null;
@@ -56,36 +59,37 @@ class NostoProduct extends Nosto\Object\Product\Product
         }
 
         if ($helper_config->useMultipleCurrencies($id_lang, $id_shop_group, $id_shop) === true) {
-            $this->setVariationId($base_currency->iso_code);
+            $nostoProduct->setVariationId($base_currency->iso_code);
             $tagging_currency = $base_currency;
         } else {
             $tagging_currency = $context->currency;
         }
-        $this->setUrl($url_helper->getProductUrl($product, $id_lang, $id_shop));
-        $this->setProductId((string)$product->id);
-        $this->setName($product->name);
-
-        $this->setPriceCurrencyCode(Tools::strtoupper($tagging_currency->iso_code));
-        $this->setAvailability($this->checkAvailability($product));
-        $this->setTag1($this->buildTags($product, $id_lang));
-        $this->amendCategories($product, $id_lang);
-        $this->setDescription($product->description_short . $product->description);
-        $this->setInventoryLevel((int)$product->quantity);
-        $this->setPrice($this->getPriceInclTax($product, $context, $tagging_currency));
-        $this->setListPrice($this->getListPriceInclTax($product, $context, $tagging_currency));
-        $this->amendBrand($product, $id_lang);
-        $this->amendImage($product, $id_lang);
-        $this->amendAlternateImages($product, $id_lang);
-        $this->amendPrices($product);
+        $nostoProduct->setUrl($url_helper->getProductUrl($product, $id_lang, $id_shop));
+        $nostoProduct->setProductId((string)$product->id);
+        $nostoProduct->setName($product->name);
+        $nostoProduct->setPriceCurrencyCode(Tools::strtoupper($tagging_currency->iso_code));
+        $nostoProduct->setAvailability(self::checkAvailability($product));
+        $nostoProduct->setTag1(self::buildTags($product, $id_lang));
+        $nostoProduct->amendCategories($product, $id_lang);
+        $nostoProduct->setDescription($product->description_short . $product->description);
+        $nostoProduct->setInventoryLevel((int)$product->quantity);
+        $nostoProduct->setPrice(self::getPriceInclTax($product, $context, $tagging_currency));
+        $nostoProduct->setListPrice(self::getListPriceInclTax($product, $context, $tagging_currency));
+        $nostoProduct->amendBrand($product, $id_lang);
+        $nostoProduct->amendImage($product, $id_lang);
+        $nostoProduct->amendAlternateImages($product, $id_lang);
+        $nostoProduct->amendPrices($product);
 
         Hook::exec(
-            'action' . str_replace('NostoTagging', 'Nosto', get_class($this)) . 'LoadAfter',
+            'action' . str_replace('NostoTagging', 'Nosto', self::class) . 'LoadAfter',
             array(
-                'nosto_product' => $this,
+                'nosto_product' => $nostoProduct,
                 'product' => $product,
                 'context' => $context
             )
         );
+
+        return $nostoProduct;
     }
 
     /**
@@ -168,13 +172,12 @@ class NostoProduct extends Nosto\Object\Product\Product
      * @param Product $product the product model.
      * @return string the value, i.e. self::IN_STOCK or self::OUT_OF_STOCK.
      */
-    protected function checkAvailability(Product $product)
+    protected static function checkAvailability(Product $product)
     {
         if (!$product->active || $product->visibility === 'none') {
             return self::INVISIBLE;
-        } else {
-            return ($product->checkQty(1)) ? self::IN_STOCK : self::OUT_OF_STOCK;
         }
+        return ($product->checkQty(1)) ? self::IN_STOCK : self::OUT_OF_STOCK;
     }
 
     /**
@@ -185,7 +188,7 @@ class NostoProduct extends Nosto\Object\Product\Product
      * @param Currency|CurrencyCore $currency the currency.
      * @return float the price.
      */
-    public function getPriceInclTax(Product $product, Context $context, Currency $currency)
+    public static function getPriceInclTax(Product $product, Context $context, Currency $currency)
     {
         return NostoHelperPrice::calcPrice($product->id, $currency, $context,
             array('user_reduction' => true));
@@ -199,7 +202,7 @@ class NostoProduct extends Nosto\Object\Product\Product
      * @param Currency|CurrencyCore $currency the currency.
      * @return float the price.
      */
-    public function getListPriceInclTax(Product $product, Context $context, Currency $currency)
+    public static function getListPriceInclTax(Product $product, Context $context, Currency $currency)
     {
         return NostoHelperPrice::calcPrice($product->id, $currency, $context,
             array('user_reduction' => false));
@@ -217,7 +220,7 @@ class NostoProduct extends Nosto\Object\Product\Product
      * @param int $id_lang for which language ID to fetch the product tags.
      * @return array the built tags.
      */
-    protected function buildTags(Product $product, $id_lang)
+    protected static function buildTags(Product $product, $id_lang)
     {
         $tags = array();
         if (($product_tags = $product->getTags($id_lang)) !== '') {
@@ -246,7 +249,8 @@ class NostoProduct extends Nosto\Object\Product\Product
     {
         $productCategories = $product->getCategories();
         foreach ($productCategories as $category_id) {
-            $category = AbstractNostoCategory::buildCategoryString($category_id, $id_lang);
+            $category = new Category((int)$category_id, $id_lang);
+            $category = NostoCategory::loadData(Context::getContext(), $category);
             if (!empty($category)) {
                 $this->addCategory($category);
             }

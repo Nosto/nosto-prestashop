@@ -26,7 +26,7 @@
 /**
  * Model for tagging categories.
  */
-class AbstractNostoCategory extends AbstractNostoModel
+class NostoCategory extends AbstractNostoModel
 {
     /**
      * @var string the built category string.
@@ -39,40 +39,28 @@ class AbstractNostoCategory extends AbstractNostoModel
      * @return Category
      * @suppress PhanTypeMismatchArgument
      */
-    private static function loadCategory($id_category, $id_lang)
+    public static function loadCategory($id_category, $id_lang)
     {
         return new Category((int)$id_category, $id_lang);
     }
 
     /**
      * Loads the category data from supplied context and category objects.
+     * Builds a tagging string of the given category including all its parent categories.
      *
      * @param Context $context the context object.
      * @param Category $category the category object.
-     */
-    public function loadData(Context $context, Category $category)
-    {
-        if (!Validate::isLoadedObject($category)) {
-            return;
-        }
-
-        $this->category_string = self::buildCategoryString($category->id, $context->language->id);
-    }
-
-    /**
-     * Builds a tagging string of the given category including all its parent categories.
-     *
-     * @param int $id_category
-     * @param int $id_lang
      * @return string
      */
-    public static function buildCategoryString($id_category, $id_lang)
+    public static function loadData(Context $context, Category $category)
     {
-        $category_list = array();
+        if (!Validate::isLoadedObject($category)) {
+            return null;
+        }
 
-        $category = self::loadCategory($id_category, $id_lang);
-        if (Validate::isLoadedObject($category) && (int)$category->active === 1) {
-            foreach ($category->getParentsCategories($id_lang) as $parent_category) {
+        $category_list = array();
+        if ((int)$category->active === 1) {
+            foreach ($category->getParentsCategories($context->language->id) as $parent_category) {
                 if (isset($parent_category['name'], $parent_category['active'])
                     && (int)$parent_category['active'] === 1
                 ) {

@@ -55,7 +55,7 @@ class NostoCategoryTagging
      * @return Category|null
      * @suppress PhanUndeclaredMethod
      */
-    private static function resolveCategoryInContext()
+    protected static function resolveCategoryInContext()
     {
         $category = null;
         if (method_exists(Context::getContext()->controller, 'getCategory')) {
@@ -99,8 +99,7 @@ class NostoCategoryTagging
             return null;
         }
 
-        $nosto_category = new AbstractNostoCategory();
-        $nosto_category->loadData(Context::getContext(), $category);
+        $nosto_category = NostoCategory::loadData(Context::getContext(), $category);
 
         Context::getContext()->smarty->assign(array(
             'nosto_category' => $nosto_category,

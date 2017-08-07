@@ -270,8 +270,7 @@ class NostoProductService extends AbstractNostoService
         /* @var NostoTaggingHelperContextFactory $context_factory */
         $context_factory = Nosto::helper('nosto_tagging/context_factory');
         $forged_context = $context_factory->forgeContext($id_lang, $id_shop);
-        $nosto_product = new NostoProduct();
-        $nosto_product->loadData($forged_context, $product);
+        $nosto_product = NostoProduct::loadData($forged_context, $product);
         $context_factory->revertToOriginalContext();
 
         return $nosto_product;
