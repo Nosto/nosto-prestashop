@@ -59,7 +59,7 @@ class NostoRatesService
             $service = new SyncRates($account);
             return $service->update($exchangeRates);
         } catch (Exception $e) {
-            NostoTaggingHelperLogger::error(__CLASS__ . '::' . __FUNCTION__ . ' - ' . $e->getMessage(),
+            NostoHelperLogger::error(__CLASS__ . '::' . __FUNCTION__ . ' - ' . $e->getMessage(),
                 $e->getCode());
         }
         return false;

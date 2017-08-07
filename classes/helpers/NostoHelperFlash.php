@@ -27,7 +27,7 @@
  * Helper class for setting and retrieving persistent user flash messages.
  * Uses the Prestashop core cookie class as storage.
  */
-class NostoTaggingHelperFlashMessage
+class NostoHelperFlash
 {
     const TYPE_SUCCESS = 'success';
     const TYPE_ERROR = 'error';

@@ -23,30 +23,17 @@
  * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
-class NostoTaggingHelperCookie
+class NostoHelperLink
 {
 
-    /**
-     * Nosto cookie name
-     */
-    const COOKIE_NAME = '2c_cId';
-
-    /**
-     * Global cookie scope
-     */
-    const GLOBAL_COOKIES = '_COOKIE';
-
-    public static function readNostoCookie()
+    public static function getLink()
     {
-        // We use the $GLOBALS here, instead of the Prestashop cookie class, as we are accessing a
-        // nosto cookie that have been set by the JavaScript loaded from nosto.com. Accessing global $_COOKIE array
-        // is not allowed by Prestashop's new validation rules effective from April 2016.
-        // We read it to keep a mapping of the Nosto user ID and the Prestashop user ID so we can identify which user
-        // actually completed an order. We do this for tracking whether or not to send abandoned cart emails.
-        if ($GLOBALS[self::GLOBAL_COOKIES] && isset($GLOBALS[self::GLOBAL_COOKIES][self::COOKIE_NAME])) {
-            return $GLOBALS[self::GLOBAL_COOKIES][self::COOKIE_NAME];
+        if (Configuration::get('PS_SSL_ENABLED_EVERYWHERE')) {
+            $link = new Link('https://', 'https://');
         } else {
-            return null;
+            $link = new Link('http://', 'http://');
         }
+
+        return $link;
     }
 }

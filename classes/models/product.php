@@ -64,7 +64,7 @@ class NostoTaggingProduct extends Nosto\Object\Product\Product
             $tagging_currency = $context->currency;
         }
         $this->setUrl($url_helper->getProductUrl($product, $id_lang, $id_shop));
-        $link = NostoTaggingHelperLink::getLink();
+        $link = NostoHelperLink::getLink();
         $this->setImageUrl($helper_image->getProductImageUrl($product, $id_lang, $link));
         $this->setProductId((string)$product->id);
         $this->setName($product->name);

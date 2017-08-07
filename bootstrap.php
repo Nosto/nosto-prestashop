@@ -36,7 +36,7 @@ class NostoBootstrap {
         require_once($moduleDir . '/classes/helpers/customer.php');
         require_once($moduleDir . '/classes/helpers/flash-message.php');
         require_once($moduleDir . '/classes/helpers/image.php');
-        require_once($moduleDir . '/classes/helpers/logger.php');
+        require_once($moduleDir . '/classes/helpers/NostoHelperLogger.php');
         require_once($moduleDir . '/classes/helpers/notification.php');
         require_once($moduleDir . '/classes/helpers/nosto-operation.php');
         require_once($moduleDir . '/classes/helpers/product-operation.php');

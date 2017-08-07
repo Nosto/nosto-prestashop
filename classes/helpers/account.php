@@ -96,7 +96,7 @@ class NostoTaggingHelperAccount
                     $service = new Nosto\Operation\UninstallAccount($account);
                     $service->delete($currentUser);
                 } catch (Nosto\NostoException $e) {
-                    NostoTaggingHelperLogger::error(
+                    NostoHelperLogger::error(
                         __CLASS__ . '::' . __FUNCTION__ . ' - ' . $e->getMessage(),
                         $e->getCode()
                     );

@@ -40,7 +40,7 @@ class NostoCustomerTagging
         }
 
         $nosto_customer->loadData(Context::getContext()->customer);
-        $cid = NostoTaggingHelperCookie::readNostoCookie();
+        $cid = NostoHelperCookie::readNostoCookie();
         $hcid = $cid ? hash(NostoTagging::VISITOR_HASH_ALGO, $cid) : '';
 
         Context::getContext()->smarty->assign(array(

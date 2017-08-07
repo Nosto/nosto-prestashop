@@ -270,19 +270,19 @@ class NostoTagging extends Module
                 // Do nothing.
                 // After the redirect this will be checked again and an error message is outputted.
             } elseif ($current_language['id_lang'] != $language_id) {
-                NostoTaggingHelperFlashMessage::add('error', $this->l('Language cannot be empty.'));
+                NostoHelperFlash::add('error', $this->l('Language cannot be empty.'));
             } elseif (
                 Tools::isSubmit('submit_nostotagging_new_account')
                 || Tools::getValue('nostotagging_account_action') === 'newAccount'
             ) {
                 $account_email = (string)Tools::getValue($this->name . '_account_email');
                 if (empty($account_email)) {
-                    NostoTaggingHelperFlashMessage::add(
+                    NostoHelperFlash::add(
                         'error',
                         $this->l('Email cannot be empty.')
                     );
                 } elseif (!Validate::isEmail($account_email)) {
-                    NostoTaggingHelperFlashMessage::add(
+                    NostoHelperFlash::add(
                         'error',
                         $this->l('Email is not a valid email address.')
                     );
@@ -297,7 +297,7 @@ class NostoTagging extends Module
                         $service->createAccount($language_id, $account_email, $account_details);
 
                         $helper_config->clearCache();
-                        NostoTaggingHelperFlashMessage::add(
+                        NostoHelperFlash::add(
                             'success',
                             $this->l(
                                 'Account created. Please check your email and follow the instructions to set a'
@@ -305,25 +305,25 @@ class NostoTagging extends Module
                             )
                         );
                     } catch (\Nosto\Request\Api\Exception\ApiResponseException $e) {
-                        NostoTaggingHelperFlashMessage::add(
+                        NostoHelperFlash::add(
                             'error',
                             $this->l(
                                 'Account could not be automatically created due to missing or invalid parameters.'
                                 . ' Please see your Prestashop logs for details'
                             )
                         );
-                        NostoTaggingHelperLogger::error(
+                        NostoHelperLogger::error(
                             'Creating Nosto account failed: ' . $e->getMessage() . ':' . $e->getCode(),
                             $e->getCode(),
                             'Employee',
                             (int)$employee->id
                         );
                     } catch (Exception $e) {
-                        NostoTaggingHelperFlashMessage::add(
+                        NostoHelperFlash::add(
                             'error',
                             $this->l('Account could not be automatically created. Please see logs for details.')
                         );
-                        NostoTaggingHelperLogger::error(
+                        NostoHelperLogger::error(
                             'Creating Nosto account failed: ' . $e->getMessage() . ':' . $e->getCode(),
                             $e->getCode(),
                             'Employee',
@@ -352,7 +352,7 @@ class NostoTagging extends Module
                     $id_shop);
                 $operation = new NostoRatesService();
                 if ($nosto_account && $operation->updateCurrencyExchangeRates($nosto_account, $this->context)) {
-                    NostoTaggingHelperFlashMessage::add(
+                    NostoHelperFlash::add(
                         'success',
                         $this->l(
                             'Exchange rates successfully updated to Nosto'
@@ -366,7 +366,7 @@ class NostoTagging extends Module
                         $message = 'There was an error updating the exchange rates. 
                             See Prestashop logs for more information.';
                     }
-                    NostoTaggingHelperFlashMessage::add(
+                    NostoHelperFlash::add(
                         'error',
                         $this->l($message)
                     );
@@ -412,19 +412,19 @@ class NostoTagging extends Module
                 try {
                     $operation = new NostoSettingsService($account);
                     $operation->update($account_meta);
-                    NostoTaggingHelperFlashMessage::add(
+                    NostoHelperFlash::add(
                         'success',
                         $this->l('The settings have been saved.')
                     );
                 } catch (\Nosto\NostoException $e) {
-                    NostoTaggingHelperLogger::error(
+                    NostoHelperLogger::error(
                         __CLASS__ . '::' . __FUNCTION__ . ' - ' . $e->getMessage(),
                         $e->getCode(),
                         'Employee',
                         (int)$employee->id
                     );
 
-                    NostoTaggingHelperFlashMessage::add(
+                    NostoHelperFlash::add(
                         'error',
                         $this->l('There was an error saving the settings. Please, see log for details.')
                     );
@@ -456,10 +456,10 @@ class NostoTagging extends Module
                 $output .= $this->displayConfirmation($this->l($success_message));
             }
 
-            foreach (NostoTaggingHelperFlashMessage::getList('success') as $flash_message) {
+            foreach (NostoHelperFlash::getList('success') as $flash_message) {
                 $output .= $this->displayConfirmation($flash_message);
             }
-            foreach (NostoTaggingHelperFlashMessage::getList('error') as $flash_message) {
+            foreach (NostoHelperFlash::getList('error') as $flash_message) {
                 $output .= $this->displayError($flash_message);
             }
 
@@ -582,7 +582,7 @@ class NostoTagging extends Module
                     $this->getSmarty()->assign(array('iframe_url' => $url));
                 }
             } catch (\Nosto\NostoException $e) {
-                NostoTaggingHelperLogger::error(
+                NostoHelperLogger::error(
                     __CLASS__ . '::' . __FUNCTION__ . ' - ' . $e->getMessage(),
                     $e->getCode(),
                     'Employee',
@@ -1305,7 +1305,7 @@ class NostoTagging extends Module
                 $operation->updateExchangeRatesForAllStores();
                 $this->defineExchangeRatesAsUpdated();
             } catch (\Nosto\NostoException $e) {
-                NostoTaggingHelperLogger::error(
+                NostoHelperLogger::error(
                     'Exchange rate sync failed with error: %s',
                     $e->getMessage()
                 );

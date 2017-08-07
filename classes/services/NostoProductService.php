@@ -181,7 +181,7 @@ class NostoProductService extends AbstractNostoService
                 try {
                     $op->upsert();
                 } catch (Exception $e) {
-                    NostoTaggingHelperLogger::error(
+                    NostoHelperLogger::error(
                         __CLASS__ . '::' . __FUNCTION__ . ' - ' . $e->getMessage(),
                         $e->getCode()
                     );
@@ -243,7 +243,7 @@ class NostoProductService extends AbstractNostoService
                 $op->addProduct($nosto_product);
                 $op->upsert();
             } catch (Nosto\NostoException $e) {
-                NostoTaggingHelperLogger::error(
+                NostoHelperLogger::error(
                     __CLASS__ . '::' . __FUNCTION__ . ' - ' . $e->getMessage(),
                     $e->getCode(),
                     get_class($product),

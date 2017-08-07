@@ -123,7 +123,7 @@ class NostoTaggingHelperCurrency
                 $nosto_currency = self::createWithCldr($currency, $context);
                 return $nosto_currency;
             } catch (Exception $e) {
-                NostoTaggingHelperLogger::error(
+                NostoHelperLogger::error(
                     sprintf(
                         'Failed to resolve currency: %s (%s)',
                         $e->getMessage(),

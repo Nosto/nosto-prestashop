@@ -90,7 +90,7 @@ class NostoTaggingMetaAccountIframe extends Nosto\Object\Iframe
             }
         } catch (Exception $e) {
             //AdminStatsControllerCore is none public api. Add a try/catch incase it has been removed or changed.
-            NostoTaggingHelperLogger::error(
+            NostoHelperLogger::error(
                 __CLASS__ . '::' . __FUNCTION__ . ' - ' . $e->getMessage(),
                 $e->getCode()
             );

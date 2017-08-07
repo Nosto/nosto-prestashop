@@ -123,7 +123,7 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
      */
     public function logError(Exception $e)
     {
-        NostoTaggingHelperLogger::error(
+        NostoHelperLogger::error(
             __CLASS__ . '::' . __FUNCTION__ . ' - ' . $e->getMessage(),
             $e->getCode()
         );

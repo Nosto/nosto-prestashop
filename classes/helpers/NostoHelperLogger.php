@@ -26,7 +26,7 @@
 /**
  * Helper class for logging events to the Prestashop log.
  */
-class NostoTaggingHelperLogger
+class NostoHelperLogger
 {
     const SEVERITY_INFO = 1;
     const SEVERITY_WARNING = 2;
@@ -73,7 +73,7 @@ class NostoTaggingHelperLogger
         $object_type = null,
         $object_id = null
     ) {
-        NostoTaggingHelperLogger::log($message, self::SEVERITY_ERROR, $error_code, $object_type,
+        NostoHelperLogger::log($message, self::SEVERITY_ERROR, $error_code, $object_type,
             $object_id);
     }
 
@@ -85,6 +85,6 @@ class NostoTaggingHelperLogger
      */
     public static function info($message)
     {
-        NostoTaggingHelperLogger::log($message, self::SEVERITY_INFO);
+        NostoHelperLogger::log($message, self::SEVERITY_INFO);
     }
 }

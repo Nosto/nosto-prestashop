@@ -19,7 +19,7 @@ class NostoSettingsService
             $service = new UpdateSettings($this->account);
             return $service->update($settings);
         } catch (Exception $e) {
-            NostoTaggingHelperLogger::error(__CLASS__ . '::' . __FUNCTION__ . ' - ' . $e->getMessage(),
+            NostoHelperLogger::error(__CLASS__ . '::' . __FUNCTION__ . ' - ' . $e->getMessage(),
                 $e->getCode());
         }
         return false;

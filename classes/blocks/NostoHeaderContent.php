@@ -37,7 +37,7 @@ class NostoHeaderContent
         $url_helper = Nosto::helper('nosto_tagging/url');
         $server_address = $url_helper->getServerAddress();
         /** @var LinkCore $link */
-        $link = NostoTaggingHelperLink::getLink();
+        $link = NostoHelperLink::getLink();
         $hidden_recommendation_elements = $this->getHiddenRecommendationElements();
         Context::getContext()->smarty->assign(array(
             'server_address' => $server_address,
