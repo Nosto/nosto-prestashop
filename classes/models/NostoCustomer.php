@@ -62,7 +62,7 @@ class NostoCustomer extends \Nosto\Object\User
      */
     private function populateCustomerReference(Customer $customer)
     {
-        /* @var NostoTaggingHelperCustomer $customer_helper */
+        /* @var NostoCustomerManager $customer_helper */
         $customer_helper = Nosto::helper('nosto_tagging/customer');
         $customer_reference = $customer_helper->getCustomerReference($customer);
         if (!empty($customer_reference)) {

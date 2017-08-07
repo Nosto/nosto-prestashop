@@ -160,12 +160,12 @@
                             <div class="radio ">
                                 <label>
                                     <input type="radio" name="multi_currency_method" value="exchangeRates" {if $multi_currency_method==="exchangeRates"}checked="checked"{/if}/>
-                                    {l s='Exchange Rates' mod='nostotagging'}
+                                    {l s='Exchange NostoExchangeRates' mod='nostotagging'}
                                 </label>
                             </div>
                             <p class="help-block">
                                 <i class="icon-warning-sign"></i>
-                                {l s='Changing this setting to "Exchange Rates" will enable multi currency feature in Nosto.' mod='nostotagging'}
+                                {l s='Changing this setting to "Exchange NostoExchangeRates" will enable multi currency feature in Nosto.' mod='nostotagging'}
                             </p>
                         </div>
                     </div>

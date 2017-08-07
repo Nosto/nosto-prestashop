@@ -470,12 +470,7 @@ class NostoTaggingHelperConfig
      */
     public static function getImageType($id_lang, $id_shop_group = null, $id_shop = null)
     {
-        $type = self::read(
-            self::NOSTOTAGGING_IMAGE_TYPE,
-            $id_lang,
-            $id_shop_group,
-            $id_shop
-        );
+        $type = self::read(self::NOSTOTAGGING_IMAGE_TYPE, $id_lang, $id_shop_group, $id_shop);
 
         return !empty($type) ? $type : null;
     }

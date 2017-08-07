@@ -53,7 +53,7 @@ class NostoRatesService
     public function updateCurrencyExchangeRates(AccountInterface $account, Context $context)
     {
         try {
-            $exchangeRates = Rates::loadData($context);
+            $exchangeRates = NostoExchangeRates::loadData($context);
             $service = new SyncRates($account);
             return $service->update($exchangeRates);
         } catch (Exception $e) {

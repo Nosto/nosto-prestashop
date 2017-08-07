@@ -3,17 +3,17 @@
 use Nosto\Object\ExchangeRate;
 use Nosto\Object\ExchangeRateCollection;
 
-class Rates extends ExchangeRateCollection
+class NostoExchangeRates extends ExchangeRateCollection
 {
     /**
      * @param Context $context
-     * @return Rates
+     * @return NostoExchangeRates
      */
     public static function loadData(Context $context)
     {
         $base_currency_code = NostoTaggingHelperCurrency::getBaseCurrency($context)->iso_code;
         $currencies = NostoTaggingHelperCurrency::getCurrencies($context, true);
-        $rates = new Rates();
+        $rates = new NostoExchangeRates();
         foreach ($currencies as $currency) {
             // Skip base currencyCode.
             if (

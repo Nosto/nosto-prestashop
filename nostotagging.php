@@ -172,7 +172,7 @@ class NostoTagging extends Module
                     'Failed to register hooks'
                 );
             }
-            /* @var NostoTaggingHelperCustomer $helper_customer */
+            /* @var NostoCustomerManager $helper_customer */
             $helper_customer = Nosto::helper('nosto_tagging/customer');
             if (!$helper_customer->createTables()) {
                 $success = false;
@@ -226,7 +226,7 @@ class NostoTagging extends Module
         return parent::uninstall()
             && NostoTaggingHelperAccount::deleteAll()
             && NostoTaggingHelperConfig::purge()
-            && NostoTaggingHelperCustomer::dropTables()
+            && NostoCustomerManager::dropTables()
             && NostoAdminTabManager::uninstall();
     }
 
@@ -788,7 +788,7 @@ class NostoTagging extends Module
      */
     public function hookDisplayShoppingCartFooter()
     {
-        /* @var NostoTaggingHelperCustomer $customer_helper */
+        /* @var NostoCustomerManager $customer_helper */
         $customer_helper = Nosto::helper('nosto_tagging/customer');
         $customer_helper->updateNostoId();
 
@@ -918,7 +918,7 @@ class NostoTagging extends Module
      */
     public function hookDisplayPaymentTop()
     {
-        /* @var NostoTaggingHelperCustomer $customer_helper */
+        /* @var NostoCustomerManager $customer_helper */
         $customer_helper = Nosto::helper('nosto_tagging/customer');
         $customer_helper->updateNostoId();
     }

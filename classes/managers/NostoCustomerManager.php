@@ -1,5 +1,29 @@
 <?php
 /**
+ * 2013-2017 Nosto Solutions Ltd
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to contact@nosto.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
+ * versions in the future. If you wish to customize PrestaShop for your
+ * needs please refer to http://www.prestashop.com for more information.
+ *
+ * @author    Nosto Solutions Ltd <contact@nosto.com>
+ * @copyright 2013-2017 Nosto Solutions Ltd
+ * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+
+/**
  * 2013-2016 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
@@ -27,7 +51,7 @@
  * Helper class for managing the link between Prestashop shopping carts and Nosto users.
  * This link is used to create server side order confirmations through the Nosto REST API.
  */
-class NostoTaggingHelperCustomer
+class NostoCustomerManager
 {
     const TABLE_NAME_CUSTOMER_LINK = 'nostotagging_customer_link';
     const TABLE_NAME_CUSTOMER_REFERENCE = 'nostotagging_customer_reference';
@@ -37,7 +61,7 @@ class NostoTaggingHelperCustomer
      *
      * @return string
      */
-    public static function getCustomerLinkTableName()
+    private static function getCustomerLinkTableName()
     {
         return pSQL(_DB_PREFIX_ . self::TABLE_NAME_CUSTOMER_LINK);
     }
@@ -47,7 +71,7 @@ class NostoTaggingHelperCustomer
      *
      * @return string
      */
-    public static function getCustomerReferenceTableName()
+    private static function getCustomerReferenceTableName()
     {
         return pSQL(_DB_PREFIX_ . self::TABLE_NAME_CUSTOMER_REFERENCE);
     }
@@ -112,7 +136,7 @@ class NostoTaggingHelperCustomer
             return false;
         }
 
-        $id_nosto_customer = NostoTagging::readNostoCookie();
+        $id_nosto_customer = NostoHelperCookie::readNostoCookie();
         if (empty($id_nosto_customer)) {
             return false;
         }

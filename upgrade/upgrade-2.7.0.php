@@ -37,7 +37,7 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_2_7_0($object)
 {
-    /* @var NostoTaggingHelperCustomer $helper_customer */
+    /* @var NostoCustomerManager $helper_customer */
     $helper_customer = Nosto::helper('nosto_tagging/customer');
     $helper_customer->createCustomerReferenceTable();
     $success = $object->registerHook('displayBackOfficeTop');
