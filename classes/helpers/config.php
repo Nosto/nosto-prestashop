@@ -397,17 +397,8 @@ class NostoHelperConfig
      */
     public static function useMultipleCurrencies($id_lang, $id_shop_group = null, $id_shop = null)
     {
-        if (
-            self::getMultiCurrencyMethod(
-                $id_lang,
-                $id_shop_group,
-                $id_shop
-            ) !== self::MULTI_CURRENCY_METHOD_DISABLED
-        ) {
-            return true;
-        } else {
-            return false;
-        }
+        return self::getMultiCurrencyMethod($id_lang, $id_shop_group, $id_shop)
+            !== self::MULTI_CURRENCY_METHOD_DISABLED;
     }
 
     /**
