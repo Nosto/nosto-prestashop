@@ -29,16 +29,6 @@
 class NostoTaggingOrderStatus extends \Nosto\Object\Order\OrderStatus
 {
     /**
-     * @var string the order status code.
-     */
-    protected $code;
-
-    /**
-     * @var string the order status label.
-     */
-    protected $label;
-
-    /**
      * Loads the order status data from the order model.
      *
      * @param Order $order the model.
@@ -47,8 +37,9 @@ class NostoTaggingOrderStatus extends \Nosto\Object\Order\OrderStatus
     public static function loadData(Order $order)
     {
         $status = new NostoTaggingOrderStatus();
-        // We prefer to use the English state name for the status code, as we use it as an unique identifier of that
-        // particular order status. The status label will primarily be in the language of the order.
+        // We prefer to use the English state name for the status code, as we
+        // use it as an unique identifier of that particular order status.
+        // The status label will primarily be in the language of the order.
         $id_lang = (int)Language::getIdByIso('en');
         if (empty($id_lang)) {
             $id_lang = (int)$order->id_lang;
@@ -67,22 +58,6 @@ class NostoTaggingOrderStatus extends \Nosto\Object\Order\OrderStatus
             $status->setLabel($state_name);
         }
         return $status;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getCode()
-    {
-        return $this->code;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getLabel()
-    {
-        return $this->label;
     }
 
     /**
