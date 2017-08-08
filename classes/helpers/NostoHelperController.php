@@ -54,9 +54,12 @@ class NostoHelperController
      * current request has a parameter called id_object and then use that identifier to instantiate
      * the object
      *
+     * @param string $idName the name of the query parameter containing the id
+     * @param string $klass the classname of the object to instantiate
+     * @param string $method the accessor method in the base controller
      * @return mixed the resolved object or null
      */
-    public static function resolveObject($id_name, $klass, $method)
+    public static function resolveObject($idName, $klass, $method)
     {
         $object = null;
         if (method_exists(Context::getContext()->controller, $method)) {
@@ -64,8 +67,8 @@ class NostoHelperController
         }
         if ($object instanceof $klass == false) {
             $id = null;
-            if (Tools::getValue($id_name)) {
-                $id = Tools::getValue($id_name);
+            if (Tools::getValue($idName)) {
+                $id = Tools::getValue($idName);
             }
             if ($id) {
                 $object = new $klass

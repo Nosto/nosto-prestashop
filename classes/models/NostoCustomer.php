@@ -64,7 +64,7 @@ class NostoCustomer extends NostoSDKUser
             $this->customer_reference = $customer_reference;
         } else {
             $customer_reference = NostoCustomerManager::generateCustomerReference($customer);
-            $customer_helper->saveCustomerReference($customer, $customer_reference);
+            NostoCustomerManager::saveCustomerReference($customer, $customer_reference);
             $this->customer_reference = $customer_reference;
         }
     }

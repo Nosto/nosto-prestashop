@@ -27,6 +27,7 @@ use \Nosto\NostoException as NostoSDKException;
 use \Nosto\Types\Signup\AccountInterface as NostoSDKSignupAccountInterface;
 use \Nosto\Request\Api\Token as NostoSDKAPIToken;
 use \Nosto\Operation\UninstallAccount as NostoSDKUninstallAccountOperation;
+use \Nosto\Object\Signup\Account as NostoSDKAccount;
 
 /**
  * Helper class for managing Nosto accounts.
@@ -44,12 +45,8 @@ class NostoHelperAccount
      * @param null|int $id_shop the ID of the shop.
      * @return bool true if the save was successful, false otherwise.
      */
-    public static function save(
-        NostoSDKSignupAccount $account,
-        $id_lang,
-        $id_shop_group = null,
-        $id_shop = null
-    ) {
+    public static function save(NostoSDKSignupAccountInterface $account, $id_lang, $id_shop_group = null, $id_shop = null)
+    {
         $success = NostoHelperConfig::saveAccountName(
             $account->getName(),
             $id_lang,
@@ -75,19 +72,14 @@ class NostoHelperAccount
      * Also sends a notification to Nosto that the account has been deleted.
      *
      * @param $context
-     * @param NostoSDKSignupAccount $account the account to delete.
+     * @param NostoSDKAccount $account the account to delete.
      * @param int $id_lang the ID of the language model to delete the account for.
      * @param null|int $id_shop_group the ID of the shop context.
      * @param null|int $id_shop the ID of the shop.
      * @return bool true if successful, false otherwise.
      */
-    public static function delete(
-        Context $context,
-        NostoSDKSignupAccount $account,
-        $id_lang,
-        $id_shop_group = null,
-        $id_shop = null
-    ) {
+    public static function delete(Context $context, NostoSDKAccount $account, $id_lang, $id_shop_group = null, $id_shop = null)
+    {
         $success = NostoHelperConfig::deleteAllFromContext($id_lang, $id_shop_group,
             $id_shop);
         $currentUser = NostoCurrentUser::loadData($context);
@@ -146,7 +138,7 @@ class NostoHelperAccount
      * @param null|int $lang_id the ID of the language.
      * @param null|int $id_shop_group the ID of the shop context.
      * @param null|int $id_shop the ID of the shop.
-     * @return NostoSDKSignupAccount|null the account with loaded API tokens, or null if not
+     * @return NostoSDKAccount|null the account with loaded API tokens, or null if not
      *     found.
      */
     public static function find($lang_id = null, $id_shop_group = null, $id_shop = null)
@@ -154,7 +146,7 @@ class NostoHelperAccount
         $account_name = NostoHelperConfig::getAccountName($lang_id, $id_shop_group,
             $id_shop);
         if (!empty($account_name)) {
-            $account = new NostoSDKSignupAccount($account_name);
+            $account = new NostoSDKAccount($account_name);
             $tokens = array();
             foreach (NostoSDKAPIToken::getApiTokenNames() as $token_name) {
                 $token_value = NostoHelperConfig::getToken($token_name, $lang_id,
@@ -203,11 +195,8 @@ class NostoHelperAccount
      * @param null|int $id_shop the ID of the shop.
      * @return bool true if it does, false otherwise.
      */
-    public static function existsAndIsConnected(
-        $lang_id = null,
-        $id_shop_group = null,
-        $id_shop = null
-    ) {
+    public static function existsAndIsConnected($lang_id = null, $id_shop_group = null, $id_shop = null)
+    {
         $account = self::find($lang_id, $id_shop_group, $id_shop);
         return ($account !== null && $account->isConnectedToNosto());
     }

@@ -36,6 +36,16 @@ if ((basename(__FILE__) === 'nostotagging.php')) {
     require_once("bootstrap.php");
 }
 
+use \Nosto\NostoException as NostoSDKException;
+use \Nosto\Request\Http\HttpRequest as NostoSDKHttpRequest;
+use \Nosto\Request\Api\Token as NostoSDKAPIToken;
+use \Nosto\Request\Api\Exception\ApiResponseException as NostoSDKAPIResponseException;
+use \Nosto\Object\Notification as NostoSDKNotification;
+use \Nosto\Helper\OAuthHelper as NostoSDKOAuthHelper;
+use \Nosto\Helper\IframeHelper as NostoSDKIframeHelper;
+use \Nosto\Object\Signup\Account as NostoSDKAccount;
+use \Nosto\Types\Signup\AccountInterface as NostoSDKAccountInterface;
+
 /**
  * NostoTagging module that integrates Nosto marketing automation service.
  *
@@ -290,7 +300,7 @@ class NostoTagging extends Module
                                 . ' password for your new account within three days.'
                             )
                         );
-                    } catch (\Nosto\Request\Api\Exception\ApiResponseException $e) {
+                    } catch (NostoSDKAPIResponseException $e) {
                         NostoHelperFlash::add(
                             'error',
                             $this->l(
@@ -298,23 +308,13 @@ class NostoTagging extends Module
                                 . ' Please see your Prestashop logs for details'
                             )
                         );
-                        NostoHelperLogger::error(
-                            'Creating Nosto account failed: ' . $e->getMessage() . ':' . $e->getCode(),
-                            $e->getCode(),
-                            'Employee',
-                            (int)$employee->id
-                        );
+                        NostoHelperLogger::error($e, 'Creating Nosto account failed');
                     } catch (Exception $e) {
                         NostoHelperFlash::add(
                             'error',
                             $this->l('Account could not be automatically created. Please see logs for details.')
                         );
-                        NostoHelperLogger::error(
-                            'Creating Nosto account failed: ' . $e->getMessage() . ':' . $e->getCode(),
-                            $e->getCode(),
-                            'Employee',
-                            (int)$employee->id
-                        );
+                        NostoHelperLogger::error($e, 'Creating Nosto account failed');
                     }
                 }
             } elseif (
@@ -324,7 +324,7 @@ class NostoTagging extends Module
             ) {
                 $meta = NostoOAuth::loadData($this->context, $language_id, $this->name,
                     $this->_path);
-                Tools::redirect(Nosto\Helper\OAuthHelper::getAuthorizationUrl($meta), '');
+                Tools::redirect(NostoSDKOAuthHelper::getAuthorizationUrl($meta), '');
                 die();
             } elseif (
                 Tools::isSubmit('submit_nostotagging_reset_account')
@@ -345,7 +345,7 @@ class NostoTagging extends Module
                         )
                     );
                 } else {
-                    if (!$nosto_account->getApiToken(Nosto\Request\Api\Token::API_EXCHANGE_RATES)) {
+                    if (!$nosto_account->getApiToken(NostoSDKAPIToken::API_EXCHANGE_RATES)) {
                         $message = 'Failed to update exchange rates to Nosto due to a missing API token. 
                             Please, reconnect your account with Nosto';
                     } else {
@@ -384,7 +384,7 @@ class NostoTagging extends Module
                 // Make sure we Nosto is installed for the current store
                 if (empty($account) || !$account->isConnectedToNosto()) {
                     Tools::redirect(
-                        Nosto\Request\Http\HttpRequest::replaceQueryParamInUrl(
+                        NostoSDKHttpRequest::replaceQueryParamInUrl(
                             'language_id',
                             $language_id,
                             $admin_url
@@ -400,14 +400,8 @@ class NostoTagging extends Module
                         'success',
                         $this->l('The settings have been saved.')
                     );
-                } catch (\Nosto\NostoException $e) {
-                    NostoHelperLogger::error(
-                        __CLASS__ . '::' . __FUNCTION__ . ' - ' . $e->getMessage(),
-                        $e->getCode(),
-                        'Employee',
-                        (int)$employee->id
-                    );
-
+                } catch (NostoSDKException $e) {
+                    NostoHelperLogger::error($e, 'Unable to update Nosto account settings');
                     NostoHelperFlash::add(
                         'error',
                         $this->l('There was an error saving the settings. Please, see log for details.')
@@ -422,7 +416,7 @@ class NostoTagging extends Module
 
             // Refresh the page after every POST to get rid of form re-submission errors.
             Tools::redirect(
-                Nosto\Request\Http\HttpRequest::replaceQueryParamInUrl(
+                NostoSDKHttpRequest::replaceQueryParamInUrl(
                     'language_id',
                     $language_id,
                     $admin_url
@@ -460,15 +454,15 @@ class NostoTagging extends Module
         $account = NostoHelperAccount::find($language_id, $id_shop_group, $id_shop);
         $missing_tokens = true;
         if (
-            $account instanceof Nosto\Types\Signup\AccountInterface
-            && $account->getApiToken(Nosto\Request\Api\Token::API_EXCHANGE_RATES)
-            && $account->getApiToken(Nosto\Request\Api\Token::API_SETTINGS)
+            $account instanceof NostoSDKAccountInterface
+            && $account->getApiToken(NostoSDKAPIToken::API_EXCHANGE_RATES)
+            && $account->getApiToken(NostoSDKAPIToken::API_SETTINGS)
         ) {
             $missing_tokens = false;
         }
         // When no account is found we will show the installation URL
         if (
-            $account instanceof Nosto\Object\Signup\Account === false
+            $account instanceof NostoSDKAccount === false
             && Shop::getContext() === Shop::CONTEXT_SHOP
         ) {
             $currentUser = NostoCurrentUser::loadData($this->context);
@@ -477,7 +471,7 @@ class NostoTagging extends Module
                 $language_id,
                 ''
             );
-            $iframe_installation_url = \Nosto\Helper\IframeHelper::getUrl(
+            $iframe_installation_url = NostoSDKIframeHelper::getUrl(
                 $account_iframe,
                 $account,
                 $currentUser,
@@ -559,17 +553,12 @@ class NostoTagging extends Module
                     $language_id,
                     ''
                 );
-                $url = \Nosto\Helper\IframeHelper::getUrl($meta, $account, $currentUser);
+                $url = NostoSDKIframeHelper::getUrl($meta, $account, $currentUser);
                 if (!empty($url)) {
                     $this->getSmarty()->assign(array('iframe_url' => $url));
                 }
-            } catch (\Nosto\NostoException $e) {
-                NostoHelperLogger::error(
-                    __CLASS__ . '::' . __FUNCTION__ . ' - ' . $e->getMessage(),
-                    $e->getCode(),
-                    'Employee',
-                    (int)$employee->id
-                );
+            } catch (NostoSDKException $e) {
+                NostoHelperLogger::error($e, 'Unable to load the Nosto IFrame');
             }
         }
         $output .= $this->display(__FILE__, $this->getSettingsTemplate());
@@ -1133,8 +1122,8 @@ class NostoTagging extends Module
     protected function getAdminUrl()
     {
         $current_url = Tools::getHttpHost(true) . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '');
-        $parsed_url = Nosto\Request\Http\HttpRequest::parseUrl($current_url);
-        $parsed_query_string = Nosto\Request\Http\HttpRequest::parseQueryString($parsed_url['query']);
+        $parsed_url = NostoSDKHttpRequest::parseUrl($current_url);
+        $parsed_query_string = NostoSDKHttpRequest::parseQueryString($parsed_url['query']);
         $valid_params = array(
             'controller',
             'token',
@@ -1150,7 +1139,7 @@ class NostoTagging extends Module
             }
         }
         $parsed_url['query'] = http_build_query($query_params);
-        return Nosto\Request\Http\HttpRequest::buildUrl($parsed_url);
+        return NostoSDKHttpRequest::buildUrl($parsed_url);
     }
 
     /**
@@ -1191,7 +1180,7 @@ class NostoTagging extends Module
      * Method for resolving correct smarty object
      *
      * @return Smarty|Smarty_Data
-     * @throws \Nosto\NostoException
+     * @throws NostoSDKException
      */
     protected function getSmarty()
     {
@@ -1205,7 +1194,7 @@ class NostoTagging extends Module
             return $this->context->smarty;
         }
 
-        throw new \Nosto\NostoException('Could not find smarty');
+        throw new NostoSDKException('Could not find smarty');
     }
 
     /**
@@ -1282,11 +1271,8 @@ class NostoTagging extends Module
                 $operation = new NostoRatesService();
                 $operation->updateExchangeRatesForAllStores();
                 $this->defineExchangeRatesAsUpdated();
-            } catch (\Nosto\NostoException $e) {
-                NostoHelperLogger::error(
-                    'Exchange rate sync failed with error: %s',
-                    $e->getMessage()
-                );
+            } catch (NostoSDKException $e) {
+                NostoHelperLogger::error($e, 'Exchange rate sync failed with error');
             }
         }
     }
@@ -1318,7 +1304,7 @@ class NostoTagging extends Module
             /* @var NostoNotification $notification */
             foreach ($notifications as $notification) {
                 if (
-                    $notification->getNotificationType() === \Nosto\Object\Notification::TYPE_MISSING_INSTALLATION
+                    $notification->getNotificationType() === NostoSDKNotification::TYPE_MISSING_INSTALLATION
                     && !NostoHelperController::isController('AdminModules')
                 ) {
                     continue;
@@ -1336,10 +1322,10 @@ class NostoTagging extends Module
     protected function addPrestashopNotification(NostoNotification $notification)
     {
         switch ($notification->getNotificationSeverity()) {
-            case \Nosto\Object\Notification::SEVERITY_INFO:
+            case NostoSDKNotification::SEVERITY_INFO:
                 $this->adminDisplayInformation($notification->getFormattedMessage());
                 break;
-            case \Nosto\Object\Notification::SEVERITY_WARNING:
+            case NostoSDKNotification::SEVERITY_WARNING:
                 $this->adminDisplayWarning($notification->getFormattedMessage());
                 break;
             default:
