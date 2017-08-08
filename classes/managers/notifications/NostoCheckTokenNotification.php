@@ -26,7 +26,7 @@
 use Nosto\Object\Notification as NostoSDKNotification;
 use Nosto\Types\Signup\AccountInterface as NostoSDKAccount;
 
-class NostoCheckTokenNotification extends NostoSDKNotification
+class NostoCheckTokenNotification extends NostoNotification
 {
     /**
      * Checks if any of the tokens are missing from the store and language and returns a
@@ -34,7 +34,7 @@ class NostoCheckTokenNotification extends NostoSDKNotification
      *
      * @param Shop $shop the shop for which to check the notification
      * @param Language $language the language for which to check the notification
-     * @return NostoSDKNotification|null a notification or null if no notification is needed
+     * @return NostoNotification|null a notification or null if no notification is needed
      */
     public static function check(Shop $shop, Language $language)
     {

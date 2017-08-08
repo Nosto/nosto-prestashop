@@ -81,6 +81,9 @@ class NostoBootstrap {
         require_once($moduleDir . '/classes/helpers/NostoHelperImage.php');
         require_once($moduleDir . '/classes/helpers/NostoHelperLink.php');
         require_once($moduleDir . '/classes/helpers/NostoHelperLogger.php');
+        require_once($moduleDir . '/classes/managers/notifications/NostoCheckAccountNotification.php');
+        require_once($moduleDir . '/classes/managers/notifications/NostoCheckMulticurrencyNotification.php');
+        require_once($moduleDir . '/classes/managers/notifications/NostoCheckTokenNotification.php');
 
         if (file_exists($moduleDir . DIRECTORY_SEPARATOR . '.env')) {
             $dotenv = new Dotenv\Dotenv($moduleDir); // @codingStandardsIgnoreLine

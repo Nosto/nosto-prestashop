@@ -26,7 +26,7 @@
 
 use Nosto\Object\Notification as NostoSDKNotification;
 
-class NostoCheckAccountNotification extends NostoSDKNotification
+class NostoCheckAccountNotification extends NostoNotification
 {
     /**
      * Checks if Nosto is installed to a given store and language and returns a notification if it
@@ -34,7 +34,7 @@ class NostoCheckAccountNotification extends NostoSDKNotification
      *
      * @param Shop $shop the shop for which to check the notification
      * @param Language $language the language for which to check the notification
-     * @return NostoSDKNotification|null a notification or null if no notification is needed
+     * @return NostoNotification|null a notification or null if no notification is needed
      */
     public static function check(Shop $shop, Language $language)
     {

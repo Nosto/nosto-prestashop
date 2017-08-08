@@ -26,7 +26,7 @@
 
 use Nosto\Object\Notification as NostoSDKNotification;
 
-class NostoCheckMulticurrencyNotification extends NostoSDKNotification
+class NostoCheckMulticurrencyNotification extends NostoNotification
 {
     /**
      * Checks if some of the stores use multiple currencies but Nosto multi-currency is not enabled
@@ -34,7 +34,7 @@ class NostoCheckMulticurrencyNotification extends NostoSDKNotification
      *
      * @param Shop $shop the shop for which to check the notification
      * @param Language $language the language for which to check the notification
-     * @return NostoSDKNotification|null a notification or null if no notification is needed
+     * @return NostoNotification|null a notification or null if no notification is needed
      */
     public static function check(Shop $shop, Language $language)
     {
