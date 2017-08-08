@@ -51,7 +51,7 @@ class NostoPagetypeTagging
         }
 
         Context::getContext()->smarty->assign(array(
-            'nosto_page_type' => self::$controllers[''], //TODO
+            'nosto_page_type' => 'front'//self::$controllers[''], //TODO
         ));
 
         return $module->display(__FILE__, 'views/templates/hook/top_page_type-tagging.tpl');

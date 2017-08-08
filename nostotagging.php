@@ -969,7 +969,8 @@ class NostoTagging extends Module
      */
     public function hookActionObjectUpdateAfter(array $params)
     {
-        NostoOrderService::upsert($params);
+        $operation = new NostoProductService();
+        $operation->upsert($params);
     }
 
     /**
@@ -979,7 +980,8 @@ class NostoTagging extends Module
      */
     public function hookActionObjectDeleteAfter(array $params)
     {
-        NostoOrderService::delete($params);
+        $operation = new NostoProductService();
+        $operation->delete($params);
     }
 
     /**
@@ -989,7 +991,7 @@ class NostoTagging extends Module
      */
     public function hookActionObjectAddAfter(array $params)
     {
-        $operation = new AbstractNostoService();
+        $operation = new NostoProductService();
         $operation->upsert($params);
     }
 

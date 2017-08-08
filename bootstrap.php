@@ -30,6 +30,7 @@ class NostoBootstrap {
         require_once($moduleDir . '/classes/models/NostoNotification.php');
         require_once($moduleDir . '/classes/models/NostoExchangeRates.php');
         require_once($moduleDir . '/classes/helpers/account.php');
+        require_once($moduleDir . '/classes/managers/NostoCustomerManager.php');
         require_once($moduleDir . '/classes/managers/NostoAdminTabManager.php');
         require_once($moduleDir . '/classes/helpers/config.php');
         require_once($moduleDir . '/classes/models/NostoCustomer.php');
