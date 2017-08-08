@@ -29,9 +29,10 @@ class NostoBrandTagging
      * Renders the brand tagging by checking if the underlying controller has an accessor
      * for it and if not, it falls back to using the identifier
      *
+     * @param NostoTagging $module
      * @return string the tagging
      */
-    public static function get()
+    public static function get(NostoTagging $module)
     {
         $brand = NostoHelperController::resolveObject("id_manufacturer", Manufacturer::class, "getManufacturer");
         if (!$brand instanceof Manufacturer) {
@@ -43,6 +44,7 @@ class NostoBrandTagging
             'nosto_brand' => $nostoBrand,
         ));
 
-        return 'views/templates/hook/manufacturer-footer_brand-tagging.tpl';
+        return $module->display(__FILE__,
+            'views/templates/hook/manufacturer-footer_brand-tagging.tpl');
     }
 }

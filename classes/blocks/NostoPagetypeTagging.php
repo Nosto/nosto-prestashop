@@ -41,9 +41,10 @@ class NostoPagetypeTagging
      * Renders the page-type tagging by checking the current controller's name against a list
      * of pre-defined page type and controller-name mappings
      *
+     * @param NostoTagging $module
      * @return string the tagging
      */
-    public static function get()
+    public static function get(NostoTagging $module)
     {
         if (!NostoHelperAccount::isContextConnected(Context::getContext())) {
             return '';
@@ -53,6 +54,6 @@ class NostoPagetypeTagging
             'nosto_page_type' => self::$controllers[''], //TODO
         ));
 
-        return 'views/templates/hook/top_page_type-tagging.tpl';
+        return $module->display(__FILE__, 'views/templates/hook/top_page_type-tagging.tpl');
     }
 }

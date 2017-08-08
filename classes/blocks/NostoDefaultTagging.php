@@ -36,13 +36,14 @@ class NostoDefaultTagging
     /**
      * Render page type tagging
      *
+     * @param NostoTagging $module
      * @return string the rendered HTML
      */
-    public static function get()
+    public static function get(NostoTagging $module)
     {
         if (self::$tagging_rendered === false) {
             self::$tagging_rendered = true;
-            $html = self::generateDefaultTagging();
+            $html = self::generateDefaultTagging($module);
         } else {
             $html = '';
         }
@@ -53,31 +54,32 @@ class NostoDefaultTagging
     /**
      * Generates the tagging based on controller
      *
+     * @param NostoTagging $module
      * @return string
      */
-    private function generateDefaultTagging()
+    private function generateDefaultTagging(NostoTagging $module)
     {
         if (!NostoHelperAccount::isContextConnected(Context::getContext())) {
             return '';
         }
 
         $html = '';
-        $html .= $this->display(__FILE__, NostoCustomerTagging::get());
-        $html .= $this->display(__FILE__, NostoCartTagging::get());
-        $html .= $this->display(__FILE__, NostoVariationTagging::get());
+        $html .= $module->display(__FILE__, NostoCustomerTagging::get($module));
+        $html .= $module->display(__FILE__, NostoCartTagging::get($module));
+        $html .= $module->display(__FILE__, NostoVariationTagging::get($module));
         if (NostoHelperController::isController('category')) {
-            $html .= $this->display(__FILE__, NostoCategoryTagging::get());
+            $html .= NostoCategoryTagging::get($module);
         } elseif (NostoHelperController::isController('manufacturer')) {
-            $html .= $this->display(__FILE__, NostoBrandTagging::get());
+            $html .= NostoBrandTagging::get($module);
         } elseif (NostoHelperController::isController('search')) {
-            $html .= $this->display(__FILE__, NostoSearchTagging::get());
+            $html .= NostoSearchTagging::get($module);
         } elseif (NostoHelperController::isController('product')) {
-            $html .= $this->display(__FILE__, NostoProductTagging::get());
+            $html .= NostoProductTagging::get($module);
         } elseif (NostoHelperController::isController('order-confirmation')) {
-            $html .= $this->display(__FILE__, OrderTagging::get());
+            $html .= OrderTagging::get($module);
         }
-        $html .= $this->display(__FILE__, 'views/templates/hook/top_nosto-elements.tpl');
-        $html .= $this->getHiddenRecommendationElements();
+        $html .= $module->display(__FILE__, 'views/templates/hook/top_nosto-elements.tpl');
+        $html .= $module->getHiddenRecommendationElements();
 
         return $html;
     }

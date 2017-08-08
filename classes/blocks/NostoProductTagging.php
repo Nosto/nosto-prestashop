@@ -31,7 +31,7 @@ class NostoProductTagging extends NostoCategoryTagging
      *
      * @return string The rendered HTML
      */
-    public static function get()
+    public static function get(NostoTagging $module)
     {
         $product = NostoHelperController::resolveObject("id_product", Product::class, "getProduct");
         if (!$product instanceof Product) {
@@ -49,6 +49,7 @@ class NostoProductTagging extends NostoCategoryTagging
         }
 
         Context::getContext()->smarty->assign($params);
-        return 'views/templates/hook/footer-product_product-tagging.tpl';
+
+        return $module->display(__FILE__, 'views/templates/hook/footer-product_product-tagging.tpl');
     }
 }

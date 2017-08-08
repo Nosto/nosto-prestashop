@@ -587,7 +587,7 @@ class NostoTagging extends Module
      */
     public function hookDisplayHeader()
     {
-        return NostoHeaderContent::get();
+        return NostoHeaderContent::get($this);
     }
 
     /**
@@ -632,7 +632,7 @@ class NostoTagging extends Module
      */
     public function hookDisplayTop()
     {
-        return NostoDefaultTagging::get();
+        return NostoDefaultTagging::get($this);
     }
 
     /**
@@ -646,7 +646,7 @@ class NostoTagging extends Module
      */
     public function hookDisplayNav1()
     {
-        return NostoDefaultTagging::get();
+        return NostoDefaultTagging::get($this);
     }
 
     /**
@@ -669,7 +669,7 @@ class NostoTagging extends Module
      */
     public function hookDisplayFooter()
     {
-        $html = NostoDefaultTagging::get();
+        $html = NostoDefaultTagging::get($this);
         $html .= NostoRecommendationElement::get("nosto-page-footer");
         return $html;
     }
@@ -752,12 +752,12 @@ class NostoTagging extends Module
      * Backwards compatibility hook.
      *
      * @see NostoTagging::hookDisplayFooterProduct()
-     * @param array $params
      * @return string The HTML to output
+     * @internal param array $params
      */
-    public function hookProductFooter(array $params)
+    public function hookProductFooter()
     {
-        return $this->hookDisplayFooterProduct($params);
+        return $this->hookDisplayFooterProduct();
     }
 
     /**
@@ -981,8 +981,7 @@ class NostoTagging extends Module
      */
     public function hookActionObjectDeleteAfter(array $params)
     {
-        $operation = new AbstractNostoService();
-        $operation->delete($params);
+        NostoOrderService::delete($params);
     }
 
     /**
@@ -1072,7 +1071,7 @@ class NostoTagging extends Module
      *
      * @return string the html.
      */
-    protected function getHiddenRecommendationElements()
+    public function getHiddenRecommendationElements()
     {
         if (NostoHelperController::isController('index')) {
             // The home page.

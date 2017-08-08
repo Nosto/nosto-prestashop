@@ -29,9 +29,10 @@ class NostoCustomerTagging
     /**
      * Renders the customer tagging by checking if the customer if currently logged in
      *
+     * @param NostoTagging $module
      * @return string the tagging
      */
-    public static function get()
+    public static function get(NostoTagging $module)
     {
         if (!self::isCustomerLoggedIn(Context::getContext()->customer)) {
             return '';
@@ -46,7 +47,7 @@ class NostoCustomerTagging
             'nosto_hcid' => $hcid
         ));
 
-        return 'views/templates/hook/top_customer-tagging.tpl';
+        return $module->display(__FILE__, 'views/templates/hook/top_customer-tagging.tpl');
     }
 
     /**

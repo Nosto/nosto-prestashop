@@ -50,9 +50,10 @@ class OrderTagging
     /**
      * Render meta-data (tagging) for a completed order.
      *
+     * @param NostoTagging $module
      * @return string The rendered HTML
      */
-    public static function get()
+    public static function get(NostoTagging $module)
     {
         $order = self::resolveOrderInContext();
         if (!$order instanceof Order) {
@@ -66,6 +67,6 @@ class OrderTagging
             'nosto_order' => $nosto_order,
         ));
 
-        return 'views/templates/hook/order-confirmation_order-tagging.tpl';
+        return $module->display(__FILE__, 'views/templates/hook/order-confirmation_order-tagging.tpl');
     }
 }

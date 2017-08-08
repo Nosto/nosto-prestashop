@@ -26,7 +26,7 @@
 class NostoHeaderContent
 {
 
-    public static function get()
+    public static function get(NostoTagging $module)
     {
         $account = NostoHelperAccount::findByContext(Context::getContext());
         if ($account === null) {
@@ -36,20 +36,20 @@ class NostoHeaderContent
         $server_address = NostoHelperUrl::getServerAddress();
         /** @var LinkCore $link */
         $link = NostoHelperLink::getLink();
-        $hidden_recommendation_elements = $this->getHiddenRecommendationElements();
+        $hidden_recommendation_elements = $module->getHiddenRecommendationElements();
         Context::getContext()->smarty->assign(array(
             'server_address' => $server_address,
             'account_name' => $account->getName(),
-            'nosto_version' => $this->version,
+            'nosto_version' => $module->version,
             'nosto_language' => Tools::strtolower(Context::getContext()->language->iso_code),
             'add_to_cart_url' => $link->getPageLink('cart.php'),
             'static_token' => Tools::getToken(false),
             'disable_autoload' => (bool)!empty($hidden_recommendation_elements)
         ));
 
-        $html = $this->display(__FILE__, 'views/templates/hook/header_meta-tags.tpl');
-        $html .= $this->display(__FILE__, 'views/templates/hook/header_embed-script.tpl');
-        $html .= $this->display(__FILE__, 'views/templates/hook/header_add-to-cart.tpl');
+        $html = $module->display(__FILE__, 'views/templates/hook/header_meta-tags.tpl');
+        $html .= $module->display(__FILE__, 'views/templates/hook/header_embed-script.tpl');
+        $html .= $module->display(__FILE__, 'views/templates/hook/header_add-to-cart.tpl');
         $html .= NostoPagetypeTagging::get();
 
         return $html;

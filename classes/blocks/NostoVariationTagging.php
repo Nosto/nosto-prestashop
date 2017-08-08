@@ -29,9 +29,10 @@ class NostoVariationTagging
      * Renders the current variation tagging by checking if multiples currencies are
      * used on the site and the active currency is different from the base currency.
      *
+     * @param NostoTagging $module
      * @return string the tagging
      */
-    public static function get()
+    public static function get(NostoTagging $module)
     {
         $id_lang = Context::getContext()->language->id;
         $id_shop = null;
@@ -47,9 +48,9 @@ class NostoVariationTagging
                 'nosto_price_variation' => $priceVariation
             ));
 
-            return 'views/templates/hook/top_price_variation-tagging.tpl';
+            return $module->display(__FILE__, 'views/templates/hook/top_price_variation-tagging.tpl');
         }
 
-        return null;
+        return '';
     }
 }

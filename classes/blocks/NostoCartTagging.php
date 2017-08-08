@@ -28,9 +28,10 @@ class NostoCartTagging
     /**
      * Renders the cart tagging by checking the cart contents
      *
+     * @param NostoTagging $module
      * @return string the tagging
      */
-    public static function get()
+    public static function get(NostoTagging $module)
     {
         $cid = NostoHelperCookie::readNostoCookie();
         $hcid = $cid ? hash(NostoTagging::VISITOR_HASH_ALGO, $cid) : '';
@@ -41,6 +42,7 @@ class NostoCartTagging
             'nosto_hcid' => $hcid
         ));
 
-        return 'views/templates/hook/top_cart-tagging.tpl';
+
+        return $module->display(__FILE__, 'views/templates/hook/top_cart-tagging.tpl');
     }
 }

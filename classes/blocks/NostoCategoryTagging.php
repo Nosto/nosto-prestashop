@@ -54,7 +54,7 @@ class NostoCategoryTagging
      *
      * @return string the tagging
      */
-    public static function get()
+    public static function get(NostoTagging $module)
     {
         $category = NostoHelperController::resolveObject("id_category", Category::class, "getCategory");
         if (!$category instanceof Category) {
@@ -75,6 +75,6 @@ class NostoCategoryTagging
             'nosto_category' => $nostoCategory,
         ));
 
-        return 'views/templates/hook/category-footer_category-tagging.tpl';
+        return $module->display(__FILE__, 'views/templates/hook/category-footer_category-tagging.tpl');
     }
 }

@@ -30,9 +30,10 @@ class NostoSearchTagging
      * Renders the current search term tagging by checking if the controller either has
      * the search_query or the s parameter (as it differs between versions.)
      *
+     * @param NostoTagging $module
      * @return string the tagging
      */
-    public static function get()
+    public static function get(NostoTagging $module)
     {
         $search_term = Tools::getValue('search_query', Tools::getValue('s'));
         if (is_null($search_term)) {
@@ -44,6 +45,6 @@ class NostoSearchTagging
             'nosto_search' => $nostoQuery,
         ));
 
-        return 'views/templates/hook/top_search-tagging.tpl';
+        return $module->display(__FILE__, 'views/templates/hook/top_search-tagging.tpl');
     }
 }
