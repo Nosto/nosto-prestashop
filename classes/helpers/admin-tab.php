@@ -32,6 +32,12 @@ class NostoTaggingHelperAdminTab
     const MAIN_MENU_ITEM_CLASS = 'AdminNosto';
     const SUB_MENU_ITEM_CLASS = 'AdminNostoPersonalization';
 
+    const NOSTO_INDEX_CLASS = 'NostoIndex';
+    const CREATE_ACCOUNT_CLASS = 'CreateAccount';
+    const CONNECT_ACCOUNT_CLASS = 'ConnectAccount';
+    const DELETE_ACCOUNT_CLASS = 'DeleteAccount';
+    const SYNC_ACCOUNT_CLASS = 'SyncAccount';
+
     /**
      * @var array translations for the Nosto `Personalization` menu item in PS 1.5.
      */
@@ -96,7 +102,41 @@ class NostoTaggingHelperAdminTab
             $subTabAdded = true;
         }
 
+        self::registerNostoControllers();
+
         return (bool)($mainTabAdded && $subTabAdded);
+    }
+
+
+    public static function registerNostoControllers()
+    {
+        self::registerController(self::NOSTO_INDEX_CLASS);
+        self::registerController(self::CREATE_ACCOUNT_CLASS);
+        self::registerController(self::CONNECT_ACCOUNT_CLASS);
+        self::registerController(self::DELETE_ACCOUNT_CLASS);
+        self::registerController(self::SYNC_ACCOUNT_CLASS);
+    }
+
+    /**
+     * Register a controller
+     * @param $className the controller class name, without the "Controller part"
+     * @return bool success
+     */
+    public static function registerController($className)
+    {
+        $tab = new Tab();
+        $tabId = (int)Tab::getIdFromClassName(self::MAIN_MENU_ITEM_CLASS);
+        $tab->active = 1;
+        $tab->class_name = $className;
+        $tab->name = array();
+        $languages = Language::getLanguages(true);
+        foreach ($languages as $lang) {
+            $tab->name[$lang['id_lang']] = 'NostoController'.$className;
+        }
+
+        $tab->id_parent = -1;
+        $tab->module = NostoTagging::MODULE_NAME;
+        return $tab->add();
     }
 
     /**
