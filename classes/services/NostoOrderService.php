@@ -63,9 +63,7 @@ class NostoOrderService extends AbstractNostoService
         // This is done out of context, so we need to specify the exact parameters to get the correct account.
         $account = NostoHelperAccount::find($order->id_lang, $id_shop_group, $id_shop);
         if ($account !== null && $account->isConnectedToNosto()) {
-            /* @var NostoCustomerManager $helper_customer */
-            $helper_customer = Nosto::helper('nosto_tagging/customer');
-            $customer_id = $helper_customer->getNostoId($order);
+            $customer_id = NostoCustomerManager::getNostoId($order);
             try {
                 $operation = new NostoSDKOrderConfirmOperation($account);
                 $operation->send($nosto_order, $customer_id);

@@ -42,8 +42,7 @@ class NostoCheckMulticurrencyNotification extends NostoSDKNotification
         $connected = NostoHelperAccount::existsAndIsConnected($language->id, $id_shop_group, $shop->id);
         if ($connected) {
             if (!NostoHelperConfig::useMultipleCurrencies($language->id, $id_shop_group, $shop->id)) {
-                /* @var NostoHelperContextFactory $context_factory */
-                $context_factory = Nosto::helper('nosto_tagging/context_factory');
+                $context_factory = new NostoHelperContextFactory();
                 $forged_context = $context_factory->forgeContext($language->id, $shop->id);
                 $currencies = NostoHelperCurrency::getCurrencies($forged_context, true);
                 $context_factory->revertToOriginalContext();

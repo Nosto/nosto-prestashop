@@ -60,7 +60,7 @@ class NostoCustomerManager
      *
      * @return bool if the creation of the table was successful
      */
-    public function createCustomerLinkTable()
+    public static function createCustomerLinkTable()
     {
         $table = self::getCustomerLinkTableName();
         $sql = 'CREATE TABLE IF NOT EXISTS `' . $table . '` (
@@ -80,7 +80,7 @@ class NostoCustomerManager
      *
      * @return bool if the creation of the table was successful
      */
-    public function createCustomerReferenceTable()
+    public static function createCustomerReferenceTable()
     {
         $table = self::getCustomerReferenceTableName();
         $sql = 'CREATE TABLE IF NOT EXISTS `' . $table . '` (
@@ -97,7 +97,7 @@ class NostoCustomerManager
      *
      * @return bool true if updated correctly and false otherwise.
      */
-    public function updateNostoId()
+    public static function updateNostoId()
     {
         $context = Context::getContext();
         if (empty($context->cart->id)) {
@@ -136,7 +136,7 @@ class NostoCustomerManager
      * @param Order $order the order whose 2c.cid cookie to look up
      * @return bool|string the customers Nosto id or false if not found.
      */
-    public function getNostoId(Order $order)
+    public static function getNostoId(Order $order)
     {
         $table = self::getCustomerLinkTableName();
         $cartId = (int)$order->id_cart;
@@ -152,7 +152,7 @@ class NostoCustomerManager
      * @param Customer $customer the customer whose reference to look up
      * @return bool|string the customers reference or false if not found.
      */
-    public function getCustomerReference(Customer $customer)
+    public static function getCustomerReference(Customer $customer)
     {
         $table = self::getCustomerReferenceTableName();
         $customerId = (int)$customer->id;
@@ -169,7 +169,7 @@ class NostoCustomerManager
      * @param $reference
      * @return bool
      */
-    public function saveCustomerReference(Customer $customer, $reference)
+    public static function saveCustomerReference(Customer $customer, $reference)
     {
         $table = self::getCustomerReferenceTableName();
         $customer_reference = pSQL($reference);
@@ -203,7 +203,7 @@ class NostoCustomerManager
      * @param Customer $customer
      * @return string
      */
-    public function generateCustomerReference(Customer $customer)
+    public static function generateCustomerReference(Customer $customer)
     {
         $hash = md5($customer->id . $customer->email);
         $uuid = uniqid(Tools::substr($hash, 0, 8), true);
@@ -230,9 +230,9 @@ class NostoCustomerManager
      *
      * @return bool if the creation of both tables was successful
      */
-    public function createTables()
+    public static function createTables()
     {
-        return $this->createCustomerLinkTable() && $this->createCustomerReferenceTable();
+        return NostoCustomerManager::createCustomerLinkTable() && NostoCustomerManager::createCustomerReferenceTable();
     }
 
     /**

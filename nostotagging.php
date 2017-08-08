@@ -172,9 +172,7 @@ class NostoTagging extends Module
                     'Failed to register hooks'
                 );
             }
-            /* @var NostoCustomerManager $helper_customer */
-            $helper_customer = Nosto::helper('nosto_tagging/customer');
-            if (!$helper_customer->createTables()) {
+            if (!NostoCustomerManager::createTables()) {
                 $success = false;
                 $this->_errors[] = $this->l(
                     'Failed to create Nosto customer table'
@@ -782,9 +780,7 @@ class NostoTagging extends Module
      */
     public function hookDisplayShoppingCartFooter()
     {
-        /* @var NostoCustomerManager $customer_helper */
-        $customer_helper = Nosto::helper('nosto_tagging/customer');
-        $customer_helper->updateNostoId();
+        NostoCustomerManager::updateNostoId();
 
         $html = '';
         $html .= NostoRecommendationElement::get("nosto-page-cart1");
@@ -912,9 +908,7 @@ class NostoTagging extends Module
      */
     public function hookDisplayPaymentTop()
     {
-        /* @var NostoCustomerManager $customer_helper */
-        $customer_helper = Nosto::helper('nosto_tagging/customer');
-        $customer_helper->updateNostoId();
+        NostoCustomerManager::updateNostoId();
     }
 
     /**
@@ -1319,9 +1313,7 @@ class NostoTagging extends Module
      */
     public function checkNotifications()
     {
-        /* @var NostoNotificationManager $helper_notification */
-        $helper_notification = Nosto::helper('nosto_tagging/notification');
-        $notifications = $helper_notification->getAll();
+        $notifications = NostoNotificationManager::getAll();
         if (is_array($notifications) && count($notifications) > 0) {
             /* @var NostoNotification $notification */
             foreach ($notifications as $notification) {

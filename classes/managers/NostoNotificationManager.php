@@ -33,7 +33,7 @@ class NostoNotificationManager
      *
      * @return NostoSDKNotification[] objects
      */
-    public function getAll()
+    public static function getAll()
     {
         $notifications = array();
         foreach (Shop::getShops() as $shopArray) {

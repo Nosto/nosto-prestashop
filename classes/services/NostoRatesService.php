@@ -35,8 +35,7 @@ class NostoRatesService
      */
     public function updateExchangeRatesForAllStores()
     {
-        /** @var NostoHelperContextFactory $context_factory */
-        $context_factory = Nosto::helper('nosto_tagging/context_factory');
+        $context_factory = new NostoHelperContextFactory();
 
         foreach (Shop::getShops() as $shop) {
             $id_shop = isset($shop['id_shop']) ? (int)$shop['id_shop'] : null;
