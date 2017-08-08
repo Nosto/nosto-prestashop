@@ -52,6 +52,7 @@ class NostoCategoryTagging
      * Renders the current category tagging by checking if the underlying controller has
      * an accessor for it and if not, it falls back to using the identifier
      *
+     * @param NostoTagging $module the instance of the module for rendering the template
      * @return string the tagging
      */
     public static function get(NostoTagging $module)

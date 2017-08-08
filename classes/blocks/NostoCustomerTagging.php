@@ -29,7 +29,7 @@ class NostoCustomerTagging
     /**
      * Renders the customer tagging by checking if the customer if currently logged in
      *
-     * @param NostoTagging $module
+     * @param NostoTagging $module the instance of the module for rendering the template
      * @return string the tagging
      */
     public static function get(NostoTagging $module)

@@ -753,7 +753,6 @@ class NostoTagging extends Module
      *
      * @see NostoTagging::hookDisplayFooterProduct()
      * @return string The HTML to output
-     * @internal param array $params
      */
     public function hookProductFooter()
     {
@@ -795,7 +794,6 @@ class NostoTagging extends Module
      * Adds completed order tagging.
      * Adds nosto elements.
      *
-     * @param array $params
      * @return string The HTML to output
      */
     public function hookDisplayOrderConfirmation()
@@ -970,8 +968,7 @@ class NostoTagging extends Module
      */
     public function hookActionObjectUpdateAfter(array $params)
     {
-        $operation = new AbstractNostoService();
-        $operation->upsert($params);
+        NostoOrderService::upsert($params);
     }
 
     /**
@@ -1260,7 +1257,6 @@ class NostoTagging extends Module
      * Updates the exchange rates to Nosto if needed
      *
      * @param boolean $force if set to true cookie check is ignored
-     * @internal param array $params
      */
     public function updateExchangeRatesIfNeeded($force = false)
     {

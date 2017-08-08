@@ -30,7 +30,7 @@ class NostoSearchTagging
      * Renders the current search term tagging by checking if the controller either has
      * the search_query or the s parameter (as it differs between versions.)
      *
-     * @param NostoTagging $module
+     * @param NostoTagging $module the instance of the module for rendering the template
      * @return string the tagging
      */
     public static function get(NostoTagging $module)

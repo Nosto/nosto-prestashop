@@ -41,7 +41,7 @@ class NostoPagetypeTagging
      * Renders the page-type tagging by checking the current controller's name against a list
      * of pre-defined page type and controller-name mappings
      *
-     * @param NostoTagging $module
+     * @param NostoTagging $module the instance of the module for rendering the template
      * @return string the tagging
      */
     public static function get(NostoTagging $module)

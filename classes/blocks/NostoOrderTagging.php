@@ -50,7 +50,7 @@ class OrderTagging
     /**
      * Render meta-data (tagging) for a completed order.
      *
-     * @param NostoTagging $module
+     * @param NostoTagging $module the instance of the module for rendering the template
      * @return string The rendered HTML
      */
     public static function get(NostoTagging $module)

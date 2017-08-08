@@ -26,6 +26,10 @@
 class NostoHeaderContent
 {
 
+    /**
+     * @param NostoTagging $module the instance of the module for rendering the template
+     * @return string
+     */
     public static function get(NostoTagging $module)
     {
         $account = NostoHelperAccount::findByContext(Context::getContext());

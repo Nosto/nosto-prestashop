@@ -36,7 +36,7 @@ class NostoDefaultTagging
     /**
      * Render page type tagging
      *
-     * @param NostoTagging $module
+     * @param NostoTagging $module the instance of the module for rendering the template
      * @return string the rendered HTML
      */
     public static function get(NostoTagging $module)
@@ -54,7 +54,7 @@ class NostoDefaultTagging
     /**
      * Generates the tagging based on controller
      *
-     * @param NostoTagging $module
+     * @param NostoTagging $module the instance of the module for rendering the template
      * @return string
      */
     private function generateDefaultTagging(NostoTagging $module)
