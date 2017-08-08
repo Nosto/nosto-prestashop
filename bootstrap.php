@@ -25,38 +25,35 @@
 
 class NostoBootstrap {
 
-    public static function init($moduleDir) {
+    public static function init($moduleDir, $moduleVersion) {
         require_once($moduleDir . '/libs/autoload.php');
-        require_once($moduleDir . '/classes/nosto.php');
-        require_once($moduleDir . '/classes/NostoNotification.php');
-        require_once($moduleDir . '/classes/models/rates.php');
+        require_once($moduleDir . '/classes/models/NostoNotification.php');
+        require_once($moduleDir . '/classes/models/NostoExchangeRates.php');
         require_once($moduleDir . '/classes/helpers/account.php');
-        require_once($moduleDir . '/classes/helpers/admin-tab.php');
+        require_once($moduleDir . '/classes/managers/NostoAdminTabManager.php');
         require_once($moduleDir . '/classes/helpers/config.php');
-        require_once($moduleDir . '/classes/helpers/NostoCustomer.php');
-        require_once($moduleDir . '/classes/helpers/flash-message.php');
+        require_once($moduleDir . '/classes/models/NostoCustomer.php');
+        require_once($moduleDir . '/classes/helpers/NostoHelperFlash.php');
         require_once($moduleDir . '/classes/helpers/NostoHelperImage.php');
         require_once($moduleDir . '/classes/helpers/NostoHelperLogger.php');
-        require_once($moduleDir . '/classes/helpers/notification.php');
-        require_once($moduleDir . '/classes/helpers/nosto-operation.php');
-        require_once($moduleDir . '/classes/helpers/product-operation.php');
-        require_once($moduleDir . '/classes/helpers/order-operation.php');
-        require_once($moduleDir . '/classes/helpers/updater.php');
+        require_once($moduleDir . '/classes/managers/NostoNotificationManager.php');
+        require_once($moduleDir . '/classes/services/AbstractNostoService.php');
+        require_once($moduleDir . '/classes/services/NostoProductService.php');
+        require_once($moduleDir . '/classes/services/NostoOrderService.php');
         require_once($moduleDir . '/classes/helpers/url.php');
         require_once($moduleDir . '/classes/helpers/currency.php');
         require_once($moduleDir . '/classes/helpers/context-factory.php');
         require_once($moduleDir . '/classes/helpers/price.php');
         require_once($moduleDir . '/classes/models/NostoCurrentUser.php');
-        require_once($moduleDir . '/classes/models/meta/account.php');
+        require_once($moduleDir . '/classes/models/meta/NostoAccountSignup.php');
         require_once($moduleDir . '/classes/models/meta/NostoAccountBilling.php');
-        require_once($moduleDir . '/classes/models/meta/NostoIframe.php');
+        require_once($moduleDir . '/classes/models/NostoIframe.php');
         require_once($moduleDir . '/classes/models/meta/NostoAccountOwner.php');
-        require_once($moduleDir . '/classes/models/meta/NostoOAuth.php');
+        require_once($moduleDir . '/classes/models/NostoOAuth.php');
         require_once($moduleDir . '/classes/models/AbstractNostoModel.php');
         require_once($moduleDir . '/classes/models/cart.php');
         require_once($moduleDir . '/classes/models/NostoCategory.php');
         require_once($moduleDir . '/classes/models/NostoCustomer.php');
-        require_once($moduleDir . '/classes/models/NostoOrderTagging.php');
         require_once($moduleDir . '/classes/models/order/NostoOrderBuyer.php');
         require_once($moduleDir . '/classes/models/NostoVariation.php');
         require_once($moduleDir . '/classes/models/order/NostoOrderPurchasedItem.php');
@@ -64,14 +61,33 @@ class NostoBootstrap {
         require_once($moduleDir . '/classes/models/NostoProduct.php');
         require_once($moduleDir . '/classes/models/NostoBrand.php');
         require_once($moduleDir . '/classes/models/NostoSearch.php');
+        require_once($moduleDir . '/classes/blocks/NostoBrandTagging.php');
+        require_once($moduleDir . '/classes/blocks/NostoCartTagging.php');
+        require_once($moduleDir . '/classes/blocks/NostoCategoryTagging.php');
+        require_once($moduleDir . '/classes/blocks/NostoCustomerTagging.php');
+        require_once($moduleDir . '/classes/blocks/NostoDefaultTagging.php');
+        require_once($moduleDir . '/classes/blocks/NostoHeaderContent.php');
+        require_once($moduleDir . '/classes/blocks/NostoOrderTagging.php');
+        require_once($moduleDir . '/classes/blocks/NostoPagetypeTagging.php');
+        require_once($moduleDir . '/classes/blocks/NostoProductTagging.php');
+        require_once($moduleDir . '/classes/blocks/NostoRecommendationElement.php');
+        require_once($moduleDir . '/classes/blocks/NostoSearchTagging.php');
+        require_once($moduleDir . '/classes/blocks/NostoVariationTagging.php');
+        require_once($moduleDir . '/classes/helpers/NostoHelperController.php');
+        require_once($moduleDir . '/classes/helpers/NostoHelperCookie.php');
+        require_once($moduleDir . '/classes/helpers/NostoHelperCron.php');
+        require_once($moduleDir . '/classes/helpers/NostoHelperFlash.php');
+        require_once($moduleDir . '/classes/helpers/NostoHelperImage.php');
+        require_once($moduleDir . '/classes/helpers/NostoHelperLink.php');
+        require_once($moduleDir . '/classes/helpers/NostoHelperLogger.php');
 
         if (file_exists($moduleDir . DIRECTORY_SEPARATOR . '.env')) {
             $dotenv = new Dotenv\Dotenv($moduleDir); // @codingStandardsIgnoreLine
             $dotenv->overload();
         }
 
-        \Nosto\Request\Http\HttpRequest::buildUserAgent('Prestashop', _PS_VERSION_, (string)$this->version);
+        \Nosto\Request\Http\HttpRequest::buildUserAgent('Prestashop', _PS_VERSION_, $moduleVersion);
     }
 }
 
-NostoBootstrap::init(NOSTO_DIR);
+NostoBootstrap::init(NOSTO_DIR, NOSTO_VERSION);

@@ -57,7 +57,7 @@ class NostoDefaultTagging
      * @param NostoTagging $module the instance of the module for rendering the template
      * @return string
      */
-    private function generateDefaultTagging(NostoTagging $module)
+    private static function generateDefaultTagging(NostoTagging $module)
     {
         if (!NostoHelperAccount::isContextConnected(Context::getContext())) {
             return '';
