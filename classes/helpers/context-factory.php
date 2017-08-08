@@ -64,6 +64,20 @@ class NostoHelperContextFactory
      */
     private $original_currency;
 
+    public static function runInContext($id_lang, $id_shop, $callable)
+    {
+        $context = new NostoHelperContextFactory();
+        $context->forgeContext($id_lang, $id_shop);
+        $retval = null;
+        try {
+            $retval = $callable($context);
+        } catch (Exception $e) {
+            NostoHelperLogger::log($e);
+        }
+        $context->revertToOriginalContext();
+        return $retval;
+    }
+
     /**
      * Forges a new context and returns the altered context
      *
@@ -71,7 +85,7 @@ class NostoHelperContextFactory
      * @param int $id_shop the shop ID to add to the new context.
      * @return Context the new context.
      */
-    public function forgeContext($id_lang, $id_shop)
+    private function forgeContext($id_lang, $id_shop)
     {
         /* @var Context $context */
         $context = Context::getContext();

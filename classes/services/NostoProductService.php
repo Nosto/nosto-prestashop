@@ -239,11 +239,11 @@ class NostoProductService extends AbstractNostoService
         if (!Validate::isLoadedObject($product)) {
             return null;
         }
-        $context_factory = new NostoHelperContextFactory();
-        $forged_context = $context_factory->forgeContext($id_lang, $id_shop);
-        $nosto_product = NostoProduct::loadData($forged_context, $product);
-        $context_factory->revertToOriginalContext();
 
-        return $nosto_product;
+        return NostoHelperContextFactory::runInContext($id_lang, $id_shop,
+            function ($context) use ($product) {
+                return NostoProduct::loadData($context, $product);
+            }
+        );
     }
 }

@@ -24,9 +24,9 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use \Nosto\Operation\SyncRates as NostoSDKSyncRatesOperation;
-use \Nosto\Types\Signup\AccountInterface as NostoSDKSignupAccount;
-use \Nosto\NostoException as NostoSDKException;
+use Nosto\NostoException as NostoSDKException;
+use Nosto\Operation\SyncRates as NostoSDKSyncRatesOperation;
+use Nosto\Types\Signup\AccountInterface as NostoSDKSignupAccount;
 
 class NostoRatesService
 {
@@ -35,8 +35,6 @@ class NostoRatesService
      */
     public function updateExchangeRatesForAllStores()
     {
-        $context_factory = new NostoHelperContextFactory();
-
         foreach (Shop::getShops() as $shop) {
             $id_shop = isset($shop['id_shop']) ? (int)$shop['id_shop'] : null;
             $id_shop_group = isset($shop['id_shop_group']) ? (int)$shop['id_shop_group'] : null;
@@ -48,17 +46,19 @@ class NostoRatesService
                     $nosto_account = NostoHelperAccount::find($id_lang, $id_shop_group,
                         $id_shop);
                     if (!is_null($nosto_account)) {
-                        $context = $context_factory->forgeContext($id_lang, $id_shop);
-                        if (!$this->updateCurrencyExchangeRates($nosto_account, $context)) {
-                            throw new NostoSDKException(
-                                sprintf(
-                                    'Exchange rate update failed for %s',
-                                    $nosto_account->getName()
-                                )
-                            );
-                        } else {
-                            $context_factory->revertToOriginalContext();
-                        }
+
+                        NostoHelperContextFactory::runInContext($id_lang, $id_shop,
+                            function ($context) use ($nosto_account) {
+                                if (!$this->updateCurrencyExchangeRates($nosto_account, $context)) {
+                                    throw new NostoSDKException(
+                                        sprintf(
+                                            'Exchange rate update failed for %s',
+                                            $nosto_account->getName()
+                                        )
+                                    );
+                                }
+                            }
+                        );
                     }
                 }
             }

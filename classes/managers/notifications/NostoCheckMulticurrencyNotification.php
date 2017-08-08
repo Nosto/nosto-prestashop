@@ -39,23 +39,27 @@ class NostoCheckMulticurrencyNotification extends NostoNotification
     public static function check(Shop $shop, Language $language)
     {
         $id_shop_group = isset($shop->id_shop_group) ? $shop->id_shop_group : null;
-        $connected = NostoHelperAccount::existsAndIsConnected($language->id, $id_shop_group, $shop->id);
+        $connected = NostoHelperAccount::existsAndIsConnected($language->id, $id_shop_group,
+            $shop->id);
         if ($connected) {
-            if (!NostoHelperConfig::useMultipleCurrencies($language->id, $id_shop_group, $shop->id)) {
-                $context_factory = new NostoHelperContextFactory();
-                $forged_context = $context_factory->forgeContext($language->id, $shop->id);
-                $currencies = NostoHelperCurrency::getCurrencies($forged_context, true);
-                $context_factory->revertToOriginalContext();
-                if (count($currencies) > 1) {
-                    return new NostoNotification(
-                        $shop,
-                        $language,
-                        NostoSDKNotification::TYPE_MULTI_CURRENCY_DISABLED,
-                        NostoSDKNotification::SEVERITY_WARNING,
-                        'Your shop %s with language %s is using multiple currencies but' .
-                        ' the multi-currency feature for Nosto is disabled'
-                    );
-                }
+            if (!NostoHelperConfig::useMultipleCurrencies($language->id, $id_shop_group,
+                $shop->id)
+            ) {
+
+                return NostoHelperContextFactory::runInContext($language->id, $shop->id,
+                    function ($context) use ($shop, $language) {
+                        $currencies = NostoHelperCurrency::getCurrencies($context, true);
+                        if (count($currencies) > 1) {
+                            return new NostoNotification(
+                                $shop,
+                                $language,
+                                NostoSDKNotification::TYPE_MULTI_CURRENCY_DISABLED,
+                                NostoSDKNotification::SEVERITY_WARNING,
+                                'Your shop %s with language %s is using multiple currencies but' .
+                                ' the multi-currency feature for Nosto is disabled'
+                            );
+                        }
+                    });
             }
         }
 
