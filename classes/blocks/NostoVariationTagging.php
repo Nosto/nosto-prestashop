@@ -48,7 +48,7 @@ class NostoVariationTagging
                 'nosto_price_variation' => $priceVariation
             ));
 
-            return $module->display(__FILE__, 'views/templates/hook/top_price_variation-tagging.tpl');
+            return $module->display("NostoTagging.php", 'views/templates/hook/top_price_variation-tagging.tpl');
         }
 
         return '';

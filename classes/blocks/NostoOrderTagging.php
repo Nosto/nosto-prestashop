@@ -67,6 +67,6 @@ class OrderTagging
             'nosto_order' => $nosto_order,
         ));
 
-        return $module->display(__FILE__, 'views/templates/hook/order-confirmation_order-tagging.tpl');
+        return $module->display("NostoTagging.php", 'views/templates/hook/order-confirmation_order-tagging.tpl');
     }
 }

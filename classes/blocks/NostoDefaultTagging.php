@@ -64,9 +64,9 @@ class NostoDefaultTagging
         }
 
         $html = '';
-        $html .= $module->display(__FILE__, NostoCustomerTagging::get($module));
-        $html .= $module->display(__FILE__, NostoCartTagging::get($module));
-        $html .= $module->display(__FILE__, NostoVariationTagging::get($module));
+        $html .= NostoCustomerTagging::get($module);
+        $html .= NostoCartTagging::get($module);
+        $html .= NostoVariationTagging::get($module);
         if (NostoHelperController::isController('category')) {
             $html .= NostoCategoryTagging::get($module);
         } elseif (NostoHelperController::isController('manufacturer')) {
@@ -78,7 +78,7 @@ class NostoDefaultTagging
         } elseif (NostoHelperController::isController('order-confirmation')) {
             $html .= OrderTagging::get($module);
         }
-        $html .= $module->display(__FILE__, 'views/templates/hook/top_nosto-elements.tpl');
+        $html .= $module->display("NostoTagging.php", 'views/templates/hook/top_nosto-elements.tpl');
         $html .= $module->getHiddenRecommendationElements();
 
         return $html;

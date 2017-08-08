@@ -51,9 +51,9 @@ class NostoHeaderContent
             'disable_autoload' => (bool)!empty($hidden_recommendation_elements)
         ));
 
-        $html = $module->display(__FILE__, 'views/templates/hook/header_meta-tags.tpl');
-        $html .= $module->display(__FILE__, 'views/templates/hook/header_embed-script.tpl');
-        $html .= $module->display(__FILE__, 'views/templates/hook/header_add-to-cart.tpl');
+        $html = $module->display("NostoTagging.php", 'views/templates/hook/header_meta-tags.tpl');
+        $html .= $module->display("NostoTagging.php", 'views/templates/hook/header_embed-script.tpl');
+        $html .= $module->display("NostoTagging.php", 'views/templates/hook/header_add-to-cart.tpl');
         $html .= NostoPagetypeTagging::get($module);
 
         return $html;

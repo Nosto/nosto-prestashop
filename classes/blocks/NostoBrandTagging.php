@@ -44,6 +44,6 @@ class NostoBrandTagging
             'nosto_brand' => $nostoBrand,
         ));
 
-        return $module->display(__FILE__, 'views/templates/hook/manufacturer-footer_brand-tagging.tpl');
+        return $module->display("NostoTagging.php", 'views/templates/hook/manufacturer-footer_brand-tagging.tpl');
     }
 }

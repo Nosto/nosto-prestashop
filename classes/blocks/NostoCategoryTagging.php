@@ -76,6 +76,6 @@ class NostoCategoryTagging
             'nosto_category' => $nostoCategory,
         ));
 
-        return $module->display(__FILE__, 'views/templates/hook/category-footer_category-tagging.tpl');
+        return $module->display("NostoTagging.php", 'views/templates/hook/category-footer_category-tagging.tpl');
     }
 }

@@ -51,6 +51,6 @@ class NostoProductTagging extends NostoCategoryTagging
 
         Context::getContext()->smarty->assign($params);
 
-        return $module->display(__FILE__, 'views/templates/hook/footer-product_product-tagging.tpl');
+        return $module->display("NostoTagging.php", 'views/templates/hook/footer-product_product-tagging.tpl');
     }
 }

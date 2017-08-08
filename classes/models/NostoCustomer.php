@@ -68,4 +68,12 @@ class NostoCustomer extends NostoSDKUser
             $this->customer_reference = $customer_reference;
         }
     }
+
+    /**
+     * @return string
+     */
+    public function getCustomerReference()
+    {
+        return $this->customer_reference;
+    }
 }

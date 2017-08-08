@@ -42,7 +42,6 @@ class NostoCartTagging
             'nosto_hcid' => $hcid
         ));
 
-
-        return $module->display(__FILE__, 'views/templates/hook/top_cart-tagging.tpl');
+        return $module->display("NostoTagging.php", 'views/templates/hook/top_cart-tagging.tpl');
     }
 }
