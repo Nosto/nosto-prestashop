@@ -54,7 +54,7 @@ class NostoHeaderContent
         $html = $module->display(__FILE__, 'views/templates/hook/header_meta-tags.tpl');
         $html .= $module->display(__FILE__, 'views/templates/hook/header_embed-script.tpl');
         $html .= $module->display(__FILE__, 'views/templates/hook/header_add-to-cart.tpl');
-        $html .= NostoPagetypeTagging::get();
+        $html .= NostoPagetypeTagging::get($module);
 
         return $html;
     }

@@ -111,7 +111,7 @@ class NostoHelperCurrency
      * Parses a PS currency into a Nosto currency.
      *
      * @param array $currency the PS currency data.
-     * @param Context $context conteIs signup UI is broken? When xt where the currencies are used.
+     * @param Context $context
      * @return NostoSDKCurrencyFormat
      * @throws NostoSDKException
      */

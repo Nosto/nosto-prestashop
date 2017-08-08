@@ -42,16 +42,17 @@ class NostoCart extends NostoSDKCart
      * Loads the cart data from supplied cart object.
      *
      * @param Cart $cart the cart object.
+     * @return NostoCart
      */
     public static function loadData(Cart $cart)
     {
         if (!Validate::isLoadedObject($cart) || ($products = $cart->getProducts()) === array()) {
-            return;
+            return null;
         }
 
         $currency = self::loadCurrency($cart->id_currency);
         if (!Validate::isLoadedObject($currency)) {
-            return;
+            return null;
         }
 
         $nostoCart = new NostoCart();
@@ -102,5 +103,7 @@ class NostoCart extends NostoSDKCart
             $nostoLineItem->setPriceCurrencyCode((string)$currency->iso_code);
             $nostoCart->addItem($nostoLineItem);
         }
+
+        return $nostoCart;
     }
 }

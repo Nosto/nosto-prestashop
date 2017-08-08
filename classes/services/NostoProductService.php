@@ -33,7 +33,7 @@ use \Nosto\Types\Product\ProductInterface as NostoSDKProductInterface;
 class NostoProductService extends AbstractNostoService
 {
     /**
-     * Maximum batch size. If exceeded the batches will be splitted into smaller
+     * Maximum batch size. If exceeded the batches will be split into smaller
      * ones.
      *
      * @var int
@@ -116,7 +116,7 @@ class NostoProductService extends AbstractNostoService
             ) {
                 throw new NostoSDKException(
                     sprintf(
-                        'Invalid data type or not loaded objec, expecting Product' .
+                        'Invalid data type or not loaded object, expecting Product' .
                         ', got %s with id %s',
                         get_class($product),
                         $product->id

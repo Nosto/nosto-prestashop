@@ -29,7 +29,7 @@
 class NostoHelperContextFactory
 {
     /**
-     * Holds the original shop id whever context is forged
+     * Holds the original shop id whenever context is forged
      *
      * @var int
      */
