@@ -46,7 +46,7 @@ class NostoCheckMulticurrencyNotification extends NostoNotification
                 $shop->id)
             ) {
 
-                return NostoHelperContextFactory::runInContext($language->id, $shop->id,
+                return NostoHelperContext::runInContext($language->id, $shop->id,
                     function ($context) use ($shop, $language) {
                         $currencies = NostoHelperCurrency::getCurrencies($context, true);
                         if (count($currencies) > 1) {

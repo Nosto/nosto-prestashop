@@ -47,7 +47,7 @@ class NostoRatesService
                         $id_shop);
                     if (!is_null($nosto_account)) {
 
-                        NostoHelperContextFactory::runInContext($id_lang, $id_shop,
+                        NostoHelperContext::runInContext($id_lang, $id_shop,
                             function ($context) use ($nosto_account) {
                                 if (!$this->updateCurrencyExchangeRates($nosto_account, $context)) {
                                     throw new NostoSDKException(

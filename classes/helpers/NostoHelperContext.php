@@ -1,0 +1,53 @@
+<?php
+/**
+ * 2013-2016 Nosto Solutions Ltd
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to contact@nosto.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
+ * versions in the future. If you wish to customize PrestaShop for your
+ * needs please refer to http://www.prestashop.com for more information.
+ *
+ * @author    Nosto Solutions Ltd <contact@nosto.com>
+ * @copyright 2013-2016 Nosto Solutions Ltd
+ * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+
+/**
+ * Context helper for creating and replacing contexts i.e. emulation
+ */
+class NostoHelperContext
+{
+
+    /**
+     * Runs a function in the scope of another shop's context and reverts back to the original
+     * context after the the function invocation
+     *
+     * @param int $id_lang the language identifier
+     * @param int $id_shop the shop identifier
+     * @param $callable
+     * @return mixed the return value of the anonymous function
+     */
+    public static function runInContext($id_lang, $id_shop, $callable)
+    {
+        $context = new NostoContextManager($id_lang, $id_shop);
+        $retval = null;
+        try {
+            $retval = $callable($context);
+        } catch (Exception $e) {
+            NostoHelperLogger::log($e);
+        }
+        $context->revertToOriginalContext();
+        return $retval;
+    }
+}

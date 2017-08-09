@@ -240,7 +240,7 @@ class NostoProductService extends AbstractNostoService
             return null;
         }
 
-        return NostoHelperContextFactory::runInContext($id_lang, $id_shop,
+        return NostoHelperContext::runInContext($id_lang, $id_shop,
             function ($context) use ($product) {
                 return NostoProduct::loadData($context, $product);
             }

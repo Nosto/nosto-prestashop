@@ -29,7 +29,8 @@ if (!defined('_PS_VERSION_')) {
 
 /*
  * Only try to load class files if we can resolve the __FILE__ global to the current file.
- * We need to do this as this module file is parsed with eval() on the modules page, and eval() messes up the __FILE__.
+ * We need to do this as this module file is parsed with eval() on the modules page, and eval()
+ * messes up the __FILE__.
  */
 if ((basename(__FILE__) === 'nostotagging.php')) {
     define('NOSTO_DIR', dirname(__FILE__));

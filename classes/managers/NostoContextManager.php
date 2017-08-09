@@ -1,6 +1,7 @@
 <?php
+
 /**
- * 2013-2016 Nosto Solutions Ltd
+ * 2013-2017 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,17 +20,14 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2016 Nosto Solutions Ltd
+ * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-/**
- * Context factory helper for creating and replacing PS contexts.
- */
-class NostoHelperContextFactory
+class NostoContextManager
 {
     /**
-     * Holds the original shop id whenever context is forged
+     * Holds the original shop id
      *
      * @var int
      */
@@ -64,69 +62,16 @@ class NostoHelperContextFactory
      */
     private $original_currency;
 
-    public static function runInContext($id_lang, $id_shop, $callable)
-    {
-        $context = new NostoHelperContextFactory();
-        $context->forgeContext($id_lang, $id_shop);
-        $retval = null;
-        try {
-            $retval = $callable($context);
-        } catch (Exception $e) {
-            NostoHelperLogger::log($e);
-        }
-        $context->revertToOriginalContext();
-        return $retval;
-    }
-
     /**
-     * Forges a new context and returns the altered context
+     * Constructor to a new context object which contains the state of the old context and provides
+     * methods to revert back to the old context
      *
      * @param int $id_lang the language ID to add to the new context.
      * @param int $id_shop the shop ID to add to the new context.
-     * @return Context the new context.
      */
-    private function forgeContext($id_lang, $id_shop)
+    public function __construct($id_lang, $id_shop)
     {
-        /* @var Context $context */
         $context = Context::getContext();
-        $this->saveOriginalContext($context);
-        $forged_context = $context->cloneContext();
-        // Reset the shop context to be the current processed shop. This will fix the "friendly url" format of urls
-        // generated through the Link class.
-        Shop::setContext(Shop::CONTEXT_SHOP, $id_shop);
-        // Reset the dispatcher singleton instance so that the url rewrite setting is check on a shop basis when
-        // generating product urls. This will fix the issue of incorrectly formatted urls when one shop has the
-        // rewrite setting enabled and another does not.
-        Dispatcher::$instance = null;
-        if (method_exists('ShopUrl', 'resetMainDomainCache')) {
-            // Reset the shop url domain cache so that it is re-initialized on a shop basis when generating product
-            // image urls. This will fix the issue of the image urls having an incorrect shop base url when the
-            // shops are configured to use different domains.
-            ShopUrl::resetMainDomainCache();
-        }
-
-        foreach (Currency::getCurrenciesByIdShop($id_shop) as $row) {
-            if ($row['deleted'] === '0' && $row['active'] === '1') {
-                $currency = new Currency($row['id_currency']);
-                break;
-            }
-        }
-
-        $forged_context->language = new Language($id_lang);
-        $forged_context->shop = new Shop($id_shop);
-        $forged_context->link = NostoHelperLink::getLink();
-        $forged_context->currency = isset($currency) ? $currency : Currency::getDefaultCurrency();
-
-        return $forged_context;
-    }
-
-    /**
-     * Saves necessary parts of current context so those can be reverted
-     *
-     * @param Context $context
-     */
-    private function saveOriginalContext(Context $context)
-    {
         if (isset($context->shop) && $context->shop instanceof Shop) {
             $this->original_shop_context = $context->shop->getContext();
             if ($context->shop->getContextShopID()) {
@@ -143,6 +88,34 @@ class NostoHelperContextFactory
                 $this->original_language = $context->language;
             }
         }
+
+        $forged_context = $context->cloneContext();
+        // Reset the shop context to be the current processed shop. This will fix the "friendly url"'
+        // format of urls generated through the Link class.
+        Shop::setContext(Shop::CONTEXT_SHOP, $id_shop);
+        // Reset the dispatcher singleton instance so that the url rewrite setting is check on a
+        // shop basis when generating product urls. This will fix the issue of incorrectly formatted
+        // urls when one shop has the rewrite setting enabled and another does not.
+        Dispatcher::$instance = null;
+        if (method_exists('ShopUrl', 'resetMainDomainCache')) {
+            // Reset the shop url domain cache so that it is re-initialized on a shop basis when
+            // generating product image urls. This will fix the issue of the image urls having an
+            // incorrect shop base url when the
+            // shops are configured to use different domains.
+            ShopUrl::resetMainDomainCache();
+        }
+
+        foreach (Currency::getCurrenciesByIdShop($id_shop) as $row) {
+            if ($row['deleted'] === '0' && $row['active'] === '1') {
+                $currency = new Currency($row['id_currency']);
+                break;
+            }
+        }
+
+        $forged_context->language = new Language($id_lang);
+        $forged_context->shop = new Shop($id_shop);
+        $forged_context->link = NostoHelperLink::getLink();
+        $forged_context->currency = isset($currency) ? $currency : Currency::getDefaultCurrency();
     }
 
     /**
@@ -173,3 +146,4 @@ class NostoHelperContextFactory
         }
     }
 }
+
