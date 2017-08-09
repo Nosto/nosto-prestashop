@@ -338,58 +338,7 @@ class NostoTagging extends Module
                 Tools::isSubmit('submit_nostotagging_new_account')
                 || Tools::getValue('nostotagging_account_action') === 'newAccount'
             ) {
-                $account_email = (string)Tools::getValue($this->name.'_account_email');
-                if (empty($account_email)) {
-                    $helper_flash->add('error', $this->l('Email cannot be empty.'));
-                } elseif (!Validate::isEmail($account_email)) {
-                    $helper_flash->add('error', $this->l('Email is not a valid email address.'));
-                } else {
-                    try {
-                        if (Tools::isSubmit('nostotagging_account_details')) {
-                            $account_details = Tools::jsonDecode(Tools::getValue('nostotagging_account_details'));
-                        } else {
-                            $account_details = false;
-                        }
-                        $this->createAccount($language_id, $account_email, $account_details);
-                        $helper_config->clearCache();
-                        $helper_flash->add(
-                            'success',
-                            $this->l(
-                                'Account created. Please check your email and follow the instructions to set a'
-                                . ' password for your new account within three days.'
-                            )
-                        );
-                    } catch (NostoApiResponseException $e) {
-                        $helper_flash->add(
-                            'error',
-                            $this->l(
-                                'Account could not be automatically created due to missing or invalid parameters.'
-                                . ' Please see your Prestashop logs for details'
-                            )
-                        );
-                        /* @var NostoTaggingHelperLogger $logger */
-                        $logger = Nosto::helper('nosto_tagging/logger');
-                        $logger->error(
-                            'Creating Nosto account failed: ' . $e->getMessage() .':'.$e->getCode(),
-                            $e->getCode(),
-                            'Employee',
-                            (int)$employee->id
-                        );
-                    } catch (Exception $e) {
-                        $helper_flash->add(
-                            'error',
-                            $this->l('Account could not be automatically created. Please see logs for details.')
-                        );
-                        /* @var NostoTaggingHelperLogger $logger */
-                        $logger = Nosto::helper('nosto_tagging/logger');
-                        $logger->error(
-                            'Creating Nosto account failed: ' . $e->getMessage() .':'.$e->getCode(),
-                            $e->getCode(),
-                            'Employee',
-                            (int)$employee->id
-                        );
-                    }
-                }
+                //moved
             } elseif (
                 Tools::isSubmit('submit_nostotagging_authorize_account')
                 || Tools::getValue('nostotagging_account_action') === 'connectAccount'
@@ -409,7 +358,9 @@ class NostoTagging extends Module
                 $account = NostoTaggingHelperAccount::findByContext($this->context);
                 $helper_config->clearCache();
                 NostoTaggingHelperAccount::delete($account, $language_id);
-            } elseif (Tools::isSubmit('submit_nostotagging_update_exchange_rates')) {
+            } elseif (Tools::isSubmit('submit_nostotagging_update_exchange_rates')
+            )
+            {
                 $nosto_account = NostoTaggingHelperAccount::find($language_id, $id_shop_group, $id_shop);
                 if ($nosto_account &&
                     NostoTaggingHelperAccount::updateCurrencyExchangeRates(
@@ -553,11 +504,18 @@ class NostoTagging extends Module
         } else {
             $iframe_installation_url = null;
         }
+
+
+        $tabId = (int)Tab::getIdFromClassName(NostoTaggingHelperAdminTab::CREATE_ACCOUNT_CLASS);
+        $id_employee = (int)$this->context->cookie->id_employee;
+        $token = Tools::getAdminToken('CreateAccount'.$tabId.$id_employee);
+        $createAccountUrl = 'index.php?controller=CreateAccount&token='.$token;
+
         /** @var NostoTaggingHelperImage $helper_images */
         $helper_images = Nosto::helper('nosto_tagging/image');
         $this->getSmarty()->assign(array(
             $this->name.'_form_action' => $this->getAdminUrl(),
-            $this->name.'_create_account' => $this->getAdminUrl(),
+            $this->name.'_create_account' => $createAccountUrl,
             $this->name.'_delete_account' => $this->getAdminUrl(),
             $this->name.'_connect_account' => $this->getAdminUrl(),
             $this->name.'_has_account' => ($account !== null),
@@ -655,31 +613,6 @@ class NostoTagging extends Module
         }
 
         return $template_file;
-    }
-    /**
-     * Creates a new Nosto account for given shop language.
-     *
-     * @param int $id_lang the language ID for which to create the account.
-     * @param string $email the account owner email address.
-     * @param string $account_details the details for the account.
-     * @return bool true if account was created, false otherwise.
-     */
-    protected function createAccount($id_lang, $email, $account_details = "")
-    {
-        $meta = new NostoTaggingMetaAccount();
-        $meta->loadData($this->context, $id_lang);
-        $meta->getOwner()->setEmail($email);
-        $meta->setDetails($account_details);
-        /** @var NostoAccount $account */
-        $account = NostoAccount::create($meta);
-        $id_shop = null;
-        $id_shop_group = null;
-        if ($this->context->shop instanceof Shop) {
-            $id_shop = $this->context->shop->id;
-            $id_shop_group = $this->context->shop->id_shop_group;
-        }
-
-        return NostoTaggingHelperAccount::save($account, $id_lang, $id_shop_group, $id_shop);
     }
 
     /**

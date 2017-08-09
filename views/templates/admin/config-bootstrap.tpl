@@ -251,6 +251,9 @@
                             $('#nostotagging_account_details').val('');
                         }
                     }
+
+                    $('#nosto_form_id').attr("action", "{/literal}{$nostotagging_create_account|escape:javascript}{literal}");
+
                     $('#nosto_form_id').submit();
                 }
             }

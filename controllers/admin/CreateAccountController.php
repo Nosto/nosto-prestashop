@@ -23,6 +23,10 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
+/**
+ * Class CreateAccountController
+ * @property Context $context
+ */
 class CreateAccountController extends ModuleAdminController
 {
     /**
@@ -35,7 +39,100 @@ class CreateAccountController extends ModuleAdminController
             return;
         }
 
-        die('todo create nosto account');
-        //todo create nosto account
+        $language_id = (int)Tools::getValue(NostoTagging::MODULE_NAME.'_current_language');
+
+        /** @var EmployeeCore $employee */
+        $employee = $this->context->employee;
+
+        /** @var NostoTaggingHelperFlashMessage $flashHelper */
+        $flashHelper = Nosto::helper('nosto_tagging/flash_message');
+
+        /** @var NostoTaggingHelperConfig $configHelper */
+        $configHelper = Nosto::helper('nosto_tagging/config');        
+
+        $account_email = (string)Tools::getValue(NostoTagging::MODULE_NAME.'_account_email');
+        if (empty($account_email)) {
+            $flashHelper->add('error', $this->l('Email cannot be empty.'));
+        } elseif (!Validate::isEmail($account_email)) {
+            $flashHelper->add('error', $this->l('Email is not a valid email address.'));
+        } else {
+            try {
+                if (Tools::isSubmit('nostotagging_account_details')) {
+                    $account_details = Tools::jsonDecode(Tools::getValue('nostotagging_account_details'));
+                } else {
+                    $account_details = false;
+                }
+                $this->createAccount($language_id, $account_email, $account_details);
+                $configHelper->clearCache();
+                $flashHelper->add(
+                    'success',
+                    $this->l(
+                        'Account created. Please check your email and follow the instructions to set a'
+                        . ' password for your new account within three days.'
+                    )
+                );
+            } catch (NostoApiResponseException $e) {
+                $flashHelper->add(
+                    'error',
+                    $this->l(
+                        'Account could not be automatically created due to missing or invalid parameters.'
+                        . ' Please see your Prestashop logs for details'
+                    )
+                );
+                /* @var NostoTaggingHelperLogger $logger */
+                $logger = Nosto::helper('nosto_tagging/logger');
+                $logger->error(
+                    'Creating Nosto account failed: ' . $e->getMessage() .':'.$e->getCode(),
+                    $e->getCode(),
+                    'Employee',
+                    (int)$employee->id
+                );
+            } catch (Exception $e) {
+                $flashHelper->add(
+                    'error',
+                    $this->l('Account could not be automatically created. Please see logs for details.')
+                );
+                /* @var NostoTaggingHelperLogger $logger */
+                $logger = Nosto::helper('nosto_tagging/logger');
+                $logger->error(
+                    'Creating Nosto account failed: ' . $e->getMessage() .':'.$e->getCode(),
+                    $e->getCode(),
+                    'Employee',
+                    (int)$employee->id
+                );
+            }
+        }
+
+        $tabId = (int)Tab::getIdFromClassName('AdminModules');
+        $employeeId = (int)$this->context->cookie->id_employee;
+        $token = Tools::getAdminToken('AdminModules'.$tabId.$employeeId);
+        Tools::redirectAdmin('index.php?controller=AdminModules&configure=nostotagging&token='.$token);
+        
+    }
+
+    /**
+     * Creates a new Nosto account for given shop language.
+     *
+     * @param int $id_lang the language ID for which to create the account.
+     * @param string $email the account owner email address.
+     * @param string $account_details the details for the account.
+     * @return bool true if account was created, false otherwise.
+     */
+    protected function createAccount($id_lang, $email, $account_details = "")
+    {
+        $meta = new NostoTaggingMetaAccount();
+        $meta->loadData($this->context, $id_lang);
+        $meta->getOwner()->setEmail($email);
+        $meta->setDetails($account_details);
+        /** @var NostoAccount $account */
+        $account = NostoAccount::create($meta);
+        $id_shop = null;
+        $id_shop_group = null;
+        if ($this->context->shop instanceof Shop) {
+            $id_shop = $this->context->shop->id;
+            $id_shop_group = $this->context->shop->id_shop_group;
+        }
+
+        return NostoTaggingHelperAccount::save($account, $id_lang, $id_shop_group, $id_shop);
     }
 }

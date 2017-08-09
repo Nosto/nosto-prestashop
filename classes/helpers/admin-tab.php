@@ -125,7 +125,7 @@ class NostoTaggingHelperAdminTab
     public static function registerController($className)
     {
         $tab = new Tab();
-        $tabId = (int)Tab::getIdFromClassName(self::MAIN_MENU_ITEM_CLASS);
+        $tabId = (int)Tab::getIdFromClassName($className);
         $tab->active = 1;
         $tab->class_name = $className;
         $tab->name = array();
