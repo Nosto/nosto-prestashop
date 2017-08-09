@@ -25,28 +25,6 @@
  */
 class OrderTagging
 {
-
-    /**
-     * Tries to resolve current / active order confirmation in context
-     *
-     * @return Order|null
-     */
-    private static function resolveOrderInContext()
-    {
-        $order = null;
-        if ($id_order = (int)Tools::getValue('id_order')) {
-            $order = new Order($id_order);
-        }
-        if (
-            $order instanceof Order === false
-            || !Validate::isLoadedObject($order)
-        ) {
-            $order = null;
-        }
-
-        return $order;
-    }
-
     /**
      * Render meta-data (tagging) for a completed order.
      *
@@ -55,7 +33,7 @@ class OrderTagging
      */
     public static function get(NostoTagging $module)
     {
-        $order = self::resolveOrderInContext();
+        $order = NostoHelperController::resolveObject("id_order", Order::class, "getOrder");
         if (!$order instanceof Order) {
             return null;
         }
