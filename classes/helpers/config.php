@@ -177,11 +177,10 @@ class NostoHelperConfig
      * Saves the account name to the config for given language.
      *
      * @param string $account_name the account name to save.
-     * @param int $id_lang the language to save the account nam for.
-     * @param null|int $id_shop_group the shop group to get the account for (defaults to current
-     *     context).
-     * @param null|int $id_shop the shop to get the account for (defaults to current context).
-     * @return bool true if saved correctly, false otherwise.
+     * @param int $id_lang the language identifier for which to save the configuration
+     * @param null|int $id_shop_group the shop-group identifier for which to save the configuration
+     * @param null|int $id_shop the shop identifier for which to save the configuration
+     * @return bool true if saving the configuration was successful, false otherwise
      */
     public static function saveAccountName($account_name, $id_lang, $id_shop_group = null, $id_shop = null)
     {
@@ -191,10 +190,9 @@ class NostoHelperConfig
     /**
      * Gets a account name from the config.
      *
-     * @param int $id_lang the language to get the account for.
-     * @param null|int $id_shop_group the shop group to get the account for (defaults to current
-     *     context).
-     * @param null|int $id_shop the shop to get the account for (defaults to current context).
+     * @param int $id_lang the language identifier for which to fetch the configuration
+     * @param null|int $id_shop_group the shop-group identifier for which to fetch the configuration
+     * @param null|int $id_shop the shop identifier for which to fetch the configuration
      * @return mixed
      */
     public static function getAccountName($id_lang, $id_shop_group = null, $id_shop = null)
@@ -207,10 +205,10 @@ class NostoHelperConfig
      *
      * @param string $token_name the name of the token.
      * @param string $token_value the value of the token.
-     * @param int $id_lang the language to save the token for.
-     * @param int|null $id_shop_group
-     * @param int|null $id_shop
-     * @return bool true if saved correctly, false otherwise.
+     * @param int $id_lang the language identifier for which to save the configuration
+     * @param null|int $id_shop_group the shop-group identifier for which to save the configuration
+     * @param null|int $id_shop the shop identifier for which to save the configuration
+     * @return bool true if saving the configuration was successful, false otherwise
      */
     public static function saveToken($token_name, $token_value, $id_lang, $id_shop_group = null, $id_shop = null) {
         return self::write(self::getTokenConfigKey($token_name), $token_value, $id_lang, false, $id_shop_group, $id_shop);
@@ -289,30 +287,28 @@ class NostoHelperConfig
     /**
      * Returns the multi currency method in use for the context.
      *
-     * @param int $id_lang the language.
-     * @param null|int $id_shop_group
-     * @param null|int $id_shop
+     * @param int $id_lang the language identifier for which to fetch the configuration
+     * @param null|int $id_shop_group the shop-group identifier for which to fetch the configuration
+     * @param null|int $id_shop the shop identifier for which to fetch the configuration
      * @return string the multi currency method.
      */
     public static function getMultiCurrencyMethod($id_lang, $id_shop_group = null, $id_shop = null)
     {
-        $method = self::read(self::MULTI_CURRENCY_METHOD, $id_lang,
-            $id_shop_group, $id_shop);
+        $method = self::read(self::MULTI_CURRENCY_METHOD, $id_lang, $id_shop_group, $id_shop);
         return !empty($method) ? $method : self::MULTI_CURRENCY_METHOD_DISABLED;
     }
 
     /**
      * Returns the position where to render Nosto tagging
      *
-     * @param int $id_lang the language.
-     * @param null|int $id_shop_group
-     * @param null|int $id_shop
+     * @param int $id_lang the language identifier for which to fetch the configuration
+     * @param null|int $id_shop_group the shop-group identifier for which to fetch the configuration
+     * @param null|int $id_shop the shop identifier for which to fetch the configuration
      * @return string
      */
     public static function getNostotaggingRenderPosition($id_lang, $id_shop_group = null, $id_shop = null)
     {
-        $position = self::read(self::NOSTOTAGGING_POSITION, $id_lang,
-            $id_shop_group, $id_shop);
+        $position = self::read(self::NOSTOTAGGING_POSITION, $id_lang, $id_shop_group, $id_shop);
         return !empty($position) ? $position : self::NOSTOTAGGING_POSITION_TOP;
     }
 
@@ -320,10 +316,10 @@ class NostoHelperConfig
      * Saves the multi currency method in use for the context.
      *
      * @param string $method the multi currency method.
-     * @param int $id_lang the language.
-     * @param null|int $id_shop_group
-     * @param null|int $id_shop
-     * @return bool
+     * @param int $id_lang the language identifier for which to save the configuration
+     * @param null|int $id_shop_group the shop-group identifier for which to save the configuration
+     * @param null|int $id_shop the shop identifier for which to save the configuration
+     * @return bool true if saving the configuration was successful, false otherwise
      */
     public static function saveMultiCurrencyMethod($method, $id_lang, $id_shop_group = null, $id_shop = null) {
         return self::write(self::MULTI_CURRENCY_METHOD, $method, $id_lang, false, $id_shop_group, $id_shop);
@@ -333,10 +329,10 @@ class NostoHelperConfig
      * Saves the position where to render Nosto tagging
      *
      * @param string $method the multi currency method.
-     * @param int $id_lang the language.
-     * @param null|int $id_shop_group
-     * @param null|int $id_shop
-     * @return bool
+     * @param int $id_lang the language identifier for which to save the configuration
+     * @param null|int $id_shop_group the shop-group identifier for which to save the configuration
+     * @param null|int $id_shop the shop identifier for which to save the configuration
+     * @return bool true if saving the configuration was successful, false otherwise
      */
     public static function saveNostoTaggingRenderPosition($method, $id_lang, $id_shop_group = null, $id_shop = null) {
         return self::write(self::NOSTOTAGGING_POSITION, $method, $id_lang, false, $id_shop_group, $id_shop);
@@ -345,9 +341,9 @@ class NostoHelperConfig
     /**
      * Checks if multiple currencies are used in tagging
      *
-     * @param int $id_lang the language.
-     * @param null|int $id_shop_group
-     * @param null|int $id_shop
+     * @param int $id_lang the language identifier for which to fetch the configuration
+     * @param null|int $id_shop_group the shop-group identifier for which to fetch the configuration
+     * @param null|int $id_shop the shop identifier for which to fetch the configuration
      * @return bool the multi currency method.
      */
     public static function useMultipleCurrencies($id_lang, $id_shop_group = null, $id_shop = null)
@@ -370,9 +366,9 @@ class NostoHelperConfig
     /**
      * Returns the image type to be used for Nosto tagging
      *
-     * @param int $id_lang the language.
-     * @param null|int $id_shop_group
-     * @param null|int $id_shop
+     * @param int $id_lang the language identifier for which to fetch the configuration
+     * @param null|int $id_shop_group the shop-group identifier for which to fetch the configuration
+     * @param null|int $id_shop the shop identifier for which to fetch the configuration
      * @return int
      */
     public static function getImageType($id_lang, $id_shop_group = null, $id_shop = null)
@@ -386,10 +382,10 @@ class NostoHelperConfig
      * Saves the image type to be used for Nosto tagging
      *
      * @param int $type the image type id
-     * @param int $id_lang the language.
-     * @param null|int $id_shop_group
-     * @param null|int $id_shop
-     * @return bool
+     * @param int $id_lang the language identifier for which to save the configuration
+     * @param null|int $id_shop_group the shop-group identifier for which to save the configuration
+     * @param null|int $id_shop the shop identifier for which to save the configuration
+     * @return bool true if saving the configuration was successful, false otherwise
      */
     public static function saveImageType($type, $id_lang, $id_shop_group = null, $id_shop = null)
     {
