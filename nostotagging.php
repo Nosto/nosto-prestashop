@@ -511,13 +511,21 @@ class NostoTagging extends Module
         $token = Tools::getAdminToken('CreateAccount'.$tabId.$id_employee);
         $createAccountUrl = 'index.php?controller=CreateAccount&token='.$token;
 
+        $tabId = (int)Tab::getIdFromClassName(NostoTaggingHelperAdminTab::CONNECT_ACCOUNT_CLASS);
+        $token = Tools::getAdminToken('ConnectAccount'.$tabId.$id_employee);
+        $connectAccountUrl = 'index.php?controller=ConnectAccount&token='.$token;
+
+        $tabId = (int)Tab::getIdFromClassName(NostoTaggingHelperAdminTab::DELETE_ACCOUNT_CLASS);
+        $token = Tools::getAdminToken('DeleteAccount'.$tabId.$id_employee);
+        $deleteAccountUrl = 'index.php?controller=DeleteAccount&token='.$token;
+
         /** @var NostoTaggingHelperImage $helper_images */
         $helper_images = Nosto::helper('nosto_tagging/image');
         $this->getSmarty()->assign(array(
             $this->name.'_form_action' => $this->getAdminUrl(),
             $this->name.'_create_account' => $createAccountUrl,
-            $this->name.'_delete_account' => $this->getAdminUrl(),
-            $this->name.'_connect_account' => $this->getAdminUrl(),
+            $this->name.'_delete_account' => $deleteAccountUrl,
+            $this->name.'_connect_account' => $connectAccountUrl,
             $this->name.'_has_account' => ($account !== null),
             $this->name.'_account_name' => ($account !== null) ? $account->getName() : null,
             $this->name.'_account_email' => $account_email,

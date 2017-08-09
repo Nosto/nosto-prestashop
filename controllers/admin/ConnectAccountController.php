@@ -35,8 +35,22 @@ class ConnectAccountController extends ModuleAdminController
             return;
         }
 
-        die('todo connect nosto account');
+        $language_id = (int)Tools::getValue(NostoTagging::MODULE_NAME.'_current_language');
 
-        //todo connect nosto account
+
+        $meta = new NostoTaggingMetaOauth();
+        $meta->setModuleName(NostoTagging::MODULE_NAME);
+        //todo prestashop 1.5.0.0 needs this module path
+//        $meta->setModulePath($this->_path);
+        $meta->loadData($this->context, $language_id);
+        $client = new NostoOAuthClient($meta);
+        Tools::redirect($client->getAuthorizationUrl(), '');
+
+        //todo it will redirect back to save the account data.
+
+//        $tabId = (int)Tab::getIdFromClassName('AdminModules');
+//        $employeeId = (int)$this->context->cookie->id_employee;
+//        $token = Tools::getAdminToken('AdminModules'.$tabId.$employeeId);
+//        Tools::redirectAdmin('index.php?controller=AdminModules&configure=nostotagging&token='.$token);
     }
 }

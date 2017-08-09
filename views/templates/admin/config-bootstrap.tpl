@@ -252,7 +252,17 @@
                         }
                     }
 
-                    $('#nosto_form_id').attr("action", "{/literal}{$nostotagging_create_account|escape:javascript}{literal}");
+                    var action = null;
+                    if (data.type == 'createAccount' || data.type == 'syncAccount') {
+                        action = "{/literal}{$nostotagging_create_account|escape:javascript}{literal}";
+                    } else if (data.type == 'connectAccount' || data.type == 'syncAccount') {
+                        action = "{/literal}{$nostotagging_connect_account|escape:javascript}{literal}";
+                    } else if (data.type == 'removeAccount') {
+                        action = "{/literal}{$nostotagging_remove_account|escape:javascript}{literal}";
+                    }
+
+
+                    $('#nosto_form_id').attr("action", action);
 
                     $('#nosto_form_id').submit();
                 }
