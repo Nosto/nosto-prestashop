@@ -51,16 +51,16 @@ abstract class AbstractNostoService
     {
         $data = array();
         foreach ($this->getContextShops() as $shop) {
-            $id_shop = (int)$shop['id_shop'];
-            $id_shop_group = (int)$shop['id_shop_group'];
-            foreach (LanguageCore::getLanguages(true, $id_shop) as $language) {
-                $id_lang = (int)$language['id_lang'];
-                $account = NostoHelperAccount::find($id_lang, $id_shop_group, $id_shop);
+            $idShop = (int)$shop['id_shop'];
+            $idShopGroup = (int)$shop['id_shop_group'];
+            foreach (LanguageCore::getLanguages(true, $idShop) as $language) {
+                $idLang = (int)$language['id_lang'];
+                $account = NostoHelperAccount::find($idLang, $idShopGroup, $idShop);
                 if ($account === null || !$account->isConnectedToNosto()) {
                     continue;
                 }
 
-                $data[] = array($account, $id_shop, $id_lang);
+                $data[] = array($account, $idShop, $idLang);
             }
         }
 

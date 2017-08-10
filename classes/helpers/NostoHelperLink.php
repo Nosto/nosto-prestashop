@@ -24,6 +24,10 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
+/**
+ * Helper class to build secure or unsecure link objects used for building all back office, front
+ * and preview URLs. This class helps by taking care of figuring out the secure mode of the store.
+ */
 class NostoHelperLink
 {
 

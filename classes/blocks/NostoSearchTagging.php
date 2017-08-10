@@ -35,12 +35,12 @@ class NostoSearchTagging
      */
     public static function get(NostoTagging $module)
     {
-        $search_term = Tools::getValue('search_query', Tools::getValue('s'));
-        if (is_null($search_term)) {
+        $searchTerm = Tools::getValue('search_query', Tools::getValue('s'));
+        if (is_null($searchTerm)) {
             return null;
         }
 
-        $nostoQuery = new NostoSearch($search_term);
+        $nostoQuery = new NostoSearch($searchTerm);
         Context::getContext()->smarty->assign(array(
             'nosto_search' => $nostoQuery,
         ));

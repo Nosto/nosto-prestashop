@@ -72,7 +72,7 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
      */
     protected function getProductIds()
     {
-        $product_ids = array();
+        $productIds = array();
         /** @noinspection SqlNoDataSourceInspection */
         $sql = sprintf(
             '
@@ -89,9 +89,9 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
 
         $rows = Db::getInstance()->executeS($sql);
         foreach ($rows as $row) {
-            $product_ids[] = (int)$row['id_product'];
+            $productIds[] = (int)$row['id_product'];
         }
 
-        return $product_ids;
+        return $productIds;
     }
 }

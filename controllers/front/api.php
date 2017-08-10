@@ -68,8 +68,8 @@ abstract class NostoTaggingApiModuleFrontController extends ModuleFrontControlle
     {
         $account = NostoHelperAccount::findByContext(Context::getContext());
         if ($account && $account->isConnectedToNosto()) {
-            $cipher_text = Nosto\Helper\ExportHelper::export($account, $collection);
-            echo $cipher_text;
+            $cipherText = Nosto\Helper\ExportHelper::export($account, $collection);
+            echo $cipherText;
         }
         // It is important to stop the script execution after the export,
         // in order to avoid any additional data being outputted.

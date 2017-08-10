@@ -29,13 +29,13 @@ use \Nosto\Object\Cart\LineItem as NostoSDKCartItem;
 class NostoCart extends NostoSDKCart
 {
     /**
-     * @param $id_currency
+     * @param $idCurrency
      * @return Currency
      * @suppress PhanTypeMismatchArgument
      */
-    private static function loadCurrency($id_currency)
+    private static function loadCurrency($idCurrency)
     {
-        return new Currency($id_currency);
+        return new Currency($idCurrency);
     }
 
     /**
@@ -56,15 +56,15 @@ class NostoCart extends NostoSDKCart
         }
 
         $nostoCart = new NostoCart();
-        $cart_rules = (array)$cart->getCartRules(CartRule::FILTER_ACTION_GIFT);
+        $cartRules = (array)$cart->getCartRules(CartRule::FILTER_ACTION_GIFT);
 
         $gift_products = array();
-        foreach ($cart_rules as $cart_rule) {
-            if ((int)$cart_rule['gift_product']) {
+        foreach ($cartRules as $cartRule) {
+            if ((int)$cartRule['gift_product']) {
                 foreach ($products as $key => &$product) {
                     if (empty($product['gift'])
-                        && (int)$product['id_product'] === (int)$cart_rule['gift_product']
-                        && (int)$product['id_product_attribute'] === (int)$cart_rule['gift_product_attribute']
+                        && (int)$product['id_product'] === (int)$cartRule['gift_product']
+                        && (int)$product['id_product_attribute'] === (int)$cartRule['gift_product_attribute']
                     ) {
                         $product['cart_quantity'] = (int)$product['cart_quantity'];
                         $product['cart_quantity']--;
@@ -73,12 +73,12 @@ class NostoCart extends NostoSDKCart
                             unset($products[$key]);
                         }
 
-                        $gift_product = $product;
-                        $gift_product['cart_quantity'] = 1;
-                        $gift_product['price_wt'] = 0;
-                        $gift_product['gift'] = true;
+                        $giftProduct = $product;
+                        $giftProduct['cart_quantity'] = 1;
+                        $giftProduct['price_wt'] = 0;
+                        $giftProduct['gift'] = true;
 
-                        $gift_products[] = $gift_product;
+                        $gift_products[] = $giftProduct;
 
                         break; // One gift product per cart rule
                     }

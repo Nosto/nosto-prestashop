@@ -23,7 +23,7 @@
  * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
-class OrderTagging
+class NostoOrderTagging
 {
     /**
      * Render meta-data (tagging) for a completed order.
@@ -38,11 +38,11 @@ class OrderTagging
             return null;
         }
 
-        $nosto_order = new NostoTaggingOrder();
-        $nosto_order->loadData(Context::getContext(), $order);
+        $nostoOrder = new NostoTaggingOrder();
+        $nostoOrder->loadData(Context::getContext(), $order);
 
         Context::getContext()->smarty->assign(array(
-            'nosto_order' => $nosto_order,
+            'nosto_order' => $nostoOrder,
         ));
 
         return $module->display("NostoTagging.php", 'views/templates/hook/order-confirmation_order-tagging.tpl');

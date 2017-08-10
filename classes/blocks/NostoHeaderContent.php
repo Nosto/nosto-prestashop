@@ -37,18 +37,18 @@ class NostoHeaderContent
             return '';
         }
 
-        $server_address = NostoHelperUrl::getServerAddress();
+        $serverAddress = NostoHelperUrl::getServerAddress();
         /** @var LinkCore $link */
         $link = NostoHelperLink::getLink();
-        $hidden_recommendation_elements = $module->getHiddenRecommendationElements();
+        $hiddenElements = $module->getHiddenRecommendationElements();
         Context::getContext()->smarty->assign(array(
-            'server_address' => $server_address,
+            'server_address' => $serverAddress,
             'account_name' => $account->getName(),
             'nosto_version' => $module->version,
             'nosto_language' => Tools::strtolower(Context::getContext()->language->iso_code),
             'add_to_cart_url' => $link->getPageLink('cart.php'),
             'static_token' => Tools::getToken(false),
-            'disable_autoload' => (bool)!empty($hidden_recommendation_elements)
+            'disable_autoload' => (bool)!empty($hiddenElements)
         ));
 
         $html = $module->display("NostoTagging.php", 'views/templates/hook/header_meta-tags.tpl');

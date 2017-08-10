@@ -104,20 +104,20 @@ class NostoCustomerManager
             return false;
         }
 
-        $id_nosto_customer = NostoHelperCookie::readNostoCookie();
-        if (empty($id_nosto_customer)) {
+        $idNostoCustomer = NostoHelperCookie::readNostoCookie();
+        if (empty($idNostoCustomer)) {
             return false;
         }
 
         $table = self::getCustomerLinkTableName();
-        $id_cart = (int)$context->cart->id;
-        $id_nosto_customer = pSQL($id_nosto_customer);
-        $where = '`id_cart` = ' . $id_cart . ' AND `id_nosto_customer` = "' . $id_nosto_customer . '"';
-        $existing_link = Db::getInstance()->getRow('SELECT * FROM `' . $table . '` WHERE ' . $where);
-        if (empty($existing_link)) {
+        $idCart = (int)$context->cart->id;
+        $idNostoCustomer = pSQL($idNostoCustomer);
+        $where = '`id_cart` = ' . $idCart . ' AND `id_nosto_customer` = "' . $idNostoCustomer . '"';
+        $existingLink = Db::getInstance()->getRow('SELECT * FROM `' . $table . '` WHERE ' . $where);
+        if (empty($existingLink)) {
             $data = array(
-                'id_cart' => $id_cart,
-                'id_nosto_customer' => $id_nosto_customer,
+                'id_cart' => $idCart,
+                'id_nosto_customer' => $idNostoCustomer,
                 'date_add' => date('Y-m-d H:i:s')
             );
             return Db::getInstance()->insert($table, $data, false, true, Db::INSERT, false);
@@ -172,26 +172,26 @@ class NostoCustomerManager
     public static function saveCustomerReference(Customer $customer, $reference)
     {
         $table = self::getCustomerReferenceTableName();
-        $customer_reference = pSQL($reference);
-        $customer_id = (int)$customer->id;
+        $customerReference = pSQL($reference);
+        $customerId = (int)$customer->id;
         $data = array(
-            'id_customer' => $customer_id,
-            'customer_reference' => $customer_reference
+            'id_customer' => $customerId,
+            'customer_reference' => $customerReference
         );
-        $existing_id = Db::getInstance()->getRow(
+        $existingId = Db::getInstance()->getRow(
             sprintf(
                 'SELECT id_customer FROM `%s` WHERE id_customer = \'%d\'',
                 $table,
-                $customer_id
+                $customerId
             )
         );
-        if (empty($existing_id)) {
+        if (empty($existingId)) {
             return Db::getInstance()->insert($table, $data, false, true, Db::INSERT, false);
         } else {
             unset($data['id_customer']);
             $where = sprintf(
                 'id_customer=\'%d\'',
-                $customer_id
+                $customerId
             );
             return Db::getInstance()->update($table, $data, $where, 0, false, true, false);
         }

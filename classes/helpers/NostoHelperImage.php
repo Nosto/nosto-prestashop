@@ -24,6 +24,10 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
+/**
+ * Helper class to choose the optimal image version from the list of defined image versions. This
+ * class helps by choosing the image closest to a 800px width.
+ */
 class NostoHelperImage
 {
     const OPTIMAL_PRODUCT_IMAGE_WIDTH = 800;
@@ -35,15 +39,15 @@ class NostoHelperImage
      */
     public static function getProductImageTypes()
     {
-        $product_images = array();
-        $image_types = ImageType::getImagesTypes();
-        foreach ($image_types as $image_type) {
+        $productImages = array();
+        $imagesTypes = ImageType::getImagesTypes();
+        foreach ($imagesTypes as $image_type) {
             if (!empty($image_type['products']) && $image_type['products'] == 1) {
-                $product_images[] = $image_type;
+                $productImages[] = $image_type;
             }
         }
 
-        return $product_images;
+        return $productImages;
     }
 
     /**
@@ -57,15 +61,15 @@ class NostoHelperImage
     public static function chooseOptimalImageType()
     {
         $definition = ObjectModel::getDefinition('ImageType');
-        $table_name = isset($definition['table']) ? $definition['table'] : 'image_type';
-        $available_image_types = Db::getInstance()->executeS('
-			SELECT * FROM `' . pSQL(_DB_PREFIX_ . $table_name) . '`
+        $tableName = isset($definition['table']) ? $definition['table'] : 'image_type';
+        $availableImageTypes = Db::getInstance()->executeS('
+			SELECT * FROM `' . pSQL(_DB_PREFIX_ . $tableName) . '`
 			WHERE `products` = 1
 			ORDER BY `width` ASC
 		');
         $optimal = self::OPTIMAL_PRODUCT_IMAGE_WIDTH;
         $found = array();
-        foreach ($available_image_types as $available) {
+        foreach ($availableImageTypes as $available) {
             if (empty($found) || abs($optimal - (int)$found['width']) > abs((int)$available['width'] - $optimal)) {
                 $found = $available;
             }
@@ -83,15 +87,15 @@ class NostoHelperImage
      */
     public static function getTaggingImageTypeName($id_lang, $id_shop_group = null, $id_shop = null)
     {
-        $saved_image_type_id = NostoHelperConfig::getImageType($id_lang, $id_shop_group,
+        $savedImageTypeId = NostoHelperConfig::getImageType($id_lang, $id_shop_group,
             $id_shop);
-        if ($saved_image_type_id) {
-            $image_type = new ImageType($saved_image_type_id);
-            $image_type_name = $image_type->name;
+        if ($savedImageTypeId) {
+            $image_type = new ImageType($savedImageTypeId);
+            $imageTypeName = $image_type->name;
         } else {
-            $image_type_name = NostoHelperImage::chooseOptimalImageType();
+            $imageTypeName = NostoHelperImage::chooseOptimalImageType();
         }
 
-        return $image_type_name;
+        return $imageTypeName;
     }
 }

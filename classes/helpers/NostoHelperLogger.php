@@ -24,7 +24,8 @@
  */
 
 /**
- * Helper class for logging events to the Prestashop log.
+ * Helper class for logging events to the Prestashop log. This class helps by sanitising the log
+ * messages and providing a standard interface to log exceptions with
  */
 class NostoHelperLogger
 {

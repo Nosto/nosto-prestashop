@@ -46,15 +46,15 @@ class NostoOrderStatus extends NostoSDKOrderStatus
 
         $state = $order->getCurrentStateFull($id_lang);
         if (!empty($state['name'])) {
-            $state_name = $state['name'];
-            $status->setCode(self::convertNameToCode($state_name));
+            $stateName = $state['name'];
+            $status->setCode(self::convertNameToCode($stateName));
             if ($id_lang !== (int)$order->id_lang) {
                 $state = $order->getCurrentStateFull((int)$order->id_lang);
                 if (!empty($state['name'])) {
-                    $state_name = $state['name'];
+                    $stateName = $state['name'];
                 }
             }
-            $status->setLabel($state_name);
+            $status->setLabel($stateName);
         }
         return $status;
     }

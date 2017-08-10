@@ -28,7 +28,7 @@ class NostoBrand extends AbstractNostoModel
     /**
      * @var string the built brand string.
      */
-    public $brand;
+    private $brand;
 
     /**
      * Loads the brand data from supplied manufacturer object.
@@ -43,7 +43,7 @@ class NostoBrand extends AbstractNostoModel
         }
 
         $nostoBrand = new NostoBrand();
-        $nostoBrand->brand_string = DIRECTORY_SEPARATOR . $manufacturer->name;
+        $nostoBrand->brand = DIRECTORY_SEPARATOR . $manufacturer->name;
         return $nostoBrand;
     }
 

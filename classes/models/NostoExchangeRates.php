@@ -35,13 +35,13 @@ class NostoExchangeRates extends NostoSDKExchangeRateCollection
      */
     public static function loadData(Context $context)
     {
-        $base_currency_code = NostoHelperCurrency::getBaseCurrency($context)->iso_code;
+        $baseCurrencyCode = NostoHelperCurrency::getBaseCurrency($context)->iso_code;
         $currencies = NostoHelperCurrency::getCurrencies($context, true);
         $rates = new NostoExchangeRates();
         foreach ($currencies as $currency) {
             // Skip base currencyCode.
             if (
-                $currency['iso_code'] === $base_currency_code
+                $currency['iso_code'] === $baseCurrencyCode
                 || $currency['deleted'] == 1
             ) {
                 continue;

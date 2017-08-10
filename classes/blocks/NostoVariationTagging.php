@@ -34,14 +34,14 @@ class NostoVariationTagging
      */
     public static function get(NostoTagging $module)
     {
-        $id_lang = Context::getContext()->language->id;
-        $id_shop = null;
-        $id_shop_group = null;
+        $idLang = Context::getContext()->language->id;
+        $idShop = null;
+        $idShopGroup = null;
         if (Context::getContext()->shop instanceof Shop) {
-            $id_shop = Context::getContext()->shop->id;
-            $id_shop_group = Context::getContext()->shop->id_shop_group;
+            $idShop = Context::getContext()->shop->id;
+            $idShopGroup = Context::getContext()->shop->id_shop_group;
         }
-        if (NostoHelperConfig::useMultipleCurrencies($id_lang, $id_shop_group, $id_shop)) {
+        if (NostoHelperConfig::useMultipleCurrencies($idLang, $idShopGroup, $idShop)) {
             $defaultVariationId = Context::getContext()->currency->iso_code;
             $priceVariation = new NostoVariation($defaultVariationId);
             Context::getContext()->smarty->assign(array(

@@ -36,24 +36,23 @@ class NostoRatesService
     public function updateExchangeRatesForAllStores()
     {
         foreach (Shop::getShops() as $shop) {
-            $id_shop = isset($shop['id_shop']) ? (int)$shop['id_shop'] : null;
-            $id_shop_group = isset($shop['id_shop_group']) ? (int)$shop['id_shop_group'] : null;
-            foreach (Language::getLanguages(true, $id_shop) as $language) {
-                $id_lang = (int)$language['id_lang'];
-                $use_multiple_currencies = NostoHelperConfig::useMultipleCurrencies($id_lang,
-                    $id_shop_group, $id_shop);
-                if ($use_multiple_currencies) {
-                    $nosto_account = NostoHelperAccount::find($id_lang, $id_shop_group,
-                        $id_shop);
-                    if (!is_null($nosto_account)) {
+            $idShop = isset($shop['id_shop']) ? (int)$shop['id_shop'] : null;
+            $idShopGroup = isset($shop['id_shop_group']) ? (int)$shop['id_shop_group'] : null;
+            foreach (Language::getLanguages(true, $idShop) as $language) {
+                $idLang = (int)$language['id_lang'];
+                $useMultipleCurrencies = NostoHelperConfig::useMultipleCurrencies($idLang,
+                    $idShopGroup, $idShop);
+                if ($useMultipleCurrencies) {
+                    $nostoAccount = NostoHelperAccount::find($idLang, $idShopGroup, $idShop);
+                    if (!is_null($nostoAccount)) {
 
-                        NostoHelperContext::runInContext($id_lang, $id_shop,
-                            function ($context) use ($nosto_account) {
-                                if (!$this->updateCurrencyExchangeRates($nosto_account, $context)) {
+                        NostoHelperContext::runInContext($idLang, $idShop,
+                            function ($context) use ($nostoAccount) {
+                                if (!$this->updateCurrencyExchangeRates($nostoAccount, $context)) {
                                     throw new NostoSDKException(
                                         sprintf(
                                             'Exchange rate update failed for %s',
-                                            $nosto_account->getName()
+                                            $nostoAccount->getName()
                                         )
                                     );
                                 }

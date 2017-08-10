@@ -31,7 +31,7 @@ class NostoDefaultTagging
      *
      * @var boolean
      */
-    private static $tagging_rendered = false;
+    private static $taggingRendered = false;
 
     /**
      * Render page type tagging
@@ -41,8 +41,8 @@ class NostoDefaultTagging
      */
     public static function get(NostoTagging $module)
     {
-        if (self::$tagging_rendered === false) {
-            self::$tagging_rendered = true;
+        if (self::$taggingRendered === false) {
+            self::$taggingRendered = true;
             $html = self::generateDefaultTagging($module);
         } else {
             $html = '';
@@ -76,7 +76,7 @@ class NostoDefaultTagging
         } elseif (NostoHelperController::isController('product')) {
             $html .= NostoProductTagging::get($module);
         } elseif (NostoHelperController::isController('order-confirmation')) {
-            $html .= OrderTagging::get($module);
+            $html .= NostoOrderTagging::get($module);
         }
         $html .= $module->display("NostoTagging.php", 'views/templates/hook/top_nosto-elements.tpl');
         $html .= $module->getHiddenRecommendationElements();

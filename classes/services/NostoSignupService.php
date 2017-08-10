@@ -31,30 +31,30 @@ class NostoSignupService
     /**
      * Creates a new Nosto account for given shop language.
      *
-     * @param int $id_lang the language-id for which to create the account.
+     * @param int $idLang the language-id for which to create the account.
      * @param string $email the account owner email address.
-     * @param stdClass|string $account_details the details for the account.
+     * @param stdClass|string $accountDetails the details for the account.
      * @return bool true if successful, false otherwise.
      */
-    public function createAccount($id_lang, $email, $account_details = "")
+    public function createAccount($idLang, $email, $accountDetails = "")
     {
-        $signupParams = NostoAccountSignup::loadData(Context::getContext(), $id_lang);
+        $signupParams = NostoAccountSignup::loadData(Context::getContext(), $idLang);
         if ($signupParams->getOwner()->getEmail() !== $email) {
             $accountOwner = new NostoAccountOwner();
             $accountOwner->setEmail($email);
             $signupParams->setOwner($accountOwner);
         }
-        $signupParams->setDetails($account_details);
+        $signupParams->setDetails($accountDetails);
 
         $operation = new NostoSDKAccountSignupOperation($signupParams);
         $account = $operation->create();
-        $id_shop = null;
-        $id_shop_group = null;
+        $idShop = null;
+        $idShopGroup = null;
         if (Context::getContext()->shop instanceof Shop) {
-            $id_shop = Context::getContext()->shop->id;
-            $id_shop_group = Context::getContext()->shop->id_shop_group;
+            $idShop = Context::getContext()->shop->id;
+            $idShopGroup = Context::getContext()->shop->id_shop_group;
         }
 
-        return NostoHelperAccount::save($account, $id_lang, $id_shop_group, $id_shop);
+        return NostoHelperAccount::save($account, $idLang, $idShopGroup, $idShop);
     }
 }

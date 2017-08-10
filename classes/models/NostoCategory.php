@@ -27,17 +27,17 @@ class NostoCategory extends AbstractNostoModel
     /**
      * @var string the built category string.
      */
-    public $category_string;
+    public $categoryString;
 
     /**
-     * @param $id_category
-     * @param $id_lang
+     * @param $idCategory
+     * @param $idLang
      * @return Category
      * @suppress PhanTypeMismatchArgument
      */
-    public static function loadId($id_category, $id_lang)
+    public static function loadId($idCategory, $idLang)
     {
-        return new Category((int)$id_category, $id_lang);
+        return new Category((int)$idCategory, $idLang);
     }
 
     /**
@@ -54,21 +54,21 @@ class NostoCategory extends AbstractNostoModel
             return null;
         }
 
-        $category_list = array();
+        $categoryList = array();
         if ((int)$category->active === 1) {
             foreach ($category->getParentsCategories($context->language->id) as $parent_category) {
                 if (isset($parent_category['name'], $parent_category['active'])
                     && (int)$parent_category['active'] === 1
                 ) {
-                    $category_list[] = (string)$parent_category['name'];
+                    $categoryList[] = (string)$parent_category['name'];
                 }
             }
         }
 
-        if (empty($category_list)) {
+        if (empty($categoryList)) {
             return '';
         }
 
-        return DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, array_reverse($category_list));
+        return DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, array_reverse($categoryList));
     }
 }

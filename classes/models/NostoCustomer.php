@@ -28,7 +28,7 @@ use \Nosto\Object\User as NostoSDKUser;
 
 class NostoCustomer extends NostoSDKUser
 {
-    private $customer_reference;
+    private $customerReference;
 
     /**
      * Loads the customer data from supplied context and customer objects.
@@ -61,11 +61,11 @@ class NostoCustomer extends NostoSDKUser
     {
         $customer_reference = NostoCustomerManager::getCustomerReference($customer);
         if (!empty($customer_reference)) {
-            $this->customer_reference = $customer_reference;
+            $this->customerReference = $customer_reference;
         } else {
             $customer_reference = NostoCustomerManager::generateCustomerReference($customer);
             NostoCustomerManager::saveCustomerReference($customer, $customer_reference);
-            $this->customer_reference = $customer_reference;
+            $this->customerReference = $customer_reference;
         }
     }
 
@@ -74,6 +74,6 @@ class NostoCustomer extends NostoSDKUser
      */
     public function getCustomerReference()
     {
-        return $this->customer_reference;
+        return $this->customerReference;
     }
 }

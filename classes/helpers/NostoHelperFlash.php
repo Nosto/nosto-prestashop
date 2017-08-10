@@ -42,16 +42,15 @@ class NostoHelperFlash
     public static function add($type, $message)
     {
         $cookie = Context::getContext()->cookie;
-        $cookie_data = isset($cookie->nostotagging) ? Tools::jsonDecode($cookie->nostotagging,
-            true) : array();
-        if (!isset($cookie_data['flash_messages'])) {
-            $cookie_data['flash_messages'] = array();
+        $cookieData = isset($cookie->nostotagging) ? Tools::jsonDecode($cookie->nostotagging, true) : array();
+        if (!isset($cookieData['flash_messages'])) {
+            $cookieData['flash_messages'] = array();
         }
-        if (!isset($cookie_data['flash_messages'][$type])) {
-            $cookie_data['flash_messages'][$type] = array();
+        if (!isset($cookieData['flash_messages'][$type])) {
+            $cookieData['flash_messages'][$type] = array();
         }
-        $cookie_data['flash_messages'][$type][] = $message;
-        $cookie->nostotagging = Tools::jsonEncode($cookie_data);
+        $cookieData['flash_messages'][$type][] = $message;
+        $cookie->nostotagging = Tools::jsonEncode($cookieData);
     }
 
     /**
@@ -63,15 +62,14 @@ class NostoHelperFlash
      */
     public static function getList($type)
     {
-        $flash_messages = array();
+        $flashMessages = array();
         $cookie = Context::getContext()->cookie;
-        $cookie_data = isset($cookie->nostotagging) ? Tools::jsonDecode($cookie->nostotagging,
-            true) : array();
-        if (isset($cookie_data['flash_messages'][$type])) {
-            $flash_messages = $cookie_data['flash_messages'][$type];
-            unset($cookie_data['flash_messages'][$type]);
-            $cookie->nostotagging = Tools::jsonEncode($cookie_data);
+        $cookieData = isset($cookie->nostotagging) ? Tools::jsonDecode($cookie->nostotagging, true) : array();
+        if (isset($cookieData['flash_messages'][$type])) {
+            $flashMessages = $cookieData['flash_messages'][$type];
+            unset($cookieData['flash_messages'][$type]);
+            $cookie->nostotagging = Tools::jsonEncode($cookieData);
         }
-        return $flash_messages;
+        return $flashMessages;
     }
 }

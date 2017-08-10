@@ -90,9 +90,9 @@ class NostoAdminTabManager
             return false;
         }
 
-        $id_tab = self::getAdminTabId(AdminNostoController::class);
-        if ($id_tab) {
-            $mainTabAdded = new Tab($id_tab);
+        $idTab = self::getAdminTabId(AdminNostoController::class);
+        if ($idTab) {
+            $mainTabAdded = new Tab($idTab);
         } else {
             /** @var TabCore $tab */
             $tab = new Tab();
@@ -110,9 +110,9 @@ class NostoAdminTabManager
 
         // For PS 1.6 it is enough to have the main menu, for PS 1.5 and 1.7 we need a sub-menu.
         if ($mainTabAdded && (_PS_VERSION_ < '1.6' || _PS_VERSION_ >= '1.7')) {
-            $id_tab = self::getAdminTabId(AdminNostoPersonalizationController::class);
-            if ($id_tab) {
-                $subTabAdded = new Tab($id_tab);
+            $idTab = self::getAdminTabId(AdminNostoPersonalizationController::class);
+            if ($idTab) {
+                $subTabAdded = new Tab($idTab);
             } else {
                 $tab = new Tab();
                 $tab->active = true;

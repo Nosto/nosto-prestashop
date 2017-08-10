@@ -47,19 +47,19 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
             if (empty($orders)) {
                 Controller::getController('PageNotFoundController')->run();
             }
-            $nosto_order = new NostoTaggingOrder();
+            $nostoOrder = new NostoTaggingOrder();
             /** @noinspection PhpParamsInspection */
-            $nosto_order->loadData($context, $orders[0]);
-            $collection->append($nosto_order);
+            $nostoOrder->loadData($context, $orders[0]);
+            $collection->append($nostoOrder);
         } else {
-            foreach ($this->getOrderIds() as $id_order) {
-                $order = new Order($id_order);
+            foreach ($this->getOrderIds() as $idOrder) {
+                $order = new Order($idOrder);
                 if (!Validate::isLoadedObject($order)) {
                     continue;
                 }
-                $nosto_order = new NostoTaggingOrder();
-                $nosto_order->loadData(Context::getContext(), $order);
-                $collection->append($nosto_order);
+                $nostoOrder = new NostoTaggingOrder();
+                $nostoOrder->loadData(Context::getContext(), $order);
+                $collection->append($nostoOrder);
             }
         }
 
@@ -99,11 +99,11 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
         );
 
         $rows = Db::getInstance()->executeS($sql);
-        $order_ids = array();
+        $orderIds = array();
         foreach ($rows as $row) {
-            $order_ids[] = (int)$row['id_order'];
+            $orderIds[] = (int)$row['id_order'];
         }
 
-        return $order_ids;
+        return $orderIds;
     }
 }

@@ -30,14 +30,14 @@ class NostoAccountSignup extends NostoSDKAccountSignup
     /**
      * @var string the API token used to identify an account creation.
      */
-    protected $sign_up_api_token = 'JRtgvoZLMl4NPqO9XWhRdvxkTMtN82ITTJij8U7necieJPCvjtZjm5C4fpNrYJ81';
+    const TOKEN = 'JRtgvoZLMl4NPqO9XWhRdvxkTMtN82ITTJij8U7necieJPCvjtZjm5C4fpNrYJ81';
 
     /**
      * NostoAccountSignup constructor.
      */
     public function __construct()
     {
-        parent::__construct('prestashop', $this->sign_up_api_token, null);
+        parent::__construct('prestashop', NostoAccountSignup::TOKEN, null);
     }
 
     /**
@@ -92,11 +92,11 @@ class NostoAccountSignup extends NostoSDKAccountSignup
         if (!Validate::isLoadedObject($context->country)) {
             $context->country = self::loadCountry();
         }
-        $id_shop = null;
-        $id_shop_group = null;
+        $idShop = null;
+        $idShopGroup = null;
         if ($context->shop instanceof Shop) {
-            $id_shop = $context->shop->id;
-            $id_shop_group = $context->shop->id_shop_group;
+            $idShop = $context->shop->id;
+            $idShopGroup = $context->shop->id_shop_group;
         }
         $signup->setTitle(Configuration::get('PS_SHOP_NAME'));
         $signup->setName(Tools::substr(sha1((string)rand()), 0, 8));
@@ -107,12 +107,12 @@ class NostoAccountSignup extends NostoSDKAccountSignup
         $signup->setOwner(NostoAccountOwner::loadData($context));
         $signup->setBillingDetails(NostoAccountBilling::loadData($context));
         $signup->setCurrencies(self::buildCurrencies($context));
-        if (NostoHelperConfig::useMultipleCurrencies($id_lang, $id_shop_group, $id_shop)) {
+        if (NostoHelperConfig::useMultipleCurrencies($id_lang, $idShopGroup, $idShop)) {
             $signup->setUseCurrencyExchangeRates(
                 NostoHelperConfig::useMultipleCurrencies(
                     $id_lang,
-                    $id_shop_group,
-                    $id_shop
+                    $idShopGroup,
+                    $idShop
                 )
             );
             $signup->setDefaultVariantId(NostoHelperCurrency::getBaseCurrency($context)->iso_code);

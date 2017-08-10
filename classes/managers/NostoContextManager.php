@@ -31,7 +31,7 @@ class NostoContextManager
      *
      * @var int
      */
-    private $original_shop_id;
+    private $originalShopId;
 
     /**
      * Holds the original shop context type
@@ -39,60 +39,60 @@ class NostoContextManager
      * @see Shop
      * @var int
      */
-    private $original_shop_context;
+    private $originalShopContext;
 
     /**
      * Holds the original shop group
      *
      * @var int
      */
-    private $original_shop_group;
+    private $originalShopGroup;
 
     /**
      * Holds the original language
      *
      * @var Language
      */
-    private $original_language;
+    private $originalLanguage;
 
     /**
      * Holds the original language
      *
      * @var Currency
      */
-    private $original_currency;
+    private $originalCurrency;
 
     /**
      * Constructor to a new context object which contains the state of the old context and provides
      * methods to revert back to the old context
      *
-     * @param int $id_lang the language ID to add to the new context.
-     * @param int $id_shop the shop ID to add to the new context.
+     * @param int $idLang the language ID to add to the new context.
+     * @param int $idShop the shop ID to add to the new context.
      */
-    public function __construct($id_lang, $id_shop)
+    public function __construct($idLang, $idShop)
     {
         $context = Context::getContext();
         if (isset($context->shop) && $context->shop instanceof Shop) {
-            $this->original_shop_context = $context->shop->getContext();
+            $this->originalShopContext = $context->shop->getContext();
             if ($context->shop->getContextShopID()) {
-                $this->original_shop_id = $context->shop->getContextShopID();
+                $this->originalShopId = $context->shop->getContextShopID();
             }
             $contextShopGroupID = $context->shop->getContextShopGroupID();
             if (!empty($contextShopGroupID)) {
-                $this->original_shop_group = $contextShopGroupID;
+                $this->originalShopGroup = $contextShopGroupID;
             }
             if (!empty($context->currency)) {
-                $this->original_currency = $context->currency;
+                $this->originalCurrency = $context->currency;
             }
             if (!empty($context->language)) {
-                $this->original_language = $context->language;
+                $this->originalLanguage = $context->language;
             }
         }
 
-        $forged_context = $context->cloneContext();
+        $forgedContext = $context->cloneContext();
         // Reset the shop context to be the current processed shop. This will fix the "friendly url"'
         // format of urls generated through the Link class.
-        Shop::setContext(Shop::CONTEXT_SHOP, $id_shop);
+        Shop::setContext(Shop::CONTEXT_SHOP, $idShop);
         // Reset the dispatcher singleton instance so that the url rewrite setting is check on a
         // shop basis when generating product urls. This will fix the issue of incorrectly formatted
         // urls when one shop has the rewrite setting enabled and another does not.
@@ -105,17 +105,17 @@ class NostoContextManager
             ShopUrl::resetMainDomainCache();
         }
 
-        foreach (Currency::getCurrenciesByIdShop($id_shop) as $row) {
+        foreach (Currency::getCurrenciesByIdShop($idShop) as $row) {
             if ($row['deleted'] === '0' && $row['active'] === '1') {
                 $currency = new Currency($row['id_currency']);
                 break;
             }
         }
 
-        $forged_context->language = new Language($id_lang);
-        $forged_context->shop = new Shop($id_shop);
-        $forged_context->link = NostoHelperLink::getLink();
-        $forged_context->currency = isset($currency) ? $currency : Currency::getDefaultCurrency();
+        $forgedContext->language = new Language($idLang);
+        $forgedContext->shop = new Shop($idShop);
+        $forgedContext->link = NostoHelperLink::getLink();
+        $forgedContext->currency = isset($currency) ? $currency : Currency::getDefaultCurrency();
     }
 
     /**
@@ -125,20 +125,20 @@ class NostoContextManager
     {
         $current_context = Context::getContext();
 
-        if (!empty($this->original_language)) {
-            $current_context->language = $this->original_language;
+        if (!empty($this->originalLanguage)) {
+            $current_context->language = $this->originalLanguage;
         }
-        if (!empty($this->original_currency)) {
-            $current_context->currency = $this->original_currency;
+        if (!empty($this->originalCurrency)) {
+            $current_context->currency = $this->originalCurrency;
         }
-        if ($this->original_shop_context === Shop::CONTEXT_SHOP && !empty($this->original_shop_id)) {
-            Shop::setContext(Shop::CONTEXT_SHOP, $this->original_shop_id);
-            if (!empty($this->original_shop_id)) {
-                $current_context->shop = new Shop($this->original_shop_id);
+        if ($this->originalShopContext === Shop::CONTEXT_SHOP && !empty($this->originalShopId)) {
+            Shop::setContext(Shop::CONTEXT_SHOP, $this->originalShopId);
+            if (!empty($this->originalShopId)) {
+                $current_context->shop = new Shop($this->originalShopId);
             }
-        } elseif ($this->original_shop_context === Shop::CONTEXT_GROUP && !empty($this->original_shop_group)) {
-            Shop::setContext(Shop::CONTEXT_GROUP, $this->original_shop_group);
-        } elseif ($this->original_shop_context === Shop::CONTEXT_ALL) {
+        } elseif ($this->originalShopContext === Shop::CONTEXT_GROUP && !empty($this->originalShopGroup)) {
+            Shop::setContext(Shop::CONTEXT_GROUP, $this->originalShopGroup);
+        } elseif ($this->originalShopContext === Shop::CONTEXT_ALL) {
             Shop::setContext(Shop::CONTEXT_ALL);
         }
         if (method_exists('ShopUrl', 'resetMainDomainCache')) {

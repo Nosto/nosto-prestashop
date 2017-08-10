@@ -39,10 +39,10 @@ class AdminNostoController extends ModuleAdminController
             return;
         }
 
-        $id_tab = NostoAdminTabManager::getAdminTabId(AdminModulesController::class);
+        $idTab = NostoAdminTabManager::getAdminTabId(AdminModulesController::class);
         /** @noinspection PhpUndefinedFieldInspection */
-        $id_employee = (int)$this->context->cookie->id_employee;
-        $token = Tools::getAdminToken('AdminModules' . $id_tab . $id_employee);
+        $idEmployee = (int)$this->context->cookie->id_employee;
+        $token = Tools::getAdminToken('AdminModules' . $idTab . $idEmployee);
         Tools::redirectAdmin('index.php?controller=AdminModules&configure=nostotagging&token=' . $token);
     }
 }

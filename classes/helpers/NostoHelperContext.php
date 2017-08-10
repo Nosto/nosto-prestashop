@@ -33,14 +33,14 @@ class NostoHelperContext
      * Runs a function in the scope of another shop's context and reverts back to the original
      * context after the the function invocation
      *
-     * @param int $id_lang the language identifier
-     * @param int $id_shop the shop identifier
+     * @param int $idLang the language identifier
+     * @param int $idShop the shop identifier
      * @param $callable
      * @return mixed the return value of the anonymous function
      */
-    public static function runInContext($id_lang, $id_shop, $callable)
+    public static function runInContext($idLang, $idShop, $callable)
     {
-        $context = new NostoContextManager($id_lang, $id_shop);
+        $context = new NostoContextManager($idLang, $idShop);
         $retval = null;
         try {
             $retval = $callable($context);

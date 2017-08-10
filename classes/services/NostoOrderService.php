@@ -56,19 +56,19 @@ class NostoOrderService extends AbstractNostoService
      */
     public function sendOrder(Order $order)
     {
-        $nosto_order = new NostoTaggingOrder();
-        $nosto_order->loadData($this->context, $order);
-        $id_shop_group = isset($order->id_shop_group) ? $order->id_shop_group : null;
-        $id_shop = isset($order->id_shop) ? $order->id_shop : null;
+        $nostoOrder = new NostoTaggingOrder();
+        $nostoOrder->loadData($this->context, $order);
+        $idShopGroup = isset($order->id_shop_group) ? $order->id_shop_group : null;
+        $idShop = isset($order->id_shop) ? $order->id_shop : null;
         // This is done out of context, so we need to specify the exact parameters to get the correct account.
-        $account = NostoHelperAccount::find($order->id_lang, $id_shop_group, $id_shop);
+        $account = NostoHelperAccount::find($order->id_lang, $idShopGroup, $idShop);
         if ($account !== null && $account->isConnectedToNosto()) {
-            $customer_id = NostoCustomerManager::getNostoId($order);
+            $customerId = NostoCustomerManager::getNostoId($order);
             try {
                 $operation = new NostoSDKOrderConfirmOperation($account);
-                $operation->send($nosto_order, $customer_id);
+                $operation->send($nostoOrder, $customerId);
                 try {
-                    $this->syncInventoryLevel($nosto_order);
+                    $this->syncInventoryLevel($nostoOrder);
                 } catch (Exception $e) {
                     NostoHelperLogger::error($e, 'Failed to synchronize products after order');
                 }
@@ -80,7 +80,7 @@ class NostoOrderService extends AbstractNostoService
 
     /**
      * Sends product updates to Nosto to keep up with the inventory level
-     *
+     *git s
      * @param NostoTaggingOrder $order
      */
     private function syncInventoryLevel(NostoTaggingOrder $order)

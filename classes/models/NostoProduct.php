@@ -43,34 +43,34 @@ class NostoProduct extends NostoSDKProduct
 
         $nostoProduct = new NostoProduct();
         $base_currency = NostoHelperCurrency::getBaseCurrency($context);
-        $id_lang = $context->language->id;
-        $id_shop = null;
-        $id_shop_group = null;
+        $idLang = $context->language->id;
+        $idShop = null;
+        $idShopGroup = null;
         if ($context->shop instanceof Shop) {
-            $id_shop = $context->shop->id;
-            $id_shop_group = $context->shop->id_shop_group;
+            $idShop = $context->shop->id;
+            $idShopGroup = $context->shop->id_shop_group;
         }
 
-        if (NostoHelperConfig::useMultipleCurrencies($id_lang, $id_shop_group, $id_shop) === true) {
+        if (NostoHelperConfig::useMultipleCurrencies($idLang, $idShopGroup, $idShop) === true) {
             $nostoProduct->setVariationId($base_currency->iso_code);
             $tagging_currency = $base_currency;
         } else {
             $tagging_currency = $context->currency;
         }
-        $nostoProduct->setUrl(NostoHelperUrl::getProductUrl($product, $id_lang, $id_shop));
+        $nostoProduct->setUrl(NostoHelperUrl::getProductUrl($product, $idLang, $idShop));
         $nostoProduct->setProductId((string)$product->id);
         $nostoProduct->setName($product->name);
         $nostoProduct->setPriceCurrencyCode(Tools::strtoupper($tagging_currency->iso_code));
         $nostoProduct->setAvailability(self::checkAvailability($product));
-        $nostoProduct->setTag1(self::buildTags($product, $id_lang));
-        $nostoProduct->amendCategories($product, $id_lang);
+        $nostoProduct->setTag1(self::buildTags($product, $idLang));
+        $nostoProduct->amendCategories($product, $idLang);
         $nostoProduct->setDescription($product->description_short . $product->description);
         $nostoProduct->setInventoryLevel((int)$product->quantity);
         $nostoProduct->setPrice(self::getPriceInclTax($product, $context, $tagging_currency));
         $nostoProduct->setListPrice(self::getListPriceInclTax($product, $context, $tagging_currency));
-        $nostoProduct->amendBrand($product, $id_lang);
-        $nostoProduct->amendImage($product, $id_lang);
-        $nostoProduct->amendAlternateImages($product, $id_lang);
+        $nostoProduct->amendBrand($product, $idLang);
+        $nostoProduct->amendImage($product, $idLang);
+        $nostoProduct->amendAlternateImages($product, $idLang);
         $nostoProduct->amendPrices($product);
 
         Hook::exec(
@@ -92,9 +92,9 @@ class NostoProduct extends NostoSDKProduct
      */
     protected function amendPrices(Product $product)
     {
-        $supplier_cost = NostoHelperPrice::getProductWholesalePriceInclTax($product);
-        if ($supplier_cost !== null && is_numeric($supplier_cost)) {
-            $this->setSupplierCost($supplier_cost);
+        $supplierCost = NostoHelperPrice::getProductWholesalePriceInclTax($product);
+        if ($supplierCost !== null && is_numeric($supplierCost)) {
+            $this->setSupplierCost($supplierCost);
         }
     }
 
@@ -108,13 +108,13 @@ class NostoProduct extends NostoSDKProduct
     {
         $images = Image::getImages((int)$id_lang, (int)$product->id);
         foreach ($images as $image) {
-            $image_type = NostoHelperImage::getTaggingImageTypeName($id_lang);
-            if (empty($image_type)) {
+            $imageType = NostoHelperImage::getTaggingImageTypeName($id_lang);
+            if (empty($imageType)) {
                 return;
             }
 
             $link = NostoHelperLink::getLink();
-            $url = $link->getImageLink($product->link_rewrite, $image['id_image'], $image_type);
+            $url = $link->getImageLink($product->link_rewrite, $image['id_image'], $imageType);
             if ($url) {
                 $this->addAlternateImageUrls($url);
             }
