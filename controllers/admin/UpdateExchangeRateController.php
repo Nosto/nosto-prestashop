@@ -32,7 +32,7 @@ class UpdateExchangeRateController extends NostoBaseController
      */
     public function execute()
     {
-        $language_id = $this->getLanguageId();
+        $languageId = $this->getLanguageId();
 
         /** @var NostoTaggingHelperFlashMessage $flashHelper */
         $flashHelper = Nosto::helper('nosto_tagging/flash_message');
@@ -44,10 +44,10 @@ class UpdateExchangeRateController extends NostoBaseController
             $shopGroupId = $this->context->shop->id_shop_group;
         }
 
-        $nosto_account = NostoTaggingHelperAccount::find($language_id, $shopGroupId, $shopId);
-        if ($nosto_account &&
+        $nostoAccount = NostoTaggingHelperAccount::find($languageId, $shopGroupId, $shopId);
+        if ($nostoAccount &&
             NostoTaggingHelperAccount::updateCurrencyExchangeRates(
-                $nosto_account,
+                $nostoAccount,
                 $this->context
             )
         ) {
@@ -58,7 +58,7 @@ class UpdateExchangeRateController extends NostoBaseController
                 )
             );
         } else {
-            if (!$nosto_account->getApiToken(NostoApiToken::API_EXCHANGE_RATES)) {
+            if (!$nostoAccount->getApiToken(NostoApiToken::API_EXCHANGE_RATES)) {
                 $message = 'Failed to update exchange rates to Nosto due to a missing API token. 
                             Please, reconnect your account with Nosto';
             } else {

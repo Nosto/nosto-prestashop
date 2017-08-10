@@ -53,11 +53,11 @@ class CreateAccountController extends NostoBaseController
         } else {
             try {
                 if (Tools::isSubmit('nostotagging_account_details')) {
-                    $account_details = Tools::jsonDecode(Tools::getValue('nostotagging_account_details'));
+                    $accountDetails = Tools::jsonDecode(Tools::getValue('nostotagging_account_details'));
                 } else {
-                    $account_details = false;
+                    $accountDetails = false;
                 }
-                $this->createAccount($this->getLanguageId(), $accountEmail, $account_details);
+                $this->createAccount($this->getLanguageId(), $accountEmail, $accountDetails);
                 $configHelper->clearCache();
                 $flashHelper->add(
                     'success',
