@@ -140,7 +140,8 @@ class NostoCustomerManager
     {
         $table = self::getCustomerLinkTableName();
         $cartId = (int)$order->id_cart;
-        $sql = 'SELECT `id_nosto_customer` FROM `' . $table . '` WHERE `id_cart` = ' . $cartId . ' ORDER BY `date_add` ASC';
+        $sql = 'SELECT `id_nosto_customer` FROM `' . $table . '` WHERE `id_cart` = ' . $cartId .
+            ' ORDER BY `date_add` ASC';
 
         return Db::getInstance()->getValue($sql);
     }

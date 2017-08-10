@@ -39,16 +39,16 @@ class NostoHelperLogger
      *
      * @param string $message the message.
      * @param int $severity what kind of log to create (use class constants).
-     * @param null|int $error_code the error code.
-     * @param null|string $object_type the object type affected.
-     * @param null|int $object_id the object id affected.
+     * @param null|int $errorCode the error code.
+     * @param null|string $objectType the object type affected.
+     * @param null|int $objectId the object id affected.
      */
     public static function log(
         $message,
         $severity = self::SEVERITY_INFO,
-        $error_code = null,
-        $object_type = null,
-        $object_id = null
+        $errorCode = null,
+        $objectType = null,
+        $objectId = null
     ) {
         $logger = (class_exists('PrestaShopLogger') ? 'PrestaShopLogger' : (class_exists('Logger') ? 'Logger' : null));
         if (!empty($logger)) {
@@ -62,9 +62,9 @@ class NostoHelperLogger
                 array($logger, 'addLog'),
                 $message,
                 $severity,
-                $error_code,
-                $object_type,
-                $object_id,
+                $errorCode,
+                $objectType,
+                $objectId,
                 true
             );
         }

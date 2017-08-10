@@ -52,12 +52,12 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
             if (!Validate::isLoadedObject($product)) {
                 Controller::getController('PageNotFoundController')->run();
             }
-            $nosto_product = NostoProduct::loadData($context, $product);
-            $collection->append($nosto_product);
+            $nostoProduct = NostoProduct::loadData($context, $product);
+            $collection->append($nostoProduct);
         } else {
-            foreach ($this->getProductIds() as $id_product) {
+            foreach ($this->getProductIds() as $idProduct) {
                 $product = new Product(
-                    $id_product,
+                    $idProduct,
                     true,
                     $context->language->id,
                     $context->shop->id
@@ -66,8 +66,8 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
                     continue;
                 }
 
-                $nosto_product = NostoProduct::loadData($context, $product);
-                $collection->append($nosto_product);
+                $nostoProduct = NostoProduct::loadData($context, $product);
+                $collection->append($nostoProduct);
             }
         }
         $this->encryptOutput($collection);

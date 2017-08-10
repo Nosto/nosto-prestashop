@@ -40,7 +40,7 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_1_1_0($object)
 {
-    $create_table = 'CREATE TABLE IF NOT EXISTS `'.pSQL(_DB_PREFIX_).'nostotagging_customer_link` (
+    $createTable = 'CREATE TABLE IF NOT EXISTS `'.pSQL(_DB_PREFIX_).'nostotagging_customer_link` (
 						`id_customer` INT(10) UNSIGNED NOT NULL,
 						`id_nosto_customer` VARCHAR(255) NOT NULL,
 						`date_add` DATETIME NOT NULL,
@@ -48,7 +48,7 @@ function upgrade_module_1_1_0($object)
 						PRIMARY KEY (`id_customer`, `id_nosto_customer`)
 					) ENGINE '.pSQL(_MYSQL_ENGINE_);
 
-    return Db::getInstance()->execute($create_table)
+    return Db::getInstance()->execute($createTable)
         && $object->registerHook('actionPaymentConfirmation')
         && $object->registerHook('displayPaymentTop')
         && $object->registerHook('displayHome')

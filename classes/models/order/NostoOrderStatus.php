@@ -39,16 +39,16 @@ class NostoOrderStatus extends NostoSDKOrderStatus
         // We prefer to use the English state name for the status code, as we
         // use it as an unique identifier of that particular order status.
         // The status label will primarily be in the language of the order.
-        $id_lang = (int)Language::getIdByIso('en');
-        if (empty($id_lang)) {
-            $id_lang = (int)$order->id_lang;
+        $idLang = (int)Language::getIdByIso('en');
+        if (empty($idLang)) {
+            $idLang = (int)$order->id_lang;
         }
 
-        $state = $order->getCurrentStateFull($id_lang);
+        $state = $order->getCurrentStateFull($idLang);
         if (!empty($state['name'])) {
             $stateName = $state['name'];
             $status->setCode(self::convertNameToCode($stateName));
-            if ($id_lang !== (int)$order->id_lang) {
+            if ($idLang !== (int)$order->id_lang) {
                 $state = $order->getCurrentStateFull((int)$order->id_lang);
                 if (!empty($state['name'])) {
                     $stateName = $state['name'];

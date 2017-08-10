@@ -39,8 +39,8 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_2_1_0($object)
 {
-    $drop_table = 'DROP TABLE IF EXISTS `'.pSQL(_DB_PREFIX_).'nostotagging_customer_link`';
-    $create_table = 'CREATE TABLE IF NOT EXISTS `'.pSQL(_DB_PREFIX_).'nostotagging_customer_link` (
+    $dropTable = 'DROP TABLE IF EXISTS `'.pSQL(_DB_PREFIX_).'nostotagging_customer_link`';
+    $createTable = 'CREATE TABLE IF NOT EXISTS `'.pSQL(_DB_PREFIX_).'nostotagging_customer_link` (
 						`id_cart` INT(10) UNSIGNED NOT NULL,
 						`id_nosto_customer` VARCHAR(255) NOT NULL,
 						`date_add` DATETIME NOT NULL,
@@ -52,8 +52,8 @@ function upgrade_module_2_1_0($object)
         && $object->unregisterHook('actionPaymentConfirmation');
 
     // We just drop the table and re-create as it's easier and we don't want the data we loose.
-    return Db::getInstance()->execute($drop_table)
-        && Db::getInstance()->execute($create_table)
+    return Db::getInstance()->execute($dropTable)
+        && Db::getInstance()->execute($createTable)
         && $object->unregisterHook('paymentConfirm')
         && $object->registerHook('postUpdateOrderStatus')
         && $hooks;
