@@ -59,7 +59,7 @@ abstract class NostoBaseController extends ModuleAdminController
 
     /**
      * Gets the current admin config language data.
-     *
+     * TODO it is copied from nostotagging.php. move it to helper after refactoring
      * @param array $languages list of valid languages.
      * @param int $id_lang if a specific language is required.
      * @return array the language data array.
@@ -94,8 +94,6 @@ abstract class NostoBaseController extends ModuleAdminController
         $token = Tools::getAdminToken('AdminModules' . $tabId . $employeeId);
         Tools::redirectAdmin('index.php?controller=AdminModules&configure=nostotagging&token=' . $token);
     }
-
-    //TODO it is copied from nostotagging.php. move it to helper after refactoring
 
     /**
      * @return bool should it be redirect to admin after executing this method.Return true means redirect to admin url
