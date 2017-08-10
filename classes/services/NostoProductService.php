@@ -129,29 +129,29 @@ class NostoProductService extends AbstractNostoService
             self::$processedProducts[] = $product->id;
             foreach ($this->getAccountData() as $data) {
                 /** @var Nosto\Object\Signup\Account $account */
-                list($account, $id_shop, $id_lang) = $data;
-                $account_name = $account->getName();
-                $nosto_product = $this->loadNostoProduct($product->id, $id_lang, $id_shop);
-                if ($nosto_product instanceof NostoProduct === false) {
+                list($account, $idShop, $idLang) = $data;
+                $accountName = $account->getName();
+                $nostoProduct = $this->loadNostoProduct($product->id, $idLang, $idShop);
+                if ($nostoProduct instanceof NostoProduct === false) {
                     continue;
                 }
-                if (!isset($productsInStore[$account_name])) {
-                    $productsInStore[$account_name] = array();
+                if (!isset($productsInStore[$accountName])) {
+                    $productsInStore[$accountName] = array();
                 }
-                if (!isset($productsInStore[$account_name][self::KEY_ACCOUNT])) {
-                    $productsInStore[$account_name][self::KEY_ACCOUNT] = $account;
+                if (!isset($productsInStore[$accountName][self::KEY_ACCOUNT])) {
+                    $productsInStore[$accountName][self::KEY_ACCOUNT] = $account;
                 }
-                if (!isset($productsInStore[$account_name][self::KEY_DATA])) {
-                    $productsInStore[$account_name][self::KEY_DATA] = array();
+                if (!isset($productsInStore[$accountName][self::KEY_DATA])) {
+                    $productsInStore[$accountName][self::KEY_DATA] = array();
                 }
 
-                if (!isset($productsInStore[$account_name][self::KEY_DATA][$batch])) {
-                    $productsInStore[$account_name][self::KEY_DATA][$batch] = array();
+                if (!isset($productsInStore[$accountName][self::KEY_DATA][$batch])) {
+                    $productsInStore[$accountName][self::KEY_DATA][$batch] = array();
                 }
-                $productsInStore[$account_name][self::KEY_DATA][$batch][] = $nosto_product;
+                $productsInStore[$accountName][self::KEY_DATA][$batch][] = $nostoProduct;
             }
         }
-        foreach ($productsInStore as $nosto_account_name => $data) {
+        foreach ($productsInStore as $nostoAccountName => $data) {
             $nosto_account = $data[self::KEY_ACCOUNT];
             foreach ($data[self::KEY_DATA] as $batchIndex => $batches) {
                 $op = new NostoSDKUpsertProductOperation($nosto_account);

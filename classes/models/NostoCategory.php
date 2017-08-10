@@ -56,11 +56,11 @@ class NostoCategory extends AbstractNostoModel
 
         $categoryList = array();
         if ((int)$category->active === 1) {
-            foreach ($category->getParentsCategories($context->language->id) as $parent_category) {
-                if (isset($parent_category['name'], $parent_category['active'])
-                    && (int)$parent_category['active'] === 1
+            foreach ($category->getParentsCategories($context->language->id) as $parentCategory) {
+                if (isset($parentCategory['name'], $parentCategory['active'])
+                    && (int)$parentCategory['active'] === 1
                 ) {
-                    $categoryList[] = (string)$parent_category['name'];
+                    $categoryList[] = (string)$parentCategory['name'];
                 }
             }
         }

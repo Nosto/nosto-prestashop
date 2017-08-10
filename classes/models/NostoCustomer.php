@@ -59,13 +59,13 @@ class NostoCustomer extends NostoSDKUser
      */
     private function populateCustomerReference(Customer $customer)
     {
-        $customer_reference = NostoCustomerManager::getCustomerReference($customer);
-        if (!empty($customer_reference)) {
-            $this->customerReference = $customer_reference;
+        $customerReference = NostoCustomerManager::getCustomerReference($customer);
+        if (!empty($customerReference)) {
+            $this->customerReference = $customerReference;
         } else {
-            $customer_reference = NostoCustomerManager::generateCustomerReference($customer);
-            NostoCustomerManager::saveCustomerReference($customer, $customer_reference);
-            $this->customerReference = $customer_reference;
+            $customerReference = NostoCustomerManager::generateCustomerReference($customer);
+            NostoCustomerManager::saveCustomerReference($customer, $customerReference);
+            $this->customerReference = $customerReference;
         }
     }
 
