@@ -49,7 +49,7 @@ class NostoHeaderContent
             'account_name' => $account->getName(),
             'nosto_version' => $module->version,
             'nosto_language' => Tools::strtolower(Context::getContext()->language->iso_code),
-            'add_to_cart_url' => $link->getPageLink('cart.php'),
+            'add_to_cart_url' => $link->getPageLink('NostoCart.php'),
             'static_token' => Tools::getToken(false),
             'disable_autoload' => (bool)!empty($hiddenElements)
         ));

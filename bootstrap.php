@@ -56,7 +56,7 @@ class NostoBootstrap
         require_once($moduleDir . '/classes/models/meta/NostoAccountOwner.php');
         require_once($moduleDir . '/classes/models/NostoOAuth.php');
         require_once($moduleDir . '/classes/models/AbstractNostoModel.php');
-        require_once($moduleDir . '/classes/models/cart.php');
+        require_once($moduleDir . '/classes/models/NostoCart.php');
         require_once($moduleDir . '/classes/models/NostoCategory.php');
         require_once($moduleDir . '/classes/models/NostoCustomer.php');
         require_once($moduleDir . '/classes/models/NostoTaggingOrder.php');
