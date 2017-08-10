@@ -376,26 +376,25 @@ class NostoTagging extends Module
             $iframe_installation_url = null;
         }
 
-
         $employeeId = (int)$this->context->cookie->id_employee;
         $createAccountUrl = NostoTaggingHelperUrl::getControllerUrl(
-            NostoTaggingHelperAdminTab::CREATE_ACCOUNT_CLASS,
+            NostoTaggingHelperAdminTab::NOSTO_CREATE_ACCOUNT_CLASS,
             $employeeId
         );
         $connectAccountUrl = NostoTaggingHelperUrl::getControllerUrl(
-            NostoTaggingHelperAdminTab::CONNECT_ACCOUNT_CLASS,
+            NostoTaggingHelperAdminTab::NOSTO_CONNECT_ACCOUNT_CLASS,
             $employeeId
         );
         $deleteAccountUrl = NostoTaggingHelperUrl::getControllerUrl(
-            NostoTaggingHelperAdminTab::DELETE_ACCOUNT_CLASS,
+            NostoTaggingHelperAdminTab::NOSTO_DELETE_ACCOUNT_CLASS,
             $employeeId
         );
         $updateExchangeRateUrl = NostoTaggingHelperUrl::getControllerUrl(
-            NostoTaggingHelperAdminTab::UPDATE_EXCHANGE_RATE_CLASS,
+            NostoTaggingHelperAdminTab::NOSTO_UPDATE_EXCHANGE_RATE_CLASS,
             $employeeId
         );
         $advanceSettingsUrl = NostoTaggingHelperUrl::getControllerUrl(
-            NostoTaggingHelperAdminTab::NOSTO_ADVANCE_SETTING_CLASS,
+            NostoTaggingHelperAdminTab::NOSTO_ADVANCED_SETTING_CLASS,
             $employeeId
         );
 

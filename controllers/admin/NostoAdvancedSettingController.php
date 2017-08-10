@@ -25,7 +25,7 @@
 
 require_once 'NostoBaseController.php';
 
-class NostoAdvanceSettingController extends NostoBaseController
+class NostoAdvancedSettingController extends NostoBaseController
 {
     /**
      * @inheritdoc

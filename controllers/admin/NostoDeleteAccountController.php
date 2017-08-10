@@ -22,23 +22,23 @@
  * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
+
 require_once 'NostoBaseController.php';
 
-class ConnectAccountController extends NostoBaseController
+class NostoDeleteAccountController extends NostoBaseController
 {
     /**
      * @inheritdoc
      */
     public function execute()
     {
-        $meta = new NostoTaggingMetaOauth();
-        $meta->setModuleName(NostoTagging::MODULE_NAME);
-        //todo prestashop 1.5.0.0 needs this module path
-//        $meta->setModulePath($this->_path);
-        $meta->loadData($this->context, $this->getLanguageId());
-        $client = new NostoOAuthClient($meta);
-        Tools::redirect($client->getAuthorizationUrl(), '');
+        /** @var NostoTaggingHelperConfig $configHelper */
+        $configHelper = Nosto::helper('nosto_tagging/config');
 
-        return false;
+        $account = NostoTaggingHelperAccount::findByContext($this->context);
+        $configHelper->clearCache();
+        NostoTaggingHelperAccount::delete($account, $this->getLanguageId());
+
+        return true;
     }
 }

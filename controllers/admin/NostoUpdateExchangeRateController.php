@@ -25,7 +25,7 @@
 
 require_once 'NostoBaseController.php';
 
-class UpdateExchangeRateController extends NostoBaseController
+class NostoUpdateExchangeRateController extends NostoBaseController
 {
     /**
      * @inheritdoc

@@ -29,7 +29,7 @@ require_once 'NostoBaseController.php';
  * Class CreateAccountController
  * @property Context $context
  */
-class CreateAccountController extends NostoBaseController
+class NostoCreateAccountController extends NostoBaseController
 {
     /**
      * @inheritdoc

@@ -278,13 +278,11 @@
             }
 
             window.Nosto.updateExchangeRateToNosto = function() {
-                //todo, why not ajax request?
                 var action = "{/literal}{$nostotagging_update_exchange_rate|escape:javascript}{literal}";
                 submitAction(action);
             }
 
             window.Nosto.saveAdvanceSettings = function() {
-                //todo, why not ajax request?
                 var action = "{/literal}{$nostotagging_advance_settings|escape:javascript}{literal}";
                 submitAction(action);
             }
