@@ -39,8 +39,11 @@ class NostoCheckTokenNotification extends NostoNotification
     public static function check(Shop $shop, Language $language)
     {
         $idShopGroup = isset($shop->id_shop_group) ? $shop->id_shop_group : null;
-        $connected = NostoHelperAccount::existsAndIsConnected($language->id, $idShopGroup,
-            $shop->id);
+        $connected = NostoHelperAccount::existsAndIsConnected(
+            $language->id,
+            $idShopGroup,
+            $shop->id
+        );
         if ($connected) {
             $account = NostoHelperAccount::find($language->id);
             if ($account instanceof NostoSDKAccount && $account->hasMissingTokens()) {

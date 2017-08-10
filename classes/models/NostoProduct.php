@@ -137,8 +137,11 @@ class NostoProduct extends NostoSDKProduct
             }
 
             $link = NostoHelperLink::getLink();
-            $url = $link->getImageLink($product->link_rewrite, $product->id . '-' . $image_id,
-                $image_type);
+            $url = $link->getImageLink(
+                $product->link_rewrite,
+                $product->id . '-' . $image_id,
+                $image_type
+            );
             if ($url) {
                 $this->setImageUrl($url);
             }
@@ -183,8 +186,12 @@ class NostoProduct extends NostoSDKProduct
      */
     public static function getPriceInclTax(Product $product, Context $context, Currency $currency)
     {
-        return NostoHelperPrice::calcPrice($product->id, $currency, $context,
-            array('user_reduction' => true));
+        return NostoHelperPrice::calcPrice(
+            $product->id,
+            $currency,
+            $context,
+            array('user_reduction' => true)
+        );
     }
 
     /**
@@ -197,8 +204,12 @@ class NostoProduct extends NostoSDKProduct
      */
     public static function getListPriceInclTax(Product $product, Context $context, Currency $currency)
     {
-        return NostoHelperPrice::calcPrice($product->id, $currency, $context,
-            array('user_reduction' => false));
+        return NostoHelperPrice::calcPrice(
+            $product->id,
+            $currency,
+            $context,
+            array('user_reduction' => false)
+        );
     }
 
     /**

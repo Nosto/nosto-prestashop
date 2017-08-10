@@ -218,8 +218,10 @@ class NostoTaggingOrder extends NostoSDKOrder
 
             if ($total_discounts_tax_incl > 0) {
                 // Subtract possible gift product price from total as gifts are tagged with price zero (0).
-                $total_discounts_tax_incl = Tools::ps_round($total_discounts_tax_incl - $total_gift_tax_incl,
-                    2);
+                $total_discounts_tax_incl = Tools::ps_round(
+                    $total_discounts_tax_incl - $total_gift_tax_incl,
+                    2
+                );
                 if ($total_discounts_tax_incl > 0) {
                     $purchased_item = new NostoOrderPurchasedItem();
                     $purchased_item->setProductId("-1");

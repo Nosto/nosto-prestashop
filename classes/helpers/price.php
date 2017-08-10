@@ -73,7 +73,10 @@ class NostoHelperPrice
             $id_address = (int)$item['id_address_delivery'];
         }
 
-        return NostoHelperPrice::calcPrice((int)$item['id_product'], $currency, $context,
+        return NostoHelperPrice::calcPrice(
+            (int)$item['id_product'],
+            $currency,
+            $context,
             array(
                 'user_reduction' => true,
                 'id_product_attribute' => (
@@ -82,7 +85,8 @@ class NostoHelperPrice
                 'id_customer' => ((int)$cart->id_customer ? (int)$cart->id_customer : null),
                 'id_cart' => (int)$cart->id,
                 'id_address' => (Address::addressExists($id_address) ? (int)$id_address : null),
-            ));
+            )
+        );
     }
 
     /**

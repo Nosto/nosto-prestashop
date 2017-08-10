@@ -23,9 +23,11 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-class NostoBootstrap {
+class NostoBootstrap
+{
 
-    public static function init($moduleDir, $moduleVersion) {
+    public static function init($moduleDir, $moduleVersion)
+    {
         require_once($moduleDir . '/libs/autoload.php');
         require_once($moduleDir . '/classes/models/NostoNotification.php');
         require_once($moduleDir . '/classes/models/NostoExchangeRates.php');

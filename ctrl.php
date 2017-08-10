@@ -65,13 +65,13 @@ if (!defined('_PS_VERSION_')) {
         // ControllerFactory is deprecated since Prestashop 1.5 and was removed in 1.7
         if (!method_exists('ControllerFactory', 'getController')) {
             switch ($controller) {
-                case 'product':
-                    $nosto_controller = new NostoTaggingProductModuleFrontController();
+            case 'product':
+                $nosto_controller = new NostoTaggingProductModuleFrontController();
                     break;
-                case 'order':
-                    $nosto_controller = new NostoTaggingOrderModuleFrontController();
+            case 'order':
+                $nosto_controller = new NostoTaggingOrderModuleFrontController();
                     break;
-                default:
+            default:
                     die();
             }
 

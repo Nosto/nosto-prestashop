@@ -201,8 +201,10 @@ class NostoProductService extends AbstractNostoService
 
     private function deleteProduct(Product $product)
     {
-        if (!Validate::isLoadedObject($product) || in_array($product->id,
-                self::$processedProducts)
+        if (!Validate::isLoadedObject($product) || in_array(
+            $product->id,
+            self::$processedProducts
+        )
         ) {
             return;
         }
@@ -240,7 +242,9 @@ class NostoProductService extends AbstractNostoService
             return null;
         }
 
-        return NostoHelperContext::runInContext($idLang, $idShop,
+        return NostoHelperContext::runInContext(
+            $idLang,
+            $idShop,
             function ($context) use ($product) {
                 return NostoProduct::loadData($context, $product);
             }

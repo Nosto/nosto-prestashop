@@ -145,8 +145,12 @@ class NostoHelperUrl
     {
         try {
             $params = array('nostodebug' => 'true');
-            return NostoHelperUrl::getPageUrl('NostoOrderTagging.php', $id_lang, null,
-                $params);
+            return NostoHelperUrl::getPageUrl(
+                'NostoOrderTagging.php',
+                $id_lang,
+                null,
+                $params
+            );
         } catch (Exception $e) {
             // Return empty on failure
             return '';
@@ -205,8 +209,10 @@ class NostoHelperUrl
             $id_shop = (int)Context::getContext()->shop->id;
         }
 
-        if (version_compare(_PS_VERSION_, '1.5.0.0') === -1 || version_compare(_PS_VERSION_,
-                '1.5.5.0') >= 0
+        if (version_compare(_PS_VERSION_, '1.5.0.0') === -1 || version_compare(
+            _PS_VERSION_,
+            '1.5.5.0'
+        ) >= 0
         ) {
             /** @var LinkCore $link */
             $link = NostoHelperLink::getLink();
@@ -255,8 +261,10 @@ class NostoHelperUrl
             $id_shop = (int)Context::getContext()->shop->id;
         }
 
-        if (version_compare(_PS_VERSION_, '1.5.0.0') === -1 || version_compare(_PS_VERSION_,
-                '1.5.5.0') >= 0
+        if (version_compare(_PS_VERSION_, '1.5.0.0') === -1 || version_compare(
+            _PS_VERSION_,
+            '1.5.5.0'
+        ) >= 0
         ) {
             /** @var LinkCore $link */
             $link = NostoHelperLink::getLink();
@@ -305,8 +313,10 @@ class NostoHelperUrl
             $id_shop = (int)Context::getContext()->shop->id;
         }
 
-        if (version_compare(_PS_VERSION_, '1.5.0.0') === -1 || version_compare(_PS_VERSION_,
-                '1.5.5.0') >= 0
+        if (version_compare(_PS_VERSION_, '1.5.0.0') === -1 || version_compare(
+            _PS_VERSION_,
+            '1.5.5.0'
+        ) >= 0
         ) {
             /** @var LinkCore $link */
             $link = NostoHelperLink::getLink();
@@ -408,7 +418,9 @@ class NostoHelperUrl
      */
     public static function getIframeOrigin()
     {
-        return NostoSDK::getEnvVariable('NOSTO_IFRAME_ORIGIN_REGEXP',
-            self::DEFAULT_IFRAME_ORIGIN_REGEXP);
+        return NostoSDK::getEnvVariable(
+            'NOSTO_IFRAME_ORIGIN_REGEXP',
+            self::DEFAULT_IFRAME_ORIGIN_REGEXP
+        );
     }
 }

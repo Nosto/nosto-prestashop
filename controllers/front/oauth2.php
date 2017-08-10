@@ -79,8 +79,12 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
      */
     public function save(Nosto\Types\Signup\AccountInterface $account)
     {
-        NostoHelperAccount::save($account, $this->id_lang, $this->id_shop_group,
-            $this->id_shop);
+        NostoHelperAccount::save(
+            $account,
+            $this->id_lang,
+            $this->id_shop_group,
+            $this->id_shop
+        );
     }
 
     /**
@@ -93,8 +97,10 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
     {
         $admin_url = NostoHelperConfig::getAdminUrl();
         if (!empty($admin_url)) {
-            $admin_url = \Nosto\Request\Http\HttpRequest::replaceQueryParamsInUrl($params,
-                $admin_url);
+            $admin_url = \Nosto\Request\Http\HttpRequest::replaceQueryParamsInUrl(
+                $params,
+                $admin_url
+            );
             Tools::redirect($admin_url, '');
             die;
         }

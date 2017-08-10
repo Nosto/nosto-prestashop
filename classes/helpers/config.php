@@ -77,8 +77,10 @@ class NostoHelperConfig
     ) {
         $callback = array(
             'Configuration',
-            ($global && method_exists('Configuration',
-                    'updateGlobalValue')) ? 'updateGlobalValue' : 'updateValue'
+            ($global && method_exists(
+                'Configuration',
+                'updateGlobalValue'
+            )) ? 'updateGlobalValue' : 'updateValue'
         );
         // Store this value for given language only if specified.
         if (!is_array($value) && !empty($lang_id)) {
@@ -210,7 +212,8 @@ class NostoHelperConfig
      * @param null|int $id_shop the shop identifier for which to save the configuration
      * @return bool true if saving the configuration was successful, false otherwise
      */
-    public static function saveToken($token_name, $token_value, $id_lang, $id_shop_group = null, $id_shop = null) {
+    public static function saveToken($token_name, $token_value, $id_lang, $id_shop_group = null, $id_shop = null)
+    {
         return self::write(self::getTokenConfigKey($token_name), $token_value, $id_lang, false, $id_shop_group, $id_shop);
     }
 
@@ -321,7 +324,8 @@ class NostoHelperConfig
      * @param null|int $id_shop the shop identifier for which to save the configuration
      * @return bool true if saving the configuration was successful, false otherwise
      */
-    public static function saveMultiCurrencyMethod($method, $id_lang, $id_shop_group = null, $id_shop = null) {
+    public static function saveMultiCurrencyMethod($method, $id_lang, $id_shop_group = null, $id_shop = null)
+    {
         return self::write(self::MULTI_CURRENCY_METHOD, $method, $id_lang, false, $id_shop_group, $id_shop);
     }
 
@@ -334,7 +338,8 @@ class NostoHelperConfig
      * @param null|int $id_shop the shop identifier for which to save the configuration
      * @return bool true if saving the configuration was successful, false otherwise
      */
-    public static function saveNostoTaggingRenderPosition($method, $id_lang, $id_shop_group = null, $id_shop = null) {
+    public static function saveNostoTaggingRenderPosition($method, $id_lang, $id_shop_group = null, $id_shop = null)
+    {
         return self::write(self::NOSTOTAGGING_POSITION, $method, $id_lang, false, $id_shop_group, $id_shop);
     }
 

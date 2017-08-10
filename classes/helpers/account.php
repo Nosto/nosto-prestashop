@@ -56,12 +56,12 @@ class NostoHelperAccount
         if ($success) {
             foreach ($account->getTokens() as $token) {
                 $success = $success && NostoHelperConfig::saveToken(
-                        $token->getName(),
-                        $token->getValue(),
-                        $id_lang,
-                        $id_shop_group,
-                        $id_shop
-                    );
+                    $token->getName(),
+                    $token->getValue(),
+                    $id_lang,
+                    $id_shop_group,
+                    $id_shop
+                );
             }
         }
         return $success;
@@ -80,8 +80,11 @@ class NostoHelperAccount
      */
     public static function delete(Context $context, NostoSDKAccount $account, $id_lang, $id_shop_group = null, $id_shop = null)
     {
-        $success = NostoHelperConfig::deleteAllFromContext($id_lang, $id_shop_group,
-            $id_shop);
+        $success = NostoHelperConfig::deleteAllFromContext(
+            $id_lang,
+            $id_shop_group,
+            $id_shop
+        );
         $currentUser = NostoCurrentUser::loadData($context);
         if ($success) {
             $token = $account->getApiToken('sso');
@@ -112,8 +115,13 @@ class NostoHelperAccount
                 if ($account === null) {
                     continue;
                 }
-                self::delete(Context::getContext(), $account, $language['id_lang'], $id_shop_group,
-                    $id_shop);
+                self::delete(
+                    Context::getContext(),
+                    $account,
+                    $language['id_lang'],
+                    $id_shop_group,
+                    $id_shop
+                );
             }
         }
         return true;
@@ -143,15 +151,21 @@ class NostoHelperAccount
      */
     public static function find($lang_id = null, $id_shop_group = null, $id_shop = null)
     {
-        $account_name = NostoHelperConfig::getAccountName($lang_id, $id_shop_group,
-            $id_shop);
+        $account_name = NostoHelperConfig::getAccountName(
+            $lang_id,
+            $id_shop_group,
+            $id_shop
+        );
         if (!empty($account_name)) {
             $account = new NostoSDKAccount($account_name);
             $tokens = array();
             foreach (NostoSDKAPIToken::getApiTokenNames() as $token_name) {
-                $token_value = NostoHelperConfig::getToken($token_name, $lang_id,
+                $token_value = NostoHelperConfig::getToken(
+                    $token_name,
+                    $lang_id,
                     $id_shop_group,
-                    $id_shop);
+                    $id_shop
+                );
                 if (!empty($token_value)) {
                     $tokens[$token_name] = $token_value;
                 }

@@ -40,13 +40,17 @@ class NostoRatesService
             $idShopGroup = isset($shop['id_shop_group']) ? (int)$shop['id_shop_group'] : null;
             foreach (Language::getLanguages(true, $idShop) as $language) {
                 $idLang = (int)$language['id_lang'];
-                $useMultipleCurrencies = NostoHelperConfig::useMultipleCurrencies($idLang,
-                    $idShopGroup, $idShop);
+                $useMultipleCurrencies = NostoHelperConfig::useMultipleCurrencies(
+                    $idLang,
+                    $idShopGroup,
+                    $idShop
+                );
                 if ($useMultipleCurrencies) {
                     $nostoAccount = NostoHelperAccount::find($idLang, $idShopGroup, $idShop);
                     if (!is_null($nostoAccount)) {
-
-                        NostoHelperContext::runInContext($idLang, $idShop,
+                        NostoHelperContext::runInContext(
+                            $idLang,
+                            $idShop,
                             function ($context) use ($nostoAccount) {
                                 if (!$this->updateCurrencyExchangeRates($nostoAccount, $context)) {
                                     throw new NostoSDKException(
@@ -82,5 +86,4 @@ class NostoRatesService
         }
         return false;
     }
-
 }
