@@ -37,6 +37,8 @@ class NostoTaggingHelperAdminTab
     const CONNECT_ACCOUNT_CLASS = 'ConnectAccount';
     const DELETE_ACCOUNT_CLASS = 'DeleteAccount';
     const SYNC_ACCOUNT_CLASS = 'SyncAccount';
+    const UPDATE_EXCHANGE_RATE_CLASS = 'UpdateExchangeRate';
+    const NOSTO_ADVANCE_SETTING_CLASS = 'NostoAdvanceSetting';
 
     /**
      * @var array translations for the Nosto `Personalization` menu item in PS 1.5.
@@ -115,6 +117,8 @@ class NostoTaggingHelperAdminTab
         self::registerController(self::CONNECT_ACCOUNT_CLASS);
         self::registerController(self::DELETE_ACCOUNT_CLASS);
         self::registerController(self::SYNC_ACCOUNT_CLASS);
+        self::registerController(self::UPDATE_EXCHANGE_RATE_CLASS);
+        self::registerController(self::NOSTO_ADVANCE_SETTING_CLASS);
     }
 
     /**

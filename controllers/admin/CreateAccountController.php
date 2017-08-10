@@ -23,24 +23,19 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
+require_once 'NostoBaseController.php';
+
 /**
  * Class CreateAccountController
  * @property Context $context
  */
-class CreateAccountController extends ModuleAdminController
+class CreateAccountController extends NostoBaseController
 {
     /**
      * @inheritdoc
      */
-    public function initContent()
+    public function execute()
     {
-        if (!$this->viewAccess()) {
-            $this->errors[] = Tools::displayError('You do not have permission to view this.');
-            return;
-        }
-
-        $language_id = (int)Tools::getValue(NostoTagging::MODULE_NAME.'_current_language');
-
         /** @var EmployeeCore $employee */
         $employee = $this->context->employee;
 
@@ -48,12 +43,12 @@ class CreateAccountController extends ModuleAdminController
         $flashHelper = Nosto::helper('nosto_tagging/flash_message');
 
         /** @var NostoTaggingHelperConfig $configHelper */
-        $configHelper = Nosto::helper('nosto_tagging/config');        
+        $configHelper = Nosto::helper('nosto_tagging/config');
 
-        $account_email = (string)Tools::getValue(NostoTagging::MODULE_NAME.'_account_email');
-        if (empty($account_email)) {
+        $accountEmail = (string)Tools::getValue(NostoTagging::MODULE_NAME . '_account_email');
+        if (empty($accountEmail)) {
             $flashHelper->add('error', $this->l('Email cannot be empty.'));
-        } elseif (!Validate::isEmail($account_email)) {
+        } elseif (!Validate::isEmail($accountEmail)) {
             $flashHelper->add('error', $this->l('Email is not a valid email address.'));
         } else {
             try {
@@ -62,7 +57,7 @@ class CreateAccountController extends ModuleAdminController
                 } else {
                     $account_details = false;
                 }
-                $this->createAccount($language_id, $account_email, $account_details);
+                $this->createAccount($this->getLanguageId(), $accountEmail, $account_details);
                 $configHelper->clearCache();
                 $flashHelper->add(
                     'success',
@@ -82,7 +77,7 @@ class CreateAccountController extends ModuleAdminController
                 /* @var NostoTaggingHelperLogger $logger */
                 $logger = Nosto::helper('nosto_tagging/logger');
                 $logger->error(
-                    'Creating Nosto account failed: ' . $e->getMessage() .':'.$e->getCode(),
+                    'Creating Nosto account failed: ' . $e->getMessage() . ':' . $e->getCode(),
                     $e->getCode(),
                     'Employee',
                     (int)$employee->id
@@ -95,7 +90,7 @@ class CreateAccountController extends ModuleAdminController
                 /* @var NostoTaggingHelperLogger $logger */
                 $logger = Nosto::helper('nosto_tagging/logger');
                 $logger->error(
-                    'Creating Nosto account failed: ' . $e->getMessage() .':'.$e->getCode(),
+                    'Creating Nosto account failed: ' . $e->getMessage() . ':' . $e->getCode(),
                     $e->getCode(),
                     'Employee',
                     (int)$employee->id
@@ -103,11 +98,7 @@ class CreateAccountController extends ModuleAdminController
             }
         }
 
-        $tabId = (int)Tab::getIdFromClassName('AdminModules');
-        $employeeId = (int)$this->context->cookie->id_employee;
-        $token = Tools::getAdminToken('AdminModules'.$tabId.$employeeId);
-        Tools::redirectAdmin('index.php?controller=AdminModules&configure=nostotagging&token='.$token);
-        
+        return true;
     }
 
     /**

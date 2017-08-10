@@ -23,19 +23,22 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-class DeleteAccountController extends ModuleAdminController
+require_once 'NostoBaseController.php';
+
+class DeleteAccountController extends NostoBaseController
 {
     /**
      * @inheritdoc
      */
-    public function initContent()
+    public function execute()
     {
-        if (!$this->viewAccess()) {
-            $this->errors[] = Tools::displayError('You do not have permission to viewDeleteAccountController.php this.');
-            return;
-        }
+        /** @var NostoTaggingHelperConfig $configHelper */
+        $configHelper = Nosto::helper('nosto_tagging/config');
 
-        die('todo delete nosto account');
-        //todo delete nosto account
+        $account = NostoTaggingHelperAccount::findByContext($this->context);
+        $configHelper->clearCache();
+        NostoTaggingHelperAccount::delete($account, $this->getLanguageId());
+
+        return true;
     }
 }

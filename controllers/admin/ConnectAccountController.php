@@ -22,35 +22,23 @@
  * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
+require_once 'NostoBaseController.php';
 
-class ConnectAccountController extends ModuleAdminController
+class ConnectAccountController extends NostoBaseController
 {
     /**
      * @inheritdoc
      */
-    public function initContent()
+    public function execute()
     {
-        if (!$this->viewAccess()) {
-            $this->errors[] = Tools::displayError('You do not have permission to viewDeleteAccountController.php this.');
-            return;
-        }
-
-        $language_id = (int)Tools::getValue(NostoTagging::MODULE_NAME.'_current_language');
-
-
         $meta = new NostoTaggingMetaOauth();
         $meta->setModuleName(NostoTagging::MODULE_NAME);
         //todo prestashop 1.5.0.0 needs this module path
 //        $meta->setModulePath($this->_path);
-        $meta->loadData($this->context, $language_id);
+        $meta->loadData($this->context, $this->getLanguageId());
         $client = new NostoOAuthClient($meta);
         Tools::redirect($client->getAuthorizationUrl(), '');
 
-        //todo it will redirect back to save the account data.
-
-//        $tabId = (int)Tab::getIdFromClassName('AdminModules');
-//        $employeeId = (int)$this->context->cookie->id_employee;
-//        $token = Tools::getAdminToken('AdminModules'.$tabId.$employeeId);
-//        Tools::redirectAdmin('index.php?controller=AdminModules&configure=nostotagging&token='.$token);
+        return false;
     }
 }
