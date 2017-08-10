@@ -27,8 +27,11 @@ class NostoHeaderContent
 {
 
     /**
+     * Renders the meta and script tagging by checking the version, the language and the URL
+     * of the add-to-cart controller
+     *
      * @param NostoTagging $module the instance of the module for rendering the template
-     * @return string
+     * @return string the tagging
      */
     public static function get(NostoTagging $module)
     {

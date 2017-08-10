@@ -27,10 +27,10 @@
 class NostoProductTagging extends NostoCategoryTagging
 {
     /**
-     * Render meta-data (tagging) for a product.
+     * Renders the customer tagging by checking if the customer if currently logged in
      *
      * @param NostoTagging $module the instance of the module for rendering the template
-     * @return string The rendered HTML
+     * @return string the tagging
      */
     public static function get(NostoTagging $module)
     {

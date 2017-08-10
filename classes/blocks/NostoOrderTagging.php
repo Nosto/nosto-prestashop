@@ -26,10 +26,10 @@
 class NostoOrderTagging
 {
     /**
-     * Render meta-data (tagging) for a completed order.
+     * Renders the order tagging by finding that most recent order that was placed
      *
      * @param NostoTagging $module the instance of the module for rendering the template
-     * @return string The rendered HTML
+     * @return string the tagging
      */
     public static function get(NostoTagging $module)
     {

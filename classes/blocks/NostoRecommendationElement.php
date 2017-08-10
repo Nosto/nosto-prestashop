@@ -26,9 +26,14 @@
 
 class NostoRecommendationElement
 {
-
     const ELEMENT = "<div class=\"nosto_element\" id=\"%s\"></div>";
 
+    /**
+     * Renders a single recommendation element using the identifier specified
+     *
+     * @param string $id the identifier of the recommendation element
+     * @return string the tagging
+     */
     public static function get($id)
     {
         if (!NostoHelperAccount::isContextConnected(Context::getContext())) {
