@@ -199,7 +199,7 @@
                 </div>
                 <div class="row nostotagging_settings">
                     <div class="col-md-12">
-                        <button onclick="Nosto.saveAdvanceSettings()" value="1" name="submit_nostotagging_advanced_settings" class="btn btn-default pull-right">
+                        <button onclick="Nosto.saveAdvancedSettings()" value="1" name="submit_nostotagging_advanced_settings" class="btn btn-default pull-right">
                             <i class="process-icon-save"></i>
                             {l s='Save' mod='nostotagging'}
                         </button>
@@ -282,7 +282,7 @@
                 submitAction(action);
             }
 
-            window.Nosto.saveAdvanceSettings = function() {
+            window.Nosto.saveAdvancedSettings = function() {
                 var action = "{/literal}{$nostotagging_advance_settings|escape:javascript}{literal}";
                 submitAction(action);
             }

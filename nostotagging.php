@@ -393,7 +393,7 @@ class NostoTagging extends Module
             NostoTaggingHelperAdminTab::NOSTO_UPDATE_EXCHANGE_RATE_CLASS,
             $employeeId
         );
-        $advanceSettingsUrl = NostoTaggingHelperUrl::getControllerUrl(
+        $advancedSettingsUrl = NostoTaggingHelperUrl::getControllerUrl(
             NostoTaggingHelperAdminTab::NOSTO_ADVANCED_SETTING_CLASS,
             $employeeId
         );
@@ -406,7 +406,7 @@ class NostoTagging extends Module
             $this->name . '_delete_account' => $deleteAccountUrl,
             $this->name . '_connect_account' => $connectAccountUrl,
             $this->name . '_update_exchange_rate' => $updateExchangeRateUrl,
-            $this->name . '_advance_settings' => $advanceSettingsUrl,
+            $this->name . '_advance_settings' => $advancedSettingsUrl,
             $this->name . '_has_account' => ($account !== null),
             $this->name . '_account_name' => ($account !== null) ? $account->getName() : null,
             $this->name . '_account_email' => $account_email,
