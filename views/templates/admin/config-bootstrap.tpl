@@ -254,13 +254,11 @@
 
                     var action = null;
                     if (data.type == 'newAccount') {
-                        action = "{/literal}{$nostotagging_create_account|escape:javascript}{literal}";
+                        action = "{/literal}{$NostoCreateAccountUrl|escape:javascript}{literal}";
+                        console.log(action);
                     } else if (data.type == 'connectAccount' || data.type == 'syncAccount') {
-                        action = "{/literal}{$nostotagging_connect_account|escape:javascript}{literal}";
-                    } else if (data.type == 'removeAccount') {
-                        action = "{/literal}{$nostotagging_remove_account|escape:javascript}{literal}";
+                        action = "{/literal}{$NostoConnectAccountUrl|escape:javascript}{literal}";
                     }
-
                     submitAction(action);
                 }
             }
@@ -273,17 +271,17 @@
             }
 
             window.Nosto.deleteNostoAccount = function() {
-                var action = "{/literal}{$nostotagging_delete_account|escape:javascript}{literal}";
+                var action = "{/literal}{$NostoDeleteAccountUrl|escape:javascript}{literal}";
                 submitAction(action);
             }
 
             window.Nosto.updateExchangeRateToNosto = function() {
-                var action = "{/literal}{$nostotagging_update_exchange_rate|escape:javascript}{literal}";
+                var action = "{/literal}{$NostoUpdateExchangeRateUrl|escape:javascript}{literal}";
                 submitAction(action);
             }
 
             window.Nosto.saveAdvancedSettings = function() {
-                var action = "{/literal}{$nostotagging_advance_settings|escape:javascript}{literal}";
+                var action = "{/literal}{$NostoAdvancedSettingUrl|escape:javascript}{literal}";
                 submitAction(action);
             }
 

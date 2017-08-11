@@ -32,12 +32,19 @@ class NostoTaggingHelperAdminTab
     const MAIN_MENU_ITEM_CLASS = 'AdminNosto';
     const SUB_MENU_ITEM_CLASS = 'AdminNostoPersonalization';
 
-    const NOSTO_INDEX_CLASS = 'NostoIndex';
     const NOSTO_CREATE_ACCOUNT_CLASS = 'NostoCreateAccount';
     const NOSTO_CONNECT_ACCOUNT_CLASS = 'NostoConnectAccount';
     const NOSTO_DELETE_ACCOUNT_CLASS = 'NostoDeleteAccount';
     const NOSTO_UPDATE_EXCHANGE_RATE_CLASS = 'NostoUpdateExchangeRate';
     const NOSTO_ADVANCED_SETTING_CLASS = 'NostoAdvancedSetting';
+
+    const NOSTO_CONTROLLER_CLASSES = array(
+        self::NOSTO_CREATE_ACCOUNT_CLASS,
+        self::NOSTO_CONNECT_ACCOUNT_CLASS,
+        self::NOSTO_DELETE_ACCOUNT_CLASS,
+        self::NOSTO_UPDATE_EXCHANGE_RATE_CLASS,
+        self::NOSTO_ADVANCED_SETTING_CLASS
+    );
 
     /**
      * @var array translations for the Nosto `Personalization` menu item in PS 1.5.
@@ -111,12 +118,9 @@ class NostoTaggingHelperAdminTab
 
     public static function registerNostoControllers()
     {
-        self::registerController(self::NOSTO_INDEX_CLASS);
-        self::registerController(self::NOSTO_CREATE_ACCOUNT_CLASS);
-        self::registerController(self::NOSTO_CONNECT_ACCOUNT_CLASS);
-        self::registerController(self::NOSTO_DELETE_ACCOUNT_CLASS);
-        self::registerController(self::NOSTO_UPDATE_EXCHANGE_RATE_CLASS);
-        self::registerController(self::NOSTO_ADVANCED_SETTING_CLASS);
+        foreach (self::NOSTO_CONTROLLER_CLASSES as $controllerName) {
+            self::registerController($controllerName);
+        }
     }
 
     /**
