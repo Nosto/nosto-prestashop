@@ -40,6 +40,11 @@ class NostoCategory extends AbstractNostoModel
         return new Category((int)$idCategory, $idLang);
     }
 
+    public function __construct($category)
+    {
+        $this->categoryString = $category;
+    }
+
     /**
      * Loads the category data from supplied context and category objects.
      * Builds a tagging string of the given category including all its parent categories.
@@ -66,9 +71,17 @@ class NostoCategory extends AbstractNostoModel
         }
 
         if (empty($categoryList)) {
-            return '';
+            return null;
         }
 
-        return DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, array_reverse($categoryList));
+        return new NostoCategory(implode(DIRECTORY_SEPARATOR, array_reverse($categoryList)) . DIRECTORY_SEPARATOR);
+    }
+
+    /**
+     * @return string
+     */
+    public function getCategory()
+    {
+        return $this->categoryString;
     }
 }

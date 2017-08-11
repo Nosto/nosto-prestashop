@@ -43,7 +43,7 @@ class NostoHelperContext
         $context = new NostoContextManager($idLang, $idShop);
         $retval = null;
         try {
-            $retval = $callable($context);
+            $retval = $callable($context->getForgedContext());
         } catch (Exception $e) {
             NostoHelperLogger::log($e);
         }

@@ -46,6 +46,7 @@ class NostoBootstrap
         require_once($moduleDir . '/classes/services/NostoProductService.php');
         require_once($moduleDir . '/classes/services/NostoOrderService.php');
         require_once($moduleDir . '/classes/services/NostoRatesService.php');
+        require_once($moduleDir . '/classes/services/NostoSettingsService.php');
         require_once($moduleDir . '/classes/services/NostoSignupService.php');
         require_once($moduleDir . '/classes/helpers/url.php');
         require_once($moduleDir . '/classes/helpers/currency.php');

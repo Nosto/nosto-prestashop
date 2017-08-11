@@ -89,7 +89,7 @@ class NostoContextManager
             }
         }
 
-        $forgedContext = $context->cloneContext();
+        $this->forgedContext = $context->cloneContext();
         // Reset the shop context to be the current processed shop. This will fix the "friendly url"'
         // format of urls generated through the Link class.
         Shop::setContext(Shop::CONTEXT_SHOP, $idShop);
@@ -112,10 +112,15 @@ class NostoContextManager
             }
         }
 
-        $forgedContext->language = new Language($idLang);
-        $forgedContext->shop = new Shop($idShop);
-        $forgedContext->link = NostoHelperLink::getLink();
-        $forgedContext->currency = isset($currency) ? $currency : Currency::getDefaultCurrency();
+        $this->forgedContext->language = new Language($idLang);
+        $this->forgedContext->shop = new Shop($idShop);
+        $this->forgedContext->link = NostoHelperLink::getLink();
+        $this->forgedContext->currency = isset($currency) ? $currency : Currency::getDefaultCurrency();
+    }
+
+    public function getForgedContext()
+    {
+        return $this->forgedContext;
     }
 
     /**
