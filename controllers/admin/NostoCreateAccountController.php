@@ -67,13 +67,15 @@ class NostoCreateAccountController extends NostoBaseController
                     )
                 );
             } catch (NostoApiResponseException $e) {
-                $flashHelper->add(
-                    'error',
-                    $this->l(
+                $message = $e->getMessage();
+                if (!$message) {
+                    $message = $this->l(
                         'Account could not be automatically created due to missing or invalid parameters.'
                         . ' Please see your Prestashop logs for details'
-                    )
-                );
+                    );
+                }
+
+                $flashHelper->add('error', $message);
                 /* @var NostoTaggingHelperLogger $logger */
                 $logger = Nosto::helper('nosto_tagging/logger');
                 $logger->error(
