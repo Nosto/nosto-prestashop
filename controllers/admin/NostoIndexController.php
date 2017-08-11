@@ -201,12 +201,12 @@ class NostoIndexController
         // which are then shown in an iframe on the module config page.
         $url = $this->getIframeUrl($context, $account, $languageId, $employee->id);
         if (!empty($url)) {
-            $smartyMetaData['iframe_url'] =  $url;
+            $smartyMetaData['iframe_url'] = $url;
         }
 
         $controllerUrls = $this->getControllerUrls($employee->id);
 
-        return array_merge ($controllerUrls, $smartyMetaData);
+        return array_merge($controllerUrls, $smartyMetaData);
     }
 
     /**
