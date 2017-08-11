@@ -46,12 +46,12 @@ class NostoPagetypeTagging
      */
     public static function get(NostoTagging $module)
     {
-        if (!NostoHelperAccount::isContextConnected(Context::getContext())) {
+        if (!Nosto::isContextConnected()) {
             return '';
         }
 
         Context::getContext()->smarty->assign(array(
-            'nosto_page_type' => 'front'//self::$controllers[''], //TODO
+            'nosto_page_type' => self::$controllers[NostoHelperController::getControllerName()]
         ));
 
         return $module->display("NostoTagging.php", 'views/templates/hook/top_page_type-tagging.tpl');

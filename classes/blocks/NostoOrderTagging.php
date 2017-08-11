@@ -38,7 +38,7 @@ class NostoOrderTagging
             return null;
         }
 
-        $nostoOrder = new NostoTaggingOrder();
+        $nostoOrder = new NostoOrder();
         $nostoOrder->loadData(Context::getContext(), $order);
 
         Context::getContext()->smarty->assign(array(

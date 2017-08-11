@@ -72,7 +72,7 @@ abstract class AbstractNostoService
      *
      * @return array list of shop data.
      */
-    protected function getContextShops()
+    private function getContextShops()
     {
         if (Shop::isFeatureActive() && Shop::getContext() !== Shop::CONTEXT_SHOP) {
             if (Shop::getContext() === Shop::CONTEXT_GROUP) {

@@ -25,7 +25,7 @@
 
 use \Nosto\Object\Order\Order as NostoSDKOrder;
 
-class NostoTaggingOrder extends NostoSDKOrder
+class NostoOrder extends NostoSDKOrder
 {
 
     /**

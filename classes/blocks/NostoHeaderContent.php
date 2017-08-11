@@ -35,7 +35,7 @@ class NostoHeaderContent
      */
     public static function get(NostoTagging $module)
     {
-        $account = NostoHelperAccount::findByContext(Context::getContext());
+        $account = Nosto::getAccount();
         if ($account === null) {
             return '';
         }

@@ -60,7 +60,7 @@ class NostoDefaultTagging
      */
     private static function generateDefaultTagging(NostoTagging $module)
     {
-        if (!NostoHelperAccount::isContextConnected(Context::getContext())) {
+        if (!Nosto::isContextConnected()) {
             return '';
         }
 

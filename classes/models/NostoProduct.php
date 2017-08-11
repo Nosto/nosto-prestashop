@@ -48,10 +48,9 @@ class NostoProduct extends NostoSDKProduct
         $idShopGroup = null;
         if ($context->shop instanceof Shop) {
             $idShop = $context->shop->id;
-            $idShopGroup = $context->shop->id_shop_group;
         }
 
-        if (NostoHelperConfig::useMultipleCurrencies($idLang, $idShopGroup, $idShop) === true) {
+        if (Nosto::useMultipleCurrencies()) {
             $nostoProduct->setVariationId($base_currency->iso_code);
             $tagging_currency = $base_currency;
         } else {

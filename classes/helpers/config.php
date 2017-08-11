@@ -179,14 +179,22 @@ class NostoHelperConfig
      * Saves the account name to the config for given language.
      *
      * @param string $account_name the account name to save.
-     * @param int $id_lang the language identifier for which to save the configuration
-     * @param null|int $id_shop_group the shop-group identifier for which to save the configuration
-     * @param null|int $id_shop the shop identifier for which to save the configuration
      * @return bool true if saving the configuration was successful, false otherwise
      */
-    public static function saveAccountName($account_name, $id_lang, $id_shop_group = null, $id_shop = null)
+    public static function saveAccountName($account_name)
     {
-        return self::write(self::ACCOUNT_NAME, $account_name, $id_lang, false, $id_shop_group, $id_shop);
+        if (Context::getContext()->shop instanceof Shop) {
+            return self::write(
+                self::ACCOUNT_NAME,
+                $account_name,
+                Context::getContext()->language->id,
+                false,
+                Context::getContext()->shop->id_shop_group,
+                Context::getContext()->shop->id
+            );
+        } else {
+            return self::write(self::ACCOUNT_NAME, $account_name, Context::getContext()->language->id);
+        }
     }
 
     /**
@@ -205,16 +213,24 @@ class NostoHelperConfig
     /**
      * Save the token to the config for given language.
      *
-     * @param string $token_name the name of the token.
-     * @param string $token_value the value of the token.
-     * @param int $id_lang the language identifier for which to save the configuration
-     * @param null|int $id_shop_group the shop-group identifier for which to save the configuration
-     * @param null|int $id_shop the shop identifier for which to save the configuration
+     * @param string $tokeName the name of the token.
+     * @param string $tokenValue the value of the token.
      * @return bool true if saving the configuration was successful, false otherwise
      */
-    public static function saveToken($token_name, $token_value, $id_lang, $id_shop_group = null, $id_shop = null)
+    public static function saveToken($tokeName, $tokenValue)
     {
-        return self::write(self::getTokenConfigKey($token_name), $token_value, $id_lang, false, $id_shop_group, $id_shop);
+        if (Context::getContext()->shop instanceof Shop) {
+            return self::write(
+                self::getTokenConfigKey($tokeName),
+                $tokenValue,
+                Context::getContext()->language->id,
+                false,
+                Context::getContext()->shop->id_shop_group,
+                Context::getContext()->shop->id
+            );
+        } else {
+            return self::write(self::getTokenConfigKey($tokeName), $tokenValue, Context::getContext()->language->id);
+        }
     }
 
     /**
@@ -319,28 +335,44 @@ class NostoHelperConfig
      * Saves the multi currency method in use for the context.
      *
      * @param string $method the multi currency method.
-     * @param int $id_lang the language identifier for which to save the configuration
-     * @param null|int $id_shop_group the shop-group identifier for which to save the configuration
-     * @param null|int $id_shop the shop identifier for which to save the configuration
      * @return bool true if saving the configuration was successful, false otherwise
      */
-    public static function saveMultiCurrencyMethod($method, $id_lang, $id_shop_group = null, $id_shop = null)
+    public static function saveMultiCurrencyMethod($method)
     {
-        return self::write(self::MULTI_CURRENCY_METHOD, $method, $id_lang, false, $id_shop_group, $id_shop);
+        if (Context::getContext()->shop instanceof Shop) {
+            return self::write(
+                self::MULTI_CURRENCY_METHOD,
+                $method,
+                Context::getContext()->language->id,
+                false,
+                Context::getContext()->shop->id_shop_group,
+                Context::getContext()->shop->id
+            );
+        } else {
+            return self::write(self::MULTI_CURRENCY_METHOD, $method, Context::getContext()->language->id);
+        }
     }
 
     /**
      * Saves the position where to render Nosto tagging
      *
      * @param string $method the multi currency method.
-     * @param int $id_lang the language identifier for which to save the configuration
-     * @param null|int $id_shop_group the shop-group identifier for which to save the configuration
-     * @param null|int $id_shop the shop identifier for which to save the configuration
      * @return bool true if saving the configuration was successful, false otherwise
      */
-    public static function saveNostoTaggingRenderPosition($method, $id_lang, $id_shop_group = null, $id_shop = null)
+    public static function saveNostoTaggingRenderPosition($method)
     {
-        return self::write(self::NOSTOTAGGING_POSITION, $method, $id_lang, false, $id_shop_group, $id_shop);
+        if (Context::getContext()->shop instanceof Shop) {
+            return self::write(
+                self::NOSTOTAGGING_POSITION,
+                $method,
+                Context::getContext()->language->id,
+                false,
+                Context::getContext()->shop->id_shop_group,
+                Context::getContext()->shop->id
+            );
+        } else {
+            return self::write(self::NOSTOTAGGING_POSITION, $method, Context::getContext()->language->id);
+        }
     }
 
     /**
@@ -387,13 +419,21 @@ class NostoHelperConfig
      * Saves the image type to be used for Nosto tagging
      *
      * @param int $type the image type id
-     * @param int $id_lang the language identifier for which to save the configuration
-     * @param null|int $id_shop_group the shop-group identifier for which to save the configuration
-     * @param null|int $id_shop the shop identifier for which to save the configuration
      * @return bool true if saving the configuration was successful, false otherwise
      */
-    public static function saveImageType($type, $id_lang, $id_shop_group = null, $id_shop = null)
+    public static function saveImageType($type)
     {
-        return self::write(self::NOSTOTAGGING_IMAGE_TYPE, $type, $id_lang, false, $id_shop_group, $id_shop);
+        if (Context::getContext()->shop instanceof Shop) {
+            return self::write(
+                self::NOSTOTAGGING_IMAGE_TYPE,
+                $type,
+                Context::getContext()->language->id,
+                false,
+                Context::getContext()->shop->id_shop_group,
+                Context::getContext()->shop->id
+            );
+        } else {
+            return self::write(self::NOSTOTAGGING_IMAGE_TYPE, $type, Context::getContext()->language->id);
+        }
     }
 }

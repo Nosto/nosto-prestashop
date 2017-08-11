@@ -92,12 +92,6 @@ class NostoAccountSignup extends NostoSDKAccountSignup
         if (!Validate::isLoadedObject($context->country)) {
             $context->country = self::loadCountry();
         }
-        $idShop = null;
-        $idShopGroup = null;
-        if ($context->shop instanceof Shop) {
-            $idShop = $context->shop->id;
-            $idShopGroup = $context->shop->id_shop_group;
-        }
         $signup->setTitle(Configuration::get('PS_SHOP_NAME'));
         $signup->setName(Tools::substr(sha1((string)rand()), 0, 8));
         $signup->setFrontPageUrl(self::getContextShopUrl($context, $language));
@@ -107,17 +101,9 @@ class NostoAccountSignup extends NostoSDKAccountSignup
         $signup->setOwner(NostoAccountOwner::loadData($context));
         $signup->setBillingDetails(NostoAccountBilling::loadData($context));
         $signup->setCurrencies(self::buildCurrencies($context));
-        if (NostoHelperConfig::useMultipleCurrencies($id_lang, $idShopGroup, $idShop)) {
-            $signup->setUseCurrencyExchangeRates(
-                NostoHelperConfig::useMultipleCurrencies(
-                    $id_lang,
-                    $idShopGroup,
-                    $idShop
-                )
-            );
+        if (Nosto::useMultipleCurrencies($id_lang)) {
+            $signup->setUseCurrencyExchangeRates(Nosto::useMultipleCurrencies($id_lang));
             $signup->setDefaultVariantId(NostoHelperCurrency::getBaseCurrency($context)->iso_code);
-        } else {
-            $signup->setUseCurrencyExchangeRates(false);
         }
         return $signup;
     }

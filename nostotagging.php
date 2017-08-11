@@ -35,6 +35,7 @@ if (!defined('_PS_VERSION_')) {
 if ((basename(__FILE__) === 'nostotagging.php')) {
     define('NOSTO_DIR', dirname(__FILE__));
     define('NOSTO_VERSION', NostoTagging::PLUGIN_VERSION);
+    /** @noinspection PhpIncludeInspection */
     require_once("bootstrap.php");
 }
 
@@ -332,12 +333,11 @@ class NostoTagging extends Module
                 Tools::isSubmit('submit_nostotagging_reset_account')
                 || Tools::getValue('nostotagging_account_action') === 'removeAccount'
             ) {
-                $account = NostoHelperAccount::findByContext($this->context);
+                $account = Nosto::getAccount();
                 NostoHelperConfig::clearCache();
                 NostoHelperAccount::delete($this->context, $account, $language_id, null);
             } elseif (Tools::isSubmit('submit_nostotagging_update_exchange_rates')) {
-                $nosto_account = NostoHelperAccount::find($language_id, $id_shop_group,
-                    $id_shop);
+                $nosto_account = Nosto::getAccount();
                 $operation = new NostoRatesService();
                 if ($nosto_account && $operation->updateCurrencyExchangeRates($nosto_account, $this->context)) {
                     NostoHelperFlash::add(
@@ -363,25 +363,10 @@ class NostoTagging extends Module
                 Tools::isSubmit('submit_nostotagging_advanced_settings')
                 && Tools::isSubmit('multi_currency_method')
             ) {
-                NostoHelperConfig::saveMultiCurrencyMethod(
-                    Tools::getValue('multi_currency_method'),
-                    $language_id,
-                    $id_shop_group,
-                    $id_shop
-                );
-                NostoHelperConfig::saveNostoTaggingRenderPosition(
-                    Tools::getValue('nostotagging_position'),
-                    $language_id,
-                    $id_shop_group,
-                    $id_shop
-                );
-                NostoHelperConfig::saveImageType(
-                    Tools::getValue('image_type'),
-                    $language_id,
-                    $id_shop_group,
-                    $id_shop
-                );
-                $account = NostoHelperAccount::find($language_id, $id_shop_group, $id_shop);
+                NostoHelperConfig::saveMultiCurrencyMethod(Tools::getValue('multi_currency_method'));
+                NostoHelperConfig::saveNostoTaggingRenderPosition(Tools::getValue('nostotagging_position'));
+                NostoHelperConfig::saveImageType(Tools::getValue('image_type'));
+                $account = Nosto::getAccount();
                 $account_meta = NostoAccountSignup::loadData($this->context, $language_id);
                 // Make sure we Nosto is installed for the current store
                 if (empty($account) || !$account->isConnectedToNosto()) {
@@ -452,8 +437,7 @@ class NostoTagging extends Module
             $current_language = $this->ensureAdminLanguage($languages, $language_id);
             $language_id = (int)$current_language['id_lang'];
         }
-        /** @var NostoAccount $account */
-        $account = NostoHelperAccount::find($language_id, $id_shop_group, $id_shop);
+        $account = Nosto::getAccount();
         $missing_tokens = true;
         if (
             $account instanceof NostoSDKAccountInterface
@@ -800,7 +784,7 @@ class NostoTagging extends Module
      */
     public function hookDisplayOrderConfirmation()
     {
-        if (!NostoHelperAccount::isContextConnected($this->context)) {
+        if (!Nosto::isContextConnected()) {
             return '';
         }
 
@@ -921,7 +905,7 @@ class NostoTagging extends Module
      */
     public function hookActionOrderStatusPostUpdate(array $params)
     {
-        $operation = new AbstractNostoService(Context::getContext());
+        $operation = new NostoOrderService(Context::getContext());
         $operation->send($params);
     }
 

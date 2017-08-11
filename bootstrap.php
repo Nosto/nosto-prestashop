@@ -29,6 +29,7 @@ class NostoBootstrap
     public static function init($moduleDir, $moduleVersion)
     {
         require_once($moduleDir . '/libs/autoload.php');
+        require_once($moduleDir . '/classes/Nosto.php');
         require_once($moduleDir . '/classes/models/NostoNotification.php');
         require_once($moduleDir . '/classes/models/NostoExchangeRates.php');
         require_once($moduleDir . '/classes/helpers/account.php');
@@ -59,7 +60,7 @@ class NostoBootstrap
         require_once($moduleDir . '/classes/models/NostoCart.php');
         require_once($moduleDir . '/classes/models/NostoCategory.php');
         require_once($moduleDir . '/classes/models/NostoCustomer.php');
-        require_once($moduleDir . '/classes/models/NostoTaggingOrder.php');
+        require_once($moduleDir . '/classes/models/NostoOrder.php');
         require_once($moduleDir . '/classes/models/order/NostoOrderBuyer.php');
         require_once($moduleDir . '/classes/models/NostoVariation.php');
         require_once($moduleDir . '/classes/models/order/NostoOrderPurchasedItem.php');

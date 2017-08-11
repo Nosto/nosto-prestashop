@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 2013-2016 Nosto Solutions Ltd
  *
@@ -23,17 +24,19 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
+use \Nosto\Mixins\OauthTrait as NostoSDKOauthTrait;
+use \Nosto\Types\Signup\AccountInterface as NostoSDKAccountInterface;
+use \Nosto\Request\Http\HttpRequest as NostoSDKHttpRequest;
+
 /**
  * @property NostoTagging $module
  */
 class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
 {
-    use Nosto\Mixins\OauthTrait {
-        Nosto\Mixins\OauthTrait::redirect as redirectTo;
+    use NostoSDKOauthTrait {
+        NostoSDKOauthTrait::redirect as redirectTo;
     }
 
-    private $id_shop;
-    private $id_shop_group;
     private $id_lang;
 
     /**
@@ -47,10 +50,6 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
     public function initContent()
     {
         $this->id_lang = (int)Tools::getValue('language_id', Context::getContext()->language->id);
-        if (Context::getContext()->shop instanceof Shop) {
-            $this->id_shop = $this->context->shop->id;
-            $this->id_shop_group = $this->context->shop->id_shop_group;
-        }
         self::connect();
     }
 
@@ -77,14 +76,9 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
      *
      * @param Nosto\Types\Signup\AccountInterface $account the account to save
      */
-    public function save(Nosto\Types\Signup\AccountInterface $account)
+    public function save(NostoSDKAccountInterface $account)
     {
-        NostoHelperAccount::save(
-            $account,
-            $this->id_lang,
-            $this->id_shop_group,
-            $this->id_shop
-        );
+        NostoHelperAccount::save($account);
     }
 
     /**
@@ -97,10 +91,7 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
     {
         $admin_url = NostoHelperConfig::getAdminUrl();
         if (!empty($admin_url)) {
-            $admin_url = \Nosto\Request\Http\HttpRequest::replaceQueryParamsInUrl(
-                $params,
-                $admin_url
-            );
+            $admin_url = NostoSDKHttpRequest::replaceQueryParamsInUrl($params, $admin_url);
             Tools::redirect($admin_url, '');
             die;
         }
@@ -127,10 +118,7 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
      */
     public function logError(Exception $e)
     {
-        NostoHelperLogger::error(
-            __CLASS__ . '::' . __FUNCTION__ . ' - ' . $e->getMessage(),
-            $e->getCode()
-        );
+        NostoHelperLogger::error($e);
     }
 
     /**

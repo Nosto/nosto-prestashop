@@ -47,7 +47,7 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
             if (empty($orders)) {
                 Controller::getController('PageNotFoundController')->run();
             }
-            $nostoOrder = new NostoTaggingOrder();
+            $nostoOrder = new NostoOrder();
             /** @noinspection PhpParamsInspection */
             $nostoOrder->loadData($context, $orders[0]);
             $collection->append($nostoOrder);
@@ -57,7 +57,7 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
                 if (!Validate::isLoadedObject($order)) {
                     continue;
                 }
-                $nostoOrder = new NostoTaggingOrder();
+                $nostoOrder = new NostoOrder();
                 $nostoOrder->loadData(Context::getContext(), $order);
                 $collection->append($nostoOrder);
             }

@@ -36,7 +36,7 @@ class NostoRecommendationElement
      */
     public static function get($id)
     {
-        if (!NostoHelperAccount::isContextConnected(Context::getContext())) {
+        if (!Nosto::isContextConnected()) {
             return '';
         }
 

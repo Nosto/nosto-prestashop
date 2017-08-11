@@ -40,28 +40,14 @@ class NostoHelperAccount
      * Also handles any attached API tokens.
      *
      * @param NostoSDKSignupAccountInterface $account the account to save.
-     * @param null|int $id_lang the ID of the language to set the account name for.
-     * @param null|int $id_shop_group the ID of the shop context.
-     * @param null|int $id_shop the ID of the shop.
      * @return bool true if the save was successful, false otherwise.
      */
-    public static function save(NostoSDKSignupAccountInterface $account, $id_lang, $id_shop_group = null, $id_shop = null)
+    public static function save(NostoSDKSignupAccountInterface $account)
     {
-        $success = NostoHelperConfig::saveAccountName(
-            $account->getName(),
-            $id_lang,
-            $id_shop_group,
-            $id_shop
-        );
+        $success = NostoHelperConfig::saveAccountName($account->getName());
         if ($success) {
             foreach ($account->getTokens() as $token) {
-                $success = $success && NostoHelperConfig::saveToken(
-                    $token->getName(),
-                    $token->getValue(),
-                    $id_lang,
-                    $id_shop_group,
-                    $id_shop
-                );
+                $success = $success && NostoHelperConfig::saveToken($token->getName(), $token->getValue());
             }
         }
         return $success;
@@ -127,19 +113,6 @@ class NostoHelperAccount
         return true;
     }
 
-    public static function findByContext(Context $context)
-    {
-        if ($context->shop instanceof Shop) {
-            return self::find(
-                $context->language->id,
-                $context->shop->id_shop_group,
-                $context->shop->id
-            );
-        } else {
-            return self::find($context->language->id);
-        }
-    }
-
     /**
      * Finds and returns an account for given criteria.
      *
@@ -180,25 +153,6 @@ class NostoHelperAccount
             return $account;
         }
         return null;
-    }
-
-    /**
-     * Checks if Nosto is installed to a given store and language
-     *
-     * @param Context $context
-     * @return bool
-     */
-    public static function isContextConnected(Context $context)
-    {
-        if ($context->shop instanceof Shop) {
-            return self::existsAndIsConnected(
-                $context->language->id,
-                $context->shop->id_shop_group,
-                $context->shop->id
-            );
-        } else {
-            return self::existsAndIsConnected($context->language->id);
-        }
     }
 
     /**
