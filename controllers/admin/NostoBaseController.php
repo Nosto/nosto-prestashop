@@ -40,9 +40,8 @@ abstract class NostoBaseController extends ModuleAdminController
         $flashHelper = Nosto::helper('nosto_tagging/flash_message');
 
         //check language
-        //TODO moved from nostotagging.php. no sure what is it all about
         $languages = Language::getLanguages(true, $this->context->shop->id);
-        $currentLanguage = $this->ensureAdminLanguage($languages, $this->getLanguageId());
+        $currentLanguage = NostoTagging::ensureAdminLanguage($languages, $this->getLanguageId());
         if (Shop::getContext() !== Shop::CONTEXT_SHOP) {
             $this->redirectToAdmin();
             return;
@@ -54,28 +53,6 @@ abstract class NostoBaseController extends ModuleAdminController
 
         if ($this->execute() === true) {
             $this->redirectToAdmin();
-        }
-    }
-
-    /**
-     * Gets the current admin config language data.
-     * TODO it is copied from nostotagging.php. move it to helper after refactoring
-     * @param array $languages list of valid languages.
-     * @param int $id_lang if a specific language is required.
-     * @return array the language data array.
-     */
-    protected function ensureAdminLanguage(array $languages, $id_lang)
-    {
-        foreach ($languages as $language) {
-            if ($language['id_lang'] == $id_lang) {
-                return $language;
-            }
-        }
-
-        if (isset($languages[0])) {
-            return $languages[0];
-        } else {
-            return array('id_lang' => 0, 'name' => '', 'iso_code' => '');
         }
     }
 

@@ -33,8 +33,6 @@ class NostoConnectAccountController extends NostoBaseController
     {
         $meta = new NostoTaggingMetaOauth();
         $meta->setModuleName(NostoTagging::MODULE_NAME);
-        //todo prestashop 1.5.0.0 needs this module path
-//        $meta->setModulePath($this->_path);
         $meta->loadData($this->context, $this->getLanguageId());
         $client = new NostoOAuthClient($meta);
         Tools::redirect($client->getAuthorizationUrl(), '');

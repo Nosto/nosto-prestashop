@@ -1118,13 +1118,13 @@ class NostoTagging extends Module
      * Gets the current admin config language data.
      *
      * @param array $languages list of valid languages.
-     * @param int $id_lang if a specific language is required.
+     * @param int $langId if a specific language is required.
      * @return array the language data array.
      */
-    protected function ensureAdminLanguage(array $languages, $id_lang)
+    public static function ensureAdminLanguage(array $languages, $langId)
     {
         foreach ($languages as $language) {
-            if ($language['id_lang'] == $id_lang) {
+            if ($language['id_lang'] == $langId) {
                 return $language;
             }
         }

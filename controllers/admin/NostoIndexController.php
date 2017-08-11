@@ -112,7 +112,7 @@ class NostoIndexController
 
         // Choose current language if it has not been set.
         if (!isset($currentLanguage)) {
-            $currentLanguage = $this->ensureAdminLanguage($languages, $languageId);
+            $currentLanguage = NostoTagging::ensureAdminLanguage($languages, $languageId);
             $languageId = (int)$currentLanguage['id_lang'];
         }
         /** @var NostoAccount $account */
@@ -247,28 +247,5 @@ class NostoIndexController
         $parsedUrl['query'] = http_build_query($queryParams);
 
         return NostoHttpRequest::buildUrl($parsedUrl);
-    }
-
-
-    /**
-     * Gets the current admin config language data.
-     *
-     * @param array $languages list of valid languages.
-     * @param int $id_lang if a specific language is required.
-     * @return array the language data array.
-     */
-    protected function ensureAdminLanguage(array $languages, $id_lang)
-    {
-        foreach ($languages as $language) {
-            if ($language['id_lang'] == $id_lang) {
-                return $language;
-            }
-        }
-
-        if (isset($languages[0])) {
-            return $languages[0];
-        } else {
-            return array('id_lang' => 0, 'name' => '', 'iso_code' => '');
-        }
     }
 }
