@@ -349,8 +349,6 @@ class NostoTagging extends Module
         return $output;
     }
 
-
-
     /**
      * @return string
      */
