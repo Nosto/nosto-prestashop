@@ -33,42 +33,43 @@ if (!defined('_PS_VERSION_')) {
  */
 if ((basename(__FILE__) === 'nostotagging.php')) {
     $module_dir = dirname(__FILE__);
-    require_once($module_dir.'/libs/nosto/php-sdk/src/config.inc.php');
-    require_once($module_dir.'/classes/admin-notification.php');
-    require_once($module_dir.'/classes/collections/exchange-rates.php');
-    require_once($module_dir.'/classes/helpers/account.php');
-    require_once($module_dir.'/classes/helpers/admin-tab.php');
-    require_once($module_dir.'/classes/helpers/config.php');
-    require_once($module_dir.'/classes/helpers/customer.php');
-    require_once($module_dir.'/classes/helpers/flash-message.php');
-    require_once($module_dir.'/classes/helpers/image.php');
-    require_once($module_dir.'/classes/helpers/logger.php');
-    require_once($module_dir.'/classes/helpers/notification.php');
-    require_once($module_dir.'/classes/helpers/nosto-operation.php');
-    require_once($module_dir.'/classes/helpers/product-operation.php');
-    require_once($module_dir.'/classes/helpers/order-operation.php');
-    require_once($module_dir.'/classes/helpers/updater.php');
-    require_once($module_dir.'/classes/helpers/url.php');
-    require_once($module_dir.'/classes/helpers/currency.php');
-    require_once($module_dir.'/classes/helpers/context-factory.php');
-    require_once($module_dir.'/classes/helpers/price.php');
-    require_once($module_dir.'/classes/meta/account.php');
-    require_once($module_dir.'/classes/meta/account-billing.php');
-    require_once($module_dir.'/classes/meta/account-iframe.php');
-    require_once($module_dir.'/classes/meta/account-owner.php');
-    require_once($module_dir.'/classes/meta/oauth.php');
-    require_once($module_dir.'/classes/models/base.php');
-    require_once($module_dir.'/classes/models/cart.php');
-    require_once($module_dir.'/classes/models/category.php');
-    require_once($module_dir.'/classes/models/customer.php');
-    require_once($module_dir.'/classes/models/order.php');
-    require_once($module_dir.'/classes/models/order-buyer.php');
-    require_once($module_dir.'/classes/models/price-variation.php');
-    require_once($module_dir.'/classes/models/order-purchased-item.php');
-    require_once($module_dir.'/classes/models/order-status.php');
-    require_once($module_dir.'/classes/models/product.php');
-    require_once($module_dir.'/classes/models/brand.php');
-    require_once($module_dir.'/classes/models/search.php');
+    require_once($module_dir . '/libs/nosto/php-sdk/src/config.inc.php');
+    require_once($module_dir . '/classes/admin-notification.php');
+    require_once($module_dir . '/classes/collections/exchange-rates.php');
+    require_once($module_dir . '/classes/helpers/account.php');
+    require_once($module_dir . '/classes/helpers/admin-tab.php');
+    require_once($module_dir . '/classes/helpers/config.php');
+    require_once($module_dir . '/classes/helpers/customer.php');
+    require_once($module_dir . '/classes/helpers/flash-message.php');
+    require_once($module_dir . '/classes/helpers/image.php');
+    require_once($module_dir . '/classes/helpers/logger.php');
+    require_once($module_dir . '/classes/helpers/notification.php');
+    require_once($module_dir . '/classes/helpers/nosto-operation.php');
+    require_once($module_dir . '/classes/helpers/product-operation.php');
+    require_once($module_dir . '/classes/helpers/order-operation.php');
+    require_once($module_dir . '/classes/helpers/updater.php');
+    require_once($module_dir . '/classes/helpers/url.php');
+    require_once($module_dir . '/classes/helpers/currency.php');
+    require_once($module_dir . '/classes/helpers/context-factory.php');
+    require_once($module_dir . '/classes/helpers/price.php');
+    require_once($module_dir . '/classes/meta/account.php');
+    require_once($module_dir . '/classes/meta/account-billing.php');
+    require_once($module_dir . '/classes/meta/account-iframe.php');
+    require_once($module_dir . '/classes/meta/account-owner.php');
+    require_once($module_dir . '/classes/meta/oauth.php');
+    require_once($module_dir . '/classes/models/base.php');
+    require_once($module_dir . '/classes/models/cart.php');
+    require_once($module_dir . '/classes/models/category.php');
+    require_once($module_dir . '/classes/models/customer.php');
+    require_once($module_dir . '/classes/models/order.php');
+    require_once($module_dir . '/classes/models/order-buyer.php');
+    require_once($module_dir . '/classes/models/price-variation.php');
+    require_once($module_dir . '/classes/models/order-purchased-item.php');
+    require_once($module_dir . '/classes/models/order-status.php');
+    require_once($module_dir . '/classes/models/product.php');
+    require_once($module_dir . '/classes/models/brand.php');
+    require_once($module_dir . '/classes/models/search.php');
+    require_once($module_dir . '/controllers/admin/NostoIndexController.php');
 }
 
 /**
@@ -262,11 +263,11 @@ class NostoTagging extends Module
                 }
 
                 $success = $this->registerHook('actionObjectUpdateAfter')
-                && $this->registerHook('actionObjectDeleteAfter')
-                && $this->registerHook('actionObjectAddAfter')
-                && $this->registerHook('actionObjectCurrencyUpdateAfter')
-                && $this->registerHook('displayBackOfficeTop')
-                && $this->registerHook('displayBackOfficeHeader');
+                    && $this->registerHook('actionObjectDeleteAfter')
+                    && $this->registerHook('actionObjectAddAfter')
+                    && $this->registerHook('actionObjectCurrencyUpdateAfter')
+                    && $this->registerHook('displayBackOfficeTop')
+                    && $this->registerHook('displayBackOfficeHeader');
                 // New hooks in 1.7
                 if (version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
                     $this->registerHook('displayNav1');
@@ -295,6 +296,38 @@ class NostoTagging extends Module
     }
 
     /**
+     * Get content for displaying message
+     *
+     * @return string display content
+     */
+    private function displayMessages()
+    {
+        /** @var NostoTaggingHelperFlashMessage $flashHelper */
+        $flashHelper = Nosto::helper('nosto_tagging/flash_message');
+
+        $output = '';
+        if (($errorMessage = Tools::getValue('oauth_error')) !== false) {
+            $output .= $this->displayError($this->l($errorMessage));
+        }
+        if (($successMessage = Tools::getValue('oauth_success')) !== false) {
+            $output .= $this->displayConfirmation($this->l($successMessage));
+        }
+
+        foreach ($flashHelper->getList('success') as $flash_message) {
+            $output .= $this->displayConfirmation($flash_message);
+        }
+        foreach ($flashHelper->getList('error') as $flash_message) {
+            $output .= $this->displayError($flash_message);
+        }
+
+        if (Shop::getContext() !== Shop::CONTEXT_SHOP) {
+            $output .= $this->displayError($this->l('Please choose a shop to configure Nosto for.'));
+        }
+
+        return $output;
+    }
+
+    /**
      * Renders the module administration form.
      * Also handles the form submit action.
      *
@@ -302,343 +335,15 @@ class NostoTagging extends Module
      */
     public function getContent()
     {
-        // Always update the url to the module admin page when we access it.
-        // This can then later be used by the oauth2 controller to redirect the user back.
-        $admin_url = $this->getAdminUrl();
+        $output = $this->displayMessages();
 
-        /** @var NostoTaggingHelperConfig $config_helper */
-        $config_helper = Nosto::helper('nosto_tagging/config');
-        $config_helper->saveAdminUrl($admin_url);
-        $output = '';
-        $languages = Language::getLanguages(true, $this->context->shop->id);
-        /** @var EmployeeCore $employee */
-        $employee = $this->context->employee;
-        $account_email = $employee->email;
-        /** @var NostoTaggingHelperFlashMessage $helper_flash */
-        $helper_flash = Nosto::helper('nosto_tagging/flash_message');
-        /** @var NostoTaggingHelperUrl $helper_url */
-        $helper_url = Nosto::helper('nosto_tagging/url');
-        /** @var NostoTaggingHelperConfig $helper_config */
-        $helper_config = Nosto::helper('nosto_tagging/config');
-        $id_shop = null;
-        $id_shop_group = null;
-        if ($this->context->shop instanceof Shop) {
-            $id_shop = $this->context->shop->id;
-            $id_shop_group = $this->context->shop->id_shop_group;
-        }
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $language_id = (int)Tools::getValue($this->name.'_current_language');
-            $current_language = $this->ensureAdminLanguage($languages, $language_id);
-            if (Shop::getContext() !== Shop::CONTEXT_SHOP) {
-            // Do nothing.
-                // After the redirect this will be checked again and an error message is outputted.
-            } elseif ($current_language['id_lang'] != $language_id) {
-                $helper_flash->add('error', $this->l('Language cannot be empty.'));
-            } elseif (
-                Tools::isSubmit('submit_nostotagging_new_account')
-                || Tools::getValue('nostotagging_account_action') === 'newAccount'
-            ) {
-                $account_email = (string)Tools::getValue($this->name.'_account_email');
-                if (empty($account_email)) {
-                    $helper_flash->add('error', $this->l('Email cannot be empty.'));
-                } elseif (!Validate::isEmail($account_email)) {
-                    $helper_flash->add('error', $this->l('Email is not a valid email address.'));
-                } else {
-                    try {
-                        if (Tools::isSubmit('nostotagging_account_details')) {
-                            $account_details = Tools::jsonDecode(Tools::getValue('nostotagging_account_details'));
-                        } else {
-                            $account_details = false;
-                        }
-                        $this->createAccount($language_id, $account_email, $account_details);
-                        $helper_config->clearCache();
-                        $helper_flash->add(
-                            'success',
-                            $this->l(
-                                'Account created. Please check your email and follow the instructions to set a'
-                                . ' password for your new account within three days.'
-                            )
-                        );
-                    } catch (NostoApiResponseException $e) {
-                        $helper_flash->add(
-                            'error',
-                            $this->l(
-                                'Account could not be automatically created due to missing or invalid parameters.'
-                                . ' Please see your Prestashop logs for details'
-                            )
-                        );
-                        /* @var NostoTaggingHelperLogger $logger */
-                        $logger = Nosto::helper('nosto_tagging/logger');
-                        $logger->error(
-                            'Creating Nosto account failed: ' . $e->getMessage() .':'.$e->getCode(),
-                            $e->getCode(),
-                            'Employee',
-                            (int)$employee->id
-                        );
-                    } catch (Exception $e) {
-                        $helper_flash->add(
-                            'error',
-                            $this->l('Account could not be automatically created. Please see logs for details.')
-                        );
-                        /* @var NostoTaggingHelperLogger $logger */
-                        $logger = Nosto::helper('nosto_tagging/logger');
-                        $logger->error(
-                            'Creating Nosto account failed: ' . $e->getMessage() .':'.$e->getCode(),
-                            $e->getCode(),
-                            'Employee',
-                            (int)$employee->id
-                        );
-                    }
-                }
-            } elseif (
-                Tools::isSubmit('submit_nostotagging_authorize_account')
-                || Tools::getValue('nostotagging_account_action') === 'connectAccount'
-                || Tools::getValue('nostotagging_account_action') === 'syncAccount'
-            ) {
-                $meta = new NostoTaggingMetaOauth();
-                $meta->setModuleName($this->name);
-                $meta->setModulePath($this->_path);
-                $meta->loadData($this->context, $language_id);
-                $client = new NostoOAuthClient($meta);
-                Tools::redirect($client->getAuthorizationUrl(), '');
-                die();
-            } elseif (
-                Tools::isSubmit('submit_nostotagging_reset_account')
-                || Tools::getValue('nostotagging_account_action') === 'removeAccount'
-            ) {
-                $account = NostoTaggingHelperAccount::findByContext($this->context);
-                $helper_config->clearCache();
-                NostoTaggingHelperAccount::delete($account, $language_id);
-            } elseif (Tools::isSubmit('submit_nostotagging_update_exchange_rates')) {
-                $nosto_account = NostoTaggingHelperAccount::find($language_id, $id_shop_group, $id_shop);
-                if ($nosto_account &&
-                    NostoTaggingHelperAccount::updateCurrencyExchangeRates(
-                        $nosto_account,
-                        $this->context
-                    )
-                ) {
-                    $helper_flash->add(
-                        'success',
-                        $this->l(
-                            'Exchange rates successfully updated to Nosto'
-                        )
-                    );
-                } else {
-                    if (!$nosto_account->getApiToken(NostoApiToken::API_EXCHANGE_RATES)) {
-                        $message = 'Failed to update exchange rates to Nosto due to a missing API token. 
-                            Please, reconnect your account with Nosto';
-                    } else {
-                        $message = 'There was an error updating the exchange rates. 
-                            See Prestashop logs for more information.';
-                    }
-                    $helper_flash->add(
-                        'error',
-                        $this->l($message)
-                    );
-                }
-            } elseif (
-                Tools::isSubmit('submit_nostotagging_advanced_settings')
-                && Tools::isSubmit('multi_currency_method')
-            ) {
-                /** @var NostoTaggingHelperConfig $helper_config */
-                $helper_config = Nosto::helper('nosto_tagging/config');
-                /** @var NostoTaggingHelperFlashMessage $helper_flash */
-                $helper_flash = Nosto::helper('nosto_tagging/flash_message');
-                $helper_config->saveMultiCurrencyMethod(
-                    Tools::getValue('multi_currency_method'),
-                    $language_id,
-                    $id_shop_group,
-                    $id_shop
-                );
-                $helper_config->saveNostoTaggingRenderPosition(
-                    Tools::getValue('nostotagging_position'),
-                    $language_id,
-                    $id_shop_group,
-                    $id_shop
-                );
-                $helper_config->saveImageType(
-                    Tools::getValue('image_type'),
-                    $language_id,
-                    $id_shop_group,
-                    $id_shop
-                );
-                $account = NostoTaggingHelperAccount::find($language_id, $id_shop_group, $id_shop);
-                $account_meta = new NostoTaggingMetaAccount();
-                $account_meta->loadData($this->context, $language_id);
-                // Make sure we Nosto is installed for the current store
-                if (empty($account) || !$account->isConnectedToNosto()) {
-                    Tools::redirect(
-                        NostoHttpRequest::replaceQueryParamInUrl(
-                            'language_id',
-                            $language_id,
-                            $admin_url
-                        ),
-                        ''
-                    );
-                    die;
-                }
-                try {
-                    NostoTaggingHelperAccount::updateSettings($account, $account_meta);
-                    $helper_flash->add('success', $this->l('The settings have been saved.'));
-                } catch (NostoException $e) {
-                    /* @var NostoTaggingHelperLogger $logger */
-                    $logger = Nosto::helper('nosto_tagging/logger');
-                    $logger->error(
-                        __CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(),
-                        $e->getCode(),
-                        'Employee',
-                        (int)$employee->id
-                    );
+        $indexController = new NostoIndexController();
+        $smartyMetaData = $indexController->getSmartyMetaData($this);
+        $this->getSmarty()->assign($smartyMetaData);
 
-                    $helper_flash->add(
-                        'error',
-                        $this->l('There was an error saving the settings. Please, see log for details.')
-                    );
-                }
-                // Also update the exchange rates if multi currency is used
-                if ($account_meta->getUseCurrencyExchangeRates()) {
-                    NostoTaggingHelperAccount::updateCurrencyExchangeRates($account, $this->context);
-                }
-            }
-
-            // Refresh the page after every POST to get rid of form re-submission errors.
-            Tools::redirect(NostoHttpRequest::replaceQueryParamInUrl('language_id', $language_id, $admin_url), '');
-            die;
-        } else {
-            $language_id = (int)Tools::getValue('language_id', 0);
-
-            if (($error_message = Tools::getValue('oauth_error')) !== false) {
-                $output .= $this->displayError($this->l($error_message));
-            }
-            if (($success_message = Tools::getValue('oauth_success')) !== false) {
-                $output .= $this->displayConfirmation($this->l($success_message));
-            }
-
-            foreach ($helper_flash->getList('success') as $flash_message) {
-                $output .= $this->displayConfirmation($flash_message);
-            }
-            foreach ($helper_flash->getList('error') as $flash_message) {
-                $output .= $this->displayError($flash_message);
-            }
-
-            if (Shop::getContext() !== Shop::CONTEXT_SHOP) {
-                $output .= $this->displayError($this->l('Please choose a shop to configure Nosto for.'));
-            }
-        }
-        // Choose current language if it has not been set.
-        if (!isset($current_language)) {
-            $current_language = $this->ensureAdminLanguage($languages, $language_id);
-            $language_id = (int)$current_language['id_lang'];
-        }
-        /** @var NostoAccount $account */
-        $account = NostoTaggingHelperAccount::find($language_id, $id_shop_group, $id_shop);
-        $missing_tokens = true;
-        if (
-            $account instanceof NostoAccountInterface
-            && $account->getApiToken(NostoApiToken::API_EXCHANGE_RATES)
-            && $account->getApiToken(NostoApiToken::API_SETTINGS)
-        ) {
-            $missing_tokens = false;
-        }
-        // When no account is found we will show the installation URL
-        if (
-            $account instanceof NostoAccountInterface === false
-            && Shop::getContext() === Shop::CONTEXT_SHOP
-        ) {
-            $account_iframe = new NostoTaggingMetaAccountIframe();
-            $account_iframe->loadData($this->context, $language_id);
-            /* @var NostoHelperIframe $iframe_helper */
-            $iframe_helper = Nosto::helper('iframe');
-            $iframe_installation_url = $iframe_helper->getUrl($account_iframe, null, array('v'=>1));
-        } else {
-            $iframe_installation_url = null;
-        }
-        /** @var NostoTaggingHelperImage $helper_images */
-        $helper_images = Nosto::helper('nosto_tagging/image');
         $this->getSmarty()->assign(array(
-            $this->name.'_form_action' => $this->getAdminUrl(),
-            $this->name.'_create_account' => $this->getAdminUrl(),
-            $this->name.'_delete_account' => $this->getAdminUrl(),
-            $this->name.'_connect_account' => $this->getAdminUrl(),
-            $this->name.'_has_account' => ($account !== null),
-            $this->name.'_account_name' => ($account !== null) ? $account->getName() : null,
-            $this->name.'_account_email' => $account_email,
-            $this->name.'_account_authorized' => ($account !== null) ? $account->isConnectedToNosto() : false,
-            $this->name.'_languages' => $languages,
-            $this->name.'_current_language' => $current_language,
-            $this->name.'_translations' => array(
-                'installed_heading' => sprintf(
-                    $this->l('You have installed Nosto to your %s shop'),
-                    $current_language['name']
-                ),
-                'installed_subheading' => sprintf(
-                    $this->l('Your account ID is %s'),
-                    ($account !== null) ? $account->getName() : ''
-                ),
-                'not_installed_subheading' => sprintf(
-                    $this->l('Install Nosto to your %s shop'),
-                    $current_language['name']
-                ),
-                'exchange_rate_crontab_example' =>sprintf(
-                    '0 0 * * * curl --silent %s > /dev/null 2>&1',
-                    $helper_url->getModuleUrl(
-                        $this->name,
-                        $this->_path,
-                        'cronRates',
-                        $current_language['id_lang'],
-                        $id_shop,
-                        array('token' => $this->getCronAccessToken())
-                    )
-                ),
-            ),
-            'multi_currency_method' => $helper_config->getMultiCurrencyMethod(
-                $current_language['id_lang'],
-                $id_shop_group,
-                $id_shop
-            ),
-            'nostotagging_position' => $helper_config->getNostotaggingRenderPosition(
-                $current_language['id_lang'],
-                $id_shop_group,
-                $id_shop
-            ),
-            $this->name.'_ps_version_class' => 'ps-'.str_replace('.', '', Tools::substr(_PS_VERSION_, 0, 3)),
-            'missing_tokens' => $missing_tokens,
-            'iframe_installation_url' => $iframe_installation_url,
-            'iframe_origin' => $helper_url->getIframeOrigin(),
-            'module_path' => $this->_path,
-            'image_types' => $helper_images->getProductImageTypes(),
-            'current_image_type' => $helper_config->getImageType(
-                $current_language['id_lang'],
-                $id_shop_group,
-                $id_shop
-            )
+            'module_path' => $this->_path
         ));
-       // Try to login employee to Nosto in order to get a url to the internal setting pages,
-        // which are then shown in an iframe on the module config page.
-        if (
-            $account
-            && $account->isConnectedToNosto()
-            && Shop::getContext() === Shop::CONTEXT_SHOP
-        ) {
-            try {
-                $meta = new NostoTaggingMetaAccountIframe();
-                $meta->setUniqueId($this->getUniqueInstallationId());
-                $meta->loadData($this->context, $language_id);
-                $url = $account->getIframeUrl($meta);
-                if (!empty($url)) {
-                    $this->getSmarty()->assign(array('iframe_url' => $url));
-                }
-            } catch (NostoException $e) {
-                /* @var NostoTaggingHelperLogger $logger */
-                $logger = Nosto::helper('nosto_tagging/logger');
-                $logger->error(
-                    __CLASS__.'::'.__FUNCTION__.' - '.$e->getMessage(),
-                    $e->getCode(),
-                    'Employee',
-                    (int)$employee->id
-                );
-            }
-        }
         $output .= $this->display(__FILE__, $this->getSettingsTemplate());
 
         return $output;
@@ -651,35 +356,10 @@ class NostoTagging extends Module
     {
         $template_file = 'views/templates/admin/config-bootstrap.tpl';
         if (_PS_VERSION_ < '1.6') {
-            $template_file  = 'views/templates/admin/legacy-config-bootstrap.tpl';
+            $template_file = 'views/templates/admin/legacy-config-bootstrap.tpl';
         }
 
         return $template_file;
-    }
-    /**
-     * Creates a new Nosto account for given shop language.
-     *
-     * @param int $id_lang the language ID for which to create the account.
-     * @param string $email the account owner email address.
-     * @param string $account_details the details for the account.
-     * @return bool true if account was created, false otherwise.
-     */
-    protected function createAccount($id_lang, $email, $account_details = "")
-    {
-        $meta = new NostoTaggingMetaAccount();
-        $meta->loadData($this->context, $id_lang);
-        $meta->getOwner()->setEmail($email);
-        $meta->setDetails($account_details);
-        /** @var NostoAccount $account */
-        $account = NostoAccount::create($meta);
-        $id_shop = null;
-        $id_shop_group = null;
-        if ($this->context->shop instanceof Shop) {
-            $id_shop = $this->context->shop->id;
-            $id_shop_group = $this->context->shop->id_shop_group;
-        }
-
-        return NostoTaggingHelperAccount::save($account, $id_lang, $id_shop_group, $id_shop);
     }
 
     /**
@@ -689,7 +369,7 @@ class NostoTagging extends Module
      */
     public function getUniqueInstallationId()
     {
-        return sha1($this->name._COOKIE_KEY_);
+        return sha1($this->name . _COOKIE_KEY_);
     }
 
     /**
@@ -758,7 +438,7 @@ class NostoTagging extends Module
         // Nosto menu item in PS >= 1.6.
         $ctrl = $this->context->controller;
         if ($ctrl instanceof AdminController && method_exists($ctrl, 'addCss')) {
-            $ctrl->addCss($this->_path.'views/css/nostotagging-back-office.css');
+            $ctrl->addCss($this->_path . 'views/css/nostotagging-back-office.css');
         }
         $this->updateExhangeRatesIfNeeded(false);
     }
@@ -1267,7 +947,7 @@ class NostoTagging extends Module
             if ($order instanceof Order === false) {
                 return;
             }
-            /* @var NostoTaggingHelperOrderOperation $order_operation*/
+            /* @var NostoTaggingHelperOrderOperation $order_operation */
             $order_operation = Nosto::helper('nosto_tagging/order_operation');
             $context = $this->getContext();
             $order_operation->send($order, $context);
@@ -1438,13 +1118,13 @@ class NostoTagging extends Module
      * Gets the current admin config language data.
      *
      * @param array $languages list of valid languages.
-     * @param int $id_lang if a specific language is required.
+     * @param int $langId if a specific language is required.
      * @return array the language data array.
      */
-    protected function ensureAdminLanguage(array $languages, $id_lang)
+    public static function ensureAdminLanguage(array $languages, $langId)
     {
         foreach ($languages as $language) {
-            if ($language['id_lang'] == $id_lang) {
+            if ($language['id_lang'] == $langId) {
                 return $language;
             }
         }
@@ -1466,25 +1146,25 @@ class NostoTagging extends Module
     protected function getHiddenRecommendationElements()
     {
         if ($this->isController('index')) {
-        // The home page.
+            // The home page.
             return $this->display(__FILE__, 'views/templates/hook/home_hidden-nosto-elements.tpl');
         } elseif ($this->isController('product')) {
-        // The product page.
+            // The product page.
             return $this->display(__FILE__, 'views/templates/hook/footer-product_hidden-nosto-elements.tpl');
         } elseif ($this->isController('order') && (int)Tools::getValue('step', 0) === 0) {
-        // The cart summary page.
+            // The cart summary page.
             return $this->display(__FILE__, 'views/templates/hook/shopping-cart-footer_hidden-nosto-elements.tpl');
         } elseif ($this->isController('category') || $this->isController('manufacturer')) {
-        // The category/manufacturer page.
+            // The category/manufacturer page.
             return $this->display(__FILE__, 'views/templates/hook/category-footer_hidden-nosto-elements.tpl');
         } elseif ($this->isController('search')) {
-        // The search page.
+            // The search page.
             return $this->display(__FILE__, 'views/templates/hook/search_hidden-nosto-elements.tpl');
         } elseif ($this->isController('pagenotfound') || $this->isController('404')) {
-        // The search page.
+            // The search page.
             return $this->display(__FILE__, 'views/templates/hook/404_hidden_nosto-elements.tpl');
         } elseif ($this->isController('order-confirmation')) {
-        // The search page.
+            // The search page.
             return $this->display(__FILE__, 'views/templates/hook/order-confirmation_hidden_nosto-elements.tpl');
         } else {
             // If the current page is not one of the ones we want to show recommendations on, just return empty.
@@ -1520,7 +1200,7 @@ class NostoTagging extends Module
      */
     protected function getAdminUrl()
     {
-        $current_url = Tools::getHttpHost(true).(isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '');
+        $current_url = Tools::getHttpHost(true) . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '');
         $parsed_url = NostoHttpRequest::parseUrl($current_url);
         $parsed_query_string = NostoHttpRequest::parseQueryString($parsed_url['query']);
         $valid_params = array(
@@ -1767,7 +1447,7 @@ class NostoTagging extends Module
      *
      * @return string the access token.
      */
-    public function getCronAccessToken()
+    public static function getCronAccessToken()
     {
         /** @var NostoTaggingHelperConfig $helper_config */
         $helper_config = Nosto::helper('nosto_tagging/config');
@@ -1799,6 +1479,7 @@ class NostoTagging extends Module
     ) {
         return $this->updateExhangeRatesIfNeeded(false);
     }
+
     /**
      * Defines exhange rates updated for current session
      */
@@ -1929,7 +1610,7 @@ class NostoTagging extends Module
         /* @var NostoTaggingHelperNotification $helper_notification */
         $helper_notification = Nosto::helper('nosto_tagging/notification');
         $notifications = $helper_notification->getAll();
-        if (is_array($notifications) && count($notifications)>0) {
+        if (is_array($notifications) && count($notifications) > 0) {
             /* @var NostoTaggingAdminNotification $notification */
             foreach ($notifications as $notification) {
                 if (

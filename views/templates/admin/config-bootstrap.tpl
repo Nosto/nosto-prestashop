@@ -70,7 +70,7 @@
                             </div>
                         </div>
                         <div class="col-lg-offset-3">
-                            <button class="btn btn-danger btn-lg" type="submit" onclick="return confirm('{l s='Are you sure you want to uninstall Nosto?' mod='nostotagging'}');" name="submit_nostotagging_reset_account">
+                            <button class="btn btn-danger btn-lg" type="submit" onclick="if(confirm('{l s='Are you sure you want to uninstall Nosto?' mod='nostotagging'}'))Nosto.deleteNostoAccount();" name="submit_nostotagging_reset_account">
                                 <span class="ladda-label">
                                     <i class="icon-remove"></i>
                                     {l s='Remove Nosto' mod='nostotagging'}
@@ -185,7 +185,7 @@
                                     {l s='You can also synchronise the exchange rates to Nosto by clicking the button below.' mod='nostotagging'}
                                 </p>
                                 <div class="form-group">
-                                    <button class="btn btn-default btn-info btn-lg" type="submit" name="submit_nostotagging_update_exchange_rates" value="1">
+                                    <button class="btn btn-default btn-info btn-lg" onclick="Nosto.updateExchangeRateToNosto()" name="submit_nostotagging_update_exchange_rates" value="1">
                                         <span class="ladda-label">
                                             <i class="icon-refresh"></i>
                                             {l s='Synchronise exchange rates' mod='nostotagging'}
@@ -199,7 +199,7 @@
                 </div>
                 <div class="row nostotagging_settings">
                     <div class="col-md-12">
-                        <button type="submit" value="1" name="submit_nostotagging_advanced_settings" class="btn btn-default pull-right">
+                        <button onclick="Nosto.saveAdvancedSettings()" value="1" name="submit_nostotagging_advanced_settings" class="btn btn-default pull-right">
                             <i class="process-icon-save"></i>
                             {l s='Save' mod='nostotagging'}
                         </button>
@@ -251,9 +251,40 @@
                             $('#nostotagging_account_details').val('');
                         }
                     }
-                    $('#nosto_form_id').submit();
+
+                    var action = null;
+                    if (data.type == 'newAccount') {
+                        action = "{/literal}{$NostoCreateAccountUrl|escape:javascript}{literal}";
+                        console.log(action);
+                    } else if (data.type == 'connectAccount' || data.type == 'syncAccount') {
+                        action = "{/literal}{$NostoConnectAccountUrl|escape:javascript}{literal}";
+                    }
+                    submitAction(action);
                 }
             }
+            // Define the "Nosto" global namespace if not already defined.
+            window.Nosto = window.Nosto || {};
+
+            function submitAction(action) {
+                $('#nosto_form_id').attr("action", action);
+                $('#nosto_form_id').submit();
+            }
+
+            window.Nosto.deleteNostoAccount = function() {
+                var action = "{/literal}{$NostoDeleteAccountUrl|escape:javascript}{literal}";
+                submitAction(action);
+            }
+
+            window.Nosto.updateExchangeRateToNosto = function() {
+                var action = "{/literal}{$NostoUpdateExchangeRateUrl|escape:javascript}{literal}";
+                submitAction(action);
+            }
+
+            window.Nosto.saveAdvancedSettings = function() {
+                var action = "{/literal}{$NostoAdvancedSettingUrl|escape:javascript}{literal}";
+                submitAction(action);
+            }
+
             window.addEventListener("message", receiveMessage, false);
         });
         {/literal}

@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2016 Nosto Solutions Ltd
+ * 2013-2017 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,39 +19,24 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2016 Nosto Solutions Ltd
+ * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
+require_once 'NostoBaseController.php';
 
-/**
- * Base controller for all Nosto CRON controllers.
- *
- * @property NostoTagging $module
- */
-abstract class NostoTaggingCronModuleFrontController extends ModuleFrontController
+class NostoConnectAccountController extends NostoBaseController
 {
     /**
      * @inheritdoc
      */
-    public function init()
+    public function execute()
     {
-        parent::init();
+        $meta = new NostoTaggingMetaOauth();
+        $meta->setModuleName(NostoTagging::MODULE_NAME);
+        $meta->loadData($this->context, $this->getLanguageId());
+        $client = new NostoOAuthClient($meta);
+        Tools::redirect($client->getAuthorizationUrl(), '');
 
-        if (!$this->validateToken(Tools::getValue('token'))) {
-            header('HTTP/1.1 403 Forbidden');
-            exit('Access forbidden');
-        }
-    }
-
-    /**
-     * Validates an access token.
-     * This is used to prevent unauthorized use of the cron controller.
-     *
-     * @param string $token the access token.
-     * @return bool if the token is valid.
-     */
-    protected function validateToken($token)
-    {
-        return ($token === NostoTagging::getCronAccessToken());
+        return false;
     }
 }

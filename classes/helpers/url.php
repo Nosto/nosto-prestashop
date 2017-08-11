@@ -42,10 +42,10 @@ class NostoTaggingHelperUrl
     {
         try {
             if (!$id_product) {
-            // Find a product that is active and available for order.
+                // Find a product that is active and available for order.
                 $sql = '
                     SELECT `id_product`
-                    FROM `'.pSQL(_DB_PREFIX_).'product`
+                    FROM `' . pSQL(_DB_PREFIX_) . 'product`
                     WHERE `active` = 1
                     AND `available_for_order` = 1
                 ';
@@ -66,7 +66,7 @@ class NostoTaggingHelperUrl
             $params = array('nostodebug' => 'true');
             return $this->getProductUrl($product, $id_lang, null, $params);
         } catch (Exception $e) {
-        // Return empty on failure
+            // Return empty on failure
             return '';
         }
     }
@@ -82,10 +82,10 @@ class NostoTaggingHelperUrl
     {
         try {
             if (!$id_category) {
-            // Find a category that is active, not the root category and has a parent category.
+                // Find a category that is active, not the root category and has a parent category.
                 $sql = '
                     SELECT `id_category`
-                    FROM `'.pSQL(_DB_PREFIX_).'category`
+                    FROM `' . pSQL(_DB_PREFIX_) . 'category`
                     WHERE `active` = 1
                     AND `id_parent` > 0
                     AND `is_root_category` = 0
@@ -106,7 +106,7 @@ class NostoTaggingHelperUrl
             $params = array('nostodebug' => 'true');
             return $this->getCategoryUrl($category, $id_lang, null, $params);
         } catch (Exception $e) {
-        // Return empty on failure
+            // Return empty on failure
             return '';
         }
     }
@@ -127,7 +127,7 @@ class NostoTaggingHelperUrl
             );
             return $this->getPageUrl('search.php', $id_lang, null, $params);
         } catch (Exception $e) {
-        // Return empty on failure
+            // Return empty on failure
             return '';
         }
     }
@@ -144,7 +144,7 @@ class NostoTaggingHelperUrl
             $params = array('nostodebug' => 'true');
             return $this->getPageUrl('order.php', $id_lang, null, $params);
         } catch (Exception $e) {
-        // Return empty on failure
+            // Return empty on failure
             return '';
         }
     }
@@ -161,7 +161,7 @@ class NostoTaggingHelperUrl
             $params = array('nostodebug' => 'true');
             return $this->getPageUrl('index.php', $id_lang, null, $params);
         } catch (Exception $e) {
-        // Return empty on failure
+            // Return empty on failure
             return '';
         }
     }
@@ -209,7 +209,7 @@ class NostoTaggingHelperUrl
                 'controller' => 'product',
                 'id_lang' => $id_lang,
             );
-            $url = $this->getBaseUrl($id_shop).'index.php?'.http_build_query($query_params);
+            $url = $this->getBaseUrl($id_shop) . 'index.php?' . http_build_query($query_params);
         }
 
         if ((int)Configuration::get('PS_REWRITING_SETTINGS') === 0) {
@@ -252,7 +252,7 @@ class NostoTaggingHelperUrl
                 'controller' => 'category',
                 'id_lang' => $id_lang,
             );
-            $url = $this->getBaseUrl($id_shop).'index.php?'.http_build_query($query_params);
+            $url = $this->getBaseUrl($id_shop) . 'index.php?' . http_build_query($query_params);
         }
 
         if ((int)Configuration::get('PS_REWRITING_SETTINGS') === 0) {
@@ -294,7 +294,7 @@ class NostoTaggingHelperUrl
                 'controller' => Tools::strReplaceFirst('.php', '', $controller),
                 'id_lang' => $id_lang,
             );
-            $url = $this->getBaseUrl($id_shop).'index.php?'.http_build_query($query_params);
+            $url = $this->getBaseUrl($id_shop) . 'index.php?' . http_build_query($query_params);
         }
 
         if ((int)Configuration::get('PS_REWRITING_SETTINGS') === 0) {
@@ -331,21 +331,36 @@ class NostoTaggingHelperUrl
 
         if (version_compare(_PS_VERSION_, '1.5.0.0') === -1) {
             $params['id_lang'] = $id_lang;
-            return $this->getBaseUrl($id_shop).$path.'ctrl.php?'.http_build_query($params);
+            return $this->getBaseUrl($id_shop) . $path . 'ctrl.php?' . http_build_query($params);
         } elseif (version_compare(_PS_VERSION_, '1.5.5.0') === -1) {
-        // For PS versions 1.5.0.0 - 1.5.4.1 we always hard-code the urls to be in non-friendly format and fetch
+            // For PS versions 1.5.0.0 - 1.5.4.1 we always hard-code the urls to be in non-friendly format and fetch
             // the shops base url ourselves. This is a workaround to all the bugs related to url building in these
             // PS versions.
             $params['fc'] = 'module';
             $params['module'] = $name;
             $params['controller'] = $controller;
             $params['id_lang'] = $id_lang;
-            return $this->getBaseUrl($id_shop).'index.php?'.http_build_query($params);
+            return $this->getBaseUrl($id_shop) . 'index.php?' . http_build_query($params);
         } else {
             /** @var LinkCore $link */
             $link = NostoTagging::buildLinkClass();
             return $link->getModuleLink($name, $controller, $params, null, $id_lang, $id_shop);
         }
+    }
+
+    /**
+     * Get the url for the controller
+     *
+     * @param string $controllerClassName controller class name prefix, without the 'Controller' part
+     * @param string $employeeId current logge in employee id
+     * @return string controller url
+     */
+    public static function getControllerUrl($controllerClassName, $employeeId)
+    {
+        $tabId = (int)Tab::getIdFromClassName($controllerClassName);
+        $token = Tools::getAdminToken($controllerClassName . $tabId . $employeeId);
+
+        return 'index.php?controller=' . $controllerClassName . '&token=' . $token;
     }
 
     /**
@@ -365,8 +380,8 @@ class NostoTaggingHelperUrl
         }
 
         /** @var Shop|ShopCore $shop */
-        $base = ($ssl ? 'https://'.$shop->domain_ssl : 'http://'.$shop->domain);
-        return $base.$shop->getBaseURI();
+        $base = ($ssl ? 'https://' . $shop->domain_ssl : 'http://' . $shop->domain);
+        return $base . $shop->getBaseURI();
     }
 
     /**
