@@ -44,6 +44,6 @@ class NostoOrderTagging
             'nosto_order' => $nostoOrder,
         ));
 
-        return $module->display("NostoTagging.php", 'views/templates/hook/order-confirmation_order-tagging.tpl');
+        return $module->render('views/templates/hook/order-confirmation_order-tagging.tpl');
     }
 }

@@ -45,6 +45,6 @@ class NostoSearchTagging
             'nosto_search' => $nostoQuery,
         ));
 
-        return $module->display("NostoTagging.php", 'views/templates/hook/top_search-tagging.tpl');
+        return $module->render('views/templates/hook/top_search-tagging.tpl');
     }
 }

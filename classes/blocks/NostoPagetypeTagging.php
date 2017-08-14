@@ -54,6 +54,6 @@ class NostoPagetypeTagging
             'nosto_page_type' => self::$controllers[NostoHelperController::getControllerName()]
         ));
 
-        return $module->display("NostoTagging.php", 'views/templates/hook/top_page_type-tagging.tpl');
+        return $module->render('views/templates/hook/top_page_type-tagging.tpl');
     }
 }
