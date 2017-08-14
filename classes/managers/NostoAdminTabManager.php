@@ -33,7 +33,7 @@ class NostoAdminTabManager
     const MAIN_MENU_ITEM_CLASS = 'AdminNosto';
     const SUB_MENU_ITEM_CLASS = 'AdminNostoPersonalization';
 
-    private static $controllers = array(
+    public static $controllers = array(
         "NostoCreateAccount",
         "NostoConnectAccount",
         "NostoDeleteAccount",

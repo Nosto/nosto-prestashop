@@ -23,6 +23,9 @@
  * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
+
+use \Nosto\Nosto as NostoSDK;
+
 class NostoHeaderContent
 {
     const DEFAULT_SERVER_ADDRESS = 'connect.nosto.com';

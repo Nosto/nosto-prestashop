@@ -29,6 +29,7 @@ use \Nosto\Object\Signup\Account as NostoSDKAccount;
 use \Nosto\Request\Http\HttpRequest as NostoSDKHttpRequest;
 use \Nosto\Types\Signup\AccountInterface as NostoSDKAccountInterface;
 use \Nosto\Request\Api\Token as NostoSDKAPIToken;
+use \Nosto\Nosto as NostoSDK;
 
 class NostoIndexController
 {
@@ -44,7 +45,7 @@ class NostoIndexController
     public function getControllerUrls($employeeId)
     {
         $urlMap = array();
-        foreach (NostoAdminTabManager::NOSTO_CONTROLLER_CLASSES as $controllerName) {
+        foreach (NostoAdminTabManager::$controllers as $controllerName) {
             $controllerUrl = NostoHelperUrl::getControllerUrl(
                 $controllerName,
                 $employeeId
@@ -85,7 +86,7 @@ class NostoIndexController
         ) {
             try {
                 $currentUser = NostoCurrentUser::loadData(Context::getContext());
-                $meta = NostoIframe::loadData(Context::getContext(), $languageId, '');
+                $meta = NostoIframe::loadData(Context::getContext(), $languageId);
                 $url = NostoSDKIframeHelper::getUrl($meta, $account, $currentUser);
             } catch (NostoSDKException $e) {
                 NostoHelperLogger::error($e, 'Unable to load the Nosto IFrame');
@@ -133,7 +134,7 @@ class NostoIndexController
             && Shop::getContext() === Shop::CONTEXT_SHOP
         ) {
             $currentUser = NostoCurrentUser::loadData(Context::getContext());
-            $accountIframe = NostoIframe::loadData(Context::getContext(), $languageId, '');
+            $accountIframe = NostoIframe::loadData(Context::getContext(), $languageId);
             $iframeInstallationUrl = NostoSDKIframeHelper::getUrl(
                 $accountIframe,
                 $account,
