@@ -33,8 +33,8 @@ class NostoCustomer extends NostoSDKUser
     /**
      * Loads the customer data from supplied context and customer objects.
      *
-     * @param Customer $customer the customer object.
-     * @return NostoCustomer
+     * @param Customer $customer the customer model to process
+     * @return NostoCustomer the customer object
      */
     public static function loadData(Customer $customer)
     {

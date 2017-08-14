@@ -25,16 +25,13 @@
  */
 class NostoBrand
 {
-    /**
-     * @var string the built brand string.
-     */
     private $brand;
 
     /**
      * Loads the brand data from supplied manufacturer object.
      *
-     * @param Manufacturer $manufacturer the manufacturer object.
-     * @return NostoBrand
+     * @param Manufacturer $manufacturer the manufacturer model to process
+     * @return NostoBrand the brand object
      */
     public static function loadData(Manufacturer $manufacturer)
     {

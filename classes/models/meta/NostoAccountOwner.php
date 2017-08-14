@@ -31,9 +31,9 @@ class NostoAccountOwner extends NostoSDKSignupOwner
      * Loads the meta data from the given context.
      *
      * @param Context $context the context to use as data source.
-     * @return NostoAccountOwner the owner of the account
+     * @return NostoAccountOwner the account owner object
      */
-    public static function loadData($context)
+    public static function loadData(Context $context)
     {
         $nostoOwner = new NostoAccountOwner();
         if (!empty($context->employee)) {

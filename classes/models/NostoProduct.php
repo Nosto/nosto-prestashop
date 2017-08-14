@@ -30,9 +30,9 @@ class NostoProduct extends NostoSDKProduct
     /**
      * Loads the product data from supplied context and product objects.
      *
-     * @param Context $context the context object.
-     * @param Product $product the product object.
-     * @return NostoProduct
+     * @param Context $context the context
+     * @param Product $product the product model to process
+     * @return NostoProduct the product object
      */
     public static function loadData(Context $context, Product $product)
     {

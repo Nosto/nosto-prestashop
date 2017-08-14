@@ -30,8 +30,8 @@ class NostoOrderStatus extends NostoSDKOrderStatus
     /**
      * Loads the order status data from the order model.
      *
-     * @param Order $order the model.
-     * @return NostoOrderStatus the order status of the order
+     * @param Order $order the order model to process
+     * @return NostoOrderStatus the order status object
      */
     public static function loadData(Order $order)
     {

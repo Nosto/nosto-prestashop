@@ -30,8 +30,8 @@ class NostoOrderBuyer extends NostoSDKOrderBuyer
     /**
      * Loads the buyer data from the customer object.
      *
-     * @param Customer $customer the customer object.
-     * @return NostoOrderBuyer the buyer of the order
+     * @param Customer $customer the customer model to process
+     * @return NostoOrderBuyer the buyer object
      */
     public static function loadData(Customer $customer)
     {

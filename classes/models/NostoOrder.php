@@ -51,9 +51,9 @@ class NostoOrder extends NostoSDKOrder
     /**
      * Loads the order data from supplied context and order objects.
      *
-     * @param Context $context the context object.
-     * @param Order $order the order object.
-     * @return NostoOrder the order
+     * @param Context $context the context
+     * @param Order $order the order model to process
+     * @return NostoOrder the order object
      */
     public static function loadData(Context $context, Order $order)
     {

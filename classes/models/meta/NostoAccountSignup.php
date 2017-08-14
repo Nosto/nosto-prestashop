@@ -70,11 +70,11 @@ class NostoAccountSignup extends NostoSDKAccountSignup
     /**
      * Loads the meta data for the context and given language.
      *
-     * @param Context $context the context to use as data source.
+     * @param Context $context the context
      * @param int $id_lang the language to use as data source.
-     * @return NostoAccountSignup|null
+     * @return NostoAccountSignup|null the signup object
      */
-    public static function loadData($context, $id_lang)
+    public static function loadData(Context $context, $id_lang)
     {
         $nostoSignup = new NostoAccountSignup();
 

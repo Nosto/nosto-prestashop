@@ -32,6 +32,10 @@ class NostoSearch
         $this->searchTerm = $searchTerm;
     }
 
+    /**
+     * @param string $term the current search term
+     * @return NostoSearch the search object
+     */
     public static function loadData($term)
     {
         $nostoSearch = new NostoSearch($term);

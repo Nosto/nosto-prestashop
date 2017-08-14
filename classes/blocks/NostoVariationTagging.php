@@ -34,16 +34,15 @@ class NostoVariationTagging
      */
     public static function get(NostoTagging $module)
     {
-        if (Nosto::useMultipleCurrencies()) {
-            $defaultVariationId = Context::getContext()->currency->iso_code;
-            $priceVariation = new NostoVariation($defaultVariationId);
-            Context::getContext()->smarty->assign(array(
-                'nosto_price_variation' => $priceVariation
-            ));
-
-            return $module->display("NostoTagging.php", 'views/templates/hook/top_price_variation-tagging.tpl');
+        if (!Nosto::useMultipleCurrencies()) {
+            return null;
         }
 
-        return '';
+        $priceVariation = NostoVariation::loadData();
+        Context::getContext()->smarty->assign(array(
+            'nosto_price_variation' => $priceVariation
+        ));
+
+        return $module->display("NostoTagging.php", 'views/templates/hook/top_price_variation-tagging.tpl');
     }
 }

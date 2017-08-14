@@ -25,9 +25,6 @@
  */
 class NostoCategory
 {
-    /**
-     * @var string the built category string.
-     */
     public $categoryString;
 
     /**
@@ -50,8 +47,8 @@ class NostoCategory
      * Loads the category data from supplied context and category objects.
      * Builds a tagging string of the given category including all its parent categories.
      *
-     * @param Context $context the context object.
-     * @param Category $category the category object.
+     * @param Context $context the context
+     * @param Category $category the category model to process
      * @return NostoCategory the category object
      */
     public static function loadData(Context $context, Category $category)

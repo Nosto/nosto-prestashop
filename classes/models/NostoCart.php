@@ -41,8 +41,8 @@ class NostoCart extends NostoSDKCart
     /**
      * Loads the cart data from supplied cart object.
      *
-     * @param Cart $cart the cart object.
-     * @return NostoCart
+     * @param Cart $cart the cart model to process
+     * @return NostoCart the cart object
      */
     public static function loadData(Cart $cart)
     {

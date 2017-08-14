@@ -30,10 +30,10 @@ class NostoCurrentUser extends NostoSDKUser
     /**
      * Loads the meta data from the given context.
      *
-     * @param Context $context the context to use as data source.
-     * @return NostoCurrentUser
+     * @param Context $context the context
+     * @return NostoCurrentUser the current user object
      */
-    public static function loadData($context)
+    public static function loadData(Context $context)
     {
         $nostoUser = new NostoCurrentUser();
         if (!empty($context->employee)) {

@@ -58,12 +58,11 @@ class NostoIframe extends NostoSDKIframe
     /**
      * Loads the meta-data from context.
      *
-     * @param Context $context the context to get the meta-data from.
+     * @param Context $context the context
      * @param int $id_lang the language ID of the shop for which to get the meta-data.
-     * @param $uniqueId
-     * @return NostoIframe|null
+     * @return NostoIframe|null the iframe object
      */
-    public static function loadData($context, $id_lang, $uniqueId)
+    public static function loadData(Context $context, $id_lang)
     {
         $nostoIframe = new NostoIframe();
         $shopLanguage = new Language($id_lang);
@@ -88,7 +87,7 @@ class NostoIframe extends NostoSDKIframe
         $nostoIframe->setShopName($shopLanguage->name);
         $nostoIframe->setVersionModule(NostoTagging::PLUGIN_VERSION);
         $nostoIframe->setVersionPlatform(_PS_VERSION_);
-        $nostoIframe->setUniqueId($uniqueId);
+        $nostoIframe->setUniqueId('');
         $nostoIframe->setPlatform('prestashop');
 
         try {

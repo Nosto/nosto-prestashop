@@ -25,11 +25,6 @@
  */
 class NostoVariation
 {
-    /**
-     * The id of the variation
-     *
-     * @var mixed variation id
-     */
     private $variationId;
 
     /**
@@ -39,10 +34,17 @@ class NostoVariation
      */
     public function __construct($variationId = null)
     {
-        $this->setVariationId($variationId);
-        NostoHelperHook::dispatchHookActionLoadAfter(get_class($this), array(
-            'nosto_price_variation' => $this
+        $this->variationId = $variationId;
+    }
+
+    public static function loadData()
+    {
+        $nostoVariation = new NostoVariation(Context::getContext()->currency->iso_code);
+
+        NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoVariation), array(
+            'nosto_variation' => $nostoVariation
         ));
+        return $nostoVariation;
     }
 
     /**
@@ -51,13 +53,5 @@ class NostoVariation
     public function getVariationId()
     {
         return $this->variationId;
-    }
-
-    /**
-     * @param mixed $variationId
-     */
-    public function setVariationId($variationId)
-    {
-        $this->variationId = $variationId;
     }
 }

@@ -30,8 +30,8 @@ use Nosto\Object\ExchangeRateCollection as NostoSDKExchangeRateCollection;
 class NostoExchangeRates extends NostoSDKExchangeRateCollection
 {
     /**
-     * @param Context $context
-     * @return NostoExchangeRates
+     * @param Context $context the context
+     * @return NostoExchangeRates the exchange rates object
      */
     public static function loadData(Context $context)
     {
