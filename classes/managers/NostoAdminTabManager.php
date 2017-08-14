@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 2013-2017 Nosto Solutions Ltd
  *
@@ -24,30 +25,6 @@
  */
 
 /**
- * 2013-2016 Nosto Solutions Ltd
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Academic Free License (AFL 3.0)
- * that is bundled with this package in the file LICENSE.txt.
- * It is also available through the world-wide-web at this URL:
- * http://opensource.org/licenses/afl-3.0.php
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to contact@nosto.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
- *
- * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2016 Nosto Solutions Ltd
- * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
- */
-
-/**
  * Helper class for managing the tab added to the admin section.
  */
 class NostoAdminTabManager
@@ -56,18 +33,12 @@ class NostoAdminTabManager
     const MAIN_MENU_ITEM_CLASS = 'AdminNosto';
     const SUB_MENU_ITEM_CLASS = 'AdminNostoPersonalization';
 
-    const NOSTO_CREATE_ACCOUNT_CLASS = 'NostoCreateAccount';
-    const NOSTO_CONNECT_ACCOUNT_CLASS = 'NostoConnectAccount';
-    const NOSTO_DELETE_ACCOUNT_CLASS = 'NostoDeleteAccount';
-    const NOSTO_UPDATE_EXCHANGE_RATE_CLASS = 'NostoUpdateExchangeRate';
-    const NOSTO_ADVANCED_SETTING_CLASS = 'NostoAdvancedSetting';
-
-    const NOSTO_CONTROLLER_CLASSES = array(
-        self::NOSTO_CREATE_ACCOUNT_CLASS,
-        self::NOSTO_CONNECT_ACCOUNT_CLASS,
-        self::NOSTO_DELETE_ACCOUNT_CLASS,
-        self::NOSTO_UPDATE_EXCHANGE_RATE_CLASS,
-        self::NOSTO_ADVANCED_SETTING_CLASS
+    private static $controllers = array(
+        "NostoCreateAccount",
+        "NostoConnectAccount",
+        "NostoDeleteAccount",
+        "NostoUpdateExchangeRate",
+        "NostoAdvancedSetting"
     );
 
     /**
@@ -155,20 +126,20 @@ class NostoAdminTabManager
 
     public static function registerNostoControllers()
     {
-        foreach (self::NOSTO_CONTROLLER_CLASSES as $controllerName) {
+        foreach (self::$controllers as $controllerName) {
             self::registerController($controllerName);
         }
     }
 
     /**
      * Register a controller
-     * @param $className the controller class name, without the "Controller part"
+     * @param string $className the controller class name, without the "Controller part"
      * @return bool success
      */
     public static function registerController($className)
     {
         $tab = new Tab();
-        $tabId = (int)Tab::getIdFromClassName($className);
+        $tab->id = (int)Tab::getIdFromClassName($className);
         $tab->active = 1;
         $tab->class_name = $className;
         $tab->name = array();

@@ -86,7 +86,7 @@ class NostoBootstrap
         require_once($moduleDir . '/classes/blocks/NostoDefaultTagging.php');
         require_once($moduleDir . '/classes/blocks/NostoHeaderContent.php');
         require_once($moduleDir . '/classes/blocks/NostoOrderTagging.php');
-        require_once($moduleDir . '/classes/blocks/NostoPagetypeTagging.php');
+        require_once($moduleDir . '/classes/blocks/NostoPageTypeTagging.php');
         require_once($moduleDir . '/classes/blocks/NostoProductTagging.php');
         require_once($moduleDir . '/classes/blocks/NostoRecommendationElement.php');
         require_once($moduleDir . '/classes/blocks/NostoSearchTagging.php');

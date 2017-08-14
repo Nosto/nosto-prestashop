@@ -394,6 +394,7 @@ class NostoHelperUrl
      */
     public static function getControllerUrl($controllerClassName, $employeeId)
     {
+        /** @noinspection PhpDeprecationInspection */
         $tabId = (int)Tab::getIdFromClassName($controllerClassName);
         $token = Tools::getAdminToken($controllerClassName . $tabId . $employeeId);
 

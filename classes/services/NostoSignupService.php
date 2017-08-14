@@ -48,13 +48,7 @@ class NostoSignupService extends AbstractNostoService
 
         $operation = new NostoSDKAccountSignupOperation($signupParams);
         $account = $operation->create();
-        $idShop = null;
-        $idShopGroup = null;
-        if (Context::getContext()->shop instanceof Shop) {
-            $idShop = Context::getContext()->shop->id;
-            $idShopGroup = Context::getContext()->shop->id_shop_group;
-        }
 
-        return NostoHelperAccount::save($account, $idLang, $idShopGroup, $idShop);
+        return NostoHelperAccount::save($account);
     }
 }

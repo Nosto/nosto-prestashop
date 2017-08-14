@@ -39,7 +39,7 @@ if ((basename(__FILE__) === 'nostotagging.php')) {
     require_once("bootstrap.php");
 }
 
-use Nosto\NostoException as NostoSDKException;
+use \Nosto\NostoException as NostoSDKException;
 
 /**
  * Main module class the is responsible for all the module behaviour. This class is to be kept
@@ -800,7 +800,7 @@ class NostoTagging extends Module
      * display method require a relative path to the views directory and therefore this method is
      * used as to indirectly invoke the display method
      *
-     * @param $template the relative path to the template to render
+     * @param string $template the relative path to the template to render
      * @return string The HTML to output
      */
     public function render($template)
