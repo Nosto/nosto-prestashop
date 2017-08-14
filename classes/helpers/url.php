@@ -25,9 +25,6 @@
 
 use Nosto\Request\Http\HttpRequest as NostoSDKHttpRequest;
 
-/**
- * Helper class for managing urls.
- */
 class NostoHelperUrl
 {
     /**
@@ -54,7 +51,7 @@ class NostoHelperUrl
             $params = array('nostodebug' => 'true');
             return self::getProductUrl($product, $idLang, null, $params);
         } catch (Exception $e) {
-            NostoHelperLogger::error($e, "Unable to build the product preview URL");
+            NostoHelperLogger::error($e, "Unable to build the product page preview URL");
             return '';
         }
     }
@@ -83,7 +80,7 @@ class NostoHelperUrl
             $params = array('nostodebug' => 'true');
             return self::getCategoryUrl($category, $idLang, null, $params);
         } catch (Exception $e) {
-            NostoHelperLogger::error($e, "Unable to build the category preview URL");
+            NostoHelperLogger::error($e, "Unable to build the category page preview URL");
             return '';
         }
     }
@@ -104,7 +101,7 @@ class NostoHelperUrl
             );
             return self::getPageUrl('NostoSearch.php', $idLang, null, $params);
         } catch (Exception $e) {
-            // Return empty on failure
+            NostoHelperLogger::error($e, "Unable to build the search page preview URL");
             return '';
         }
     }
@@ -121,7 +118,7 @@ class NostoHelperUrl
             $params = array('nostodebug' => 'true');
             return self::getPageUrl('NostoOrderTagging.php', $idLang, null, $params);
         } catch (Exception $e) {
-            // Return empty on failure
+            NostoHelperLogger::error($e, "Unable to build the cart page preview URL");
             return '';
         }
     }
@@ -138,7 +135,7 @@ class NostoHelperUrl
             $params = array('nostodebug' => 'true');
             return self::getPageUrl('index.php', $idLang, null, $params);
         } catch (Exception $e) {
-            // Return empty on failure
+            NostoHelperLogger::error($e, "Unable to build the home page preview URL");
             return '';
         }
     }

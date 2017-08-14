@@ -25,7 +25,6 @@
 
 class NostoHelperHook
 {
-
     /**
      * Dispatches the hook `action{MODEL}LoadAfter`. This method can be called last in the tagging
      * model loadData() methods, to allow overriding of model data.
