@@ -134,6 +134,7 @@ class NostoTagging extends Module
         $this->name = self::MODULE_NAME;
         $this->tab = 'advertising_marketing';
         $this->version = self::PLUGIN_VERSION;
+        $this->bootstrap = true; // Necessary for Bootstrap CSS initialisation in the UI
         $this->author = 'Nosto';
         $this->need_instance = 1;
         $this->ps_versions_compliancy = array('min' => '1.5', 'max' => _PS_VERSION_);

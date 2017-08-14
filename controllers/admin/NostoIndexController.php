@@ -24,9 +24,11 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use Nosto\Helper\IframeHelper as NostoSDKIframeHelper;
-use Nosto\Object\Signup\Account as NostoSDKAccount;
-use Nosto\Request\Http\HttpRequest as NostoSDKHttpRequest;
+use \Nosto\Helper\IframeHelper as NostoSDKIframeHelper;
+use \Nosto\Object\Signup\Account as NostoSDKAccount;
+use \Nosto\Request\Http\HttpRequest as NostoSDKHttpRequest;
+use \Nosto\Types\Signup\AccountInterface as NostoSDKAccountInterface;
+use \Nosto\Request\Api\Token as NostoSDKAPIToken;
 
 class NostoIndexController
 {
@@ -104,15 +106,15 @@ class NostoIndexController
         $account = Nosto::getAccount();
         $missingTokens = true;
         if (
-            $account instanceof NostoAccountInterface
-            && $account->getApiToken(NostoApiToken::API_EXCHANGE_RATES)
-            && $account->getApiToken(NostoApiToken::API_SETTINGS)
+            $account instanceof NostoSDKAccountInterface
+            && $account->getApiToken(NostoSDKAPIToken::API_EXCHANGE_RATES)
+            && $account->getApiToken(NostoSDKAPIToken::API_SETTINGS)
         ) {
             $missingTokens = false;
         }
         // When no account is found we will show the installation URL
         if (
-            $account instanceof NostoAccountInterface === false
+            $account instanceof NostoSDKAccountInterface === false
             && Shop::getContext() === Shop::CONTEXT_SHOP
         ) {
             $currentUser = NostoCurrentUser::loadData(Context::getContext());
