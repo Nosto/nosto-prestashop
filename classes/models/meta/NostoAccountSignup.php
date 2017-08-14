@@ -23,7 +23,7 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use \Nosto\Object\Signup\Signup as NostoSDKAccountSignup;
+use Nosto\Object\Signup\Signup as NostoSDKAccountSignup;
 
 class NostoAccountSignup extends NostoSDKAccountSignup
 {
@@ -76,7 +76,7 @@ class NostoAccountSignup extends NostoSDKAccountSignup
      */
     public static function loadData($context, $id_lang)
     {
-        $signup = new NostoAccountSignup();
+        $nostoSignup = new NostoAccountSignup();
 
         $language = new Language($id_lang);
         if (!Validate::isLoadedObject($language)) {
@@ -92,20 +92,24 @@ class NostoAccountSignup extends NostoSDKAccountSignup
         if (!Validate::isLoadedObject($context->country)) {
             $context->country = self::loadCountry();
         }
-        $signup->setTitle(Configuration::get('PS_SHOP_NAME'));
-        $signup->setName(Tools::substr(sha1((string)rand()), 0, 8));
-        $signup->setFrontPageUrl(self::getContextShopUrl($context, $language));
-        $signup->setCurrencyCode($context->currency->iso_code);
-        $signup->setLanguageCode($context->language->iso_code);
-        $signup->setOwnerLanguageCode($language->iso_code);
-        $signup->setOwner(NostoAccountOwner::loadData($context));
-        $signup->setBillingDetails(NostoAccountBilling::loadData($context));
-        $signup->setCurrencies(self::buildCurrencies($context));
+        $nostoSignup->setTitle(Configuration::get('PS_SHOP_NAME'));
+        $nostoSignup->setName(Tools::substr(sha1((string)rand()), 0, 8));
+        $nostoSignup->setFrontPageUrl(self::getContextShopUrl($context, $language));
+        $nostoSignup->setCurrencyCode($context->currency->iso_code);
+        $nostoSignup->setLanguageCode($context->language->iso_code);
+        $nostoSignup->setOwnerLanguageCode($language->iso_code);
+        $nostoSignup->setOwner(NostoAccountOwner::loadData($context));
+        $nostoSignup->setBillingDetails(NostoAccountBilling::loadData($context));
+        $nostoSignup->setCurrencies(self::buildCurrencies($context));
         if (Nosto::useMultipleCurrencies($id_lang)) {
-            $signup->setUseCurrencyExchangeRates(Nosto::useMultipleCurrencies($id_lang));
-            $signup->setDefaultVariantId(NostoHelperCurrency::getBaseCurrency($context)->iso_code);
+            $nostoSignup->setUseCurrencyExchangeRates(Nosto::useMultipleCurrencies($id_lang));
+            $nostoSignup->setDefaultVariantId(NostoHelperCurrency::getBaseCurrency($context)->iso_code);
         }
-        return $signup;
+
+        NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoSignup), array(
+            'nosto_account_signup' => $nostoSignup
+        ));
+        return $nostoSignup;
     }
 
     /**
@@ -115,7 +119,7 @@ class NostoAccountSignup extends NostoSDKAccountSignup
      * @param Language $language the language.
      * @return string the absolute url.
      */
-    protected static function getContextShopUrl($context, $language)
+    protected static function getContextShopUrl($context, $language) //TODO: Why is this not in the helper?
     {
         $shop = $context->shop;
         $ssl = Configuration::get('PS_SSL_ENABLED');

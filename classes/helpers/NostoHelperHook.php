@@ -1,7 +1,6 @@
 <?php
-
 /**
- * 2013-2016 Nosto Solutions Ltd
+ * 2013-2017 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -20,35 +19,25 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2016 Nosto Solutions Ltd
+ * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
-class NostoSearch
+
+class NostoHelperHook
 {
-    protected $searchTerm;
-
-    public function __construct($searchTerm)
-    {
-        $this->searchTerm = $searchTerm;
-    }
-
-    public static function loadData($term)
-    {
-        $nostoSearch = new NostoSearch($term);
-
-        NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoSearch), array(
-            'nosto_search_term' => $nostoSearch
-        ));
-        return $nostoSearch;
-    }
 
     /**
-     * Getter for the search term.
+     * Dispatches the hook `action{MODEL}LoadAfter`. This method can be called last in the tagging
+     * model loadData() methods, to allow overriding of model data.
      *
-     * @return string the term.
+     * @param string $klass the name of the class
+     * @param array $params the hook params.
      */
-    public function getSearchTerm()
+    public static function dispatchHookActionLoadAfter($klass, array $params)
     {
-        return $this->searchTerm;
+        // We replace the "NostoTagging" part of the class
+        // name with "Nosto", e.g. "NostoProduct" => "NostoProduct".
+        Hook::exec('action' . str_replace('NostoTagging', 'Nosto', $klass) . 'LoadAfter', $params);
     }
+
 }

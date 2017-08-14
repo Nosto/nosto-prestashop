@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 2013-2016 Nosto Solutions Ltd
  *
@@ -22,8 +23,7 @@
  * @copyright 2013-2016 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
-
-class NostoVariation extends AbstractNostoModel
+class NostoVariation
 {
     /**
      * The id of the variation
@@ -40,7 +40,7 @@ class NostoVariation extends AbstractNostoModel
     public function __construct($variationId = null)
     {
         $this->setVariationId($variationId);
-        $this->dispatchHookActionLoadAfter(array(
+        NostoHelperHook::dispatchHookActionLoadAfter(get_class($this), array(
             'nosto_price_variation' => $this
         ));
     }

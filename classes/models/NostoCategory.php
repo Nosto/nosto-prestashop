@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 2013-2016 Nosto Solutions Ltd
  *
@@ -22,7 +23,7 @@
  * @copyright 2013-2016 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
-class NostoCategory extends AbstractNostoModel
+class NostoCategory
 {
     /**
      * @var string the built category string.
@@ -51,7 +52,7 @@ class NostoCategory extends AbstractNostoModel
      *
      * @param Context $context the context object.
      * @param Category $category the category object.
-     * @return string
+     * @return NostoCategory the category object
      */
     public static function loadData(Context $context, Category $category)
     {
@@ -74,7 +75,13 @@ class NostoCategory extends AbstractNostoModel
             return null;
         }
 
-        return new NostoCategory(implode(DIRECTORY_SEPARATOR, array_reverse($categoryList)) . DIRECTORY_SEPARATOR);
+        $nostoCategory = new NostoCategory(implode(DIRECTORY_SEPARATOR, array_reverse($categoryList)) . DIRECTORY_SEPARATOR);
+
+        NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoCategory), array(
+            'category' => $category,
+            'nosto_category' => $nostoCategory
+        ));
+        return $nostoCategory;
     }
 
     /**

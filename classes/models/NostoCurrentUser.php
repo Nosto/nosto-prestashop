@@ -23,7 +23,7 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use \Nosto\Object\User as NostoSDKUser;
+use Nosto\Object\User as NostoSDKUser;
 
 class NostoCurrentUser extends NostoSDKUser
 {
@@ -35,12 +35,16 @@ class NostoCurrentUser extends NostoSDKUser
      */
     public static function loadData($context)
     {
-        $owner = new NostoCurrentUser();
+        $nostoUser = new NostoCurrentUser();
         if (!empty($context->employee)) {
-            $owner->setFirstName($context->employee->firstname);
-            $owner->setLastName($context->employee->lastname);
-            $owner->setEmail($context->employee->email);
+            $nostoUser->setFirstName($context->employee->firstname);
+            $nostoUser->setLastName($context->employee->lastname);
+            $nostoUser->setEmail($context->employee->email);
         }
-        return $owner;
+
+        NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoUser), array(
+            'nosto_user' => $nostoUser
+        ));
+        return $nostoUser;
     }
 }

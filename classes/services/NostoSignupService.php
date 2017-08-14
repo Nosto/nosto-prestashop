@@ -26,7 +26,7 @@
 
 use \Nosto\Operation\AccountSignup as NostoSDKAccountSignupOperation;
 
-class NostoSignupService
+class NostoSignupService extends AbstractNostoService
 {
     /**
      * Creates a new Nosto account for given shop language.

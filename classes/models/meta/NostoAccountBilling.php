@@ -23,7 +23,7 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use \Nosto\Object\Signup\Billing as NostoSDKSignupBilling;
+use Nosto\Object\Signup\Billing as NostoSDKSignupBilling;
 
 class NostoAccountBilling extends NostoSDKSignupBilling
 {
@@ -31,12 +31,16 @@ class NostoAccountBilling extends NostoSDKSignupBilling
      * Loads the meta data from the given context.
      *
      * @param Context $context the context to use as data source.
-     * @return NostoAccountBilling
+     * @return NostoAccountBilling the billing details of the account
      */
     public static function loadData($context)
     {
-        $billing = new NostoAccountBilling();
-        $billing->setCountry($context->country->iso_code);
-        return $billing;
+        $nostoBilling = new NostoAccountBilling();
+        $nostoBilling->setCountry($context->country->iso_code);
+
+        NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoBilling), array(
+            'nosto_account_billing' => $nostoBilling
+        ));
+        return $nostoBilling;
     }
 }

@@ -56,8 +56,7 @@ class NostoOrderService extends AbstractNostoService
      */
     public function sendOrder(Order $order)
     {
-        $nostoOrder = new NostoOrder();
-        $nostoOrder->loadData($this->context, $order);
+        $nostoOrder = NostoOrder::loadData($this->context, $order);
         $idShopGroup = isset($order->id_shop_group) ? $order->id_shop_group : null;
         $idShop = isset($order->id_shop) ? $order->id_shop : null;
         // This is done out of context, so we need to specify the exact parameters to get the

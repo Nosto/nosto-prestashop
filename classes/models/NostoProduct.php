@@ -23,7 +23,7 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use \Nosto\Object\Product\Product as NostoSDKProduct;
+use Nosto\Object\Product\Product as NostoSDKProduct;
 
 class NostoProduct extends NostoSDKProduct
 {
@@ -72,15 +72,10 @@ class NostoProduct extends NostoSDKProduct
         $nostoProduct->amendAlternateImages($product, $idLang);
         $nostoProduct->amendPrices($product);
 
-        Hook::exec(
-            'action' . str_replace('NostoTagging', 'Nosto', self::class) . 'LoadAfter',
-            array(
-                'nosto_product' => $nostoProduct,
-                'product' => $product,
-                'context' => $context
-            )
-        );
-
+        NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoProduct), array(
+            'product' => $product,
+            'nosto_product' => $nostoProduct
+        ));
         return $nostoProduct;
     }
 

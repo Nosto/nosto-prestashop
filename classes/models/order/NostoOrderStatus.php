@@ -23,7 +23,7 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use \Nosto\Object\Order\OrderStatus as NostoSDKOrderStatus;
+use Nosto\Object\Order\OrderStatus as NostoSDKOrderStatus;
 
 class NostoOrderStatus extends NostoSDKOrderStatus
 {
@@ -31,11 +31,11 @@ class NostoOrderStatus extends NostoSDKOrderStatus
      * Loads the order status data from the order model.
      *
      * @param Order $order the model.
-     * @return NostoOrderStatus
+     * @return NostoOrderStatus the order status of the order
      */
     public static function loadData(Order $order)
     {
-        $status = new NostoOrderStatus();
+        $nostoStatus = new NostoOrderStatus();
         // We prefer to use the English state name for the status code, as we
         // use it as an unique identifier of that particular order status.
         // The status label will primarily be in the language of the order.
@@ -47,16 +47,21 @@ class NostoOrderStatus extends NostoSDKOrderStatus
         $state = $order->getCurrentStateFull($idLang);
         if (!empty($state['name'])) {
             $stateName = $state['name'];
-            $status->setCode(self::convertNameToCode($stateName));
+            $nostoStatus->setCode(self::convertNameToCode($stateName));
             if ($idLang !== (int)$order->id_lang) {
                 $state = $order->getCurrentStateFull((int)$order->id_lang);
                 if (!empty($state['name'])) {
                     $stateName = $state['name'];
                 }
             }
-            $status->setLabel($stateName);
+            $nostoStatus->setLabel($stateName);
         }
-        return $status;
+
+        NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoStatus), array(
+            'order' => $order,
+            'nosto_order_status' => $nostoStatus
+        ));
+        return $nostoStatus;
     }
 
     /**

@@ -23,8 +23,8 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use \Nosto\Object\Cart\Cart as NostoSDKCart;
-use \Nosto\Object\Cart\LineItem as NostoSDKCartItem;
+use Nosto\Object\Cart\Cart as NostoSDKCart;
+use Nosto\Object\Cart\LineItem as NostoSDKCartItem;
 
 class NostoCart extends NostoSDKCart
 {
@@ -104,6 +104,10 @@ class NostoCart extends NostoSDKCart
             $nostoCart->addItem($nostoLineItem);
         }
 
+        NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoCart), array(
+            'cart' => $cart,
+            'nosto_cart' => $nostoCart
+        ));
         return $nostoCart;
     }
 }

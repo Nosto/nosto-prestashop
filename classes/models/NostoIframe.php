@@ -47,7 +47,7 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use \Nosto\Object\Iframe as NostoSDKIframe;
+use Nosto\Object\Iframe as NostoSDKIframe;
 
 class NostoIframe extends NostoSDKIframe
 {
@@ -65,7 +65,7 @@ class NostoIframe extends NostoSDKIframe
      */
     public static function loadData($context, $id_lang, $uniqueId)
     {
-        $iframe = new NostoIframe();
+        $nostoIframe = new NostoIframe();
         $shopLanguage = new Language($id_lang);
         $shopContext = $context->shop->getContext();
         if (
@@ -75,21 +75,21 @@ class NostoIframe extends NostoSDKIframe
             return null;
         }
 
-        $iframe->setFirstName($context->employee->firstname);
-        $iframe->setLastName($context->employee->lastname);
-        $iframe->setEmail($context->employee->email);
-        $iframe->setLanguageIsoCode($context->language->iso_code);
-        $iframe->setLanguageIsoCodeShop($shopLanguage->iso_code);
-        $iframe->setPreviewUrlProduct(NostoHelperUrl::getPreviewUrlProduct(null, $id_lang));
-        $iframe->setPreviewUrlCategory(NostoHelperUrl::getPreviewUrlCategory(null, $id_lang));
-        $iframe->setPreviewUrlSearch(NostoHelperUrl::getPreviewUrlSearch($id_lang));
-        $iframe->setPreviewUrlCart(NostoHelperUrl::getPreviewUrlCart($id_lang));
-        $iframe->setPreviewUrlFront(NostoHelperUrl::getPreviewUrlHome($id_lang));
-        $iframe->setShopName($shopLanguage->name);
-        $iframe->setVersionModule(NostoTagging::PLUGIN_VERSION);
-        $iframe->setVersionPlatform(_PS_VERSION_);
-        $iframe->setUniqueId($uniqueId);
-        $iframe->setPlatform('prestashop');
+        $nostoIframe->setFirstName($context->employee->firstname);
+        $nostoIframe->setLastName($context->employee->lastname);
+        $nostoIframe->setEmail($context->employee->email);
+        $nostoIframe->setLanguageIsoCode($context->language->iso_code);
+        $nostoIframe->setLanguageIsoCodeShop($shopLanguage->iso_code);
+        $nostoIframe->setPreviewUrlProduct(NostoHelperUrl::getPreviewUrlProduct(null, $id_lang));
+        $nostoIframe->setPreviewUrlCategory(NostoHelperUrl::getPreviewUrlCategory(null, $id_lang));
+        $nostoIframe->setPreviewUrlSearch(NostoHelperUrl::getPreviewUrlSearch($id_lang));
+        $nostoIframe->setPreviewUrlCart(NostoHelperUrl::getPreviewUrlCart($id_lang));
+        $nostoIframe->setPreviewUrlFront(NostoHelperUrl::getPreviewUrlHome($id_lang));
+        $nostoIframe->setShopName($shopLanguage->name);
+        $nostoIframe->setVersionModule(NostoTagging::PLUGIN_VERSION);
+        $nostoIframe->setVersionPlatform(_PS_VERSION_);
+        $nostoIframe->setUniqueId($uniqueId);
+        $nostoIframe->setPlatform('prestashop');
 
         try {
             //Check the recent visits and sales and get the shop traffic for the qualification
@@ -99,11 +99,11 @@ class NostoIframe extends NostoSDKIframe
                 $beginDate = $daysBack->sub(new DateInterval("P30D"))->format("Y-m-d");
                 $sales = AdminStatsControllerCore::getTotalSales($beginDate, $today);
                 $visits = AdminStatsControllerCore::getVisits(false, $beginDate, $today);
-                $iframe->setRecentVisits(strval($visits));
-                $iframe->setRecentSales(number_format((float)$sales));
+                $nostoIframe->setRecentVisits(strval($visits));
+                $nostoIframe->setRecentSales(number_format((float)$sales));
                 $currency = $context->currency;
                 if ($currency instanceof Currency) {
-                    $iframe->setCurrency($currency->iso_code);
+                    $nostoIframe->setCurrency($currency->iso_code);
                 }
             }
         } catch (Exception $e) {
@@ -112,7 +112,10 @@ class NostoIframe extends NostoSDKIframe
             NostoHelperLogger::error($e);
         }
 
-        return $iframe;
+        NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoIframe), array(
+            'nosto_iframe' => $nostoIframe
+        ));
+        return $nostoIframe;
     }
 
     /**

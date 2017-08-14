@@ -40,7 +40,7 @@ class NostoSearchTagging
             return null;
         }
 
-        $nostoQuery = new NostoSearch($searchTerm);
+        $nostoQuery = NostoSearch::loadData($searchTerm);
         Context::getContext()->smarty->assign(array(
             'nosto_search' => $nostoQuery,
         ));

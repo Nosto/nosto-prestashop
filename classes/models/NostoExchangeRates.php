@@ -24,8 +24,8 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use \Nosto\Object\ExchangeRate as NostoSDKExchangeRate;
-use \Nosto\Object\ExchangeRateCollection as NostoSDKExchangeRateCollection;
+use Nosto\Object\ExchangeRate as NostoSDKExchangeRate;
+use Nosto\Object\ExchangeRateCollection as NostoSDKExchangeRateCollection;
 
 class NostoExchangeRates extends NostoSDKExchangeRateCollection
 {
@@ -37,7 +37,7 @@ class NostoExchangeRates extends NostoSDKExchangeRateCollection
     {
         $baseCurrencyCode = NostoHelperCurrency::getBaseCurrency($context)->iso_code;
         $currencies = NostoHelperCurrency::getCurrencies($context, true);
-        $rates = new NostoExchangeRates();
+        $nostoRates = new NostoExchangeRates();
         foreach ($currencies as $currency) {
             // Skip base currencyCode.
             if (
@@ -48,9 +48,12 @@ class NostoExchangeRates extends NostoSDKExchangeRateCollection
             }
 
             $rate = new NostoSDKExchangeRate($currency['iso_code'], $currency['conversion_rate']);
-            $rates->addRate($currency['iso_code'], $rate);
+            $nostoRates->addRate($currency['iso_code'], $rate);
         }
 
-        return $rates;
+        NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoRates), array(
+            'nosto_exchange_rates' => $nostoRates
+        ));
+        return $nostoRates;
     }
 }

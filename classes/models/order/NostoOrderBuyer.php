@@ -23,7 +23,7 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use \Nosto\Object\Order\Buyer as NostoSDKOrderBuyer;
+use Nosto\Object\Order\Buyer as NostoSDKOrderBuyer;
 
 class NostoOrderBuyer extends NostoSDKOrderBuyer
 {
@@ -31,14 +31,19 @@ class NostoOrderBuyer extends NostoSDKOrderBuyer
      * Loads the buyer data from the customer object.
      *
      * @param Customer $customer the customer object.
-     * @return NostoOrderBuyer
+     * @return NostoOrderBuyer the buyer of the order
      */
     public static function loadData(Customer $customer)
     {
-        $buyer = new NostoOrderBuyer();
-        $buyer->setFirstName($customer->firstname);
-        $buyer->setLastName($customer->lastname);
-        $buyer->setEmail($customer->email);
-        return $buyer;
+        $nostoBuyer = new NostoOrderBuyer();
+        $nostoBuyer->setFirstName($customer->firstname);
+        $nostoBuyer->setLastName($customer->lastname);
+        $nostoBuyer->setEmail($customer->email);
+
+        NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoBuyer), array(
+            'customer' => $customer,
+            'nosto_order_buyer' => $nostoBuyer
+        ));
+        return $nostoBuyer;
     }
 }
