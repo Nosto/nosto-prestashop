@@ -168,7 +168,7 @@ class NostoTagging extends Module
                 || !$this->registerHook('header')
                 || !$this->registerHook('top')
                 || !$this->registerHook('footer')
-                || !$this->registerHook('productfooter')
+                || !$this->registerHook('productFooter')
                 || !$this->registerHook('shoppingCart')
                 || !$this->registerHook('orderConfirmation')
                 || !$this->registerHook('postUpdateOrderStatus')
@@ -182,15 +182,11 @@ class NostoTagging extends Module
             }
             if (!NostoCustomerManager::createTables()) {
                 $success = false;
-                $this->_errors[] = $this->l(
-                    'Failed to create Nosto customer table'
-                );
+                $this->_errors[] = $this->l('Failed to create Nosto customer table');
             }
             if (!NostoAdminTabManager::install()) {
                 $success = false;
-                $this->_errors[] = $this->l(
-                    'Failed to create Nosto admin tab'
-                );
+                $this->_errors[] = $this->l('Failed to create Nosto admin tab');
             }
             if (!$this->initHooks()) {
                 $success = false;
@@ -757,28 +753,6 @@ class NostoTagging extends Module
     }
 
     /**
-     * Gets the current admin config language data.
-     *
-     * @param array $languages list of valid languages.
-     * @param int $id_lang if a specific language is required.
-     * @return array the language data array.
-     */
-    public static function ensureAdminLanguage(array $languages, $id_lang)
-    {
-        foreach ($languages as $language) {
-            if ($language['id_lang'] == $id_lang) {
-                return $language;
-            }
-        }
-
-        if (isset($languages[0])) {
-            return $languages[0];
-        } else {
-            return array('id_lang' => 0, 'name' => '', 'iso_code' => '');
-        }
-    }
-
-    /**
      * Returns hidden nosto recommendation elements for the current controller.
      * These are used as a fallback for showing recommendations if the appropriate hooks are not
      * present in the theme. The hidden elements are put into place and shown in the shop with
@@ -824,36 +798,6 @@ class NostoTagging extends Module
             // If the current page is not one of the ones we want to show recommendations on, just return empty.
             return '';
         }
-    }
-
-    /**
-     * Returns the admin url.
-     * Note the url is parsed from the current url, so this can only work if called when on the
-     * admin page.
-     *
-     * @return string the url.
-     */
-    protected function getAdminUrl()
-    {
-        $current_url = Tools::getHttpHost(true) . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '');
-        $parsed_url = NostoSDKHttpRequest::parseUrl($current_url);
-        $parsed_query_string = NostoSDKHttpRequest::parseQueryString($parsed_url['query']);
-        $valid_params = array(
-            'controller',
-            'token',
-            'configure',
-            'tab_module',
-            'module_name',
-            'tab',
-        );
-        $query_params = array();
-        foreach ($valid_params as $valid_param) {
-            if (isset($parsed_query_string[$valid_param])) {
-                $query_params[$valid_param] = $parsed_query_string[$valid_param];
-            }
-        }
-        $parsed_url['query'] = http_build_query($query_params);
-        return NostoSDKHttpRequest::buildUrl($parsed_url);
     }
 
     /**
@@ -916,12 +860,20 @@ class NostoTagging extends Module
      */
     public function hookDisplayBackOfficeTop()
     {
-        $this->checkNotifications();
+        NostoNotificationManager::checkAndDisplay($this);
     }
 
     public function hookBackOfficeFooter()
     {
         return $this->updateExchangeRatesIfNeeded(false);
+    }
+
+    public function adminDisplayInformation($message) {
+        return parent::adminDisplayInformation($message);
+    }
+
+    public function adminDisplayWarning($message) {
+        return parent::adminDisplayWarning($message);
     }
 
     /**
@@ -1000,43 +952,5 @@ class NostoTagging extends Module
         }
 
         return $logged_in;
-    }
-
-    /**
-     * Checks all Nosto notifications and adds them as an admin notification
-     */
-    public function checkNotifications()
-    {
-        $notifications = NostoNotificationManager::getAll();
-        if (is_array($notifications) && count($notifications) > 0) {
-            /* @var NostoNotification $notification */
-            foreach ($notifications as $notification) {
-                if (
-                    $notification->getNotificationType() === NostoSDKNotification::TYPE_MISSING_INSTALLATION
-                    && !NostoHelperController::isController('AdminModules')
-                ) {
-                    continue;
-                }
-                $this->addPrestashopNotification($notification);
-            }
-        }
-    }
-
-    /**
-     * Adds a Prestashop admin notification
-     *
-     * @param NostoNotification $notification
-     */
-    protected function addPrestashopNotification(NostoNotification $notification)
-    {
-        switch ($notification->getNotificationSeverity()) {
-            case NostoSDKNotification::SEVERITY_INFO:
-                $this->adminDisplayInformation($notification->getFormattedMessage());
-                break;
-            case NostoSDKNotification::SEVERITY_WARNING:
-                $this->adminDisplayWarning($notification->getFormattedMessage());
-                break;
-            default:
-        }
     }
 }

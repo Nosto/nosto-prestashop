@@ -36,7 +36,7 @@ abstract class NostoBaseController extends ModuleAdminController
         }
 
         $languages = Language::getLanguages(true, $this->context->shop->id);
-        $currentLanguage = NostoTagging::ensureAdminLanguage($languages, $this->getLanguageId());
+        $currentLanguage = NostoHelperLanguage::ensureAdminLanguage($languages, $this->getLanguageId());
         if (Shop::getContext() !== Shop::CONTEXT_SHOP) {
             $this->redirectToAdmin();
             return;

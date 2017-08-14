@@ -100,7 +100,7 @@ class NostoIndexController
 
         // Choose current language if it has not been set.
         if (!isset($currentLanguage)) {
-            $currentLanguage = NostoTagging::ensureAdminLanguage($languages, $languageId);
+            $currentLanguage = NostoHelperLanguage::ensureAdminLanguage($languages, $languageId);
             $languageId = (int)$currentLanguage['id_lang'];
         }
         $account = Nosto::getAccount();
