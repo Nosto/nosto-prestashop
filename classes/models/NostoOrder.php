@@ -70,8 +70,8 @@ class NostoOrder extends NostoSDKOrder
             $this->setOrderNumber((string)$order->id);
         }
         $this->setOrderNumber(isset($order->reference) ? (string)$order->reference : $order->id);
-        $this->setCustomer(NostoOrderBuyer::loadData($customer));
-        $this->setCreatedAt(DateTime::createFromFormat('Y-m-d', $order->date_add));
+        $this->setCustomer(NostoOrderBuyer::loadData($customer, $order));
+        $this->setCreatedAt(DateTime::createFromFormat('Y-m-d H:i:s', $order->date_add));
         $this->setPurchasedItems($this->findPurchasedItems($context, $order));
         $this->setPaymentProvider('unknown');
 

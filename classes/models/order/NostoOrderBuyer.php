@@ -23,7 +23,7 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use \Nosto\Object\Order\Buyer as NostoSDKOrderBuyer;
+use Nosto\Object\Order\Buyer as NostoSDKOrderBuyer;
 
 class NostoOrderBuyer extends NostoSDKOrderBuyer
 {
@@ -31,14 +31,34 @@ class NostoOrderBuyer extends NostoSDKOrderBuyer
      * Loads the buyer data from the customer object.
      *
      * @param Customer $customer the customer object.
+     * @param Order $order the order object
      * @return NostoOrderBuyer
      */
-    public static function loadData(Customer $customer)
+    public static function loadData(Customer $customer, Order $order)
     {
         $buyer = new NostoOrderBuyer();
         $buyer->setFirstName($customer->firstname);
         $buyer->setLastName($customer->lastname);
         $buyer->setEmail($customer->email);
+
+        $billingAddressId = $order->id_address_invoice;
+        $addresses = $customer->getAddresses($order->id_lang);
+        $billingAddress = null;
+        if ($addresses) {
+            foreach ($addresses as $address) {
+                if ($address['id_address'] === $billingAddressId) {
+                    if ($address['phone_mobile']) {
+                        $buyer->setPhone($address['phone_mobile']);
+                    } elseif ($address['phone']) {
+                        $buyer->setPhone($address['phone']);
+                    }
+                    $buyer->setPostcode($address['postcode']);
+                    $buyer->setCountry($address['country']);
+                    break;
+                }
+            }
+        }
+
         return $buyer;
     }
 }
