@@ -43,7 +43,6 @@ class NostoOrderBuyer extends NostoSDKOrderBuyer
 
         $billingAddressId = $order->id_address_invoice;
         $addresses = $customer->getAddresses($order->id_lang);
-        $billingAddress = null;
         if ($addresses) {
             foreach ($addresses as $address) {
                 if ($address['id_address'] === $billingAddressId) {
