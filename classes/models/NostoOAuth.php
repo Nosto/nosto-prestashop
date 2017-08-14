@@ -36,10 +36,9 @@ class NostoOAuth extends NostoSDKOAuth
      * @param Context $context the context to use as data source.
      * @param int $idLang the language to use as data source.
      * @param $moduleName
-     * @param $modulePath
      * @return NostoOAuth|null
      */
-    public static function loadData($context, $idLang, $moduleName, $modulePath)
+    public static function loadData($context, $idLang, $moduleName)
     {
         $language = new Language($idLang);
         if (!Validate::isLoadedObject($language)) {
@@ -56,7 +55,6 @@ class NostoOAuth extends NostoSDKOAuth
 
             $redirectUrl = NostoHelperUrl::getModuleUrl(
                 $moduleName,
-                $modulePath,
                 'oauth2',
                 $idLang,
                 $idShop,

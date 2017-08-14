@@ -39,15 +39,9 @@ if ((basename(__FILE__) === 'nostotagging.php')) {
     require_once("bootstrap.php");
 }
 
-use \Nosto\NostoException as NostoSDKException;
-use \Nosto\Request\Http\HttpRequest as NostoSDKHttpRequest;
-use \Nosto\Request\Api\Token as NostoSDKAPIToken;
-use \Nosto\Request\Api\Exception\ApiResponseException as NostoSDKAPIResponseException;
-use \Nosto\Object\Notification as NostoSDKNotification;
-use \Nosto\Helper\OAuthHelper as NostoSDKOAuthHelper;
-use \Nosto\Helper\IframeHelper as NostoSDKIframeHelper;
-use \Nosto\Object\Signup\Account as NostoSDKAccount;
-use \Nosto\Types\Signup\AccountInterface as NostoSDKAccountInterface;
+use Nosto\NostoException as NostoSDKException;
+use Nosto\Object\Notification as NostoSDKNotification;
+use Nosto\Request\Http\HttpRequest as NostoSDKHttpRequest;
 
 /**
  * NostoTagging module that integrates Nosto marketing automation service.
@@ -61,7 +55,7 @@ class NostoTagging extends Module
      *
      * @var string
      */
-    const PLUGIN_VERSION = '2.8.3';
+    const PLUGIN_VERSION = '2.8.6';
 
     /**
      * Internal name of the Nosto plug-in
@@ -238,315 +232,51 @@ class NostoTagging extends Module
     }
 
     /**
+     * Get content for displaying message
+     *
+     * @return string display content
+     */
+    private function displayMessages()
+    {
+        $output = '';
+        if (($errorMessage = Tools::getValue('oauth_error')) !== false) {
+            $output .= $this->displayError($this->l($errorMessage));
+        }
+        if (($successMessage = Tools::getValue('oauth_success')) !== false) {
+            $output .= $this->displayConfirmation($this->l($successMessage));
+        }
+
+        foreach (NostoHelperFlash::getList('success') as $flash_message) {
+            $output .= $this->displayConfirmation($flash_message);
+        }
+        foreach (NostoHelperFlash::getList('error') as $flash_message) {
+            $output .= $this->displayError($flash_message);
+        }
+
+        if (Shop::getContext() !== Shop::CONTEXT_SHOP) {
+            $output .= $this->displayError($this->l('Please choose a shop to configure Nosto for.'));
+        }
+
+        return $output;
+    }
+
+    /**
      * Renders the module administration form.
      * Also handles the form submit action.
      *
      * @return string The HTML to output.
-     * @suppress PhanDeprecatedFunction
      */
     public function getContent()
     {
-        // Always update the url to the module admin page when we access it.
-        // This can then later be used by the oauth2 controller to redirect the user back.
-        $admin_url = $this->getAdminUrl();
+        $output = $this->displayMessages();
 
-        NostoHelperConfig::saveAdminUrl($admin_url);
-        $output = '';
-        $languages = Language::getLanguages(true, $this->context->shop->id);
-        /** @var EmployeeCore $employee */
-        $employee = $this->context->employee;
-        $account_email = $employee->email;
-        $id_shop = null;
-        $id_shop_group = null;
-        if ($this->context->shop instanceof Shop) {
-            $id_shop = $this->context->shop->id;
-            $id_shop_group = $this->context->shop->id_shop_group;
-        }
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $language_id = (int)Tools::getValue($this->name . '_current_language');
-            $current_language = $this->ensureAdminLanguage($languages, $language_id);
-            if (Shop::getContext() !== Shop::CONTEXT_SHOP) {
-                // Do nothing.
-                // After the redirect this will be checked again and an error message is outputted.
-            } elseif ($current_language['id_lang'] != $language_id) {
-                NostoHelperFlash::add('error', $this->l('Language cannot be empty.'));
-            } elseif (
-                Tools::isSubmit('submit_nostotagging_new_account')
-                || Tools::getValue('nostotagging_account_action') === 'newAccount'
-            ) {
-                $account_email = (string)Tools::getValue($this->name . '_account_email');
-                if (empty($account_email)) {
-                    NostoHelperFlash::add(
-                        'error',
-                        $this->l('Email cannot be empty.')
-                    );
-                } elseif (!Validate::isEmail($account_email)) {
-                    NostoHelperFlash::add(
-                        'error',
-                        $this->l('Email is not a valid email address.')
-                    );
-                } else {
-                    try {
-                        if (Tools::isSubmit('nostotagging_account_details')) {
-                            $account_details = (object)Tools::jsonDecode(Tools::getValue('nostotagging_account_details'));
-                        } else {
-                            $account_details = false;
-                        }
-                        $service = new NostoSignupService();
-                        $service->createAccount($language_id, $account_email, $account_details);
+        $indexController = new NostoIndexController();
+        $smartyMetaData = $indexController->getSmartyMetaData($this);
+        $this->getSmarty()->assign($smartyMetaData);
 
-                        NostoHelperConfig::clearCache();
-                        NostoHelperFlash::add(
-                            'success',
-                            $this->l(
-                                'Account created. Please check your email and follow the instructions to set a'
-                                . ' password for your new account within three days.'
-                            )
-                        );
-                    } catch (NostoSDKAPIResponseException $e) {
-                        NostoHelperFlash::add(
-                            'error',
-                            $this->l(
-                                'Account could not be automatically created due to missing or invalid parameters.'
-                                . ' Please see your Prestashop logs for details'
-                            )
-                        );
-                        NostoHelperLogger::error($e, 'Creating Nosto account failed');
-                    } catch (Exception $e) {
-                        NostoHelperFlash::add(
-                            'error',
-                            $this->l('Account could not be automatically created. Please see logs for details.')
-                        );
-                        NostoHelperLogger::error($e, 'Creating Nosto account failed');
-                    }
-                }
-            } elseif (
-                Tools::isSubmit('submit_nostotagging_authorize_account')
-                || Tools::getValue('nostotagging_account_action') === 'connectAccount'
-                || Tools::getValue('nostotagging_account_action') === 'syncAccount'
-            ) {
-                $meta = NostoOAuth::loadData($this->context, $language_id, $this->name,
-                    $this->_path);
-                Tools::redirect(NostoSDKOAuthHelper::getAuthorizationUrl($meta), '');
-                die();
-            } elseif (
-                Tools::isSubmit('submit_nostotagging_reset_account')
-                || Tools::getValue('nostotagging_account_action') === 'removeAccount'
-            ) {
-                $account = Nosto::getAccount();
-                NostoHelperConfig::clearCache();
-                NostoHelperAccount::delete($this->context, $account, $language_id, null);
-            } elseif (Tools::isSubmit('submit_nostotagging_update_exchange_rates')) {
-                $nosto_account = Nosto::getAccount();
-                $operation = new NostoRatesService();
-                if ($nosto_account && $operation->updateCurrencyExchangeRates($nosto_account, $this->context)) {
-                    NostoHelperFlash::add(
-                        'success',
-                        $this->l(
-                            'Exchange rates successfully updated to Nosto'
-                        )
-                    );
-                } else {
-                    if (!$nosto_account->getApiToken(NostoSDKAPIToken::API_EXCHANGE_RATES)) {
-                        $message = 'Failed to update exchange rates to Nosto due to a missing API token. 
-                            Please, reconnect your account with Nosto';
-                    } else {
-                        $message = 'There was an error updating the exchange rates. 
-                            See Prestashop logs for more information.';
-                    }
-                    NostoHelperFlash::add(
-                        'error',
-                        $this->l($message)
-                    );
-                }
-            } elseif (
-                Tools::isSubmit('submit_nostotagging_advanced_settings')
-                && Tools::isSubmit('multi_currency_method')
-            ) {
-                NostoHelperConfig::saveMultiCurrencyMethod(Tools::getValue('multi_currency_method'));
-                NostoHelperConfig::saveNostoTaggingRenderPosition(Tools::getValue('nostotagging_position'));
-                NostoHelperConfig::saveImageType(Tools::getValue('image_type'));
-                $account = Nosto::getAccount();
-                $account_meta = NostoAccountSignup::loadData($this->context, $language_id);
-                // Make sure we Nosto is installed for the current store
-                if (empty($account) || !$account->isConnectedToNosto()) {
-                    Tools::redirect(
-                        NostoSDKHttpRequest::replaceQueryParamInUrl(
-                            'language_id',
-                            $language_id,
-                            $admin_url
-                        ),
-                        ''
-                    );
-                    die;
-                }
-                try {
-                    $operation = new NostoSettingsService($account);
-                    $operation->update($account_meta);
-                    NostoHelperFlash::add(
-                        'success',
-                        $this->l('The settings have been saved.')
-                    );
-                } catch (NostoSDKException $e) {
-                    NostoHelperLogger::error($e, 'Unable to update Nosto account settings');
-                    NostoHelperFlash::add(
-                        'error',
-                        $this->l('There was an error saving the settings. Please, see log for details.')
-                    );
-                }
-                // Also update the exchange rates if multi currency is used
-                if ($account_meta->getUseExchangeRates()) {
-                    $operation = new NostoRatesService();
-                    $operation->updateCurrencyExchangeRates($account, $this->context);
-                }
-            }
-
-            // Refresh the page after every POST to get rid of form re-submission errors.
-            Tools::redirect(
-                NostoSDKHttpRequest::replaceQueryParamInUrl(
-                    'language_id',
-                    $language_id,
-                    $admin_url
-                ),
-                ''
-            );
-            die;
-        } else {
-            $language_id = (int)Tools::getValue('language_id', 0);
-
-            if (($error_message = Tools::getValue('oauth_error')) !== false) {
-                $output .= $this->displayError($this->l($error_message));
-            }
-            if (($success_message = Tools::getValue('oauth_success')) !== false) {
-                $output .= $this->displayConfirmation($this->l($success_message));
-            }
-
-            foreach (NostoHelperFlash::getList('success') as $flash_message) {
-                $output .= $this->displayConfirmation($flash_message);
-            }
-            foreach (NostoHelperFlash::getList('error') as $flash_message) {
-                $output .= $this->displayError($flash_message);
-            }
-
-            if (Shop::getContext() !== Shop::CONTEXT_SHOP) {
-                $output .= $this->displayError($this->l('Please choose a shop to configure Nosto for.'));
-            }
-        }
-        // Choose current language if it has not been set.
-        if (!isset($current_language)) {
-            $current_language = $this->ensureAdminLanguage($languages, $language_id);
-            $language_id = (int)$current_language['id_lang'];
-        }
-        $account = Nosto::getAccount();
-        $missing_tokens = true;
-        if (
-            $account instanceof NostoSDKAccountInterface
-            && $account->getApiToken(NostoSDKAPIToken::API_EXCHANGE_RATES)
-            && $account->getApiToken(NostoSDKAPIToken::API_SETTINGS)
-        ) {
-            $missing_tokens = false;
-        }
-        // When no account is found we will show the installation URL
-        if (
-            $account instanceof NostoSDKAccount === false
-            && Shop::getContext() === Shop::CONTEXT_SHOP
-        ) {
-            $currentUser = NostoCurrentUser::loadData($this->context);
-            $account_iframe = NostoIframe::loadData(
-                $this->context,
-                $language_id,
-                ''
-            );
-            $iframe_installation_url = NostoSDKIframeHelper::getUrl(
-                $account_iframe,
-                $account,
-                $currentUser,
-                array('v' => 1)
-            );
-        } else {
-            $iframe_installation_url = null;
-        }
         $this->getSmarty()->assign(array(
-            $this->name . '_form_action' => $this->getAdminUrl(),
-            $this->name . '_create_account' => $this->getAdminUrl(),
-            $this->name . '_delete_account' => $this->getAdminUrl(),
-            $this->name . '_connect_account' => $this->getAdminUrl(),
-            $this->name . '_has_account' => ($account !== null),
-            $this->name . '_account_name' => ($account !== null) ? $account->getName() : null,
-            $this->name . '_account_email' => $account_email,
-            $this->name . '_account_authorized' => ($account !== null) ? $account->isConnectedToNosto() : false,
-            $this->name . '_languages' => $languages,
-            $this->name . '_current_language' => $current_language,
-            $this->name . '_translations' => array(
-                'installed_heading' => sprintf(
-                    $this->l('You have installed Nosto to your %s shop'),
-                    $current_language['name']
-                ),
-                'installed_subheading' => sprintf(
-                    $this->l('Your account ID is %s'),
-                    ($account !== null) ? $account->getName() : ''
-                ),
-                'not_installed_subheading' => sprintf(
-                    $this->l('Install Nosto to your %s shop'),
-                    $current_language['name']
-                ),
-                'exchange_rate_crontab_example' => sprintf(
-                    '0 0 * * * curl --silent %s > /dev/null 2>&1',
-                    NostoHelperUrl::getModuleUrl(
-                        $this->name,
-                        $this->_path,
-                        'cronRates',
-                        $current_language['id_lang'],
-                        $id_shop,
-                        array('token' => NostoHelperCron::getCronAccessToken())
-                    )
-                ),
-            ),
-            'multi_currency_method' => NostoHelperConfig::getMultiCurrencyMethod(
-                $current_language['id_lang'],
-                $id_shop_group,
-                $id_shop
-            ),
-            'nostotagging_position' => NostoHelperConfig::getNostotaggingRenderPosition(
-                $current_language['id_lang'],
-                $id_shop_group,
-                $id_shop
-            ),
-            $this->name . '_ps_version_class' => 'ps-' . str_replace('.', '',
-                    Tools::substr(_PS_VERSION_, 0, 3)),
-            'missing_tokens' => $missing_tokens,
-            'iframe_installation_url' => $iframe_installation_url,
-            'iframe_origin' => NostoHelperUrl::getIframeOrigin(),
-            'module_path' => $this->_path,
-            'image_types' => NostoHelperImage::getProductImageTypes(),
-            'current_image_type' => NostoHelperConfig::getImageType(
-                $current_language['id_lang'],
-                $id_shop_group,
-                $id_shop
-            )
+            'module_path' => $this->_path
         ));
-        // Try to login employee to Nosto in order to get a url to the internal setting pages,
-        // which are then shown in an iframe on the module config page.
-        if (
-            $account
-            && $account->isConnectedToNosto()
-            && Shop::getContext() === Shop::CONTEXT_SHOP
-        ) {
-            try {
-                $currentUser = NostoCurrentUser::loadData($this->context);
-                $meta = NostoIframe::loadData(
-                    $this->context,
-                    $language_id,
-                    ''
-                );
-                $url = NostoSDKIframeHelper::getUrl($meta, $account, $currentUser);
-                if (!empty($url)) {
-                    $this->getSmarty()->assign(array('iframe_url' => $url));
-                }
-            } catch (NostoSDKException $e) {
-                NostoHelperLogger::error($e, 'Unable to load the Nosto IFrame');
-            }
-        }
         $output .= $this->display(__FILE__, $this->getSettingsTemplate());
 
         return $output;
@@ -795,12 +525,11 @@ class NostoTagging extends Module
      * Backwards compatibility hook.
      *
      * @see NostoTagging::hookDisplayOrderConfirmation()
-     * @param array $params
      * @return string The HTML to output
      */
-    public function hookOrderConfirmation(array $params)
+    public function hookOrderConfirmation()
     {
-        return $this->hookDisplayOrderConfirmation($params);
+        return $this->hookDisplayOrderConfirmation();
     }
 
     /**
@@ -1033,7 +762,7 @@ class NostoTagging extends Module
      * @param int $id_lang if a specific language is required.
      * @return array the language data array.
      */
-    protected function ensureAdminLanguage(array $languages, $id_lang)
+    public static function ensureAdminLanguage(array $languages, $id_lang)
     {
         foreach ($languages as $language) {
             if ($language['id_lang'] == $id_lang) {
@@ -1231,13 +960,8 @@ class NostoTagging extends Module
 
     /**
      * Updates the exchange rates to Nosto when currency object is saved
-     *
-     * @param array $params
      */
-    public function hookActionObjectCurrencyUpdateAfter(
-        /** @noinspection PhpUnusedParameterInspection */
-        array $params
-    ) {
+    public function hookActionObjectCurrencyUpdateAfter() {
         return $this->updateExchangeRatesIfNeeded(true);
     }
 

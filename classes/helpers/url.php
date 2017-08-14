@@ -346,7 +346,6 @@ class NostoHelperUrl
      * PS versions.
      *
      * @param string $name the name of the module to create an url for.
-     * @param string $path the path of the module to create an url for
      * @param string $controller the name of the controller.
      * @param int|null $id_lang the language ID (falls back on current context if not set).
      * @param int|null $id_shop the shop ID (falls back on current context if not set).
@@ -355,7 +354,6 @@ class NostoHelperUrl
      */
     public static function getModuleUrl(
         $name,
-        $path,
         $controller,
         $id_lang = null,
         $id_shop = null,
@@ -371,10 +369,7 @@ class NostoHelperUrl
         $params['module'] = $name;
         $params['controller'] = $controller;
 
-        if (version_compare(_PS_VERSION_, '1.5.0.0') === -1) {
-            $params['id_lang'] = $id_lang;
-            return NostoHelperUrl::getBaseUrl($id_shop) . $path . 'ctrl.php?' . http_build_query($params);
-        } elseif (version_compare(_PS_VERSION_, '1.5.5.0') === -1) {
+        if (version_compare(_PS_VERSION_, '1.5.5.0') === -1) {
             // For PS versions 1.5.0.0 - 1.5.4.1 we always hard-code the urls to be in non-friendly format and fetch
             // the shops base url ourselves. This is a workaround to all the bugs related to url building in these
             // PS versions.
@@ -388,6 +383,21 @@ class NostoHelperUrl
             $link = NostoHelperLink::getLink();
             return $link->getModuleLink($name, $controller, $params, null, $id_lang, $id_shop);
         }
+    }
+
+    /**
+     * Get the url for the controller
+     *
+     * @param string $controllerClassName controller class name prefix, without the 'Controller' part
+     * @param string $employeeId current logge in employee id
+     * @return string controller url
+     */
+    public static function getControllerUrl($controllerClassName, $employeeId)
+    {
+        $tabId = (int)Tab::getIdFromClassName($controllerClassName);
+        $token = Tools::getAdminToken($controllerClassName . $tabId . $employeeId);
+
+        return 'index.php?controller=' . $controllerClassName . '&token=' . $token;
     }
 
     /**

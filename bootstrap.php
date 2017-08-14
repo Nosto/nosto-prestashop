@@ -30,6 +30,14 @@ class NostoBootstrap
     {
         require_once($moduleDir . '/libs/autoload.php');
         require_once($moduleDir . '/classes/Nosto.php');
+        require_once($moduleDir . '/controllers/admin/NostoBaseController.php');
+        require_once($moduleDir . '/controllers/admin/AdminNostoController.php');
+        require_once($moduleDir . '/controllers/admin/AdminNostoPersonalizationController.php');
+        require_once($moduleDir . '/controllers/admin/NostoAdvancedSettingController.php');
+        require_once($moduleDir . '/controllers/admin/NostoConnectAccountController.php');
+        require_once($moduleDir . '/controllers/admin/NostoCreateAccountController.php');
+        require_once($moduleDir . '/controllers/admin/NostoUpdateExchangeRateController.php');
+        require_once($moduleDir . '/controllers/admin/NostoIndexController.php');
         require_once($moduleDir . '/classes/models/NostoNotification.php');
         require_once($moduleDir . '/classes/models/NostoExchangeRates.php');
         require_once($moduleDir . '/classes/helpers/account.php');
