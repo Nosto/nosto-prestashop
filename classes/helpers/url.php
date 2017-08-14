@@ -52,7 +52,7 @@ class NostoHelperUrl
             }
 
             $params = array('nostodebug' => 'true');
-            return NostoHelperUrl::getProductUrl($product, $idLang, null, $params);
+            return self::getProductUrl($product, $idLang, null, $params);
         } catch (Exception $e) {
             NostoHelperLogger::error($e, "Unable to build the product preview URL");
             return '';
@@ -81,7 +81,7 @@ class NostoHelperUrl
             }
 
             $params = array('nostodebug' => 'true');
-            return NostoHelperUrl::getCategoryUrl($category, $idLang, null, $params);
+            return self::getCategoryUrl($category, $idLang, null, $params);
         } catch (Exception $e) {
             NostoHelperLogger::error($e, "Unable to build the category preview URL");
             return '';
@@ -102,7 +102,7 @@ class NostoHelperUrl
                 'search_query' => 'nosto',
                 'nostodebug' => 'true',
             );
-            return NostoHelperUrl::getPageUrl('NostoSearch.php', $idLang, null, $params);
+            return self::getPageUrl('NostoSearch.php', $idLang, null, $params);
         } catch (Exception $e) {
             // Return empty on failure
             return '';
@@ -119,12 +119,7 @@ class NostoHelperUrl
     {
         try {
             $params = array('nostodebug' => 'true');
-            return NostoHelperUrl::getPageUrl(
-                'NostoOrderTagging.php',
-                $idLang,
-                null,
-                $params
-            );
+            return self::getPageUrl('NostoOrderTagging.php', $idLang, null, $params);
         } catch (Exception $e) {
             // Return empty on failure
             return '';
@@ -141,7 +136,7 @@ class NostoHelperUrl
     {
         try {
             $params = array('nostodebug' => 'true');
-            return NostoHelperUrl::getPageUrl('index.php', $idLang, null, $params);
+            return self::getPageUrl('index.php', $idLang, null, $params);
         } catch (Exception $e) {
             // Return empty on failure
             return '';
@@ -269,7 +264,7 @@ class NostoHelperUrl
             $params['module'] = $name;
             $params['controller'] = $controller;
             $params['id_lang'] = $idLang;
-            return NostoHelperUrl::getBaseUrl($idShop) . 'index.php?' . http_build_query($params);
+            return self::getBaseUrl($idShop) . 'index.php?' . http_build_query($params);
         } else {
             $link = NostoHelperLink::getLink();
             return $link->getModuleLink($name, $controller, $params, null, $idLang, $idShop);
