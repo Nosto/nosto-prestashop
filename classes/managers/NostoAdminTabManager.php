@@ -139,6 +139,7 @@ class NostoAdminTabManager
     public static function registerController($className)
     {
         $tab = new Tab();
+        /** @noinspection PhpDeprecationInspection */
         $tab->id = (int)Tab::getIdFromClassName($className);
         $tab->active = 1;
         $tab->class_name = $className;

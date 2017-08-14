@@ -32,6 +32,9 @@ use \Nosto\Request\Api\Token as NostoSDKAPIToken;
 
 class NostoIndexController
 {
+    const DEFAULT_SERVER_ADDRESS = 'connect.nosto.com';
+    const DEFAULT_IFRAME_ORIGIN_REGEXP = '(https:\/\/(.*)\.hub\.nosto\.com)|(https:\/\/my\.nosto\.com)';
+
     /**
      * Get the associative array for setting to smarty with all the controller's url
      *
@@ -52,6 +55,18 @@ class NostoIndexController
 
         return $urlMap;
     }
+
+    /**
+     * Returns the iframe origin where messages are allowed
+     *
+     * @return false|string
+     */
+    public static function getIframeOrigin()
+    {
+        return NostoSDK::getEnvVariable('NOSTO_IFRAME_ORIGIN_REGEXP', self::DEFAULT_IFRAME_ORIGIN_REGEXP);
+    }
+
+
 
     /**
      * Get Iframe url
@@ -175,7 +190,7 @@ class NostoIndexController
                     Tools::substr(_PS_VERSION_, 0, 3)),
             'missing_tokens' => $missingTokens,
             'iframe_installation_url' => $iframeInstallationUrl,
-            'iframe_origin' => NostoHelperUrl::getIframeOrigin(),
+            'iframe_origin' => self::getIframeOrigin(),
             'image_types' => NostoHelperImage::getProductImageTypes(),
             'current_image_type' => NostoHelperConfig::getImageType(
                 $currentLanguage['id_lang'],

@@ -23,39 +23,32 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use \Nosto\Request\Http\HttpRequest as NostoSDKHttpRequest;
-use \Nosto\Nosto as NostoSDK;
+use Nosto\Request\Http\HttpRequest as NostoSDKHttpRequest;
 
 /**
  * Helper class for managing urls.
  */
 class NostoHelperUrl
 {
-    const DEFAULT_SERVER_ADDRESS = 'connect.nosto.com';
-    const DEFAULT_IFRAME_ORIGIN_REGEXP = '(https:\/\/(.*)\.hub\.nosto\.com)|(https:\/\/my\.nosto\.com)';
-
     /**
      * Returns a preview url to a product page.
      *
-     * @param int|null $id_product optional product ID if a specific product is required.
      * @param int|null $id_lang optional language ID if a specific language is needed.
      * @return string the url.
      */
-    public static function getPreviewUrlProduct($id_product = null, $id_lang = null)
+    public static function getPreviewUrlProduct($id_lang = null)
     {
         try {
-            if (!$id_product) {
-                // Find a product that is active and available for order.
-                $sql = '
-                    SELECT `id_product`
-                    FROM `' . pSQL(_DB_PREFIX_) . 'product`
-                    WHERE `active` = 1
-                    AND `available_for_order` = 1
-                ';
+            // Find a product that is active and available for order.
+            $sql = '
+                SELECT `id_product`
+                FROM `' . pSQL(_DB_PREFIX_) . 'product`
+                WHERE `active` = 1
+                AND `available_for_order` = 1
+            ';
 
-                $row = Db::getInstance()->getRow($sql);
-                $id_product = isset($row['id_product']) ? (int)$row['id_product'] : 0;
-            }
+            $row = Db::getInstance()->getRow($sql);
+            $id_product = isset($row['id_product']) ? (int)$row['id_product'] : 0;
 
             if (is_null($id_lang)) {
                 $id_lang = (int)Context::getContext()->language->id;
@@ -77,25 +70,22 @@ class NostoHelperUrl
     /**
      * Returns a preview url to a category page.
      *
-     * @param int|null $id_category optional category ID if a specific category is required.
      * @param int|null $id_lang optional language ID if a specific language is needed.
      * @return string the url.
      */
-    public static function getPreviewUrlCategory($id_category = null, $id_lang = null)
+    public static function getPreviewUrlCategory($id_lang = null)
     {
         try {
-            if (!$id_category) {
-                // Find a category that is active, not the root category and has a parent category.
-                $sql = '
-                    SELECT `id_category`
-                    FROM `' . pSQL(_DB_PREFIX_) . 'category`
-                    WHERE `active` = 1
-                    AND `id_parent` > 0
-                    AND `is_root_category` = 0
-				';
-                $row = Db::getInstance()->getRow($sql);
-                $id_category = isset($row['id_category']) ? (int)$row['id_category'] : 0;
-            }
+            // Find a category that is active, not the root category and has a parent category.
+            $sql = '
+                SELECT `id_category`
+                FROM `' . pSQL(_DB_PREFIX_) . 'category`
+                WHERE `active` = 1
+                AND `id_parent` > 0
+                AND `is_root_category` = 0
+            ';
+            $row = Db::getInstance()->getRow($sql);
+            $id_category = isset($row['id_category']) ? (int)$row['id_category'] : 0;
 
             if (is_null($id_lang)) {
                 $id_lang = (int)Context::getContext()->language->id;
@@ -175,16 +165,6 @@ class NostoHelperUrl
     }
 
     /**
-     * Get the Nosto server address for the shop frontend JavaScripts.
-     *
-     * @return string the url.
-     */
-    public static function getServerAddress()
-    {
-        return NostoSDK::getEnvVariable('NOSTO_SERVER_URL', self::DEFAULT_SERVER_ADDRESS);
-    }
-
-    /**
      * Builds a product page url for the language and shop.
      *
      * We created our own method due to the existing one in `LinkCore` behaving differently across
@@ -201,7 +181,8 @@ class NostoHelperUrl
         $id_lang = null,
         $id_shop = null,
         array $params = array()
-    ) {
+    )
+    {
         if (is_null($id_lang)) {
             $id_lang = (int)Context::getContext()->language->id;
         }
@@ -210,9 +191,9 @@ class NostoHelperUrl
         }
 
         if (version_compare(_PS_VERSION_, '1.5.0.0') === -1 || version_compare(
-            _PS_VERSION_,
-            '1.5.5.0'
-        ) >= 0
+                _PS_VERSION_,
+                '1.5.5.0'
+            ) >= 0
         ) {
             /** @var LinkCore $link */
             $link = NostoHelperLink::getLink();
@@ -253,7 +234,8 @@ class NostoHelperUrl
         $id_lang = null,
         $id_shop = null,
         array $params = array()
-    ) {
+    )
+    {
         if (is_null($id_lang)) {
             $id_lang = (int)Context::getContext()->language->id;
         }
@@ -262,9 +244,9 @@ class NostoHelperUrl
         }
 
         if (version_compare(_PS_VERSION_, '1.5.0.0') === -1 || version_compare(
-            _PS_VERSION_,
-            '1.5.5.0'
-        ) >= 0
+                _PS_VERSION_,
+                '1.5.5.0'
+            ) >= 0
         ) {
             /** @var LinkCore $link */
             $link = NostoHelperLink::getLink();
@@ -305,7 +287,8 @@ class NostoHelperUrl
         $id_lang = null,
         $id_shop = null,
         array $params = array()
-    ) {
+    )
+    {
         if (is_null($id_lang)) {
             $id_lang = (int)Context::getContext()->language->id;
         }
@@ -314,9 +297,9 @@ class NostoHelperUrl
         }
 
         if (version_compare(_PS_VERSION_, '1.5.0.0') === -1 || version_compare(
-            _PS_VERSION_,
-            '1.5.5.0'
-        ) >= 0
+                _PS_VERSION_,
+                '1.5.5.0'
+            ) >= 0
         ) {
             /** @var LinkCore $link */
             $link = NostoHelperLink::getLink();
@@ -358,7 +341,8 @@ class NostoHelperUrl
         $id_lang = null,
         $id_shop = null,
         array $params = array()
-    ) {
+    )
+    {
         if (is_null($id_lang)) {
             $id_lang = (int)Context::getContext()->language->id;
         }
@@ -420,18 +404,5 @@ class NostoHelperUrl
         /** @var Shop|ShopCore $shop */
         $base = ($ssl ? 'https://' . $shop->domain_ssl : 'http://' . $shop->domain);
         return $base . $shop->getBaseURI();
-    }
-
-    /**
-     * Returns the iframe origin where messages are allowed
-     *
-     * @return false|string
-     */
-    public static function getIframeOrigin()
-    {
-        return NostoSDK::getEnvVariable(
-            'NOSTO_IFRAME_ORIGIN_REGEXP',
-            self::DEFAULT_IFRAME_ORIGIN_REGEXP
-        );
     }
 }

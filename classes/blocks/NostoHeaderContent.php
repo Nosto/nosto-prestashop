@@ -25,6 +25,8 @@
  */
 class NostoHeaderContent
 {
+    const DEFAULT_SERVER_ADDRESS = 'connect.nosto.com';
+
     /**
      * Returns hidden nosto recommendation elements for the current controller.
      * These are used as a fallback for showing recommendations if the appropriate hooks are not
@@ -63,6 +65,16 @@ class NostoHeaderContent
     }
 
     /**
+     * Get the Nosto server address for the shop frontend JavaScripts.
+     *
+     * @return string the url.
+     */
+    public static function getServerAddress()
+    {
+        return NostoSDK::getEnvVariable('NOSTO_SERVER_URL', self::DEFAULT_SERVER_ADDRESS);
+    }
+
+    /**
      * Renders the meta and script tagging by checking the version, the language and the URL
      * of the add-to-cart controller
      *
@@ -76,7 +88,7 @@ class NostoHeaderContent
             return '';
         }
 
-        $serverAddress = NostoHelperUrl::getServerAddress();
+        $serverAddress = self::getServerAddress();
         $link = NostoHelperLink::getLink();
         $hiddenElements = self::getHiddenRecommendationElements($module);
         Context::getContext()->smarty->assign(array(

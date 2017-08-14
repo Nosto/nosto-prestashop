@@ -79,8 +79,8 @@ class NostoIframe extends NostoSDKIframe
         $nostoIframe->setEmail($context->employee->email);
         $nostoIframe->setLanguageIsoCode($context->language->iso_code);
         $nostoIframe->setLanguageIsoCodeShop($shopLanguage->iso_code);
-        $nostoIframe->setPreviewUrlProduct(NostoHelperUrl::getPreviewUrlProduct(null, $id_lang));
-        $nostoIframe->setPreviewUrlCategory(NostoHelperUrl::getPreviewUrlCategory(null, $id_lang));
+        $nostoIframe->setPreviewUrlProduct(NostoHelperUrl::getPreviewUrlProduct($id_lang));
+        $nostoIframe->setPreviewUrlCategory(NostoHelperUrl::getPreviewUrlCategory($id_lang));
         $nostoIframe->setPreviewUrlSearch(NostoHelperUrl::getPreviewUrlSearch($id_lang));
         $nostoIframe->setPreviewUrlCart(NostoHelperUrl::getPreviewUrlCart($id_lang));
         $nostoIframe->setPreviewUrlFront(NostoHelperUrl::getPreviewUrlHome($id_lang));
