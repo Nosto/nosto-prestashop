@@ -23,6 +23,7 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
+use Nosto\Request\Http\HttpRequest;
 use \Nosto\NostoException as NostoSDKException;
 use \Nosto\Operation\UpsertProduct as NostoSDKUpsertProductOperation;
 use \Nosto\Types\Product\ProductInterface as NostoSDKProductInterface;
@@ -101,7 +102,7 @@ class NostoProductService extends AbstractNostoService
      */
     private function update(array $products)
     {
-        NostoHttpRequest::$responseTimeout = self::$apiWaitTimeout;
+        HttpRequest::$responseTimeout = self::$apiWaitTimeout;
         $productsInStore = array();
         $counter = 0;
         $batch = 1;

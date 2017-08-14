@@ -152,7 +152,6 @@ class NostoIndexController
                     '0 0 * * * curl --silent %s > /dev/null 2>&1',
                     NostoHelperUrl::getModuleUrl(
                         'nostotagging',
-                        null,
                         'cronRates',
                         $currentLanguage['id_lang'],
                         $shopId,

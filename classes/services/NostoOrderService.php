@@ -45,7 +45,7 @@ class NostoOrderService extends AbstractNostoService
             if ($order instanceof Order === false) {
                 return;
             }
-            $this->send($order);
+            $this->sendOrder($order);
         }
     }
 
