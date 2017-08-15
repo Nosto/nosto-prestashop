@@ -48,6 +48,8 @@ class NostoBootstrap
         require_once($moduleDir . '/classes/models/NostoCustomer.php');
         require_once($moduleDir . '/classes/helpers/NostoHelperFlash.php');
         require_once($moduleDir . '/classes/helpers/NostoHelperImage.php');
+        require_once($moduleDir . '/classes/helpers/NostoHelperHook.php');
+        require_once($moduleDir . '/classes/helpers/NostoHelperLanguage.php');
         require_once($moduleDir . '/classes/helpers/NostoHelperLogger.php');
         require_once($moduleDir . '/classes/managers/NostoNotificationManager.php');
         require_once($moduleDir . '/classes/services/AbstractNostoService.php');
@@ -65,7 +67,6 @@ class NostoBootstrap
         require_once($moduleDir . '/classes/models/NostoIframe.php');
         require_once($moduleDir . '/classes/models/meta/NostoAccountOwner.php');
         require_once($moduleDir . '/classes/models/NostoOAuth.php');
-        require_once($moduleDir . '/classes/models/AbstractNostoModel.php');
         require_once($moduleDir . '/classes/models/NostoCart.php');
         require_once($moduleDir . '/classes/models/NostoCategory.php');
         require_once($moduleDir . '/classes/models/NostoCustomer.php');
@@ -84,7 +85,7 @@ class NostoBootstrap
         require_once($moduleDir . '/classes/blocks/NostoDefaultTagging.php');
         require_once($moduleDir . '/classes/blocks/NostoHeaderContent.php');
         require_once($moduleDir . '/classes/blocks/NostoOrderTagging.php');
-        require_once($moduleDir . '/classes/blocks/NostoPagetypeTagging.php');
+        require_once($moduleDir . '/classes/blocks/NostoPageTypeTagging.php');
         require_once($moduleDir . '/classes/blocks/NostoProductTagging.php');
         require_once($moduleDir . '/classes/blocks/NostoRecommendationElement.php');
         require_once($moduleDir . '/classes/blocks/NostoSearchTagging.php');

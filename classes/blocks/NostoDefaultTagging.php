@@ -27,9 +27,7 @@ class NostoDefaultTagging
 {
 
     /**
-     * Keeps the state of Nosto default tagging
-     *
-     * @var boolean
+     * @var boolean keeps the state of Nosto default tagging
      */
     private static $taggingRendered = false;
 
@@ -79,8 +77,8 @@ class NostoDefaultTagging
         } elseif (NostoHelperController::isController('order-confirmation')) {
             $html .= NostoOrderTagging::get($module);
         }
-        $html .= $module->display("NostoTagging.php", 'views/templates/hook/top_nosto-elements.tpl');
-        $html .= $module->getHiddenRecommendationElements();
+        $html .= $module->render('views/templates/hook/top_nosto-elements.tpl');
+        $html .= NostoHeaderContent::getHiddenRecommendationElements($module);
 
         return $html;
     }

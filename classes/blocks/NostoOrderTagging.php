@@ -38,13 +38,12 @@ class NostoOrderTagging
             return null;
         }
 
-        $nostoOrder = new NostoOrder();
-        $nostoOrder->loadData(Context::getContext(), $order);
+        $nostoOrder = NostoOrder::loadData(Context::getContext(), $order);
 
         Context::getContext()->smarty->assign(array(
             'nosto_order' => $nostoOrder,
         ));
 
-        return $module->display("NostoTagging.php", 'views/templates/hook/order-confirmation_order-tagging.tpl');
+        return $module->render('views/templates/hook/order-confirmation_order-tagging.tpl');
     }
 }

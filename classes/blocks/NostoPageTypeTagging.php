@@ -23,7 +23,7 @@
  * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
-class NostoPagetypeTagging
+class NostoPageTypeTagging
 {
     private static $controllers = array(
         "category" => "category",
@@ -54,6 +54,6 @@ class NostoPagetypeTagging
             'nosto_page_type' => self::$controllers[NostoHelperController::getControllerName()]
         ));
 
-        return $module->display("NostoTagging.php", 'views/templates/hook/top_page_type-tagging.tpl');
+        return $module->render('views/templates/hook/top_page_type-tagging.tpl');
     }
 }

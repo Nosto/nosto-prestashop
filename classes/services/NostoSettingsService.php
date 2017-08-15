@@ -28,7 +28,7 @@ use \Nosto\Operation\UpdateSettings as NostoSDKUpdateSettingsOperation;
 use \Nosto\Object\Settings as NostoSDKSettings;
 use \Nosto\Object\Signup\Account as NostoSDKSignupAccount;
 
-class NostoSettingsService
+class NostoSettingsService extends AbstractNostoService
 {
     private $account;
 

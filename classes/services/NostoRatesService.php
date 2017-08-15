@@ -24,11 +24,11 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use Nosto\NostoException as NostoSDKException;
-use Nosto\Operation\SyncRates as NostoSDKSyncRatesOperation;
-use Nosto\Types\Signup\AccountInterface as NostoSDKSignupAccount;
+use \Nosto\NostoException as NostoSDKException;
+use \Nosto\Operation\SyncRates as NostoSDKSyncRatesOperation;
+use \Nosto\Types\Signup\AccountInterface as NostoSDKSignupAccount;
 
-class NostoRatesService
+class NostoRatesService extends AbstractNostoService
 {
     /**
      * Updates exchange rates for all stores and Nosto accounts

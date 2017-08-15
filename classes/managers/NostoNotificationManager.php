@@ -29,11 +29,12 @@ use \Nosto\Object\Notification as NostoSDKNotification;
 class NostoNotificationManager
 {
     /**
-     * Checks and returns all notification for the Prestashop installation
+     * Checks all notifications for all the stores and languages in the Prestashop installation and
+     * displays them in the admin depending upon the severity.
      *
-     * @return NostoSDKNotification[] objects
+     * @param NostoTagging $module the instance of the module for displaying notifications
      */
-    public static function getAll()
+    public static function checkAndDisplay(NostoTagging $module)
     {
         $notifications = array();
         foreach (Shop::getShops() as $shopArray) {
@@ -56,6 +57,22 @@ class NostoNotificationManager
             }
         }
 
-        return $notifications;
+        foreach ($notifications as $notification) {
+            if (
+                $notification->getNotificationType() === NostoSDKNotification::TYPE_MISSING_INSTALLATION
+                && !NostoHelperController::isController('AdminModules')
+            ) {
+                continue;
+            }
+            switch ($notification->getNotificationSeverity()) {
+                case NostoSDKNotification::SEVERITY_INFO:
+                    $module->adminDisplayInformation($notification->getFormattedMessage());
+                    break;
+                case NostoSDKNotification::SEVERITY_WARNING:
+                    $module->adminDisplayWarning($notification->getFormattedMessage());
+                    break;
+                default:
+            }
+        }
     }
 }

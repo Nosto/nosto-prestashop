@@ -1,7 +1,6 @@
 <?php
-
 /**
- * 2013-2016 Nosto Solutions Ltd
+ * 2013-2017 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -20,38 +19,24 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2016 Nosto Solutions Ltd
+ * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
-class NostoVariation
+
+class NostoHelperHook
 {
-    private $variationId;
-
     /**
-     * Constructor
+     * Dispatches the hook `action{MODEL}LoadAfter`. This method can be called last in the tagging
+     * model loadData() methods, to allow overriding of model data.
      *
-     * @param null $variationId
+     * @param string $klass the name of the class
+     * @param array $params the hook params.
      */
-    public function __construct($variationId = null)
+    public static function dispatchHookActionLoadAfter($klass, array $params)
     {
-        $this->variationId = $variationId;
+        // We replace the "NostoTagging" part of the class
+        // name with "Nosto", e.g. "NostoProduct" => "NostoProduct".
+        Hook::exec('action' . str_replace('NostoTagging', 'Nosto', $klass) . 'LoadAfter', $params);
     }
 
-    public static function loadData()
-    {
-        $nostoVariation = new NostoVariation(Context::getContext()->currency->iso_code);
-
-        NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoVariation), array(
-            'nosto_variation' => $nostoVariation
-        ));
-        return $nostoVariation;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getVariationId()
-    {
-        return $this->variationId;
-    }
 }

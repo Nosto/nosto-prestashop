@@ -53,6 +53,6 @@ class NostoCategoryTagging
             'nosto_category' => $nostoCategory,
         ));
 
-        return $module->display("NostoTagging.php", 'views/templates/hook/category-footer_category-tagging.tpl');
+        return $module->render('views/templates/hook/category-footer_category-tagging.tpl');
     }
 }

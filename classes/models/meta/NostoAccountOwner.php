@@ -31,16 +31,20 @@ class NostoAccountOwner extends NostoSDKSignupOwner
      * Loads the meta data from the given context.
      *
      * @param Context $context the context to use as data source.
-     * @return NostoAccountOwner
+     * @return NostoAccountOwner the account owner object
      */
-    public static function loadData($context)
+    public static function loadData(Context $context)
     {
-        $owner = new NostoAccountOwner();
+        $nostoOwner = new NostoAccountOwner();
         if (!empty($context->employee)) {
-            $owner->setFirstName($context->employee->firstname);
-            $owner->setLastName($context->employee->lastname);
-            $owner->setEmail($context->employee->email);
+            $nostoOwner->setFirstName($context->employee->firstname);
+            $nostoOwner->setLastName($context->employee->lastname);
+            $nostoOwner->setEmail($context->employee->email);
         }
-        return $owner;
+
+        NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoOwner), array(
+            'nosto_account_owner' => $nostoOwner
+        ));
+        return $nostoOwner;
     }
 }

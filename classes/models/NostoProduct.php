@@ -30,9 +30,9 @@ class NostoProduct extends NostoSDKProduct
     /**
      * Loads the product data from supplied context and product objects.
      *
-     * @param Context $context the context object.
-     * @param Product $product the product object.
-     * @return NostoProduct
+     * @param Context $context the context
+     * @param Product $product the product model to process
+     * @return NostoProduct the product object
      */
     public static function loadData(Context $context, Product $product)
     {
@@ -72,15 +72,10 @@ class NostoProduct extends NostoSDKProduct
         $nostoProduct->amendAlternateImages($product, $idLang);
         $nostoProduct->amendPrices($product);
 
-        Hook::exec(
-            'action' . str_replace('NostoTagging', 'Nosto', self::class) . 'LoadAfter',
-            array(
-                'nosto_product' => $nostoProduct,
-                'product' => $product,
-                'context' => $context
-            )
-        );
-
+        NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoProduct), array(
+            'product' => $product,
+            'nosto_product' => $nostoProduct
+        ));
         return $nostoProduct;
     }
 

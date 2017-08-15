@@ -33,22 +33,25 @@ class NostoCustomer extends NostoSDKUser
     /**
      * Loads the customer data from supplied context and customer objects.
      *
-     * @param Customer $customer the customer object.
-     * @return NostoCustomer
+     * @param Customer $customer the customer model to process
+     * @return NostoCustomer the customer object
      */
     public static function loadData(Customer $customer)
     {
-        $user = new NostoCustomer();
-        $user->setFirstName($customer->firstname);
-        $user->setLastName($customer->lastname);
-        $user->setEmail($customer->email);
+        $nostoCustomer = new NostoCustomer();
+        $nostoCustomer->setFirstName($customer->firstname);
+        $nostoCustomer->setLastName($customer->lastname);
+        $nostoCustomer->setEmail($customer->email);
         try {
-            $user->populateCustomerReference($customer);
+            $nostoCustomer->populateCustomerReference($customer);
         } catch (Exception $e) {
             NostoHelperLogger::error($e);
         }
 
-        return $user;
+        NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoCustomer), array(
+            'nosto_customer' => $nostoCustomer
+        ));
+        return $nostoCustomer;
     }
 
     /**

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 2013-2016 Nosto Solutions Ltd
  *
@@ -22,14 +23,27 @@
  * @copyright 2013-2016 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
-
-class NostoSearch extends AbstractNostoModel
+class NostoSearch
 {
     protected $searchTerm;
 
     public function __construct($searchTerm)
     {
         $this->searchTerm = $searchTerm;
+    }
+
+    /**
+     * @param string $term the current search term
+     * @return NostoSearch the search object
+     */
+    public static function loadData($term)
+    {
+        $nostoSearch = new NostoSearch($term);
+
+        NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoSearch), array(
+            'nosto_search_term' => $nostoSearch
+        ));
+        return $nostoSearch;
     }
 
     /**

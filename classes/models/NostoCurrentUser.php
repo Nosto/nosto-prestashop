@@ -30,17 +30,21 @@ class NostoCurrentUser extends NostoSDKUser
     /**
      * Loads the meta data from the given context.
      *
-     * @param Context $context the context to use as data source.
-     * @return NostoCurrentUser
+     * @param Context $context the context
+     * @return NostoCurrentUser the current user object
      */
-    public static function loadData($context)
+    public static function loadData(Context $context)
     {
-        $owner = new NostoCurrentUser();
+        $nostoUser = new NostoCurrentUser();
         if (!empty($context->employee)) {
-            $owner->setFirstName($context->employee->firstname);
-            $owner->setLastName($context->employee->lastname);
-            $owner->setEmail($context->employee->email);
+            $nostoUser->setFirstName($context->employee->firstname);
+            $nostoUser->setLastName($context->employee->lastname);
+            $nostoUser->setEmail($context->employee->email);
         }
-        return $owner;
+
+        NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoUser), array(
+            'nosto_user' => $nostoUser
+        ));
+        return $nostoUser;
     }
 }

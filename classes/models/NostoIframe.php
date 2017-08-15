@@ -58,14 +58,13 @@ class NostoIframe extends NostoSDKIframe
     /**
      * Loads the meta-data from context.
      *
-     * @param Context $context the context to get the meta-data from.
+     * @param Context $context the context
      * @param int $id_lang the language ID of the shop for which to get the meta-data.
-     * @param $uniqueId
-     * @return NostoIframe|null
+     * @return NostoIframe|null the iframe object
      */
-    public static function loadData($context, $id_lang, $uniqueId)
+    public static function loadData(Context $context, $id_lang)
     {
-        $iframe = new NostoIframe();
+        $nostoIframe = new NostoIframe();
         $shopLanguage = new Language($id_lang);
         $shopContext = $context->shop->getContext();
         if (
@@ -75,21 +74,21 @@ class NostoIframe extends NostoSDKIframe
             return null;
         }
 
-        $iframe->setFirstName($context->employee->firstname);
-        $iframe->setLastName($context->employee->lastname);
-        $iframe->setEmail($context->employee->email);
-        $iframe->setLanguageIsoCode($context->language->iso_code);
-        $iframe->setLanguageIsoCodeShop($shopLanguage->iso_code);
-        $iframe->setPreviewUrlProduct(NostoHelperUrl::getPreviewUrlProduct(null, $id_lang));
-        $iframe->setPreviewUrlCategory(NostoHelperUrl::getPreviewUrlCategory(null, $id_lang));
-        $iframe->setPreviewUrlSearch(NostoHelperUrl::getPreviewUrlSearch($id_lang));
-        $iframe->setPreviewUrlCart(NostoHelperUrl::getPreviewUrlCart($id_lang));
-        $iframe->setPreviewUrlFront(NostoHelperUrl::getPreviewUrlHome($id_lang));
-        $iframe->setShopName($shopLanguage->name);
-        $iframe->setVersionModule(NostoTagging::PLUGIN_VERSION);
-        $iframe->setVersionPlatform(_PS_VERSION_);
-        $iframe->setUniqueId($uniqueId);
-        $iframe->setPlatform('prestashop');
+        $nostoIframe->setFirstName($context->employee->firstname);
+        $nostoIframe->setLastName($context->employee->lastname);
+        $nostoIframe->setEmail($context->employee->email);
+        $nostoIframe->setLanguageIsoCode($context->language->iso_code);
+        $nostoIframe->setLanguageIsoCodeShop($shopLanguage->iso_code);
+        $nostoIframe->setPreviewUrlProduct(NostoHelperUrl::getPreviewUrlProduct($id_lang));
+        $nostoIframe->setPreviewUrlCategory(NostoHelperUrl::getPreviewUrlCategory($id_lang));
+        $nostoIframe->setPreviewUrlSearch(NostoHelperUrl::getPreviewUrlSearch($id_lang));
+        $nostoIframe->setPreviewUrlCart(NostoHelperUrl::getPreviewUrlCart($id_lang));
+        $nostoIframe->setPreviewUrlFront(NostoHelperUrl::getPreviewUrlHome($id_lang));
+        $nostoIframe->setShopName($shopLanguage->name);
+        $nostoIframe->setVersionModule(NostoTagging::PLUGIN_VERSION);
+        $nostoIframe->setVersionPlatform(_PS_VERSION_);
+        $nostoIframe->setUniqueId('');
+        $nostoIframe->setPlatform('prestashop');
 
         try {
             //Check the recent visits and sales and get the shop traffic for the qualification
@@ -99,11 +98,11 @@ class NostoIframe extends NostoSDKIframe
                 $beginDate = $daysBack->sub(new DateInterval("P30D"))->format("Y-m-d");
                 $sales = AdminStatsControllerCore::getTotalSales($beginDate, $today);
                 $visits = AdminStatsControllerCore::getVisits(false, $beginDate, $today);
-                $iframe->setRecentVisits(strval($visits));
-                $iframe->setRecentSales(number_format((float)$sales));
+                $nostoIframe->setRecentVisits(strval($visits));
+                $nostoIframe->setRecentSales(number_format((float)$sales));
                 $currency = $context->currency;
                 if ($currency instanceof Currency) {
-                    $iframe->setCurrency($currency->iso_code);
+                    $nostoIframe->setCurrency($currency->iso_code);
                 }
             }
         } catch (Exception $e) {
@@ -112,7 +111,10 @@ class NostoIframe extends NostoSDKIframe
             NostoHelperLogger::error($e);
         }
 
-        return $iframe;
+        NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoIframe), array(
+            'nosto_iframe' => $nostoIframe
+        ));
+        return $nostoIframe;
     }
 
     /**

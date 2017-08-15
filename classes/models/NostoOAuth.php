@@ -25,18 +25,18 @@
  */
 
 use \Nosto\NostoException as NostoSDKException;
-use \Nosto\Request\Api\Token as NostoSDKAPIToken;
 use \Nosto\OAuth as NostoSDKOAuth;
+use \Nosto\Request\Api\Token as NostoSDKAPIToken;
 
 class NostoOAuth extends NostoSDKOAuth
 {
     /**
      * Loads meta data from the given context and language.
      *
-     * @param Context $context the context to use as data source.
-     * @param int $idLang the language to use as data source.
-     * @param $moduleName
-     * @return NostoOAuth|null
+     * @param Context $context the context object
+     * @param int $idLang the language
+     * @param string $moduleName the name of the module
+     * @return NostoOAuth|null the oauth object
      */
     public static function loadData($context, $idLang, $moduleName)
     {
@@ -69,6 +69,9 @@ class NostoOAuth extends NostoSDKOAuth
             NostoHelperLogger::error($e);
         }
 
+        NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoOAuth), array(
+            'nosto_oauth' => $nostoOAuth
+        ));
         return $nostoOAuth;
     }
 }

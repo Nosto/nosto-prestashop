@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 2013-2016 Nosto Solutions Ltd
  *
@@ -22,19 +23,15 @@
  * @copyright 2013-2016 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
-
-class NostoBrand extends AbstractNostoModel
+class NostoBrand
 {
-    /**
-     * @var string the built brand string.
-     */
     private $brand;
 
     /**
      * Loads the brand data from supplied manufacturer object.
      *
-     * @param Manufacturer $manufacturer the manufacturer object.
-     * @return NostoBrand
+     * @param Manufacturer $manufacturer the manufacturer model to process
+     * @return NostoBrand the brand object
      */
     public static function loadData(Manufacturer $manufacturer)
     {
@@ -44,6 +41,11 @@ class NostoBrand extends AbstractNostoModel
 
         $nostoBrand = new NostoBrand();
         $nostoBrand->brand = DIRECTORY_SEPARATOR . $manufacturer->name;
+
+        NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoBrand), array(
+            'manufacturer' => $manufacturer,
+            'nosto_brand' => $nostoBrand
+        ));
         return $nostoBrand;
     }
 

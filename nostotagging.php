@@ -39,12 +39,12 @@ if ((basename(__FILE__) === 'nostotagging.php')) {
     require_once("bootstrap.php");
 }
 
-use Nosto\NostoException as NostoSDKException;
-use Nosto\Object\Notification as NostoSDKNotification;
-use Nosto\Request\Http\HttpRequest as NostoSDKHttpRequest;
+use \Nosto\NostoException as NostoSDKException;
 
 /**
- * NostoTagging module that integrates Nosto marketing automation service.
+ * Main module class the is responsible for all the module behaviour. This class is to be kept
+ * lightweight with no more than single line method bodies that simply delegate to other services,
+ * helpers or manager.
  *
  * @property Context $context
  */
@@ -134,6 +134,7 @@ class NostoTagging extends Module
         $this->name = self::MODULE_NAME;
         $this->tab = 'advertising_marketing';
         $this->version = self::PLUGIN_VERSION;
+        $this->bootstrap = true; // Necessary for Bootstrap CSS initialisation in the UI
         $this->author = 'Nosto';
         $this->need_instance = 1;
         $this->ps_versions_compliancy = array('min' => '1.5', 'max' => _PS_VERSION_);
@@ -167,7 +168,7 @@ class NostoTagging extends Module
                 || !$this->registerHook('header')
                 || !$this->registerHook('top')
                 || !$this->registerHook('footer')
-                || !$this->registerHook('productfooter')
+                || !$this->registerHook('productFooter')
                 || !$this->registerHook('shoppingCart')
                 || !$this->registerHook('orderConfirmation')
                 || !$this->registerHook('postUpdateOrderStatus')
@@ -181,18 +182,15 @@ class NostoTagging extends Module
             }
             if (!NostoCustomerManager::createTables()) {
                 $success = false;
-                $this->_errors[] = $this->l(
-                    'Failed to create Nosto customer table'
-                );
+                $this->_errors[] = $this->l('Failed to create Nosto customer table');
             }
             if (!NostoAdminTabManager::install()) {
                 $success = false;
-                $this->_errors[] = $this->l(
-                    'Failed to create Nosto admin tab'
-                );
+                $this->_errors[] = $this->l('Failed to create Nosto admin tab');
             }
-            if (!$this->initHooks()) {
+            if (!NostoHookManager::initHooks(self::$custom_hooks)) {
                 $success = false;
+                $this->_errors[] = $this->l('Failed to register custom Nosto hooks');
             }
             // For versions < 1.5.3.1 we need to keep track of the currently installed version.
             // This is to enable auto-update of the module by running its upgrade scripts.
@@ -277,27 +275,19 @@ class NostoTagging extends Module
         $this->getSmarty()->assign(array(
             'module_path' => $this->_path
         ));
-        $output .= $this->display(__FILE__, $this->getSettingsTemplate());
+
+        $template_file = 'views/templates/admin/config-bootstrap.tpl';
+        if (_PS_VERSION_ < '1.6') {
+            $template_file = 'views/templates/admin/legacy-config-bootstrap.tpl';
+        }
+        $output .= $this->display(__FILE__, $template_file);
 
         return $output;
     }
 
     /**
-     * @return string
-     */
-    private function getSettingsTemplate()
-    {
-        $template_file = 'views/templates/admin/config-bootstrap.tpl';
-        if (_PS_VERSION_ < '1.6') {
-            $template_file = 'views/templates/admin/legacy-config-bootstrap.tpl';
-        }
-
-        return $template_file;
-    }
-
-    /**
-     * Hook for adding content to the <head> section of the HTML pages.
-     * Adds the Nosto embed script.
+     * Layout hook for adding content to the <head> of every page. This hook renders the entire
+     * client script, the add-to-cart script and some meta tags
      *
      * @return string The HTML to output
      */
@@ -307,7 +297,8 @@ class NostoTagging extends Module
     }
 
     /**
-     * Backwards compatibility hook.
+     * Backwards compatibility layout hook for adding content to the <head> of every page. This hook
+     * should not have any logic and should only delegate to another hook.
      *
      * @see NostoTagging::hookDisplayHeader()
      * @return string The HTML to output
@@ -339,10 +330,8 @@ class NostoTagging extends Module
     }
 
     /**
-     * Hook for adding content to the top of every page.
-     *
-     * Adds customer and cart tagging.
-     * Adds nosto elements.
+     * Layout hook for adding content to the header of every page. This hook renders the entire
+     * tagging if the tagging wasn't rendered in a previous hook.
      *
      * @return string The HTML to output
      */
@@ -352,21 +341,21 @@ class NostoTagging extends Module
     }
 
     /**
-     * Hook for adding content to the top of every page in displayNav1.
-     *
-     * Adds customer and cart tagging.
-     * Adds nosto elements.
+     * Modern layout hook for adding content to the top of every page in displayNav1. This hooks is
+     * newer 1.7 hook that does the same as the top hook. This hook should not have any logic and
+     * should only delegate to another hook.
      *
      * @since Prestashop 1.7.0.0
      * @return string The HTML to output
      */
     public function hookDisplayNav1()
     {
-        return NostoDefaultTagging::get($this);
+        return $this->hookDisplayTop();
     }
 
     /**
-     * Backwards compatibility hook.
+     * Backwards compatibility layout hook that renders content in the header of every page. This
+     * hook should not have any logic and should only delegate to another hook.
      *
      * @see NostoTagging::hookDisplayTop()
      * @return string The HTML to output
@@ -377,9 +366,9 @@ class NostoTagging extends Module
     }
 
     /**
-     * Hook for adding content to the footer of every page.
-     *
-     * Adds nosto elements.
+     * Layout hook for adding content to the footer of every page. This hook renders a recommendation
+     * element and also renders the entire tagging if the tagging wasn't rendered in a previous
+     * hook.
      *
      * @return string The HTML to output
      */
@@ -391,7 +380,8 @@ class NostoTagging extends Module
     }
 
     /**
-     * Backwards compatibility hook.
+     * Backwards compatibility layout hook for adding content to the footer of every page. This hook
+     * should not have any logic and should only delegate to another hook.
      *
      * @see NostoTagging::hookDisplayFooter()
      * @return string The HTML to output
@@ -402,9 +392,8 @@ class NostoTagging extends Module
     }
 
     /**
-     * Hook for adding content to the left column of every page.
-     *
-     * Adds nosto elements.
+     * Layout hook for adding content to the left column of every page. This hook renders a single
+     * recommendation element. This hook is extremely theme-dependant and may not always exist.
      *
      * @return string The HTML to output
      */
@@ -414,9 +403,10 @@ class NostoTagging extends Module
     }
 
     /**
-     * Backwards compatibility hook.
+     * Backwards compatibility layout hook for adding content to the left column of every page.
+     * This hook should not have any logic and should only delegate to another hook.
      *
-     * @see NostoTagging::hookDisplayLeftColumn()
+     * @see NostoTagging::hookDisplayRightColumn()
      * @return string The HTML to output
      */
     public function hookLeftColumn()
@@ -425,9 +415,8 @@ class NostoTagging extends Module
     }
 
     /**
-     * Hook for adding content to the right column of every page.
-     *
-     * Adds nosto elements.
+     * Layout hook for adding content to the right column of every page. This hook renders a single
+     * recommendation element. This hook is extremely theme-dependant and may not always exist.
      *
      * @return string The HTML to output
      */
@@ -437,7 +426,8 @@ class NostoTagging extends Module
     }
 
     /**
-     * Backwards compatibility hook.
+     * Backwards compatibility layout hook for adding content to the right column of every page.
+     * This hook should not have any logic and should only delegate to another hook.
      *
      * @see NostoTagging::hookDisplayRightColumn()
      * @return string The HTML to output
@@ -448,10 +438,9 @@ class NostoTagging extends Module
     }
 
     /**
-     * Hook for adding content below the product description on the product page.
-     *
-     * Adds product tagging.
-     * Adds nosto elements.
+     * Layout hook for adding content below the product description on the product page. This hook
+     * renders three recommendation elements. The product tagging is omitted from here and instead
+     * rendered along with the rest of the tagging to keep all the tagging consolidated.
      *
      * @return string The HTML to output
      */
@@ -465,7 +454,8 @@ class NostoTagging extends Module
     }
 
     /**
-     * Backwards compatibility hook.
+     * Backwards compatibility layout hook for adding content below the product description on the
+     * product page. This hook should not have any logic and should only delegate to another hook.
      *
      * @see NostoTagging::hookDisplayFooterProduct()
      * @return string The HTML to output
@@ -476,9 +466,9 @@ class NostoTagging extends Module
     }
 
     /**
-     * Hook for adding content below the product list on the shopping cart page.
-     *
-     * Adds nosto elements.
+     * Layout hook for adding content to the cart page below the itemised cart listing. This hooks
+     * renders three recommendation elements on the cart page and also updates the customer link
+     * table.
      *
      * @return string The HTML to output
      */
@@ -494,7 +484,8 @@ class NostoTagging extends Module
     }
 
     /**
-     * Backwards compatibility hook.
+     * Backwards compatibility layout hook for adding content to the cart page below the itemised
+     * cart listing. This hook should not have any logic and should only delegate to another hook.
      *
      * @see NostoTagging::hookDisplayShoppingCartFooter()
      * @return string The HTML to output
@@ -505,10 +496,8 @@ class NostoTagging extends Module
     }
 
     /**
-     * Hook for adding content on the order confirmation page.
-     *
-     * Adds completed order tagging.
-     * Adds nosto elements.
+     * Backwards compatibility layout hook for adding content to the order page below the itemised
+     * order listing.
      *
      * @return string The HTML to output
      */
@@ -522,7 +511,8 @@ class NostoTagging extends Module
     }
 
     /**
-     * Backwards compatibility hook.
+     * Backwards compatibility layout hook for adding content to the order page below the itemised
+     * order listing. This hook should not have any logic and should only delegate to another hook.
      *
      * @see NostoTagging::hookDisplayOrderConfirmation()
      * @return string The HTML to output
@@ -533,14 +523,12 @@ class NostoTagging extends Module
     }
 
     /**
-     * Hook for adding content to category page above the product list.
-     *
-     * Adds nosto elements.
-     *
+     * Layout hook for adding content to search page above the category items list. This hook renders
+     * a single recommendation element.
+     * <br />
      * Please note that in order for this hook to be executed, it will have to be added to the
      * theme category.tpl file.
      *
-     * - Theme category.tpl: add the below line to the top of the file
      *   {hook h='displayCategoryTop'}
      *
      * @return string The HTML to output
@@ -551,14 +539,12 @@ class NostoTagging extends Module
     }
 
     /**
-     * Hook for adding content to category page below the product list.
-     *
-     * Adds nosto elements.
-     *
+     * Layout hook for adding content to search page below the category items list. This hook renders
+     * a single recommendation element.
+     * <br />
      * Please note that in order for this hook to be executed, it will have to be added to the
      * theme category.tpl file.
      *
-     * - Theme category.tpl: add the below line to the end of the file
      *   {hook h='displayCategoryFooter'}
      *
      * @return string The HTML to output
@@ -569,14 +555,12 @@ class NostoTagging extends Module
     }
 
     /**
-     * Hook for adding content to search page above the search result list.
-     *
-     * Adds nosto elements.
-     *
+     * Layout hook for adding content to search page above the search result list. This hook renders
+     * a single recommendation element.
+     * <br />
      * Please note that in order for this hook to be executed, it will have to be added to the
      * theme search.tpl file.
      *
-     * - Theme search.tpl: add the below line to the top of the file
      *   {hook h='displaySearchTop'}
      *
      * @return string The HTML to output
@@ -587,14 +571,12 @@ class NostoTagging extends Module
     }
 
     /**
-     * Hook for adding content to search page below the search result list.
-     *
-     * Adds nosto elements.
-     *
+     * Layout hook for adding content to search page below the search result list. This hook renders
+     * a single recommendation element.
+     * <br />
      * Please note that in order for this hook to be executed, it will have to be added to the
      * theme search.tpl file.
      *
-     * - Theme search.tpl: add the below line to the end of the file
      *   {hook h='displaySearchFooter'}
      *
      * @return string The HTML to output
@@ -605,8 +587,10 @@ class NostoTagging extends Module
     }
 
     /**
-     * Hook for updating the customer link table with the Prestashop customer id and the Nosto
-     * customer id.
+     * Layout hook for updating the customer link table with the Prestashop customer id and the Nosto
+     * customer id. This hook doesn't render anything as the cart tagging is rendered along with the
+     * other tagging while the recommendation elements are at the bottom of the page. No recommendation
+     * elements are rendered here as it is too intrusive.
      */
     public function hookDisplayPaymentTop()
     {
@@ -614,7 +598,8 @@ class NostoTagging extends Module
     }
 
     /**
-     * Backwards compatibility hook.
+     * Backwards compatibility layout hook that renders content above the payment page. This
+     * hook should not have any logic and should only delegate to another hook.
      *
      * @see NostoTagging::hookDisplayPaymentTop()
      */
@@ -624,13 +609,14 @@ class NostoTagging extends Module
     }
 
     /**
-     * Hook for sending order confirmations to Nosto via the API.
+     * Observer hook that is called when the order's status is updated. This hook sends an order
+     * order confirmation to Nosto via the API.
      *
      * This is a fallback for the regular order tagging on the "order confirmation page", as there
      * are cases when the customer does not get redirected back to the shop after the payment is
      * completed.
      *
-     * @param array $params
+     * @param array $params the observer parameters, one of which contains the order model
      */
     public function hookActionOrderStatusPostUpdate(array $params)
     {
@@ -639,10 +625,11 @@ class NostoTagging extends Module
     }
 
     /**
-     * Backwards compatibility hook.
+     * Backwards compatibility observer hook that is called when an order's status is updated. This
+     * hook should not have any logic and should only delegate to another hook.
      *
      * @see NostoTagging::hookActionOrderStatusPostUpdate()
-     * @param array $params
+     * @param array $params the observer parameters, one of which contains the order model
      */
     public function hookPostUpdateOrderStatus(array $params)
     {
@@ -650,8 +637,8 @@ class NostoTagging extends Module
     }
 
     /**
-     * Hook for adding content to the home page.
-     * Adds nosto elements.
+     * Layout hook for adding content to the home page. This hooks renders four recommendation
+     * elements on the front page
      *
      * @return string The HTML to output
      */
@@ -666,7 +653,8 @@ class NostoTagging extends Module
     }
 
     /**
-     * Backwards compatibility hook.
+     * Backwards compatibility layout hook for adding content to the home page. This hook should
+     * not have any logic and should only delegate to another hook.
      *
      * @see NostoTagging::hookDisplayHome()
      * @return string The HTML to output
@@ -677,9 +665,11 @@ class NostoTagging extends Module
     }
 
     /**
-     * Hook that is fired after a object is updated in the db.
+     * Hook that is fired after a object has been updated in the database. This hook intercepts all
+     * object modifications but the service filters out non-product events i.e. events whose
+     * parameter named `object` don't have a product object.
      *
-     * @param array $params
+     * @param array $params the observer parameters, one of which contains the mutated model
      */
     public function hookActionObjectUpdateAfter(array $params)
     {
@@ -688,9 +678,11 @@ class NostoTagging extends Module
     }
 
     /**
-     * Hook that is fired after a object is deleted from the db.
+     * Hook that is fired after a object has been deleted in the database. This hook intercepts all
+     * object deletions but the service filters out non-product events i.e. events whose
+     * parameter named `object` don't have a product object.
      *
-     * @param array $params
+     * @param array $params the observer parameters, one of which contains the mutated model
      */
     public function hookActionObjectDeleteAfter(array $params)
     {
@@ -699,9 +691,11 @@ class NostoTagging extends Module
     }
 
     /**
-     * Hook that is fired after a object has been created in the db.
+     * Hook that is fired after a object has been created in the database. This hook intercepts all
+     * object additions but the service filters out non-product events i.e. events whose
+     * parameter named `object` don't have a product object.
      *
-     * @param array $params
+     * @param array $params the observer parameters, one of which contains the mutated model
      */
     public function hookActionObjectAddAfter(array $params)
     {
@@ -710,10 +704,11 @@ class NostoTagging extends Module
     }
 
     /**
-     * Hook called when a product is update with a new picture, right after said update
+     * Observer hook that is called when a product is updated, right before said modification. This
+     * hook sends a product upsert call to Nosto
      *
-     * @see NostoTagging::hookActionObjectUpdateAfter
-     * @param array $params
+     * @see NostoTagging::hookActionObjectAddAfter
+     * @param array $params the observer parameters, one of which contains the product model
      */
     public function hookUpdateProduct(array $params)
     {
@@ -721,10 +716,11 @@ class NostoTagging extends Module
     }
 
     /**
-     * Hook called when a product is deleted, right before said deletion
+     * Observer hook that is called when a product is deleted, right before said deletion. This hook
+     * sends a product delete call to Nosto
      *
      * @see NostoTagging::hookActionObjectDeleteAfter
-     * @param array $params
+     * @param array $params the observer parameters, one of which contains the product model
      */
     public function hookDeleteProduct(array $params)
     {
@@ -732,10 +728,11 @@ class NostoTagging extends Module
     }
 
     /**
-     * Hook called when a product is added, right after said addition
+     * Observer hook that is called when a product is created, right before said addition. This hook
+     * sends a product upsert call to Nosto
      *
      * @see NostoTagging::hookActionObjectAddAfter
-     * @param array $params
+     * @param array $params the observer parameters, one of which contains the product model
      */
     public function hookAddProduct(array $params)
     {
@@ -756,137 +753,59 @@ class NostoTagging extends Module
     }
 
     /**
-     * Gets the current admin config language data.
-     *
-     * @param array $languages list of valid languages.
-     * @param int $id_lang if a specific language is required.
-     * @return array the language data array.
+     * Admin hook that is triggered when the header of the back-office is being rendered. This hook
+     * renders all the different warnings and information messages to be displayed.
      */
-    public static function ensureAdminLanguage(array $languages, $id_lang)
+    public function hookDisplayBackOfficeTop()
     {
-        foreach ($languages as $language) {
-            if ($language['id_lang'] == $id_lang) {
-                return $language;
-            }
-        }
-
-        if (isset($languages[0])) {
-            return $languages[0];
-        } else {
-            return array('id_lang' => 0, 'name' => '', 'iso_code' => '');
-        }
+        NostoNotificationManager::checkAndDisplay($this);
     }
 
     /**
-     * Returns hidden nosto recommendation elements for the current controller.
-     * These are used as a fallback for showing recommendations if the appropriate hooks are not
-     * present in the theme. The hidden elements are put into place and shown in the shop with
-     * JavaScript.
-     *
-     * @return string the html.
+     * Admin hook that is triggered when the footer of the back-office is being rendered. This hook
+     * sends all the exchange-rates to Nosto so if the merchant has forgotten to configure the cron,
+     * we should still get some updates.
      */
-    public function getHiddenRecommendationElements()
+    public function hookBackOfficeFooter()
     {
-        if (NostoHelperController::isController('index')) {
-            // The home page.
-            return $this->display(__FILE__, 'views/templates/hook/home_hidden-nosto-elements.tpl');
-        } elseif (NostoHelperController::isController('product')) {
-            // The product page.
-            return $this->display(__FILE__,
-                'views/templates/hook/footer-product_hidden-nosto-elements.tpl');
-        } elseif (NostoHelperController::isController('order') && (int)Tools::getValue('step',
-                0) === 0
-        ) {
-            // The cart summary page.
-            return $this->display(__FILE__,
-                'views/templates/hook/shopping-cart-footer_hidden-nosto-elements.tpl');
-        } elseif (NostoHelperController::isController('category')
-            || NostoHelperController::isController('manufacturer')
-        ) {
-            // The category/manufacturer page.
-            return $this->display(__FILE__,
-                'views/templates/hook/category-footer_hidden-nosto-elements.tpl');
-        } elseif (NostoHelperController::isController('search')) {
-            // The search page.
-            return $this->display(__FILE__,
-                'views/templates/hook/search_hidden-nosto-elements.tpl');
-        } elseif (NostoHelperController::isController('pagenotfound')
-            || NostoHelperController::isController('404')
-        ) {
-            // The search page.
-            return $this->display(__FILE__, 'views/templates/hook/404_hidden_nosto-elements.tpl');
-        } elseif (NostoHelperController::isController('order-confirmation')) {
-            // The search page.
-            return $this->display(__FILE__,
-                'views/templates/hook/order-confirmation_hidden_nosto-elements.tpl');
-        } else {
-            // If the current page is not one of the ones we want to show recommendations on, just return empty.
-            return '';
-        }
+        return $this->updateExchangeRatesIfNeeded(false);
     }
 
     /**
-     * Returns the admin url.
-     * Note the url is parsed from the current url, so this can only work if called when on the
-     * admin page.
+     * Helper method to display a general message in the admin. This method is plug for the method
+     * in the underlying class to increase the visibility from protected to public
      *
-     * @return string the url.
+     * @param string $message the general message to be displayed
+     * @return bool if the displaying of the general message was successful
      */
-    protected function getAdminUrl()
+    public function adminDisplayInformation($message)
     {
-        $current_url = Tools::getHttpHost(true) . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '');
-        $parsed_url = NostoSDKHttpRequest::parseUrl($current_url);
-        $parsed_query_string = NostoSDKHttpRequest::parseQueryString($parsed_url['query']);
-        $valid_params = array(
-            'controller',
-            'token',
-            'configure',
-            'tab_module',
-            'module_name',
-            'tab',
-        );
-        $query_params = array();
-        foreach ($valid_params as $valid_param) {
-            if (isset($parsed_query_string[$valid_param])) {
-                $query_params[$valid_param] = $parsed_query_string[$valid_param];
-            }
-        }
-        $parsed_url['query'] = http_build_query($query_params);
-        return NostoSDKHttpRequest::buildUrl($parsed_url);
+        return parent::adminDisplayInformation($message);
     }
 
     /**
-     * Adds custom hooks used by this module.
+     * Helper method to display a warning message in the admin. This method is plug for the method
+     * in the underlying class to increase the visibility from protected to public
      *
-     * Run on module install.
-     *
-     * @return bool
+     * @param string $message the warning message to be displayed
+     * @return bool if the displaying of the warning message was successful
      */
-    protected function initHooks()
+    public function adminDisplayWarning($message)
     {
-        $success = true;
-        if (!empty(self::$custom_hooks)) {
-            foreach (self::$custom_hooks as $hook) {
-                $callback = array(
-                    'Hook',
-                    (method_exists('Hook', 'getIdByName')) ? 'getIdByName' : 'get'
-                );
-                $id_hook = call_user_func($callback, $hook['name']);
-                if (empty($id_hook)) {
-                    $new_hook = new Hook();
-                    $new_hook->name = pSQL($hook['name']);
-                    $new_hook->title = pSQL($hook['title']);
-                    $new_hook->description = pSQL($hook['description']);
-                    $new_hook->add();
-                    $id_hook = $new_hook->id;
-                    if (!$id_hook) {
-                        $success = false;
-                    }
-                }
-            }
-        }
+        return parent::adminDisplayWarning($message);
+    }
 
-        return $success;
+    /**
+     * Helper method to render a template in the current Smarty context. All calls to the module's
+     * display method require a relative path to the views directory and therefore this method is
+     * used as to indirectly invoke the display method
+     *
+     * @param string $template the relative path to the template to render
+     * @return string The HTML to output
+     */
+    public function render($template)
+    {
+        return parent::display(__FILE__, $template);
     }
 
     /**
@@ -897,30 +816,13 @@ class NostoTagging extends Module
      */
     protected function getSmarty()
     {
-        if (!empty($this->smarty)
-            && method_exists($this->smarty, 'assign')
-        ) {
+        if (!empty($this->smarty) && method_exists($this->smarty, 'assign')) {
             return $this->smarty;
-        } elseif (!empty($this->context->smarty)
-            && method_exists($this->context->smarty, 'assign')
-        ) {
+        } elseif (!empty($this->context->smarty) && method_exists($this->context->smarty, 'assign')) {
             return $this->context->smarty;
         }
 
         throw new NostoSDKException('Could not find smarty');
-    }
-
-    /**
-     * Updates the exchange rates to Nosto when user logs in or logs out
-     */
-    public function hookDisplayBackOfficeTop()
-    {
-        $this->checkNotifications();
-    }
-
-    public function hookBackOfficeFooter()
-    {
-        return $this->updateExchangeRatesIfNeeded(false);
     }
 
     /**
@@ -961,7 +863,8 @@ class NostoTagging extends Module
     /**
      * Updates the exchange rates to Nosto when currency object is saved
      */
-    public function hookActionObjectCurrencyUpdateAfter() {
+    public function hookActionObjectCurrencyUpdateAfter()
+    {
         return $this->updateExchangeRatesIfNeeded(true);
     }
 
@@ -999,43 +902,5 @@ class NostoTagging extends Module
         }
 
         return $logged_in;
-    }
-
-    /**
-     * Checks all Nosto notifications and adds them as an admin notification
-     */
-    public function checkNotifications()
-    {
-        $notifications = NostoNotificationManager::getAll();
-        if (is_array($notifications) && count($notifications) > 0) {
-            /* @var NostoNotification $notification */
-            foreach ($notifications as $notification) {
-                if (
-                    $notification->getNotificationType() === NostoSDKNotification::TYPE_MISSING_INSTALLATION
-                    && !NostoHelperController::isController('AdminModules')
-                ) {
-                    continue;
-                }
-                $this->addPrestashopNotification($notification);
-            }
-        }
-    }
-
-    /**
-     * Adds a Prestashop admin notification
-     *
-     * @param NostoNotification $notification
-     */
-    protected function addPrestashopNotification(NostoNotification $notification)
-    {
-        switch ($notification->getNotificationSeverity()) {
-            case NostoSDKNotification::SEVERITY_INFO:
-                $this->adminDisplayInformation($notification->getFormattedMessage());
-                break;
-            case NostoSDKNotification::SEVERITY_WARNING:
-                $this->adminDisplayWarning($notification->getFormattedMessage());
-                break;
-            default:
-        }
     }
 }
