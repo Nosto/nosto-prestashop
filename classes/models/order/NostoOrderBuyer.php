@@ -23,7 +23,7 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use \Nosto\Object\Order\Buyer as NostoSDKOrderBuyer;
+use Nosto\Object\Order\Buyer as NostoSDKOrderBuyer;
 
 class NostoOrderBuyer extends NostoSDKOrderBuyer
 {
@@ -31,19 +31,41 @@ class NostoOrderBuyer extends NostoSDKOrderBuyer
      * Loads the buyer data from the customer object.
      *
      * @param Customer $customer the customer model to process
+     * @param Order $order the order object
      * @return NostoOrderBuyer the buyer object
      */
-    public static function loadData(Customer $customer)
+    public static function loadData(Customer $customer, Order $order)
     {
         $nostoBuyer = new NostoOrderBuyer();
         $nostoBuyer->setFirstName($customer->firstname);
         $nostoBuyer->setLastName($customer->lastname);
         $nostoBuyer->setEmail($customer->email);
 
+        $billingAddressId = $order->id_address_invoice;
+        $addresses = $customer->getAddresses($order->id_lang);
+        if ($addresses) {
+            foreach ($addresses as $address) {
+                if (array_key_exists('id_address', $address)
+                    && $address['id_address'] === $billingAddressId
+                ) {
+                    $addressObject = new Address($address['id_address'], $order->id_lang);
+                    if ($addressObject->phone_mobile) {
+                        $nostoBuyer->setPhone($addressObject->phone_mobile);
+                    } elseif ($addressObject->phone) {
+                        $nostoBuyer->setPhone($addressObject->phone);
+                    }
+                    $nostoBuyer->setPostcode($addressObject->postcode);
+                    $nostoBuyer->setCountry($addressObject->country);
+                    break;
+                }
+            }
+        }
+
         NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoBuyer), array(
             'customer' => $customer,
             'nosto_order_buyer' => $nostoBuyer
         ));
-        return $nostoBuyer;
+
+      return $nostoBuyer;
     }
 }

@@ -73,7 +73,7 @@ class NostoOrder extends NostoSDKOrder
         }
         $nostoOrder->setOrderNumber(isset($order->reference) ? (string)$order->reference : $order->id);
         $nostoOrder->setCustomer(NostoOrderBuyer::loadData($customer));
-        $nostoOrder->setCreatedAt(DateTime::createFromFormat('Y-m-d', $order->date_add));
+        $nostoOrder->setCreatedAt(DateTime::createFromFormat('Y-m-d H:i:s', $order->date_add));
         $nostoOrder->setPurchasedItems(self::findPurchasedItems($context, $order));
         $nostoOrder->setPaymentProvider('unknown');
 
