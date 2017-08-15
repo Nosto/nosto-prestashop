@@ -51,49 +51,48 @@ class NostoOrder extends NostoSDKOrder
     /**
      * Loads the order data from supplied context and order objects.
      *
-     * @param Context $context the context object.
-     * @param Order $order the order object.
+     * @param Context $context the context
+     * @param Order $order the order model to process
+     * @return NostoOrder the order object
      */
-    public function loadData(Context $context, Order $order)
+    public static function loadData(Context $context, Order $order)
     {
         if (!Validate::isLoadedObject($order)) {
-            return;
+            return null;
         }
 
+        $nostoOrder = new NostoOrder();
         $customer = self::loadCustomer($order);
 
         // The order reference was introduced in prestashop 1.5 where orders can be split into multiple ones.
         if (isset($order->reference)) {
-            $this->setOrderNumber($order->reference);
-            $this->setExternalOrderRef((string)$order->id);
+            $nostoOrder->setOrderNumber($order->reference);
+            $nostoOrder->setExternalOrderRef((string)$order->id);
         } else {
-            $this->setOrderNumber((string)$order->id);
+            $nostoOrder->setOrderNumber((string)$order->id);
         }
-        $this->setOrderNumber(isset($order->reference) ? (string)$order->reference : $order->id);
-        $this->setCustomer(NostoOrderBuyer::loadData($customer, $order));
-        $this->setCreatedAt(DateTime::createFromFormat('Y-m-d H:i:s', $order->date_add));
-        $this->setPurchasedItems($this->findPurchasedItems($context, $order));
-        $this->setPaymentProvider('unknown');
+        $nostoOrder->setOrderNumber(isset($order->reference) ? (string)$order->reference : $order->id);
+        $nostoOrder->setCustomer(NostoOrderBuyer::loadData($customer));
+        $nostoOrder->setCreatedAt(DateTime::createFromFormat('Y-m-d H:i:s', $order->date_add));
+        $nostoOrder->setPurchasedItems(self::findPurchasedItems($context, $order));
+        $nostoOrder->setPaymentProvider('unknown');
 
         if (!empty($order->module)) {
             $payment_module = Module::getInstanceByName($order->module);
             if ($payment_module !== false && isset($payment_module->version)) {
-                $this->setPaymentProvider($order->module . ' [' . $payment_module->version . ']');
+                $nostoOrder->setPaymentProvider($order->module . ' [' . $payment_module->version . ']');
             } else {
-                $this->setPaymentProvider($order->module . ' [unknown]');
+                $nostoOrder->setPaymentProvider($order->module . ' [unknown]');
             }
         }
 
-        $this->setOrderStatus(NostoOrderStatus::loadData($order));
+        $nostoOrder->setOrderStatus(NostoOrderStatus::loadData($order));
 
-        Hook::exec(
-            'action' . str_replace('NostoTagging', 'Nosto', get_class($this)) . 'LoadAfter',
-            array(
-                'nosto_order' => $this,
-                'order' => $order,
-                'context' => $context
-            )
-        );
+        NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoOrder), array(
+            'order' => $order,
+            'nosto_order' => $nostoOrder
+        ));
+        return $nostoOrder;
     }
 
     /**
@@ -103,7 +102,7 @@ class NostoOrder extends NostoSDKOrder
      * @param Order $order the order object.
      * @return NostoOrderPurchasedItem[] the purchased items.
      */
-    protected function findPurchasedItems(Context $context, Order $order)
+    protected static function findPurchasedItems(Context $context, Order $order)
     {
         $purchased_items = array();
 

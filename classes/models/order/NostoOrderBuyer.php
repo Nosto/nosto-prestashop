@@ -30,16 +30,16 @@ class NostoOrderBuyer extends NostoSDKOrderBuyer
     /**
      * Loads the buyer data from the customer object.
      *
-     * @param Customer $customer the customer object.
+     * @param Customer $customer the customer model to process
      * @param Order $order the order object
-     * @return NostoOrderBuyer
+     * @return NostoOrderBuyer the buyer object
      */
     public static function loadData(Customer $customer, Order $order)
     {
-        $buyer = new NostoOrderBuyer();
-        $buyer->setFirstName($customer->firstname);
-        $buyer->setLastName($customer->lastname);
-        $buyer->setEmail($customer->email);
+        $nostoBuyer = new NostoOrderBuyer();
+        $nostoBuyer->setFirstName($customer->firstname);
+        $nostoBuyer->setLastName($customer->lastname);
+        $nostoBuyer->setEmail($customer->email);
 
         $billingAddressId = $order->id_address_invoice;
         $addresses = $customer->getAddresses($order->id_lang);
@@ -50,17 +50,22 @@ class NostoOrderBuyer extends NostoSDKOrderBuyer
                 ) {
                     $addressObject = new Address($address['id_address'], $order->id_lang);
                     if ($addressObject->phone_mobile) {
-                        $buyer->setPhone($addressObject->phone_mobile);
+                        $nostoBuyer->setPhone($addressObject->phone_mobile);
                     } elseif ($addressObject->phone) {
-                        $buyer->setPhone($addressObject->phone);
+                        $nostoBuyer->setPhone($addressObject->phone);
                     }
-                    $buyer->setPostcode($addressObject->postcode);
-                    $buyer->setCountry($addressObject->country);
+                    $nostoBuyer->setPostcode($addressObject->postcode);
+                    $nostoBuyer->setCountry($addressObject->country);
                     break;
                 }
             }
         }
 
-        return $buyer;
+        NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoBuyer), array(
+            'customer' => $customer,
+            'nosto_order_buyer' => $nostoBuyer
+        ));
+
+        return $nostoBuyer;
     }
 }
