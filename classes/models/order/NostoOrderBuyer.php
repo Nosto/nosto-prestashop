@@ -45,14 +45,17 @@ class NostoOrderBuyer extends NostoSDKOrderBuyer
         $addresses = $customer->getAddresses($order->id_lang);
         if ($addresses) {
             foreach ($addresses as $address) {
-                if ($address['id_address'] === $billingAddressId) {
-                    if ($address['phone_mobile']) {
-                        $buyer->setPhone($address['phone_mobile']);
-                    } elseif ($address['phone']) {
-                        $buyer->setPhone($address['phone']);
+                if (array_key_exists('id_address', $address)
+                    && $address['id_address'] === $billingAddressId
+                ) {
+                    $addressObject = new Address($address['id_address'], $order->id_lang);
+                    if ($addressObject->phone_mobile) {
+                        $buyer->setPhone($addressObject->phone_mobile);
+                    } elseif ($addressObject->phone) {
+                        $buyer->setPhone($addressObject->phone);
                     }
-                    $buyer->setPostcode($address['postcode']);
-                    $buyer->setCountry($address['country']);
+                    $buyer->setPostcode($addressObject->postcode);
+                    $buyer->setCountry($addressObject->country);
                     break;
                 }
             }
