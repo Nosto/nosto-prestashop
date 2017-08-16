@@ -84,7 +84,7 @@
                 {if is_array($sku->getCustomFields())}
                     {foreach from=$sku->getCustomFields() key=key item=val}
                         <span class="{$key|escape:'htmlall':'UTF-8'}">{$val|escape:'htmlall':'UTF-8'}</span>
-					{/foreach}
+                    {/foreach}
                 {/if}
                 </span>
             </span>
