@@ -82,14 +82,14 @@
                 <span class="availability">{$sku->getAvailability()|escape:'htmlall':'UTF-8'}</span>
                 <span class="custom_fields">
                 {if is_array($sku->getCustomFields())}
-					{foreach from=$sku->getCustomFields() key=key item=val}
+                    {foreach from=$sku->getCustomFields() key=key item=val}
                         <span class="{$key|escape:'htmlall':'UTF-8'}">{$val|escape:'htmlall':'UTF-8'}</span>
 					{/foreach}
-				{/if}
+                {/if}
                 </span>
             </span>
-		{/foreach}
-	</div>
+        {/foreach}
+    </div>
 	{if isset($nosto_category) && is_object($nosto_category)}
 		<div class="nosto_category" style="display:none">{$nosto_category->getCategory()|escape:'htmlall':'UTF-8'}</div>
 	{/if}

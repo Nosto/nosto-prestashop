@@ -225,11 +225,11 @@
                                 </label>
                                 <div class="col-lg-9">
                                     <span class="switch prestashop-switch fixed-width-lg">
-										<input type="radio" name="nosto_sku_switch" id="nosto_sku_switch_on" value="1" {if $sku_enabled === true}checked="checked" {/if}/>
+                                        <input type="radio" name="nosto_sku_switch" id="nosto_sku_switch_on" value="1" {if $sku_enabled === true}checked="checked" {/if}/>
                                         <label for="nosto_sku_switch_on" class="radioCheck">Yes</label>
                                         <input type="radio" name="nosto_sku_switch" id="nosto_sku_switch_off" value="0" {if $sku_enabled !== true}checked="checked" {/if}/>
                                         <label for="nosto_sku_switch_off" class="radioCheck">No</label>
-										<a class="slide-button btn"></a>
+                                        <a class="slide-button btn"></a>
                                     </span>
                                 </div>
                             </div>
