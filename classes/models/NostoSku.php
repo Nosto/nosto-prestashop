@@ -133,7 +133,13 @@ class NostoSku extends NostoSDKSku
      * @param int $shopGroupId
      * @param int $shopId
      */
-    protected function amendImage(Combination $combination, NostoProduct $nostoProduct, $langId, $shopGroupId, $shopId)
+    protected function amendImage(
+        Combination $combination,
+        NostoProduct $nostoProduct,
+        $langId,
+        $shopGroupId,
+        $shopId
+    )
     {
         $images = $combination->getWsImages();
         if ($images) {
