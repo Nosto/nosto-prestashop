@@ -76,6 +76,7 @@ class NostoBootstrap
         require_once($moduleDir . '/classes/models/order/NostoOrderPurchasedItem.php');
         require_once($moduleDir . '/classes/models/order/NostoOrderStatus.php');
         require_once($moduleDir . '/classes/models/NostoProduct.php');
+        require_once($moduleDir . '/classes/models/NostoSku.php');
         require_once($moduleDir . '/classes/models/NostoBrand.php');
         require_once($moduleDir . '/classes/models/NostoSearch.php');
         require_once($moduleDir . '/classes/blocks/NostoBrandTagging.php');

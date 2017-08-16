@@ -70,7 +70,10 @@ class NostoProduct extends NostoSDKProduct
         $nostoProduct->amendBrand($product, $idLang);
         $nostoProduct->amendImage($product, $idLang);
         $nostoProduct->amendAlternateImages($product, $idLang);
-        $nostoProduct->amendPrices($product);
+        $nostoProduct->amendSkus($product, $idLang);
+        if (NostoHelperConfig::getSkuEnabled($idLang, $idShopGroup, $idShop)) {
+            $nostoProduct->amendPrices($product);
+        }
 
         NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoProduct), array(
             'product' => $product,
@@ -112,6 +115,28 @@ class NostoProduct extends NostoSDKProduct
             if ($url) {
                 $this->addAlternateImageUrls($url);
             }
+        }
+    }
+
+    /**
+     * Amend skus
+     *
+     * @param Product $product
+     * @param $langId
+     * @return bool
+     */
+    protected function amendSkus(Product $product, $langId)
+    {
+        $attributes_groups = $product->getAttributesGroups($langId);
+        $variants = array();
+        foreach ($attributes_groups as $attributes_group) {
+            $variants[$attributes_group['id_product_attribute']] = $attributes_group;
+        }
+
+        $combinationIds = $product->getWsCombinations();
+        foreach ($combinationIds as $combinationId) {
+            $combination = new Combination($combinationId['id'], $langId);
+            $this->addSku(NostoSku::loadData($product, $this, $combination, $variants[$combination->id]));
         }
     }
 

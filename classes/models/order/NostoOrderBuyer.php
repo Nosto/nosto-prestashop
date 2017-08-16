@@ -66,6 +66,6 @@ class NostoOrderBuyer extends NostoSDKOrderBuyer
             'nosto_order_buyer' => $nostoBuyer
         ));
 
-      return $nostoBuyer;
+        return $nostoBuyer;
     }
 }

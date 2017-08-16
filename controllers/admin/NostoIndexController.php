@@ -197,7 +197,8 @@ class NostoIndexController
                 $currentLanguage['id_lang'],
                 $shopGroupId,
                 $shopId
-            )
+            ),
+            'sku_enabled' => NostoHelperConfig::getSkuEnabled($languageId, $shopGroupId, $shopId)
         );
 
         if ($account) {
