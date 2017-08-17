@@ -46,23 +46,24 @@ class NostoSku extends NostoSDKSku
         if (!Validate::isLoadedObject($combination)) {
             return null;
         }
-        $langId = Context::getContext()->language->id;
-        $shopId = null;
-        $shopGroupId = null;
-        if (Context::getContext()->shop instanceof Shop) {
-            $shopId = Context::getContext()->shop->id;
-        }
 
         $nostoSku = new NostoSku();
         $nostoSku->amendAvailability($attributesGroup);
         $nostoSku->setId($combination->id);
-        $nostoSku->amendImage($combination, $nostoProduct, $langId, $shopGroupId, $shopId);
-        $nostoSku->amendCustomFields($combination, $langId, $shopId);
+        $nostoSku->amendImage($combination, $nostoProduct);
+        $nostoSku->amendCustomFields($combination);
         $nostoSku->amendPrice($combination);
-        $nostoSku->amendName($combination, $langId);
+        $nostoSku->amendName($combination);
 
         $nostoSku->setGtin($combination->ean13);
-        $nostoSku->setUrl(NostoHelperUrl::getProductUrl($product, $langId, $shopId, array(), $combination->id));
+        $nostoSku->setUrl(
+            NostoHelperUrl::getProductUrl(
+                $product, NostoHelperContext::getLanguageIdFromContext(),
+                NostoHelperContext::getShopIdFromContext(),
+                array(),
+                $combination->id
+            )
+        );
 
         return $nostoSku;
     }
@@ -89,17 +90,24 @@ class NostoSku extends NostoSDKSku
      * Amend custom fields
      *
      * @param Combination $combination
-     * @param $langId
-     * @param $shopId
      */
-    protected function amendCustomFields(Combination $combination, $langId, $shopId)
+    protected function amendCustomFields(Combination $combination)
     {
-        $attributes = $combination->getAttributesName($langId);
+        $attributes = $combination->getAttributesName(
+            NostoHelperContext::getLanguageIdFromContext()
+        );
         foreach ($attributes as $attributesInfo) {
             $attributeId = $attributesInfo['id_attribute'];
-            $attribute = new Attribute($attributeId, $langId, $shopId);
+            $attribute = new Attribute(
+                $attributeId,
+                NostoHelperContext::getLanguageIdFromContext(),
+                NostoHelperContext::getShopIdFromContext());
             $attributeName = $attributesInfo['name'];
-            $attributeGroup = new AttributeGroup($attribute->id_attribute_group, $langId, $shopId);
+            $attributeGroup = new AttributeGroup(
+                $attribute->id_attribute_group,
+                NostoHelperContext::getLanguageIdFromContext(),
+                NostoHelperContext::getShopIdFromContext()
+            );
 
             $this->addCustomField($attributeGroup->name, $attributeName);
         }
@@ -109,11 +117,10 @@ class NostoSku extends NostoSDKSku
      * Amend sku name
      *
      * @param Combination $combination
-     * @param $langId
      */
-    protected function amendName(Combination $combination, $langId)
+    protected function amendName(Combination $combination)
     {
-        $nameArray = $combination->getAttributesName($langId);
+        $nameArray = $combination->getAttributesName(NostoHelperContext::getLanguageIdFromContext());
         if ($nameArray) {
             $names = array();
             foreach ($nameArray as $nameInfo) {
@@ -129,16 +136,10 @@ class NostoSku extends NostoSDKSku
      *
      * @param Combination $combination the product model.
      * @param NostoProduct $nostoProduct
-     * @param int $langId language id of the context
-     * @param int $shopGroupId
-     * @param int $shopId
      */
     protected function amendImage(
         Combination $combination,
-        NostoProduct $nostoProduct,
-        $langId,
-        $shopGroupId,
-        $shopId
+        NostoProduct $nostoProduct
     )
     {
         $images = $combination->getWsImages();
@@ -150,12 +151,20 @@ class NostoSku extends NostoSDKSku
 
                 $imageId = $image['id'];
                 if ((int)$imageId > 0) {
-                    $imageType = NostoHelperImage::getTaggingImageTypeName($langId, $shopGroupId, $shopId);
+                    $imageType = NostoHelperImage::getTaggingImageTypeName(
+                        NostoHelperContext::getLanguageIdFromContext(),
+                        NostoHelperContext::getShopGroupIdFromContext(),
+                        NostoHelperContext::getShopIdFromContext()
+                    );
                     if (empty($imageType)) {
                         return;
                     }
 
-                    $product = new Product($combination->id_product, $langId, $shopId);
+                    $product = new Product(
+                        $combination->id_product,
+                        NostoHelperContext::getLanguageIdFromContext(),
+                        NostoHelperContext::getShopIdFromContext()
+                    );
                     $link = NostoHelperLink::getLink();
                     $url = $link->getImageLink(
                         $product->link_rewrite,
