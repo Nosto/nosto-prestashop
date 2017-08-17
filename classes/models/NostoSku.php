@@ -142,23 +142,31 @@ class NostoSku extends NostoSDKSku
     )
     {
         $images = $combination->getWsImages();
-        if ($images) {
-            $imageId = $images[0]['id'];
-            if ((int)$imageId > 0) {
-                $image_type = NostoHelperImage::getTaggingImageTypeName($langId, $shopGroupId, $shopId);
-                if (empty($image_type)) {
-                    return;
+        if ($images && is_array($images)) {
+            foreach ($images as $image) {
+                if (!is_array($image) || !array_key_exists('id', $image)) {
+                    continue;
                 }
 
-                $product = new Product($combination->id_product, $langId, $shopId);
-                $link = NostoHelperLink::getLink();
-                $url = $link->getImageLink(
-                    $product->link_rewrite,
-                    $combination->id_product . '-' . $imageId,
-                    $image_type
-                );
-                if ($url) {
-                    $this->setImageUrl($url);
+                $imageId = $image['id'];
+                if ((int)$imageId > 0) {
+                    $imageType = NostoHelperImage::getTaggingImageTypeName($langId, $shopGroupId, $shopId);
+                    if (empty($imageType)) {
+                        return;
+                    }
+
+                    $product = new Product($combination->id_product, $langId, $shopId);
+                    $link = NostoHelperLink::getLink();
+                    $url = $link->getImageLink(
+                        $product->link_rewrite,
+                        $combination->id_product . '-' . $imageId,
+                        $imageType
+                    );
+                    if ($url) {
+                        $this->setImageUrl($url);
+                        //image url found, break from loop
+                        break;
+                    }
                 }
             }
         }
