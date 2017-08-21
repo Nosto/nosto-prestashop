@@ -23,8 +23,8 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use \Nosto\NostoException as NostoSDKException;
-use \Nosto\Object\Format as NostoSDKCurrencyFormat;
+use Nosto\NostoException as NostoSDKException;
+use Nosto\Object\Format as NostoSDKCurrencyFormat;
 
 /**
  * Helper class for currency related tasks.

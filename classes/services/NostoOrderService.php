@@ -23,7 +23,7 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use \Nosto\Operation\OrderConfirm as NostoSDKOrderConfirmOperation;
+use Nosto\Operation\OrderConfirm as NostoSDKOrderConfirmOperation;
 
 /**
  * Helper class for sending order data to Nosto.

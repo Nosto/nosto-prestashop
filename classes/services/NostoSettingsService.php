@@ -24,9 +24,9 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use \Nosto\Operation\UpdateSettings as NostoSDKUpdateSettingsOperation;
-use \Nosto\Object\Settings as NostoSDKSettings;
-use \Nosto\Object\Signup\Account as NostoSDKSignupAccount;
+use Nosto\Object\Settings as NostoSDKSettings;
+use Nosto\Object\Signup\Account as NostoSDKSignupAccount;
+use Nosto\Operation\UpdateSettings as NostoSDKUpdateSettingsOperation;
 
 class NostoSettingsService extends AbstractNostoService
 {

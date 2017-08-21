@@ -24,9 +24,9 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use \Nosto\NostoException as NostoSDKException;
-use \Nosto\OAuth as NostoSDKOAuth;
-use \Nosto\Request\Api\Token as NostoSDKAPIToken;
+use Nosto\NostoException as NostoSDKException;
+use Nosto\OAuth as NostoSDKOAuth;
+use Nosto\Request\Api\Token as NostoSDKAPIToken;
 
 class NostoOAuth extends NostoSDKOAuth
 {

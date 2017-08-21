@@ -24,9 +24,9 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use \Nosto\Mixins\OauthTrait as NostoSDKOauthTrait;
-use \Nosto\Types\Signup\AccountInterface as NostoSDKAccountInterface;
-use \Nosto\Request\Http\HttpRequest as NostoSDKHttpRequest;
+use Nosto\Mixins\OauthTrait as NostoSDKOauthTrait;
+use Nosto\Request\Http\HttpRequest as NostoSDKHttpRequest;
+use Nosto\Types\Signup\AccountInterface as NostoSDKAccountInterface;
 
 /**
  * @property NostoTagging $module

@@ -75,13 +75,14 @@ class NostoHelperConfig
         $global = false,
         $id_shop_group = null,
         $id_shop = null
-    ) {
+    )
+    {
         $callback = array(
             'Configuration',
             ($global && method_exists(
-                'Configuration',
-                'updateGlobalValue'
-            )) ? 'updateGlobalValue' : 'updateValue'
+                    'Configuration',
+                    'updateGlobalValue'
+                )) ? 'updateGlobalValue' : 'updateValue'
         );
         // Store this value for given language only if specified.
         if (!is_array($value) && !empty($lang_id)) {

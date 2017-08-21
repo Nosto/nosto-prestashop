@@ -25,7 +25,7 @@
 
 require_once(dirname(__FILE__) . '/cron.php');
 
-use \Nosto\NostoException as NostoSDKException;
+use Nosto\NostoException as NostoSDKException;
 
 /**
  * Cron controller to update currency exchange rates in Nosto.
@@ -45,7 +45,7 @@ class NostoTaggingCronRatesModuleFrontController extends NostoTaggingCronModuleF
             $operation = new NostoRatesService();
             $operation->updateExchangeRatesForAllStores();
         } catch (NostoSDKException $e) {
-            NostoHelperLogger::error($e,'Exchange rate sync failed with error');
+            NostoHelperLogger::error($e, 'Exchange rate sync failed with error');
         }
         NostoHelperLogger::info('Exchange rate sync finished');
         exit;

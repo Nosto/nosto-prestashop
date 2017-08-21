@@ -23,7 +23,7 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use \Nosto\Object\Product\Product as NostoSDKProduct;
+use Nosto\Object\Product\Product as NostoSDKProduct;
 
 class NostoProduct extends NostoSDKProduct
 {

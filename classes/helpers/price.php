@@ -66,7 +66,8 @@ class NostoHelperPrice
         array $item,
         Context $context,
         Currency $currency
-    ) {
+    )
+    {
         if (Configuration::get('PS_TAX_ADDRESS_TYPE') == 'id_address_invoice') {
             $id_address = (int)$cart->id_address_invoice;
         } else {
@@ -104,7 +105,8 @@ class NostoHelperPrice
         Currency $currency,
         Context $context,
         array $options = array()
-    ) {
+    )
+    {
         // If the requested currency is not the one in the context, then set it.
         if (
             $context->currency instanceof Currency

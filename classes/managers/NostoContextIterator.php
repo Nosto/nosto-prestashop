@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 2013-2017 Nosto Solutions Ltd
  *
@@ -22,7 +23,6 @@
  * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
-
 class NostoContextIterator implements IteratorAggregate
 {
     private $scopes = array();
@@ -48,4 +48,5 @@ class NostoContextIterator implements IteratorAggregate
     public function getIterator()
     {
         return new ArrayIterator($this->scopes);
-}}
+    }
+}

@@ -24,12 +24,12 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use \Nosto\Helper\IframeHelper as NostoSDKIframeHelper;
-use \Nosto\Object\Signup\Account as NostoSDKAccount;
-use \Nosto\Request\Http\HttpRequest as NostoSDKHttpRequest;
-use \Nosto\Types\Signup\AccountInterface as NostoSDKAccountInterface;
-use \Nosto\Request\Api\Token as NostoSDKAPIToken;
-use \Nosto\Nosto as NostoSDK;
+use Nosto\Helper\IframeHelper as NostoSDKIframeHelper;
+use Nosto\Nosto as NostoSDK;
+use Nosto\Object\Signup\Account as NostoSDKAccount;
+use Nosto\Request\Api\Token as NostoSDKAPIToken;
+use Nosto\Request\Http\HttpRequest as NostoSDKHttpRequest;
+use Nosto\Types\Signup\AccountInterface as NostoSDKAccountInterface;
 
 class NostoIndexController
 {
@@ -66,7 +66,6 @@ class NostoIndexController
     {
         return NostoSDK::getEnvVariable('NOSTO_IFRAME_ORIGIN_REGEXP', self::DEFAULT_IFRAME_ORIGIN_REGEXP);
     }
-
 
 
     /**

@@ -23,8 +23,8 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use \Nosto\Object\Cart\Cart as NostoSDKCart;
-use \Nosto\Object\Cart\LineItem as NostoSDKCartItem;
+use Nosto\Object\Cart\Cart as NostoSDKCart;
+use Nosto\Object\Cart\LineItem as NostoSDKCartItem;
 
 class NostoCart extends NostoSDKCart
 {

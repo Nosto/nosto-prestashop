@@ -42,7 +42,8 @@ class NostoSku extends NostoSDKSku
         NostoProduct $nostoProduct,
         Combination $combination,
         array $attributesGroup
-    ) {
+    )
+    {
         if (!Validate::isLoadedObject($combination)) {
             return null;
         }

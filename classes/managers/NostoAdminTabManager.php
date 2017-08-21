@@ -146,7 +146,7 @@ class NostoAdminTabManager
         $tab->name = array();
         $languages = Language::getLanguages(true);
         foreach ($languages as $lang) {
-            $tab->name[$lang['id_lang']] = 'NostoController'.$className;
+            $tab->name[$lang['id_lang']] = 'NostoController' . $className;
         }
 
         $tab->id_parent = -1;
