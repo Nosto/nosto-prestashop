@@ -29,6 +29,7 @@ class NostoBootstrap
     public static function init($moduleDir, $moduleVersion)
     {
         require_once($moduleDir . '/libs/autoload.php');
+        require_once($moduleDir . '/libs/nosto/php-sdk/src/Types/Markupable.php');
         require_once($moduleDir . '/classes/Nosto.php');
         require_once($moduleDir . '/controllers/admin/NostoBaseController.php');
         require_once($moduleDir . '/controllers/admin/AdminNostoController.php');

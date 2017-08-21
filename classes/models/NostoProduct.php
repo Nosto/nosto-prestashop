@@ -79,6 +79,11 @@ class NostoProduct extends NostoSDKProduct
             'product' => $product,
             'nosto_product' => $nostoProduct
         ));
+
+        $markup = \Nosto\Helper\HtmlMarkupSerializationHelper::objectToMarkup($nostoProduct, "nosto_product");
+//        print($markup);
+//        die();
+
         return $nostoProduct;
     }
 
@@ -275,7 +280,7 @@ class NostoProduct extends NostoSDKProduct
             $category = new Category((int)$category_id, $id_lang);
             $category = NostoCategory::loadData(Context::getContext(), $category);
             if (!empty($category)) {
-                $this->addCategory($category);
+                $this->addCategory($category->categoryString);
             }
         }
     }

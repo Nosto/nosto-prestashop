@@ -1,0 +1,1631 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="d02a9bfe-4031-4b27-890c-35e392c4be49" name="Default" comment="79">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bootstrap.php" afterPath="$PROJECT_DIR$/bootstrap.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/classes/helpers/NostoHelperContext.php" afterPath="$PROJECT_DIR$/classes/helpers/NostoHelperContext.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/classes/models/NostoProduct.php" afterPath="$PROJECT_DIR$/classes/models/NostoProduct.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/classes/models/NostoSku.php" afterPath="$PROJECT_DIR$/classes/models/NostoSku.php" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="Sku.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/libs/nosto/php-sdk/src/Object/Product/Sku.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="612">
+              <caret line="260" column="0" lean-forward="false" selection-start-line="260" selection-start-column="0" selection-end-line="260" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SkuCollection.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/libs/nosto/php-sdk/src/Object/Product/SkuCollection.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="375">
+              <caret line="60" column="5" lean-forward="false" selection-start-line="60" selection-start-column="5" selection-end-line="60" selection-end-column="5" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="StringCollection.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/libs/nosto/php-sdk/src/Object/StringCollection.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="525">
+              <caret line="68" column="5" lean-forward="false" selection-start-line="68" selection-start-column="5" selection-end-line="68" selection-end-column="5" />
+              <folding>
+                <element signature="e#1771#1798#0#PHP" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Link.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/libs/prestashop/ps/classes/Link.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="597">
+              <caret line="356" column="7" lean-forward="false" selection-start-line="356" selection-start-column="7" selection-end-line="356" selection-end-column="7" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="config-bootstrap.tpl" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/views/templates/admin/config-bootstrap.tpl">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="694">
+              <caret line="219" column="30" lean-forward="false" selection-start-line="219" selection-start-column="30" selection-end-line="219" selection-end-column="30" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="header_add-to-cart.tpl" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/views/templates/hook/header_add-to-cart.tpl">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="703">
+              <caret line="101" column="21" lean-forward="false" selection-start-line="101" selection-start-column="21" selection-end-line="101" selection-end-column="21" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="NostoSku.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/classes/models/NostoSku.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="326">
+              <caret line="60" column="59" lean-forward="false" selection-start-line="60" selection-start-column="59" selection-end-line="60" selection-end-column="59" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="NostoHelperContext.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/classes/helpers/NostoHelperContext.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="840">
+              <caret line="78" column="6" lean-forward="false" selection-start-line="78" selection-start-column="6" selection-end-line="78" selection-end-column="6" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Product.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/libs/prestashop/ps/classes/Product.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="409">
+              <caret line="2327" column="15" lean-forward="false" selection-start-line="2327" selection-start-column="12" selection-end-line="2327" selection-end-column="15" />
+              <folding>
+                <marker date="1492673256000" expanded="true" signature="26436:26664" ph="SELECT cp.`i... ${_DB_PREFIX_}category_product" />
+                <marker date="1492673256000" expanded="true" signature="28904:29074" ph="SELECT `id_p... ${_DB_PREFIX_}category_product" />
+                <marker date="1492673256000" expanded="true" signature="29909:30115" ph="SELECT `id_p... ${_DB_PREFIX_}category_product" />
+                <marker date="1492673256000" expanded="true" signature="31631:31812" ph="SELECT produ... ${_DB_PREFIX_}" />
+                <marker date="1492673256000" expanded="true" signature="32042:32476" ph="SELECT produ... ${_DB_PREFIX_}" />
+                <marker date="1492673256000" expanded="true" signature="32594:32864" ph="SELECT produ... ${_DB_PREFIX_}" />
+                <marker date="1492673256000" expanded="true" signature="33109:33342" ph="SELECT produ... ${_DB_PREFIX_}" />
+                <marker date="1492673256000" expanded="true" signature="41482:41647" ph="SELECT id_ca... ${_DB_PREFIX_}category_product" />
+                <marker date="1492673256000" expanded="true" signature="43047:43371" ph="SELECT c.`id... ${_DB_PREFIX_}category_product" />
+                <marker date="1492673256000" expanded="true" signature="44224:44385" ph="SELECT `id_c... ${_DB_PREFIX_}category_product" />
+                <marker date="1492673256000" expanded="true" signature="45273:45374" ph="SELECT `id_c... ${_DB_PREFIX_}category_product" />
+                <marker date="1492673256000" expanded="true" signature="46452:46525" ph="SELECT `id_i... ${_DB_PREFIX_}image" />
+                <marker date="1492673256000" expanded="true" signature="48194:49193" ph="SELECT p.*, ${_DB_PREFIX_}product" />
+                <marker date="1492673256000" expanded="true" signature="49922:50309" ph="SELECT p.`id... ${_DB_PREFIX_}product" />
+                <marker date="1492673256000" expanded="true" signature="50472:50872" ph="SELECT p.id_... ${_DB_PREFIX_}product" />
+                <marker date="1492673256000" expanded="true" signature="51334:51769" ph="SELECT pac.`... ${_DB_PREFIX_}product_attribute" />
+                <marker date="1492673256000" expanded="true" signature="68226:68371" ph="SELECT SUM(q... ${_DB_PREFIX_}" />
+                <marker date="1492673256000" expanded="true" signature="70932:71002" ph="DELETE FROM " />
+                <marker date="1492673256000" expanded="true" signature="71416:71509" ph="SELECT id_at... ${_DB_PREFIX_}" />
+                <marker date="1492673256000" expanded="true" signature="72059:72131" ph="DELETE FROM " />
+                <marker date="1492673256000" expanded="true" signature="72564:72638" ph="DELETE FROM " />
+                <marker date="1492673256000" expanded="true" signature="73311:73419" ph="DELETE FROM " />
+                <marker date="1492673256000" expanded="true" signature="73640:73706" ph="DELETE FROM " />
+                <marker date="1492673256000" expanded="true" signature="76922:77255" ph="SELECT p.*, ${_DB_PREFIX_}feature_product" />
+                <marker date="1492673256000" expanded="true" signature="77544:77614" ph="DELETE FROM " />
+                <marker date="1492673256000" expanded="true" signature="77692:77767" ph="DELETE FROM " />
+                <marker date="1492673256000" expanded="true" signature="78811:79040" ph="SELECT pa.*,... ${_DB_PREFIX_}product_attribute" />
+                <marker date="1492673256000" expanded="true" signature="81533:82576" ph="SELECT pa.*,... ${_DB_PREFIX_}product_attribute" />
+                <marker date="1492673256000" expanded="true" signature="83628:84752" ph="SELECT pa.*,... ${_DB_PREFIX_}product_attribute" />
+                <marker date="1492673256000" expanded="true" signature="85668:85765" ph="SELECT `id_p... ${_DB_PREFIX_}product_attribute" />
+                <marker date="1492673256000" expanded="true" signature="86086:86478" ph="SELECT pai.`... ${_DB_PREFIX_}product_attribute_image" />
+                <marker date="1492673256000" expanded="true" signature="86970:87374" ph="SELECT pai.`... ${_DB_PREFIX_}product_attribute_image" />
+                <marker date="1492673256000" expanded="true" signature="87791:87938" ph="SELECT COUNT... ${_DB_PREFIX_}product_attribute" />
+                <marker date="1492673256000" expanded="true" signature="90181:90524" ph="SELECT COUNT... ${_DB_PREFIX_}product" />
+                <marker date="1492673256000" expanded="true" signature="95989:96044" ph="INSERT INTO `${_DB_PREFIX_}product_reductions`... " />
+                <marker date="1492673256000" expanded="true" signature="96571:97364" ph="SELECT produ... ${_DB_PREFIX_}product_reductions" />
+                <marker date="1492673256000" expanded="true" signature="101896:102334" ph="SELECT COUNT... ${_DB_PREFIX_}product" />
+                <marker date="1492673256000" expanded="true" signature="105417:105502" ph="SELECT `id_c... ${_DB_PREFIX_}category_product" />
+                <marker date="1492673256000" expanded="true" signature="106091:106510" ph="SELECT cp.`i... ${_DB_PREFIX_}category_product" />
+                <marker date="1492673256000" expanded="true" signature="107068:107307" ph="SELECT c.* F... ${_DB_PREFIX_}product_carrier" />
+                <marker date="1492673256000" expanded="true" signature="107781:107884" ph="DELETE FROM " />
+                <marker date="1492673256000" expanded="true" signature="108563:108890" ph="SELECT image... ${_DB_PREFIX_}image" />
+                <marker date="1492673256000" expanded="true" signature="109312:109503" ph="SELECT image... ${_DB_PREFIX_}image" />
+                <marker date="1492673256000" expanded="true" signature="114106:114234" ph="SELECT SUM(`... ${_DB_PREFIX_}cart_product" />
+                <marker date="1492673256000" expanded="true" signature="127031:127153" ph="SELECT SUM(`... ${_DB_PREFIX_}cart_product" />
+                <marker date="1492673256000" expanded="true" signature="129115:129341" ph="SELECT pa.`i... ${_DB_PREFIX_}product_attribute" />
+                <marker date="1492673256000" expanded="true" signature="129560:129787" ph="SELECT pa.`i... ${_DB_PREFIX_}product_attribute" />
+                <marker date="1492673256000" expanded="true" signature="136010:136208" ph="SELECT COUNT... ${_DB_PREFIX_}product_attribute" />
+                <marker date="1492673256000" expanded="true" signature="136723:136923" ph="SELECT pa.id... ${_DB_PREFIX_}product_attribute" />
+                <marker date="1492673256000" expanded="true" signature="137053:137232" ph="SELECT MIN(p... ${_DB_PREFIX_}product_attribute" />
+                <marker date="1492673256000" expanded="true" signature="140046:141605" ph="SELECT ag.`i... ${_DB_PREFIX_}product_attribute" />
+                <marker date="1492673256000" expanded="true" signature="142538:142940" ph="SELECT p.`id... ${_DB_PREFIX_}accessory" />
+                <marker date="1492673256000" expanded="true" signature="145929:146013" ph="SELECT `id_p... ${_DB_PREFIX_}product_lang" />
+                <marker date="1492673256000" expanded="true" signature="148026:148222" ph="INSERT INTO `${_DB_PREFIX_}feature_product`... " />
+                <marker date="1492673256000" expanded="true" signature="148223:148251" ph="UPDATE `id_f... " />
+                <marker date="1492673256000" expanded="true" signature="148831:149061" ph="SELECT fp.id... ${_DB_PREFIX_}feature_product" />
+                <marker date="1492673256000" expanded="true" signature="149701:149849" ph="SELECT id_fe... ${_DB_PREFIX_}feature_product" />
+                <marker date="1492673256000" expanded="true" signature="150691:151228" ph="SELECT id_pr... ${_DB_PREFIX_}" />
+                <marker date="1492673256000" expanded="true" signature="154484:154653" ph="SELECT pa.*,... ${_DB_PREFIX_}product_attribute" />
+                <marker date="1492673256000" expanded="true" signature="155034:155135" ph="SELECT * FRO... ${_DB_PREFIX_}product_attribute_combination" />
+                <marker date="1492673256000" expanded="true" signature="156794:156936" ph="SELECT * FRO... ${_DB_PREFIX_}product_supplier" />
+                <marker date="1492673256000" expanded="true" signature="157438:157540" ph="INSERT INTO `${_DB_PREFIX_}attribute_impact`... " />
+                <marker date="1492673256000" expanded="true" signature="158269:158391" ph="SELECT ai.`i... ${_DB_PREFIX_}attribute_impact" />
+                <marker date="1492673256000" expanded="true" signature="159015:159116" ph="SELECT `id_i... ${_DB_PREFIX_}product_attribute_image" />
+                <marker date="1492673256000" expanded="true" signature="159456:159524" ph="SELECT * FRO... ${_DB_PREFIX_}accessory" />
+                <marker date="1492673256000" expanded="true" signature="159967:160049" ph="SELECT `id_t... ${_DB_PREFIX_}product_tag" />
+                <marker date="1492673256000" expanded="true" signature="160595:160799" ph="SELECT `disp... ${_DB_PREFIX_}product_download" />
+                <marker date="1492673256000" expanded="true" signature="161982:162067" ph="SELECT `id_a... ${_DB_PREFIX_}product_attachment" />
+                <marker date="1492673256000" expanded="true" signature="163024:163096" ph="SELECT * FRO... ${_DB_PREFIX_}feature_product" />
+                <marker date="1492673256000" expanded="true" signature="163211:163289" ph="SELECT * FRO... ${_DB_PREFIX_}feature_value" />
+                <marker date="1492673256000" expanded="true" signature="163682:163759" ph="SELECT MAX(`... ${_DB_PREFIX_}feature_value" />
+                <marker date="1492673256000" expanded="true" signature="163947:164086" ph="SELECT * FRO... ${_DB_PREFIX_}feature_value_lang" />
+                <marker date="1492673256000" expanded="true" signature="165095:165273" ph="SELECT `id_c... ${_DB_PREFIX_}customization_field" />
+                <marker date="1492673256000" expanded="true" signature="165703:165989" ph="SELECT `id_c... ${_DB_PREFIX_}customization_field_lang" />
+                <marker date="1492673256000" expanded="true" signature="168726:168854" ph="SELECT * FRO... ${_DB_PREFIX_}product_supplier" />
+                <marker date="1492673256000" expanded="true" signature="172176:172316" ph="SELECT name ${_DB_PREFIX_}" />
+                <marker date="1492673256000" expanded="true" signature="179934:180492" ph="SELECT name,... ${_DB_PREFIX_}" />
+                <marker date="1492673256000" expanded="true" signature="180866:181142" ph="SELECT * FRO... ${_DB_PREFIX_}" />
+                <marker date="1492673256000" expanded="true" signature="181957:182121" ph="SELECT COUNT... ${_DB_PREFIX_}cart_product" />
+                <marker date="1492673256000" expanded="true" signature="182499:183259" ph="SELECT cd.`i... ${_DB_PREFIX_}customized_data" />
+                <marker date="1492673256000" expanded="true" signature="184077:184278" ph="SELECT `id_p... ${_DB_PREFIX_}customization" />
+                <marker date="1492673256000" expanded="true" signature="189865:190029" ph="SELECT `id_c... ${_DB_PREFIX_}customization_field" />
+                <marker date="1492673256000" expanded="true" signature="192837:192970" ph="INSERT INTO `${_DB_PREFIX_}customization_field`... " />
+                <marker date="1492673256000" expanded="true" signature="193500:193621" ph="INSERT INTO `${_DB_PREFIX_}customization_field_lang`... " />
+                <marker date="1492673256000" expanded="true" signature="195059:195283" ph="INSERT INTO `${_DB_PREFIX_}customization_field_lang`... " />
+                <marker date="1492673256000" expanded="true" signature="195284:195320" ph="UPDATE `name... " />
+                <marker date="1492673256000" expanded="true" signature="195477:195669" ph="INSERT INTO `${_DB_PREFIX_}customization_field_lang`... " />
+                <marker date="1492673256000" expanded="true" signature="195670:195706" ph="UPDATE `name... " />
+                <marker date="1492673256000" expanded="true" signature="197219:197687" ph="SELECT cf.`i... ${_DB_PREFIX_}customization_field" />
+                <marker date="1492673256000" expanded="true" signature="198234:198355" ph="SELECT `id_c... ${_DB_PREFIX_}customization_field" />
+                <marker date="1492673256000" expanded="true" signature="198822:198965" ph="SELECT `id_c... ${_DB_PREFIX_}customization_field" />
+                <marker date="1492673256000" expanded="true" signature="200091:200213" ph="SELECT id_pr... ${_DB_PREFIX_}product" />
+                <marker date="1492673256000" expanded="true" signature="200764:200885" ph="SELECT id_pr... ${_DB_PREFIX_}category_product" />
+                <marker date="1492673256000" expanded="true" signature="202094:202325" ph="SELECT ctg.`... ${_DB_PREFIX_}category_product" />
+                <marker date="1492673256000" expanded="true" signature="202463:202781" ph="SELECT cg.`i... ${_DB_PREFIX_}category_product" />
+                <marker date="1492673256000" expanded="true" signature="204345:205338" ph="SELECT sm.id... ${_DB_PREFIX_}stock_mvt" />
+                <marker date="1492673256000" expanded="true" signature="205490:206099" ph="SELECT pl.`i... ${_DB_PREFIX_}product" />
+                <marker date="1492673256000" expanded="true" signature="206597:206728" ph="SELECT `id_t... ${_DB_PREFIX_}product_shop" />
+                <marker date="1492673256000" expanded="true" signature="208335:208404" ph="DELETE FROM " />
+                <marker date="1492673256000" expanded="true" signature="209431:209658" ph="SELECT cp.`i... ${_DB_PREFIX_}category_product" />
+                <marker date="1492673256000" expanded="true" signature="210430:210530" ph="INSERT INTO `${_DB_PREFIX_}category_product`... " />
+                <marker date="1492673256000" expanded="true" signature="211056:211271" ph="SELECT p.`id... ${_DB_PREFIX_}accessory" />
+                <marker date="1492673256000" expanded="true" signature="211659:211785" ph="INSERT INTO `${_DB_PREFIX_}accessory`... " />
+                <marker date="1492673256000" expanded="true" signature="212056:212226" ph="SELECT pa.`i... ${_DB_PREFIX_}product_attribute" />
+                <marker date="1492673256000" expanded="true" signature="212744:212914" ph="SELECT pa.`i... ${_DB_PREFIX_}product_attribute" />
+                <marker date="1492673256000" expanded="true" signature="213157:213239" ph="SELECT pa.`i... ${_DB_PREFIX_}product_attribute" />
+                <marker date="1492673256000" expanded="true" signature="214338:214427" ph="INSERT INTO `${_DB_PREFIX_}product_attribute`... " />
+                <marker date="1492673256000" expanded="true" signature="214708:214996" ph="SELECT DISTI... ${_DB_PREFIX_}product_attribute" />
+                <marker date="1492673256000" expanded="true" signature="215249:215386" ph="SELECT posit... ${_DB_PREFIX_}category_product" />
+                <marker date="1492673256000" expanded="true" signature="215965:216110" ph="SELECT `id_p... ${_DB_PREFIX_}category_product" />
+                <marker date="1492673256000" expanded="true" signature="218242:218451" ph="SELECT i.`id... ${_DB_PREFIX_}image" />
+                <marker date="1492673256000" expanded="true" signature="218555:218673" ph="SELECT `id_s... ${_DB_PREFIX_}stock_available" />
+                <marker date="1492673256000" expanded="true" signature="218828:218917" ph="SELECT `id_t... ${_DB_PREFIX_}product_tag" />
+                <marker date="1492673256000" expanded="true" signature="219479:219537" ph="SELECT `id_l... ${_DB_PREFIX_}tag" />
+                <marker date="1492673256000" expanded="true" signature="219721:219810" ph="INSERT INTO `${_DB_PREFIX_}product_tag`... " />
+                <marker date="1492673256000" expanded="true" signature="220842:220939" ph="SELECT `refe... ${_DB_PREFIX_}product" />
+                <marker date="1492673256000" expanded="true" signature="221309:221494" ph="SELECT pa.id... ${_DB_PREFIX_}product_attribute" />
+                <marker date="1492673256000" expanded="true" signature="222044:222918" ph="SELECT a.`id... ${_DB_PREFIX_}attribute" />
+                <marker date="1492673256000" expanded="true" signature="223273:224234" ph="SELECT DISTI... ${_DB_PREFIX_}attribute" />
+                <marker date="1492673256000" expanded="true" signature="224836:225242" ph="SELECT pac.`... ${_DB_PREFIX_}product_attribute_combination" />
+                <marker date="1492673256000" expanded="true" signature="225529:225811" ph="SELECT `id_a... ${_DB_PREFIX_}attribute" />
+                <marker date="1492673256000" expanded="true" signature="226126:226567" ph="SELECT pac.`... ${_DB_PREFIX_}product_attribute_combination" />
+                <marker date="1492673256000" expanded="true" signature="233779:233874" ph="SELECT `adva... ${_DB_PREFIX_}" />
+                <marker date="1492673256000" expanded="true" signature="234746:234896" ph="SELECT produ... ${_DB_PREFIX_}product" />
+                <marker date="1492673256000" expanded="true" signature="235227:235306" ph="SELECT `id_s... ${_DB_PREFIX_}product_shop" />
+                <marker date="1492673256000" expanded="true" signature="237200:237421" ph="SELECT pa.id... ${_DB_PREFIX_}product_attribute" />
+                <marker date="1492673256000" expanded="true" signature="237568:238003" ph="SELECT id_ta... COUNT" />
+                <marker date="1492673256000" expanded="true" signature="237612:237986" ph="SELECT COUNT... ${_DB_PREFIX_}" />
+                <marker date="1492673256000" expanded="true" signature="239538:239626" ph="SELECT id_pr... ${_DB_PREFIX_}" />
+                <marker date="1492673256000" expanded="true" signature="240821:241581" ph="SELECT sa.id... ${_DB_PREFIX_}" />
+                <marker date="1492673256000" expanded="true" signature="243573:243644" ph="SELECT DISTI... ${_DB_PREFIX_}product" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="NostoProduct.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/classes/models/NostoProduct.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="842">
+              <caret line="83" column="0" lean-forward="false" selection-start-line="83" selection-start-column="2" selection-end-line="84" selection-end-column="16" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>combination</find>
+      <find>link_rewrite</find>
+      <find>getPriceInclTax</find>
+      <find>());</find>
+      <find>getAttributesName</find>
+      <find>$context</find>
+      <find>Multi Currency Method</find>
+      <find>varia</find>
+      <find>switch prestashop-switch</find>
+      <find>delete</find>
+      <find>$definition</find>
+      <find>views/templates/hook/header_add-to-cart.tpl</find>
+      <find>saveMultiCurrencyMethod</find>
+      <find>$langId</find>
+      <find>data_nosto_id</find>
+      <find>nosto-page-product1</find>
+      <find>data-nosto-id</find>
+      <find>nostojs</find>
+      <find>primary_block</find>
+      <find>displayFooterProduct</find>
+      <find>js-auto-slots-inline.tpl</find>
+      <find>footer-product_nosto-elements.tpl</find>
+      <find>loaddata</find>
+      <find>escapeHtml</find>
+      <find>tag1</find>
+      <find>addtocarturl</find>
+      <find>die</find>
+      <find>getlanguageId</find>
+      <find>getLanguageIdFrom</find>
+      <find>conf_id_PRESTASTORE_LIVE</find>
+    </findStrings>
+    <replaceStrings>
+      <replace />
+      <replace>const _CLASS</replace>
+      <replace>2013-2017</replace>
+      <replace>2017</replace>
+      <replace>$flashHelper</replace>
+      <replace>$configHelper</replace>
+      <replace>NostoTagging::MODULE_NAME</replace>
+      <replace>fuck</replace>
+      <replace>$languageId</replace>
+      <replace>$context</replace>
+      <replace>'nostotagging</replace>
+      <replace>$nostoTagging-&gt;l</replace>
+      <replace>|escape:'htmlall':'UTF-8'</replace>
+      <replace>()|escape:'htmlall':'UTF-8'</replace>
+      <replace>Context::getContext()</replace>
+      <replace>Context::getContext()-&gt;language-&gt;id</replace>
+    </replaceStrings>
+    <dirStrings>
+      <dir>$USER_HOME$/htdocs/prestashop</dir>
+      <dir>$PROJECT_DIR$</dir>
+      <dir>$PROJECT_DIR$/controllers</dir>
+      <dir>$PROJECT_DIR$/libs/nosto/php-sdk</dir>
+      <dir>$PROJECT_DIR$/classes</dir>
+      <dir>$USER_HOME$/htdocs/prestashop/1614</dir>
+    </dirStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/controllers/admin/CreateAccountController.php" />
+        <option value="$PROJECT_DIR$/controllers/front/NostoTaggingOauth2ModuleFrontController.php" />
+        <option value="$PROJECT_DIR$/ctrl.php" />
+        <option value="$PROJECT_DIR$/classes/meta/oauth.php" />
+        <option value="$PROJECT_DIR$/controllers/front/oauth2.php" />
+        <option value="$PROJECT_DIR$/controllers/admin/ConnectAccountController.php" />
+        <option value="$PROJECT_DIR$/controllers/admin/NostoConnectAccountController.php" />
+        <option value="$PROJECT_DIR$/controllers/admin/NostoUpdateExchangeRateController.php" />
+        <option value="$PROJECT_DIR$/controllers/admin/NostoCreateAccountController.php" />
+        <option value="$PROJECT_DIR$/controllers/front/cron.php" />
+        <option value="$PROJECT_DIR$/classes/helpers/admin-tab.php" />
+        <option value="$PROJECT_DIR$/controllers/admin/NostoBaseController.php" />
+        <option value="$PROJECT_DIR$/classes/helpers/currency.php" />
+        <option value="$PROJECT_DIR$/nostotagging.php" />
+        <option value="$PROJECT_DIR$/composer.json" />
+        <option value="$PROJECT_DIR$/views/templates/hook/top_cart-tagging.tpl" />
+        <option value="$PROJECT_DIR$/classes/services/NostoOrderService.php" />
+        <option value="$PROJECT_DIR$/classes/services/NostoProductService.php" />
+        <option value="$PROJECT_DIR$/views/templates/hook/order-confirmation_order-tagging.tpl" />
+        <option value="$PROJECT_DIR$/classes/models/NostoOrder.php" />
+        <option value="$PROJECT_DIR$/classes/models/order/NostoOrderBuyer.php" />
+        <option value="$PROJECT_DIR$/views/templates/admin/legacy-config-bootstrap.tpl" />
+        <option value="$PROJECT_DIR$/controllers/admin/NostoIndexController.php" />
+        <option value="$PROJECT_DIR$/controllers/admin/NostoAdvancedSettingController.php" />
+        <option value="$PROJECT_DIR$/views/templates/hook/footer-product_product-tagging.tpl" />
+        <option value="$PROJECT_DIR$/classes/helpers/url.php" />
+        <option value="$PROJECT_DIR$/controllers/admin/NostoDeleteAccountController.php" />
+        <option value="$PROJECT_DIR$/classes/helpers/config.php" />
+        <option value="$PROJECT_DIR$/libs/prestashop/ps/classes/Configuration.php" />
+        <option value="$PROJECT_DIR$/classes/helpers/NostoContextHelper.php" />
+        <option value="$PROJECT_DIR$/classes/models/NostoSku.php" />
+        <option value="$PROJECT_DIR$/views/templates/hook/partials/js-auto-slots-inline.tpl" />
+        <option value="$PROJECT_DIR$/libs/nosto/php-sdk/src/Object/Markupable.php" />
+        <option value="$PROJECT_DIR$/libs/nosto/php-sdk/src/Helper/SerializationHelper.php" />
+        <option value="$PROJECT_DIR$/libs/nosto/php-sdk/src/Object/Product/Sku.php" />
+        <option value="$PROJECT_DIR$/libs/nosto/php-sdk/src/Object/Product/Variation.php" />
+        <option value="$PROJECT_DIR$/libs/nosto/php-sdk/src/Object/Product/VariationCollection.php" />
+        <option value="$PROJECT_DIR$/libs/nosto/php-sdk/src/Object/StringCollection.php" />
+        <option value="$PROJECT_DIR$/bootstrap.php" />
+        <option value="$PROJECT_DIR$/libs/nosto/php-sdk/src/Helper/HtmlMarkupSerializationHelper.php" />
+        <option value="$PROJECT_DIR$/libs/nosto/php-sdk/src/Object/Product/Product.php" />
+        <option value="$PROJECT_DIR$/libs/nosto/php-sdk/src/Object/Cart/Cart.php" />
+        <option value="$PROJECT_DIR$/libs/nosto/php-sdk/src/Types/Markupable.php" />
+        <option value="$PROJECT_DIR$/libs/nosto/php-sdk/src/Types/MarkupableCollection.php" />
+        <option value="$PROJECT_DIR$/libs/nosto/php-sdk/src/Object/Cart/LineItem.php" />
+        <option value="$PROJECT_DIR$/libs/nosto/php-sdk/src/Object/Product/SkuCollection.php" />
+        <option value="$PROJECT_DIR$/libs/prestashop/ps/classes/Product.php" />
+        <option value="$PROJECT_DIR$/classes/models/NostoProduct.php" />
+        <option value="$PROJECT_DIR$/views/templates/hook/header_add-to-cart.tpl" />
+        <option value="$PROJECT_DIR$/classes/helpers/NostoHelperContext.php" />
+        <option value="$PROJECT_DIR$/views/templates/admin/config-bootstrap.tpl" />
+      </list>
+    </option>
+  </component>
+  <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsFlowSettings">
+    <service-enabled>false</service-enabled>
+    <exe-path />
+    <annotation-enable>false</annotation-enable>
+    <other-services-enabled>false</other-services-enabled>
+    <auto-save>true</auto-save>
+  </component>
+  <component name="JsGulpfileManager">
+    <detection-done>true</detection-done>
+    <sorting>DEFINITION_ORDER</sorting>
+  </component>
+  <component name="PhpDebugGeneral" xdebug_debug_port="9001" listening_started="true" xdebug_force_break_when_no_path_mapping="false" xdebug_force_break_when_outside_project="false" />
+  <component name="PhpServers">
+    <servers>
+      <server host="prestashop16.dev.nos.to" id="4fd5dd28-b1b6-49d6-b01a-35092c2fa762" name="prestashop16.dev.nos.to" />
+      <server host="prestashopsub.dev.nos.to" id="16783913-96e6-419e-a5f9-020711807da9" name="prestashopsub.dev.nos.to" />
+      <server host="localhost" id="c17846ae-b4ca-45cb-8146-cd3d994a5a38" name="localhost" use_path_mappings="true">
+        <path_mappings>
+          <mapping local-root="/Applications/MAMP/htdocs/prestashop/1.6" remote-root="/Applications/MAMP/htdocs/prestashop/1614" />
+          <mapping local-root="/Applications/MAMP/htdocs/prestashop/1.6/themes/default-bootstrap/modules/blockcontactinfos" remote-root="/Applications/MAMP/htdocs/prestashop/1614" />
+          <mapping local-root="/Applications/MAMP/htdocs/prestashop/1614" remote-root="/Applications/MAMP/htdocs/prestashop/1614" />
+          <mapping local-root="$PROJECT_DIR$" remote-root="/Users/chenliangde/projects/prestashop" />
+        </path_mappings>
+      </server>
+      <server host="magento.dev.nos.to" id="bd43dcf6-9753-4a20-9e79-aea4de4cd2f0" name="magento.dev.nos.to" use_path_mappings="true">
+        <path_mappings>
+          <mapping local-root="/Applications/MAMP/htdocs/prestashop/1614/admin285puj5hu/themes/default/template/controllers/emails" remote-root="/Applications/MAMP/htdocs/magento/1.14" />
+        </path_mappings>
+      </server>
+      <server host="localhost" id="a7f2f590-33b1-4c23-9651-09d2984f003c" name="localhost" use_path_mappings="true">
+        <path_mappings>
+          <mapping local-root="/Applications/MAMP/htdocs/prestashop/1614" remote-root="/Applications/MAMP/htdocs/prestashop/1562" />
+        </path_mappings>
+      </server>
+      <server host="53sub.dev.nos.to" id="cd56d7e1-07c0-47b0-a340-5603ec2efb3c" name="53sub.dev.nos.to" />
+      <server host="127.0.0.1" id="4c91d46e-2f96-4f28-bc29-44be9e0f9ff0" name="127.0.0.1" use_path_mappings="true">
+        <path_mappings>
+          <mapping local-root="/Applications/MAMP/htdocs/prestashop/1614/admin285puj5hu/themes/default/template/controllers/emails" remote-root="/Applications/MAMP/htdocs/magento2/2.2.1" />
+        </path_mappings>
+      </server>
+    </servers>
+  </component>
+  <component name="PhpWebServerValidation" path_to_validation_script="$PROJECT_DIR$" selected_validation_type="LOCAL" web_path_to_validation_script="http://localhost/" />
+  <component name="PhpWorkspaceProjectConfiguration" backward_compatibility_performed="true">
+    <include_path>
+      <path value="/Applications/MAMP/htdocs/prestashop/1614" />
+      <path value="$PROJECT_DIR$/../PrestaShopAutoComplete" />
+    </include_path>
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="y" value="23" />
+    <option name="width" value="2560" />
+    <option name="height" value="1337" />
+  </component>
+  <component name="ProjectInspectionProfilesVisibleTreeState">
+    <entry key="Project Default">
+      <profile-state>
+        <expanded-state>
+          <State>
+            <id />
+          </State>
+        </expanded-state>
+        <selected-state>
+          <State>
+            <id>AngularJS</id>
+          </State>
+        </selected-state>
+      </profile-state>
+    </entry>
+  </component>
+  <component name="ProjectView">
+    <navigator currentView="ProjectPane" proportions="" version="1">
+      <flattenPackages />
+      <showMembers />
+      <showModules />
+      <showLibraryContents />
+      <hideEmptyPackages />
+      <abbreviatePackageNames />
+      <autoscrollToSource />
+      <autoscrollFromSource ProjectPane="true" />
+      <sortByType />
+      <manualOrder />
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="Scope" />
+      <pane id="Scratches" />
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="prestashop" type="b2602c69:ProjectViewProjectNode" />
+              <item name="prestashop" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
+            <path>
+              <item name="prestashop" type="b2602c69:ProjectViewProjectNode" />
+              <item name="prestashop" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="classes" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
+            <path>
+              <item name="prestashop" type="b2602c69:ProjectViewProjectNode" />
+              <item name="prestashop" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="classes" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="helpers" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
+            <path>
+              <item name="prestashop" type="b2602c69:ProjectViewProjectNode" />
+              <item name="prestashop" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="classes" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="models" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
+            <path>
+              <item name="prestashop" type="b2602c69:ProjectViewProjectNode" />
+              <item name="prestashop" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="libs" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
+            <path>
+              <item name="prestashop" type="b2602c69:ProjectViewProjectNode" />
+              <item name="prestashop" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="libs" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="nosto" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
+            <path>
+              <item name="prestashop" type="b2602c69:ProjectViewProjectNode" />
+              <item name="prestashop" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="libs" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="nosto" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="php-sdk" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
+            <path>
+              <item name="prestashop" type="b2602c69:ProjectViewProjectNode" />
+              <item name="prestashop" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="libs" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="nosto" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="php-sdk" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="src" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
+            <path>
+              <item name="prestashop" type="b2602c69:ProjectViewProjectNode" />
+              <item name="prestashop" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="libs" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="nosto" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="php-sdk" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="src" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="Helper" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
+            <path>
+              <item name="prestashop" type="b2602c69:ProjectViewProjectNode" />
+              <item name="prestashop" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="libs" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="nosto" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="php-sdk" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="src" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="Object" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
+            <path>
+              <item name="prestashop" type="b2602c69:ProjectViewProjectNode" />
+              <item name="prestashop" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="libs" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="nosto" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="php-sdk" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="src" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="Object" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="Cart" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
+            <path>
+              <item name="prestashop" type="b2602c69:ProjectViewProjectNode" />
+              <item name="prestashop" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="libs" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="nosto" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="php-sdk" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="src" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="Object" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="Order" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
+            <path>
+              <item name="prestashop" type="b2602c69:ProjectViewProjectNode" />
+              <item name="prestashop" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="libs" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="nosto" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="php-sdk" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="src" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="Object" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="Product" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
+            <path>
+              <item name="prestashop" type="b2602c69:ProjectViewProjectNode" />
+              <item name="prestashop" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="libs" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="nosto" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="php-sdk" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="src" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="Types" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
+            <path>
+              <item name="prestashop" type="b2602c69:ProjectViewProjectNode" />
+              <item name="prestashop" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="libs" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="prestashop" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
+            <path>
+              <item name="prestashop" type="b2602c69:ProjectViewProjectNode" />
+              <item name="prestashop" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="libs" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="prestashop" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="ps" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
+            <path>
+              <item name="prestashop" type="b2602c69:ProjectViewProjectNode" />
+              <item name="prestashop" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="libs" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="prestashop" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="ps" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="classes" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
+            <path>
+              <item name="prestashop" type="b2602c69:ProjectViewProjectNode" />
+              <item name="prestashop" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="libs" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="prestashop" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="ps" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="classes" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="order" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
+            <path>
+              <item name="prestashop" type="b2602c69:ProjectViewProjectNode" />
+              <item name="prestashop" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="views" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
+            <path>
+              <item name="prestashop" type="b2602c69:ProjectViewProjectNode" />
+              <item name="prestashop" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="views" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="templates" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
+            <path>
+              <item name="prestashop" type="b2602c69:ProjectViewProjectNode" />
+              <item name="prestashop" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="views" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="templates" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="admin" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
+            <path>
+              <item name="prestashop" type="b2602c69:ProjectViewProjectNode" />
+              <item name="prestashop" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="views" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="templates" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="hook" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
+            <path>
+              <item name="prestashop" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="bcb0276e:PhpExternalLibrariesNodePatcher$PatchedExternalLibrariesNode" />
+            </path>
+            <path>
+              <item name="prestashop" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="bcb0276e:PhpExternalLibrariesNodePatcher$PatchedExternalLibrariesNode" />
+              <item name="PHP" type="5114b859:PhpExternalLibrariesNodePatcher$PatchedLibraryNode" />
+            </path>
+            <path>
+              <item name="prestashop" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="bcb0276e:PhpExternalLibrariesNodePatcher$PatchedExternalLibrariesNode" />
+              <item name="PHP" type="5114b859:PhpExternalLibrariesNodePatcher$PatchedLibraryNode" />
+              <item name="1614" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
+            <path>
+              <item name="prestashop" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="bcb0276e:PhpExternalLibrariesNodePatcher$PatchedExternalLibrariesNode" />
+              <item name="PHP" type="5114b859:PhpExternalLibrariesNodePatcher$PatchedLibraryNode" />
+              <item name="1614" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="cache" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
+            <path>
+              <item name="prestashop" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="bcb0276e:PhpExternalLibrariesNodePatcher$PatchedExternalLibrariesNode" />
+              <item name="PHP" type="5114b859:PhpExternalLibrariesNodePatcher$PatchedLibraryNode" />
+              <item name="1614" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="cache" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="smarty" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
+            <path>
+              <item name="prestashop" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="bcb0276e:PhpExternalLibrariesNodePatcher$PatchedExternalLibrariesNode" />
+              <item name="PHP" type="5114b859:PhpExternalLibrariesNodePatcher$PatchedLibraryNode" />
+              <item name="1614" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="cache" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="smarty" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="compile" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
+            <path>
+              <item name="prestashop" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="bcb0276e:PhpExternalLibrariesNodePatcher$PatchedExternalLibrariesNode" />
+              <item name="PHP" type="5114b859:PhpExternalLibrariesNodePatcher$PatchedLibraryNode" />
+              <item name="1614" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="classes" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
+            <path>
+              <item name="prestashop" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="bcb0276e:PhpExternalLibrariesNodePatcher$PatchedExternalLibrariesNode" />
+              <item name="PHP" type="5114b859:PhpExternalLibrariesNodePatcher$PatchedLibraryNode" />
+              <item name="1614" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="classes" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="controller" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
+            <path>
+              <item name="prestashop" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="bcb0276e:PhpExternalLibrariesNodePatcher$PatchedExternalLibrariesNode" />
+              <item name="PHP" type="5114b859:PhpExternalLibrariesNodePatcher$PatchedLibraryNode" />
+              <item name="1614" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="classes" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="db" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
+            <path>
+              <item name="prestashop" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="bcb0276e:PhpExternalLibrariesNodePatcher$PatchedExternalLibrariesNode" />
+              <item name="PHP" type="5114b859:PhpExternalLibrariesNodePatcher$PatchedLibraryNode" />
+              <item name="1614" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="classes" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="module" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
+            <path>
+              <item name="prestashop" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="bcb0276e:PhpExternalLibrariesNodePatcher$PatchedExternalLibrariesNode" />
+              <item name="PHP" type="5114b859:PhpExternalLibrariesNodePatcher$PatchedLibraryNode" />
+              <item name="1614" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="config" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
+            <path>
+              <item name="prestashop" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="bcb0276e:PhpExternalLibrariesNodePatcher$PatchedExternalLibrariesNode" />
+              <item name="PHP" type="5114b859:PhpExternalLibrariesNodePatcher$PatchedLibraryNode" />
+              <item name="1614" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="tools" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
+            <path>
+              <item name="prestashop" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="bcb0276e:PhpExternalLibrariesNodePatcher$PatchedExternalLibrariesNode" />
+              <item name="PHP" type="5114b859:PhpExternalLibrariesNodePatcher$PatchedLibraryNode" />
+              <item name="1614" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="tools" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="profiling" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
+            <path>
+              <item name="prestashop" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="bcb0276e:PhpExternalLibrariesNodePatcher$PatchedExternalLibrariesNode" />
+              <item name="PHP" type="5114b859:PhpExternalLibrariesNodePatcher$PatchedLibraryNode" />
+              <item name="1614" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="tools" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="smarty" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
+            <path>
+              <item name="prestashop" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="bcb0276e:PhpExternalLibrariesNodePatcher$PatchedExternalLibrariesNode" />
+              <item name="PHP" type="5114b859:PhpExternalLibrariesNodePatcher$PatchedLibraryNode" />
+              <item name="1614" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="tools" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="smarty" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="sysplugins" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
+            <path>
+              <item name="prestashop" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="bcb0276e:PhpExternalLibrariesNodePatcher$PatchedExternalLibrariesNode" />
+              <item name="PHP" type="5114b859:PhpExternalLibrariesNodePatcher$PatchedLibraryNode" />
+              <item name="PrestaShopAutoComplete" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
+            <path>
+              <item name="prestashop" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="bcb0276e:PhpExternalLibrariesNodePatcher$PatchedExternalLibrariesNode" />
+              <item name="PHP Runtime" type="20ee2d1f:SyntheticLibraryElementNode" />
+            </path>
+            <path>
+              <item name="prestashop" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="bcb0276e:PhpExternalLibrariesNodePatcher$PatchedExternalLibrariesNode" />
+              <item name="PHP Runtime" type="20ee2d1f:SyntheticLibraryElementNode" />
+              <item name="date" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
+            <path>
+              <item name="prestashop" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="bcb0276e:PhpExternalLibrariesNodePatcher$PatchedExternalLibrariesNode" />
+              <item name="PHP Runtime" type="20ee2d1f:SyntheticLibraryElementNode" />
+              <item name="http" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
+            <path>
+              <item name="prestashop" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="bcb0276e:PhpExternalLibrariesNodePatcher$PatchedExternalLibrariesNode" />
+              <item name="PHP Runtime" type="20ee2d1f:SyntheticLibraryElementNode" />
+              <item name="standard" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$USER_HOME$/htdocs/prestashop/1614" />
+    <property name="settings.editor.selected.configurable" value="preferences.sourceCode" />
+    <property name="two.files.diff.last.used.folder" value="$PROJECT_DIR$/../nosto-php-sdk" />
+    <property name="nodejs_interpreter_path" value="$USER_HOME$/.nvm/versions/node/v0.12.18/bin/node" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/libs/nosto/php-sdk/src/Types" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/libs/nosto/php-sdk/src/Types" />
+      <recent name="$PROJECT_DIR$/libs/nosto/php-sdk/src/Object" />
+      <recent name="$PROJECT_DIR$/libs/nosto/php-sdk/src/Helper" />
+      <recent name="$PROJECT_DIR$/classes/helpers" />
+      <recent name="$PROJECT_DIR$/classes/models" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="js.build_tools.gulp" factoryName="Gulp.js">
+      <node-interpreter>project</node-interpreter>
+      <node-options />
+      <gulpfile />
+      <tasks />
+      <arguments />
+      <envs />
+    </configuration>
+    <configuration default="true" type="CodeceptionConfigurationType" factoryName="Codeception">
+      <PhpTestRunnerSettings />
+      <method />
+    </configuration>
+    <configuration default="true" type="JavaScriptTestRunnerJest" factoryName="Jest">
+      <node-interpreter value="project" />
+      <working-dir value="" />
+      <envs />
+      <scope-kind value="ALL" />
+      <method />
+    </configuration>
+    <configuration default="true" type="JavaScriptTestRunnerProtractor" factoryName="Protractor">
+      <config-file value="" />
+      <node-interpreter value="project" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug">
+      <method />
+    </configuration>
+    <configuration default="true" type="NodeJSConfigurationType" factoryName="Node.js" path-to-node="project" working-dir="">
+      <method />
+    </configuration>
+    <configuration default="true" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
+      <TestRunner />
+      <method />
+    </configuration>
+    <configuration default="true" type="PhpBehatConfigurationType" factoryName="Behat">
+      <BehatRunner />
+      <method />
+    </configuration>
+    <configuration default="true" type="PhpLocalRunConfigurationType" factoryName="PHP Console">
+      <method />
+    </configuration>
+    <configuration default="true" type="PhpSpecConfigurationType" factoryName="PHPSpec">
+      <PhpTestRunnerSettings />
+      <method />
+    </configuration>
+    <configuration default="true" type="js.build_tools.npm" factoryName="npm">
+      <command value="run" />
+      <scripts />
+      <node-interpreter value="project" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="mocha-javascript-test-runner" factoryName="Mocha">
+      <node-interpreter>project</node-interpreter>
+      <node-options />
+      <working-directory />
+      <pass-parent-env>true</pass-parent-env>
+      <envs />
+      <ui />
+      <extra-mocha-options />
+      <test-kind>DIRECTORY</test-kind>
+      <test-directory />
+      <recursive>false</recursive>
+      <method />
+    </configuration>
+  </component>
+  <component name="ShelveChangesManager" show_recycled="false">
+    <option name="remove_strategy" value="false" />
+  </component>
+  <component name="StructureViewFactory">
+    <option name="ACTIVE_ACTIONS" value=",ALPHA_COMPARATOR" />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="d02a9bfe-4031-4b27-890c-35e392c4be49" name="Default" comment="" />
+      <created>1495196730620</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1495196730620</updated>
+      <workItem from="1495196732376" duration="2599000" />
+      <workItem from="1496730613398" duration="27876000" />
+      <workItem from="1496847325210" duration="533000" />
+      <workItem from="1496904816541" duration="10001000" />
+      <workItem from="1496929688995" duration="1517000" />
+      <workItem from="1496988495953" duration="1221000" />
+      <workItem from="1497532470089" duration="2216000" />
+      <workItem from="1497853490686" duration="701000" />
+      <workItem from="1498117665901" duration="2222000" />
+      <workItem from="1498138488197" duration="582000" />
+      <workItem from="1498139709297" duration="598000" />
+      <workItem from="1501483217448" duration="3246000" />
+      <workItem from="1501490579215" duration="234000" />
+      <workItem from="1501570073925" duration="12493000" />
+      <workItem from="1501674963201" duration="7807000" />
+      <workItem from="1501740736563" duration="7631000" />
+      <workItem from="1501827841722" duration="4585000" />
+      <workItem from="1502086015512" duration="4490000" />
+      <workItem from="1502171982651" duration="10692000" />
+      <workItem from="1502273265942" duration="21609000" />
+      <workItem from="1502360111724" duration="35071000" />
+      <workItem from="1502692602258" duration="2513000" />
+      <workItem from="1502705380559" duration="14690000" />
+      <workItem from="1502777460940" duration="19294000" />
+      <workItem from="1502864882083" duration="12829000" />
+      <workItem from="1502950692543" duration="41795000" />
+      <workItem from="1503303181022" duration="2379000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="251424000" />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="0" y="23" width="2560" height="1337" extended-state="6" />
+    <editor active="true" />
+    <layout>
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3415409" sideWeight="0.6956522" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3998358" sideWeight="0.5015886" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.29696473" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32922825" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3415409" sideWeight="0.3043478" order="1" side_tool="true" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.1730927" sideWeight="0.49841145" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+    </layout>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint type="php">
+          <condition expression="$module_name == 'nostotagging'" language="PHP" />
+          <url>file:///Applications/MAMP/htdocs/prestashop/1614/classes/module/Module.php</url>
+          <line>1095</line>
+          <option name="timeStamp" value="34" />
+        </line-breakpoint>
+        <line-breakpoint type="php">
+          <url>file:///Applications/MAMP/htdocs/prestashop/1614/classes/module/Module.php</url>
+          <line>2298</line>
+          <option name="timeStamp" value="39" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="php">
+          <url>file://$PROJECT_DIR$/nostotagging.php</url>
+          <line>57</line>
+          <option name="timeStamp" value="48" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="php">
+          <url>file://$PROJECT_DIR$/libs/nosto/php-sdk/src/classes/NostoAccount.php</url>
+          <line>116</line>
+          <option name="timeStamp" value="69" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="php">
+          <url>file://$PROJECT_DIR$/libs/nosto/php-sdk/src/classes/NostoAccount.php</url>
+          <line>129</line>
+          <option name="timeStamp" value="70" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="php">
+          <url>file://$PROJECT_DIR$/libs/prestashop/ps/classes/Product.php</url>
+          <line>5806</line>
+          <option name="timeStamp" value="88" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="php">
+          <url>file://$PROJECT_DIR$/classes/helpers/config.php</url>
+          <line>102</line>
+          <option name="timeStamp" value="106" />
+        </line-breakpoint>
+      </breakpoints>
+      <breakpoints-dialog>
+        <breakpoints-dialog />
+      </breakpoints-dialog>
+      <option name="time" value="113" />
+    </breakpoint-manager>
+    <watches-manager />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/libs/prestashop/ps/classes/Tools.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="297">
+          <caret line="414" column="27" lean-forward="false" selection-start-line="414" selection-start-column="27" selection-end-line="414" selection-end-column="27" />
+          <folding>
+            <marker date="1492673256000" expanded="false" signature="33102:33151" ph="..." />
+            <marker date="1492673256000" expanded="true" signature="33152:33169" ph="..." />
+            <marker date="1492673256000" expanded="true" signature="33577:33788" ph="..." />
+            <marker date="1492673256000" expanded="true" signature="82677:82817" ph="..." />
+            <marker date="1492673256000" expanded="true" signature="82935:84083" ph="..." />
+            <marker date="1492673256000" expanded="true" signature="84109:84143" ph="..." />
+            <marker date="1492673256000" expanded="true" signature="84182:84451" ph="..." />
+            <marker date="1492673256000" expanded="true" signature="84210:84439" ph="..." />
+            <marker date="1492673256000" expanded="true" signature="90188:90485" ph="SELECT DISTI... ${_DB_PREFIX_}" />
+            <marker date="1492673256000" expanded="true" signature="133128:133228" ph="SELECT id_ca... ${_DB_PREFIX_}" />
+            <marker date="1492673256000" expanded="true" signature="133325:133903" ph="SELECT c.id_... ${_DB_PREFIX_}" />
+            <marker date="1492673256000" expanded="true" signature="136335:136591" ph="..." />
+            <marker date="1492673256000" expanded="true" signature="136551:136586" ph="..." />
+            <marker date="1492673256000" expanded="true" signature="136640:136877" ph="..." />
+            <marker date="1492673256000" expanded="true" signature="136856:136872" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/classes/helpers/config.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="5">
+          <caret line="392" column="26" lean-forward="false" selection-start-line="392" selection-start-column="26" selection-end-line="392" selection-end-column="26" />
+          <folding>
+            <marker date="1503044630000" expanded="true" signature="16007:16125" ph="{...}" />
+            <marker date="1503044630000" expanded="true" signature="16067:16118" ph="..." />
+            <marker date="1503044630000" expanded="true" signature="16134:16503" ph=" Returns the image type to be used for Nosto tagging ..." />
+            <marker date="1503044630000" expanded="true" signature="16595:16748" ph="{...}" />
+            <marker date="1503044630000" expanded="true" signature="16757:16954" ph=" Saves the image type to be used for Nosto tagging ..." />
+            <marker date="1503044630000" expanded="true" signature="17504:17510" ph="{...}" />
+            <marker date="1503044630000" expanded="true" signature="17069:17379" ph="..." />
+            <marker date="1503044630000" expanded="true" signature="17101:17368" ph="..." />
+            <marker date="1503044630000" expanded="true" signature="17387:17503" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/controllers/admin/NostoAdvancedSettingController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="36" column="35" lean-forward="false" selection-start-line="36" selection-start-column="35" selection-end-line="36" selection-end-column="35" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$APPLICATION_HOME_DIR$/plugins/php/lib/php.jar!/stubs/standard/standard_9.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="297">
+          <caret line="722" column="9" lean-forward="false" selection-start-line="722" selection-start-column="9" selection-end-line="722" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///Applications/MAMP/htdocs/prestashop/1614/classes/db/Db.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="297">
+          <caret line="617" column="20" lean-forward="false" selection-start-line="617" selection-start-column="20" selection-end-line="617" selection-end-column="20" />
+          <folding>
+            <marker date="1501484404000" expanded="true" signature="17310:17341" ph="DELETE FROM " />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/classes/helpers/NostoContextHelper.php" />
+    <entry file="file://$PROJECT_DIR$/classes/helpers/NostoHelperImage.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="547">
+          <caret line="87" column="27" lean-forward="false" selection-start-line="87" selection-start-column="27" selection-end-line="87" selection-end-column="27" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/classes/helpers/NostoHelperFlash.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libs/prestashop/ps/classes/Combination.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="290">
+          <caret line="344" column="20" lean-forward="false" selection-start-line="344" selection-start-column="20" selection-end-line="344" selection-end-column="20" />
+          <folding>
+            <marker date="1492673256000" expanded="true" signature="8697:8808" ph="INSERT INTO `${_DB_PREFIX_}product_attribute_combination`... " />
+            <marker date="1492673256000" expanded="true" signature="9602:9770" ph="SELECT a.id_... ${_DB_PREFIX_}product_attribute_combination" />
+            <marker date="1492673256000" expanded="true" signature="10012:10182" ph="SELECT a.`id... ${_DB_PREFIX_}product_attribute_image" />
+            <marker date="1492673256000" expanded="true" signature="10373:10460" ph="DELETE FROM " />
+            <marker date="1492673256000" expanded="true" signature="10863:10965" ph="INSERT INTO `${_DB_PREFIX_}product_attribute_image`... " />
+            <marker date="1492673256000" expanded="true" signature="11584:11801" ph="SELECT al.* ${_DB_PREFIX_}" />
+            <marker date="1492673256000" expanded="true" signature="13429:13752" ph="SELECT a.id_... ${_DB_PREFIX_}" />
+            <marker date="1492673256000" expanded="true" signature="14057:14236" ph="SELECT produ... ${_DB_PREFIX_}product_attribute" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///Applications/MAMP/htdocs/prestashop/1614/classes/AttributeGroup.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2050">
+          <caret line="26" column="6" lean-forward="false" selection-start-line="26" selection-start-column="6" selection-end-line="26" selection-end-column="6" />
+          <folding>
+            <marker date="1501484404000" expanded="true" signature="3478:3704" ph="SELECT pac.`... ${_DB_PREFIX_}product_attribute" />
+            <marker date="1501484404000" expanded="true" signature="4511:4602" ph="SELECT `id_a... ${_DB_PREFIX_}attribute" />
+            <marker date="1501484404000" expanded="true" signature="5022:5145" ph="DELETE FROM " />
+            <marker date="1501484404000" expanded="true" signature="5529:5631" ph="DELETE FROM " />
+            <marker date="1501484404000" expanded="true" signature="5687:5789" ph="DELETE FROM " />
+            <marker date="1501484404000" expanded="true" signature="5840:5908" ph="DELETE FROM " />
+            <marker date="1501484404000" expanded="true" signature="6656:6971" ph="SELECT * FRO... ${_DB_PREFIX_}attribute" />
+            <marker date="1501484404000" expanded="true" signature="7337:7648" ph="SELECT DISTI... ${_DB_PREFIX_}attribute_group" />
+            <marker date="1501484404000" expanded="true" signature="8278:8421" ph="DELETE FROM " />
+            <marker date="1501484404000" expanded="true" signature="8914:9060" ph="SELECT a.id_... ${_DB_PREFIX_}attribute" />
+            <marker date="1501484404000" expanded="true" signature="9382:9586" ph="SELECT ag.`p... ${_DB_PREFIX_}attribute_group" />
+            <marker date="1501484404000" expanded="true" signature="10919:11010" ph="SELECT `id_a... ${_DB_PREFIX_}attribute_group" />
+            <marker date="1501484404000" expanded="true" signature="11576:11640" ph="SELECT MAX(`... ${_DB_PREFIX_}attribute_group" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../PrestaShopAutoComplete/autocomplete.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="276">
+          <caret line="107" column="35" lean-forward="false" selection-start-line="107" selection-start-column="35" selection-end-line="107" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/classes/helpers/url.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="27" column="3" lean-forward="false" selection-start-line="27" selection-start-column="3" selection-end-line="27" selection-end-column="3" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libs/prestashop/ps/classes/Configuration.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="231">
+          <caret line="179" column="41" lean-forward="false" selection-start-line="179" selection-start-column="41" selection-end-line="179" selection-end-column="41" />
+          <folding>
+            <marker date="1502977027000" expanded="true" signature="4647:5046" ph="SELECT c.`na... " />
+            <marker date="1502977027000" expanded="true" signature="17721:17850" ph="SELECT 1 FRO... table" />
+            <marker date="1502977027000" expanded="true" signature="20291:20604" ph="DELETE FROM " />
+            <marker date="1502977027000" expanded="true" signature="20433:20594" ph="SELECT `${bq... ${_DB_PREFIX_}" />
+            <marker date="1502977027000" expanded="true" signature="20665:20768" ph="DELETE FROM " />
+            <marker date="1502977027000" expanded="true" signature="21569:21691" ph="DELETE FROM " />
+            <marker date="1502977027000" expanded="true" signature="21750:21877" ph="DELETE FROM " />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/views/templates/hook/top_nosto-elements.tpl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/views/templates/hook/home_nosto-elements.tpl" />
+    <entry file="file://$PROJECT_DIR$/views/templates/hook/category-footer_nosto-elements.tpl" />
+    <entry file="file:///Applications/MAMP/htdocs/prestashop/1614/cache/smarty/compile/7e/5f/33/7e5f33606b778162c62b19641c7dae82822b7cb8.file.js-nosto-stub.tpl.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="330">
+          <caret line="23" column="31" lean-forward="false" selection-start-line="23" selection-start-column="31" selection-end-line="23" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/views/templates/hook/partials/js-nosto-stub.tpl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="15" column="76" lean-forward="false" selection-start-line="15" selection-start-column="76" selection-end-line="15" selection-end-column="76" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/views/templates/hook/footer-product_hidden-nosto-elements.tpl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="25" column="55" lean-forward="false" selection-start-line="25" selection-start-column="42" selection-end-line="25" selection-end-column="55" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/htdocs/prestashop/1614/themes/default-bootstrap/product.tpl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15">
+          <caret line="36" column="53" lean-forward="false" selection-start-line="36" selection-start-column="53" selection-end-line="36" selection-end-column="53" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/views/templates/hook/footer-product_nosto-elements.tpl" />
+    <entry file="file://$PROJECT_DIR$/views/templates/hook/partials/js-auto-slots-inline.tpl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="204">
+          <caret line="19" column="52" lean-forward="false" selection-start-line="19" selection-start-column="52" selection-end-line="19" selection-end-column="52" />
+          <folding>
+            <marker date="1503044630000" expanded="true" signature="999:2267" ph="{...}" />
+            <marker date="1503044630000" expanded="true" signature="1050:1086" ph="{...}" />
+            <marker date="1503044630000" expanded="true" signature="1112:2263" ph="{...}" />
+            <marker date="1503044630000" expanded="true" signature="1324:2224" ph="{...}" />
+            <marker date="1503044630000" expanded="true" signature="1407:1723" ph="{...}" />
+            <marker date="1503044630000" expanded="true" signature="1535:1713" ph="{...}" />
+            <marker date="1503044630000" expanded="true" signature="1806:2121" ph="{...}" />
+            <marker date="1503044630000" expanded="true" signature="1934:2111" ph="{...}" />
+            <marker date="1503044630000" expanded="true" signature="2168:2216" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/classes/models/NostoCategory.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="499">
+          <caret line="58" column="0" lean-forward="true" selection-start-line="58" selection-start-column="0" selection-end-line="58" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libs/nosto/php-sdk/src/Object/Order/Order.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="495">
+          <caret line="73" column="7" lean-forward="true" selection-start-line="73" selection-start-column="7" selection-end-line="73" selection-end-column="7" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/classes/Nosto.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nostotagging.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3060">
+          <caret line="226" column="36" lean-forward="false" selection-start-line="226" selection-start-column="36" selection-end-line="226" selection-end-column="36" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libs/nosto/php-sdk/src/Helper/SerializationHelper.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="379">
+          <caret line="160" column="10" lean-forward="false" selection-start-line="160" selection-start-column="10" selection-end-line="160" selection-end-column="10" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libs/nosto/php-sdk/src/Object/Product/ProductCollection.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libs/nosto/php-sdk/src/Object/AbstractCollection.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="57">
+          <caret line="47" column="1" lean-forward="true" selection-start-line="47" selection-start-column="1" selection-end-line="47" selection-end-column="1" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libs/nosto/php-sdk/src/Object/Product/Variation.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="837">
+          <caret line="193" column="27" lean-forward="false" selection-start-line="193" selection-start-column="27" selection-end-line="193" selection-end-column="27" />
+          <folding>
+            <element signature="e#1779#1804#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libs/nosto/php-sdk/src/Object/Product/VariationCollection.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="420">
+          <caret line="63" column="0" lean-forward="true" selection-start-line="63" selection-start-column="0" selection-end-line="63" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bootstrap.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="540">
+          <caret line="58" column="77" lean-forward="true" selection-start-line="58" selection-start-column="77" selection-end-line="58" selection-end-column="77" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libs/nosto/php-sdk/src/Helper/HtmlMarkupSerializationHelper.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="250">
+          <caret line="69" column="25" lean-forward="false" selection-start-line="69" selection-start-column="25" selection-end-line="69" selection-end-column="25" />
+          <folding>
+            <element signature="e#6#1744#0#PHP" expanded="true" />
+            <element signature="e#1771#1798#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libs/prestashop/ps/classes/order/Order.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-41">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <marker date="1492673256000" expanded="true" signature="20129:20192" ph="DELETE FROM " />
+            <marker date="1492673256000" expanded="true" signature="21705:22776" ph="SELECT os.*,... ${_DB_PREFIX_}orders" />
+            <marker date="1492673256000" expanded="true" signature="23159:23436" ph="SELECT * FRO... ${_DB_PREFIX_}order_detail" />
+            <marker date="1492673256000" expanded="true" signature="23581:23723" ph="SELECT `mess... ${_DB_PREFIX_}message" />
+            <marker date="1492673256000" expanded="true" signature="26894:27199" ph="SELECT o.id_... ${_DB_PREFIX_}" />
+            <marker date="1492673256000" expanded="true" signature="29034:29392" ph="SELECT `imag... ${_DB_PREFIX_}product_attribute_image" />
+            <marker date="1492673256000" expanded="true" signature="29524:29722" ph="SELECT `imag... ${_DB_PREFIX_}image" />
+            <marker date="1492673256000" expanded="true" signature="30237:30465" ph="SELECT `prod... ${_DB_PREFIX_}order_detail" />
+            <marker date="1492673256000" expanded="true" signature="31559:31649" ph="SELECT * FRO... ${_DB_PREFIX_}order_cart_rule" />
+            <marker date="1492673256000" expanded="true" signature="31963:32189" ph="SELECT COUNT... ${_DB_PREFIX_}orders" />
+            <marker date="1492673256000" expanded="true" signature="32811:33113" ph="SELECT os.`i... ${_DB_PREFIX_}order_state" />
+            <marker date="1492673256000" expanded="true" signature="33508:33868" ph="SELECT IFNUL... ${_DB_PREFIX_}orders" />
+            <marker date="1492673256000" expanded="true" signature="35167:35509" ph="SELECT o.*, ${_DB_PREFIX_}orders" />
+            <marker date="1492673256000" expanded="true" signature="35180:35286" ph="SELECT SUM(o... ${_DB_PREFIX_}order_detail" />
+            <marker date="1492673256000" expanded="true" signature="35698:36329" ph="SELECT os.`i... ${_DB_PREFIX_}order_history" />
+            <marker date="1492673256000" expanded="true" signature="36599:36807" ph="SELECT `id_o... ${_DB_PREFIX_}orders" />
+            <marker date="1492673256000" expanded="true" signature="37417:38070" ph="SELECT *, ( ${_DB_PREFIX_}orders" />
+            <marker date="1492673256000" expanded="true" signature="38541:38986" ph="SELECT `id_o... ${_DB_PREFIX_}orders" />
+            <marker date="1492673256000" expanded="true" signature="39441:39666" ph="SELECT id_or... ${_DB_PREFIX_}" />
+            <marker date="1492673256000" expanded="true" signature="41463:41577" ph="SELECT COUNT... ${_DB_PREFIX_}orders" />
+            <marker date="1492673256000" expanded="true" signature="42595:42685" ph="SELECT `id_o... ${_DB_PREFIX_}orders" />
+            <marker date="1492673256000" expanded="true" signature="45266:45322" ph="SELECT MAX(`... ${_DB_PREFIX_}order_invoice" />
+            <marker date="1492673256000" expanded="true" signature="46921:47024" ph="SELECT `numb... ${_DB_PREFIX_}order_invoice" />
+            <marker date="1492673256000" expanded="true" signature="47952:48173" ph="SELECT `id_o... ${_DB_PREFIX_}order_carrier" />
+            <marker date="1492673256000" expanded="true" signature="48850:49280" ph="SELECT DISTI... ${_DB_PREFIX_}order_payment" />
+            <marker date="1492673256000" expanded="true" signature="49514:49822" ph="INSERT INTO `${_DB_PREFIX_}order_invoice_payment`... " />
+            <marker date="1492673256000" expanded="true" signature="55600:55712" ph="SELECT `deli... ${_DB_PREFIX_}order_invoice" />
+            <marker date="1492673256000" expanded="true" signature="56778:56919" ph="SELECT id_or... ${_DB_PREFIX_}orders" />
+            <marker date="1492673256000" expanded="true" signature="57832:58079" ph="SELECT id_or... ${_DB_PREFIX_}orders" />
+            <marker date="1492673256000" expanded="true" signature="58302:58414" ph="SELECT SUM(p... ${_DB_PREFIX_}" />
+            <marker date="1492673256000" expanded="true" signature="58715:58819" ph="SELECT `invo... ${_DB_PREFIX_}orders" />
+            <marker date="1492673256000" expanded="true" signature="58976:59306" ph="SELECT COUNT... ${_DB_PREFIX_}orders" />
+            <marker date="1492673256000" expanded="true" signature="59678:59798" ph="SELECT `id_c... ${_DB_PREFIX_}orders" />
+            <marker date="1492673256000" expanded="true" signature="59946:60429" ph="SELECT `id_o... ${_DB_PREFIX_}order_detail" />
+            <marker date="1492673256000" expanded="true" signature="61088:61236" ph="SELECT `invo... ${_DB_PREFIX_}orders" />
+            <marker date="1492673256000" expanded="true" signature="62155:62232" ph="DELETE FROM " />
+            <marker date="1492673256000" expanded="true" signature="62485:62661" ph="SELECT id_or... ${_DB_PREFIX_}" />
+            <marker date="1492673256000" expanded="true" signature="62880:63055" ph="SELECT id_or... ${_DB_PREFIX_}" />
+            <marker date="1492673256000" expanded="true" signature="64265:64535" ph="SELECT od.`t... ${_DB_PREFIX_}order_detail_tax" />
+            <marker date="1492673256000" expanded="true" signature="67118:67318" ph="INSERT INTO `${_DB_PREFIX_}order_invoice_payment`... " />
+            <marker date="1492673256000" expanded="true" signature="68923:69878" ph="SELECT DISTI... ${_DB_PREFIX_}orders" />
+            <marker date="1492673256000" expanded="true" signature="72945:73109" ph="SELECT SUM(t... ${_DB_PREFIX_}orders" />
+            <marker date="1492673256000" expanded="true" signature="74158:74588" ph="SELECT odt.`... ${_DB_PREFIX_}order_detail_tax" />
+            <marker date="1492673256000" expanded="true" signature="75076:75574" ph="SELECT odt.`... ${_DB_PREFIX_}order_detail_tax" />
+            <marker date="1492673256000" expanded="true" signature="77412:77575" ph="SELECT `ecot... ${_DB_PREFIX_}order_detail" />
+            <marker date="1492673256000" expanded="true" signature="77823:77929" ph="SELECT `id_o... ${_DB_PREFIX_}order_invoice" />
+            <marker date="1492673256000" expanded="true" signature="78538:78700" ph="SELECT `id_o... ${_DB_PREFIX_}order_invoice" />
+            <marker date="1492673256000" expanded="true" signature="78932:79083" ph="SELECT id_wa... ${_DB_PREFIX_}order_detail" />
+            <marker date="1492673256000" expanded="true" signature="82013:82126" ph="SELECT `id_o... ${_DB_PREFIX_}order_carrier" />
+            <marker date="1492673256000" expanded="true" signature="82463:82568" ph="SELECT `id_o... ${_DB_PREFIX_}order_carrier" />
+            <marker date="1492673256000" expanded="true" signature="82928:83033" ph="SELECT `id_o... ${_DB_PREFIX_}order_carrier" />
+            <marker date="1492673256000" expanded="true" signature="92131:92244" ph="DELETE FROM " />
+            <marker date="1492673256000" expanded="true" signature="92351:92457" ph="INSERT INTO `${_DB_PREFIX_}order_detail_tax`... " />
+            <marker date="1492673256000" expanded="true" signature="92605:92997" ph="SELECT od.id... ${_DB_PREFIX_}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libs/nosto/php-sdk/src/Object/Product/Product.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3255">
+          <caret line="250" column="50" lean-forward="false" selection-start-line="250" selection-start-column="50" selection-end-line="250" selection-end-column="50" />
+          <folding>
+            <element signature="e#1779#1804#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libs/nosto/php-sdk/src/Object/Cart/Cart.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1155">
+          <caret line="112" column="26" lean-forward="false" selection-start-line="112" selection-start-column="26" selection-end-line="112" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libs/nosto/php-sdk/src/Types/Markupable.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="42" column="0" lean-forward="false" selection-start-line="42" selection-start-column="0" selection-end-line="42" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libs/nosto/php-sdk/src/Types/LineItemInterface.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libs/nosto/php-sdk/src/Types/MarkupableCollection.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="42" column="0" lean-forward="false" selection-start-line="42" selection-start-column="0" selection-end-line="42" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libs/nosto/php-sdk/src/Object/Cart/LineItem.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2070">
+          <caret line="173" column="18" lean-forward="false" selection-start-line="173" selection-start-column="18" selection-end-line="173" selection-end-column="18" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libs/nosto/php-sdk/src/Object/Order/Buyer.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="48" column="0" lean-forward="false" selection-start-line="48" selection-start-column="0" selection-end-line="48" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libs/nosto/php-sdk/src/Object/Product/SkuCollection.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="60" column="5" lean-forward="false" selection-start-line="60" selection-start-column="5" selection-end-line="60" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libs/nosto/php-sdk/src/Object/StringCollection.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="525">
+          <caret line="68" column="5" lean-forward="false" selection-start-line="68" selection-start-column="5" selection-end-line="68" selection-end-column="5" />
+          <folding>
+            <element signature="e#1771#1798#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libs/prestashop/ps/classes/Link.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="597">
+          <caret line="356" column="7" lean-forward="false" selection-start-line="356" selection-start-column="7" selection-end-line="356" selection-end-column="7" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libs/prestashop/ps/classes/Product.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="409">
+          <caret line="2327" column="15" lean-forward="false" selection-start-line="2327" selection-start-column="12" selection-end-line="2327" selection-end-column="15" />
+          <folding>
+            <marker date="1492673256000" expanded="true" signature="26436:26664" ph="SELECT cp.`i... ${_DB_PREFIX_}category_product" />
+            <marker date="1492673256000" expanded="true" signature="28904:29074" ph="SELECT `id_p... ${_DB_PREFIX_}category_product" />
+            <marker date="1492673256000" expanded="true" signature="29909:30115" ph="SELECT `id_p... ${_DB_PREFIX_}category_product" />
+            <marker date="1492673256000" expanded="true" signature="31631:31812" ph="SELECT produ... ${_DB_PREFIX_}" />
+            <marker date="1492673256000" expanded="true" signature="32042:32476" ph="SELECT produ... ${_DB_PREFIX_}" />
+            <marker date="1492673256000" expanded="true" signature="32594:32864" ph="SELECT produ... ${_DB_PREFIX_}" />
+            <marker date="1492673256000" expanded="true" signature="33109:33342" ph="SELECT produ... ${_DB_PREFIX_}" />
+            <marker date="1492673256000" expanded="true" signature="41482:41647" ph="SELECT id_ca... ${_DB_PREFIX_}category_product" />
+            <marker date="1492673256000" expanded="true" signature="43047:43371" ph="SELECT c.`id... ${_DB_PREFIX_}category_product" />
+            <marker date="1492673256000" expanded="true" signature="44224:44385" ph="SELECT `id_c... ${_DB_PREFIX_}category_product" />
+            <marker date="1492673256000" expanded="true" signature="45273:45374" ph="SELECT `id_c... ${_DB_PREFIX_}category_product" />
+            <marker date="1492673256000" expanded="true" signature="46452:46525" ph="SELECT `id_i... ${_DB_PREFIX_}image" />
+            <marker date="1492673256000" expanded="true" signature="48194:49193" ph="SELECT p.*, ${_DB_PREFIX_}product" />
+            <marker date="1492673256000" expanded="true" signature="49922:50309" ph="SELECT p.`id... ${_DB_PREFIX_}product" />
+            <marker date="1492673256000" expanded="true" signature="50472:50872" ph="SELECT p.id_... ${_DB_PREFIX_}product" />
+            <marker date="1492673256000" expanded="true" signature="51334:51769" ph="SELECT pac.`... ${_DB_PREFIX_}product_attribute" />
+            <marker date="1492673256000" expanded="true" signature="68226:68371" ph="SELECT SUM(q... ${_DB_PREFIX_}" />
+            <marker date="1492673256000" expanded="true" signature="70932:71002" ph="DELETE FROM " />
+            <marker date="1492673256000" expanded="true" signature="71416:71509" ph="SELECT id_at... ${_DB_PREFIX_}" />
+            <marker date="1492673256000" expanded="true" signature="72059:72131" ph="DELETE FROM " />
+            <marker date="1492673256000" expanded="true" signature="72564:72638" ph="DELETE FROM " />
+            <marker date="1492673256000" expanded="true" signature="73311:73419" ph="DELETE FROM " />
+            <marker date="1492673256000" expanded="true" signature="73640:73706" ph="DELETE FROM " />
+            <marker date="1492673256000" expanded="true" signature="76922:77255" ph="SELECT p.*, ${_DB_PREFIX_}feature_product" />
+            <marker date="1492673256000" expanded="true" signature="77544:77614" ph="DELETE FROM " />
+            <marker date="1492673256000" expanded="true" signature="77692:77767" ph="DELETE FROM " />
+            <marker date="1492673256000" expanded="true" signature="78811:79040" ph="SELECT pa.*,... ${_DB_PREFIX_}product_attribute" />
+            <marker date="1492673256000" expanded="true" signature="81533:82576" ph="SELECT pa.*,... ${_DB_PREFIX_}product_attribute" />
+            <marker date="1492673256000" expanded="true" signature="83628:84752" ph="SELECT pa.*,... ${_DB_PREFIX_}product_attribute" />
+            <marker date="1492673256000" expanded="true" signature="85668:85765" ph="SELECT `id_p... ${_DB_PREFIX_}product_attribute" />
+            <marker date="1492673256000" expanded="true" signature="86086:86478" ph="SELECT pai.`... ${_DB_PREFIX_}product_attribute_image" />
+            <marker date="1492673256000" expanded="true" signature="86970:87374" ph="SELECT pai.`... ${_DB_PREFIX_}product_attribute_image" />
+            <marker date="1492673256000" expanded="true" signature="87791:87938" ph="SELECT COUNT... ${_DB_PREFIX_}product_attribute" />
+            <marker date="1492673256000" expanded="true" signature="90181:90524" ph="SELECT COUNT... ${_DB_PREFIX_}product" />
+            <marker date="1492673256000" expanded="true" signature="95989:96044" ph="INSERT INTO `${_DB_PREFIX_}product_reductions`... " />
+            <marker date="1492673256000" expanded="true" signature="96571:97364" ph="SELECT produ... ${_DB_PREFIX_}product_reductions" />
+            <marker date="1492673256000" expanded="true" signature="101896:102334" ph="SELECT COUNT... ${_DB_PREFIX_}product" />
+            <marker date="1492673256000" expanded="true" signature="105417:105502" ph="SELECT `id_c... ${_DB_PREFIX_}category_product" />
+            <marker date="1492673256000" expanded="true" signature="106091:106510" ph="SELECT cp.`i... ${_DB_PREFIX_}category_product" />
+            <marker date="1492673256000" expanded="true" signature="107068:107307" ph="SELECT c.* F... ${_DB_PREFIX_}product_carrier" />
+            <marker date="1492673256000" expanded="true" signature="107781:107884" ph="DELETE FROM " />
+            <marker date="1492673256000" expanded="true" signature="108563:108890" ph="SELECT image... ${_DB_PREFIX_}image" />
+            <marker date="1492673256000" expanded="true" signature="109312:109503" ph="SELECT image... ${_DB_PREFIX_}image" />
+            <marker date="1492673256000" expanded="true" signature="114106:114234" ph="SELECT SUM(`... ${_DB_PREFIX_}cart_product" />
+            <marker date="1492673256000" expanded="true" signature="127031:127153" ph="SELECT SUM(`... ${_DB_PREFIX_}cart_product" />
+            <marker date="1492673256000" expanded="true" signature="129115:129341" ph="SELECT pa.`i... ${_DB_PREFIX_}product_attribute" />
+            <marker date="1492673256000" expanded="true" signature="129560:129787" ph="SELECT pa.`i... ${_DB_PREFIX_}product_attribute" />
+            <marker date="1492673256000" expanded="true" signature="136010:136208" ph="SELECT COUNT... ${_DB_PREFIX_}product_attribute" />
+            <marker date="1492673256000" expanded="true" signature="136723:136923" ph="SELECT pa.id... ${_DB_PREFIX_}product_attribute" />
+            <marker date="1492673256000" expanded="true" signature="137053:137232" ph="SELECT MIN(p... ${_DB_PREFIX_}product_attribute" />
+            <marker date="1492673256000" expanded="true" signature="140046:141605" ph="SELECT ag.`i... ${_DB_PREFIX_}product_attribute" />
+            <marker date="1492673256000" expanded="true" signature="142538:142940" ph="SELECT p.`id... ${_DB_PREFIX_}accessory" />
+            <marker date="1492673256000" expanded="true" signature="145929:146013" ph="SELECT `id_p... ${_DB_PREFIX_}product_lang" />
+            <marker date="1492673256000" expanded="true" signature="148026:148222" ph="INSERT INTO `${_DB_PREFIX_}feature_product`... " />
+            <marker date="1492673256000" expanded="true" signature="148223:148251" ph="UPDATE `id_f... " />
+            <marker date="1492673256000" expanded="true" signature="148831:149061" ph="SELECT fp.id... ${_DB_PREFIX_}feature_product" />
+            <marker date="1492673256000" expanded="true" signature="149701:149849" ph="SELECT id_fe... ${_DB_PREFIX_}feature_product" />
+            <marker date="1492673256000" expanded="true" signature="150691:151228" ph="SELECT id_pr... ${_DB_PREFIX_}" />
+            <marker date="1492673256000" expanded="true" signature="154484:154653" ph="SELECT pa.*,... ${_DB_PREFIX_}product_attribute" />
+            <marker date="1492673256000" expanded="true" signature="155034:155135" ph="SELECT * FRO... ${_DB_PREFIX_}product_attribute_combination" />
+            <marker date="1492673256000" expanded="true" signature="156794:156936" ph="SELECT * FRO... ${_DB_PREFIX_}product_supplier" />
+            <marker date="1492673256000" expanded="true" signature="157438:157540" ph="INSERT INTO `${_DB_PREFIX_}attribute_impact`... " />
+            <marker date="1492673256000" expanded="true" signature="158269:158391" ph="SELECT ai.`i... ${_DB_PREFIX_}attribute_impact" />
+            <marker date="1492673256000" expanded="true" signature="159015:159116" ph="SELECT `id_i... ${_DB_PREFIX_}product_attribute_image" />
+            <marker date="1492673256000" expanded="true" signature="159456:159524" ph="SELECT * FRO... ${_DB_PREFIX_}accessory" />
+            <marker date="1492673256000" expanded="true" signature="159967:160049" ph="SELECT `id_t... ${_DB_PREFIX_}product_tag" />
+            <marker date="1492673256000" expanded="true" signature="160595:160799" ph="SELECT `disp... ${_DB_PREFIX_}product_download" />
+            <marker date="1492673256000" expanded="true" signature="161982:162067" ph="SELECT `id_a... ${_DB_PREFIX_}product_attachment" />
+            <marker date="1492673256000" expanded="true" signature="163024:163096" ph="SELECT * FRO... ${_DB_PREFIX_}feature_product" />
+            <marker date="1492673256000" expanded="true" signature="163211:163289" ph="SELECT * FRO... ${_DB_PREFIX_}feature_value" />
+            <marker date="1492673256000" expanded="true" signature="163682:163759" ph="SELECT MAX(`... ${_DB_PREFIX_}feature_value" />
+            <marker date="1492673256000" expanded="true" signature="163947:164086" ph="SELECT * FRO... ${_DB_PREFIX_}feature_value_lang" />
+            <marker date="1492673256000" expanded="true" signature="165095:165273" ph="SELECT `id_c... ${_DB_PREFIX_}customization_field" />
+            <marker date="1492673256000" expanded="true" signature="165703:165989" ph="SELECT `id_c... ${_DB_PREFIX_}customization_field_lang" />
+            <marker date="1492673256000" expanded="true" signature="168726:168854" ph="SELECT * FRO... ${_DB_PREFIX_}product_supplier" />
+            <marker date="1492673256000" expanded="true" signature="172176:172316" ph="SELECT name ${_DB_PREFIX_}" />
+            <marker date="1492673256000" expanded="true" signature="179934:180492" ph="SELECT name,... ${_DB_PREFIX_}" />
+            <marker date="1492673256000" expanded="true" signature="180866:181142" ph="SELECT * FRO... ${_DB_PREFIX_}" />
+            <marker date="1492673256000" expanded="true" signature="181957:182121" ph="SELECT COUNT... ${_DB_PREFIX_}cart_product" />
+            <marker date="1492673256000" expanded="true" signature="182499:183259" ph="SELECT cd.`i... ${_DB_PREFIX_}customized_data" />
+            <marker date="1492673256000" expanded="true" signature="184077:184278" ph="SELECT `id_p... ${_DB_PREFIX_}customization" />
+            <marker date="1492673256000" expanded="true" signature="189865:190029" ph="SELECT `id_c... ${_DB_PREFIX_}customization_field" />
+            <marker date="1492673256000" expanded="true" signature="192837:192970" ph="INSERT INTO `${_DB_PREFIX_}customization_field`... " />
+            <marker date="1492673256000" expanded="true" signature="193500:193621" ph="INSERT INTO `${_DB_PREFIX_}customization_field_lang`... " />
+            <marker date="1492673256000" expanded="true" signature="195059:195283" ph="INSERT INTO `${_DB_PREFIX_}customization_field_lang`... " />
+            <marker date="1492673256000" expanded="true" signature="195284:195320" ph="UPDATE `name... " />
+            <marker date="1492673256000" expanded="true" signature="195477:195669" ph="INSERT INTO `${_DB_PREFIX_}customization_field_lang`... " />
+            <marker date="1492673256000" expanded="true" signature="195670:195706" ph="UPDATE `name... " />
+            <marker date="1492673256000" expanded="true" signature="197219:197687" ph="SELECT cf.`i... ${_DB_PREFIX_}customization_field" />
+            <marker date="1492673256000" expanded="true" signature="198234:198355" ph="SELECT `id_c... ${_DB_PREFIX_}customization_field" />
+            <marker date="1492673256000" expanded="true" signature="198822:198965" ph="SELECT `id_c... ${_DB_PREFIX_}customization_field" />
+            <marker date="1492673256000" expanded="true" signature="200091:200213" ph="SELECT id_pr... ${_DB_PREFIX_}product" />
+            <marker date="1492673256000" expanded="true" signature="200764:200885" ph="SELECT id_pr... ${_DB_PREFIX_}category_product" />
+            <marker date="1492673256000" expanded="true" signature="202094:202325" ph="SELECT ctg.`... ${_DB_PREFIX_}category_product" />
+            <marker date="1492673256000" expanded="true" signature="202463:202781" ph="SELECT cg.`i... ${_DB_PREFIX_}category_product" />
+            <marker date="1492673256000" expanded="true" signature="204345:205338" ph="SELECT sm.id... ${_DB_PREFIX_}stock_mvt" />
+            <marker date="1492673256000" expanded="true" signature="205490:206099" ph="SELECT pl.`i... ${_DB_PREFIX_}product" />
+            <marker date="1492673256000" expanded="true" signature="206597:206728" ph="SELECT `id_t... ${_DB_PREFIX_}product_shop" />
+            <marker date="1492673256000" expanded="true" signature="208335:208404" ph="DELETE FROM " />
+            <marker date="1492673256000" expanded="true" signature="209431:209658" ph="SELECT cp.`i... ${_DB_PREFIX_}category_product" />
+            <marker date="1492673256000" expanded="true" signature="210430:210530" ph="INSERT INTO `${_DB_PREFIX_}category_product`... " />
+            <marker date="1492673256000" expanded="true" signature="211056:211271" ph="SELECT p.`id... ${_DB_PREFIX_}accessory" />
+            <marker date="1492673256000" expanded="true" signature="211659:211785" ph="INSERT INTO `${_DB_PREFIX_}accessory`... " />
+            <marker date="1492673256000" expanded="true" signature="212056:212226" ph="SELECT pa.`i... ${_DB_PREFIX_}product_attribute" />
+            <marker date="1492673256000" expanded="true" signature="212744:212914" ph="SELECT pa.`i... ${_DB_PREFIX_}product_attribute" />
+            <marker date="1492673256000" expanded="true" signature="213157:213239" ph="SELECT pa.`i... ${_DB_PREFIX_}product_attribute" />
+            <marker date="1492673256000" expanded="true" signature="214338:214427" ph="INSERT INTO `${_DB_PREFIX_}product_attribute`... " />
+            <marker date="1492673256000" expanded="true" signature="214708:214996" ph="SELECT DISTI... ${_DB_PREFIX_}product_attribute" />
+            <marker date="1492673256000" expanded="true" signature="215249:215386" ph="SELECT posit... ${_DB_PREFIX_}category_product" />
+            <marker date="1492673256000" expanded="true" signature="215965:216110" ph="SELECT `id_p... ${_DB_PREFIX_}category_product" />
+            <marker date="1492673256000" expanded="true" signature="218242:218451" ph="SELECT i.`id... ${_DB_PREFIX_}image" />
+            <marker date="1492673256000" expanded="true" signature="218555:218673" ph="SELECT `id_s... ${_DB_PREFIX_}stock_available" />
+            <marker date="1492673256000" expanded="true" signature="218828:218917" ph="SELECT `id_t... ${_DB_PREFIX_}product_tag" />
+            <marker date="1492673256000" expanded="true" signature="219479:219537" ph="SELECT `id_l... ${_DB_PREFIX_}tag" />
+            <marker date="1492673256000" expanded="true" signature="219721:219810" ph="INSERT INTO `${_DB_PREFIX_}product_tag`... " />
+            <marker date="1492673256000" expanded="true" signature="220842:220939" ph="SELECT `refe... ${_DB_PREFIX_}product" />
+            <marker date="1492673256000" expanded="true" signature="221309:221494" ph="SELECT pa.id... ${_DB_PREFIX_}product_attribute" />
+            <marker date="1492673256000" expanded="true" signature="222044:222918" ph="SELECT a.`id... ${_DB_PREFIX_}attribute" />
+            <marker date="1492673256000" expanded="true" signature="223273:224234" ph="SELECT DISTI... ${_DB_PREFIX_}attribute" />
+            <marker date="1492673256000" expanded="true" signature="224836:225242" ph="SELECT pac.`... ${_DB_PREFIX_}product_attribute_combination" />
+            <marker date="1492673256000" expanded="true" signature="225529:225811" ph="SELECT `id_a... ${_DB_PREFIX_}attribute" />
+            <marker date="1492673256000" expanded="true" signature="226126:226567" ph="SELECT pac.`... ${_DB_PREFIX_}product_attribute_combination" />
+            <marker date="1492673256000" expanded="true" signature="233779:233874" ph="SELECT `adva... ${_DB_PREFIX_}" />
+            <marker date="1492673256000" expanded="true" signature="234746:234896" ph="SELECT produ... ${_DB_PREFIX_}product" />
+            <marker date="1492673256000" expanded="true" signature="235227:235306" ph="SELECT `id_s... ${_DB_PREFIX_}product_shop" />
+            <marker date="1492673256000" expanded="true" signature="237200:237421" ph="SELECT pa.id... ${_DB_PREFIX_}product_attribute" />
+            <marker date="1492673256000" expanded="true" signature="237568:238003" ph="SELECT id_ta... COUNT" />
+            <marker date="1492673256000" expanded="true" signature="237612:237986" ph="SELECT COUNT... ${_DB_PREFIX_}" />
+            <marker date="1492673256000" expanded="true" signature="239538:239626" ph="SELECT id_pr... ${_DB_PREFIX_}" />
+            <marker date="1492673256000" expanded="true" signature="240821:241581" ph="SELECT sa.id... ${_DB_PREFIX_}" />
+            <marker date="1492673256000" expanded="true" signature="243573:243644" ph="SELECT DISTI... ${_DB_PREFIX_}product" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/classes/models/NostoProduct.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="842">
+          <caret line="83" column="0" lean-forward="false" selection-start-line="83" selection-start-column="2" selection-end-line="84" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libs/nosto/php-sdk/src/Object/Product/Sku.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="612">
+          <caret line="260" column="0" lean-forward="false" selection-start-line="260" selection-start-column="0" selection-end-line="260" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/views/templates/hook/header_add-to-cart.tpl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="703">
+          <caret line="101" column="21" lean-forward="false" selection-start-line="101" selection-start-column="21" selection-end-line="101" selection-end-column="21" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/classes/models/NostoSku.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="326">
+          <caret line="60" column="59" lean-forward="false" selection-start-line="60" selection-start-column="59" selection-end-line="60" selection-end-column="59" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/classes/helpers/NostoHelperContext.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="840">
+          <caret line="78" column="6" lean-forward="false" selection-start-line="78" selection-start-column="6" selection-end-line="78" selection-end-column="6" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/views/templates/admin/config-bootstrap.tpl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="694">
+          <caret line="219" column="30" lean-forward="false" selection-start-line="219" selection-start-column="30" selection-end-line="219" selection-end-column="30" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>
