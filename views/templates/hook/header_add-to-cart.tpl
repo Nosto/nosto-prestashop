@@ -72,8 +72,8 @@
     Nosto.postAddToCartForm = function (data, url) {
 
         var form = document.createElement("form");
-        form.setAttribute("method", "get");
-        form.setAttribute("action", "");
+        form.setAttribute("method", "post");
+        form.setAttribute("action", url);
 
         for (var key in data) {
             if (data.hasOwnProperty(key)) {
