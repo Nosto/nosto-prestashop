@@ -33,6 +33,7 @@ class NostoHelperConfig
     const INSTALLED_VERSION = 'NOSTOTAGGING_INSTALLED_VERSION';
     const CRON_ACCESS_TOKEN = 'NOSTOTAGGING_CRON_ACCESS_TOKEN';
     const MULTI_CURRENCY_METHOD = 'NOSTOTAGGING_MC_METHOD';
+    const SKU_SWITCH = 'NOSTOTAGGING_SKU_SWITCH';
     const TOKEN_CONFIG_PREFIX = 'NOSTOTAGGING_API_TOKEN_';
     const MULTI_CURRENCY_METHOD_VARIATION = 'priceVariation';
     const MULTI_CURRENCY_METHOD_EXCHANGE_RATE = 'exchangeRate';
@@ -350,6 +351,41 @@ class NostoHelperConfig
             );
         } else {
             return self::write(self::MULTI_CURRENCY_METHOD, $method, Context::getContext()->language->id);
+        }
+    }
+
+    /**
+     * Is sku feature enabled
+     *
+     * @param int $langId the language identifier for which to fetch the configuration
+     * @param null|int $shopGroupId the shop-group identifier for which to fetch the configuration
+     * @param null|int $shopId the shop identifier for which to fetch the configuration
+     * @return bool true if sku feature has been enabled, false otherwise
+     */
+    public static function getSkuEnabled($langId, $shopGroupId, $shopId)
+    {
+        return (bool)self::read(self::SKU_SWITCH, $langId, $shopGroupId, $shopId);
+    }
+
+    /**
+     * Saves enable/disable of sku feature
+     *
+     * @param bool $enabled
+     * @return bool true if saving the configuration was successful, false otherwise
+     */
+    public static function saveSkuEnabled($enabled)
+    {
+        if (Context::getContext()->shop instanceof Shop) {
+            return self::write(
+                self::SKU_SWITCH,
+                $enabled,
+                Context::getContext()->language->id,
+                false,
+                Context::getContext()->shop->id_shop_group,
+                Context::getContext()->shop->id
+            );
+        } else {
+            return self::write(self::SKU_SWITCH, $enabled, Context::getContext()->language->id);
         }
     }
 

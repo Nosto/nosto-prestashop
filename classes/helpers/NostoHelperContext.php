@@ -28,7 +28,6 @@
  */
 class NostoHelperContext
 {
-
     /**
      * Runs a function in the scope of another shop's context and reverts back to the original
      * context after the the function invocation
@@ -49,5 +48,43 @@ class NostoHelperContext
         }
         $context->revertToOriginalContext();
         return $retval;
+    }
+
+    /**
+     * Get language Id from current context
+     *
+     * @return mixed int|null
+     */
+    public static function getLanguageId()
+    {
+        return Context::getContext()->language->id;
+    }
+
+    /**
+     * Get shop group Id from current context
+     *
+     * @return int|null
+     */
+    public static function getShopGroupId()
+    {
+        if (Context::getContext()->shop instanceof Shop) {
+            return Context::getContext()->shop->id_shop_group;
+        }
+
+        return null;
+    }
+
+    /**
+     * Get shop Id from current context
+     *
+     * @return int|null
+     */
+    public static function getShopId()
+    {
+        if (Context::getContext()->shop instanceof Shop) {
+            return Context::getContext()->shop->id;
+        }
+
+        return null;
     }
 }

@@ -150,9 +150,16 @@ class NostoHelperUrl
      * @param int|null $idLang the language ID (falls back on current context if not set).
      * @param int|null $idShop the shop ID (falls back on current context if not set).
      * @param array $params additional params to add to the url.
+     * @param int|null $productAttributeId product attribute id
      * @return string the product page url.
      */
-    public static function getProductUrl($product, $idLang = null, $idShop = null, array $params = array())
+    public static function getProductUrl(
+        $product,
+        $idLang = null,
+        $idShop = null,
+        array $params = array(),
+        $productAttributeId = 0
+    )
     {
         if (is_null($idLang)) {
             $idLang = (int)Context::getContext()->language->id;
@@ -161,7 +168,18 @@ class NostoHelperUrl
             $idShop = (int)Context::getContext()->shop->id;
         }
 
-        $url = NostoHelperLink::getLink()->getProductLink($product, null, null, null, $idLang, $idShop);
+        $url = NostoHelperLink::getLink()->getProductLink(
+            $product,
+            null,
+            null,
+            null,
+            $idLang,
+            $idShop,
+            $productAttributeId,
+            false,
+            false,
+            true
+        );
         if ((int)Configuration::get('PS_REWRITING_SETTINGS') === 0) {
             $params['id_lang'] = $idLang;
         }
