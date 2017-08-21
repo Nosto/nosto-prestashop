@@ -58,8 +58,8 @@ class NostoSku extends NostoSDKSku
         $nostoSku->setGtin($combination->ean13);
         $nostoSku->setUrl(
             NostoHelperUrl::getProductUrl(
-                $product, NostoHelperContext::getLanguageIdFromContext(),
-                NostoHelperContext::getShopIdFromContext(),
+                $product, NostoHelperContext::getLanguageId(),
+                NostoHelperContext::getShopId(),
                 array(),
                 $combination->id
             )
@@ -94,19 +94,19 @@ class NostoSku extends NostoSDKSku
     protected function amendCustomFields(Combination $combination)
     {
         $attributes = $combination->getAttributesName(
-            NostoHelperContext::getLanguageIdFromContext()
+            NostoHelperContext::getLanguageId()
         );
         foreach ($attributes as $attributesInfo) {
             $attributeId = $attributesInfo['id_attribute'];
             $attribute = new Attribute(
                 $attributeId,
-                NostoHelperContext::getLanguageIdFromContext(),
-                NostoHelperContext::getShopIdFromContext());
+                NostoHelperContext::getLanguageId(),
+                NostoHelperContext::getShopId());
             $attributeName = $attributesInfo['name'];
             $attributeGroup = new AttributeGroup(
                 $attribute->id_attribute_group,
-                NostoHelperContext::getLanguageIdFromContext(),
-                NostoHelperContext::getShopIdFromContext()
+                NostoHelperContext::getLanguageId(),
+                NostoHelperContext::getShopId()
             );
 
             $this->addCustomField($attributeGroup->name, $attributeName);
@@ -120,7 +120,7 @@ class NostoSku extends NostoSDKSku
      */
     protected function amendName(Combination $combination)
     {
-        $nameArray = $combination->getAttributesName(NostoHelperContext::getLanguageIdFromContext());
+        $nameArray = $combination->getAttributesName(NostoHelperContext::getLanguageId());
         if ($nameArray) {
             $names = array();
             foreach ($nameArray as $nameInfo) {
@@ -152,9 +152,9 @@ class NostoSku extends NostoSDKSku
                 $imageId = $image['id'];
                 if ((int)$imageId > 0) {
                     $imageType = NostoHelperImage::getTaggingImageTypeName(
-                        NostoHelperContext::getLanguageIdFromContext(),
-                        NostoHelperContext::getShopGroupIdFromContext(),
-                        NostoHelperContext::getShopIdFromContext()
+                        NostoHelperContext::getLanguageId(),
+                        NostoHelperContext::getShopGroupId(),
+                        NostoHelperContext::getShopId()
                     );
                     if (empty($imageType)) {
                         return;
@@ -162,8 +162,8 @@ class NostoSku extends NostoSDKSku
 
                     $product = new Product(
                         $combination->id_product,
-                        NostoHelperContext::getLanguageIdFromContext(),
-                        NostoHelperContext::getShopIdFromContext()
+                        NostoHelperContext::getLanguageId(),
+                        NostoHelperContext::getShopId()
                     );
                     $link = NostoHelperLink::getLink();
                     $url = $link->getImageLink(

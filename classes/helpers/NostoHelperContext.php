@@ -55,7 +55,7 @@ class NostoHelperContext
      *
      * @return mixed int|null
      */
-    public static function getLanguageIdFromContext()
+    public static function getLanguageId()
     {
         return Context::getContext()->language->id;
     }
@@ -65,7 +65,7 @@ class NostoHelperContext
      *
      * @return int|null
      */
-    public static function getShopGroupIdFromContext()
+    public static function getShopGroupId()
     {
         if (Context::getContext()->shop instanceof Shop) {
             return Context::getContext()->shop->id_shop_group;
@@ -79,7 +79,7 @@ class NostoHelperContext
      *
      * @return int|null
      */
-    public static function getShopIdFromContext()
+    public static function getShopId()
     {
         if (Context::getContext()->shop instanceof Shop) {
             return Context::getContext()->shop->id;
