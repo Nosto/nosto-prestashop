@@ -24,6 +24,7 @@
  */
 
 use Nosto\Object\Product\Product as NostoSDKProduct;
+use \Nosto\Object\StringCollection;
 
 class NostoProduct extends NostoSDKProduct
 {
@@ -242,23 +243,26 @@ class NostoProduct extends NostoSDKProduct
      *
      * @param Product $product the product model.
      * @param int $id_lang for which language ID to fetch the product tags.
-     * @return array the built tags.
+     * @return StringCollection the built tags.
      */
     protected static function buildTags(Product $product, $id_lang)
     {
-        $tags = array();
+        $tagsCollection = new StringCollection('tag1', 'tag');
         if (($product_tags = $product->getTags($id_lang)) !== '') {
             $tags = explode(', ', $product_tags);
+            foreach ($tags as $tag) {
+                $tagsCollection->append($tag);
+            }
         }
 
         // If the product has no attributes (color, size etc.), then we mark
         // it as possible to add directly to cart.
         $product_attributes = $product->getAttributesGroups($id_lang);
         if (empty($product_attributes)) {
-            $tags[] = self::ADD_TO_CART;
+            $tagsCollection->append(self::ADD_TO_CART);
         }
 
-        return $tags;
+        return $tagsCollection;
     }
 
     /**
@@ -276,7 +280,7 @@ class NostoProduct extends NostoSDKProduct
             $category = new Category((int)$category_id, $id_lang);
             $category = NostoCategory::loadData(Context::getContext(), $category);
             if (!empty($category)) {
-                $this->addCategory($category);
+                $this->addCategory($category->getValue());
             }
         }
     }

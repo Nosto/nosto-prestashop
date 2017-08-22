@@ -23,10 +23,10 @@
  * @copyright 2013-2016 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
-class NostoCategory
-{
-    public $categoryString;
+use \Nosto\Object\MarkupableString;
 
+class NostoCategory extends MarkupableString
+{
     /**
      * @param $idCategory
      * @param $idLang
@@ -40,7 +40,7 @@ class NostoCategory
 
     public function __construct($category)
     {
-        $this->categoryString = $category;
+        parent::__construct($category, 'nosto_category');
     }
 
     /**
@@ -79,13 +79,5 @@ class NostoCategory
             'nosto_category' => $nostoCategory
         ));
         return $nostoCategory;
-    }
-
-    /**
-     * @return string
-     */
-    public function getCategory()
-    {
-        return $this->categoryString;
     }
 }

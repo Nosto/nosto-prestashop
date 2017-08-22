@@ -23,10 +23,10 @@
  * @copyright 2013-2016 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
-class NostoBrand
-{
-    private $brand;
+use \Nosto\Object\MarkupableString;
 
+class NostoBrand extends MarkupableString
+{
     /**
      * Loads the brand data from supplied manufacturer object.
      *
@@ -39,8 +39,7 @@ class NostoBrand
             return null;
         }
 
-        $nostoBrand = new NostoBrand();
-        $nostoBrand->brand = DIRECTORY_SEPARATOR . $manufacturer->name;
+        $nostoBrand = new NostoBrand(DIRECTORY_SEPARATOR . $manufacturer->name, 'nosto_category');
 
         NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoBrand), array(
             'manufacturer' => $manufacturer,
@@ -54,6 +53,6 @@ class NostoBrand
      */
     public function getBrand()
     {
-        return $this->brand;
+        return $this->getValue();
     }
 }

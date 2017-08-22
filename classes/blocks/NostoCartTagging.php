@@ -37,11 +37,12 @@ class NostoCartTagging
         $hcid = $cid ? hash(NostoTagging::VISITOR_HASH_ALGO, $cid) : '';
 
         $nostoCart = NostoCart::loadData(Context::getContext()->cart);
-        Context::getContext()->smarty->assign(array(
-            'nosto_cart' => $nostoCart,
-            'nosto_hcid' => $hcid
-        ));
 
-        return $module->render('views/templates/hook/top_cart-tagging.tpl');
+        if (!$nostoCart instanceof NostoCart) {
+            return null;
+        }
+        $nostoCart->setHcid($hcid);
+
+        return $nostoCart->toHtml();
     }
 }

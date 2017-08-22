@@ -23,10 +23,10 @@
  * @copyright 2013-2016 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
-class NostoVariation
-{
-    private $variationId;
+use \Nosto\Object\ MarkupableString;
 
+class NostoVariation extends MarkupableString
+{
     /**
      * Constructor
      *
@@ -34,7 +34,7 @@ class NostoVariation
      */
     public function __construct($variationId = null)
     {
-        $this->variationId = $variationId;
+        parent::__construct($variationId, 'nosto_price_variation');
     }
 
     public static function loadData()
@@ -52,6 +52,6 @@ class NostoVariation
      */
     public function getVariationId()
     {
-        return $this->variationId;
+        return $this->getValue();
     }
 }
