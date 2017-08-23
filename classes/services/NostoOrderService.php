@@ -51,11 +51,7 @@ class NostoOrderService extends AbstractNostoService
     public function sendOrder(Order $order)
     {
         try {
-            $nostoOrder = NostoOrder::loadData(Context::getContext(), $order);
-            $idShopGroup = isset($order->id_shop_group) ? $order->id_shop_group : null;
-            $idShop = isset($order->id_shop) ? $order->id_shop : null;
-            // This is done out of context, so we need to specify the exact parameters to get the
-            // correct account.
+            $nostoOrder = NostoOrder::loadData($order);
             // TODO: EMulate
             $account = NostoHelperAccount::find();
             if ($account !== null && $account->isConnectedToNosto()) {
