@@ -140,7 +140,7 @@ class NostoAccountSignup extends NostoSDKAccountSignup
         $nosto_currencies = array();
         $currencies = NostoHelperCurrency::getCurrencies(true);
         foreach ($currencies as $currency) {
-            $nosto_currency = NostoHelperCurrency::getNostoCurrency($currency, Context::getContext());
+            $nosto_currency = NostoHelperCurrency::getNostoCurrency($currency);
             $nosto_currencies[$currency['iso_code']] = $nosto_currency;
         }
 

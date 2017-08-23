@@ -53,27 +53,17 @@ class NostoHelperCurrency
      */
     public static function getBaseCurrency()
     {
-        $id_lang = Context::getContext()->language->id;
-        $id_shop = Context::getContext()->shop->id;
-        if (isset(Context::getContext()->shop->id_shop_group)) {
-            $id_shop_group = Context::getContext()->shop->id_shop_group;
-        } else {
-            $id_shop_group = null;
-        }
-
-        $base_id_currency = (int)Configuration::get('PS_CURRENCY_DEFAULT', $id_lang, $id_shop_group,
-            $id_shop);
+        $base_id_currency = (int)Configuration::get('PS_CURRENCY_DEFAULT', NostoHelperContext::getLanguageId(), NostoHelperContext::getShopGroupId(), NostoHelperContext::getShopId());
         if ($base_id_currency === 0) {
-            $base_id_currency = (int)Configuration::get('PS_CURRENCY_DEFAULT', null, $id_shop_group,
-                $id_shop);
+            $base_id_currency = (int)Configuration::get('PS_CURRENCY_DEFAULT', null, NostoHelperContext::getShopGroupId(), NostoHelperContext::getShopId());
         }
         $base_currency = self::loadCurrency($base_id_currency);
         if (!Validate::isLoadedObject($base_currency)) {
             throw new NostoSDKException(
                 sprintf(
                     'Failed to find base currency for shop #%s and lang #%s.',
-                    $id_shop,
-                    $id_lang
+                    NostoHelperContext::getShopId(),
+                    NostoHelperContext::getLanguageId()
                 )
             );
         }
@@ -89,8 +79,7 @@ class NostoHelperCurrency
      */
     public static function getCurrencies($only_active = false)
     {
-        $id_shop = (int)Context::getContext()->shop->id;
-        $all_currencies = Currency::getCurrenciesByIdShop($id_shop);
+        $all_currencies = Currency::getCurrenciesByIdShop(NostoHelperContext::getShopId());
         if ($only_active === true) {
             $currencies = array();
             foreach ($all_currencies as $currency) {
@@ -109,19 +98,18 @@ class NostoHelperCurrency
      * Parses a PS currency into a Nosto currency.
      *
      * @param array $currency the PS currency data.
-     * @param Context $context
      * @return NostoSDKCurrencyFormat
      * @throws NostoSDKException
      */
-    public static function getNostoCurrency(array $currency, Context $context = null)
+    public static function getNostoCurrency(array $currency)
     {
         if (
-            $context instanceof Context
+            Context::getContext() instanceof Context
             && (_PS_VERSION_ >= '1.7')
         ) {
             // In Prestashop 1.7 we use the CLDR
             try {
-                $nosto_currency = self::createWithCldr($currency, $context);
+                $nosto_currency = self::createWithCldr($currency);
                 return $nosto_currency;
             } catch (Exception $e) {
                 NostoHelperLogger::error($e);
@@ -185,13 +173,12 @@ class NostoHelperCurrency
      * @see https://github.com/ICanBoogie/CLDR
      *
      * @param array $currency Prestashop currency array
-     * @param Context $context
      * @return NostoSDKCurrencyFormat
      * @suppress PhanTypeMismatchArgument
      */
-    private static function createWithCldr(array $currency, Context $context)
+    private static function createWithCldr(array $currency)
     {
-        $cldr = Tools::getCldr(null, $context->language->language_code);
+        $cldr = Tools::getCldr(null, Context::getContext()->language->language_code);
         /** @noinspection PhpParamsInspection */
         $cldr_currency = new \ICanBoogie\CLDR\Currency($cldr->getRepository(), $currency['iso_code']);
         $localized_currency = $cldr_currency->localize($cldr->getCulture());

@@ -23,9 +23,7 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use Nosto\NostoException as NostoSDKException;
 use Nosto\Object\Signup\Account as NostoSDKAccount;
-use Nosto\Operation\UninstallAccount as NostoSDKUninstallAccountOperation;
 use Nosto\Request\Api\Token as NostoSDKAPIToken;
 use Nosto\Types\Signup\AccountInterface as NostoSDKSignupAccountInterface;
 
@@ -57,31 +55,11 @@ class NostoHelperAccount
      * Deletes a Nosto account from the PS config.
      * Also sends a notification to Nosto that the account has been deleted.
      *
-     * @param NostoSDKAccount $account the account to delete.
-     * @param int $id_lang the ID of the language model to delete the account for.
-     * @param null|int $id_shop_group the ID of the shop context.
-     * @param null|int $id_shop the ID of the shop.
      * @return bool true if successful, false otherwise.
      */
-    public static function delete(NostoSDKAccount $account, $id_lang, $id_shop_group = null, $id_shop = null)
+    public static function delete()
     {
-        $success = NostoHelperConfig::deleteAllFromContext(
-            $id_lang,
-            $id_shop_group,
-            $id_shop
-        );
-        $currentUser = NostoCurrentUser::loadData();
-        if ($success) {
-            $token = $account->getApiToken('sso');
-            if ($token) {
-                try {
-                    $service = new NostoSDKUninstallAccountOperation($account);
-                    $service->delete($currentUser);
-                } catch (NostoSDKException $e) {
-                    NostoHelperLogger::error($e);
-                }
-            }
-        }
+        $success = NostoHelperConfig::deleteAllFromContext();
         return $success;
     }
 
@@ -93,15 +71,8 @@ class NostoHelperAccount
     public static function deleteAll()
     {
         foreach (Shop::getShops() as $shop) {
-            $id_shop = isset($shop['id_shop']) ? $shop['id_shop'] : null;
-            foreach (Language::getLanguages(true, $id_shop) as $language) {
-                $id_shop_group = isset($shop['id_shop_group']) ? $shop['id_shop_group'] : null;
-                $account = self::find();
-                if ($account === null) {
-                    continue;
-                }
-                self::delete($account, $language['id_lang'], $id_shop_group, $id_shop);
-            }
+            //TODO: Emulatte
+            self::delete();
         }
         return true;
     }
