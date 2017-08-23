@@ -33,23 +33,28 @@ class NostoProductTagging extends NostoCategoryTagging
      */
     public static function get(NostoTagging $module)
     {
-        $product = NostoHelperController::resolveObject("id_product", Product::class, "getProduct");
+        $product = NostoHelperController::resolveObject(
+            "id_product",
+            Product::class,
+            "getProduct"
+        );
         if (!$product instanceof Product) {
             return null;
         }
 
         $nostoProduct = NostoProduct::loadData(Context::getContext(), $product);
-        $params = array('nosto_product' => $nostoProduct);
+        $html = $nostoProduct ? $nostoProduct->toHtml() : '';
 
-
-        $category = NostoHelperController::resolveObject("id_category", Category::class, "getCategory");
+        $category = NostoHelperController::resolveObject(
+            "id_category",
+            Category::class,
+            "getCategory"
+        );
         if (Validate::isLoadedObject($category)) {
             $nostoCategory = NostoCategory::loadData(Context::getContext(), $category);
-            $params['nosto_category'] = $nostoCategory;
+            $html .= $nostoCategory->toHtml();
         }
 
-        Context::getContext()->smarty->assign($params);
-
-        return $module->render('views/templates/hook/footer-product_product-tagging.tpl');
+        return $html;
     }
 }

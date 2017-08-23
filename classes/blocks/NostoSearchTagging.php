@@ -40,10 +40,7 @@ class NostoSearchTagging
         }
 
         $nostoQuery = NostoSearch::loadData($searchTerm);
-        Context::getContext()->smarty->assign(array(
-            'nosto_search' => $nostoQuery,
-        ));
 
-        return $module->render('views/templates/hook/top_search-tagging.tpl');
+        return $nostoQuery ? $nostoQuery->toHtml() : null;
     }
 }

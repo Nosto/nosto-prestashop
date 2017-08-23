@@ -23,13 +23,13 @@
  * @copyright 2013-2016 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
-class NostoSearch
-{
-    protected $searchTerm;
+use \Nosto\Object\MarkupableString;
 
+class NostoSearch extends MarkupableString
+{
     public function __construct($searchTerm)
     {
-        $this->searchTerm = $searchTerm;
+        parent::__construct($searchTerm, 'nosto_search_term');
     }
 
     /**
@@ -53,6 +53,6 @@ class NostoSearch
      */
     public function getSearchTerm()
     {
-        return $this->searchTerm;
+        return $this->getValue();
     }
 }

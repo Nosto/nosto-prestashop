@@ -40,10 +40,6 @@ class NostoOrderTagging
 
         $nostoOrder = NostoOrder::loadData(Context::getContext(), $order);
 
-        Context::getContext()->smarty->assign(array(
-            'nosto_order' => $nostoOrder,
-        ));
-
-        return $module->render('views/templates/hook/order-confirmation_order-tagging.tpl');
+        return $nostoOrder ? $nostoOrder->toHtml() : null;
     }
 }

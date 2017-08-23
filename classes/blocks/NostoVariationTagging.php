@@ -39,10 +39,7 @@ class NostoVariationTagging
         }
 
         $priceVariation = NostoVariation::loadData();
-        Context::getContext()->smarty->assign(array(
-            'nosto_price_variation' => $priceVariation
-        ));
 
-        return $module->render('views/templates/hook/top_price_variation-tagging.tpl');
+        return $priceVariation ? $priceVariation->toHtml() : null;
     }
 }
