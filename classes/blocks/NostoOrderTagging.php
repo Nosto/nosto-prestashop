@@ -27,11 +27,9 @@ class NostoOrderTagging
 {
     /**
      * Renders the order tagging by finding that most recent order that was placed
-     *
-     * @param NostoTagging $module the instance of the module for rendering the template
      * @return string the tagging
      */
-    public static function get(NostoTagging $module)
+    public static function get()
     {
         $order = NostoHelperController::resolveObject("id_order", Order::class, "getOrder");
         if (!$order instanceof Order) {

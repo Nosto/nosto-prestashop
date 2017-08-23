@@ -24,7 +24,6 @@
  */
 
 use Nosto\Object\Product\Product as NostoSDKProduct;
-use \Nosto\Object\StringCollection;
 
 class NostoProduct extends NostoSDKProduct
 {
