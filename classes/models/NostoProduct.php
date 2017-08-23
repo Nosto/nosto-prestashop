@@ -96,7 +96,7 @@ class NostoProduct extends NostoSDKProduct
      */
     protected function amendAlternateImages(Product $product)
     {
-        $images = Image::getImages((int)Context::getContext()->language->id, (int)$product->id);
+        $images = Image::getImages((int)NostoHelperContext::getLanguageId(), (int)$product->id);
         foreach ($images as $image) {
             $imageType = NostoHelperImage::getTaggingImageTypeName();
             if (empty($imageType)) {

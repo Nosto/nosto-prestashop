@@ -121,14 +121,14 @@ class NostoAccountSignup extends NostoSDKAccountSignup
         $shop = Context::getContext()->shop;
         $ssl = Configuration::get('PS_SSL_ENABLED');
         $rewrite = (int)Configuration::get('PS_REWRITING_SETTINGS', null, null, $shop->id);
-        $multi_lang = (Language::countActiveLanguages(Context::getContext()->shop->id) > 1);
+        $multi_lang = (Language::countActiveLanguages(NostoHelperContext::getShopId()) > 1);
         $base = ($ssl ? 'https://' . $shop->domain_ssl : 'http://' . $shop->domain) . $shop->getBaseURI();
         $lang = '';
         if ($multi_lang) {
             if ($rewrite) {
                 $lang = Context::getContext()->language->iso_code . '/';
             } else {
-                $lang = '?id_lang=' . Context::getContext()->language->id;
+                $lang = '?id_lang=' . NostoHelperContext::getLanguageId();
             }
         }
         return $base . $lang;

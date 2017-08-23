@@ -71,7 +71,7 @@ class NostoHelperAccount
     public static function deleteAll()
     {
         foreach (Shop::getShops()) {
-            //TODO: Emulatte
+            //TODO: Emulate
             self::delete();
         }
         return true;

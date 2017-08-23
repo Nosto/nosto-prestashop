@@ -52,7 +52,7 @@ class NostoOrderService extends AbstractNostoService
     {
         try {
             $nostoOrder = NostoOrder::loadData($order);
-            // TODO: EMulate
+            // TODO: Emulate
             $account = NostoHelperAccount::find();
             if ($account !== null && $account->isConnectedToNosto()) {
                 $customerId = NostoCustomerManager::getNostoId($order);

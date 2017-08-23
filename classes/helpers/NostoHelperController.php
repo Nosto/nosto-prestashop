@@ -79,8 +79,8 @@ class NostoHelperController
                 $object = new $klass
                 (
                     (int)$id,
-                    Context::getContext()->language->id,
-                    Context::getContext()->shop->id
+                    NostoHelperContext::getLanguageId(),
+                    NostoHelperContext::getShopId()
                 );
             }
         }

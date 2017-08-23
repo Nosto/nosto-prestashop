@@ -202,13 +202,13 @@ class NostoHelperConfig
             return self::write(
                 self::ACCOUNT_NAME,
                 $account_name,
-                Context::getContext()->language->id,
+                NostoHelperContext::getLanguageId(),
                 false,
-                Context::getContext()->shop->id_shop_group,
-                Context::getContext()->shop->id
+                NostoHelperContext::getShopGroupId(),
+                NostoHelperContext::getShopId()
             );
         } else {
-            return self::write(self::ACCOUNT_NAME, $account_name, Context::getContext()->language->id);
+            return self::write(self::ACCOUNT_NAME, $account_name, NostoHelperContext::getLanguageId());
         }
     }
 
@@ -238,13 +238,13 @@ class NostoHelperConfig
             return self::write(
                 self::getTokenConfigKey($tokeName),
                 $tokenValue,
-                Context::getContext()->language->id,
+                NostoHelperContext::getLanguageId(),
                 false,
-                Context::getContext()->shop->id_shop_group,
-                Context::getContext()->shop->id
+                NostoHelperContext::getShopGroupId(),
+                NostoHelperContext::getShopId()
             );
         } else {
-            return self::write(self::getTokenConfigKey($tokeName), $tokenValue, Context::getContext()->language->id);
+            return self::write(self::getTokenConfigKey($tokeName), $tokenValue, NostoHelperContext::getLanguageId());
         }
     }
 
@@ -348,13 +348,13 @@ class NostoHelperConfig
             return self::write(
                 self::MULTI_CURRENCY_METHOD,
                 $method,
-                Context::getContext()->language->id,
+                NostoHelperContext::getLanguageId(),
                 false,
-                Context::getContext()->shop->id_shop_group,
-                Context::getContext()->shop->id
+                NostoHelperContext::getShopGroupId(),
+                NostoHelperContext::getShopId()
             );
         } else {
-            return self::write(self::MULTI_CURRENCY_METHOD, $method, Context::getContext()->language->id);
+            return self::write(self::MULTI_CURRENCY_METHOD, $method, NostoHelperContext::getLanguageId());
         }
     }
 
@@ -379,13 +379,13 @@ class NostoHelperConfig
             return self::write(
                 self::SKU_SWITCH,
                 $enabled,
-                Context::getContext()->language->id,
+                NostoHelperContext::getLanguageId(),
                 false,
-                Context::getContext()->shop->id_shop_group,
-                Context::getContext()->shop->id
+                NostoHelperContext::getShopGroupId(),
+                NostoHelperContext::getShopId()
             );
         } else {
-            return self::write(self::SKU_SWITCH, $enabled, Context::getContext()->language->id);
+            return self::write(self::SKU_SWITCH, $enabled, NostoHelperContext::getLanguageId());
         }
     }
 
@@ -401,13 +401,13 @@ class NostoHelperConfig
             return self::write(
                 self::NOSTOTAGGING_POSITION,
                 $method,
-                Context::getContext()->language->id,
+                NostoHelperContext::getLanguageId(),
                 false,
-                Context::getContext()->shop->id_shop_group,
-                Context::getContext()->shop->id
+                NostoHelperContext::getShopGroupId(),
+                NostoHelperContext::getShopId()
             );
         } else {
-            return self::write(self::NOSTOTAGGING_POSITION, $method, Context::getContext()->language->id);
+            return self::write(self::NOSTOTAGGING_POSITION, $method, NostoHelperContext::getLanguageId());
         }
     }
 
@@ -457,13 +457,13 @@ class NostoHelperConfig
             return self::write(
                 self::NOSTOTAGGING_IMAGE_TYPE,
                 $type,
-                Context::getContext()->language->id,
+                NostoHelperContext::getLanguageId(),
                 false,
-                Context::getContext()->shop->id_shop_group,
-                Context::getContext()->shop->id
+                NostoHelperContext::getShopGroupId(),
+                NostoHelperContext::getShopId()
             );
         } else {
-            return self::write(self::NOSTOTAGGING_IMAGE_TYPE, $type, Context::getContext()->language->id);
+            return self::write(self::NOSTOTAGGING_IMAGE_TYPE, $type, NostoHelperContext::getLanguageId());
         }
     }
 }

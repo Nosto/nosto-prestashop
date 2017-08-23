@@ -269,7 +269,7 @@ class NostoHelperUrl
      */
     private static function getBaseUrl()
     {
-        $idShop = (int)Context::getContext()->shop->id;
+        $idShop = (int)NostoHelperContext::getShopId();
         $ssl = Configuration::get('PS_SSL_ENABLED');
 
         if (Configuration::get('PS_MULTISHOP_FEATURE_ACTIVE') && !is_null($idShop)) {
