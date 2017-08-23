@@ -24,7 +24,6 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use Nosto\NostoException as NostoSDKException;
 use Nosto\Operation\SyncRates as NostoSDKSyncRatesOperation;
 use Nosto\Types\Signup\AccountInterface as NostoSDKSignupAccount;
 
@@ -51,15 +50,8 @@ class NostoRatesService extends AbstractNostoService
                         NostoHelperContext::runInContext(
                             $idLang,
                             $idShop,
-                            function ($context) use ($nostoAccount) {
-                                if (!$this->updateCurrencyExchangeRates($nostoAccount, $context)) {
-                                    throw new NostoSDKException(
-                                        sprintf(
-                                            'Exchange rate update failed for %s',
-                                            $nostoAccount->getName()
-                                        )
-                                    );
-                                }
+                            function () use ($nostoAccount) {
+                                return $this->updateCurrencyExchangeRates($nostoAccount);
                             }
                         );
                     }
@@ -72,13 +64,12 @@ class NostoRatesService extends AbstractNostoService
      * Sends a currency exchange rate update request to Nosto via API.
      *
      * @param NostoSDKSignupAccount $account
-     * @param Context $context
-     * @return bool
+     * @return bool true if successful, false otherwise.
      */
-    public function updateCurrencyExchangeRates(NostoSDKSignupAccount $account, Context $context)
+    public function updateCurrencyExchangeRates(NostoSDKSignupAccount $account)
     {
         try {
-            $exchangeRates = NostoExchangeRates::loadData($context);
+            $exchangeRates = NostoExchangeRates::loadData();
             $service = new NostoSDKSyncRatesOperation($account);
             return $service->update($exchangeRates);
         } catch (Exception $e) {

@@ -48,16 +48,15 @@ class NostoHelperCurrency
     /**
      * Fetches the base currency from the context.
      *
-     * @param Context|ContextCore $context the context.
      * @return Currency
      * @throws NostoSDKException
      */
-    public static function getBaseCurrency(Context $context)
+    public static function getBaseCurrency()
     {
-        $id_lang = $context->language->id;
-        $id_shop = $context->shop->id;
-        if (isset($context->shop->id_shop_group)) {
-            $id_shop_group = $context->shop->id_shop_group;
+        $id_lang = Context::getContext()->language->id;
+        $id_shop = Context::getContext()->shop->id;
+        if (isset(Context::getContext()->shop->id_shop_group)) {
+            $id_shop_group = Context::getContext()->shop->id_shop_group;
         } else {
             $id_shop_group = null;
         }
@@ -85,13 +84,12 @@ class NostoHelperCurrency
     /**
      * Fetches all currencies defined in context.
      *
-     * @param Context|ContextCore $context the context.
      * @param boolean $only_active if set to true, only active languages will be returned
      * @return array the found currencies.
      */
-    public static function getCurrencies(Context $context, $only_active = false)
+    public static function getCurrencies($only_active = false)
     {
-        $id_shop = (int)$context->shop->id;
+        $id_shop = (int)Context::getContext()->shop->id;
         $all_currencies = Currency::getCurrenciesByIdShop($id_shop);
         if ($only_active === true) {
             $currencies = array();

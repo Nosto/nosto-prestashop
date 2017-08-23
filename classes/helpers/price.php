@@ -57,14 +57,12 @@ class NostoHelperPrice
      *
      * @param Cart|CartCore $cart the cart.
      * @param array $item the cart item.
-     * @param Context $context the context.
      * @param Currency $currency the currency.
      * @return float the price.
      */
     public function getCartItemPriceInclTax(
         Cart $cart,
         array $item,
-        Context $context,
         Currency $currency
     )
     {
@@ -77,7 +75,6 @@ class NostoHelperPrice
         return NostoHelperPrice::calcPrice(
             (int)$item['id_product'],
             $currency,
-            $context,
             array(
                 'user_reduction' => true,
                 'id_product_attribute' => (
@@ -96,32 +93,30 @@ class NostoHelperPrice
      *
      * @param int $id_product the product ID.
      * @param Currency|CurrencyCore $currency the currency object.
-     * @param Context $context the context object.
      * @param array $options options for the Product::getPriceStatic method.
      * @return float the price.
      */
     public static function calcPrice(
         $id_product,
         Currency $currency,
-        Context $context,
         array $options = array()
     )
     {
         // If the requested currency is not the one in the context, then set it.
         if (
-            $context->currency instanceof Currency
-            && $currency->iso_code !== $context->currency->iso_code
+            Context::getContext()->currency instanceof Currency
+            && $currency->iso_code !== Context::getContext()->currency->iso_code
         ) {
             /** @var Currency|CurrencyCore $old_currency */
-            $old_currency = $context->currency;
-            $context->currency = $currency;
+            $old_currency = Context::getContext()->currency;
+            Context::getContext()->currency = $currency;
         }
 
         if (
-            !isset($context->employee)
-            || empty($context->employee)
+            !isset(Context::getContext()->employee)
+            || empty(Context::getContext()->employee)
         ) {
-            $context->employee = new Employee();
+            Context::getContext()->employee = new Employee();
         }
 
         $options = array_merge(array(
@@ -159,13 +154,13 @@ class NostoHelperPrice
             $specific_price_output,
             $options['with_eco_tax'],
             $options['use_group_reduction'],
-            $context,
+            Context::getContext(),
             $options['use_customer_price']
         );
 
         // If currency was replaced in context, restore the old one.
         if (isset($old_currency)) {
-            $context->currency = $old_currency;
+            Context::getContext()->currency = $old_currency;
         }
 
         return NostoHelperPrice::roundPrice($value);

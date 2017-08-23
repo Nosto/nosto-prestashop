@@ -33,7 +33,7 @@ class NostoConnectAccountController extends NostoBaseController
      */
     public function execute()
     {
-        $meta = NostoOAuth::loadData($this->context, $this->getLanguageId(), NostoTagging::MODULE_NAME);
+        $meta = NostoOAuth::loadData($this->getLanguageId(), NostoTagging::MODULE_NAME);
         Tools::redirect(NostoSDKOAuthHelper::getAuthorizationUrl($meta), '');
         return false;
     }

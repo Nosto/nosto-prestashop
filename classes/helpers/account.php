@@ -57,21 +57,20 @@ class NostoHelperAccount
      * Deletes a Nosto account from the PS config.
      * Also sends a notification to Nosto that the account has been deleted.
      *
-     * @param $context
      * @param NostoSDKAccount $account the account to delete.
      * @param int $id_lang the ID of the language model to delete the account for.
      * @param null|int $id_shop_group the ID of the shop context.
      * @param null|int $id_shop the ID of the shop.
      * @return bool true if successful, false otherwise.
      */
-    public static function delete(Context $context, NostoSDKAccount $account, $id_lang, $id_shop_group = null, $id_shop = null)
+    public static function delete(NostoSDKAccount $account, $id_lang, $id_shop_group = null, $id_shop = null)
     {
         $success = NostoHelperConfig::deleteAllFromContext(
             $id_lang,
             $id_shop_group,
             $id_shop
         );
-        $currentUser = NostoCurrentUser::loadData($context);
+        $currentUser = NostoCurrentUser::loadData();
         if ($success) {
             $token = $account->getApiToken('sso');
             if ($token) {
@@ -101,13 +100,7 @@ class NostoHelperAccount
                 if ($account === null) {
                     continue;
                 }
-                self::delete(
-                    Context::getContext(),
-                    $account,
-                    $language['id_lang'],
-                    $id_shop_group,
-                    $id_shop
-                );
+                self::delete($account, $language['id_lang'], $id_shop_group, $id_shop);
             }
         }
         return true;

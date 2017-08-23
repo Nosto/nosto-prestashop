@@ -31,11 +31,10 @@ class NostoProduct extends NostoSDKProduct
     /**
      * Loads the product data from supplied context and product objects.
      *
-     * @param Context $context the context
      * @param Product $product the product model to process
      * @return NostoProduct the product object
      */
-    public static function loadData(Context $context, Product $product)
+    public static function loadData(Product $product)
     {
         if (!Validate::isLoadedObject($product)) {
             return null;
@@ -43,36 +42,30 @@ class NostoProduct extends NostoSDKProduct
 
 
         $nostoProduct = new NostoProduct();
-        $base_currency = NostoHelperCurrency::getBaseCurrency($context);
-        $idLang = $context->language->id;
-        $idShop = null;
-        $idShopGroup = null;
-        if ($context->shop instanceof Shop) {
-            $idShop = $context->shop->id;
-        }
+        $base_currency = NostoHelperCurrency::getBaseCurrency();
 
         if (Nosto::useMultipleCurrencies()) {
             $nostoProduct->setVariationId($base_currency->iso_code);
             $tagging_currency = $base_currency;
         } else {
-            $tagging_currency = $context->currency;
+            $tagging_currency = Context::getContext()->currency;
         }
-        $nostoProduct->setUrl(NostoHelperUrl::getProductUrl($product, $idLang, $idShop));
+        $nostoProduct->setUrl(NostoHelperUrl::getProductUrl($product));
         $nostoProduct->setProductId((string)$product->id);
         $nostoProduct->setName($product->name);
         $nostoProduct->setPriceCurrencyCode(Tools::strtoupper($tagging_currency->iso_code));
         $nostoProduct->setAvailability(self::checkAvailability($product));
-        $nostoProduct->amendTags($product, $idLang);
-        $nostoProduct->amendCategories($product, $idLang);
+        $nostoProduct->amendTags($product);
+        $nostoProduct->amendCategories($product);
         $nostoProduct->setDescription($product->description_short . $product->description);
         $nostoProduct->setInventoryLevel((int)$product->quantity);
-        $nostoProduct->setPrice(self::getPriceInclTax($product, $context, $tagging_currency));
-        $nostoProduct->setListPrice(self::getListPriceInclTax($product, $context, $tagging_currency));
-        $nostoProduct->amendBrand($product, $idLang);
-        $nostoProduct->amendImage($product, $idLang);
-        $nostoProduct->amendAlternateImages($product, $idLang);
-        $nostoProduct->amendSkus($product, $idLang);
-        if (NostoHelperConfig::getSkuEnabled($idLang, $idShopGroup, $idShop)) {
+        $nostoProduct->setPrice(self::getPriceInclTax($product, $tagging_currency));
+        $nostoProduct->setListPrice(self::getListPriceInclTax($product, $tagging_currency));
+        $nostoProduct->amendBrand($product);
+        $nostoProduct->amendImage($product);
+        $nostoProduct->amendAlternateImages($product);
+        $nostoProduct->amendSkus($product);
+        if (NostoHelperConfig::getSkuEnabled()) {
             $nostoProduct->amendPrices($product);
         }
 
@@ -101,13 +94,12 @@ class NostoProduct extends NostoSDKProduct
      * Sets the alternate images for the product
      *
      * @param Product $product
-     * @param $id_lang
      */
-    protected function amendAlternateImages(Product $product, $id_lang)
+    protected function amendAlternateImages(Product $product)
     {
-        $images = Image::getImages((int)$id_lang, (int)$product->id);
+        $images = Image::getImages((int)Context::getContext()->language->id, (int)$product->id);
         foreach ($images as $image) {
-            $imageType = NostoHelperImage::getTaggingImageTypeName($id_lang);
+            $imageType = NostoHelperImage::getTaggingImageTypeName(Context::getContext()->language->id);
             if (empty($imageType)) {
                 return;
             }
@@ -146,13 +138,12 @@ class NostoProduct extends NostoSDKProduct
      * Returns the absolute product image url of the primary image.
      *
      * @param Product|ProductCore $product the product model.
-     * @param int $id_lang language id of the context
      */
-    protected function amendImage($product, $id_lang)
+    protected function amendImage($product)
     {
         $image_id = $product->getCoverWs();
         if ((int)$image_id > 0) {
-            $image_type = NostoHelperImage::getTaggingImageTypeName($id_lang);
+            $image_type = NostoHelperImage::getTaggingImageTypeName(Context::getContext()->language->id);
             if (empty($image_type)) {
                 return;
             }
@@ -201,16 +192,14 @@ class NostoProduct extends NostoSDKProduct
      * Returns the product price including discounts and taxes for the given currency.
      *
      * @param Product|ProductCore $product the product.
-     * @param Context|ContextCore $context the context.
      * @param Currency|CurrencyCore $currency the currency.
      * @return float the price.
      */
-    public static function getPriceInclTax(Product $product, Context $context, Currency $currency)
+    public static function getPriceInclTax(Product $product, Currency $currency)
     {
         return NostoHelperPrice::calcPrice(
             $product->id,
             $currency,
-            $context,
             array('user_reduction' => true)
         );
     }
@@ -219,16 +208,14 @@ class NostoProduct extends NostoSDKProduct
      * Returns the product list price including taxes for the given currency.
      *
      * @param Product|ProductCore $product the product.
-     * @param Context|ContextCore $context the context.
      * @param Currency|CurrencyCore $currency the currency.
      * @return float the price.
      */
-    public static function getListPriceInclTax(Product $product, Context $context, Currency $currency)
+    public static function getListPriceInclTax(Product $product, Currency $currency)
     {
         return NostoHelperPrice::calcPrice(
             $product->id,
             $currency,
-            $context,
             array('user_reduction' => false)
         );
     }
@@ -255,7 +242,7 @@ class NostoProduct extends NostoSDKProduct
 
         // If the product has no attributes (color, size etc.), then we mark
         // it as possible to add directly to cart.
-        $product_attributes = $product->getAttributesGroups($id_lang);
+        $product_attributes = $product->getAttributesGroups(Context::getContext()->language->id);
         if (empty($product_attributes)) {
             $this->addTag1(self::ADD_TO_CART);
         }
@@ -267,13 +254,12 @@ class NostoProduct extends NostoSDKProduct
      * By "path" we mean the full tree path of the products categories and sub-categories.
      *
      * @param Product $product the product model.
-     * @param int $id_lang for which language ID to fetch the categories.
      */
-    protected function amendCategories(Product $product, $id_lang)
+    protected function amendCategories(Product $product)
     {
         $productCategories = $product->getCategories();
         foreach ($productCategories as $category_id) {
-            $category = new Category((int)$category_id, $id_lang);
+            $category = new Category((int)$category_id, Context::getContext()->language->id);
             $category = NostoCategory::loadData(Context::getContext(), $category);
             if (!empty($category)) {
                 $this->addCategory($category->getValue());
@@ -285,12 +271,11 @@ class NostoProduct extends NostoSDKProduct
      * Builds the brand name from the product's manufacturer to and returns them.
      *
      * @param Product $product the product model.
-     * @param int $id_lang for which language ID to fetch the categories.
      */
-    protected function amendBrand(Product $product, $id_lang)
+    protected function amendBrand(Product $product)
     {
         if (empty($product->manufacturer_name) && !empty($product->id_manufacturer)) {
-            $manufacturer = new Manufacturer($product->id_manufacturer, $id_lang);
+            $manufacturer = new Manufacturer($product->id_manufacturer, Context::getContext()->language->id);
             if (!empty($manufacturer)) {
                 $this->setBrand($manufacturer->name);
             }

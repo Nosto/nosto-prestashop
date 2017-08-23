@@ -246,8 +246,8 @@ class NostoProductService extends AbstractNostoService
         return NostoHelperContext::runInContext(
             $idLang,
             $idShop,
-            function ($context) use ($product) {
-                return NostoProduct::loadData($context, $product);
+            function () use ($product) {
+                return NostoProduct::loadData($product);
             }
         );
     }

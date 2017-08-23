@@ -103,7 +103,7 @@ class NostoAccountSignup extends NostoSDKAccountSignup
         $nostoSignup->setCurrencies(self::buildCurrencies($context));
         if (Nosto::useMultipleCurrencies($id_lang)) {
             $nostoSignup->setUseCurrencyExchangeRates(Nosto::useMultipleCurrencies($id_lang));
-            $nostoSignup->setDefaultVariantId(NostoHelperCurrency::getBaseCurrency($context)->iso_code);
+            $nostoSignup->setDefaultVariantId(NostoHelperCurrency::getBaseCurrency()->iso_code);
         }
 
         NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoSignup), array(
@@ -140,7 +140,7 @@ class NostoAccountSignup extends NostoSDKAccountSignup
     protected static function buildCurrencies(Context $context)
     {
         $nosto_currencies = array();
-        $currencies = NostoHelperCurrency::getCurrencies($context, true);
+        $currencies = NostoHelperCurrency::getCurrencies(true);
         foreach ($currencies as $currency) {
             $nosto_currency = NostoHelperCurrency::getNostoCurrency($currency, $context);
             $nosto_currencies[$currency['iso_code']] = $nosto_currency;

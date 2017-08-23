@@ -84,8 +84,8 @@ class NostoIndexController
             && Shop::getContext() === Shop::CONTEXT_SHOP
         ) {
             try {
-                $currentUser = NostoCurrentUser::loadData(Context::getContext());
-                $meta = NostoIframe::loadData(Context::getContext(), $languageId);
+                $currentUser = NostoCurrentUser::loadData();
+                $meta = NostoIframe::loadData($languageId);
                 $url = NostoSDKIframeHelper::getUrl($meta, $account, $currentUser);
             } catch (NostoSDKException $e) {
                 NostoHelperLogger::error($e, 'Unable to load the Nosto IFrame');
@@ -132,8 +132,8 @@ class NostoIndexController
             $account instanceof NostoSDKAccountInterface === false
             && Shop::getContext() === Shop::CONTEXT_SHOP
         ) {
-            $currentUser = NostoCurrentUser::loadData(Context::getContext());
-            $accountIframe = NostoIframe::loadData(Context::getContext(), $languageId);
+            $currentUser = NostoCurrentUser::loadData();
+            $accountIframe = NostoIframe::loadData($languageId);
             $iframeInstallationUrl = NostoSDKIframeHelper::getUrl(
                 $accountIframe,
                 $account,
@@ -170,8 +170,6 @@ class NostoIndexController
                     NostoHelperUrl::getModuleUrl(
                         'nostotagging',
                         'cronRates',
-                        $currentLanguage['id_lang'],
-                        $shopId,
                         array('token' => NostoHelperCron::getCronAccessToken())
                     )
                 ),
