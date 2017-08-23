@@ -24,9 +24,9 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use Nosto\Object\Customer as NostoSDKUser;
+use Nosto\Object\Customer as NostoSDKCustomer;
 
-class NostoCustomer extends NostoSDKUser
+class NostoCustomer extends NostoSDKCustomer
 {
     /**
      * Loads the customer data from supplied context and customer objects.
