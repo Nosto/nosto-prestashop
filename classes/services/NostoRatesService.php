@@ -35,15 +35,9 @@ class NostoRatesService extends AbstractNostoService
     public function updateExchangeRatesForAllStores()
     {
         foreach (Shop::getShops() as $shop) {
-            $idShop = isset($shop['id_shop']) ? (int)$shop['id_shop'] : null;
-            $idShopGroup = isset($shop['id_shop_group']) ? (int)$shop['id_shop_group'] : null;
+            //TODO: Emulate
             foreach (Language::getLanguages(true, $idShop) as $language) {
-                $idLang = (int)$language['id_lang'];
-                $useMultipleCurrencies = NostoHelperConfig::useMultipleCurrencies(
-                    $idLang,
-                    $idShopGroup,
-                    $idShop
-                );
+                $useMultipleCurrencies = NostoHelperConfig::useMultipleCurrencies();
                 if ($useMultipleCurrencies) {
                     $nostoAccount = NostoHelperAccount::find();
                     if (!is_null($nostoAccount)) {

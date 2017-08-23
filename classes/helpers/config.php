@@ -65,7 +65,7 @@ class NostoHelperConfig
      * @param string $name the name of the config entry in the db.
      * @return mixed
      */
-    private static function readGlobal($name, $lang_id = null, $id_shop_group = null, $id_shop = null)
+    private static function readGlobal($name)
     {
         return Configuration::get($name);
     }
@@ -252,15 +252,11 @@ class NostoHelperConfig
      * Gets a token from the config by name.
      *
      * @param string $token_name the name of the token to get.
-     * @param int $id_lang the language to get the token for.
-     * @param null|int $id_shop_group the shop group to get the token for (defaults to current
-     *     context).
-     * @param null|int $id_shop the shop to get the token for (defaults to current context).
      * @return mixed
      */
-    public static function getToken($token_name, $id_lang, $id_shop_group = null, $id_shop = null)
+    public static function getToken($token_name)
     {
-        return Configuration::get(self::getTokenConfigKey($token_name), $id_lang, $id_shop_group, $id_shop);
+        return Configuration::get(self::getTokenConfigKey($token_name), NostoHelperContext::getLanguageId(), NostoHelperContext::getShopGroupId(), NostoHelperContext::getShopId());
     }
 
     /**
@@ -321,28 +317,22 @@ class NostoHelperConfig
     /**
      * Returns the multi currency method in use for the context.
      *
-     * @param int $id_lang the language identifier for which to fetch the configuration
-     * @param null|int $id_shop_group the shop-group identifier for which to fetch the configuration
-     * @param null|int $id_shop the shop identifier for which to fetch the configuration
      * @return string the multi currency method.
      */
-    public static function getMultiCurrencyMethod($id_lang, $id_shop_group = null, $id_shop = null)
+    public static function getMultiCurrencyMethod()
     {
-        $method = Configuration::get(self::MULTI_CURRENCY_METHOD, $id_lang, $id_shop_group, $id_shop);
+        $method = Configuration::get(self::MULTI_CURRENCY_METHOD, NostoHelperContext::getLanguageId(), NostoHelperContext::getShopGroupId(), NostoHelperContext::getShopId());
         return !empty($method) ? $method : self::MULTI_CURRENCY_METHOD_DISABLED;
     }
 
     /**
      * Returns the position where to render Nosto tagging
      *
-     * @param int $id_lang the language identifier for which to fetch the configuration
-     * @param null|int $id_shop_group the shop-group identifier for which to fetch the configuration
-     * @param null|int $id_shop the shop identifier for which to fetch the configuration
      * @return string
      */
-    public static function getNostotaggingRenderPosition($id_lang, $id_shop_group = null, $id_shop = null)
+    public static function getNostotaggingRenderPosition()
     {
-        $position = self::read(self::NOSTOTAGGING_POSITION, $id_lang, $id_shop_group, $id_shop);
+        $position = self::read(self::NOSTOTAGGING_POSITION);
         return !empty($position) ? $position : self::NOSTOTAGGING_POSITION_TOP;
     }
 
@@ -370,15 +360,11 @@ class NostoHelperConfig
 
     /**
      * Is sku feature enabled
-     *
-     * @param int $langId the language identifier for which to fetch the configuration
-     * @param null|int $shopGroupId the shop-group identifier for which to fetch the configuration
-     * @param null|int $shopId the shop identifier for which to fetch the configuration
      * @return bool true if sku feature has been enabled, false otherwise
      */
-    public static function getSkuEnabled($langId, $shopGroupId, $shopId)
+    public static function getSkuEnabled()
     {
-        return (bool)self::read(self::SKU_SWITCH, $langId, $shopGroupId, $shopId);
+        return (bool)self::read(self::SKU_SWITCH);
     }
 
     /**
@@ -428,14 +414,11 @@ class NostoHelperConfig
     /**
      * Checks if multiple currencies are used in tagging
      *
-     * @param int $id_lang the language identifier for which to fetch the configuration
-     * @param null|int $id_shop_group the shop-group identifier for which to fetch the configuration
-     * @param null|int $id_shop the shop identifier for which to fetch the configuration
      * @return bool the multi currency method.
      */
-    public static function useMultipleCurrencies($id_lang, $id_shop_group = null, $id_shop = null)
+    public static function useMultipleCurrencies()
     {
-        return self::getMultiCurrencyMethod($id_lang, $id_shop_group, $id_shop) !== self::MULTI_CURRENCY_METHOD_DISABLED;
+        return self::getMultiCurrencyMethod() !== self::MULTI_CURRENCY_METHOD_DISABLED;
     }
 
     /**
@@ -453,14 +436,11 @@ class NostoHelperConfig
     /**
      * Returns the image type to be used for Nosto tagging
      *
-     * @param int $id_lang the language identifier for which to fetch the configuration
-     * @param null|int $id_shop_group the shop-group identifier for which to fetch the configuration
-     * @param null|int $id_shop the shop identifier for which to fetch the configuration
      * @return int
      */
-    public static function getImageType($id_lang, $id_shop_group = null, $id_shop = null)
+    public static function getImageType()
     {
-        $type = self::read(self::NOSTOTAGGING_IMAGE_TYPE, $id_lang, $id_shop_group, $id_shop);
+        $type = self::read(self::NOSTOTAGGING_IMAGE_TYPE);
 
         return !empty($type) ? $type : null;
     }

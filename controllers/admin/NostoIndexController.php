@@ -174,28 +174,16 @@ class NostoIndexController
                     )
                 ),
             ),
-            'multi_currency_method' => NostoHelperConfig::getMultiCurrencyMethod(
-                $currentLanguage['id_lang'],
-                $shopGroupId,
-                $shopId
-            ),
-            'nostotagging_position' => NostoHelperConfig::getNostotaggingRenderPosition(
-                $currentLanguage['id_lang'],
-                $shopGroupId,
-                $shopId
-            ),
+            'multi_currency_method' => NostoHelperConfig::getMultiCurrencyMethod(),
+            'nostotagging_position' => NostoHelperConfig::getNostotaggingRenderPosition(),
             'nostotagging_ps_version_class' => 'ps-' . str_replace('.', '',
                     Tools::substr(_PS_VERSION_, 0, 3)),
             'missing_tokens' => $missingTokens,
             'iframe_installation_url' => $iframeInstallationUrl,
             'iframe_origin' => self::getIframeOrigin(),
             'image_types' => NostoHelperImage::getProductImageTypes(),
-            'current_image_type' => NostoHelperConfig::getImageType(
-                $currentLanguage['id_lang'],
-                $shopGroupId,
-                $shopId
-            ),
-            'sku_enabled' => NostoHelperConfig::getSkuEnabled($languageId, $shopGroupId, $shopId)
+            'current_image_type' => NostoHelperConfig::getImageType(),
+            'sku_enabled' => NostoHelperConfig::getSkuEnabled()
         );
 
         if ($account) {
