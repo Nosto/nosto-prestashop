@@ -142,16 +142,9 @@ class NostoHelperUrl
      * @param int|null $productAttributeId product attribute id
      * @return string the product page url.
      */
-    public static function getProductUrl(
-        $product,
-        $idLang = null,
-        $idShop = null,
-        array $params = array(),
-        $productAttributeId = 0
-    )
-    {
-        $idLang = (int)Context::getContext()->language->id;
-        $idShop = (int)Context::getContext()->shop->id;
+    public static function getProductUrl($product, array $params = array(), $productAttributeId = 0) {
+        $idLang = NostoHelperContext::getLanguageId();
+        $idShop = NostoHelperContext::getShopId();
 
         $url = NostoHelperLink::getLink()->getProductLink(
             $product,
@@ -184,8 +177,8 @@ class NostoHelperUrl
      */
     public static function getCategoryUrl($category, array $params = array())
     {
-        $idLang = (int)Context::getContext()->language->id;
-        $idShop = (int)Context::getContext()->shop->id;
+        $idLang = NostoHelperContext::getLanguageId();
+        $idShop = NostoHelperContext::getShopId();
 
         $url = NostoHelperLink::getLink()->getCategoryLink($category, null, $idLang, null, $idShop);
         if ((int)Configuration::get('PS_REWRITING_SETTINGS') === 0) {
@@ -207,8 +200,8 @@ class NostoHelperUrl
      */
     public static function getPageUrl($controller, array $params = array())
     {
-        $idLang = (int)Context::getContext()->language->id;
-        $idShop = (int)Context::getContext()->shop->id;
+        $idLang = NostoHelperContext::getLanguageId();
+        $idShop = NostoHelperContext::getShopId();
 
         $url = NostoHelperLink::getLink()->getPageLink($controller, true, $idLang, null, false, $idShop);
 
@@ -232,8 +225,8 @@ class NostoHelperUrl
      */
     public static function getModuleUrl($name, $controller, array $params = array())
     {
-        $idLang = (int)Context::getContext()->language->id;
-        $idShop = (int)Context::getContext()->shop->id;
+        $idLang = NostoHelperContext::getLanguageId();
+        $idShop = NostoHelperContext::getShopId();
 
         $params['module'] = $name;
         $params['controller'] = $controller;
