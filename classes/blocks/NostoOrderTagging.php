@@ -38,7 +38,7 @@ class NostoOrderTagging
             return null;
         }
 
-        $nostoOrder = NostoOrder::loadData(Context::getContext(), $order);
+        $nostoOrder = NostoOrder::loadData($order);
 
         return $nostoOrder ? $nostoOrder->toHtml() : null;
     }

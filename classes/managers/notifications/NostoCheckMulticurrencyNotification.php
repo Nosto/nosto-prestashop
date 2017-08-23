@@ -32,24 +32,20 @@ class NostoCheckMulticurrencyNotification extends NostoNotification
      * Checks if some of the stores use multiple currencies but Nosto multi-currency is not enabled
      * and returns a notification if it isn't
      *
-     * @param Shop $shop the shop for which to check the notification
-     * @param Language $language the language for which to check the notification
      * @return NostoNotification|null a notification or null if no notification is needed
      */
-    public static function check(Shop $shop, Language $language)
+    public static function check()
     {
         $connected = NostoHelperAccount::existsAndIsConnected();
         if ($connected) {
             if (!Nosto::useMultipleCurrencies()) {
                 return NostoHelperContext::runInContext(
-                    $language->id,
-                    $shop->id,
-                    function () use ($shop, $language) {
+                    function () use ($x) {
                         $currencies = NostoHelperCurrency::getCurrencies(true);
                         if (count($currencies) > 1) {
                             return new NostoNotification(
-                                $shop,
-                                $language,
+                                Context::getContext()->shop,
+                                Context::getContext()->language,
                                 NostoSDKNotification::TYPE_MULTI_CURRENCY_DISABLED,
                                 NostoSDKNotification::SEVERITY_WARNING,
                                 'Your shop %s with language %s is using multiple currencies but' .

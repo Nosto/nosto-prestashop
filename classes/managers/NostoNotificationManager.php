@@ -40,17 +40,16 @@ class NostoNotificationManager
         foreach (Shop::getShops() as $shopArray) {
             $shop = new Shop($shopArray['id_shop']);
             foreach (Language::getLanguages(true, $shop->id) as $languageArray) {
-                $language = new Language($languageArray['id_lang']);
 
-                $notification = NostoCheckAccountNotification::check($shop, $language);
+                $notification = NostoCheckAccountNotification::check();
                 if ($notification != null) {
                     $notifications[] = $notification;
                 }
-                $notification = NostoCheckMulticurrencyNotification::check($shop, $language);
+                $notification = NostoCheckMulticurrencyNotification::check();
                 if ($notification != null) {
                     $notifications[] = $notification;
                 }
-                $notification = NostoCheckTokenNotification::check($shop, $language);
+                $notification = NostoCheckTokenNotification::check();
                 if ($notification != null) {
                     $notifications[] = $notification;
                 }

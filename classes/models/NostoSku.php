@@ -57,14 +57,7 @@ class NostoSku extends NostoSDKSku
         $nostoSku->amendName($combination);
 
         $nostoSku->setGtin($combination->ean13);
-        $nostoSku->setUrl(
-            NostoHelperUrl::getProductUrl(
-                $product, NostoHelperContext::getLanguageId(),
-                NostoHelperContext::getShopId(),
-                array(),
-                $combination->id
-            )
-        );
+        $nostoSku->setUrl(NostoHelperUrl::getProductUrl($product, array(), $combination->id));
 
         return $nostoSku;
     }
@@ -76,7 +69,7 @@ class NostoSku extends NostoSDKSku
      */
     protected function amendPrice(Combination $combination)
     {
-        $base_currency = NostoHelperCurrency::getBaseCurrency(Context::getContext());
+        $base_currency = NostoHelperCurrency::getBaseCurrency();
         if (Nosto::useMultipleCurrencies()) {
             $tagging_currency = $base_currency;
         } else {
@@ -152,11 +145,7 @@ class NostoSku extends NostoSDKSku
 
                 $imageId = $image['id'];
                 if ((int)$imageId > 0) {
-                    $imageType = NostoHelperImage::getTaggingImageTypeName(
-                        NostoHelperContext::getLanguageId(),
-                        NostoHelperContext::getShopGroupId(),
-                        NostoHelperContext::getShopId()
-                    );
+                    $imageType = NostoHelperImage::getTaggingImageTypeName();
                     if (empty($imageType)) {
                         return;
                     }
@@ -212,7 +201,6 @@ class NostoSku extends NostoSDKSku
         return NostoHelperPrice::calcPrice(
             $combination->id_product,
             $currency,
-            Context::getContext(),
             array('user_reduction' => true, 'id_product_attribute' => $combination->id)
         );
     }
@@ -229,7 +217,6 @@ class NostoSku extends NostoSDKSku
         return NostoHelperPrice::calcPrice(
             $combination->id_product,
             $currency,
-            Context::getContext(),
             array('user_reduction' => false, 'id_product_attribute' => $combination->id)
         );
     }

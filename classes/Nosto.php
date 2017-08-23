@@ -48,10 +48,6 @@ class Nosto
      */
     public static function useMultipleCurrencies()
     {
-        return NostoHelperConfig::getMultiCurrencyMethod(
-                NostoHelperContext::getLanguageId(),
-                NostoHelperContext::getShopGroupId(),
-                NostoHelperContext::getShopId()
-            ) !== NostoHelperConfig::MULTI_CURRENCY_METHOD_DISABLED;
+        return NostoHelperConfig::getMultiCurrencyMethod() !== NostoHelperConfig::MULTI_CURRENCY_METHOD_DISABLED;
     }
 }

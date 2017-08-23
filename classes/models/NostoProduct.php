@@ -116,7 +116,6 @@ class NostoProduct extends NostoSDKProduct
      * Amend skus
      *
      * @param Product $product
-     * @return bool
      */
     protected function amendSkus(Product $product)
     {

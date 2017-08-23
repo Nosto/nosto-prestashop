@@ -84,11 +84,7 @@ class NostoHelperImage
      */
     public static function getTaggingImageTypeName()
     {
-        $savedImageTypeId = NostoHelperConfig::getImageType(
-            NostoHelperContext::getLanguageId(),
-            NostoHelperContext::getShopGroupId(),
-            NostoHelperContext::getShopId()
-        );
+        $savedImageTypeId = NostoHelperConfig::getImageType();
         if ($savedImageTypeId) {
             $image_type = new ImageType($savedImageTypeId);
             $imageTypeName = $image_type->name;

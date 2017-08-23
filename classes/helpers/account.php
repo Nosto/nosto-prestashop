@@ -70,7 +70,7 @@ class NostoHelperAccount
      */
     public static function deleteAll()
     {
-        foreach (Shop::getShops() as $shop) {
+        foreach (Shop::getShops()) {
             //TODO: Emulatte
             self::delete();
         }
@@ -94,12 +94,7 @@ class NostoHelperAccount
             $account = new NostoSDKAccount($account_name);
             $tokens = array();
             foreach (NostoSDKAPIToken::getApiTokenNames() as $token_name) {
-                $token_value = NostoHelperConfig::getToken(
-                    $token_name,
-                    NostoHelperContext::getLanguageId(),
-                    NostoHelperContext::getShopGroupId(),
-                    NostoHelperContext::getShopId()
-                );
+                $token_value = NostoHelperConfig::getToken($token_name);
                 if (!empty($token_value)) {
                     $tokens[$token_name] = $token_value;
                 }
