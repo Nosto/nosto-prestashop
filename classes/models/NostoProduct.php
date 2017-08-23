@@ -62,7 +62,7 @@ class NostoProduct extends NostoSDKProduct
         $nostoProduct->setName($product->name);
         $nostoProduct->setPriceCurrencyCode(Tools::strtoupper($tagging_currency->iso_code));
         $nostoProduct->setAvailability(self::checkAvailability($product));
-        $nostoProduct->setTag1(self::buildTags($product, $idLang));
+        $nostoProduct->amendTags($product, $idLang);
         $nostoProduct->amendCategories($product, $idLang);
         $nostoProduct->setDescription($product->description_short . $product->description);
         $nostoProduct->setInventoryLevel((int)$product->quantity);
@@ -243,15 +243,13 @@ class NostoProduct extends NostoSDKProduct
      *
      * @param Product $product the product model.
      * @param int $id_lang for which language ID to fetch the product tags.
-     * @return StringCollection the built tags.
      */
-    protected static function buildTags(Product $product, $id_lang)
+    protected function amendTags(Product $product, $id_lang)
     {
-        $tagsCollection = new StringCollection('tag1', 'tag');
         if (($product_tags = $product->getTags($id_lang)) !== '') {
             $tags = explode(', ', $product_tags);
             foreach ($tags as $tag) {
-                $tagsCollection->append($tag);
+                $this->addTag1($tag);
             }
         }
 
@@ -259,10 +257,8 @@ class NostoProduct extends NostoSDKProduct
         // it as possible to add directly to cart.
         $product_attributes = $product->getAttributesGroups($id_lang);
         if (empty($product_attributes)) {
-            $tagsCollection->append(self::ADD_TO_CART);
+            $this->addTag1(self::ADD_TO_CART);
         }
-
-        return $tagsCollection;
     }
 
     /**

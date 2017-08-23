@@ -40,6 +40,6 @@ class NostoVariationTagging
 
         $priceVariation = NostoVariation::loadData();
 
-        return $priceVariation->toHtml();
+        return $priceVariation ? $priceVariation->toHtml() : null;
     }
 }

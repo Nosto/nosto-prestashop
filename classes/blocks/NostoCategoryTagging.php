@@ -49,6 +49,6 @@ class NostoCategoryTagging
         }
         $nostoCategory = NostoCategory::loadData(Context::getContext(), $category);
 
-        return $nostoCategory ? $nostoCategory->toHtml() : '';
+        return $nostoCategory ? $nostoCategory->toHtml() : null;
     }
 }

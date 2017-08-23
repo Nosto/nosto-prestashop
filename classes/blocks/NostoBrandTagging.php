@@ -41,6 +41,6 @@ class NostoBrandTagging
 
         $nostoBrand = NostoBrand::loadData($brand);
 
-        return $nostoBrand->toHtml();
+        return $nostoBrand ? $nostoBrand->toHtml() : null;
     }
 }

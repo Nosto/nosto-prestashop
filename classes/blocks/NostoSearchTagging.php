@@ -41,6 +41,6 @@ class NostoSearchTagging
 
         $nostoQuery = NostoSearch::loadData($searchTerm);
 
-        return $nostoQuery->toHtml();
+        return $nostoQuery ? $nostoQuery->toHtml() : null;
     }
 }

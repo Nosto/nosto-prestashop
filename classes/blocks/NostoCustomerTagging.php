@@ -41,6 +41,9 @@ class NostoCustomerTagging
         $hcid = $cid ? hash(NostoTagging::VISITOR_HASH_ALGO, $cid) : '';
 
         $nostoCustomer = NostoCustomer::loadData(Context::getContext()->customer);
+        if (!$nostoCustomer instanceof  NostoCustomer) {
+            return null;
+        }
         $nostoCustomer->setHcid($hcid);
 
         return $nostoCustomer->toHtml();
