@@ -96,7 +96,7 @@ class NostoHelperAccount
             $id_shop = isset($shop['id_shop']) ? $shop['id_shop'] : null;
             foreach (Language::getLanguages(true, $id_shop) as $language) {
                 $id_shop_group = isset($shop['id_shop_group']) ? $shop['id_shop_group'] : null;
-                $account = self::find($language['id_lang'], $id_shop_group, $id_shop);
+                $account = self::find();
                 if ($account === null) {
                     continue;
                 }
@@ -109,18 +109,15 @@ class NostoHelperAccount
     /**
      * Finds and returns an account for given criteria.
      *
-     * @param null|int $lang_id the ID of the language.
-     * @param null|int $id_shop_group the ID of the shop context.
-     * @param null|int $id_shop the ID of the shop.
-     * @return NostoSDKAccount|null the account with loaded API tokens, or null if not
-     *     found.
+     * @return NostoSDKAccount|null the account with loaded API tokens, or null if not found.
+     * @internal param int|null $lang_id the ID of the language.
      */
-    public static function find($lang_id = null, $id_shop_group = null, $id_shop = null)
+    public static function find()
     {
         $account_name = NostoHelperConfig::getAccountName(
-            $lang_id,
-            $id_shop_group,
-            $id_shop
+            NostoHelperContext::getLanguageId(),
+            NostoHelperContext::getShopGroupId(),
+            NostoHelperContext::getShopId()
         );
         if (!empty($account_name)) {
             $account = new NostoSDKAccount($account_name);
@@ -128,9 +125,9 @@ class NostoHelperAccount
             foreach (NostoSDKAPIToken::getApiTokenNames() as $token_name) {
                 $token_value = NostoHelperConfig::getToken(
                     $token_name,
-                    $lang_id,
-                    $id_shop_group,
-                    $id_shop
+                    NostoHelperContext::getLanguageId(),
+                    NostoHelperContext::getShopGroupId(),
+                    NostoHelperContext::getShopId()
                 );
                 if (!empty($token_value)) {
                     $tokens[$token_name] = $token_value;
@@ -151,14 +148,11 @@ class NostoHelperAccount
     /**
      * Checks if an account exists and is "connected to Nosto" for given criteria.
      *
-     * @param null|int $lang_id the ID of the language.
-     * @param null|int $id_shop_group the ID of the shop context.
-     * @param null|int $id_shop the ID of the shop.
      * @return bool true if it does, false otherwise.
      */
-    public static function existsAndIsConnected($lang_id = null, $id_shop_group = null, $id_shop = null)
+    public static function existsAndIsConnected()
     {
-        $account = self::find($lang_id, $id_shop_group, $id_shop);
+        $account = self::find();
         return ($account !== null && $account->isConnectedToNosto());
     }
 }

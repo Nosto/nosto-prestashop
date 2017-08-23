@@ -62,7 +62,8 @@ class NostoOrderService extends AbstractNostoService
             $idShop = isset($order->id_shop) ? $order->id_shop : null;
             // This is done out of context, so we need to specify the exact parameters to get the
             // correct account.
-            $account = NostoHelperAccount::find($order->id_lang, $idShopGroup, $idShop);
+            // TODO: EMulate
+            $account = NostoHelperAccount::find();
             if ($account !== null && $account->isConnectedToNosto()) {
                 $customerId = NostoCustomerManager::getNostoId($order);
 

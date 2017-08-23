@@ -33,13 +33,12 @@ class NostoOAuth extends NostoSDKOAuth
     /**
      * Loads meta data from the given context and language.
      *
-     * @param int $idLang the language
      * @param string $moduleName the name of the module
      * @return NostoOAuth|null the oauth object
      */
-    public static function loadData($idLang, $moduleName)
+    public static function loadData($moduleName)
     {
-        $language = new Language($idLang);
+        $language = new Language(NostoHelperContext::getLanguageId());
         if (!Validate::isLoadedObject($language)) {
             return null;
         }

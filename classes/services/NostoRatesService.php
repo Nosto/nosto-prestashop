@@ -45,7 +45,7 @@ class NostoRatesService extends AbstractNostoService
                     $idShop
                 );
                 if ($useMultipleCurrencies) {
-                    $nostoAccount = NostoHelperAccount::find($idLang, $idShopGroup, $idShop);
+                    $nostoAccount = NostoHelperAccount::find();
                     if (!is_null($nostoAccount)) {
                         NostoHelperContext::runInContext(
                             $idLang,

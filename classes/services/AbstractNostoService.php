@@ -55,7 +55,7 @@ abstract class AbstractNostoService
             $idShopGroup = (int)$shop['id_shop_group'];
             foreach (LanguageCore::getLanguages(true, $idShop) as $language) {
                 $idLang = (int)$language['id_lang'];
-                $account = NostoHelperAccount::find($idLang, $idShopGroup, $idShop);
+                $account = NostoHelperAccount::find();
                 if ($account === null || !$account->isConnectedToNosto()) {
                     continue;
                 }

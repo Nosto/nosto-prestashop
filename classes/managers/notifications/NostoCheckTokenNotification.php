@@ -32,24 +32,17 @@ class NostoCheckTokenNotification extends NostoNotification
      * Checks if any of the tokens are missing from the store and language and returns a
      * notification if any token is is
      *
-     * @param Shop $shop the shop for which to check the notification
-     * @param Language $language the language for which to check the notification
      * @return NostoNotification|null a notification or null if no notification is needed
      */
-    public static function check(Shop $shop, Language $language)
+    public static function check()
     {
-        $idShopGroup = isset($shop->id_shop_group) ? $shop->id_shop_group : null;
-        $connected = NostoHelperAccount::existsAndIsConnected(
-            $language->id,
-            $idShopGroup,
-            $shop->id
-        );
+        $connected = NostoHelperAccount::existsAndIsConnected();
         if ($connected) {
-            $account = NostoHelperAccount::find($language->id);
+            $account = NostoHelperAccount::find();
             if ($account instanceof NostoSDKAccount && $account->hasMissingTokens()) {
                 return new NostoCheckTokenNotification(
-                    $shop,
-                    $language,
+                    Context::getContext()->shop,
+                    Context::getContext()->language,
                     NostoSDKNotification::TYPE_MISSING_TOKENS,
                     NostoSDKNotification::SEVERITY_WARNING,
                     'One or more Nosto API tokens are missing for shop %s and language %s'

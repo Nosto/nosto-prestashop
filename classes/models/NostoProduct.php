@@ -99,7 +99,7 @@ class NostoProduct extends NostoSDKProduct
     {
         $images = Image::getImages((int)Context::getContext()->language->id, (int)$product->id);
         foreach ($images as $image) {
-            $imageType = NostoHelperImage::getTaggingImageTypeName(Context::getContext()->language->id);
+            $imageType = NostoHelperImage::getTaggingImageTypeName();
             if (empty($imageType)) {
                 return;
             }
@@ -116,12 +116,11 @@ class NostoProduct extends NostoSDKProduct
      * Amend skus
      *
      * @param Product $product
-     * @param $langId
      * @return bool
      */
-    protected function amendSkus(Product $product, $langId)
+    protected function amendSkus(Product $product)
     {
-        $attributes_groups = $product->getAttributesGroups($langId);
+        $attributes_groups = $product->getAttributesGroups(NostoHelperContext::getLanguageId());
         $variants = array();
         foreach ($attributes_groups as $attributes_group) {
             $variants[$attributes_group['id_product_attribute']] = $attributes_group;
@@ -129,7 +128,7 @@ class NostoProduct extends NostoSDKProduct
 
         $combinationIds = $product->getWsCombinations();
         foreach ($combinationIds as $combinationId) {
-            $combination = new Combination($combinationId['id'], $langId);
+            $combination = new Combination($combinationId['id'], NostoHelperContext::getLanguageId());
             $this->addSku(NostoSku::loadData($product, $this, $combination, $variants[$combination->id]));
         }
     }
@@ -143,7 +142,7 @@ class NostoProduct extends NostoSDKProduct
     {
         $image_id = $product->getCoverWs();
         if ((int)$image_id > 0) {
-            $image_type = NostoHelperImage::getTaggingImageTypeName(Context::getContext()->language->id);
+            $image_type = NostoHelperImage::getTaggingImageTypeName();
             if (empty($image_type)) {
                 return;
             }
@@ -229,11 +228,10 @@ class NostoProduct extends NostoSDKProduct
      * the product when it is recommended to a user.
      *
      * @param Product $product the product model.
-     * @param int $id_lang for which language ID to fetch the product tags.
      */
-    protected function amendTags(Product $product, $id_lang)
+    protected function amendTags(Product $product)
     {
-        if (($product_tags = $product->getTags($id_lang)) !== '') {
+        if (($product_tags = $product->getTags(NostoHelperContext::getLanguageId())) !== '') {
             $tags = explode(', ', $product_tags);
             foreach ($tags as $tag) {
                 $this->addTag1($tag);

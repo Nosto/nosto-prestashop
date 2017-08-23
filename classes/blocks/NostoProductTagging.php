@@ -42,7 +42,7 @@ class NostoProductTagging extends NostoCategoryTagging
             return null;
         }
 
-        $nostoProduct = NostoProduct::loadData(Context::getContext(), $product);
+        $nostoProduct = NostoProduct::loadData($product);
         $html = $nostoProduct ? $nostoProduct->toHtml() : '';
 
         $category = NostoHelperController::resolveObject(

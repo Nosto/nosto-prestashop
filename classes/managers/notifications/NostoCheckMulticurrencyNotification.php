@@ -38,9 +38,9 @@ class NostoCheckMulticurrencyNotification extends NostoNotification
      */
     public static function check(Shop $shop, Language $language)
     {
-        $connected = NostoHelperAccount::existsAndIsConnected($language->id, $shop->id_shop_group, $shop->id);
+        $connected = NostoHelperAccount::existsAndIsConnected();
         if ($connected) {
-            if (!Nosto::useMultipleCurrencies($language->id, $shop)) {
+            if (!Nosto::useMultipleCurrencies()) {
                 return NostoHelperContext::runInContext(
                     $language->id,
                     $shop->id,
