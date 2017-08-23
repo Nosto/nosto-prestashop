@@ -51,7 +51,7 @@ class NostoProductTagging extends NostoCategoryTagging
             "getCategory"
         );
         if (Validate::isLoadedObject($category)) {
-            $nostoCategory = NostoCategory::loadData(Context::getContext(), $category);
+            $nostoCategory = NostoCategory::loadData($category);
             $html .= $nostoCategory->toHtml();
         }
 

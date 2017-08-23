@@ -70,39 +70,37 @@ class NostoAccountSignup extends NostoSDKAccountSignup
     /**
      * Loads the meta data for the context and given language.
      *
-     * @param Context $context the context
-     * @param int $id_lang the language to use as data source.
      * @return NostoAccountSignup|null the signup object
      */
-    public static function loadData(Context $context, $id_lang)
+    public static function loadData()
     {
         $nostoSignup = new NostoAccountSignup();
 
-        $language = new Language($id_lang);
+        $language = new Language(NostoHelperContext::getLanguageId());
         if (!Validate::isLoadedObject($language)) {
             return null;
         }
 
-        if (!Validate::isLoadedObject($context->language)) {
-            $context->language = self::loadLanguage();
+        if (!Validate::isLoadedObject(Context::getContext()->language)) {
+            Context::getContext()->language = self::loadLanguage();
         }
-        if (!Validate::isLoadedObject($context->currency)) {
-            $context->currency = self::loadCurrency();
+        if (!Validate::isLoadedObject(Context::getContext()->currency)) {
+            Context::getContext()->currency = self::loadCurrency();
         }
-        if (!Validate::isLoadedObject($context->country)) {
-            $context->country = self::loadCountry();
+        if (!Validate::isLoadedObject(Context::getContext()->country)) {
+            Context::getContext()->country = self::loadCountry();
         }
         $nostoSignup->setTitle(Configuration::get('PS_SHOP_NAME'));
         $nostoSignup->setName(Tools::substr(sha1((string)rand()), 0, 8));
-        $nostoSignup->setFrontPageUrl(self::getContextShopUrl($context, $language));
-        $nostoSignup->setCurrencyCode($context->currency->iso_code);
-        $nostoSignup->setLanguageCode($context->language->iso_code);
+        $nostoSignup->setFrontPageUrl(self::getContextShopUrl());
+        $nostoSignup->setCurrencyCode(Context::getContext()->currency->iso_code);
+        $nostoSignup->setLanguageCode($language->iso_code);
         $nostoSignup->setOwnerLanguageCode($language->iso_code);
-        $nostoSignup->setOwner(NostoAccountOwner::loadData($context));
-        $nostoSignup->setBillingDetails(NostoAccountBilling::loadData($context));
-        $nostoSignup->setCurrencies(self::buildCurrencies($context));
-        if (Nosto::useMultipleCurrencies($id_lang)) {
-            $nostoSignup->setUseCurrencyExchangeRates(Nosto::useMultipleCurrencies($id_lang));
+        $nostoSignup->setOwner(NostoAccountOwner::loadData(Context::getContext()));
+        $nostoSignup->setBillingDetails(NostoAccountBilling::loadData());
+        $nostoSignup->setCurrencies(self::buildCurrencies());
+        if (Nosto::useMultipleCurrencies(NostoHelperContext::getLanguageId())) {
+            $nostoSignup->setUseCurrencyExchangeRates(Nosto::useMultipleCurrencies(NostoHelperContext::getLanguageId()));
             $nostoSignup->setDefaultVariantId(NostoHelperCurrency::getBaseCurrency()->iso_code);
         }
 
@@ -115,34 +113,34 @@ class NostoAccountSignup extends NostoSDKAccountSignup
     /**
      * Returns the current shop's url from the context and language.
      *
-     * @param Context $context the context.
+     * @param Context Context::getContext() the context.
      * @param Language $language the language.
      * @return string the absolute url.
      */
-    protected static function getContextShopUrl($context, $language) //TODO: Why is this not in the helper?
+    protected static function getContextShopUrl() //TODO: Why is this not in the helper?
     {
-        $shop = $context->shop;
+        $shop = Context::getContext()->shop;
         $ssl = Configuration::get('PS_SSL_ENABLED');
         $rewrite = (int)Configuration::get('PS_REWRITING_SETTINGS', null, null, $shop->id);
-        $multi_lang = (Language::countActiveLanguages($shop->id) > 1);
+        $multi_lang = (Language::countActiveLanguages(Context::getContext()->shop->id) > 1);
         $base = ($ssl ? 'https://' . $shop->domain_ssl : 'http://' . $shop->domain) . $shop->getBaseURI();
         $lang = '';
         if ($multi_lang) {
             if ($rewrite) {
-                $lang = $language->iso_code . '/';
+                $lang = Context::getContext()->language->iso_code . '/';
             } else {
-                $lang = '?id_lang=' . $language->id;
+                $lang = '?id_lang=' . Context::getContext()->language->id;
             }
         }
         return $base . $lang;
     }
 
-    protected static function buildCurrencies(Context $context)
+    protected static function buildCurrencies()
     {
         $nosto_currencies = array();
         $currencies = NostoHelperCurrency::getCurrencies(true);
         foreach ($currencies as $currency) {
-            $nosto_currency = NostoHelperCurrency::getNostoCurrency($currency, $context);
+            $nosto_currency = NostoHelperCurrency::getNostoCurrency($currency, Context::getContext());
             $nosto_currencies[$currency['iso_code']] = $nosto_currency;
         }
 

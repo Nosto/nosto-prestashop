@@ -47,14 +47,27 @@ class NostoHelperConfig
      * Reads and returns a config entry value.
      *
      * @param string $name the name of the config entry in the db.
-     * @param int|null $lang_id the language the config entry is saved for.
-     * @param int|null $id_shop_group the shop group id the config entry is saved for.
-     * @param int|null $id_shop the shop id the config entry is saved for.
      * @return mixed
      */
-    private static function read($name, $lang_id = null, $id_shop_group = null, $id_shop = null)
+    private static function read($name)
     {
-        return Configuration::get($name, $lang_id, $id_shop_group, $id_shop);
+        return Configuration::get(
+            $name,
+            NostoHelperContext::getLanguageId(),
+            NostoHelperContext::getShopGroupId(),
+            NostoHelperContext::getShopId()
+        );
+    }
+
+    /**
+     * Reads and returns a global config entry value.
+     *
+     * @param string $name the name of the config entry in the db.
+     * @return mixed
+     */
+    private static function readGlobal($name, $lang_id = null, $id_shop_group = null, $id_shop = null)
+    {
+        return Configuration::get($name);
     }
 
     /**
@@ -209,7 +222,7 @@ class NostoHelperConfig
      */
     public static function getAccountName($id_lang, $id_shop_group = null, $id_shop = null)
     {
-        return self::read(self::ACCOUNT_NAME, $id_lang, $id_shop_group, $id_shop);
+        return Configuration::get(self::ACCOUNT_NAME, $id_lang, $id_shop_group, $id_shop);
     }
 
     /**
@@ -247,7 +260,7 @@ class NostoHelperConfig
      */
     public static function getToken($token_name, $id_lang, $id_shop_group = null, $id_shop = null)
     {
-        return self::read(self::getTokenConfigKey($token_name), $id_lang, $id_shop_group, $id_shop);
+        return Configuration::get(self::getTokenConfigKey($token_name), $id_lang, $id_shop_group, $id_shop);
     }
 
     /**
@@ -268,7 +281,7 @@ class NostoHelperConfig
      */
     public static function getAdminUrl()
     {
-        return self::read(self::ADMIN_URL);
+        return self::readGlobal(self::ADMIN_URL);
     }
 
     /**
@@ -290,7 +303,7 @@ class NostoHelperConfig
      */
     public static function getCronAccessToken()
     {
-        return self::read(self::CRON_ACCESS_TOKEN);
+        return self::readGlobal(self::CRON_ACCESS_TOKEN);
     }
 
     /**
@@ -315,7 +328,7 @@ class NostoHelperConfig
      */
     public static function getMultiCurrencyMethod($id_lang, $id_shop_group = null, $id_shop = null)
     {
-        $method = self::read(self::MULTI_CURRENCY_METHOD, $id_lang, $id_shop_group, $id_shop);
+        $method = Configuration::get(self::MULTI_CURRENCY_METHOD, $id_lang, $id_shop_group, $id_shop);
         return !empty($method) ? $method : self::MULTI_CURRENCY_METHOD_DISABLED;
     }
 

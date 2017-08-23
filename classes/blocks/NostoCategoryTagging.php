@@ -47,7 +47,7 @@ class NostoCategoryTagging
             $idCategory = Context::getContext()->cookie->last_visited_category;
             $category = NostoCategory::loadId($idCategory, Context::getContext()->language->id);
         }
-        $nostoCategory = NostoCategory::loadData(Context::getContext(), $category);
+        $nostoCategory = NostoCategory::loadData($category);
 
         return $nostoCategory ? $nostoCategory->toHtml() : null;
     }

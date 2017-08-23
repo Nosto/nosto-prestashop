@@ -37,7 +37,7 @@ class NostoAdvancedSettingController extends NostoBaseController
         NostoHelperConfig::saveNostoTaggingRenderPosition(Tools::getValue('nostotagging_position'));
         NostoHelperConfig::saveImageType(Tools::getValue('image_type'));
         $account = Nosto::getAccount();
-        $account_meta = NostoAccountSignup::loadData($this->context, $this->context->language->id);
+        $account_meta = NostoAccountSignup::loadData();
 
         if (!empty($account) && $account->isConnectedToNosto()) {
             try {

@@ -51,11 +51,10 @@ class NostoOrder extends NostoSDKOrder
     /**
      * Loads the order data from supplied context and order objects.
      *
-     * @param Context $context the context
      * @param Order $order the order model to process
      * @return NostoOrder the order object
      */
-    public static function loadData(Context $context, Order $order)
+    public static function loadData(Order $order)
     {
         if (!Validate::isLoadedObject($order)) {
             return null;
@@ -74,7 +73,7 @@ class NostoOrder extends NostoSDKOrder
         $nostoOrder->setOrderNumber(isset($order->reference) ? (string)$order->reference : $order->id);
         $nostoOrder->setCustomer(NostoOrderBuyer::loadData($customer, $order));
         $nostoOrder->setCreatedAt(DateTime::createFromFormat('Y-m-d H:i:s', $order->date_add));
-        $nostoOrder->setPurchasedItems(self::findPurchasedItems($context, $order));
+        $nostoOrder->setPurchasedItems(self::findPurchasedItems($order));
         $nostoOrder->setPaymentProvider('unknown');
 
         if (!empty($order->module)) {
@@ -98,11 +97,10 @@ class NostoOrder extends NostoSDKOrder
     /**
      * Finds purchased items for the order.
      *
-     * @param Context $context the context.
      * @param Order $order the order object.
      * @return NostoOrderPurchasedItem[] the purchased items.
      */
-    protected static function findPurchasedItems(Context $context, Order $order)
+    protected static function findPurchasedItems(Order $order)
     {
         $purchased_items = array();
 
@@ -181,9 +179,7 @@ class NostoOrder extends NostoSDKOrder
         }
         $items = array_merge($products, $gift_products);
 
-        if (!$context) {
-            $context = Context::getContext();
-        }
+        $context = Context::getContext();
 
         $id_lang = (int)$context->language->id;
         foreach ($items as $item) {

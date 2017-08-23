@@ -47,11 +47,10 @@ class NostoCategory extends MarkupableString
      * Loads the category data from supplied context and category objects.
      * Builds a tagging string of the given category including all its parent categories.
      *
-     * @param Context $context the context
      * @param Category $category the category model to process
      * @return NostoCategory the category object
      */
-    public static function loadData(Context $context, Category $category)
+    public static function loadData(Category $category)
     {
         if (!Validate::isLoadedObject($category)) {
             return null;
@@ -59,7 +58,7 @@ class NostoCategory extends MarkupableString
 
         $categoryList = array();
         if ((int)$category->active === 1) {
-            foreach ($category->getParentsCategories($context->language->id) as $parentCategory) {
+            foreach ($category->getParentsCategories(NostoHelperContext::getLanguageId()) as $parentCategory) {
                 if (isset($parentCategory['name'], $parentCategory['active'])
                     && (int)$parentCategory['active'] === 1
                 ) {

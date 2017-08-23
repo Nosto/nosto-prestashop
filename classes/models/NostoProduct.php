@@ -240,7 +240,7 @@ class NostoProduct extends NostoSDKProduct
 
         // If the product has no attributes (color, size etc.), then we mark
         // it as possible to add directly to cart.
-        $product_attributes = $product->getAttributesGroups(Context::getContext()->language->id);
+        $product_attributes = $product->getAttributesGroups(NostoHelperContext::getLanguageId());
         if (empty($product_attributes)) {
             $this->addTag1(self::ADD_TO_CART);
         }
@@ -257,8 +257,8 @@ class NostoProduct extends NostoSDKProduct
     {
         $productCategories = $product->getCategories();
         foreach ($productCategories as $category_id) {
-            $category = new Category((int)$category_id, Context::getContext()->language->id);
-            $category = NostoCategory::loadData(Context::getContext(), $category);
+            $category = new Category((int)$category_id, NostoHelperContext::getLanguageId());
+            $category = NostoCategory::loadData($category);
             if (!empty($category)) {
                 $this->addCategory($category->getValue());
             }
@@ -273,7 +273,7 @@ class NostoProduct extends NostoSDKProduct
     protected function amendBrand(Product $product)
     {
         if (empty($product->manufacturer_name) && !empty($product->id_manufacturer)) {
-            $manufacturer = new Manufacturer($product->id_manufacturer, Context::getContext()->language->id);
+            $manufacturer = new Manufacturer($product->id_manufacturer, NostoHelperContext::getLanguageId());
             if (!empty($manufacturer)) {
                 $this->setBrand($manufacturer->name);
             }

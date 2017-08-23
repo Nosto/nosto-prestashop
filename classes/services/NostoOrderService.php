@@ -31,12 +31,6 @@ use Nosto\Operation\OrderConfirm as NostoSDKOrderConfirmOperation;
 class NostoOrderService extends AbstractNostoService
 {
     public static $syncInventoriesAfterOrder = true;
-    private $context;
-
-    public function __construct(Context $context)
-    {
-        $this->context = $context;
-    }
 
     public function send($params)
     {
@@ -57,7 +51,7 @@ class NostoOrderService extends AbstractNostoService
     public function sendOrder(Order $order)
     {
         try {
-            $nostoOrder = NostoOrder::loadData($this->context, $order);
+            $nostoOrder = NostoOrder::loadData(Context::getContext(), $order);
             $idShopGroup = isset($order->id_shop_group) ? $order->id_shop_group : null;
             $idShop = isset($order->id_shop) ? $order->id_shop : null;
             // This is done out of context, so we need to specify the exact parameters to get the

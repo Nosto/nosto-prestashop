@@ -35,12 +35,12 @@ class NostoHelperUrl
     public static function getPreviewUrlProduct()
     {
         try {
-            $idLang = (int)Context::getContext()->language->id;
+            $idLang = NostoHelperContext::getLanguageId();
 
             $row = Product::getProducts($idLang, 0, 1, "id_product", "ASC", false, true);
-            $id_product = isset($row['id_product']) ? (int)$row['id_product'] : 0;
+            $productId = isset($row['id_product']) ? (int)$row['id_product'] : 0;
 
-            $product = new Product($idLang, $id_product);
+            $product = new Product($idLang, $productId);
             if (!Validate::isLoadedObject($product)) {
                 return '';
             }
@@ -61,12 +61,12 @@ class NostoHelperUrl
     public static function getPreviewUrlCategory()
     {
         try {
-            $idLang = (int)Context::getContext()->language->id;
+            $idLang = NostoHelperContext::getLanguageId();
 
             $row = Category::getHomeCategories($idLang, true)[0];
-            $id_category = isset($row['id_category']) ? (int)$row['id_category'] : 0;
+            $categoryId = isset($row['id_category']) ? (int)$row['id_category'] : 0;
 
-            $category = new Category($id_category, $idLang);
+            $category = new Category($categoryId, $idLang);
             if (!Validate::isLoadedObject($category)) {
                 return '';
             }

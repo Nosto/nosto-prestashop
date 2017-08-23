@@ -620,7 +620,7 @@ class NostoTagging extends Module
      */
     public function hookActionOrderStatusPostUpdate(array $params)
     {
-        $operation = new NostoOrderService(Context::getContext());
+        $operation = new NostoOrderService();
         $operation->send($params);
     }
 
