@@ -47,12 +47,8 @@ class NostoCategoryTagging
             $idCategory = Context::getContext()->cookie->last_visited_category;
             $category = NostoCategory::loadId($idCategory, Context::getContext()->language->id);
         }
-
         $nostoCategory = NostoCategory::loadData(Context::getContext(), $category);
-        Context::getContext()->smarty->assign(array(
-            'nosto_category' => $nostoCategory,
-        ));
 
-        return $module->render('views/templates/hook/category-footer_category-tagging.tpl');
+        return $nostoCategory ? $nostoCategory->toHtml() : null;
     }
 }

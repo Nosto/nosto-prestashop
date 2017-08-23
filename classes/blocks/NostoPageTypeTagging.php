@@ -23,6 +23,8 @@
  * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
+use \Nosto\Object\MarkupableString;
+
 class NostoPageTypeTagging
 {
     private static $controllers = array(
@@ -50,10 +52,11 @@ class NostoPageTypeTagging
             return '';
         }
 
-        Context::getContext()->smarty->assign(array(
-            'nosto_page_type' => self::$controllers[NostoHelperController::getControllerName()]
-        ));
+        $pageType = new MarkupableString(
+            self::$controllers[NostoHelperController::getControllerName()],
+            'nosto_page_type'
+        );
 
-        return $module->render('views/templates/hook/top_page_type-tagging.tpl');
+        return $pageType->toHtml();
     }
 }

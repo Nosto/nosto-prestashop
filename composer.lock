@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "bfcbb4b0179e20fabf60392d6d50077d",
+    "content-hash": "fdda0cae39bd10ea1751e4c67b89b100",
     "packages": [
         {
             "name": "nosto/php-sdk",
-            "version": "3.0.12",
+            "version": "dev-feature/progammatic-markup-generation",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Nosto/nosto-php-sdk.git",
-                "reference": "6f61e834b5f5219b636b4f6d18c3599ea6c2a8a8"
+                "reference": "ed116e9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Nosto/nosto-php-sdk/zipball/6f61e834b5f5219b636b4f6d18c3599ea6c2a8a8",
-                "reference": "6f61e834b5f5219b636b4f6d18c3599ea6c2a8a8",
+                "url": "https://api.github.com/repos/Nosto/nosto-php-sdk/zipball/ed116e9",
+                "reference": "ed116e9",
                 "shasum": ""
             },
             "require": {
@@ -51,7 +51,7 @@
                 "BSD-3-Clause"
             ],
             "description": "PHP SDK for developing Nosto modules for e-commerce platforms",
-            "time": "2017-07-31T13:29:29+00:00"
+            "time": "2017-08-22 15:04:10"
         },
         {
             "name": "phpseclib/phpseclib",
@@ -1108,16 +1108,16 @@
         },
         {
             "name": "symfony/polyfill-mbstring",
-            "version": "v1.4.0",
+            "version": "v1.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-mbstring.git",
-                "reference": "f29dca382a6485c3cbe6379f0c61230167681937"
+                "reference": "7c8fae0ac1d216eb54349e6a8baa57d515fe8803"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/f29dca382a6485c3cbe6379f0c61230167681937",
-                "reference": "f29dca382a6485c3cbe6379f0c61230167681937",
+                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/7c8fae0ac1d216eb54349e6a8baa57d515fe8803",
+                "reference": "7c8fae0ac1d216eb54349e6a8baa57d515fe8803",
                 "shasum": ""
             },
             "require": {
@@ -1129,7 +1129,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.4-dev"
+                    "dev-master": "1.5-dev"
                 }
             },
             "autoload": {
@@ -1163,7 +1163,7 @@
                 "portable",
                 "shim"
             ],
-            "time": "2017-06-09T14:24:12+00:00"
+            "time": "2017-06-14T15:44:48+00:00"
         },
         {
             "name": "symfony/yaml",
@@ -1276,6 +1276,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "nosto/php-sdk": 20,
         "phpmd/phpmd": 0
     },
     "prefer-stable": false,

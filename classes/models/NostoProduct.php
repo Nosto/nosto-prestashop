@@ -24,6 +24,7 @@
  */
 
 use Nosto\Object\Product\Product as NostoSDKProduct;
+use \Nosto\Object\StringCollection;
 
 class NostoProduct extends NostoSDKProduct
 {
@@ -61,7 +62,7 @@ class NostoProduct extends NostoSDKProduct
         $nostoProduct->setName($product->name);
         $nostoProduct->setPriceCurrencyCode(Tools::strtoupper($tagging_currency->iso_code));
         $nostoProduct->setAvailability(self::checkAvailability($product));
-        $nostoProduct->setTag1(self::buildTags($product, $idLang));
+        $nostoProduct->amendTags($product, $idLang);
         $nostoProduct->amendCategories($product, $idLang);
         $nostoProduct->setDescription($product->description_short . $product->description);
         $nostoProduct->setInventoryLevel((int)$product->quantity);
@@ -242,23 +243,22 @@ class NostoProduct extends NostoSDKProduct
      *
      * @param Product $product the product model.
      * @param int $id_lang for which language ID to fetch the product tags.
-     * @return array the built tags.
      */
-    protected static function buildTags(Product $product, $id_lang)
+    protected function amendTags(Product $product, $id_lang)
     {
-        $tags = array();
         if (($product_tags = $product->getTags($id_lang)) !== '') {
             $tags = explode(', ', $product_tags);
+            foreach ($tags as $tag) {
+                $this->addTag1($tag);
+            }
         }
 
         // If the product has no attributes (color, size etc.), then we mark
         // it as possible to add directly to cart.
         $product_attributes = $product->getAttributesGroups($id_lang);
         if (empty($product_attributes)) {
-            $tags[] = self::ADD_TO_CART;
+            $this->addTag1(self::ADD_TO_CART);
         }
-
-        return $tags;
     }
 
     /**
@@ -276,7 +276,7 @@ class NostoProduct extends NostoSDKProduct
             $category = new Category((int)$category_id, $id_lang);
             $category = NostoCategory::loadData(Context::getContext(), $category);
             if (!empty($category)) {
-                $this->addCategory($category);
+                $this->addCategory($category->getValue());
             }
         }
     }

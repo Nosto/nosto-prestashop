@@ -24,12 +24,10 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use Nosto\Object\User as NostoSDKUser;
+use Nosto\Object\Customer as NostoSDKCustomer;
 
-class NostoCustomer extends NostoSDKUser
+class NostoCustomer extends NostoSDKCustomer
 {
-    private $customerReference;
-
     /**
      * Loads the customer data from supplied context and customer objects.
      *
@@ -64,19 +62,11 @@ class NostoCustomer extends NostoSDKUser
     {
         $customerReference = NostoCustomerManager::getCustomerReference($customer);
         if (!empty($customerReference)) {
-            $this->customerReference = $customerReference;
+            $this->setCustomerReference($customerReference);
         } else {
             $customerReference = NostoCustomerManager::generateCustomerReference($customer);
             NostoCustomerManager::saveCustomerReference($customer, $customerReference);
-            $this->customerReference = $customerReference;
+            $this->setCustomerReference($customerReference);
         }
-    }
-
-    /**
-     * @return string
-     */
-    public function getCustomerReference()
-    {
-        return $this->customerReference;
     }
 }

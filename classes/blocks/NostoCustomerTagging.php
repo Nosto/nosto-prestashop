@@ -41,12 +41,12 @@ class NostoCustomerTagging
         $hcid = $cid ? hash(NostoTagging::VISITOR_HASH_ALGO, $cid) : '';
 
         $nostoCustomer = NostoCustomer::loadData(Context::getContext()->customer);
-        Context::getContext()->smarty->assign(array(
-            'nosto_customer' => $nostoCustomer,
-            'nosto_hcid' => $hcid
-        ));
+        if (!$nostoCustomer instanceof  NostoCustomer) {
+            return null;
+        }
+        $nostoCustomer->setHcid($hcid);
 
-        return $module->render('views/templates/hook/top_customer-tagging.tpl');
+        return $nostoCustomer->toHtml();
     }
 
     /**
