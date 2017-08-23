@@ -114,7 +114,6 @@ class NostoAccountSignup extends NostoSDKAccountSignup
      * Returns the current shop's url from the context and language.
      *
      * @param Context Context::getContext() the context.
-     * @param Language $language the language.
      * @return string the absolute url.
      */
     protected static function getContextShopUrl() //TODO: Why is this not in the helper?

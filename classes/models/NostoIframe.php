@@ -58,13 +58,12 @@ class NostoIframe extends NostoSDKIframe
     /**
      * Loads the meta-data from context.
      *
-     * @param int $id_lang the language ID of the shop for which to get the meta-data.
      * @return NostoIframe|null the iframe object
      */
-    public static function loadData($id_lang)
+    public static function loadData()
     {
         $nostoIframe = new NostoIframe();
-        $shopLanguage = new Language($id_lang);
+        $shopLanguage = new Language(NostoHelperContext::getLanguageId());
         $shopContext = Context::getContext()->shop->getContext();
         if (
             !Validate::isLoadedObject($shopLanguage)

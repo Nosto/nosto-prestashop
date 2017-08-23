@@ -85,7 +85,7 @@ class NostoIndexController
         ) {
             try {
                 $currentUser = NostoCurrentUser::loadData();
-                $meta = NostoIframe::loadData($languageId);
+                $meta = NostoIframe::loadData();
                 $url = NostoSDKIframeHelper::getUrl($meta, $account, $currentUser);
             } catch (NostoSDKException $e) {
                 NostoHelperLogger::error($e, 'Unable to load the Nosto IFrame');
