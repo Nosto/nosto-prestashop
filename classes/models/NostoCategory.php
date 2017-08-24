@@ -29,13 +29,12 @@ class NostoCategory extends MarkupableString
 {
     /**
      * @param $idCategory
-     * @param $idLang
      * @return Category
      * @suppress PhanTypeMismatchArgument
      */
-    public static function loadId($idCategory, $idLang)
+    public static function loadId($idCategory)
     {
-        return new Category((int)$idCategory, $idLang);
+        return new Category((int)$idCategory, NostoHelperContext::getLanguageId());
     }
 
     public function __construct($category)

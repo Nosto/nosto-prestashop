@@ -143,25 +143,18 @@ class NostoHelperConfig
     /**
      * Removes all "NOSTOTAGGING_" config entries for the current context and given language.
      *
-     * @param int|null $id_lang the ID of the language object to remove the config entries for.
-     * @param null|int $id_shop_group the ID of the shop context.
-     * @param null|int $id_shop the ID of the shop.
      * @return bool
      */
-    public static function deleteAllFromContext($id_lang = null, $id_shop_group = null, $id_shop = null)
+    public static function deleteAllFromContext()
     {
-        if ($id_shop === null) {
-            $id_shop = (int)Shop::getContextShopID(true);
-        }
-        if ($id_shop_group === null) {
-            $id_shop_group = (int)Shop::getContextShopGroupID(true);
-        }
-
-        if ($id_shop) {
-            $context_restriction = ' AND `id_shop` = ' . $id_shop;
-        } elseif ($id_shop_group) {
+        $languageId = NostoHelperContext::getLanguageId();
+        $shopId = (int)Shop::getContextShopID(true);
+        $shopGroupId = (int)Shop::getContextShopGroupID(true);
+        if ($shopId) {
+            $context_restriction = ' AND `id_shop` = ' . $shopId;
+        } elseif ($shopGroupId) {
             $context_restriction = '
-                AND `id_shop_group` = ' . $id_shop_group . '
+                AND `id_shop_group` = ' . $shopGroupId . '
                 AND (`id_shop` IS NULL OR `id_shop` = 0)
             ';
         } else {
@@ -174,13 +167,13 @@ class NostoHelperConfig
         $config_table = pSQL(_DB_PREFIX_ . 'configuration');
         $config_lang_table = pSQL($config_table . '_lang');
 
-        if (!empty($id_lang)) {
+        if (!empty($languageId)) {
             Db::getInstance()->execute(
                 'DELETE `' . $config_lang_table . '` FROM `' . $config_lang_table . '`
                 INNER JOIN `' . $config_table . '`
                 ON `' . $config_lang_table . '`.`id_configuration` = `' . $config_table . '`.`id_configuration`
                 WHERE `' . $config_table . '`.`name` LIKE "NOSTOTAGGING_%"
-                AND `id_lang` = ' . (int)$id_lang
+                AND `id_lang` = ' . (int)$languageId
                 . $context_restriction
             );
         }
