@@ -111,7 +111,7 @@ class NostoIndexController
             $shopGroupId = Context::getContext()->shop->id_shop_group;
         }
 
-        $languageId = (int)Tools::getValue('language_id', 0);
+        $languageId = (int)Tools::getValue('nostotagging_current_language', 0);
 
         // Choose current language if it has not been set.
         if (!isset($currentLanguage)) {
