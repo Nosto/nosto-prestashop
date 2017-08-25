@@ -63,9 +63,10 @@ class NostoProduct extends NostoSDKProduct
         $nostoProduct->amendBrand($product);
         $nostoProduct->amendImage($product);
         $nostoProduct->amendAlternateImages($product);
-        $nostoProduct->amendSkus($product);
+        $nostoProduct->amendSupplierCost($product);
+
         if (NostoHelperConfig::getSkuEnabled()) {
-            $nostoProduct->amendPrices($product);
+            $nostoProduct->amendSkus($product);
         }
 
         NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoProduct), array(
@@ -81,14 +82,13 @@ class NostoProduct extends NostoSDKProduct
      *
      * @param Product $product
      */
-    protected function amendPrices(Product $product)
+    protected function amendSupplierCost(Product $product)
     {
         $supplierCost = NostoHelperPrice::getProductWholesalePriceInclTax($product);
         if ($supplierCost !== null && is_numeric($supplierCost)) {
             $this->setSupplierCost($supplierCost);
         }
     }
-
     /**
      * Sets the alternate images for the product
      *

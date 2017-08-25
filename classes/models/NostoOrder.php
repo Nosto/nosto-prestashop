@@ -179,15 +179,13 @@ class NostoOrder extends NostoSDKOrder
         }
         $items = array_merge($products, $gift_products);
 
-        $context = Context::getContext();
-
-        $id_lang = (int)$context->language->id;
+        $languageId = NostoHelperContext::getLanguageId();
         foreach ($items as $item) {
-            $p = new Product($item['product_id'], false, $context->language->id);
+            $p = new Product($item['product_id'], false, $languageId);
             if (Validate::isLoadedObject($p)) {
                 $product_name = $p->name;
                 $id_attribute = (int)$item['product_attribute_id'];
-                $attribute_combinations = $p->getAttributeCombinationsById($id_attribute, $id_lang);
+                $attribute_combinations = $p->getAttributeCombinationsById($id_attribute, $languageId);
                 if (!empty($attribute_combinations)) {
                     $attribute_combination_names = array();
                     foreach ($attribute_combinations as $attribute_combination) {

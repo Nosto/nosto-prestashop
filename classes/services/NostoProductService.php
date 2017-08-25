@@ -124,10 +124,10 @@ class NostoProductService extends AbstractNostoService
                     )
                 );
             }
-            if (in_array($product->id, self::$processedProducts)) {
+            if (in_array(NostoHelperContext::getLanguageId() . '-' . $product->id, self::$processedProducts)) {
                 continue;
             }
-            self::$processedProducts[] = $product->id;
+            self::$processedProducts[] = NostoHelperContext::getLanguageId() . '-' . $product->id;
 
             $nostoAccount = NostoHelperAccount::find();
             if (!$nostoAccount)
@@ -216,14 +216,14 @@ class NostoProductService extends AbstractNostoService
     private function deleteProduct(Product $product)
     {
         if (!Validate::isLoadedObject($product) || in_array(
-                $product->id,
+                NostoHelperContext::getLanguageId() . '-' . $product->id,
                 self::$processedProducts
             )
         ) {
             return;
         }
 
-        self::$processedProducts[] = $product->id;
+        self::$processedProducts[] = NostoHelperContext::getLanguageId() . '-' . $product->id;
 
         $nostoAccount = NostoHelperAccount::find();
         if (!$nostoAccount)
@@ -252,7 +252,7 @@ class NostoProductService extends AbstractNostoService
      */
     protected function loadNostoProduct($idProduct)
     {
-        $product = new Product($idProduct, true);
+        $product = new Product($idProduct, true, NostoHelperContext::getLanguageId(), NostoHelperContext::getShopId());
         if (!Validate::isLoadedObject($product)) {
             return null;
         }

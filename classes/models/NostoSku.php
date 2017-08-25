@@ -30,7 +30,6 @@ class NostoSku extends NostoSDKSku
     /**
      * Loads the product data from supplied context and product objects.
      *
-     * @param Context Context::getContext() the context object.
      * @param Product $product magento product object
      * @param NostoProduct $nostoProduct
      * @param Combination $combination the prestashop combination object

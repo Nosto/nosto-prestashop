@@ -40,7 +40,7 @@ class NostoHelperUrl
             $row = Product::getProducts($idLang, 0, 1, "id_product", "ASC", false, true);
             $productId = isset($row['id_product']) ? (int)$row['id_product'] : 0;
 
-            $product = new Product($idLang, $productId);
+            $product = new Product($productId, $idLang, NostoHelperContext::getShopId());
             if (!Validate::isLoadedObject($product)) {
                 return '';
             }
