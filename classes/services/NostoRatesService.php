@@ -35,16 +35,15 @@ class NostoRatesService extends AbstractNostoService
     public function updateExchangeRatesForAllStores()
     {
         foreach (Shop::getShops() as $shop) {
-            Context::setInstanceForTesting()
             //TODO: Emulate
-            foreach (Language::getLanguages(true, $idShop) as $language) {
+            foreach (Language::getLanguages(true, NostoHelperContext::getShopId()) as $language) {
                 $useMultipleCurrencies = NostoHelperConfig::useMultipleCurrencies();
                 if ($useMultipleCurrencies) {
                     $nostoAccount = NostoHelperAccount::find();
                     if (!is_null($nostoAccount)) {
                         NostoHelperContext::runInContext(
-                            $idLang,
-                            $idShop,
+                            NostoHelperContext::getLanguageId(),
+                            NostoHelperContext::getShopId(),
                             function () use ($nostoAccount) {
                                 return $this->updateCurrencyExchangeRates($nostoAccount);
                             }

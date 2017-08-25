@@ -50,7 +50,7 @@ class NostoCreateAccountController extends NostoBaseController
                     $account_details = false;
                 }
                 $service = new NostoSignupService();
-                $service->createAccount($this->getLanguageId(), $account_email, $account_details);
+                $service->createAccount($account_email, $account_details);
 
                 NostoHelperConfig::clearCache();
                 NostoHelperFlash::add(

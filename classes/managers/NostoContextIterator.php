@@ -34,14 +34,16 @@ class NostoContextIterator implements IteratorAggregate
             $id_shop = isset($shop['id_shop']) ? $shop['id_shop'] : null;
             foreach (Language::getLanguages(true, $id_shop) as $language) {
                 $id_shop_group = isset($shop['id_shop_group']) ? $shop['id_shop_group'] : null;
-                $account = NostoHelperAccount::find($language['id_lang'], $id_shop_group, $id_shop);
-                if ($account === null) {
-                    continue;
-                }
-
-                $this->scopes[] = $account;
+                NostoHelperContext::runWithEachNostoAccount(function()
+                {
+                    $account = NostoHelperAccount::find();
+                    if ($account !== null) {
+                        $this->scopes[] = $account;
+                    }
+                });
             }
         }
+
         return true;
     }
 

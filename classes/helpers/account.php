@@ -70,7 +70,7 @@ class NostoHelperAccount
      */
     public static function deleteAll()
     {
-        foreach (Shop::getShops()) {
+        foreach (Shop::getShops() as $shop) {
             //TODO: Emulate
             self::delete();
         }

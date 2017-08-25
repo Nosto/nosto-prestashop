@@ -34,7 +34,7 @@ class NostoDeleteAccountController extends NostoBaseController
     {
         $account = Nosto::getAccount();
         NostoHelperConfig::clearCache();
-        NostoHelperAccount::delete($this->context, $account, $this->getLanguageId(), null);
+        NostoHelperAccount::delete($account, $this->getLanguageId(), null);
         return true;
     }
 }

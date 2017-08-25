@@ -103,7 +103,7 @@ class NostoIndexController
 
         NostoHelperConfig::saveAdminUrl($adminUrl);
         $languages = Language::getLanguages(true, Context::getContext()->shop->id);
-        $accountEmail = Context::getContext()->employee->email;
+
         $shopId = null;
         $shopGroupId = null;
         if (Context::getContext()->shop instanceof Shop) {
@@ -118,6 +118,19 @@ class NostoIndexController
             $currentLanguage = NostoHelperLanguage::ensureAdminLanguage($languages, $languageId);
             $languageId = (int)$currentLanguage['id_lang'];
         }
+
+        return NostoHelperContext::runInContext(
+            $languageId,
+            $shopId,
+            function() use ($nostoTagging, $languages, $currentLanguage)
+            {
+                return self::generateSmartyData($nostoTagging, $languages, $currentLanguage);
+            }
+        );
+    }
+
+    private function generateSmartyData(NostoTagging $nostoTagging, $languages, $currentLanguage)
+    {
         $account = Nosto::getAccount();
         $missingTokens = true;
         if (
@@ -133,7 +146,7 @@ class NostoIndexController
             && Shop::getContext() === Shop::CONTEXT_SHOP
         ) {
             $currentUser = NostoCurrentUser::loadData();
-            $accountIframe = NostoIframe::loadData($languageId);
+            $accountIframe = NostoIframe::loadData();
             $iframeInstallationUrl = NostoSDKIframeHelper::getUrl(
                 $accountIframe,
                 $account,
@@ -143,6 +156,8 @@ class NostoIndexController
         } else {
             $iframeInstallationUrl = null;
         }
+
+        $accountEmail = Context::getContext()->employee->email;
 
         $smartyMetaData = array(
             'nostotagging_form_action' => $this->getAdminUrl(),
@@ -189,7 +204,7 @@ class NostoIndexController
         if ($account) {
             // Try to login employee to Nosto in order to get a url to the internal setting pages,
             // which are then shown in an iframe on the module config page.
-            $url = $this->getIframeUrl($account, $languageId);
+            $url = $this->getIframeUrl($account, NostoHelperContext::getLanguageId());
             if (!empty($url)) {
                 $smartyMetaData['iframe_url'] = $url;
             }

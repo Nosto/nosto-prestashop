@@ -128,30 +128,38 @@ class NostoProductService extends AbstractNostoService
                 continue;
             }
             self::$processedProducts[] = $product->id;
-            foreach ($this->getAccountData() as $data) {
-                /** @var Nosto\Object\Signup\Account $account */
-                list($account, $idShop, $idLang) = $data;
-                $accountName = $account->getName();
-                $nostoProduct = $this->loadNostoProduct($product->id, $idLang, $idShop);
-                if ($nostoProduct instanceof NostoProduct === false) {
-                    continue;
-                }
-                if (!isset($productsInStore[$accountName])) {
-                    $productsInStore[$accountName] = array();
-                }
-                if (!isset($productsInStore[$accountName][self::KEY_ACCOUNT])) {
-                    $productsInStore[$accountName][self::KEY_ACCOUNT] = $account;
-                }
-                if (!isset($productsInStore[$accountName][self::KEY_DATA])) {
-                    $productsInStore[$accountName][self::KEY_DATA] = array();
-                }
 
-                if (!isset($productsInStore[$accountName][self::KEY_DATA][$batch])) {
-                    $productsInStore[$accountName][self::KEY_DATA][$batch] = array();
-                }
-                $productsInStore[$accountName][self::KEY_DATA][$batch][] = $nostoProduct;
+            $nostoAccount = NostoHelperAccount::find(
+                NostoHelperContext::getLanguageId(),
+                NostoHelperContext::getShopGroupId(),
+                NostoHelperContext::getShopId()
+            );
+            if (!$nostoAccount)
+            {
+                continue;
             }
+
+            $accountName = $nostoAccount->getName();
+            $nostoProduct = $this->loadNostoProduct($product->id);
+            if ($nostoProduct instanceof NostoProduct === false) {
+                continue;
+            }
+            if (!isset($productsInStore[$accountName])) {
+                $productsInStore[$accountName] = array();
+            }
+            if (!isset($productsInStore[$accountName][self::KEY_ACCOUNT])) {
+                $productsInStore[$accountName][self::KEY_ACCOUNT] = $nostoAccount;
+            }
+            if (!isset($productsInStore[$accountName][self::KEY_DATA])) {
+                $productsInStore[$accountName][self::KEY_DATA] = array();
+            }
+
+            if (!isset($productsInStore[$accountName][self::KEY_DATA][$batch])) {
+                $productsInStore[$accountName][self::KEY_DATA][$batch] = array();
+            }
+            $productsInStore[$accountName][self::KEY_DATA][$batch][] = $nostoProduct;
         }
+
         foreach ($productsInStore as $nostoAccountName => $data) {
             $nosto_account = $data[self::KEY_ACCOUNT];
             foreach ($data[self::KEY_DATA] as $batchIndex => $batches) {
@@ -180,7 +188,12 @@ class NostoProductService extends AbstractNostoService
         if (isset($params['object'])) {
             $object = $params['object'];
             if ($object instanceof Product) {
-                $this->updateProduct($object);
+
+                //run over all the nosto account
+                NostoHelperContext::runWithEachNostoAccount(function () use ($object)
+                {
+                    $this->updateProduct($object);
+                });
             }
         }
     }
@@ -195,7 +208,11 @@ class NostoProductService extends AbstractNostoService
         if (isset($params['object'])) {
             $object = $params['object'];
             if ($object instanceof Product) {
-                $this->deleteProduct($object);
+                //run over all the nosto account
+                NostoHelperContext::runWithEachNostoAccount(function () use ($object)
+                {
+                    $this->deleteProduct($object);
+                });
             }
         }
     }
@@ -211,20 +228,23 @@ class NostoProductService extends AbstractNostoService
         }
 
         self::$processedProducts[] = $product->id;
-        foreach ($this->getAccountData() as $data) {
-            list($account) = $data;
 
-            $nostoProduct = new NostoProduct();
-            $nostoProduct->assignId($product);
+        $nostoAccount = NostoHelperAccount::find();
+        if (!$nostoAccount)
+        {
+            return;
+        }
 
-            try {
-                $op = new NostoSDKUpsertProductOperation($account);
-                $nostoProduct->setAvailability(NostoSDKProductInterface::DISCONTINUED);
-                $op->addProduct($nostoProduct);
-                $op->upsert();
-            } catch (NostoSDKException $e) {
-                NostoHelperLogger::error($e, sprintf("Failed to upsert product %s", $product->id));
-            }
+        $nostoProduct = new NostoProduct();
+        $nostoProduct->assignId($product);
+
+        try {
+            $op = new NostoSDKUpsertProductOperation($nostoAccount);
+            $nostoProduct->setAvailability(NostoSDKProductInterface::DISCONTINUED);
+            $op->addProduct($nostoProduct);
+            $op->upsert();
+        } catch (NostoSDKException $e) {
+            NostoHelperLogger::error($e, sprintf("Failed to upsert product %s", $product->id));
         }
     }
 
@@ -232,23 +252,15 @@ class NostoProductService extends AbstractNostoService
      * Loads a Nosto product model for given PS product ID, language ID and shop ID.
      *
      * @param int $idProduct the PS product ID.
-     * @param int $idLang the language ID.
-     * @param int $idShop the shop ID.
      * @return NostoProduct|null the product or null if could not be loaded.
      */
-    protected function loadNostoProduct($idProduct, $idLang, $idShop)
+    protected function loadNostoProduct($idProduct)
     {
-        $product = new Product($idProduct, true, $idLang, $idShop);
+        $product = new Product($idProduct, true);
         if (!Validate::isLoadedObject($product)) {
             return null;
         }
 
-        return NostoHelperContext::runInContext(
-            $idLang,
-            $idShop,
-            function () use ($product) {
-                return NostoProduct::loadData($product);
-            }
-        );
+        return NostoProduct::loadData($product);
     }
 }

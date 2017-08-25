@@ -36,17 +36,26 @@ abstract class NostoBaseController extends ModuleAdminController
         }
 
         $languages = Language::getLanguages(true, $this->context->shop->id);
-        $currentLanguage = NostoHelperLanguage::ensureAdminLanguage($languages, $this->getLanguageId());
+        $handlingLanguage = NostoHelperLanguage::ensureAdminLanguage($languages, $this->getLanguageId());
         if (Shop::getContext() !== Shop::CONTEXT_SHOP) {
             $this->redirectToAdmin();
             return;
-        } elseif ($currentLanguage['id_lang'] != $this->getLanguageId()) {
+        } elseif ($handlingLanguage['id_lang'] != $this->getLanguageId()) {
             NostoHelperFlash::add('error', $this->l('Language cannot be empty.'));
             $this->redirectToAdmin();
             return;
         }
 
-        if ($this->execute() === true) {
+        //run the code in a context with language id set to the language admin chose
+        $redirectToAdminPage = NostoHelperContext::runInContext(
+            $handlingLanguage['id_lang'],
+            NostoHelperContext::getShopId(),
+            function () {
+                return $this->execute();
+            }
+        );
+
+        if ($redirectToAdminPage) {
             $this->redirectToAdmin();
         }
     }

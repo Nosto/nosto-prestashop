@@ -39,8 +39,8 @@ class NostoCheckMulticurrencyNotification extends NostoNotification
         $connected = NostoHelperAccount::existsAndIsConnected();
         if ($connected) {
             if (!Nosto::useMultipleCurrencies()) {
-                return NostoHelperContext::runInContext(
-                    function () use ($x) {
+                return NostoHelperContext::runInContext(NostoHelperContext::getLanguageId(), NostoHelperContext::getShopId(),//TODO ????
+                    function (){
                         $currencies = NostoHelperCurrency::getCurrencies(true);
                         if (count($currencies) > 1) {
                             return new NostoNotification(

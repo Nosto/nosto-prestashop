@@ -23,7 +23,7 @@
  * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
-class NostoProductTagging extends NostoCategoryTagging
+class NostoProductTagging
 {
     /**
      * Renders the customer tagging by checking if the customer if currently logged in

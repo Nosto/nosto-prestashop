@@ -28,6 +28,9 @@
  */
 class NostoHelperContext
 {
+    private static $backupContextStack = array();
+    private static $backupShopContextStack = array();
+
     /**
      * Runs a function in the scope of another shop's context and reverts back to the original
      * context after the the function invocation
@@ -39,15 +42,93 @@ class NostoHelperContext
      */
     public static function runInContext($idLang, $idShop, $callable)
     {
-        $context = new NostoContextManager($idLang, $idShop);
         $retval = null;
+
+        self::emulateContext($idLang, $idShop);
         try {
-            $retval = $callable($context->getForgedContext());
+            $retval = $callable();
         } catch (Exception $e) {
             NostoHelperLogger::log($e);
         }
-        $context->revertToOriginalContext();
+        self::revertToOriginalContext();
+
         return $retval;
+    }
+
+    public static function runWithEachNostoAccount($callable)
+    {
+        foreach (Shop::getShops() as $shop) {
+            $shopId = isset($shop['id_shop']) ? $shop['id_shop'] : null;
+            foreach (Language::getLanguages(true, $shopId) as $language) {
+                $id_shop_group = isset($shop['id_shop_group']) ? $shop['id_shop_group'] : null;
+                self::runInContext($language['id_lang'], $shopId, function() use ($callable)
+                {
+                    $account = NostoHelperAccount::find();
+                    if ($account === null) {
+                        return null;
+                    } else {
+                        $callable();
+                    }
+
+                });
+            }
+        }
+
+        return true;
+    }
+
+    public static function emulateContext($languageId, $shopId)
+    {
+        $context = Context::getContext();
+        self::$backupContextStack[] = $context->cloneContext();
+
+        // Reset the shop context to be the current processed shop. This will fix the "friendly url"'
+        // format of urls generated through the Link class.
+        self::$backupShopContextStack[] = Shop::getContext();
+        Shop::setContext(Shop::CONTEXT_SHOP, $shopId);
+        // Reset the dispatcher singleton instance so that the url rewrite setting is check on a
+        // shop basis when generating product urls. This will fix the issue of incorrectly formatted
+        // urls when one shop has the rewrite setting enabled and another does not.
+        Dispatcher::$instance = null;
+        if (method_exists('ShopUrl', 'resetMainDomainCache')) {
+            // Reset the shop url domain cache so that it is re-initialized on a shop basis when
+            // generating product image urls. This will fix the issue of the image urls having an
+            // incorrect shop base url when the
+            // shops are configured to use different domains.
+            ShopUrl::resetMainDomainCache();
+        }
+
+        $context->language = new Language($languageId);
+        $context->shop = new Shop($shopId);
+        $context->currency = Currency::getDefaultCurrency();
+        $context->link = NostoHelperLink::getLink();
+    }
+
+    /**
+     * Revert the active context to the original one (before calling forgeContext)
+     */
+    public static function revertToOriginalContext()
+    {
+        if (!self::$backupContextStack || !self::$backupShopContextStack )
+        {
+            throw new Exception('revertToOriginalContext() is called before calling emulateContext()');
+        }
+
+        $backupContext = array_shift(self::$backupContextStack);
+        $backupShopContext = array_shift(self::$backupShopContextStack);
+
+        $context = Context::getContext();
+
+        $context->language = $backupContext->language;
+        $context->shop = $backupContext->shop;
+        $context->currency = $backupContext->currency;
+        $context->link = $backupContext->link;
+
+        Shop::setContext($backupShopContext, $context->shop ? $context->shop->id : null);
+
+        if (method_exists('ShopUrl', 'resetMainDomainCache')) {
+            ShopUrl::resetMainDomainCache();
+        }
     }
 
     /**
@@ -57,7 +138,7 @@ class NostoHelperContext
      */
     public static function getLanguageId()
     {
-        return NostoHelperContext::getLanguageId();
+        return Context::getContext()->language->id;
     }
 
     /**
@@ -68,7 +149,7 @@ class NostoHelperContext
     public static function getShopGroupId()
     {
         if (Context::getContext()->shop instanceof Shop) {
-            return NostoHelperContext::getShopGroupId();
+            return Context::getContext()->shop->id_shop_group;
         }
 
         return null;
@@ -82,7 +163,7 @@ class NostoHelperContext
     public static function getShopId()
     {
         if (Context::getContext()->shop instanceof Shop) {
-            return NostoHelperContext::getShopId();
+            return Context::getContext()->shop->id;
         }
 
         return null;
