@@ -129,11 +129,7 @@ class NostoProductService extends AbstractNostoService
             }
             self::$processedProducts[] = $product->id;
 
-            $nostoAccount = NostoHelperAccount::find(
-                NostoHelperContext::getLanguageId(),
-                NostoHelperContext::getShopGroupId(),
-                NostoHelperContext::getShopId()
-            );
+            $nostoAccount = NostoHelperAccount::find();
             if (!$nostoAccount)
             {
                 continue;

@@ -57,19 +57,27 @@ class NostoHelperContext
 
     public static function runWithEachNostoAccount($callable)
     {
+        self::runWithEachNostoAccount(function () use ($callable)
+        {
+            $account = NostoHelperAccount::find();
+            if ($account === null) {
+                return null;
+            } else {
+                $callable();
+            }
+        });
+    }
+
+
+    public static function runInAContextForEachLanguageEachShop($callable)
+    {
         foreach (Shop::getShops() as $shop) {
             $shopId = isset($shop['id_shop']) ? $shop['id_shop'] : null;
             foreach (Language::getLanguages(true, $shopId) as $language) {
                 $id_shop_group = isset($shop['id_shop_group']) ? $shop['id_shop_group'] : null;
                 self::runInContext($language['id_lang'], $shopId, function() use ($callable)
                 {
-                    $account = NostoHelperAccount::find();
-                    if ($account === null) {
-                        return null;
-                    } else {
-                        $callable();
-                    }
-
+                    $callable();
                 });
             }
         }

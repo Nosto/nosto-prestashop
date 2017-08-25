@@ -39,23 +39,19 @@ class NostoCheckMulticurrencyNotification extends NostoNotification
         $connected = NostoHelperAccount::existsAndIsConnected();
         if ($connected) {
             if (!Nosto::useMultipleCurrencies()) {
-                return NostoHelperContext::runInContext(NostoHelperContext::getLanguageId(), NostoHelperContext::getShopId(),//TODO ????
-                    function (){
-                        $currencies = NostoHelperCurrency::getCurrencies(true);
-                        if (count($currencies) > 1) {
-                            return new NostoNotification(
-                                Context::getContext()->shop,
-                                Context::getContext()->language,
-                                NostoSDKNotification::TYPE_MULTI_CURRENCY_DISABLED,
-                                NostoSDKNotification::SEVERITY_WARNING,
-                                'Your shop %s with language %s is using multiple currencies but' .
-                                ' the multi-currency feature for Nosto is disabled'
-                            );
-                        }
+                $currencies = NostoHelperCurrency::getCurrencies(true);
+                if (count($currencies) > 1) {
+                    return new NostoNotification(
+                        Context::getContext()->shop,
+                        Context::getContext()->language,
+                        NostoSDKNotification::TYPE_MULTI_CURRENCY_DISABLED,
+                        NostoSDKNotification::SEVERITY_WARNING,
+                        'Your shop %s with language %s is using multiple currencies but' .
+                        ' the multi-currency feature for Nosto is disabled'
+                    );
+                }
 
-                        return null;
-                    }
-                );
+                return null;
             }
         }
 

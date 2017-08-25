@@ -26,6 +26,7 @@
 if (!defined('_PS_VERSION_')) {
     exit;
 }
+require_once("bootstrap.php");
 
 /*
  * Only try to load class files if we can resolve the __FILE__ global to the current file.
@@ -38,8 +39,6 @@ if ((basename(__FILE__) === 'nostotagging.php')) {
     /** @noinspection PhpIncludeInspection */
     require_once("bootstrap.php");
 }
-
-use \Nosto\NostoException as NostoSDKException;
 
 /**
  * Main module class the is responsible for all the module behaviour. This class is to be kept
@@ -812,7 +811,7 @@ class NostoTagging extends Module
      * Method for resolving correct smarty object
      *
      * @return Smarty|Smarty_Data
-     * @throws NostoSDKException
+     * @throws NostoException
      */
     protected function getSmarty()
     {
@@ -822,7 +821,7 @@ class NostoTagging extends Module
             return $this->context->smarty;
         }
 
-        throw new NostoSDKException('Could not find smarty');
+        throw new NostoException('Could not find smarty');
     }
 
     /**
@@ -881,7 +880,7 @@ class NostoTagging extends Module
                 $operation = new NostoRatesService();
                 $operation->updateExchangeRatesForAllStores();
                 $this->defineExchangeRatesAsUpdated();
-            } catch (NostoSDKException $e) {
+            } catch (NostoException $e) {
                 NostoHelperLogger::error($e, 'Exchange rate sync failed with error');
             }
         }

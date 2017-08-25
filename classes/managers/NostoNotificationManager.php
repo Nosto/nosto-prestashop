@@ -37,24 +37,22 @@ class NostoNotificationManager
     public static function checkAndDisplay(NostoTagging $module)
     {
         $notifications = array();
-        foreach (Shop::getShops() as $shopArray) {
-            $shop = new Shop($shopArray['id_shop']);
-            foreach (Language::getLanguages(true, $shop->id) as $languageArray) {
 
-                $notification = NostoCheckAccountNotification::check();
-                if ($notification != null) {
-                    $notifications[] = $notification;
-                }
-                $notification = NostoCheckMulticurrencyNotification::check();
-                if ($notification != null) {
-                    $notifications[] = $notification;
-                }
-                $notification = NostoCheckTokenNotification::check();
-                if ($notification != null) {
-                    $notifications[] = $notification;
-                }
+        NostoHelperContext::runInAContextForEachLanguageEachShop(function() use (&$notifications)
+        {
+            $notification = NostoCheckAccountNotification::check();
+            if ($notification != null) {
+                $notifications[] = $notification;
             }
-        }
+            $notification = NostoCheckMulticurrencyNotification::check();
+            if ($notification != null) {
+                $notifications[] = $notification;
+            }
+            $notification = NostoCheckTokenNotification::check();
+            if ($notification != null) {
+                $notifications[] = $notification;
+            }
+        });
 
         foreach ($notifications as $notification) {
             if (

@@ -52,6 +52,7 @@ class NostoBootstrap
         require_once($moduleDir . '/classes/helpers/NostoHelperLanguage.php');
         require_once($moduleDir . '/classes/helpers/NostoHelperLogger.php');
         require_once($moduleDir . '/classes/managers/NostoNotificationManager.php');
+        require_once($moduleDir . '/classes/managers/NostoHookManager.php');
         require_once($moduleDir . '/classes/services/AbstractNostoService.php');
         require_once($moduleDir . '/classes/services/NostoProductService.php');
         require_once($moduleDir . '/classes/services/NostoOrderService.php');
@@ -111,5 +112,4 @@ class NostoBootstrap
         \Nosto\Request\Http\HttpRequest::buildUserAgent('Prestashop', _PS_VERSION_, $moduleVersion);
     }
 }
-
 NostoBootstrap::init(NOSTO_DIR, NOSTO_VERSION);

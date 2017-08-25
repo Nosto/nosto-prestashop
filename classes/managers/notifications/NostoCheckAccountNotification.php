@@ -37,7 +37,7 @@ class NostoCheckAccountNotification extends NostoNotification
     public static function check()
     {
         $connected = NostoHelperAccount::existsAndIsConnected();
-        if ($connected) {
+        if (!$connected) {
             return new NostoCheckAccountNotification(
                 Context::getContext()->shop,
                 Context::getContext()->language,
