@@ -26,7 +26,6 @@
 if (!defined('_PS_VERSION_')) {
     exit;
 }
-require_once("bootstrap.php");
 
 /*
  * Only try to load class files if we can resolve the __FILE__ global to the current file.
