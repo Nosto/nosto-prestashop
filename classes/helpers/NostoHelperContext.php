@@ -50,7 +50,8 @@ class NostoHelperContext
         $currencyId = false,
         $employeeId = false,
         $countryId = false
-    ) {
+    )
+    {
         $retval = null;
 
         self::emulateContext($idLang, $idShop, $currencyId, $employeeId, $countryId);
@@ -75,7 +76,6 @@ class NostoHelperContext
             }
         });
     }
-
 
     public static function runInAContextForEachLanguageEachShop($callable)
     {
@@ -110,7 +110,8 @@ class NostoHelperContext
         $currencyId = false,
         $employeeId = false,
         $countryId = false
-    ) {
+    )
+    {
         $context = Context::getContext();
         self::$backupContextStack[] = $context->cloneContext();
 
