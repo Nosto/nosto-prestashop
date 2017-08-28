@@ -38,11 +38,9 @@ class NostoOAuth extends NostoSDKOAuth
      */
     public static function loadData($moduleName)
     {
-        $language = new Language(NostoHelperContext::getLanguageId());
-        if (!Validate::isLoadedObject($language)) {
+        if (!Validate::isLoadedObject(NostoHelperContext::getLanguage())) {
             return null;
         }
-
         $nostoOAuth = new NostoOAuth();
         try {
             $nostoOAuth->setScopes(NostoSDKAPIToken::getApiTokenNames());
@@ -50,13 +48,13 @@ class NostoOAuth extends NostoSDKOAuth
             $redirectUrl = NostoHelperUrl::getModuleUrl(
                 $moduleName,
                 'oauth2',
-                array('language_id' => (int)$language->id)
+                array('language_id' => NostoHelperContext::getLanguageId())
             );
 
             $nostoOAuth->setClientId('prestashop');
             $nostoOAuth->setClientSecret('prestashop');
             $nostoOAuth->setRedirectUrl($redirectUrl);
-            $nostoOAuth->setLanguageIsoCode($language->iso_code);
+            $nostoOAuth->setLanguageIsoCode(NostoHelperContext::getLanguage()->iso_code);
         } catch (NostoSDKException $e) {
             NostoHelperLogger::error($e);
         }

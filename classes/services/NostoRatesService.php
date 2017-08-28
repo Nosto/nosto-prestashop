@@ -42,11 +42,11 @@ class NostoRatesService extends AbstractNostoService
                     $nostoAccount = NostoHelperAccount::find();
                     if (!is_null($nostoAccount)) {
                         NostoHelperContext::runInContext(
-                            NostoHelperContext::getLanguageId(),
-                            NostoHelperContext::getShopId(),
                             function () use ($nostoAccount) {
                                 return $this->updateCurrencyExchangeRates($nostoAccount);
-                            }
+                            },
+                            NostoHelperContext::getLanguageId(),
+                            NostoHelperContext::getShopId()
                         );
                     }
                 }

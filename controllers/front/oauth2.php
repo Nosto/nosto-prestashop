@@ -37,7 +37,7 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
         NostoSDKOauthTrait::redirect as redirectTo;
     }
 
-    private $id_lang;
+    private $languageId;
 
     /**
      * Handles the redirect from Nosto oauth2 authorization server when an existing account is
@@ -49,7 +49,7 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
      */
     public function initContent()
     {
-        $this->id_lang = (int)Tools::getValue('language_id', Context::getContext()->language->id);
+        $this->languageId = (int)Tools::getValue('language_id', NostoHelperContext::getLanguageId());
         self::connect();
     }
 
@@ -62,11 +62,11 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
      */
     public function getMeta()
     {
-        return NostoOAuth::loadData(
-            Context::getContext(),
-            $this->id_lang,
-            $this->module->name,
-            $this->module->getPath()
+        return NostoHelperContext::runInContext(
+            function () {
+                return NostoOAuth::loadData($this->module->name);
+            },
+            $this->languageId
         );
     }
 

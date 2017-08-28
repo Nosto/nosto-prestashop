@@ -72,7 +72,7 @@ class NostoSku extends NostoSDKSku
         if (Nosto::useMultipleCurrencies()) {
             $tagging_currency = $base_currency;
         } else {
-            $tagging_currency = Context::getContext()->currency;
+            $tagging_currency = NostoHelperContext::getCurrency();
         }
 
         $this->setListPrice(self::getListPriceInclTax($combination, $tagging_currency));
@@ -133,8 +133,7 @@ class NostoSku extends NostoSDKSku
     protected function amendImage(
         Combination $combination,
         NostoProduct $nostoProduct
-    )
-    {
+    ) {
         $images = $combination->getWsImages();
         if ($images && is_array($images)) {
             foreach ($images as $image) {

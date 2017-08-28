@@ -38,7 +38,6 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
      */
     public function initContent()
     {
-        $context = Context::getContext();
         $collection = new Nosto\Object\Order\OrderCollection();
 
         $id = Tools::getValue('id');
@@ -47,7 +46,7 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
             if (empty($orders)) {
                 Controller::getController('PageNotFoundController')->run();
             }
-            $nostoOrder = NostoOrder::loadData($context, $orders[0]);
+            $nostoOrder = NostoOrder::loadData($orders[0]);
             $collection->append($nostoOrder);
         } else {
             foreach ($this->getOrderIds() as $idOrder) {
@@ -55,7 +54,7 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
                 if (!Validate::isLoadedObject($order)) {
                     continue;
                 }
-                $nostoOrder = NostoOrder::loadData(Context::getContext(), $order);
+                $nostoOrder = NostoOrder::loadData($order);
                 $collection->append($nostoOrder);
             }
         }
@@ -70,13 +69,12 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
      */
     protected function getOrderIds()
     {
-        $context = Context::getContext();
         $where = strtr(
             '`id_shop_group` = {g} AND `id_shop` = {s} AND `id_lang` = {l}',
             array(
-                '{g}' => pSQL((string)$context->shop->id_shop_group),
-                '{s}' => pSQL((string)$context->shop->id),
-                '{l}' => pSQL((string)$context->language->id),
+                '{g}' => pSQL((string)NostoHelperContext::getShopGroupId()),
+                '{s}' => pSQL((string)NostoHelperContext::getShopId()),
+                '{l}' => pSQL((string)NostoHelperContext::getLanguageId()),
             )
         );
 

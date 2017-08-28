@@ -35,7 +35,7 @@ class NostoAccountBilling extends NostoSDKSignupBilling
     public static function loadData()
     {
         $nostoBilling = new NostoAccountBilling();
-        $nostoBilling->setCountry(Context::getContext()->country->iso_code);
+        $nostoBilling->setCountry(NostoHelperContext::getCountry()->iso_code);
 
         NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoBilling), array(
             'nosto_account_billing' => $nostoBilling

@@ -47,7 +47,7 @@ class NostoProduct extends NostoSDKProduct
             $nostoProduct->setVariationId($base_currency->iso_code);
             $tagging_currency = $base_currency;
         } else {
-            $tagging_currency = Context::getContext()->currency;
+            $tagging_currency = NostoHelperContext::getCurrency();
         }
         $nostoProduct->setUrl(NostoHelperUrl::getProductUrl($product));
         $nostoProduct->setProductId((string)$product->id);
@@ -89,6 +89,7 @@ class NostoProduct extends NostoSDKProduct
             $this->setSupplierCost($supplierCost);
         }
     }
+
     /**
      * Sets the alternate images for the product
      *

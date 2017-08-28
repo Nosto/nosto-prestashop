@@ -41,30 +41,30 @@ class NostoAccountSignup extends NostoSDKAccountSignup
     }
 
     /**
-     * @return Language
+     * @return int language id
      * @suppress PhanTypeMismatchArgument
      */
-    private static function loadLanguage()
+    private static function loadLanguageId()
     {
-        return new Language((int)Configuration::get('PS_LANG_DEFAULT'));
+        return (int)Configuration::get('PS_LANG_DEFAULT');
     }
 
     /**
-     * @return Currency
+     * @return int Currency id
      * @suppress PhanTypeMismatchArgument
      */
-    private static function loadCurrency()
+    private static function loadCurrencyId()
     {
-        return new Currency((int)Configuration::get('PS_CURRENCY_DEFAULT'));
+        return (int)Configuration::get('PS_CURRENCY_DEFAULT');
     }
 
     /**
-     * @return Country
+     * @return int Country id
      * @suppress PhanTypeMismatchArgument
      */
-    private static function loadCountry()
+    private static function loadCountryId()
     {
-        return new Country((int)Configuration::get('PS_COUNTRY_DEFAULT'));
+        return (int)Configuration::get('PS_COUNTRY_DEFAULT');
     }
 
     /**
@@ -76,37 +76,51 @@ class NostoAccountSignup extends NostoSDKAccountSignup
     {
         $nostoSignup = new NostoAccountSignup();
 
-        $language = new Language(NostoHelperContext::getLanguageId());
+        $language = NostoHelperContext::getLanguage();
         if (!Validate::isLoadedObject($language)) {
             return null;
         }
 
+        $languageId = NostoHelperContext::getLanguageId();
+        $currencyId = NostoHelperContext::getCurrencyId();
+        $countryId = NostoHelperContext::getCountryId();
         if (!Validate::isLoadedObject(NostoHelperContext::getLanguage())) {
-            Context::getContext()->language = self::loadLanguage();
+            $languageId = self::loadLanguageId();
         }
-        if (!Validate::isLoadedObject(Context::getContext()->currency)) {
-            Context::getContext()->currency = self::loadCurrency();
+        if (!Validate::isLoadedObject(NostoHelperContext::getCurrency())) {
+            $currencyId = self::loadCurrencyId();
         }
-        if (!Validate::isLoadedObject(Context::getContext()->country)) {
-            Context::getContext()->country = self::loadCountry();
-        }
-        $nostoSignup->setTitle(Configuration::get('PS_SHOP_NAME'));
-        $nostoSignup->setName(Tools::substr(sha1((string)rand()), 0, 8));
-        $nostoSignup->setFrontPageUrl(self::getContextShopUrl());
-        $nostoSignup->setCurrencyCode(Context::getContext()->currency->iso_code);
-        $nostoSignup->setLanguageCode($language->iso_code);
-        $nostoSignup->setOwnerLanguageCode($language->iso_code);
-        $nostoSignup->setOwner(NostoAccountOwner::loadData());
-        $nostoSignup->setBillingDetails(NostoAccountBilling::loadData());
-        $nostoSignup->setCurrencies(self::buildCurrencies());
-        if (Nosto::useMultipleCurrencies()) {
-            $nostoSignup->setUseCurrencyExchangeRates(Nosto::useMultipleCurrencies());
-            $nostoSignup->setDefaultVariantId(NostoHelperCurrency::getBaseCurrency()->iso_code);
+        if (!Validate::isLoadedObject(NostoHelperContext::getCountry())) {
+            $countryId = self::loadCountryId();
         }
 
-        NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoSignup), array(
-            'nosto_account_signup' => $nostoSignup
-        ));
+        NostoHelperContext::runInContext(
+            function () use (&$nostoSignup) {
+                $nostoSignup->setTitle(Configuration::get('PS_SHOP_NAME'));
+                $nostoSignup->setName(Tools::substr(sha1((string)rand()), 0, 8));
+                $nostoSignup->setFrontPageUrl(self::getContextShopUrl());
+                $nostoSignup->setCurrencyCode(NostoHelperContext::getCurrency()->iso_code);
+                $nostoSignup->setLanguageCode(NostoHelperContext::getLanguage()->iso_code);
+                $nostoSignup->setOwnerLanguageCode(NostoHelperContext::getLanguage()->iso_code);
+                $nostoSignup->setOwner(NostoAccountOwner::loadData());
+                $nostoSignup->setBillingDetails(NostoAccountBilling::loadData());
+                $nostoSignup->setCurrencies(self::buildCurrencies());
+                if (Nosto::useMultipleCurrencies()) {
+                    $nostoSignup->setUseCurrencyExchangeRates(Nosto::useMultipleCurrencies());
+                    $nostoSignup->setDefaultVariantId(NostoHelperCurrency::getBaseCurrency()->iso_code);
+                }
+
+                NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoSignup), array(
+                    'nosto_account_signup' => $nostoSignup
+                ));
+            },
+            $languageId,
+            false,
+            $currencyId,
+            false,
+            $countryId
+        );
+
         return $nostoSignup;
     }
 

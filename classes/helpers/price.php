@@ -102,68 +102,61 @@ class NostoHelperPrice
         array $options = array()
     )
     {
-        // If the requested currency is not the one in the context, then set it.
-        if (
-            Context::getContext()->currency instanceof Currency
-            && $currency->iso_code !== Context::getContext()->currency->iso_code
-        ) {
-            /** @var Currency|CurrencyCore $old_currency */
-            $old_currency = Context::getContext()->currency;
-            Context::getContext()->currency = $currency;
+        $employeeId = NostoHelperContext::getEmployeeId();
+        if (empty(NostoHelperContext::getEmployee())) {
+            $employee = new Employee();
+            $employeeId = $employee->id;
         }
 
-        if (
-            !isset(Context::getContext()->employee)
-            || empty(Context::getContext()->employee)
-        ) {
-            Context::getContext()->employee = new Employee();
-        }
+        return NostoHelperContext::runInContext(
+            function () use ($options, $id_product)
+            {
+                $options = array_merge(array(
+                    'include_tax' => true,
+                    'id_product_attribute' => null,
+                    'decimals' => 6,
+                    'divisor' => null,
+                    'only_reduction' => false,
+                    'user_reduction' => true,
+                    'quantity' => 1,
+                    'force_associated_tax' => false,
+                    'id_customer' => null,
+                    'id_cart' => null,
+                    'id_address' => null,
+                    'with_eco_tax' => true,
+                    'use_group_reduction' => true,
+                    'use_customer_price' => true,
+                ), $options);
+                // This option is used as a reference, so we need it in a separate variable.
+                $specific_price_output = null;
 
-        $options = array_merge(array(
-            'include_tax' => true,
-            'id_product_attribute' => null,
-            'decimals' => 6,
-            'divisor' => null,
-            'only_reduction' => false,
-            'user_reduction' => true,
-            'quantity' => 1,
-            'force_associated_tax' => false,
-            'id_customer' => null,
-            'id_cart' => null,
-            'id_address' => null,
-            'with_eco_tax' => true,
-            'use_group_reduction' => true,
-            'use_customer_price' => true,
-        ), $options);
-        // This option is used as a reference, so we need it in a separate variable.
-        $specific_price_output = null;
+                $value = Product::getPriceStatic(
+                    (int)$id_product,
+                    $options['include_tax'],
+                    $options['id_product_attribute'],
+                    $options['decimals'],
+                    $options['divisor'],
+                    $options['only_reduction'],
+                    $options['user_reduction'],
+                    $options['quantity'],
+                    $options['force_associated_tax'],
+                    $options['id_customer'],
+                    $options['id_cart'],
+                    $options['id_address'],
+                    $specific_price_output,
+                    $options['with_eco_tax'],
+                    $options['use_group_reduction'],
+                    Context::getContext(),
+                    $options['use_customer_price']
+                );
 
-        $value = Product::getPriceStatic(
-            (int)$id_product,
-            $options['include_tax'],
-            $options['id_product_attribute'],
-            $options['decimals'],
-            $options['divisor'],
-            $options['only_reduction'],
-            $options['user_reduction'],
-            $options['quantity'],
-            $options['force_associated_tax'],
-            $options['id_customer'],
-            $options['id_cart'],
-            $options['id_address'],
-            $specific_price_output,
-            $options['with_eco_tax'],
-            $options['use_group_reduction'],
-            Context::getContext(),
-            $options['use_customer_price']
+                return NostoHelperPrice::roundPrice($value);
+            },
+            false,
+            false,
+            $currency->id,
+            $employeeId
         );
-
-        // If currency was replaced in context, restore the old one.
-        if (isset($old_currency)) {
-            Context::getContext()->currency = $old_currency;
-        }
-
-        return NostoHelperPrice::roundPrice($value);
     }
 
     /**

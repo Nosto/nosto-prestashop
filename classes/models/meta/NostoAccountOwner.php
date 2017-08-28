@@ -35,15 +35,16 @@ class NostoAccountOwner extends NostoSDKSignupOwner
     public static function loadData()
     {
         $nostoOwner = new NostoAccountOwner();
-        if (!empty(Context::getContext()->employee)) {
-            $nostoOwner->setFirstName(Context::getContext()->employee->firstname);
-            $nostoOwner->setLastName(Context::getContext()->employee->lastname);
-            $nostoOwner->setEmail(Context::getContext()->employee->email);
+        if (!empty(NostoHelperContext::getEmployee())) {
+            $nostoOwner->setFirstName(NostoHelperContext::getEmployee()->firstname);
+            $nostoOwner->setLastName(NostoHelperContext::getEmployee()->lastname);
+            $nostoOwner->setEmail(NostoHelperContext::getEmployee()->email);
         }
 
         NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoOwner), array(
             'nosto_account_owner' => $nostoOwner
         ));
+
         return $nostoOwner;
     }
 }

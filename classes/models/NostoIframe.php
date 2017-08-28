@@ -72,9 +72,9 @@ class NostoIframe extends NostoSDKIframe
             return null;
         }
 
-        $nostoIframe->setFirstName(Context::getContext()->employee->firstname);
-        $nostoIframe->setLastName(Context::getContext()->employee->lastname);
-        $nostoIframe->setEmail(Context::getContext()->employee->email);
+        $nostoIframe->setFirstName(NostoHelperContext::getEmployee()->firstname);
+        $nostoIframe->setLastName(NostoHelperContext::getEmployee()->lastname);
+        $nostoIframe->setEmail(NostoHelperContext::getEmployee()->email);
         $nostoIframe->setLanguageIsoCode(NostoHelperContext::getLanguage()->iso_code);
         $nostoIframe->setLanguageIsoCodeShop($shopLanguage->iso_code);
         $nostoIframe->setPreviewUrlProduct(NostoHelperUrl::getPreviewUrlProduct());
@@ -98,7 +98,7 @@ class NostoIframe extends NostoSDKIframe
                 $visits = AdminStatsControllerCore::getVisits(false, $beginDate, $today);
                 $nostoIframe->setRecentVisits(strval($visits));
                 $nostoIframe->setRecentSales(number_format((float)$sales));
-                $currency = Context::getContext()->currency;
+                $currency = NostoHelperContext::getCurrency();
                 if ($currency instanceof Currency) {
                     $nostoIframe->setCurrency($currency->iso_code);
                 }

@@ -102,13 +102,13 @@ class NostoIndexController
         $adminUrl = $this->getAdminUrl();
 
         NostoHelperConfig::saveAdminUrl($adminUrl);
-        $languages = Language::getLanguages(true, Context::getContext()->shop->id);
+        $languages = Language::getLanguages(true, NostoHelperContext::getShopId());
 
         $shopId = null;
         $shopGroupId = null;
-        if (Context::getContext()->shop instanceof Shop) {
-            $shopId = Context::getContext()->shop->id;
-            $shopGroupId = Context::getContext()->shop->id_shop_group;
+        if (NostoHelperContext::getShop() instanceof Shop) {
+            $shopId = NostoHelperContext::getShopId();
+            $shopGroupId = NostoHelperContext::getShopGroupId();
         }
 
         $languageId = (int)Tools::getValue('nostotagging_current_language', 0);
@@ -120,12 +120,11 @@ class NostoIndexController
         }
 
         return NostoHelperContext::runInContext(
-            $languageId,
-            $shopId,
-            function() use ($nostoTagging, $languages, $currentLanguage)
-            {
+            function () use ($nostoTagging, $languages, $currentLanguage) {
                 return self::generateSmartyData($nostoTagging, $languages, $currentLanguage);
-            }
+            },
+            $languageId,
+            $shopId
         );
     }
 
@@ -157,7 +156,7 @@ class NostoIndexController
             $iframeInstallationUrl = null;
         }
 
-        $accountEmail = Context::getContext()->employee->email;
+        $accountEmail = NostoHelperContext::getEmployee()->email;
 
         $smartyMetaData = array(
             'nostotagging_form_action' => $this->getAdminUrl(),
@@ -210,7 +209,7 @@ class NostoIndexController
             }
         }
 
-        $controllerUrls = $this->getControllerUrls(Context::getContext()->employee->id);
+        $controllerUrls = $this->getControllerUrls(NostoHelperContext::getEmployee()->id);
 
         return array_merge($controllerUrls, $smartyMetaData);
     }

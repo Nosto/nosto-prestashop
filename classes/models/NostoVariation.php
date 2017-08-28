@@ -39,7 +39,7 @@ class NostoVariation extends MarkupableString
 
     public static function loadData()
     {
-        $nostoVariation = new NostoVariation(Context::getContext()->currency->iso_code);
+        $nostoVariation = new NostoVariation(NostoHelperContext::getCurrency()->iso_code);
 
         NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoVariation), array(
             'nosto_variation' => $nostoVariation

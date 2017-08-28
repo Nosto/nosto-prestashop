@@ -25,6 +25,8 @@
 
 require_once(dirname(__FILE__) . '/api.php');
 
+use Nosto\Object\Product\ProductCollection;
+
 /**
  * Front controller for gathering all products from the shop and sending the meta-data to Nosto.
  *
@@ -37,40 +39,48 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
      */
     public function initContent()
     {
-        $context = Context::getContext();
-        $collection = new Nosto\Object\Product\ProductCollection();
         // We need to forge the employee in order to get a price for a product
-        $context->employee = new Employee();
+        $employee = new Employee();
 
-        if (!empty(Tools::getValue('id'))) {
-            $product = new Product(
-                Tools::getValue('id'),
-                true,
-                $context->language->id,
-                $context->shop->id
-            );
-            if (!Validate::isLoadedObject($product)) {
-                Controller::getController('PageNotFoundController')->run();
-            }
-            $nostoProduct = NostoProduct::loadData($product);
-            $collection->append($nostoProduct);
-        } else {
-            foreach ($this->getProductIds() as $idProduct) {
-                $product = new Product(
-                    $idProduct,
-                    true,
-                    $context->language->id,
-                    $context->shop->id
-                );
-                if (!Validate::isLoadedObject($product)) {
-                    continue;
+        NostoHelperContext::runInContext(
+            function () {
+                $collection = new ProductCollection();
+                if (!empty(Tools::getValue('id'))) {
+                    $product = new Product(
+                        Tools::getValue('id'),
+                        true,
+                        NostoHelperContext::getLanguageId(),
+                        NostoHelperContext::getShopId()
+                    );
+                    if (!Validate::isLoadedObject($product)) {
+                        Controller::getController('PageNotFoundController')->run();
+                    }
+                    $nostoProduct = NostoProduct::loadData($product);
+                    $collection->append($nostoProduct);
+                } else {
+                    foreach ($this->getProductIds() as $idProduct) {
+                        $product = new Product(
+                            $idProduct,
+                            true,
+                            NostoHelperContext::getLanguageId(),
+                            NostoHelperContext::getShopId()
+                        );
+                        if (!Validate::isLoadedObject($product)) {
+                            continue;
+                        }
+
+                        $nostoProduct = NostoProduct::loadData($product);
+                        $collection->append($nostoProduct);
+                    }
                 }
+                $this->encryptOutput($collection);
+            },
+            false,
+            false,
+            false,
+            $employee->id
+        );
 
-                $nostoProduct = NostoProduct::loadData($product);
-                $collection->append($nostoProduct);
-            }
-        }
-        $this->encryptOutput($collection);
     }
 
     /**
