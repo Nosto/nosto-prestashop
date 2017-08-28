@@ -297,7 +297,7 @@ class NostoHelperContext
      */
     public static function getShopId()
     {
-        return self::getShop() ? self::getShopId() : null;
+        return self::getShop() ? self::getShop()->id : null;
     }
 
     /**
