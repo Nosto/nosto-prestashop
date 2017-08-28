@@ -53,9 +53,19 @@ class NostoHelperCurrency
      */
     public static function getBaseCurrency()
     {
-        $base_id_currency = (int)Configuration::get('PS_CURRENCY_DEFAULT', NostoHelperContext::getLanguageId(), NostoHelperContext::getShopGroupId(), NostoHelperContext::getShopId());
+        $base_id_currency = (int)Configuration::get(
+            'PS_CURRENCY_DEFAULT',
+            NostoHelperContext::getLanguageId(),
+            NostoHelperContext::getShopGroupId(),
+            NostoHelperContext::getShopId()
+        );
         if ($base_id_currency === 0) {
-            $base_id_currency = (int)Configuration::get('PS_CURRENCY_DEFAULT', null, NostoHelperContext::getShopGroupId(), NostoHelperContext::getShopId());
+            $base_id_currency = (int)Configuration::get(
+                'PS_CURRENCY_DEFAULT',
+                null,
+                NostoHelperContext::getShopGroupId(),
+                NostoHelperContext::getShopId()
+            );
         }
         $base_currency = self::loadCurrency($base_id_currency);
         if (!Validate::isLoadedObject($base_currency)) {
