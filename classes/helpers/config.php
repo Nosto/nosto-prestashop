@@ -88,8 +88,7 @@ class NostoHelperConfig
         $global = false,
         $id_shop_group = null,
         $id_shop = null
-    )
-    {
+    ) {
         $callback = array(
             'Configuration',
             ($global && method_exists(

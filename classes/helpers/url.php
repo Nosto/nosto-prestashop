@@ -142,7 +142,8 @@ class NostoHelperUrl
      * @param int|null $productAttributeId product attribute id
      * @return string the product page url.
      */
-    public static function getProductUrl($product, array $params = array(), $productAttributeId = 0) {
+    public static function getProductUrl($product, array $params = array(), $productAttributeId = 0)
+    {
         $idLang = NostoHelperContext::getLanguageId();
         $idShop = NostoHelperContext::getShopId();
 

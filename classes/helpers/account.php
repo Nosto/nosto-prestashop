@@ -70,7 +70,7 @@ class NostoHelperAccount
      */
     public static function deleteAll()
     {
-        NostoHelperContext::runInAContextForEachLanguageEachShop(function (){
+        NostoHelperContext::runInAContextForEachLanguageEachShop(function () {
             self::delete();
         });
 

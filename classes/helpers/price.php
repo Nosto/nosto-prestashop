@@ -64,8 +64,7 @@ class NostoHelperPrice
         Cart $cart,
         array $item,
         Currency $currency
-    )
-    {
+    ) {
         if (Configuration::get('PS_TAX_ADDRESS_TYPE') == 'id_address_invoice') {
             $id_address = (int)$cart->id_address_invoice;
         } else {
@@ -100,8 +99,7 @@ class NostoHelperPrice
         $id_product,
         Currency $currency,
         array $options = array()
-    )
-    {
+    ) {
         $employeeId = NostoHelperContext::getEmployeeId();
         if (empty(NostoHelperContext::getEmployee())) {
             $employee = new Employee();
@@ -109,8 +107,7 @@ class NostoHelperPrice
         }
 
         return NostoHelperContext::runInContext(
-            function () use ($options, $id_product)
-            {
+            function () use ($options, $id_product) {
                 $options = array_merge(array(
                     'include_tax' => true,
                     'id_product_attribute' => null,
