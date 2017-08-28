@@ -88,8 +88,7 @@ class NostoHelperConfig
         $global = false,
         $id_shop_group = null,
         $id_shop = null
-    )
-    {
+    ) {
         $callback = array(
             'Configuration',
             ($global && method_exists(
@@ -251,7 +250,12 @@ class NostoHelperConfig
      */
     public static function getToken($token_name)
     {
-        return Configuration::get(self::getTokenConfigKey($token_name), NostoHelperContext::getLanguageId(), NostoHelperContext::getShopGroupId(), NostoHelperContext::getShopId());
+        return Configuration::get(
+            self::getTokenConfigKey($token_name),
+            NostoHelperContext::getLanguageId(),
+            NostoHelperContext::getShopGroupId(),
+            NostoHelperContext::getShopId()
+        );
     }
 
     /**
@@ -316,7 +320,13 @@ class NostoHelperConfig
      */
     public static function getMultiCurrencyMethod()
     {
-        $method = Configuration::get(self::MULTI_CURRENCY_METHOD, NostoHelperContext::getLanguageId(), NostoHelperContext::getShopGroupId(), NostoHelperContext::getShopId());
+        $method = Configuration::get(
+            self::MULTI_CURRENCY_METHOD,
+            NostoHelperContext::getLanguageId(),
+            NostoHelperContext::getShopGroupId(),
+            NostoHelperContext::getShopId()
+        );
+        
         return !empty($method) ? $method : self::MULTI_CURRENCY_METHOD_DISABLED;
     }
 
