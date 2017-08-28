@@ -252,7 +252,12 @@ class NostoProductService extends AbstractNostoService
      */
     protected function loadNostoProduct($idProduct)
     {
-        $product = new Product($idProduct, true, NostoHelperContext::getLanguageId(), NostoHelperContext::getShopId());
+        $product = new Product(
+            $idProduct,
+            true,
+            NostoHelperContext::getLanguageId(),
+            NostoHelperContext::getShopId()
+        );
         if (!Validate::isLoadedObject($product)) {
             return null;
         }
