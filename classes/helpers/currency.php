@@ -74,13 +74,13 @@ class NostoHelperCurrency
     /**
      * Fetches all currencies defined in context.
      *
-     * @param boolean $only_active if set to true, only active languages will be returned
+     * @param boolean $onlyActive if set to true, only active languages will be returned
      * @return array the found currencies.
      */
-    public static function getCurrencies($only_active = false)
+    public static function getCurrencies($onlyActive = false)
     {
         $all_currencies = Currency::getCurrenciesByIdShop(NostoHelperContext::getShopId());
-        if ($only_active === true) {
+        if ($onlyActive === true) {
             $currencies = array();
             foreach ($all_currencies as $currency) {
                 if (self::currencyActive($currency)) {
