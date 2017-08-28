@@ -177,8 +177,8 @@ class NostoHelperContext
             throw new Exception('revertToOriginalContext() is called before calling emulateContext()');
         }
 
-        $backupContext = array_shift(self::$backupContextStack);
-        $backupShopContext = array_shift(self::$backupShopContextStack);
+        $backupContext = array_pop(self::$backupContextStack);
+        $backupShopContext = array_pop(self::$backupShopContextStack);
 
         $context = Context::getContext();
 
