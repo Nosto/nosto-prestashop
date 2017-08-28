@@ -87,8 +87,8 @@ class NostoHelperContext
                     function () use ($callable) {
                         $callable();
                     },
-                    $language['id_lang']
-                    , $shopId
+                    $language['id_lang'],
+                    $shopId
                 );
             }
         }
