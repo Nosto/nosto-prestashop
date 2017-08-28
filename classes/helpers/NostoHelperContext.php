@@ -126,7 +126,7 @@ class NostoHelperContext
             $context->shop = null;
             Shop::setContext(Shop::CONTEXT_SHOP, null);
         } elseif ($shopId !== false) {
-            $context->shop = new Language($languageId);
+            $context->shop = new Shop($shopId);
             Shop::setContext(Shop::CONTEXT_SHOP, $shopId);
         }
         // Reset the dispatcher singleton instance so that the url rewrite setting is check on a
