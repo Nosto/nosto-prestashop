@@ -85,13 +85,9 @@ class NostoHelperAccount
      */
     public static function find()
     {
-        $account_name = NostoHelperConfig::getAccountName(
-            NostoHelperContext::getLanguageId(),
-            NostoHelperContext::getShopGroupId(),
-            NostoHelperContext::getShopId()
-        );
-        if (!empty($account_name)) {
-            $account = new NostoSDKAccount($account_name);
+        $accountName = NostoHelperConfig::getAccountName();
+        if (!empty($accountName)) {
+            $account = new NostoSDKAccount($accountName);
             $tokens = array();
             foreach (NostoSDKAPIToken::getApiTokenNames() as $token_name) {
                 $token_value = NostoHelperConfig::getToken($token_name);

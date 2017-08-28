@@ -186,36 +186,38 @@ class NostoHelperConfig
     /**
      * Saves the account name to the config for given language.
      *
-     * @param string $account_name the account name to save.
+     * @param string $accountName the account name to save.
      * @return bool true if saving the configuration was successful, false otherwise
      */
-    public static function saveAccountName($account_name)
+    public static function saveAccountName($accountName)
     {
         if (NostoHelperContext::getShop() instanceof Shop) {
             return self::write(
                 self::ACCOUNT_NAME,
-                $account_name,
+                $accountName,
                 NostoHelperContext::getLanguageId(),
                 false,
                 NostoHelperContext::getShopGroupId(),
                 NostoHelperContext::getShopId()
             );
         } else {
-            return self::write(self::ACCOUNT_NAME, $account_name, NostoHelperContext::getLanguageId());
+            return self::write(self::ACCOUNT_NAME, $accountName, NostoHelperContext::getLanguageId());
         }
     }
 
     /**
      * Gets a account name from the config.
      *
-     * @param int $id_lang the language identifier for which to fetch the configuration
-     * @param null|int $id_shop_group the shop-group identifier for which to fetch the configuration
-     * @param null|int $id_shop the shop identifier for which to fetch the configuration
      * @return mixed
      */
-    public static function getAccountName($id_lang, $id_shop_group = null, $id_shop = null)
+    public static function getAccountName()
     {
-        return Configuration::get(self::ACCOUNT_NAME, $id_lang, $id_shop_group, $id_shop);
+        return Configuration::get(
+            self::ACCOUNT_NAME,
+            NostoHelperContext::getLanguageId(),
+            NostoHelperContext::getShopGroupId(),
+            NostoHelperContext::getShopId()
+        );
     }
 
     /**

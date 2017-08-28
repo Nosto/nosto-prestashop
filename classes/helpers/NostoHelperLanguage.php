@@ -29,13 +29,13 @@ class NostoHelperLanguage
      * Gets the current admin config language data.
      *
      * @param array $languages list of valid languages.
-     * @param int $id_lang if a specific language is required.
+     * @param int $languageId if a specific language is required.
      * @return array the language data array.
      */
-    public static function ensureAdminLanguage(array $languages, $id_lang)
+    public static function ensureAdminLanguage(array $languages, $languageId)
     {
         foreach ($languages as $language) {
-            if ($language['id_lang'] == $id_lang) {
+            if ($language['id_lang'] == $languageId) {
                 return $language;
             }
         }
