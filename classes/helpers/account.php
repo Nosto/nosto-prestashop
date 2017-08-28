@@ -70,10 +70,10 @@ class NostoHelperAccount
      */
     public static function deleteAll()
     {
-        foreach (Shop::getShops() as $shop) {
-            //TODO: Emulate
+        NostoHelperContext::runInAContextForEachLanguageEachShop(function (){
             self::delete();
-        }
+        });
+
         return true;
     }
 
