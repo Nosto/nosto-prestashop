@@ -186,6 +186,7 @@ class NostoHelperContext
         $context->shop = $backupContext->shop;
         $context->currency = $backupContext->currency;
         $context->employee = $backupContext->employee;
+        $context->country = $backupContext->country;
         $context->link = $backupContext->link;
 
         Shop::setContext($backupShopContext, $context->shop ? $context->shop->id : null);
