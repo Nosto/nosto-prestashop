@@ -42,8 +42,8 @@ class NostoCheckMulticurrencyNotification extends NostoNotification
                 $currencies = NostoHelperCurrency::getCurrencies(true);
                 if (count($currencies) > 1) {
                     return new NostoNotification(
-                        Context::getContext()->shop,
-                        Context::getContext()->language,
+                        NostoHelperContext::getShop(),
+                        NostoHelperContext::getLanguage(),
                         NostoSDKNotification::TYPE_MULTI_CURRENCY_DISABLED,
                         NostoSDKNotification::SEVERITY_WARNING,
                         'Your shop %s with language %s is using multiple currencies but' .

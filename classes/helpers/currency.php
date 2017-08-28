@@ -178,7 +178,7 @@ class NostoHelperCurrency
      */
     private static function createWithCldr(array $currency)
     {
-        $cldr = Tools::getCldr(null, Context::getContext()->language->language_code);
+        $cldr = Tools::getCldr(null, NostoHelperContext::getLanguage()->language_code);
         /** @noinspection PhpParamsInspection */
         $cldr_currency = new \ICanBoogie\CLDR\Currency($cldr->getRepository(), $currency['iso_code']);
         $localized_currency = $cldr_currency->localize($cldr->getCulture());

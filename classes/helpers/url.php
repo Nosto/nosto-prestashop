@@ -275,7 +275,7 @@ class NostoHelperUrl
         if (Configuration::get('PS_MULTISHOP_FEATURE_ACTIVE') && !is_null($idShop)) {
             $shop = new Shop($idShop);
         } else {
-            $shop = Context::getContext()->shop;
+            $shop = NostoHelperContext::getShop();
         }
 
         $base = ($ssl ? 'https://' . $shop->domain_ssl : 'http://' . $shop->domain);

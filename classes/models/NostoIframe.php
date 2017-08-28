@@ -64,7 +64,7 @@ class NostoIframe extends NostoSDKIframe
     {
         $nostoIframe = new NostoIframe();
         $shopLanguage = new Language(NostoHelperContext::getLanguageId());
-        $shopContext = Context::getContext()->shop->getContext();
+        $shopContext = NostoHelperContext::getShop()->getContext();
         if (
             !Validate::isLoadedObject($shopLanguage)
             || $shopContext !== Shop::CONTEXT_SHOP
@@ -75,7 +75,7 @@ class NostoIframe extends NostoSDKIframe
         $nostoIframe->setFirstName(Context::getContext()->employee->firstname);
         $nostoIframe->setLastName(Context::getContext()->employee->lastname);
         $nostoIframe->setEmail(Context::getContext()->employee->email);
-        $nostoIframe->setLanguageIsoCode(Context::getContext()->language->iso_code);
+        $nostoIframe->setLanguageIsoCode(NostoHelperContext::getLanguage()->iso_code);
         $nostoIframe->setLanguageIsoCodeShop($shopLanguage->iso_code);
         $nostoIframe->setPreviewUrlProduct(NostoHelperUrl::getPreviewUrlProduct());
         $nostoIframe->setPreviewUrlCategory(NostoHelperUrl::getPreviewUrlCategory());

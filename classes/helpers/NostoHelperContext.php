@@ -140,13 +140,23 @@ class NostoHelperContext
     }
 
     /**
+     * Get language from current context
+     *
+     * @return Language|null
+     */
+    public static function getLanguage()
+    {
+        return Context::getContext()->language;
+    }
+
+    /**
      * Get language Id from current context
      *
-     * @return mixed int|null
+     * @return int|null
      */
     public static function getLanguageId()
     {
-        return Context::getContext()->language->id;
+        return self::getLanguage() ? self::getLanguage()->id : null;
     }
 
     /**
@@ -170,10 +180,16 @@ class NostoHelperContext
      */
     public static function getShopId()
     {
-        if (Context::getContext()->shop instanceof Shop) {
-            return Context::getContext()->shop->id;
-        }
+        return self::getShop() ? self::getShopId() : null;
+    }
 
-        return null;
+    /**
+     * Get shop from current context
+     *
+     * @return Shop|null
+     */
+    public static function getShop()
+    {
+        return Context::getContext()->shop;
     }
 }

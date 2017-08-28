@@ -39,8 +39,8 @@ class NostoCheckAccountNotification extends NostoNotification
         $connected = NostoHelperAccount::existsAndIsConnected();
         if (!$connected) {
             return new NostoCheckAccountNotification(
-                Context::getContext()->shop,
-                Context::getContext()->language,
+                NostoHelperContext::getShop(),
+                NostoHelperContext::getLanguage(),
                 NostoSDKNotification::TYPE_MISSING_INSTALLATION,
                 NostoSDKNotification::SEVERITY_INFO,
                 'Nosto account is not installed to shop %s and language %s'

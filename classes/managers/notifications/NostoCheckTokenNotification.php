@@ -41,8 +41,8 @@ class NostoCheckTokenNotification extends NostoNotification
             $account = NostoHelperAccount::find();
             if ($account instanceof NostoSDKAccount && $account->hasMissingTokens()) {
                 return new NostoCheckTokenNotification(
-                    Context::getContext()->shop,
-                    Context::getContext()->language,
+                    NostoHelperContext::getShop(),
+                    NostoHelperContext::getLanguage(),
                     NostoSDKNotification::TYPE_MISSING_TOKENS,
                     NostoSDKNotification::SEVERITY_WARNING,
                     'One or more Nosto API tokens are missing for shop %s and language %s'

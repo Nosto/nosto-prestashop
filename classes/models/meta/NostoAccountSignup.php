@@ -81,7 +81,7 @@ class NostoAccountSignup extends NostoSDKAccountSignup
             return null;
         }
 
-        if (!Validate::isLoadedObject(Context::getContext()->language)) {
+        if (!Validate::isLoadedObject(NostoHelperContext::getLanguage())) {
             Context::getContext()->language = self::loadLanguage();
         }
         if (!Validate::isLoadedObject(Context::getContext()->currency)) {
@@ -117,7 +117,7 @@ class NostoAccountSignup extends NostoSDKAccountSignup
      */
     protected static function getContextShopUrl() //TODO: Why is this not in the helper?
     {
-        $shop = Context::getContext()->shop;
+        $shop = NostoHelperContext::getShop();
         $ssl = Configuration::get('PS_SSL_ENABLED');
         $rewrite = (int)Configuration::get('PS_REWRITING_SETTINGS', null, null, $shop->id);
         $multi_lang = (Language::countActiveLanguages(NostoHelperContext::getShopId()) > 1);
@@ -125,7 +125,7 @@ class NostoAccountSignup extends NostoSDKAccountSignup
         $lang = '';
         if ($multi_lang) {
             if ($rewrite) {
-                $lang = Context::getContext()->language->iso_code . '/';
+                $lang = NostoHelperContext::getLanguage()->iso_code . '/';
             } else {
                 $lang = '?id_lang=' . NostoHelperContext::getLanguageId();
             }

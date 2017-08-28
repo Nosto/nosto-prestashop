@@ -191,7 +191,7 @@ class NostoHelperConfig
      */
     public static function saveAccountName($account_name)
     {
-        if (Context::getContext()->shop instanceof Shop) {
+        if (NostoHelperContext::getShop() instanceof Shop) {
             return self::write(
                 self::ACCOUNT_NAME,
                 $account_name,
@@ -227,7 +227,7 @@ class NostoHelperConfig
      */
     public static function saveToken($tokeName, $tokenValue)
     {
-        if (Context::getContext()->shop instanceof Shop) {
+        if (NostoHelperContext::getShop() instanceof Shop) {
             return self::write(
                 self::getTokenConfigKey($tokeName),
                 $tokenValue,
@@ -337,7 +337,7 @@ class NostoHelperConfig
      */
     public static function saveMultiCurrencyMethod($method)
     {
-        if (Context::getContext()->shop instanceof Shop) {
+        if (NostoHelperContext::getShop() instanceof Shop) {
             return self::write(
                 self::MULTI_CURRENCY_METHOD,
                 $method,
@@ -368,7 +368,7 @@ class NostoHelperConfig
      */
     public static function saveSkuEnabled($enabled)
     {
-        if (Context::getContext()->shop instanceof Shop) {
+        if (NostoHelperContext::getShop() instanceof Shop) {
             return self::write(
                 self::SKU_SWITCH,
                 $enabled,
@@ -390,7 +390,7 @@ class NostoHelperConfig
      */
     public static function saveNostoTaggingRenderPosition($method)
     {
-        if (Context::getContext()->shop instanceof Shop) {
+        if (NostoHelperContext::getShop() instanceof Shop) {
             return self::write(
                 self::NOSTOTAGGING_POSITION,
                 $method,
@@ -446,7 +446,7 @@ class NostoHelperConfig
      */
     public static function saveImageType($type)
     {
-        if (Context::getContext()->shop instanceof Shop) {
+        if (NostoHelperContext::getShop() instanceof Shop) {
             return self::write(
                 self::NOSTOTAGGING_IMAGE_TYPE,
                 $type,
