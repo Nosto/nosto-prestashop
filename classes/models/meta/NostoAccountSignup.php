@@ -135,7 +135,8 @@ class NostoAccountSignup extends NostoSDKAccountSignup
         $ssl = Configuration::get('PS_SSL_ENABLED');
         $rewrite = (int)Configuration::get('PS_REWRITING_SETTINGS', null, null, $shop->id);
         $multi_lang = (Language::countActiveLanguages(NostoHelperContext::getShopId()) > 1);
-        $base = ($ssl ? 'https://' . $shop->domain_ssl : 'http://' . $shop->domain) . $shop->getBaseURI();
+        $base = ($ssl ? 'https://' . ShopUrl::getMainShopDomainSSL() : 'http://' . ShopUrl::getMainShopDomain())
+            . $shop->getBaseURI();
         $lang = '';
         if ($multi_lang) {
             if ($rewrite) {

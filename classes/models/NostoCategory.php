@@ -70,7 +70,10 @@ class NostoCategory extends MarkupableString
             return null;
         }
 
-        $nostoCategory = new NostoCategory(implode(DIRECTORY_SEPARATOR, array_reverse($categoryList)) . DIRECTORY_SEPARATOR);
+        $nostoCategory = new NostoCategory(
+            implode(DIRECTORY_SEPARATOR, array_reverse($categoryList))
+            . DIRECTORY_SEPARATOR
+        );
 
         NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoCategory), array(
             'category' => $category,

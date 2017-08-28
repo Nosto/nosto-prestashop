@@ -279,7 +279,7 @@ class NostoHelperUrl
             $shop = NostoHelperContext::getShop();
         }
 
-        $base = ($ssl ? 'https://' . $shop->domain_ssl : 'http://' . $shop->domain);
+        $base = ($ssl ? 'https://' . ShopUrl::getMainShopDomainSSL() : 'http://' . ShopUrl::getMainShopDomain());
         return $base . $shop->getBaseURI();
     }
 }

@@ -52,7 +52,9 @@ class NostoProductTagging
         );
         if (Validate::isLoadedObject($category)) {
             $nostoCategory = NostoCategory::loadData($category);
-            $html .= $nostoCategory->toHtml();
+            if ($nostoCategory) {
+                $html .= $nostoCategory->toHtml();
+            }
         }
 
         return $html;

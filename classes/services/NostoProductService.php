@@ -111,8 +111,7 @@ class NostoProductService extends AbstractNostoService
                 ++$batch;
             }
             ++$counter;
-            if (
-                $product instanceof Product === false
+            if ($product instanceof Product === false
                 || !Validate::isLoadedObject($product)
             ) {
                 throw new NostoSDKException(
@@ -130,8 +129,7 @@ class NostoProductService extends AbstractNostoService
             self::$processedProducts[] = NostoHelperContext::getLanguageId() . '-' . $product->id;
 
             $nostoAccount = NostoHelperAccount::find();
-            if (!$nostoAccount)
-            {
+            if (!$nostoAccount) {
                 continue;
             }
 
