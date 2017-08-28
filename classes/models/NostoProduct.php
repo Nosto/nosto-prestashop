@@ -41,25 +41,25 @@ class NostoProduct extends NostoSDKProduct
 
 
         $nostoProduct = new NostoProduct();
-        $base_currency = NostoHelperCurrency::getBaseCurrency();
+        $baseCurrency = NostoHelperCurrency::getBaseCurrency();
 
         if (Nosto::useMultipleCurrencies()) {
-            $nostoProduct->setVariationId($base_currency->iso_code);
-            $tagging_currency = $base_currency;
+            $nostoProduct->setVariationId($baseCurrency->iso_code);
+            $taggingCurrency = $baseCurrency;
         } else {
-            $tagging_currency = NostoHelperContext::getCurrency();
+            $taggingCurrency = NostoHelperContext::getCurrency();
         }
         $nostoProduct->setUrl(NostoHelperUrl::getProductUrl($product));
         $nostoProduct->setProductId((string)$product->id);
         $nostoProduct->setName($product->name);
-        $nostoProduct->setPriceCurrencyCode(Tools::strtoupper($tagging_currency->iso_code));
+        $nostoProduct->setPriceCurrencyCode(Tools::strtoupper($taggingCurrency->iso_code));
         $nostoProduct->setAvailability(self::checkAvailability($product));
         $nostoProduct->amendTags($product);
         $nostoProduct->amendCategories($product);
         $nostoProduct->setDescription($product->description_short . $product->description);
         $nostoProduct->setInventoryLevel((int)$product->quantity);
-        $nostoProduct->setPrice(self::getPriceInclTax($product, $tagging_currency));
-        $nostoProduct->setListPrice(self::getListPriceInclTax($product, $tagging_currency));
+        $nostoProduct->setPrice(self::getPriceInclTax($product, $taggingCurrency));
+        $nostoProduct->setListPrice(self::getListPriceInclTax($product, $taggingCurrency));
         $nostoProduct->amendBrand($product);
         $nostoProduct->amendImage($product);
         $nostoProduct->amendAlternateImages($product);
