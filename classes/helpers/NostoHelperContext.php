@@ -50,8 +50,7 @@ class NostoHelperContext
         $currencyId = false,
         $employeeId = false,
         $countryId = false
-    )
-    {
+    ) {
         $retval = null;
 
         self::emulateContext($idLang, $idShop, $currencyId, $employeeId, $countryId);
@@ -82,7 +81,6 @@ class NostoHelperContext
         foreach (Shop::getShops() as $shop) {
             $shopId = isset($shop['id_shop']) ? $shop['id_shop'] : null;
             foreach (Language::getLanguages(true, $shopId) as $language) {
-                $id_shop_group = isset($shop['id_shop_group']) ? $shop['id_shop_group'] : null;
                 self::runInContext(
                     function () use ($callable) {
                         $callable();
@@ -118,10 +116,7 @@ class NostoHelperContext
         // Reset the shop context to be the current processed shop. This will fix the "friendly url"'
         // format of urls generated through the Link class.
         self::$backupShopContextStack[] = Shop::getContext();
-        if ($shopId !== false) {
-            $context->shop = new Shop($shopId);
-            Shop::setContext(Shop::CONTEXT_SHOP, $shopId);
-        }
+
         if ($shopId === null) {
             $context->shop = null;
             Shop::setContext(Shop::CONTEXT_SHOP, null);
@@ -140,6 +135,9 @@ class NostoHelperContext
             // shops are configured to use different domains.
             ShopUrl::resetMainDomainCache();
         }
+
+        //clean local cache. Otherwish it may get the wrong quantity data or other data
+        Cache::clean("*");
 
         if ($languageId === null) {
             $context->language = null;

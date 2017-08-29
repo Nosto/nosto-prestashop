@@ -26,6 +26,8 @@
 
 require_once 'NostoBaseController.php';
 
+use Nosto\Helper\OAuthHelper as NostoSDKOAuthHelper;
+
 class NostoConnectAccountController extends NostoBaseController
 {
     /**

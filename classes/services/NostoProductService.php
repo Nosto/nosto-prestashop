@@ -92,6 +92,11 @@ class NostoProductService extends AbstractNostoService
         return $this->update(array($product));
     }
 
+    private function getProductCacheKey(Product $product)
+    {
+        return NostoHelperContext::getShopId() . '-' . NostoHelperContext::getLanguageId() . '-' . $product->id;
+    }
+
     /**
      * Sends a product update to Nosto for all stores and installed Nosto
      * accounts
@@ -123,10 +128,10 @@ class NostoProductService extends AbstractNostoService
                     )
                 );
             }
-            if (in_array(NostoHelperContext::getLanguageId() . '-' . $product->id, self::$processedProducts)) {
+            if (in_array($this->getProductCacheKey($product), self::$processedProducts)) {
                 continue;
             }
-            self::$processedProducts[] = NostoHelperContext::getLanguageId() . '-' . $product->id;
+            self::$processedProducts[] = $this->getProductCacheKey($product);
 
             $nostoAccount = NostoHelperAccount::find();
             if (!$nostoAccount) {
@@ -214,14 +219,14 @@ class NostoProductService extends AbstractNostoService
     private function deleteProduct(Product $product)
     {
         if (!Validate::isLoadedObject($product) || in_array(
-                NostoHelperContext::getLanguageId() . '-' . $product->id,
+                $this->getProductCacheKey($product),
                 self::$processedProducts
             )
         ) {
             return;
         }
 
-        self::$processedProducts[] = NostoHelperContext::getLanguageId() . '-' . $product->id;
+        self::$processedProducts[] = $this->getProductCacheKey($product);
 
         $nostoAccount = NostoHelperAccount::find();
         if (!$nostoAccount)

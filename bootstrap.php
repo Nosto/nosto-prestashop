@@ -38,6 +38,7 @@ class NostoBootstrap
         require_once($moduleDir . '/controllers/admin/NostoCreateAccountController.php');
         require_once($moduleDir . '/controllers/admin/NostoUpdateExchangeRateController.php');
         require_once($moduleDir . '/controllers/admin/NostoIndexController.php');
+        require_once($moduleDir . '/controllers/front/OauthTraitAdaptor.php');
         require_once($moduleDir . '/classes/models/NostoNotification.php');
         require_once($moduleDir . '/classes/models/NostoExchangeRates.php');
         require_once($moduleDir . '/classes/helpers/account.php');
