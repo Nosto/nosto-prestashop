@@ -50,7 +50,7 @@ class NostoSku extends NostoSDKSku
         $nostoSku = new NostoSku();
         $nostoSku->amendAvailability($attributesGroup);
         $nostoSku->setId($combination->id);
-        $nostoSku->amendImage($combination, $nostoProduct);
+        $nostoSku->amendImage($product, $combination, $nostoProduct);
         $nostoSku->amendCustomFields($combination);
         $nostoSku->amendPrice($combination);
         $nostoSku->amendName($combination);
@@ -126,11 +126,12 @@ class NostoSku extends NostoSDKSku
 
     /**
      * Returns the absolute product image url
-     *
+     * @param Product $product
      * @param Combination $combination the product model.
      * @param NostoProduct $nostoProduct
      */
     protected function amendImage(
+        Product $product,
         Combination $combination,
         NostoProduct $nostoProduct
     ) {
@@ -148,11 +149,6 @@ class NostoSku extends NostoSDKSku
                         return;
                     }
 
-                    $product = new Product(
-                        $combination->id_product,
-                        NostoHelperContext::getLanguageId(),
-                        NostoHelperContext::getShopId()
-                    );
                     $link = NostoHelperLink::getLink();
                     $url = $link->getImageLink(
                         $product->link_rewrite,
