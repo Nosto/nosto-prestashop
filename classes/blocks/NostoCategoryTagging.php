@@ -28,7 +28,7 @@ class NostoCategoryTagging
     /**
      * Renders the current category tagging by checking if the underlying controller has
      * an accessor for it and if not, it falls back to using the identifier
-     * @return string the tagging
+     * @return string|null the tagging
      */
     public static function get()
     {

@@ -27,7 +27,7 @@ class NostoOrderTagging
 {
     /**
      * Renders the order tagging by finding that most recent order that was placed
-     * @return string the tagging
+     * @return string|null the tagging
      */
     public static function get()
     {

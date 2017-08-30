@@ -47,7 +47,7 @@ class NostoCategory extends MarkupableString
      * Builds a tagging string of the given category including all its parent categories.
      *
      * @param Category $category the category model to process
-     * @return NostoCategory the category object
+     * @return NostoCategory|null the category object
      */
     public static function loadData(Category $category)
     {

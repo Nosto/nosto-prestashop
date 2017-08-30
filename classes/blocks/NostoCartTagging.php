@@ -27,7 +27,7 @@ class NostoCartTagging
 {
     /**
      * Renders the cart tagging by checking the cart contents
-     * @return string the tagging
+     * @return string|null the tagging
      */
     public static function get()
     {

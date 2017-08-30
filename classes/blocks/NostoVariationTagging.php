@@ -28,7 +28,7 @@ class NostoVariationTagging
     /**
      * Renders the current variation tagging by checking if multiples currencies are
      * used on the site and the active currency is different from the base currency.
-     * @return string the tagging
+     * @return string|null the tagging
      */
     public static function get()
     {

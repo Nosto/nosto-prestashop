@@ -25,6 +25,8 @@
 
 require_once 'NostoBaseController.php';
 
+use Nosto\NostoException as NostoSDKException;
+
 class NostoAdvancedSettingController extends NostoBaseController
 {
     /**
@@ -53,7 +55,7 @@ class NostoAdvancedSettingController extends NostoBaseController
             // Also update the exchange rates if multi currency is used
             if ($account_meta->getUseExchangeRates()) {
                 $operation = new NostoRatesService();
-                $operation->updateCurrencyExchangeRates($account, $this->context);
+                $operation->updateCurrencyExchangeRates($account);
             }
         } else {
             //TODO: Flash and log error

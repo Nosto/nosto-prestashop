@@ -36,11 +36,11 @@ class NostoHelperContext
      * context after the the function invocation
      *
      * @param $callable
-     * @param bool|null|int $idLang the language identifier. False means do not manipulate it
-     * @param bool|null|int $idShop the shop identifier. False means do not manipulate it
-     * @param bool|null|int $currencyId the currency id. False means do not manipulate it
-     * @param bool|null|int $employeeId the employee id. False means do not manipulate it
-     * @param bool|null|int $countyId the country id. False means do not manipulate it
+     * @param bool|int $idLang the language identifier. False means do not manipulate it
+     * @param bool|int $idShop the shop identifier. False means do not manipulate it
+     * @param bool|int $currencyId the currency id. False means do not manipulate it
+     * @param bool|int $employeeId the employee id. False means do not manipulate it
+     * @param bool|int $countyId the country id. False means do not manipulate it
      * @return mixed the return value of the anonymous function
      */
     public static function runInContext(
@@ -57,7 +57,7 @@ class NostoHelperContext
         try {
             $retval = $callable();
         } catch (Exception $e) {
-            NostoHelperLogger::log($e);
+            NostoHelperLogger::log($e->getMessage());
         }
         self::revertToOriginalContext();
 
@@ -96,11 +96,11 @@ class NostoHelperContext
 
     /**
      * emulate context
-     * @param bool|null|int $languageId the language identifier. False means do not manipulate it
-     * @param bool|null|int $shopId the shop identifier. False means do not manipulate it
-     * @param bool|null|int $currencyId the currency id. False means do not manipulate it
-     * @param bool|null|int $employeeId the employee id. False means do not manipulate it
-     * @param bool|null|int $countyId the country id. False means do not manipulate it
+     * @param bool|int $languageId the language identifier. False means do not manipulate it
+     * @param bool|int $shopId the shop identifier. False means do not manipulate it
+     * @param bool|int $currencyId the currency id. False means do not manipulate it
+     * @param bool|int $employeeId the employee id. False means do not manipulate it
+     * @param bool|int $countyId the country id. False means do not manipulate it
      */
     public static function emulateContext(
         $languageId = false,
@@ -117,10 +117,7 @@ class NostoHelperContext
         // format of urls generated through the Link class.
         self::$backupShopContextStack[] = Shop::getContext();
 
-        if ($shopId === null) {
-            $context->shop = null;
-            Shop::setContext(Shop::CONTEXT_SHOP, null);
-        } elseif ($shopId !== false) {
+        if ($shopId !== false) {
             $context->shop = new Shop($shopId);
             Shop::setContext(Shop::CONTEXT_SHOP, $shopId);
         }
@@ -139,27 +136,19 @@ class NostoHelperContext
         //clean local cache. Otherwish it may get the wrong quantity data or other data
         Cache::clean("*");
 
-        if ($languageId === null) {
-            $context->language = null;
-        } elseif ($languageId !== false) {
+        if ($languageId !== false) {
             $context->language = new Language($languageId);
         }
 
-        if ($currencyId === null) {
-            $context->currency = null;//TODO why original code set it to Currency::getDefaultCurrency();
-        } elseif ($currencyId !== false) {
+        if ($currencyId !== false) {
             $context->currency = new Currency($currencyId);
         }
 
-        if ($employeeId === null) {
-            $context->employee = null;
-        } elseif ($employeeId !== false) {
+        if ($employeeId !== false) {
             $context->employee = new Employee($employeeId);
         }
 
-        if ($countryId === null) {
-            $context->country = null;
-        } elseif ($countryId !== false) {
+        if ($countryId !== false) {
             $context->country = new Country($countryId);
         }
 

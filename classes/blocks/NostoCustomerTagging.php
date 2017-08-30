@@ -27,7 +27,7 @@ class NostoCustomerTagging
 {
     /**
      * Renders the customer tagging by checking if the customer if currently logged in
-     * @return string the tagging
+     * @return string|null the tagging
      */
     public static function get()
     {

@@ -30,9 +30,9 @@ class NostoVariation extends MarkupableString
     /**
      * Constructor
      *
-     * @param null $variationId
+     * @param string $variationId
      */
-    public function __construct($variationId = null)
+    public function __construct($variationId)
     {
         parent::__construct($variationId, 'nosto_price_variation');
     }

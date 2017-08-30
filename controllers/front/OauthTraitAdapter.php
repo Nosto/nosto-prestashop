@@ -36,6 +36,8 @@ class OauthTraitAdapter
     use NostoSDKOauthTrait;
 
     private $languageId;
+    /** @var string */
+    private $moduleName;
 
     /**
      * Handles the redirect from Nosto oauth2 authorization server when an existing account is
@@ -43,10 +45,12 @@ class OauthTraitAdapter
      * "return_url" sent in the first step of the authorization cycle, and requires it to be from
      * the same domain that the account is configured for and only redirects to that domain.
      *
+     * @param $moduleName module name
      * @return void
      */
-    public function initContent()
+    public function initContent($moduleName)
     {
+        $this->moduleName = $moduleName;
         $this->languageId = (int)Tools::getValue('language_id', NostoHelperContext::getLanguageId());
         self::connect();
     }
@@ -62,7 +66,7 @@ class OauthTraitAdapter
     {
         return NostoHelperContext::runInContext(
             function () {
-                return NostoOAuth::loadData($this->module->name);
+                return NostoOAuth::loadData($this->moduleName);
             },
             $this->languageId
         );

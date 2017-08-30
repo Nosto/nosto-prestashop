@@ -134,7 +134,7 @@ class NostoAdminTabManager
     /**
      * Register a controller
      * @param string $className the controller class name, without the "Controller part"
-     * @return bool success
+     * @return bool|int tab id
      */
     public static function registerController($className)
     {

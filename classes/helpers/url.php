@@ -251,7 +251,7 @@ class NostoHelperUrl
      * Get the url for the controller
      *
      * @param string $controllerClassName controller class name prefix, without the 'Controller' part
-     * @param string $employeeId current logge in employee id
+     * @param int $employeeId current logged in employee id
      * @return string controller url
      */
     public static function getControllerUrl($controllerClassName, $employeeId)

@@ -25,6 +25,8 @@
 
 require_once 'NostoBaseController.php';
 
+use Nosto\Request\Api\Exception\ApiResponseException as NostoSDKAPIResponseException;
+
 /**
  * Class CreateAccountController
  *
