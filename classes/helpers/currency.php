@@ -35,6 +35,8 @@ class NostoHelperCurrency
     const CURRENCY_GROUP_LENGTH = 3;
     const CURRENCY_PRECISION = 2;
 
+    const CONFIG_KEY_CURRENCY_DEFAULT = 'PS_CURRENCY_DEFAULT';
+
     /**
      * @param $id
      * @return Currency
@@ -54,14 +56,14 @@ class NostoHelperCurrency
     public static function getBaseCurrency()
     {
         $base_id_currency = (int)Configuration::get(
-            'PS_CURRENCY_DEFAULT',
+            self::CONFIG_KEY_CURRENCY_DEFAULT,
             NostoHelperContext::getLanguageId(),
             NostoHelperContext::getShopGroupId(),
             NostoHelperContext::getShopId()
         );
         if ($base_id_currency === 0) {
             $base_id_currency = (int)Configuration::get(
-                'PS_CURRENCY_DEFAULT',
+                self::CONFIG_KEY_CURRENCY_DEFAULT,
                 null,
                 NostoHelperContext::getShopGroupId(),
                 NostoHelperContext::getShopId()

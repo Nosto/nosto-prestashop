@@ -92,7 +92,7 @@ class NostoHelperUrl
                 'search_query' => 'nosto',
                 'nostodebug' => 'true',
             );
-            return self::getPageUrl('NostoSearch.php', $params);
+            return self::getPageUrl('search.php', $params);
         } catch (Exception $e) {
             NostoHelperLogger::error($e, "Unable to build the search page preview URL");
             return '';
@@ -108,7 +108,7 @@ class NostoHelperUrl
     {
         try {
             $params = array('nostodebug' => 'true');
-            return self::getPageUrl('NostoOrderTagging.php', $params);
+            return self::getPageUrl('order.php', $params);
         } catch (Exception $e) {
             NostoHelperLogger::error($e, "Unable to build the cart page preview URL");
             return '';
