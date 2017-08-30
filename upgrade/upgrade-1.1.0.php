@@ -37,6 +37,8 @@ if (!defined('_PS_VERSION_')) {
  *
  * @param NostoTagging $object
  * @return bool
+ *
+ * @suppress PhanUnreferencedMethod
  */
 function upgrade_module_1_1_0($object)
 {

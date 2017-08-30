@@ -251,6 +251,8 @@ class NostoProduct extends NostoSDKProduct
      * By "path" we mean the full tree path of the products categories and sub-categories.
      *
      * @param Product $product the product model.
+     *
+     * @suppress PhanTypeMismatchArgument
      */
     protected function amendCategories(Product $product)
     {

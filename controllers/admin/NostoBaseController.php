@@ -27,6 +27,8 @@ abstract class NostoBaseController extends ModuleAdminController
 {
     /**
      * @inheritdoc
+     *
+     * @suppress PhanDeprecatedFunction
      */
     public function initContent()
     {
@@ -68,6 +70,9 @@ abstract class NostoBaseController extends ModuleAdminController
         return (int)Tools::getValue(NostoTagging::MODULE_NAME . '_current_language');
     }
 
+    /**
+     * @suppress PhanDeprecatedFunction
+     */
     protected function redirectToAdmin()
     {
         $tabId = (int)Tab::getIdFromClassName('AdminModules');

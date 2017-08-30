@@ -23,6 +23,8 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
+use Nosto\NostoException;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -45,9 +47,12 @@ if ((basename(__FILE__) === 'nostotagging.php')) {
  * helpers or manager.
  *
  * @property Context $context
+ * @property string $bootstrap
  */
 class NostoTagging extends Module
 {
+    /** @var bool */
+    public $bootstrap;
     /**
      * The version of the Nosto plug-in
      *

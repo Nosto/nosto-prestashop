@@ -57,6 +57,8 @@ class NostoHelperUrl
      * Returns a preview url to a category page.
      *
      * @return string the url.
+     *
+     * @suppress PhanTypeMismatchArgument
      */
     public static function getPreviewUrlCategory()
     {
@@ -253,6 +255,8 @@ class NostoHelperUrl
      * @param string $controllerClassName controller class name prefix, without the 'Controller' part
      * @param int $employeeId current logged in employee id
      * @return string controller url
+     *
+     * @suppress PhanDeprecatedFunction
      */
     public static function getControllerUrl($controllerClassName, $employeeId)
     {

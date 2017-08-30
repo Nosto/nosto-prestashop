@@ -101,6 +101,8 @@ class NostoHelperContext
      * @param bool|int $currencyId the currency id. False means do not manipulate it
      * @param bool|int $employeeId the employee id. False means do not manipulate it
      * @param bool|int $countyId the country id. False means do not manipulate it
+     *
+     * @suppress PhanTypeMismatchArgument
      */
     public static function emulateContext(
         $languageId = false,

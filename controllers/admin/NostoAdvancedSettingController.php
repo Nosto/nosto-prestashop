@@ -31,6 +31,8 @@ class NostoAdvancedSettingController extends NostoBaseController
 {
     /**
      * @inheritdoc
+     *
+     * @suppress PhanDeprecatedFunction
      */
     public function execute()
     {

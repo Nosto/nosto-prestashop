@@ -33,6 +33,7 @@ if (!defined('_PS_VERSION_')) {
  * Creates "action{MODEL}LoadAfter" hooks dispatched by the tagging model.
  *
  * @return bool
+ * @suppress PhanUnreferencedMethod
  */
 function upgrade_module_2_5_0()
 {

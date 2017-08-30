@@ -47,6 +47,8 @@ class NostoOrderService extends AbstractNostoService
      * Sends order data to Nosto.
      *
      * @param Order $order
+     *
+     * @suppress PhanTypeMismatchArgument
      */
     public function sendOrder(Order $order)
     {
