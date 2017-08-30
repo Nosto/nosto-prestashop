@@ -44,7 +44,6 @@ class NostoBootstrap
         require_once($moduleDir . '/classes/helpers/account.php');
         require_once($moduleDir . '/classes/managers/NostoCustomerManager.php');
         require_once($moduleDir . '/classes/managers/NostoAdminTabManager.php');
-        require_once($moduleDir . '/classes/managers/NostoContextManager.php');
         require_once($moduleDir . '/classes/helpers/config.php');
         require_once($moduleDir . '/classes/models/NostoCustomer.php');
         require_once($moduleDir . '/classes/helpers/NostoHelperFlash.php');

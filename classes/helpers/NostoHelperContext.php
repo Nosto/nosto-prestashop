@@ -36,11 +36,11 @@ class NostoHelperContext
      * context after the the function invocation
      *
      * @param $callable
-     * @param bool|null|int $idLang the language identifier. False means do not munipulate it
-     * @param bool|null|int $idShop the shop identifier. False means do not munipulate it
-     * @param bool|null|int $currencyId the currency id. False means do not munipulate it
-     * @param bool|null|int $employeeId the employee id. False means do not munipulate it
-     * @param bool|null|int $countyId the country id. False means do not munipulate it
+     * @param bool|null|int $idLang the language identifier. False means do not manipulate it
+     * @param bool|null|int $idShop the shop identifier. False means do not manipulate it
+     * @param bool|null|int $currencyId the currency id. False means do not manipulate it
+     * @param bool|null|int $employeeId the employee id. False means do not manipulate it
+     * @param bool|null|int $countyId the country id. False means do not manipulate it
      * @return mixed the return value of the anonymous function
      */
     public static function runInContext(
@@ -96,11 +96,11 @@ class NostoHelperContext
 
     /**
      * emulate context
-     * @param bool|null|int $languageId the language identifier. False means do not munipulate it
-     * @param bool|null|int $shopId the shop identifier. False means do not munipulate it
-     * @param bool|null|int $currencyId the currency id. False means do not munipulate it
-     * @param bool|null|int $employeeId the employee id. False means do not munipulate it
-     * @param bool|null|int $countyId the country id. False means do not munipulate it
+     * @param bool|null|int $languageId the language identifier. False means do not manipulate it
+     * @param bool|null|int $shopId the shop identifier. False means do not manipulate it
+     * @param bool|null|int $currencyId the currency id. False means do not manipulate it
+     * @param bool|null|int $employeeId the employee id. False means do not manipulate it
+     * @param bool|null|int $countyId the country id. False means do not manipulate it
      */
     public static function emulateContext(
         $languageId = false,
