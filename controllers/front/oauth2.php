@@ -43,7 +43,7 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
      */
     public function initContent()
     {
-        $oauthAdaptor = new OauthTraitAdaptor();
+        $oauthAdaptor = new OauthTraitAdapter();
         $oauthAdaptor->initContent();
     }
 }

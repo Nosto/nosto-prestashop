@@ -31,7 +31,7 @@ use Nosto\Types\Signup\AccountInterface as NostoSDKAccountInterface;
 /**
  * @property NostoTagging $module
  */
-class OauthTraitAdaptor
+class OauthTraitAdapter
 {
     use NostoSDKOauthTrait;
 
