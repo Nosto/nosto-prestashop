@@ -676,8 +676,12 @@ class NostoTagging extends Module
      */
     public function hookActionObjectUpdateAfter(array $params)
     {
-        $operation = new NostoProductService();
-        $operation->upsert($params);
+        try {
+            $operation = new NostoProductService();
+            $operation->upsert($params);
+        } catch (Exception $e) {
+            NostoHelperLogger::error($e);
+        }
     }
 
     /**
@@ -689,8 +693,12 @@ class NostoTagging extends Module
      */
     public function hookActionObjectDeleteAfter(array $params)
     {
-        $operation = new NostoProductService();
-        $operation->delete($params);
+        try {
+            $operation = new NostoProductService();
+            $operation->delete($params);
+        } catch (Exception $e) {
+            NostoHelperLogger::error($e);
+        }
     }
 
     /**
@@ -702,8 +710,12 @@ class NostoTagging extends Module
      */
     public function hookActionObjectAddAfter(array $params)
     {
-        $operation = new NostoProductService();
-        $operation->upsert($params);
+        try {
+            $operation = new NostoProductService();
+            $operation->upsert($params);
+        } catch (Exception $e) {
+            NostoHelperLogger::error($e);
+        }
     }
 
     /**
@@ -715,7 +727,11 @@ class NostoTagging extends Module
      */
     public function hookUpdateProduct(array $params)
     {
-        $this->hookActionObjectUpdateAfter(array('object' => $params['product']));
+        try {
+            $this->hookActionObjectUpdateAfter(array('object' => $params['product']));
+        } catch (Exception $e) {
+            NostoHelperLogger::error($e);
+        }
     }
 
     /**
@@ -727,7 +743,11 @@ class NostoTagging extends Module
      */
     public function hookDeleteProduct(array $params)
     {
-        $this->hookActionObjectDeleteAfter(array('object' => $params['product']));
+        try {
+            $this->hookActionObjectDeleteAfter(array('object' => $params['product']));
+        } catch (Exception $e) {
+            NostoHelperLogger::error($e);
+        }
     }
 
     /**
@@ -739,7 +759,11 @@ class NostoTagging extends Module
      */
     public function hookAddProduct(array $params)
     {
-        $this->hookActionObjectAddAfter(array('object' => $params['product']));
+        try {
+            $this->hookActionObjectAddAfter(array('object' => $params['product']));
+        } catch (Exception $e) {
+            NostoHelperLogger::error($e);
+        }
     }
 
     /**
@@ -752,7 +776,11 @@ class NostoTagging extends Module
      */
     public function hookUpdateQuantity(array $params)
     {
-        $this->hookActionObjectUpdateAfter(array('object' => $params['product']));
+        try {
+            $this->hookActionObjectUpdateAfter(array('object' => $params['product']));
+        } catch (Exception $e) {
+            NostoHelperLogger::error($e);
+        }
     }
 
     /**
