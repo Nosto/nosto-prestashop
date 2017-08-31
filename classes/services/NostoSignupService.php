@@ -25,6 +25,7 @@
  */
 
 use Nosto\Operation\AccountSignup as NostoSDKAccountSignupOperation;
+use \Nosto\NostoException as NostoSDKException;
 
 class NostoSignupService extends AbstractNostoService
 {
@@ -34,6 +35,7 @@ class NostoSignupService extends AbstractNostoService
      * @param string $email the account owner email address.
      * @param stdClass|string $accountDetails the details for the account.
      * @return bool true if successful, false otherwise.
+     * @throws NostoSDKException on failure.
      */
     public function createAccount($email, $accountDetails = "")
     {
