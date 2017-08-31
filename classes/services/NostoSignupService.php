@@ -34,6 +34,7 @@ class NostoSignupService extends AbstractNostoService
      * @param string $email the account owner email address.
      * @param stdClass|string $accountDetails the details for the account.
      * @return bool true if successful, false otherwise.
+     * @throws \Nosto\NostoException on failure.
      */
     public function createAccount($email, $accountDetails = "")
     {

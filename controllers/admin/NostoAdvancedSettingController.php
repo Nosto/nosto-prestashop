@@ -50,8 +50,10 @@ class NostoAdvancedSettingController extends NostoBaseController
                 NostoHelperFlash::add('success', $this->l('The settings have been saved.'));
             } catch (NostoSDKException $e) {
                 NostoHelperLogger::error($e, 'Unable to update Nosto account settings');
-                NostoHelperFlash::add('error',
-                    $this->l('There was an error saving the settings. Please, see log for details.'));
+                NostoHelperFlash::add(
+                    'error',
+                    $this->l('There was an error saving the settings. Please, see log for details.')
+                );
             }
 
             // Also update the exchange rates if multi currency is used
@@ -60,7 +62,9 @@ class NostoAdvancedSettingController extends NostoBaseController
                 $operation->updateCurrencyExchangeRates($account);
             }
         } else {
-            //TODO: Flash and log error
+            $message = "Couldn't save advanced settings since there is no connected nosto account.";
+            NostoHelperLogger::info($message);
+            NostoHelperFlash::add('error', $this->l($message));
         }
 
         return true;
