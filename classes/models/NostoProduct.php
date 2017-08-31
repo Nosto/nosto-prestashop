@@ -127,7 +127,7 @@ class NostoProduct extends NostoSDKProduct
 
         $combinationIds = $product->getWsCombinations();
         foreach ($combinationIds as $combinationId) {
-            $combination = new Combination($combinationId['id'], NostoHelperContext::getLanguageId());
+            $combination = new Combination($combinationId[NostoTagging::ID], NostoHelperContext::getLanguageId());
             $this->addSku(NostoSku::loadData($product, $this, $combination, $variants[$combination->id]));
         }
     }

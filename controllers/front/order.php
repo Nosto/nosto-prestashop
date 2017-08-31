@@ -40,7 +40,7 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
     {
         $collection = new Nosto\Object\Order\OrderCollection();
 
-        $id = Tools::getValue('id');
+        $id = Tools::getValue(NostoTagging::ID);
         if (!empty($id)) {
             $orders = Order::getByReference($id);
             if (empty($orders)) {

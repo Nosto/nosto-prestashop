@@ -72,6 +72,8 @@ class NostoTagging extends Module
      */
     const VISITOR_HASH_ALGO = 'sha256';
 
+    const ID = 'id';
+
     /**
      * Custom hooks to add for this module.
      *

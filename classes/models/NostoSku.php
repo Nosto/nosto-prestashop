@@ -138,11 +138,11 @@ class NostoSku extends NostoSDKSku
         $images = $combination->getWsImages();
         if ($images && is_array($images)) {
             foreach ($images as $image) {
-                if (!is_array($image) || !array_key_exists('id', $image)) {
+                if (!is_array($image) || !array_key_exists(NostoTagging::ID, $image)) {
                     continue;
                 }
 
-                $imageId = $image['id'];
+                $imageId = $image[NostoTagging::ID];
                 if ((int)$imageId > 0) {
                     $imageType = NostoHelperImage::getTaggingImageTypeName();
                     if (empty($imageType)) {
