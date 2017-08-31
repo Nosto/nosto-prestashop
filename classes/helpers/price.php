@@ -28,6 +28,15 @@
  */
 class NostoHelperPrice
 {
+    const PS_TAX_ADDRESS_TYPE = 'PS_TAX_ADDRESS_TYPE';
+    const ID_ADDRESS_INVOICE = 'id_address_invoice';
+    const ID_ADDRESS_DELIVERY = 'id_address_delivery';
+    const ID_PRODUCT_ATTRIBUTE = 'id_product_attribute';
+    const ID_CUSTOMER = 'id_customer';
+    const ID_CART = 'id_cart';
+    const ID_ADDRESS = 'id_address';
+    const ID_PRODUCT = 'id_product';
+
     /**
      * Returns the product wholesale price including taxes for the given currency.
      *
@@ -65,23 +74,23 @@ class NostoHelperPrice
         array $item,
         Currency $currency
     ) {
-        if (Configuration::get('PS_TAX_ADDRESS_TYPE') == 'id_address_invoice') {
+        if (Configuration::get(self::PS_TAX_ADDRESS_TYPE) == self::ID_ADDRESS_INVOICE) {
             $id_address = (int)$cart->id_address_invoice;
         } else {
-            $id_address = (int)$item['id_address_delivery'];
+            $id_address = (int)$item[self::ID_ADDRESS_DELIVERY];
         }
 
         return NostoHelperPrice::calcPrice(
-            (int)$item['id_product'],
+            (int)$item[self::ID_PRODUCT],
             $currency,
             array(
                 'user_reduction' => true,
-                'id_product_attribute' => (
-                isset($item['id_product_attribute']) ? (int)$item['id_product_attribute'] : null
+                self::ID_PRODUCT_ATTRIBUTE => (
+                isset($item[self::ID_PRODUCT_ATTRIBUTE]) ? (int)$item[self::ID_PRODUCT_ATTRIBUTE] : null
                 ),
-                'id_customer' => ((int)$cart->id_customer ? (int)$cart->id_customer : null),
-                'id_cart' => (int)$cart->id,
-                'id_address' => (Address::addressExists($id_address) ? (int)$id_address : null),
+                self::ID_CUSTOMER => ((int)$cart->id_customer ? (int)$cart->id_customer : null),
+                self::ID_CART => (int)$cart->id,
+                self::ID_ADDRESS => (Address::addressExists($id_address) ? (int)$id_address : null),
             )
         );
     }
