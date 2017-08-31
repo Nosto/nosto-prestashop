@@ -30,16 +30,16 @@ class NostoVariation extends MarkupableString
     /**
      * Constructor
      *
-     * @param null $variationId
+     * @param string $variationId
      */
-    public function __construct($variationId = null)
+    public function __construct($variationId)
     {
         parent::__construct($variationId, 'nosto_price_variation');
     }
 
     public static function loadData()
     {
-        $nostoVariation = new NostoVariation(Context::getContext()->currency->iso_code);
+        $nostoVariation = new NostoVariation(NostoHelperContext::getCurrency()->iso_code);
 
         NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoVariation), array(
             'nosto_variation' => $nostoVariation

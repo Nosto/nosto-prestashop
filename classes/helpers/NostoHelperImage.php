@@ -80,18 +80,11 @@ class NostoHelperImage
     /**
      * Returns the image type to be used in product image tagging
      *
-     * @param $id_lang
-     * @param null $id_shop_group
-     * @param null $id_shop
      * @return string
      */
-    public static function getTaggingImageTypeName($id_lang, $id_shop_group = null, $id_shop = null)
+    public static function getTaggingImageTypeName()
     {
-        $savedImageTypeId = NostoHelperConfig::getImageType(
-            $id_lang,
-            $id_shop_group,
-            $id_shop
-        );
+        $savedImageTypeId = NostoHelperConfig::getImageType();
         if ($savedImageTypeId) {
             $image_type = new ImageType($savedImageTypeId);
             $imageTypeName = $image_type->name;

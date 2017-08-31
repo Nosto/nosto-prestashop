@@ -23,6 +23,8 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
+use Nosto\NostoException;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -39,17 +41,18 @@ if ((basename(__FILE__) === 'nostotagging.php')) {
     require_once("bootstrap.php");
 }
 
-use \Nosto\NostoException as NostoSDKException;
-
 /**
  * Main module class the is responsible for all the module behaviour. This class is to be kept
  * lightweight with no more than single line method bodies that simply delegate to other services,
  * helpers or manager.
  *
  * @property Context $context
+ * @property string $bootstrap
  */
 class NostoTagging extends Module
 {
+    /** @var bool */
+    public $bootstrap;
     /**
      * The version of the Nosto plug-in
      *
@@ -620,7 +623,7 @@ class NostoTagging extends Module
      */
     public function hookActionOrderStatusPostUpdate(array $params)
     {
-        $operation = new NostoOrderService(Context::getContext());
+        $operation = new NostoOrderService();
         $operation->send($params);
     }
 
@@ -812,7 +815,7 @@ class NostoTagging extends Module
      * Method for resolving correct smarty object
      *
      * @return Smarty|Smarty_Data
-     * @throws NostoSDKException
+     * @throws NostoException
      */
     protected function getSmarty()
     {
@@ -822,7 +825,7 @@ class NostoTagging extends Module
             return $this->context->smarty;
         }
 
-        throw new NostoSDKException('Could not find smarty');
+        throw new NostoException('Could not find smarty');
     }
 
     /**
@@ -881,7 +884,7 @@ class NostoTagging extends Module
                 $operation = new NostoRatesService();
                 $operation->updateExchangeRatesForAllStores();
                 $this->defineExchangeRatesAsUpdated();
-            } catch (NostoSDKException $e) {
+            } catch (NostoException $e) {
                 NostoHelperLogger::error($e, 'Exchange rate sync failed with error');
             }
         }

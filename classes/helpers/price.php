@@ -57,17 +57,14 @@ class NostoHelperPrice
      *
      * @param Cart|CartCore $cart the cart.
      * @param array $item the cart item.
-     * @param Context $context the context.
      * @param Currency $currency the currency.
      * @return float the price.
      */
     public function getCartItemPriceInclTax(
         Cart $cart,
         array $item,
-        Context $context,
         Currency $currency
-    )
-    {
+    ) {
         if (Configuration::get('PS_TAX_ADDRESS_TYPE') == 'id_address_invoice') {
             $id_address = (int)$cart->id_address_invoice;
         } else {
@@ -77,7 +74,6 @@ class NostoHelperPrice
         return NostoHelperPrice::calcPrice(
             (int)$item['id_product'],
             $currency,
-            $context,
             array(
                 'user_reduction' => true,
                 'id_product_attribute' => (
@@ -96,79 +92,68 @@ class NostoHelperPrice
      *
      * @param int $id_product the product ID.
      * @param Currency|CurrencyCore $currency the currency object.
-     * @param Context $context the context object.
      * @param array $options options for the Product::getPriceStatic method.
      * @return float the price.
      */
     public static function calcPrice(
         $id_product,
         Currency $currency,
-        Context $context,
         array $options = array()
-    )
-    {
-        // If the requested currency is not the one in the context, then set it.
-        if (
-            $context->currency instanceof Currency
-            && $currency->iso_code !== $context->currency->iso_code
-        ) {
-            /** @var Currency|CurrencyCore $old_currency */
-            $old_currency = $context->currency;
-            $context->currency = $currency;
+    ) {
+        $employeeId = NostoHelperContext::getEmployeeId();
+        if (empty(NostoHelperContext::getEmployee())) {
+            $employee = new Employee();
+            $employeeId = $employee->id;
         }
 
-        if (
-            !isset($context->employee)
-            || empty($context->employee)
-        ) {
-            $context->employee = new Employee();
-        }
+        return NostoHelperContext::runInContext(
+            function () use ($options, $id_product) {
+                $options = array_merge(array(
+                    'include_tax' => true,
+                    'id_product_attribute' => null,
+                    'decimals' => 6,
+                    'divisor' => null,
+                    'only_reduction' => false,
+                    'user_reduction' => true,
+                    'quantity' => 1,
+                    'force_associated_tax' => false,
+                    'id_customer' => null,
+                    'id_cart' => null,
+                    'id_address' => null,
+                    'with_eco_tax' => true,
+                    'use_group_reduction' => true,
+                    'use_customer_price' => true,
+                ), $options);
+                // This option is used as a reference, so we need it in a separate variable.
+                $specific_price_output = null;
 
-        $options = array_merge(array(
-            'include_tax' => true,
-            'id_product_attribute' => null,
-            'decimals' => 6,
-            'divisor' => null,
-            'only_reduction' => false,
-            'user_reduction' => true,
-            'quantity' => 1,
-            'force_associated_tax' => false,
-            'id_customer' => null,
-            'id_cart' => null,
-            'id_address' => null,
-            'with_eco_tax' => true,
-            'use_group_reduction' => true,
-            'use_customer_price' => true,
-        ), $options);
-        // This option is used as a reference, so we need it in a separate variable.
-        $specific_price_output = null;
+                $value = Product::getPriceStatic(
+                    (int)$id_product,
+                    $options['include_tax'],
+                    $options['id_product_attribute'],
+                    $options['decimals'],
+                    $options['divisor'],
+                    $options['only_reduction'],
+                    $options['user_reduction'],
+                    $options['quantity'],
+                    $options['force_associated_tax'],
+                    $options['id_customer'],
+                    $options['id_cart'],
+                    $options['id_address'],
+                    $specific_price_output,
+                    $options['with_eco_tax'],
+                    $options['use_group_reduction'],
+                    Context::getContext(),
+                    $options['use_customer_price']
+                );
 
-        $value = Product::getPriceStatic(
-            (int)$id_product,
-            $options['include_tax'],
-            $options['id_product_attribute'],
-            $options['decimals'],
-            $options['divisor'],
-            $options['only_reduction'],
-            $options['user_reduction'],
-            $options['quantity'],
-            $options['force_associated_tax'],
-            $options['id_customer'],
-            $options['id_cart'],
-            $options['id_address'],
-            $specific_price_output,
-            $options['with_eco_tax'],
-            $options['use_group_reduction'],
-            $context,
-            $options['use_customer_price']
+                return NostoHelperPrice::roundPrice($value);
+            },
+            false,
+            false,
+            $currency->id,
+            $employeeId
         );
-
-        // If currency was replaced in context, restore the old one.
-        if (isset($old_currency)) {
-            $context->currency = $old_currency;
-        }
-
-        return NostoHelperPrice::roundPrice($value);
     }
 
     /**

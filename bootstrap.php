@@ -38,12 +38,12 @@ class NostoBootstrap
         require_once($moduleDir . '/controllers/admin/NostoCreateAccountController.php');
         require_once($moduleDir . '/controllers/admin/NostoUpdateExchangeRateController.php');
         require_once($moduleDir . '/controllers/admin/NostoIndexController.php');
+        require_once($moduleDir . '/controllers/front/OauthTraitAdapter.php');
         require_once($moduleDir . '/classes/models/NostoNotification.php');
         require_once($moduleDir . '/classes/models/NostoExchangeRates.php');
         require_once($moduleDir . '/classes/helpers/account.php');
         require_once($moduleDir . '/classes/managers/NostoCustomerManager.php');
         require_once($moduleDir . '/classes/managers/NostoAdminTabManager.php');
-        require_once($moduleDir . '/classes/managers/NostoContextManager.php');
         require_once($moduleDir . '/classes/helpers/config.php');
         require_once($moduleDir . '/classes/models/NostoCustomer.php');
         require_once($moduleDir . '/classes/helpers/NostoHelperFlash.php');
@@ -52,6 +52,7 @@ class NostoBootstrap
         require_once($moduleDir . '/classes/helpers/NostoHelperLanguage.php');
         require_once($moduleDir . '/classes/helpers/NostoHelperLogger.php');
         require_once($moduleDir . '/classes/managers/NostoNotificationManager.php');
+        require_once($moduleDir . '/classes/managers/NostoHookManager.php');
         require_once($moduleDir . '/classes/services/AbstractNostoService.php');
         require_once($moduleDir . '/classes/services/NostoProductService.php');
         require_once($moduleDir . '/classes/services/NostoOrderService.php');
@@ -111,5 +112,4 @@ class NostoBootstrap
         \Nosto\Request\Http\HttpRequest::buildUserAgent('Prestashop', _PS_VERSION_, $moduleVersion);
     }
 }
-
 NostoBootstrap::init(NOSTO_DIR, NOSTO_VERSION);

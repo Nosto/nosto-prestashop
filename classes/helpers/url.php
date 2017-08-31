@@ -30,26 +30,23 @@ class NostoHelperUrl
     /**
      * Returns a preview url to a product page.
      *
-     * @param int|null $idLang optional language ID if a specific language is needed.
      * @return string the url.
      */
-    public static function getPreviewUrlProduct($idLang = null)
+    public static function getPreviewUrlProduct()
     {
         try {
-            if (is_null($idLang)) {
-                $idLang = (int)Context::getContext()->language->id;
-            }
+            $idLang = NostoHelperContext::getLanguageId();
 
             $row = Product::getProducts($idLang, 0, 1, "id_product", "ASC", false, true);
-            $id_product = isset($row['id_product']) ? (int)$row['id_product'] : 0;
+            $productId = isset($row['id_product']) ? (int)$row['id_product'] : 0;
 
-            $product = new Product($idLang, $id_product);
+            $product = new Product($productId, $idLang, NostoHelperContext::getShopId());
             if (!Validate::isLoadedObject($product)) {
                 return '';
             }
 
             $params = array('nostodebug' => 'true');
-            return self::getProductUrl($product, $idLang, null, $params);
+            return self::getProductUrl($product, $params);
         } catch (Exception $e) {
             NostoHelperLogger::error($e, "Unable to build the product page preview URL");
             return '';
@@ -59,26 +56,25 @@ class NostoHelperUrl
     /**
      * Returns a preview url to a category page.
      *
-     * @param int|null $idLang optional language ID if a specific language is needed.
      * @return string the url.
+     *
+     * @suppress PhanTypeMismatchArgument
      */
-    public static function getPreviewUrlCategory($idLang = null)
+    public static function getPreviewUrlCategory()
     {
         try {
-            if (is_null($idLang)) {
-                $idLang = (int)Context::getContext()->language->id;
-            }
+            $idLang = NostoHelperContext::getLanguageId();
 
             $row = Category::getHomeCategories($idLang, true)[0];
-            $id_category = isset($row['id_category']) ? (int)$row['id_category'] : 0;
+            $categoryId = isset($row['id_category']) ? (int)$row['id_category'] : 0;
 
-            $category = new Category($id_category, $idLang);
+            $category = new Category($categoryId, $idLang);
             if (!Validate::isLoadedObject($category)) {
                 return '';
             }
 
             $params = array('nostodebug' => 'true');
-            return self::getCategoryUrl($category, $idLang, null, $params);
+            return self::getCategoryUrl($category, $params);
         } catch (Exception $e) {
             NostoHelperLogger::error($e, "Unable to build the category page preview URL");
             return '';
@@ -88,10 +84,9 @@ class NostoHelperUrl
     /**
      * Returns a preview url to the search page.
      *
-     * @param int|null $idLang optional language ID if a specific language is needed.
      * @return string the url.
      */
-    public static function getPreviewUrlSearch($idLang = null)
+    public static function getPreviewUrlSearch()
     {
         try {
             $params = array(
@@ -99,7 +94,7 @@ class NostoHelperUrl
                 'search_query' => 'nosto',
                 'nostodebug' => 'true',
             );
-            return self::getPageUrl('NostoSearch.php', $idLang, null, $params);
+            return self::getPageUrl('search.php', $params);
         } catch (Exception $e) {
             NostoHelperLogger::error($e, "Unable to build the search page preview URL");
             return '';
@@ -109,14 +104,13 @@ class NostoHelperUrl
     /**
      * Returns a preview url to cart page.
      *
-     * @param int|null $idLang optional language ID if a specific language is needed.
      * @return string the url.
      */
-    public static function getPreviewUrlCart($idLang = null)
+    public static function getPreviewUrlCart()
     {
         try {
             $params = array('nostodebug' => 'true');
-            return self::getPageUrl('NostoOrderTagging.php', $idLang, null, $params);
+            return self::getPageUrl('order.php', $params);
         } catch (Exception $e) {
             NostoHelperLogger::error($e, "Unable to build the cart page preview URL");
             return '';
@@ -126,14 +120,13 @@ class NostoHelperUrl
     /**
      * Returns a preview url to the home page.
      *
-     * @param int|null $idLang optional language ID if a specific language is needed.
      * @return string the url.
      */
-    public static function getPreviewUrlHome($idLang = null)
+    public static function getPreviewUrlHome()
     {
         try {
             $params = array('nostodebug' => 'true');
-            return self::getPageUrl('index.php', $idLang, null, $params);
+            return self::getPageUrl('index.php', $params);
         } catch (Exception $e) {
             NostoHelperLogger::error($e, "Unable to build the home page preview URL");
             return '';
@@ -147,26 +140,14 @@ class NostoHelperUrl
      * PS versions.
      *
      * @param Product $product
-     * @param int|null $idLang the language ID (falls back on current context if not set).
-     * @param int|null $idShop the shop ID (falls back on current context if not set).
      * @param array $params additional params to add to the url.
      * @param int|null $productAttributeId product attribute id
      * @return string the product page url.
      */
-    public static function getProductUrl(
-        $product,
-        $idLang = null,
-        $idShop = null,
-        array $params = array(),
-        $productAttributeId = 0
-    )
+    public static function getProductUrl($product, array $params = array(), $productAttributeId = 0)
     {
-        if (is_null($idLang)) {
-            $idLang = (int)Context::getContext()->language->id;
-        }
-        if (is_null($idShop)) {
-            $idShop = (int)Context::getContext()->shop->id;
-        }
+        $idLang = NostoHelperContext::getLanguageId();
+        $idShop = NostoHelperContext::getShopId();
 
         $url = NostoHelperLink::getLink()->getProductLink(
             $product,
@@ -194,19 +175,13 @@ class NostoHelperUrl
      * PS versions.
      *
      * @param Category|CategoryCore $category the category model.
-     * @param int|null $idLang the language ID (falls back on current context if not set).
-     * @param int|null $idShop the shop ID (falls back on current context if not set).
      * @param array $params additional params to add to the url.
      * @return string the category page url.
      */
-    public static function getCategoryUrl($category, $idLang = null, $idShop = null, array $params = array())
+    public static function getCategoryUrl($category, array $params = array())
     {
-        if (is_null($idLang)) {
-            $idLang = (int)Context::getContext()->language->id;
-        }
-        if (is_null($idShop)) {
-            $idShop = (int)Context::getContext()->shop->id;
-        }
+        $idLang = NostoHelperContext::getLanguageId();
+        $idShop = NostoHelperContext::getShopId();
 
         $url = NostoHelperLink::getLink()->getCategoryLink($category, null, $idLang, null, $idShop);
         if ((int)Configuration::get('PS_REWRITING_SETTINGS') === 0) {
@@ -223,19 +198,13 @@ class NostoHelperUrl
      * PS versions.
      *
      * @param string $controller the controller name.
-     * @param int|null $idLang the language ID (falls back on current context if not set).
-     * @param int|null $idShop the shop ID (falls back on current context if not set).
      * @param array $params additional params to add to the url.
      * @return string the page url.
      */
-    public static function getPageUrl($controller, $idLang = null, $idShop = null, array $params = array())
+    public static function getPageUrl($controller, array $params = array())
     {
-        if (is_null($idLang)) {
-            $idLang = (int)Context::getContext()->language->id;
-        }
-        if (is_null($idShop)) {
-            $idShop = (int)Context::getContext()->shop->id;
-        }
+        $idLang = NostoHelperContext::getLanguageId();
+        $idShop = NostoHelperContext::getShopId();
 
         $url = NostoHelperLink::getLink()->getPageLink($controller, true, $idLang, null, false, $idShop);
 
@@ -254,19 +223,13 @@ class NostoHelperUrl
      *
      * @param string $name the name of the module to create an url for.
      * @param string $controller the name of the controller.
-     * @param int|null $idLang the language ID (falls back on current context if not set).
-     * @param int|null $idShop the shop ID (falls back on current context if not set).
      * @param array $params additional params to add to the url.
      * @return string the url.
      */
-    public static function getModuleUrl($name, $controller, $idLang = null, $idShop = null, array $params = array())
+    public static function getModuleUrl($name, $controller, array $params = array())
     {
-        if (is_null($idLang)) {
-            $idLang = (int)Context::getContext()->language->id;
-        }
-        if (is_null($idShop)) {
-            $idShop = (int)Context::getContext()->shop->id;
-        }
+        $idLang = NostoHelperContext::getLanguageId();
+        $idShop = NostoHelperContext::getShopId();
 
         $params['module'] = $name;
         $params['controller'] = $controller;
@@ -279,7 +242,7 @@ class NostoHelperUrl
             $params['module'] = $name;
             $params['controller'] = $controller;
             $params['id_lang'] = $idLang;
-            return self::getBaseUrl($idShop) . 'index.php?' . http_build_query($params);
+            return self::getBaseUrl() . 'index.php?' . http_build_query($params);
         } else {
             $link = NostoHelperLink::getLink();
             return $link->getModuleLink($name, $controller, $params, null, $idLang, $idShop);
@@ -290,8 +253,10 @@ class NostoHelperUrl
      * Get the url for the controller
      *
      * @param string $controllerClassName controller class name prefix, without the 'Controller' part
-     * @param string $employeeId current logge in employee id
+     * @param int $employeeId current logged in employee id
      * @return string controller url
+     *
+     * @suppress PhanDeprecatedFunction
      */
     public static function getControllerUrl($controllerClassName, $employeeId)
     {
@@ -305,20 +270,20 @@ class NostoHelperUrl
     /**
      * Returns the base url for given shop.
      *
-     * @param null $id_shop the shop ID (falls back on current context if not set).
      * @return string the base url.
      */
-    private static function getBaseUrl($id_shop = null)
+    private static function getBaseUrl()
     {
+        $idShop = (int)NostoHelperContext::getShopId();
         $ssl = Configuration::get('PS_SSL_ENABLED');
 
-        if (Configuration::get('PS_MULTISHOP_FEATURE_ACTIVE') && !is_null($id_shop)) {
-            $shop = new Shop($id_shop);
+        if (Configuration::get('PS_MULTISHOP_FEATURE_ACTIVE') && !is_null($idShop)) {
+            $shop = new Shop($idShop);
         } else {
-            $shop = Context::getContext()->shop;
+            $shop = NostoHelperContext::getShop();
         }
 
-        $base = ($ssl ? 'https://' . $shop->domain_ssl : 'http://' . $shop->domain);
+        $base = ($ssl ? 'https://' . ShopUrl::getMainShopDomainSSL() : 'http://' . ShopUrl::getMainShopDomain());
         return $base . $shop->getBaseURI();
     }
 }

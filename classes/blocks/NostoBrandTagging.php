@@ -28,11 +28,9 @@ class NostoBrandTagging
     /**
      * Renders the brand tagging by checking if the underlying controller has an accessor
      * for it and if not, it falls back to using the identifier
-     *
-     * @param NostoTagging $module the instance of the module for rendering the template
-     * @return string the tagging
+     * @return string|null the tagging
      */
-    public static function get(NostoTagging $module)
+    public static function get()
     {
         $brand = NostoHelperController::resolveObject("id_manufacturer", Manufacturer::class, "getManufacturer");
         if (!$brand instanceof Manufacturer) {

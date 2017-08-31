@@ -33,47 +33,21 @@ class Nosto
      */
     public static function isContextConnected()
     {
-        if (Context::getContext()->shop instanceof Shop) {
-            return NostoHelperAccount::existsAndIsConnected(
-                Context::getContext()->language->id,
-                Context::getContext()->shop->id_shop_group,
-                Context::getContext()->shop->id
-            );
-        } else {
-            return NostoHelperAccount::existsAndIsConnected(Context::getContext()->language->id);
-        }
+        return NostoHelperAccount::existsAndIsConnected();
     }
 
     public static function getAccount()
     {
-        if (Context::getContext()->shop instanceof Shop) {
-            return NostoHelperAccount::find(
-                Context::getContext()->language->id,
-                Context::getContext()->shop->id_shop_group,
-                Context::getContext()->shop->id
-            );
-        } else {
-            return NostoHelperAccount::find(Context::getContext()->language->id);
-        }
+        return NostoHelperAccount::find();
     }
 
     /**
      * Checks if multiple currencies are used in tagging
      *
-     * @param int $idLang the language identifier for which to fetch the configuration
-     * @param null $shop
      * @return bool the multi currency method.
      */
-    public static function useMultipleCurrencies($idLang = null, $shop = null)
+    public static function useMultipleCurrencies()
     {
-        $idLang = $idLang ?: Context::getContext()->language->id;
-        $idShop = null;
-        $idShopGroup = null;
-        if (!empty($shop) && Context::getContext()->shop instanceof Shop) {
-            $idShop = Context::getContext()->shop->id ?: null;
-            $idShopGroup = Context::getContext()->shop->id_shop_group ?: null;
-        }
-
-        return NostoHelperConfig::getMultiCurrencyMethod($idLang, $idShopGroup, $idShop) !== NostoHelperConfig::MULTI_CURRENCY_METHOD_DISABLED;
+        return NostoHelperConfig::getMultiCurrencyMethod() !== NostoHelperConfig::MULTI_CURRENCY_METHOD_DISABLED;
     }
 }

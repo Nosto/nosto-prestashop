@@ -28,11 +28,9 @@ class NostoCategoryTagging
     /**
      * Renders the current category tagging by checking if the underlying controller has
      * an accessor for it and if not, it falls back to using the identifier
-     *
-     * @param NostoTagging $module the instance of the module for rendering the template
-     * @return string the tagging
+     * @return string|null the tagging
      */
-    public static function get(NostoTagging $module)
+    public static function get()
     {
         $category = NostoHelperController::resolveObject("id_category", Category::class, "getCategory");
         if (!$category instanceof Category) {
@@ -45,9 +43,9 @@ class NostoCategoryTagging
 
             /** @noinspection PhpUndefinedFieldInspection */
             $idCategory = Context::getContext()->cookie->last_visited_category;
-            $category = NostoCategory::loadId($idCategory, Context::getContext()->language->id);
+            $category = NostoCategory::loadId($idCategory);
         }
-        $nostoCategory = NostoCategory::loadData(Context::getContext(), $category);
+        $nostoCategory = NostoCategory::loadData($category);
 
         return $nostoCategory ? $nostoCategory->toHtml() : null;
     }

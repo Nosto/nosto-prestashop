@@ -63,19 +63,19 @@ class NostoDefaultTagging
         }
 
         $html = '';
-        $html .= NostoCustomerTagging::get($module);
-        $html .= NostoCartTagging::get($module);
-        $html .= NostoVariationTagging::get($module);
+        $html .= NostoCustomerTagging::get();
+        $html .= NostoCartTagging::get();
+        $html .= NostoVariationTagging::get();
         if (NostoHelperController::isController('category')) {
-            $html .= NostoCategoryTagging::get($module);
+            $html .= NostoCategoryTagging::get();
         } elseif (NostoHelperController::isController('manufacturer')) {
-            $html .= NostoBrandTagging::get($module);
+            $html .= NostoBrandTagging::get();
         } elseif (NostoHelperController::isController('search')) {
-            $html .= NostoSearchTagging::get($module);
+            $html .= NostoSearchTagging::get();
         } elseif (NostoHelperController::isController('product')) {
-            $html .= NostoProductTagging::get($module);
+            $html .= NostoProductTagging::get();
         } elseif (NostoHelperController::isController('order-confirmation')) {
-            $html .= NostoOrderTagging::get($module);
+            $html .= NostoOrderTagging::get();
         }
         $html .= $module->render('views/templates/hook/top_nosto-elements.tpl');
         $html .= NostoHeaderContent::getHiddenRecommendationElements($module);

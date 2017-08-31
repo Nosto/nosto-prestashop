@@ -27,11 +27,9 @@ class NostoCartTagging
 {
     /**
      * Renders the cart tagging by checking the cart contents
-     *
-     * @param NostoTagging $module the instance of the module for rendering the template
-     * @return string the tagging
+     * @return string|null the tagging
      */
-    public static function get(NostoTagging $module)
+    public static function get()
     {
         $cid = NostoHelperCookie::readNostoCookie();
         $hcid = $cid ? hash(NostoTagging::VISITOR_HASH_ALGO, $cid) : '';

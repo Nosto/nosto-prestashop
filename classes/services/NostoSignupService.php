@@ -31,14 +31,13 @@ class NostoSignupService extends AbstractNostoService
     /**
      * Creates a new Nosto account for given shop language.
      *
-     * @param int $idLang the language-id for which to create the account.
      * @param string $email the account owner email address.
      * @param stdClass|string $accountDetails the details for the account.
      * @return bool true if successful, false otherwise.
      */
-    public function createAccount($idLang, $email, $accountDetails = "")
+    public function createAccount($email, $accountDetails = "")
     {
-        $signupParams = NostoAccountSignup::loadData(Context::getContext(), $idLang);
+        $signupParams = NostoAccountSignup::loadData();
         if ($signupParams->getOwner()->getEmail() !== $email) {
             $accountOwner = new NostoAccountOwner();
             $accountOwner->setEmail($email);

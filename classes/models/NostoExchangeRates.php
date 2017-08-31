@@ -30,13 +30,12 @@ use Nosto\Object\ExchangeRateCollection as NostoSDKExchangeRateCollection;
 class NostoExchangeRates extends NostoSDKExchangeRateCollection
 {
     /**
-     * @param Context $context the context
      * @return NostoExchangeRates the exchange rates object
      */
-    public static function loadData(Context $context)
+    public static function loadData()
     {
-        $baseCurrencyCode = NostoHelperCurrency::getBaseCurrency($context)->iso_code;
-        $currencies = NostoHelperCurrency::getCurrencies($context, true);
+        $baseCurrencyCode = NostoHelperCurrency::getBaseCurrency()->iso_code;
+        $currencies = NostoHelperCurrency::getCurrencies(true);
         $nostoRates = new NostoExchangeRates();
         foreach ($currencies as $currency) {
             // Skip base currencyCode.

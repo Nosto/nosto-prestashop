@@ -31,7 +31,7 @@ class NostoBrand extends MarkupableString
      * Loads the brand data from supplied manufacturer object.
      *
      * @param Manufacturer $manufacturer the manufacturer model to process
-     * @return NostoBrand the brand object
+     * @return NostoBrand|null the brand object
      */
     public static function loadData(Manufacturer $manufacturer)
     {

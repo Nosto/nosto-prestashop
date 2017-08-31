@@ -30,7 +30,6 @@ class NostoSku extends NostoSDKSku
     /**
      * Loads the product data from supplied context and product objects.
      *
-     * @param Context Context::getContext() the context object.
      * @param Product $product magento product object
      * @param NostoProduct $nostoProduct
      * @param Combination $combination the prestashop combination object
@@ -51,20 +50,13 @@ class NostoSku extends NostoSDKSku
         $nostoSku = new NostoSku();
         $nostoSku->amendAvailability($attributesGroup);
         $nostoSku->setId($combination->id);
-        $nostoSku->amendImage($combination, $nostoProduct);
+        $nostoSku->amendImage($product, $combination, $nostoProduct);
         $nostoSku->amendCustomFields($combination);
         $nostoSku->amendPrice($combination);
         $nostoSku->amendName($combination);
 
         $nostoSku->setGtin($combination->ean13);
-        $nostoSku->setUrl(
-            NostoHelperUrl::getProductUrl(
-                $product, NostoHelperContext::getLanguageId(),
-                NostoHelperContext::getShopId(),
-                array(),
-                $combination->id
-            )
-        );
+        $nostoSku->setUrl(NostoHelperUrl::getProductUrl($product, array(), $combination->id));
 
         return $nostoSku;
     }
@@ -76,11 +68,11 @@ class NostoSku extends NostoSDKSku
      */
     protected function amendPrice(Combination $combination)
     {
-        $base_currency = NostoHelperCurrency::getBaseCurrency(Context::getContext());
+        $base_currency = NostoHelperCurrency::getBaseCurrency();
         if (Nosto::useMultipleCurrencies()) {
             $tagging_currency = $base_currency;
         } else {
-            $tagging_currency = Context::getContext()->currency;
+            $tagging_currency = NostoHelperContext::getCurrency();
         }
 
         $this->setListPrice(self::getListPriceInclTax($combination, $tagging_currency));
@@ -134,15 +126,15 @@ class NostoSku extends NostoSDKSku
 
     /**
      * Returns the absolute product image url
-     *
+     * @param Product $product
      * @param Combination $combination the product model.
      * @param NostoProduct $nostoProduct
      */
     protected function amendImage(
+        Product $product,
         Combination $combination,
         NostoProduct $nostoProduct
-    )
-    {
+    ) {
         $images = $combination->getWsImages();
         if ($images && is_array($images)) {
             foreach ($images as $image) {
@@ -152,20 +144,11 @@ class NostoSku extends NostoSDKSku
 
                 $imageId = $image['id'];
                 if ((int)$imageId > 0) {
-                    $imageType = NostoHelperImage::getTaggingImageTypeName(
-                        NostoHelperContext::getLanguageId(),
-                        NostoHelperContext::getShopGroupId(),
-                        NostoHelperContext::getShopId()
-                    );
+                    $imageType = NostoHelperImage::getTaggingImageTypeName();
                     if (empty($imageType)) {
                         return;
                     }
 
-                    $product = new Product(
-                        $combination->id_product,
-                        NostoHelperContext::getLanguageId(),
-                        NostoHelperContext::getShopId()
-                    );
                     $link = NostoHelperLink::getLink();
                     $url = $link->getImageLink(
                         $product->link_rewrite,
@@ -212,7 +195,6 @@ class NostoSku extends NostoSDKSku
         return NostoHelperPrice::calcPrice(
             $combination->id_product,
             $currency,
-            Context::getContext(),
             array('user_reduction' => true, 'id_product_attribute' => $combination->id)
         );
     }
@@ -229,7 +211,6 @@ class NostoSku extends NostoSDKSku
         return NostoHelperPrice::calcPrice(
             $combination->id_product,
             $currency,
-            Context::getContext(),
             array('user_reduction' => false, 'id_product_attribute' => $combination->id)
         );
     }

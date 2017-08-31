@@ -32,18 +32,15 @@ class NostoCheckAccountNotification extends NostoNotification
      * Checks if Nosto is installed to a given store and language and returns a notification if it
      * isn't
      *
-     * @param Shop $shop the shop for which to check the notification
-     * @param Language $language the language for which to check the notification
      * @return NostoNotification|null a notification or null if no notification is needed
      */
-    public static function check(Shop $shop, Language $language)
+    public static function check()
     {
-        $idShopGroup = isset($shop->id_shop_group) ? $shop->id_shop_group : null;
-        $connected = NostoHelperAccount::existsAndIsConnected($language->id, $idShopGroup, $shop->id);
-        if ($connected) {
+        $connected = NostoHelperAccount::existsAndIsConnected();
+        if (!$connected) {
             return new NostoCheckAccountNotification(
-                $shop,
-                $language,
+                NostoHelperContext::getShop(),
+                NostoHelperContext::getLanguage(),
                 NostoSDKNotification::TYPE_MISSING_INSTALLATION,
                 NostoSDKNotification::SEVERITY_INFO,
                 'Nosto account is not installed to shop %s and language %s'

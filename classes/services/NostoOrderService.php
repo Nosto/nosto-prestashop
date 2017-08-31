@@ -31,12 +31,6 @@ use Nosto\Operation\OrderConfirm as NostoSDKOrderConfirmOperation;
 class NostoOrderService extends AbstractNostoService
 {
     public static $syncInventoriesAfterOrder = true;
-    private $context;
-
-    public function __construct(Context $context)
-    {
-        $this->context = $context;
-    }
 
     public function send($params)
     {
@@ -53,18 +47,18 @@ class NostoOrderService extends AbstractNostoService
      * Sends order data to Nosto.
      *
      * @param Order $order
+     *
+     * @suppress PhanTypeMismatchArgument
      */
     public function sendOrder(Order $order)
     {
-        $nostoOrder = NostoOrder::loadData($this->context, $order);
-        $idShopGroup = isset($order->id_shop_group) ? $order->id_shop_group : null;
-        $idShop = isset($order->id_shop) ? $order->id_shop : null;
-        // This is done out of context, so we need to specify the exact parameters to get the
-        // correct account.
-        $account = NostoHelperAccount::find($order->id_lang, $idShopGroup, $idShop);
-        if ($account !== null && $account->isConnectedToNosto()) {
-            $customerId = NostoCustomerManager::getNostoId($order);
-            try {
+        try {
+            $nostoOrder = NostoOrder::loadData($order);
+            // TODO: Emulate
+            $account = NostoHelperAccount::find();
+            if ($account !== null && $account->isConnectedToNosto()) {
+                $customerId = NostoCustomerManager::getNostoId($order);
+
                 $operation = new NostoSDKOrderConfirmOperation($account);
                 $operation->send($nostoOrder, $customerId);
                 try {
@@ -87,9 +81,9 @@ class NostoOrderService extends AbstractNostoService
                 } catch (Exception $e) {
                     NostoHelperLogger::error($e, 'Failed to synchronize products after order');
                 }
-            } catch (Exception $e) {
-                NostoHelperLogger::error($e, 'Failed to send order confirmation');
             }
+        } catch (Exception $e) {
+            NostoHelperLogger::error($e, 'Failed to send order confirmation');
         }
     }
 }

@@ -27,6 +27,8 @@ abstract class NostoBaseController extends ModuleAdminController
 {
     /**
      * @inheritdoc
+     *
+     * @suppress PhanDeprecatedFunction
      */
     public function initContent()
     {
@@ -36,17 +38,26 @@ abstract class NostoBaseController extends ModuleAdminController
         }
 
         $languages = Language::getLanguages(true, $this->context->shop->id);
-        $currentLanguage = NostoHelperLanguage::ensureAdminLanguage($languages, $this->getLanguageId());
+        $handlingLanguage = NostoHelperLanguage::ensureAdminLanguage($languages, $this->getLanguageId());
         if (Shop::getContext() !== Shop::CONTEXT_SHOP) {
             $this->redirectToAdmin();
             return;
-        } elseif ($currentLanguage['id_lang'] != $this->getLanguageId()) {
+        } elseif ($handlingLanguage['id_lang'] != $this->getLanguageId()) {
             NostoHelperFlash::add('error', $this->l('Language cannot be empty.'));
             $this->redirectToAdmin();
             return;
         }
 
-        if ($this->execute() === true) {
+        //run the code in a context with language id set to the language admin chose
+        $redirectToAdminPage = NostoHelperContext::runInContext(
+            function () {
+                return $this->execute();
+            },
+            $handlingLanguage['id_lang'],
+            NostoHelperContext::getShopId()
+        );
+
+        if ($redirectToAdminPage) {
             $this->redirectToAdmin();
         }
     }
@@ -59,6 +70,9 @@ abstract class NostoBaseController extends ModuleAdminController
         return (int)Tools::getValue(NostoTagging::MODULE_NAME . '_current_language');
     }
 
+    /**
+     * @suppress PhanDeprecatedFunction
+     */
     protected function redirectToAdmin()
     {
         $tabId = (int)Tab::getIdFromClassName('AdminModules');
@@ -71,5 +85,5 @@ abstract class NostoBaseController extends ModuleAdminController
      * @return bool should it be redirect to admin after executing this method.Return true means
      *     redirect to admin url
      */
-    abstract function execute();
+    public abstract function execute();
 }

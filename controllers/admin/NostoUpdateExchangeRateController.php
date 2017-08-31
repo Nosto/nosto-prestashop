@@ -25,17 +25,20 @@
 
 require_once 'NostoBaseController.php';
 
+use Nosto\Request\Api\Token as NostoSDKAPIToken;
+
 class NostoUpdateExchangeRateController extends NostoBaseController
 {
     /**
      * @inheritdoc
+     *
+     * @suppress PhanDeprecatedFunction
      */
     public function execute()
     {
         $nosto_account = Nosto::getAccount();
         $operation = new NostoRatesService();
-        if ($nosto_account && $operation->updateCurrencyExchangeRates($nosto_account,
-                $this->context)
+        if ($nosto_account && $operation->updateCurrencyExchangeRates($nosto_account)
         ) {
             NostoHelperFlash::add('success',
                 $this->l('Exchange rates successfully updated to Nosto'));

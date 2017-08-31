@@ -30,6 +30,7 @@ use Nosto\Object\Signup\Account as NostoSDKAccount;
 use Nosto\Request\Api\Token as NostoSDKAPIToken;
 use Nosto\Request\Http\HttpRequest as NostoSDKHttpRequest;
 use Nosto\Types\Signup\AccountInterface as NostoSDKAccountInterface;
+use Nosto\NostoException as NostoSDKException;
 
 class NostoIndexController
 {
@@ -84,8 +85,8 @@ class NostoIndexController
             && Shop::getContext() === Shop::CONTEXT_SHOP
         ) {
             try {
-                $currentUser = NostoCurrentUser::loadData(Context::getContext());
-                $meta = NostoIframe::loadData(Context::getContext(), $languageId);
+                $currentUser = NostoCurrentUser::loadData();
+                $meta = NostoIframe::loadData();
                 $url = NostoSDKIframeHelper::getUrl($meta, $account, $currentUser);
             } catch (NostoSDKException $e) {
                 NostoHelperLogger::error($e, 'Unable to load the Nosto IFrame');
@@ -102,22 +103,34 @@ class NostoIndexController
         $adminUrl = $this->getAdminUrl();
 
         NostoHelperConfig::saveAdminUrl($adminUrl);
-        $languages = Language::getLanguages(true, Context::getContext()->shop->id);
-        $accountEmail = Context::getContext()->employee->email;
+        $languages = Language::getLanguages(true, NostoHelperContext::getShopId());
+
         $shopId = null;
         $shopGroupId = null;
-        if (Context::getContext()->shop instanceof Shop) {
-            $shopId = Context::getContext()->shop->id;
-            $shopGroupId = Context::getContext()->shop->id_shop_group;
+        if (NostoHelperContext::getShop() instanceof Shop) {
+            $shopId = NostoHelperContext::getShopId();
+            $shopGroupId = NostoHelperContext::getShopGroupId();
         }
 
-        $languageId = (int)Tools::getValue('language_id', 0);
+        $languageId = (int)Tools::getValue('nostotagging_current_language', 0);
 
         // Choose current language if it has not been set.
         if (!isset($currentLanguage)) {
             $currentLanguage = NostoHelperLanguage::ensureAdminLanguage($languages, $languageId);
             $languageId = (int)$currentLanguage['id_lang'];
         }
+
+        return NostoHelperContext::runInContext(
+            function () use ($nostoTagging, $languages, $currentLanguage) {
+                return self::generateSmartyData($nostoTagging, $languages, $currentLanguage);
+            },
+            $languageId,
+            $shopId
+        );
+    }
+
+    private function generateSmartyData(NostoTagging $nostoTagging, $languages, $currentLanguage)
+    {
         $account = Nosto::getAccount();
         $missingTokens = true;
         if (
@@ -132,8 +145,8 @@ class NostoIndexController
             $account instanceof NostoSDKAccountInterface === false
             && Shop::getContext() === Shop::CONTEXT_SHOP
         ) {
-            $currentUser = NostoCurrentUser::loadData(Context::getContext());
-            $accountIframe = NostoIframe::loadData(Context::getContext(), $languageId);
+            $currentUser = NostoCurrentUser::loadData();
+            $accountIframe = NostoIframe::loadData();
             $iframeInstallationUrl = NostoSDKIframeHelper::getUrl(
                 $accountIframe,
                 $account,
@@ -143,6 +156,8 @@ class NostoIndexController
         } else {
             $iframeInstallationUrl = null;
         }
+
+        $accountEmail = NostoHelperContext::getEmployee()->email;
 
         $smartyMetaData = array(
             'nostotagging_form_action' => $this->getAdminUrl(),
@@ -170,46 +185,32 @@ class NostoIndexController
                     NostoHelperUrl::getModuleUrl(
                         'nostotagging',
                         'cronRates',
-                        $currentLanguage['id_lang'],
-                        $shopId,
                         array('token' => NostoHelperCron::getCronAccessToken())
                     )
                 ),
             ),
-            'multi_currency_method' => NostoHelperConfig::getMultiCurrencyMethod(
-                $currentLanguage['id_lang'],
-                $shopGroupId,
-                $shopId
-            ),
-            'nostotagging_position' => NostoHelperConfig::getNostotaggingRenderPosition(
-                $currentLanguage['id_lang'],
-                $shopGroupId,
-                $shopId
-            ),
+            'multi_currency_method' => NostoHelperConfig::getMultiCurrencyMethod(),
+            'nostotagging_position' => NostoHelperConfig::getNostotaggingRenderPosition(),
             'nostotagging_ps_version_class' => 'ps-' . str_replace('.', '',
                     Tools::substr(_PS_VERSION_, 0, 3)),
             'missing_tokens' => $missingTokens,
             'iframe_installation_url' => $iframeInstallationUrl,
             'iframe_origin' => self::getIframeOrigin(),
             'image_types' => NostoHelperImage::getProductImageTypes(),
-            'current_image_type' => NostoHelperConfig::getImageType(
-                $currentLanguage['id_lang'],
-                $shopGroupId,
-                $shopId
-            ),
-            'sku_enabled' => NostoHelperConfig::getSkuEnabled($languageId, $shopGroupId, $shopId)
+            'current_image_type' => NostoHelperConfig::getImageType(),
+            'sku_enabled' => NostoHelperConfig::getSkuEnabled()
         );
 
         if ($account) {
             // Try to login employee to Nosto in order to get a url to the internal setting pages,
             // which are then shown in an iframe on the module config page.
-            $url = $this->getIframeUrl($account, $languageId);
+            $url = $this->getIframeUrl($account, NostoHelperContext::getLanguageId());
             if (!empty($url)) {
                 $smartyMetaData['iframe_url'] = $url;
             }
         }
 
-        $controllerUrls = $this->getControllerUrls(Context::getContext()->employee->id);
+        $controllerUrls = $this->getControllerUrls(NostoHelperContext::getEmployee()->id);
 
         return array_merge($controllerUrls, $smartyMetaData);
     }

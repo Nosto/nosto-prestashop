@@ -63,6 +63,8 @@ class NostoHelperController
      * @param string $klass the classname of the object to instantiate
      * @param string $method the accessor method in the base controller
      * @return mixed the resolved object or null
+     *
+     * @suppress PhanTypeMismatchArgument
      */
     public static function resolveObject($idName, $klass, $method)
     {
@@ -79,8 +81,8 @@ class NostoHelperController
                 $object = new $klass
                 (
                     (int)$id,
-                    Context::getContext()->language->id,
-                    Context::getContext()->shop->id
+                    NostoHelperContext::getLanguageId(),
+                    NostoHelperContext::getShopId()
                 );
             }
         }

@@ -33,6 +33,8 @@ if (!defined('_PS_VERSION_')) {
  * Removes unused config variables.
  *
  * @return bool
+ *
+ * @suppress PhanUnreferencedMethod
  */
 function upgrade_module_1_2_0()
 {

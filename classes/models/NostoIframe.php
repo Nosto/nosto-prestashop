@@ -58,15 +58,13 @@ class NostoIframe extends NostoSDKIframe
     /**
      * Loads the meta-data from context.
      *
-     * @param Context $context the context
-     * @param int $id_lang the language ID of the shop for which to get the meta-data.
      * @return NostoIframe|null the iframe object
      */
-    public static function loadData(Context $context, $id_lang)
+    public static function loadData()
     {
         $nostoIframe = new NostoIframe();
-        $shopLanguage = new Language($id_lang);
-        $shopContext = $context->shop->getContext();
+        $shopLanguage = new Language(NostoHelperContext::getLanguageId());
+        $shopContext = NostoHelperContext::getShop()->getContext();
         if (
             !Validate::isLoadedObject($shopLanguage)
             || $shopContext !== Shop::CONTEXT_SHOP
@@ -74,16 +72,16 @@ class NostoIframe extends NostoSDKIframe
             return null;
         }
 
-        $nostoIframe->setFirstName($context->employee->firstname);
-        $nostoIframe->setLastName($context->employee->lastname);
-        $nostoIframe->setEmail($context->employee->email);
-        $nostoIframe->setLanguageIsoCode($context->language->iso_code);
+        $nostoIframe->setFirstName(NostoHelperContext::getEmployee()->firstname);
+        $nostoIframe->setLastName(NostoHelperContext::getEmployee()->lastname);
+        $nostoIframe->setEmail(NostoHelperContext::getEmployee()->email);
+        $nostoIframe->setLanguageIsoCode(NostoHelperContext::getLanguage()->iso_code);
         $nostoIframe->setLanguageIsoCodeShop($shopLanguage->iso_code);
-        $nostoIframe->setPreviewUrlProduct(NostoHelperUrl::getPreviewUrlProduct($id_lang));
-        $nostoIframe->setPreviewUrlCategory(NostoHelperUrl::getPreviewUrlCategory($id_lang));
-        $nostoIframe->setPreviewUrlSearch(NostoHelperUrl::getPreviewUrlSearch($id_lang));
-        $nostoIframe->setPreviewUrlCart(NostoHelperUrl::getPreviewUrlCart($id_lang));
-        $nostoIframe->setPreviewUrlFront(NostoHelperUrl::getPreviewUrlHome($id_lang));
+        $nostoIframe->setPreviewUrlProduct(NostoHelperUrl::getPreviewUrlProduct());
+        $nostoIframe->setPreviewUrlCategory(NostoHelperUrl::getPreviewUrlCategory());
+        $nostoIframe->setPreviewUrlSearch(NostoHelperUrl::getPreviewUrlSearch());
+        $nostoIframe->setPreviewUrlCart(NostoHelperUrl::getPreviewUrlCart());
+        $nostoIframe->setPreviewUrlFront(NostoHelperUrl::getPreviewUrlHome());
         $nostoIframe->setShopName($shopLanguage->name);
         $nostoIframe->setVersionModule(NostoTagging::PLUGIN_VERSION);
         $nostoIframe->setVersionPlatform(_PS_VERSION_);
@@ -100,7 +98,7 @@ class NostoIframe extends NostoSDKIframe
                 $visits = AdminStatsControllerCore::getVisits(false, $beginDate, $today);
                 $nostoIframe->setRecentVisits(strval($visits));
                 $nostoIframe->setRecentSales(number_format((float)$sales));
-                $currency = $context->currency;
+                $currency = NostoHelperContext::getCurrency();
                 if ($currency instanceof Currency) {
                     $nostoIframe->setCurrency($currency->iso_code);
                 }

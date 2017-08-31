@@ -33,12 +33,6 @@ use Nosto\Types\Signup\AccountInterface as NostoSDKAccountInterface;
  */
 class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
 {
-    use NostoSDKOauthTrait {
-        NostoSDKOauthTrait::redirect as redirectTo;
-    }
-
-    private $id_lang;
-
     /**
      * Handles the redirect from Nosto oauth2 authorization server when an existing account is
      * connected to a store. This is handled in the front end as the oauth2 server validates the
@@ -49,84 +43,7 @@ class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
      */
     public function initContent()
     {
-        $this->id_lang = (int)Tools::getValue('language_id', Context::getContext()->language->id);
-        self::connect();
-    }
-
-    /**
-     * Implemented trait method that is responsible for fetching the OAuth parameters used for all
-     * OAuth operations
-     *
-     * @return Nosto\Oauth the OAuth parameters for the operations
-     * @suppress PhanUndeclaredMethod
-     */
-    public function getMeta()
-    {
-        return NostoOAuth::loadData(
-            Context::getContext(),
-            $this->id_lang,
-            $this->module->name,
-            $this->module->getPath()
-        );
-    }
-
-    /**
-     * Implemented trait method that is responsible for saving an account with the all tokens for
-     * the current store view (as defined by the parameter.)
-     *
-     * @param Nosto\Types\Signup\AccountInterface $account the account to save
-     */
-    public function save(NostoSDKAccountInterface $account)
-    {
-        NostoHelperAccount::save($account);
-    }
-
-    /**
-     * Implemented trait method that redirects the user with the authentication params to the
-     * admin controller.
-     *
-     * @param array $params the parameters to be used when building the redirect
-     */
-    public function redirectTo(array $params)
-    {
-        $admin_url = NostoHelperConfig::getAdminUrl();
-        if (!empty($admin_url)) {
-            $admin_url = NostoSDKHttpRequest::replaceQueryParamsInUrl($params, $admin_url);
-            Tools::redirect($admin_url, '');
-            die;
-        }
-        $this->notFound();
-    }
-
-    /**
-     * Implemented trait method that is a utility responsible for fetching a specified query
-     * parameter from the GET request.
-     *
-     * @param string $name the name of the query parameter to fetch
-     * @return string the value of the specified query parameter
-     */
-    public function getParam($name)
-    {
-        return Tools::getValue($name);
-    }
-
-    /**
-     * Implemented trait method that is responsible for logging an exception to the Magento error
-     * log when an error occurs.
-     *
-     * @param Exception $e the exception to be logged
-     */
-    public function logError(Exception $e)
-    {
-        NostoHelperLogger::error($e);
-    }
-
-    /**
-     * Implemented trait method that is responsible for redirecting the user to a 404 page when
-     * the authorization code is invalid.
-     */
-    public function notFound()
-    {
-        Controller::getController('PageNotFoundController')->run();
+        $oauthAdaptor = new OauthTraitAdapter();
+        $oauthAdaptor->initContent($this->module->name);
     }
 }

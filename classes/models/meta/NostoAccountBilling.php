@@ -30,13 +30,12 @@ class NostoAccountBilling extends NostoSDKSignupBilling
     /**
      * Loads the meta data from the given context.
      *
-     * @param Context $context the context
      * @return NostoAccountBilling the billing details object
      */
-    public static function loadData(Context $context)
+    public static function loadData()
     {
         $nostoBilling = new NostoAccountBilling();
-        $nostoBilling->setCountry($context->country->iso_code);
+        $nostoBilling->setCountry(NostoHelperContext::getCountry()->iso_code);
 
         NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoBilling), array(
             'nosto_account_billing' => $nostoBilling

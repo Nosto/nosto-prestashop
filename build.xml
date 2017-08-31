@@ -150,6 +150,16 @@
         <echo msg="Files copied and compressed"/>
     </target>
 
+    <target name="phan">
+        <exec executable="./libs/bin/phan" passthru="true">
+            <arg value="--progress-bar"/>
+            <arg value="--signature-compatibility"/>
+            <arg value="--config-file=phan.php"/>
+            <arg value="--dead-code-detection"/>
+            <arg value="."/>
+        </exec>
+    </target>
+
     <fileset dir="${srcdir}" id="sourcefiles">
         <patternset id="nostotagging.sources">
             <include name="**"/>

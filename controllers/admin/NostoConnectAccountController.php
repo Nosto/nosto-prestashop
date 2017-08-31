@@ -26,6 +26,8 @@
 
 require_once 'NostoBaseController.php';
 
+use Nosto\Helper\OAuthHelper as NostoSDKOAuthHelper;
+
 class NostoConnectAccountController extends NostoBaseController
 {
     /**
@@ -33,7 +35,7 @@ class NostoConnectAccountController extends NostoBaseController
      */
     public function execute()
     {
-        $meta = NostoOAuth::loadData($this->context, $this->getLanguageId(), NostoTagging::MODULE_NAME);
+        $meta = NostoOAuth::loadData(NostoTagging::MODULE_NAME);
         Tools::redirect(NostoSDKOAuthHelper::getAuthorizationUrl($meta), '');
         return false;
     }

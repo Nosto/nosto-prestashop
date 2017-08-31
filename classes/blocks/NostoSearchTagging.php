@@ -28,11 +28,9 @@ class NostoSearchTagging
     /**
      * Renders the current search term tagging by checking if the controller either has
      * the search_query or the s parameter (as it differs between versions.)
-     *
-     * @param NostoTagging $module the instance of the module for rendering the template
-     * @return string the tagging
+     * @return string|null the tagging
      */
-    public static function get(NostoTagging $module)
+    public static function get()
     {
         $searchTerm = Tools::getValue('search_query', Tools::getValue('s'));
         if (is_null($searchTerm)) {

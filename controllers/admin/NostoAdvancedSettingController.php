@@ -25,10 +25,14 @@
 
 require_once 'NostoBaseController.php';
 
+use Nosto\NostoException as NostoSDKException;
+
 class NostoAdvancedSettingController extends NostoBaseController
 {
     /**
      * @inheritdoc
+     *
+     * @suppress PhanDeprecatedFunction
      */
     public function execute()
     {
@@ -37,7 +41,7 @@ class NostoAdvancedSettingController extends NostoBaseController
         NostoHelperConfig::saveNostoTaggingRenderPosition(Tools::getValue('nostotagging_position'));
         NostoHelperConfig::saveImageType(Tools::getValue('image_type'));
         $account = Nosto::getAccount();
-        $account_meta = NostoAccountSignup::loadData($this->context, $this->context->language->id);
+        $account_meta = NostoAccountSignup::loadData();
 
         if (!empty($account) && $account->isConnectedToNosto()) {
             try {
@@ -53,7 +57,7 @@ class NostoAdvancedSettingController extends NostoBaseController
             // Also update the exchange rates if multi currency is used
             if ($account_meta->getUseExchangeRates()) {
                 $operation = new NostoRatesService();
-                $operation->updateCurrencyExchangeRates($account, $this->context);
+                $operation->updateCurrencyExchangeRates($account);
             }
         } else {
             //TODO: Flash and log error

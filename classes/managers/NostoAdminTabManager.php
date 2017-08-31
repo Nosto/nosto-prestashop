@@ -134,20 +134,18 @@ class NostoAdminTabManager
     /**
      * Register a controller
      * @param string $className the controller class name, without the "Controller part"
-     * @return bool success
+     * @return bool|int tab id
+     *
+     * @suppress PhanDeprecatedFunction
      */
     public static function registerController($className)
     {
         $tab = new Tab();
         /** @noinspection PhpDeprecationInspection */
         $tab->id = (int)Tab::getIdFromClassName($className);
-        $tab->active = 1;
+        $tab->active = true;
         $tab->class_name = $className;
-        $tab->name = array();
-        $languages = Language::getLanguages(true);
-        foreach ($languages as $lang) {
-            $tab->name[$lang['id_lang']] = 'NostoController' . $className;
-        }
+        $tab->name = 'NostoController' . $className;
 
         $tab->id_parent = -1;
         $tab->module = NostoTagging::MODULE_NAME;
