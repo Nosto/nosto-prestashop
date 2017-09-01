@@ -340,7 +340,10 @@ class NostoTagging extends Module
      */
     public function hookDisplayTop()
     {
-        return NostoDefaultTagging::get($this);
+        $taggingOnTop = NostoHelperConfig::getNostotaggingRenderPosition()
+            !== NostoHelperConfig::NOSTOTAGGING_POSITION_FOOTER;
+
+        return $taggingOnTop ? NostoDefaultTagging::get($this) : '';
     }
 
     /**
@@ -377,8 +380,11 @@ class NostoTagging extends Module
      */
     public function hookDisplayFooter()
     {
-        $html = NostoDefaultTagging::get($this);
+        $taggingOnFooter = NostoHelperConfig::getNostotaggingRenderPosition()
+            === NostoHelperConfig::NOSTOTAGGING_POSITION_FOOTER;
+        $html = $taggingOnFooter ? NostoDefaultTagging::get($this) : '';
         $html .= NostoRecommendationElement::get("nosto-page-footer");
+
         return $html;
     }
 
