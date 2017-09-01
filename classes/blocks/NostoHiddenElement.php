@@ -30,19 +30,36 @@ class NostoHiddenElement
     const INSERT_POSITION_APPEND = 'append';
 
     /**
-     * Renders a single hidden element using the identifier specified
+     * Renders a single hidden element using the identifier specifie.
+     * The hidden elements will be appended to the center_column block by js
      *
      * @param string $nostoDataId the identifier of the hidden element
      * @param string $position must be one of:
      *  NostoHiddenElement::INSERT_POSITION_PREPEND, NostoHiddenElement::INSERT_POSITION_APPEND
      * @return string the tagging
      */
-    public static function get($nostoDataId, $position = self::INSERT_POSITION_APPEND)
+    public static function append($nostoDataId, $position = self::INSERT_POSITION_APPEND)
     {
         if (!Nosto::isContextConnected()) {
             return '';
         }
 
-        return sprintf(self::HIDDEN_ELEMENT, $nostoDataId, $position);
+        return sprintf(self::HIDDEN_ELEMENT, $nostoDataId, self::INSERT_POSITION_APPEND);
+    }
+
+    /**
+     * Renders a single hidden element using the identifier specified
+     * The hidden elements will be prepended to the center_column block by js
+     *
+     * @param string $nostoDataId the identifier of the hidden element
+     * @return string the tagging
+     */
+    public static function prepend($nostoDataId)
+    {
+        if (!Nosto::isContextConnected()) {
+            return '';
+        }
+
+        return sprintf(self::HIDDEN_ELEMENT, $nostoDataId, self::INSERT_POSITION_PREPEND);
     }
 }

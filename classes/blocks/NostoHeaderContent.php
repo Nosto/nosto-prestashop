@@ -41,7 +41,7 @@ class NostoHeaderContent
      */
     public static function getHiddenRecommendationElements(NostoTagging $module)
     {
-        $methodName = 'getHiddenELementsFor';
+        $methodName = 'getHiddenElementsFor';
         $methodName .= str_replace('-', '', NostoHelperController::getControllerName());
         if (method_exists('NostoHeaderContent', $methodName)) {
             return self::$methodName($module);
@@ -52,77 +52,77 @@ class NostoHeaderContent
         }
     }
 
-    private static function getHiddenELementsForIndex()
+    private static function getHiddenElementsForIndex()
     {
-        $html = NostoHiddenElement::get('frontpage-nosto-1');
-        $html .= NostoHiddenElement::get('frontpage-nosto-2');
-        $html .= NostoHiddenElement::get('frontpage-nosto-3');
-        $html .= NostoHiddenElement::get('frontpage-nosto-4');
+        $html = NostoHiddenElement::append('frontpage-nosto-1');
+        $html .= NostoHiddenElement::append('frontpage-nosto-2');
+        $html .= NostoHiddenElement::append('frontpage-nosto-3');
+        $html .= NostoHiddenElement::append('frontpage-nosto-4');
 
         return $html;
     }
 
-    private static function getHiddenELementsForProduct()
+    private static function getHiddenElementsForProduct()
     {
-        $html = NostoHiddenElement::get('nosto-page-product1');
-        $html .= NostoHiddenElement::get('nosto-page-product2');
-        $html .= NostoHiddenElement::get('nosto-page-product3');
+        $html = NostoHiddenElement::append('nosto-page-product1');
+        $html .= NostoHiddenElement::append('nosto-page-product2');
+        $html .= NostoHiddenElement::append('nosto-page-product3');
 
         return $html;
     }
 
-    private static function getHiddenELementsForOrder()
+    private static function getHiddenElementsForOrder()
     {
         if ((int)Tools::getValue('step', 0) !== 0) {
             return '';
         }
 
-        $html = NostoHiddenElement::get('nosto-page-cart1');
-        $html .= NostoHiddenElement::get('nosto-page-cart2');
-        $html .= NostoHiddenElement::get('nosto-page-cart3');
+        $html = NostoHiddenElement::append('nosto-page-cart1');
+        $html .= NostoHiddenElement::append('nosto-page-cart2');
+        $html .= NostoHiddenElement::append('nosto-page-cart3');
 
         return $html;
     }
 
-    private static function getHiddenELementsForCategory()
+    private static function getHiddenElementsForCategory()
     {
-        $html = NostoHiddenElement::get('nosto-page-category1');
-        $html .= NostoHiddenElement::get('nosto-page-category2');
+        $html = NostoHiddenElement::append('nosto-page-category1');
+        $html .= NostoHiddenElement::append('nosto-page-category2');
 
         return $html;
     }
 
-    private static function getHiddenELementsForManufacturer()
+    private static function getHiddenElementsForManufacturer()
     {
         return self::getHiddenELementsForCategory();
     }
 
-    private static function getHiddenELementsForSearch()
+    private static function getHiddenElementsForSearch()
     {
-        $html = NostoHiddenElement::get('nosto-page-search1', NostoHiddenElement::INSERT_POSITION_PREPEND);
-        $html .= NostoHiddenElement::get('nosto-page-search2');
+        $html = NostoHiddenElement::prepend('nosto-page-search1');
+        $html .= NostoHiddenElement::append('nosto-page-search2');
 
         return $html;
     }
 
-    private static function getHiddenELementsForPageNotFound()
+    private static function getHiddenElementsForPageNotFound()
     {
-        $html = NostoHiddenElement::get('notfound-nosto-1');
-        $html .= NostoHiddenElement::get('notfound-nosto-2');
-        $html .= NostoHiddenElement::get('notfound-nosto-3');
+        $html = NostoHiddenElement::append('notfound-nosto-1');
+        $html .= NostoHiddenElement::append('notfound-nosto-2');
+        $html .= NostoHiddenElement::append('notfound-nosto-3');
 
         return $html;
     }
 
-    private static function getHiddenELementsFor404()
+    private static function getHiddenElementsFor404()
     {
         return self::getHiddenELementsForPageNotFound();
     }
 
-    private static function getHiddenELementsForOrderConfirmation()
+    private static function getHiddenElementsForOrderConfirmation()
     {
-        $html = NostoHiddenElement::get('thankyou-nosto-1');
-        $html .= NostoHiddenElement::get('thankyou-nosto-2');
+        $html = NostoHiddenElement::append('thankyou-nosto-1');
+        $html .= NostoHiddenElement::append('thankyou-nosto-2');
 
         return $html;
     }
