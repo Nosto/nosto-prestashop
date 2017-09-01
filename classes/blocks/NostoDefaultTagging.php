@@ -25,12 +25,6 @@
  */
 class NostoDefaultTagging
 {
-
-    /**
-     * @var boolean keeps the state of Nosto default tagging
-     */
-    private static $taggingRendered = false;
-
     /**
      * Renders the main tagging by if it hasn't already been rendered. This acts as a safeguard
      * so that if the top hook isn't fired, the tagging might be rendered in the bottom hook.
@@ -39,24 +33,6 @@ class NostoDefaultTagging
      * @return string the tagging
      */
     public static function get(NostoTagging $module)
-    {
-        if (self::$taggingRendered === false) {
-            self::$taggingRendered = true;
-            $html = self::generateDefaultTagging($module);
-        } else {
-            $html = '';
-        }
-
-        return $html;
-    }
-
-    /**
-     * Renders the main tagging by checking the controller name and delegating accordingly
-     *
-     * @param NostoTagging $module the instance of the module for rendering the template
-     * @return string the tagging
-     */
-    private static function generateDefaultTagging(NostoTagging $module)
     {
         if (!Nosto::isContextConnected()) {
             return '';
