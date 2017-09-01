@@ -46,6 +46,8 @@ class NostoHeaderContent
         if (method_exists('NostoHeaderContent', $methodName)) {
             return self::$methodName($module);
         } else {
+            // If the current page is not one of the ones we want to show recommendations on, just
+            // return empty.
             return '';
         }
     }
