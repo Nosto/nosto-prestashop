@@ -41,30 +41,88 @@ class NostoHeaderContent
      */
     public static function getHiddenRecommendationElements(NostoTagging $module)
     {
-        if (NostoHelperController::isController('index')) {
-            return $module->render('views/templates/hook/home_hidden-nosto-elements.tpl');
-        } elseif (NostoHelperController::isController('product')) {
-            return $module->render('views/templates/hook/footer-product_hidden-nosto-elements.tpl');
-        } elseif (NostoHelperController::isController('order') && (int)Tools::getValue('step', 0) === 0
-        ) {
-            return $module->render('views/templates/hook/shopping-cart-footer_hidden-nosto-elements.tpl');
-        } elseif (NostoHelperController::isController('category')
-            || NostoHelperController::isController('manufacturer')
-        ) {
-            return $module->render('views/templates/hook/category-footer_hidden-nosto-elements.tpl');
-        } elseif (NostoHelperController::isController('search')) {
-            return $module->render('views/templates/hook/search_hidden-nosto-elements.tpl');
-        } elseif (NostoHelperController::isController('pagenotfound')
-            || NostoHelperController::isController('404')
-        ) {
-            return $module->render('views/templates/hook/404_hidden_nosto-elements.tpl');
-        } elseif (NostoHelperController::isController('order-confirmation')) {
-            return $module->render('views/templates/hook/order-confirmation_hidden_nosto-elements.tpl');
+        $methodName = 'getHiddenELementsFor';
+        $methodName .= str_replace('-', '', NostoHelperController::getControllerName());
+        if (method_exists('NostoHeaderContent', $methodName)) {
+            return self::$methodName($module);
         } else {
-            // If the current page is not one of the ones we want to show recommendations on, just
-            // return empty.
             return '';
         }
+    }
+
+    private static function getHiddenELementsForIndex()
+    {
+        $html = NostoHiddenElement::get('frontpage-nosto-1');
+        $html .= NostoHiddenElement::get('frontpage-nosto-2');
+        $html .= NostoHiddenElement::get('frontpage-nosto-3');
+        $html .= NostoHiddenElement::get('frontpage-nosto-4');
+
+        return $html;
+    }
+
+    private static function getHiddenELementsForProduct()
+    {
+        $html = NostoHiddenElement::get('nosto-page-product1');
+        $html .= NostoHiddenElement::get('nosto-page-product2');
+        $html .= NostoHiddenElement::get('nosto-page-product3');
+
+        return $html;
+    }
+
+    private static function getHiddenELementsForOrder()
+    {
+        if ((int)Tools::getValue('step', 0) !== 0) {
+            return '';
+        }
+
+        $html = NostoHiddenElement::get('nosto-page-cart1');
+        $html .= NostoHiddenElement::get('nosto-page-cart2');
+        $html .= NostoHiddenElement::get('nosto-page-cart3');
+
+        return $html;
+    }
+
+    private static function getHiddenELementsForCategory()
+    {
+        $html = NostoHiddenElement::get('nosto-page-category1');
+        $html .= NostoHiddenElement::get('nosto-page-category2');
+
+        return $html;
+    }
+
+    private static function getHiddenELementsForManufacturer()
+    {
+        return self::getHiddenELementsForCategory();
+    }
+
+    private static function getHiddenELementsForSearch()
+    {
+        $html = NostoHiddenElement::get('nosto-page-search1', NostoHiddenElement::INSERT_POSITION_PREPEND);
+        $html .= NostoHiddenElement::get('nosto-page-search2');
+
+        return $html;
+    }
+
+    private static function getHiddenELementsForPageNotFound()
+    {
+        $html = NostoHiddenElement::get('notfound-nosto-1');
+        $html .= NostoHiddenElement::get('notfound-nosto-2');
+        $html .= NostoHiddenElement::get('notfound-nosto-3');
+
+        return $html;
+    }
+
+    private static function getHiddenELementsFor404()
+    {
+        return self::getHiddenELementsForPageNotFound();
+    }
+
+    private static function getHiddenELementsForOrderConfirmation()
+    {
+        $html = NostoHiddenElement::get('thankyou-nosto-1');
+        $html .= NostoHiddenElement::get('thankyou-nosto-2');
+
+        return $html;
     }
 
     /**

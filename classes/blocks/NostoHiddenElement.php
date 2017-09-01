@@ -23,22 +23,26 @@
  * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
-class NostoRecommendationElement
+class NostoHiddenElement
 {
-    const ELEMENT = '<div class="nosto_element" id="%s"></div>';
+    const HIDDEN_ELEMENT = '<div class="hidden_nosto_element" data-nosto-id="%s" nosto_insert_position="%s"></div>';
+    const INSERT_POSITION_PREPEND = 'prepend';
+    const INSERT_POSITION_APPEND = 'append';
 
     /**
-     * Renders a single recommendation element using the identifier specified
+     * Renders a single hidden element using the identifier specified
      *
-     * @param string $id the identifier of the recommendation element
+     * @param string $nostoDataId the identifier of the hidden element
+     * @param string $position must be one of:
+     *  NostoHiddenElement::INSERT_POSITION_PREPEND, NostoHiddenElement::INSERT_POSITION_APPEND
      * @return string the tagging
      */
-    public static function get($id)
+    public static function get($nostoDataId, $position = self::INSERT_POSITION_APPEND)
     {
         if (!Nosto::isContextConnected()) {
             return '';
         }
 
-        return sprintf(self::ELEMENT, $id);
+        return sprintf(self::HIDDEN_ELEMENT, $nostoDataId, $position);
     }
 }
