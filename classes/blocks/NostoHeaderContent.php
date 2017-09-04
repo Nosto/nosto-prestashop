@@ -36,15 +36,14 @@ class NostoHeaderContent
      * present in the theme. The hidden elements are put into place and shown in the shop with
      * JavaScript.
      *
-     * @param NostoTagging $module
      * @return string the html.
      */
-    public static function getHiddenRecommendationElements(NostoTagging $module)
+    public static function getHiddenRecommendationElements()
     {
         $methodName = 'getHiddenElementsFor';
         $methodName .= str_replace('-', '', NostoHelperController::getControllerName());
         if (method_exists('NostoHeaderContent', $methodName)) {
-            return self::$methodName($module);
+            return self::$methodName();
         } else {
             // If the current page is not one of the ones we want to show recommendations on, just
             // return empty.
