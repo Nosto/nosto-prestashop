@@ -54,7 +54,6 @@ class NostoDefaultTagging
             $html .= NostoOrderTagging::get();
         }
         $html .= $module->render('views/templates/hook/top_nosto-elements.tpl');
-        $html .= NostoHeaderContent::getHiddenRecommendationElements();
 
         return $html;
     }
