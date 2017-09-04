@@ -25,7 +25,7 @@
  */
 class NostoRecommendationElement
 {
-    const ELEMENT = "<div class=\"nosto_element\" id=\"%s\"></div>";
+    const ELEMENT = '<div class="nosto_element" id="%s"></div>';
 
     /**
      * Renders a single recommendation element using the identifier specified

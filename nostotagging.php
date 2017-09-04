@@ -342,7 +342,110 @@ class NostoTagging extends Module
      */
     public function hookDisplayTop()
     {
-        return NostoDefaultTagging::get($this);
+        $html = '';
+        if (NostoHelperConfig::getNostotaggingRenderPosition()
+            !== NostoHelperConfig::NOSTOTAGGING_POSITION_FOOTER) {
+            $html = NostoDefaultTagging::get($this);
+            $html .= self::dispatchPseudoHooks();
+        }
+
+        return $html;
+    }
+
+    /**
+     * Returns hidden nosto recommendation elements for the current controller.
+     * These are used as a fallback for showing recommendations if the appropriate hooks are not
+     * present in the theme. The hidden elements are put into place and shown in the shop with
+     * JavaScript.
+     *
+     * @return string the html.
+     */
+    public static function dispatchPseudoHooks()
+    {
+        $methodName = 'pseudoHookLoadingPage';
+        $methodName .= str_replace('-', '', NostoHelperController::getControllerName());
+        if (method_exists('NostoHeaderContent', $methodName)) {
+            return self::$methodName();
+        } else {
+            // If the current page is not one of the ones we want to show recommendations on, just
+            // return empty.
+            return '';
+        }
+    }
+
+    private static function pseudoHookLoadingPageIndex()
+    {
+        $html = NostoHiddenElement::append('frontpage-nosto-1');
+        $html .= NostoHiddenElement::append('frontpage-nosto-2');
+        $html .= NostoHiddenElement::append('frontpage-nosto-3');
+        $html .= NostoHiddenElement::append('frontpage-nosto-4');
+
+        return $html;
+    }
+
+    private static function pseudoHookLoadingPageProduct()
+    {
+        $html = NostoHiddenElement::append('nosto-page-product1');
+        $html .= NostoHiddenElement::append('nosto-page-product2');
+        $html .= NostoHiddenElement::append('nosto-page-product3');
+
+        return $html;
+    }
+
+    private static function pseudoHookLoadingPageOrder()
+    {
+        if ((int)Tools::getValue('step', 0) !== 0) {
+            return '';
+        }
+
+        $html = NostoHiddenElement::append('nosto-page-cart1');
+        $html .= NostoHiddenElement::append('nosto-page-cart2');
+        $html .= NostoHiddenElement::append('nosto-page-cart3');
+
+        return $html;
+    }
+
+    private static function pseudoHookLoadingPageCategory()
+    {
+        $html = NostoHiddenElement::append('nosto-page-category1');
+        $html .= NostoHiddenElement::append('nosto-page-category2');
+
+        return $html;
+    }
+
+    private static function pseudoHookLoadingPageManufacturer()
+    {
+        return self::pseudoHookLoadingPageCategory();
+    }
+
+    private static function pseudoHookLoadingPageSearch()
+    {
+        $html = NostoHiddenElement::prepend('nosto-page-search1');
+        $html .= NostoHiddenElement::append('nosto-page-search2');
+
+        return $html;
+    }
+
+    private static function pseudoHookLoadingPagePageNotFound()
+    {
+        $html = NostoHiddenElement::append('notfound-nosto-1');
+        $html .= NostoHiddenElement::append('notfound-nosto-2');
+        $html .= NostoHiddenElement::append('notfound-nosto-3');
+
+        return $html;
+    }
+
+    private static function pseudoHookLoadingPage404()
+    {
+        return self::pseudoHookLoadingPagePageNotFound();
+    }
+
+    private static function pseudoHookLoadingPageOrderConfirmation()
+    {
+        $html = NostoHiddenElement::append('thankyou-nosto-1');
+        $html .= NostoHiddenElement::append('thankyou-nosto-2');
+
+        return $html;
     }
 
     /**
@@ -379,8 +482,14 @@ class NostoTagging extends Module
      */
     public function hookDisplayFooter()
     {
-        $html = NostoDefaultTagging::get($this);
+        $html = '';
+        if (NostoHelperConfig::getNostotaggingRenderPosition()
+            === NostoHelperConfig::NOSTOTAGGING_POSITION_FOOTER) {
+            $html = NostoDefaultTagging::get($this);
+            $html .= self::dispatchPseudoHooks();
+        }
         $html .= NostoRecommendationElement::get("nosto-page-footer");
+
         return $html;
     }
 
