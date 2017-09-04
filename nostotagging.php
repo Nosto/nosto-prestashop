@@ -350,7 +350,6 @@ class NostoTagging extends Module
         return $html;
     }
 
-
     /**
      * Returns hidden nosto recommendation elements for the current controller.
      * These are used as a fallback for showing recommendations if the appropriate hooks are not
