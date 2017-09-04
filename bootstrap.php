@@ -92,6 +92,7 @@ class NostoBootstrap
         require_once($moduleDir . '/classes/blocks/NostoRecommendationElement.php');
         require_once($moduleDir . '/classes/blocks/NostoSearchTagging.php');
         require_once($moduleDir . '/classes/blocks/NostoVariationTagging.php');
+        require_once($moduleDir . '/classes/blocks/NostoHiddenElement.php');
         require_once($moduleDir . '/classes/helpers/NostoHelperController.php');
         require_once($moduleDir . '/classes/helpers/NostoHelperCookie.php');
         require_once($moduleDir . '/classes/helpers/NostoHelperCron.php');
