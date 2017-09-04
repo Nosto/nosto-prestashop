@@ -28,6 +28,8 @@ use Nosto\Object\Customer as NostoSDKCustomer;
 
 class NostoCustomer extends NostoSDKCustomer
 {
+    const NOSTO_TAGGING_RESTORE_CART_ATTRIBUTE_LENGTH = 64;
+
     /**
      * Loads the customer data from supplied context and customer objects.
      *
@@ -68,5 +70,24 @@ class NostoCustomer extends NostoSDKCustomer
             NostoCustomerManager::saveCustomerReference($customer, $customerReference);
             $this->setCustomerReference($customerReference);
         }
+    }
+
+    /**
+     * Returns restore cart url
+     *
+     * @param string $hash
+     * @return string
+     */
+    private function generateRestoreCartUrl($hash)
+    {
+        $params = array(
+            'restoreCartHash' => $hash
+        );
+
+        $this->context->link->getModuleLink('nostotagging','restoreCart',array_of_params);
+        $params['h'] = $hash;
+        $url = $store->getUrl(NostoHelperUrl::NOSTO_PATH_RESTORE_CART, $params);
+
+        return $url;
     }
 }

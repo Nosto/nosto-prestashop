@@ -112,22 +112,37 @@ class NostoCustomerManager
         $table = self::getCustomerLinkTableName();
         $idCart = (int)$context->cart->id;
         $idNostoCustomer = pSQL($idNostoCustomer);
+        $restoreCartHash = self::generateRestoreCartHash();
         $where = '`id_cart` = ' . $idCart . ' AND `id_nosto_customer` = "' . $idNostoCustomer . '"';
         $existingLink = Db::getInstance()->getRow('SELECT * FROM `' . $table . '` WHERE ' . $where);
         if (empty($existingLink)) {
             $data = array(
                 'id_cart' => $idCart,
                 'id_nosto_customer' => $idNostoCustomer,
-                'date_add' => date('Y-m-d H:i:s')
+                'date_add' => date('Y-m-d H:i:s'),
+                'restore_cart_hash' => $restoreCartHash
             );
             return Db::getInstance()->insert($table, $data, false, true, Db::INSERT, false);
         } else {
             $data = array(
                 'date_upd' => date('Y-m-d H:i:s')
             );
+
             return Db::getInstance()->update($table, $data, $where, 0, false, true, false);
         }
     }
+
+    /**
+     * Generate unique hash for restore cart
+     * Size of it equals to or less than restore_cart_hash column length
+     *
+     * @return string
+     */
+    private static function generateRestoreCartHash()
+    {
+        return hash('sha256', uniqid(NostoTagging::MODULE_NAME));
+    }
+
 
     /**
      * Returns the Nosto customer id for a given order by using the order's cart identifier
