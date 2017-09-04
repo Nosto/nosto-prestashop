@@ -152,7 +152,7 @@ class NostoHeaderContent
 
         $serverAddress = self::getServerAddress();
         $link = NostoHelperLink::getLink();
-        $hiddenElements = self::getHiddenRecommendationElements($module);
+        $hiddenElements = self::getHiddenRecommendationElements();
         Context::getContext()->smarty->assign(array(
             'server_address' => $serverAddress,
             'account_name' => $account->getName(),
