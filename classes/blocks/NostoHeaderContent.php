@@ -31,43 +31,6 @@ class NostoHeaderContent
     const DEFAULT_SERVER_ADDRESS = 'connect.nosto.com';
 
     /**
-     * Returns hidden nosto recommendation elements for the current controller.
-     * These are used as a fallback for showing recommendations if the appropriate hooks are not
-     * present in the theme. The hidden elements are put into place and shown in the shop with
-     * JavaScript.
-     *
-     * @param NostoTagging $module
-     * @return string the html.
-     */
-    public static function getHiddenRecommendationElements(NostoTagging $module)
-    {
-        if (NostoHelperController::isController('index')) {
-            return $module->render('views/templates/hook/home_hidden-nosto-elements.tpl');
-        } elseif (NostoHelperController::isController('product')) {
-            return $module->render('views/templates/hook/footer-product_hidden-nosto-elements.tpl');
-        } elseif (NostoHelperController::isController('order') && (int)Tools::getValue('step', 0) === 0
-        ) {
-            return $module->render('views/templates/hook/shopping-cart-footer_hidden-nosto-elements.tpl');
-        } elseif (NostoHelperController::isController('category')
-            || NostoHelperController::isController('manufacturer')
-        ) {
-            return $module->render('views/templates/hook/category-footer_hidden-nosto-elements.tpl');
-        } elseif (NostoHelperController::isController('search')) {
-            return $module->render('views/templates/hook/search_hidden-nosto-elements.tpl');
-        } elseif (NostoHelperController::isController('pagenotfound')
-            || NostoHelperController::isController('404')
-        ) {
-            return $module->render('views/templates/hook/404_hidden_nosto-elements.tpl');
-        } elseif (NostoHelperController::isController('order-confirmation')) {
-            return $module->render('views/templates/hook/order-confirmation_hidden_nosto-elements.tpl');
-        } else {
-            // If the current page is not one of the ones we want to show recommendations on, just
-            // return empty.
-            return '';
-        }
-    }
-
-    /**
      * Get the Nosto server address for the shop frontend JavaScripts.
      *
      * @return string the url.
@@ -93,15 +56,13 @@ class NostoHeaderContent
 
         $serverAddress = self::getServerAddress();
         $link = NostoHelperLink::getLink();
-        $hiddenElements = self::getHiddenRecommendationElements($module);
         Context::getContext()->smarty->assign(array(
             'server_address' => $serverAddress,
             'account_name' => $account->getName(),
             'nosto_version' => $module->version,
             'nosto_language' => Tools::strtolower(NostoHelperContext::getLanguage()->iso_code),
             'add_to_cart_url' => $link->getPageLink('NostoCart.php'),
-            'static_token' => Tools::getToken(false),
-            'disable_autoload' => (bool)!empty($hiddenElements)
+            'static_token' => Tools::getToken(false)
         ));
 
         $html = $module->render('views/templates/hook/header_meta-tags.tpl');
