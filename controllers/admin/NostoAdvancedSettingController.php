@@ -41,12 +41,12 @@ class NostoAdvancedSettingController extends NostoBaseController
         NostoHelperConfig::saveNostoTaggingRenderPosition(Tools::getValue('nostotagging_position'));
         NostoHelperConfig::saveImageType(Tools::getValue('image_type'));
         $account = Nosto::getAccount();
-        $account_meta = NostoAccountSignup::loadData();
+        $accountMeta = NostoAccountSignup::loadData();
 
         if (!empty($account) && $account->isConnectedToNosto()) {
             try {
                 $operation = new NostoSettingsService($account);
-                $operation->update($account_meta);
+                $operation->update($accountMeta);
                 NostoHelperFlash::add('success', $this->l('The settings have been saved.'));
             } catch (NostoSDKException $e) {
                 NostoHelperLogger::error($e, 'Unable to update Nosto account settings');
@@ -57,7 +57,7 @@ class NostoAdvancedSettingController extends NostoBaseController
             }
 
             // Also update the exchange rates if multi currency is used
-            if ($account_meta->getUseExchangeRates()) {
+            if ($accountMeta->getUseExchangeRates()) {
                 $operation = new NostoRatesService();
                 $operation->updateCurrencyExchangeRates($account);
             }

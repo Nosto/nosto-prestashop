@@ -38,8 +38,7 @@ class NostoNotificationManager
     {
         $notifications = array();
 
-        NostoHelperContext::runInAContextForEachLanguageEachShop(function() use (&$notifications)
-        {
+        NostoHelperContext::runInContextForEachLanguageEachShop(function () use (&$notifications) {
             $notification = NostoCheckAccountNotification::check();
             if ($notification != null) {
                 $notifications[] = $notification;
@@ -55,8 +54,7 @@ class NostoNotificationManager
         });
 
         foreach ($notifications as $notification) {
-            if (
-                $notification->getNotificationType() === NostoSDKNotification::TYPE_MISSING_INSTALLATION
+            if ($notification->getNotificationType() === NostoSDKNotification::TYPE_MISSING_INSTALLATION
                 && !NostoHelperController::isController('AdminModules')
             ) {
                 continue;

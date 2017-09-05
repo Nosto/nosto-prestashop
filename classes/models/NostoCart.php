@@ -58,7 +58,7 @@ class NostoCart extends NostoSDKCart
         $nostoCart = new NostoCart();
         $cartRules = (array)$cart->getCartRules(CartRule::FILTER_ACTION_GIFT);
 
-        $gift_products = array();
+        $giftProducts = array();
         foreach ($cartRules as $cartRule) {
             if ((int)$cartRule['gift_product']) {
                 foreach ($products as $key => &$product) {
@@ -78,7 +78,7 @@ class NostoCart extends NostoSDKCart
                         $giftProduct['price_wt'] = 0;
                         $giftProduct['gift'] = true;
 
-                        $gift_products[] = $giftProduct;
+                        $giftProducts[] = $giftProduct;
 
                         break; // One gift product per cart rule
                     }
@@ -87,7 +87,7 @@ class NostoCart extends NostoSDKCart
             }
         }
 
-        $items = array_merge($products, $gift_products);
+        $items = array_merge($products, $giftProducts);
 
         foreach ($items as $item) {
             $name = $item['name'];

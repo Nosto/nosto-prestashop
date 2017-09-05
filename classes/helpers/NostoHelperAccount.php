@@ -70,7 +70,7 @@ class NostoHelperAccount
      */
     public static function deleteAll()
     {
-        NostoHelperContext::runInAContextForEachLanguageEachShop(function () {
+        NostoHelperContext::runInContextForEachLanguageEachShop(function () {
             self::delete();
         });
 
@@ -89,10 +89,10 @@ class NostoHelperAccount
         if (!empty($accountName)) {
             $account = new NostoSDKAccount($accountName);
             $tokens = array();
-            foreach (NostoSDKAPIToken::getApiTokenNames() as $token_name) {
-                $token_value = NostoHelperConfig::getToken($token_name);
-                if (!empty($token_value)) {
-                    $tokens[$token_name] = $token_value;
+            foreach (NostoSDKAPIToken::getApiTokenNames() as $tokenName) {
+                $tokenValue = NostoHelperConfig::getToken($tokenName);
+                if (!empty($tokenValue)) {
+                    $tokens[$tokenName] = $tokenValue;
                 }
             }
 

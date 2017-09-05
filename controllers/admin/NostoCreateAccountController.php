@@ -41,20 +41,20 @@ class NostoCreateAccountController extends NostoBaseController
      */
     public function execute()
     {
-        $account_email = (string)Tools::getValue(NostoTagging::MODULE_NAME . '_account_email');
-        if (empty($account_email)) {
+        $accountEmail = (string)Tools::getValue(NostoTagging::MODULE_NAME . '_account_email');
+        if (empty($accountEmail)) {
             NostoHelperFlash::add('error', $this->l('Email cannot be empty.'));
-        } elseif (!Validate::isEmail($account_email)) {
+        } elseif (!Validate::isEmail($accountEmail)) {
             NostoHelperFlash::add('error', $this->l('Email is not a valid email address.'));
         } else {
             try {
                 if (Tools::isSubmit('nostotagging_account_details')) {
-                    $account_details = (object)Tools::jsonDecode(Tools::getValue('nostotagging_account_details'));
+                    $accountDetails = (object)Tools::jsonDecode(Tools::getValue('nostotagging_account_details'));
                 } else {
-                    $account_details = false;
+                    $accountDetails = false;
                 }
                 $service = new NostoSignupService();
-                $service->createAccount($account_email, $account_details);
+                $service->createAccount($accountEmail, $accountDetails);
 
                 NostoHelperConfig::clearCache();
                 NostoHelperFlash::add(

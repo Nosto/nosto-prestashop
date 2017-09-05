@@ -34,8 +34,7 @@ class NostoRatesService extends AbstractNostoService
      */
     public function updateExchangeRatesForAllStores()
     {
-        NostoHelperContext::runWithEachNostoAccount(function ()
-        {
+        NostoHelperContext::runWithEachNostoAccount(function () {
             $useMultipleCurrencies = NostoHelperConfig::useMultipleCurrencies();
             if ($useMultipleCurrencies) {
                 $account = NostoHelperAccount::find();

@@ -91,10 +91,10 @@ class OauthTraitAdapter
      */
     public function redirect(array $params)
     {
-        $admin_url = NostoHelperConfig::getAdminUrl();
-        if (!empty($admin_url)) {
-            $admin_url = NostoSDKHttpRequest::replaceQueryParamsInUrl($params, $admin_url);
-            Tools::redirect($admin_url, '');
+        $adminUrl = NostoHelperConfig::getAdminUrl();
+        if (!empty($adminUrl)) {
+            $adminUrl = NostoSDKHttpRequest::replaceQueryParamsInUrl($params, $adminUrl);
+            Tools::redirect($adminUrl, '');
             die;
         }
         $this->notFound();

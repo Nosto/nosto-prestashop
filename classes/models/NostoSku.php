@@ -41,8 +41,7 @@ class NostoSku extends NostoSDKSku
         NostoProduct $nostoProduct,
         Combination $combination,
         array $attributesGroup
-    )
-    {
+    ) {
         if (!Validate::isLoadedObject($combination)) {
             return null;
         }
@@ -68,15 +67,15 @@ class NostoSku extends NostoSDKSku
      */
     protected function amendPrice(Combination $combination)
     {
-        $base_currency = NostoHelperCurrency::getBaseCurrency();
+        $baseCurrency = NostoHelperCurrency::getBaseCurrency();
         if (Nosto::useMultipleCurrencies()) {
-            $tagging_currency = $base_currency;
+            $taggingCurrency = $baseCurrency;
         } else {
-            $tagging_currency = NostoHelperContext::getCurrency();
+            $taggingCurrency = NostoHelperContext::getCurrency();
         }
 
-        $this->setListPrice(self::getListPriceInclTax($combination, $tagging_currency));
-        $this->setPrice(self::getPriceInclTax($combination, $tagging_currency));
+        $this->setListPrice(self::getListPriceInclTax($combination, $taggingCurrency));
+        $this->setPrice(self::getPriceInclTax($combination, $taggingCurrency));
     }
 
     /**
@@ -94,7 +93,8 @@ class NostoSku extends NostoSDKSku
             $attribute = new Attribute(
                 $attributeId,
                 NostoHelperContext::getLanguageId(),
-                NostoHelperContext::getShopId());
+                NostoHelperContext::getShopId()
+            );
             $attributeName = $attributesInfo['name'];
             $attributeGroup = new AttributeGroup(
                 $attribute->id_attribute_group,

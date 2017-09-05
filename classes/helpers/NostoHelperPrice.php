@@ -45,20 +45,20 @@ class NostoHelperPrice
      */
     public static function getProductWholesalePriceInclTax(Product $product)
     {
-        $wholesale_price_exc_taxes = $product->wholesale_price;
-        if ($wholesale_price_exc_taxes > 0) {
+        $wholesalePriceExcTaxes = $product->wholesale_price;
+        if ($wholesalePriceExcTaxes > 0) {
             if ($product->tax_rate > 0) {
-                $wholesale_price_inc_taxes = NostoHelperPrice::roundPrice(
-                    $wholesale_price_exc_taxes * (1 + $product->tax_rate / 100)
+                $wholesalePriceIncTaxes = NostoHelperPrice::roundPrice(
+                    $wholesalePriceExcTaxes * (1 + $product->tax_rate / 100)
                 );
             } else {
-                $wholesale_price_inc_taxes = $wholesale_price_exc_taxes;
+                $wholesalePriceIncTaxes = $wholesalePriceExcTaxes;
             }
         } else {
-            $wholesale_price_inc_taxes = null;
+            $wholesalePriceIncTaxes = null;
         }
 
-        return $wholesale_price_inc_taxes;
+        return $wholesalePriceIncTaxes;
     }
 
     /**
@@ -75,9 +75,9 @@ class NostoHelperPrice
         Currency $currency
     ) {
         if (Configuration::get(self::PS_TAX_ADDRESS_TYPE) == self::ID_ADDRESS_INVOICE) {
-            $id_address = (int)$cart->id_address_invoice;
+            $idAddress = (int)$cart->id_address_invoice;
         } else {
-            $id_address = (int)$item[self::ID_ADDRESS_DELIVERY];
+            $idAddress = (int)$item[self::ID_ADDRESS_DELIVERY];
         }
 
         return NostoHelperPrice::calcPrice(
@@ -90,7 +90,7 @@ class NostoHelperPrice
                 ),
                 self::ID_CUSTOMER => ((int)$cart->id_customer ? (int)$cart->id_customer : null),
                 self::ID_CART => (int)$cart->id,
-                self::ID_ADDRESS => (Address::addressExists($id_address) ? (int)$id_address : null),
+                self::ID_ADDRESS => (Address::addressExists($idAddress) ? (int)$idAddress : null),
             )
         );
     }
@@ -99,13 +99,13 @@ class NostoHelperPrice
      * Returns the product price for the given currency.
      * The price is rounded according to the configured rounding mode in PS.
      *
-     * @param int $id_product the product ID.
+     * @param int $idProduct the product ID.
      * @param Currency|CurrencyCore $currency the currency object.
      * @param array $options options for the Product::getPriceStatic method.
      * @return float the price.
      */
     public static function calcPrice(
-        $id_product,
+        $idProduct,
         Currency $currency,
         array $options = array()
     ) {
@@ -116,7 +116,7 @@ class NostoHelperPrice
         }
 
         return NostoHelperContext::runInContext(
-            function () use ($options, $id_product) {
+            function () use ($options, $idProduct) {
                 $options = array_merge(array(
                     'include_tax' => true,
                     'id_product_attribute' => null,
@@ -134,10 +134,10 @@ class NostoHelperPrice
                     'use_customer_price' => true,
                 ), $options);
                 // This option is used as a reference, so we need it in a separate variable.
-                $specific_price_output = null;
+                $specificPriceOutput = null;
 
                 $value = Product::getPriceStatic(
-                    (int)$id_product,
+                    (int)$idProduct,
                     $options['include_tax'],
                     $options['id_product_attribute'],
                     $options['decimals'],
@@ -149,7 +149,7 @@ class NostoHelperPrice
                     $options['id_customer'],
                     $options['id_cart'],
                     $options['id_address'],
-                    $specific_price_output,
+                    $specificPriceOutput,
                     $options['with_eco_tax'],
                     $options['use_group_reduction'],
                     Context::getContext(),

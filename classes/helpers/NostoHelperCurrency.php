@@ -55,22 +55,22 @@ class NostoHelperCurrency
      */
     public static function getBaseCurrency()
     {
-        $base_id_currency = (int)Configuration::get(
+        $baseIdCurrency = (int)Configuration::get(
             self::PS_CURRENCY_DEFAULT,
             NostoHelperContext::getLanguageId(),
             NostoHelperContext::getShopGroupId(),
             NostoHelperContext::getShopId()
         );
-        if ($base_id_currency === 0) {
-            $base_id_currency = (int)Configuration::get(
+        if ($baseIdCurrency === 0) {
+            $baseIdCurrency = (int)Configuration::get(
                 self::PS_CURRENCY_DEFAULT,
                 null,
                 NostoHelperContext::getShopGroupId(),
                 NostoHelperContext::getShopId()
             );
         }
-        $base_currency = self::loadCurrency($base_id_currency);
-        if (!Validate::isLoadedObject($base_currency)) {
+        $baseCurrency = self::loadCurrency($baseIdCurrency);
+        if (!Validate::isLoadedObject($baseCurrency)) {
             throw new NostoSDKException(
                 sprintf(
                     'Failed to find base currency for shop #%s and lang #%s.',
@@ -80,7 +80,7 @@ class NostoHelperCurrency
             );
         }
 
-        return $base_currency;
+        return $baseCurrency;
     }
 
     /**
@@ -91,16 +91,16 @@ class NostoHelperCurrency
      */
     public static function getCurrencies($onlyActive = false)
     {
-        $all_currencies = Currency::getCurrenciesByIdShop(NostoHelperContext::getShopId());
+        $allCurrencies = Currency::getCurrenciesByIdShop(NostoHelperContext::getShopId());
         if ($onlyActive === true) {
             $currencies = array();
-            foreach ($all_currencies as $currency) {
+            foreach ($allCurrencies as $currency) {
                 if (self::currencyActive($currency)) {
                     $currencies[] = $currency;
                 }
             }
         } else {
-            $currencies = $all_currencies;
+            $currencies = $allCurrencies;
         }
 
         return $currencies;
@@ -115,14 +115,13 @@ class NostoHelperCurrency
      */
     public static function getNostoCurrency(array $currency)
     {
-        if (
-            Context::getContext() instanceof Context
+        if (Context::getContext() instanceof Context
             && (_PS_VERSION_ >= '1.7')
         ) {
             // In Prestashop 1.7 we use the CLDR
             try {
-                $nosto_currency = self::createWithCldr($currency);
-                return $nosto_currency;
+                $nostoCurrency = self::createWithCldr($currency);
+                return $nostoCurrency;
             } catch (Exception $e) {
                 NostoHelperLogger::error($e);
             }
@@ -133,33 +132,33 @@ class NostoHelperCurrency
         switch ($currency['format']) {
             /* X 0,000.00 */
             case 1:
-                $group_symbol = ',';
-                $decimal_symbol = '.';
-                $symbol_position = true;
+                $groupSymbol = ',';
+                $decimalSymbol = '.';
+                $symbolPosition = true;
                 break;
             /* 0 000,00 X*/
             case 2:
-                $group_symbol = ' ';
-                $decimal_symbol = ',';
-                $symbol_position = false;
+                $groupSymbol = ' ';
+                $decimalSymbol = ',';
+                $symbolPosition = false;
                 break;
             /* X 0.000,00 */
             case 3:
-                $group_symbol = '.';
-                $decimal_symbol = ',';
-                $symbol_position = true;
+                $groupSymbol = '.';
+                $decimalSymbol = ',';
+                $symbolPosition = true;
                 break;
             /* 0,000.00 X */
             case 4:
-                $group_symbol = ',';
-                $decimal_symbol = '.';
-                $symbol_position = false;
+                $groupSymbol = ',';
+                $decimalSymbol = '.';
+                $symbolPosition = false;
                 break;
             /* X 0'000.00 */
             case 5:
-                $group_symbol = '\'';
-                $decimal_symbol = '.';
-                $symbol_position = true;
+                $groupSymbol = '\'';
+                $decimalSymbol = '.';
+                $symbolPosition = true;
                 break;
 
             default:
@@ -171,10 +170,10 @@ class NostoHelperCurrency
                 );
         }
         return new NostoSDKCurrencyFormat(
-            $symbol_position,
-            $group_symbol,
+            $symbolPosition,
+            $groupSymbol,
             self::CURRENCY_GROUP_LENGTH,
-            $decimal_symbol,
+            $decimalSymbol,
             self::CURRENCY_PRECISION
         );
     }
@@ -192,22 +191,22 @@ class NostoHelperCurrency
     {
         $cldr = Tools::getCldr(null, NostoHelperContext::getLanguage()->language_code);
         /** @noinspection PhpParamsInspection */
-        $cldr_currency = new \ICanBoogie\CLDR\Currency($cldr->getRepository(), $currency['iso_code']);
-        $localized_currency = $cldr_currency->localize($cldr->getCulture());
-        $pattern = $localized_currency->locale->numbers->currency_formats['standard'];
-        $symbols = $localized_currency->locale->numbers->symbols;
-        $symbol_pos = Tools::strpos($pattern, self::CURRENCY_SYMBOL_MARKER);
+        $cldrCurrency = new \ICanBoogie\CLDR\Currency($cldr->getRepository(), $currency['iso_code']);
+        $localizedCurrency = $cldrCurrency->localize($cldr->getCulture());
+        $pattern = $localizedCurrency->locale->numbers->currency_formats['standard'];
+        $symbols = $localizedCurrency->locale->numbers->symbols;
+        $symbolPos = Tools::strpos($pattern, self::CURRENCY_SYMBOL_MARKER);
 
         // Check if the currency symbol is before or after the amount.
-        $symbol_position = $symbol_pos === 0;
-        $group_symbol = isset($symbols['group']) ? $symbols['group'] : ',';
-        $decimal_symbol = isset($symbols['decimal']) ? $symbols['decimal'] : ',';
+        $symbolPosition = $symbolPos === 0;
+        $groupSymbol = isset($symbols['group']) ? $symbols['group'] : ',';
+        $decimalSymbol = isset($symbols['decimal']) ? $symbols['decimal'] : ',';
 
         return new NostoSDKCurrencyFormat(
-            $symbol_position,
-            $group_symbol,
+            $symbolPosition,
+            $groupSymbol,
             self::CURRENCY_GROUP_LENGTH,
-            $decimal_symbol,
+            $decimalSymbol,
             self::CURRENCY_PRECISION
         );
     }

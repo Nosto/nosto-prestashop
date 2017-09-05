@@ -80,7 +80,6 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
             false,
             $employee->id
         );
-
     }
 
     /**

@@ -31,7 +31,7 @@ if (!defined('_PS_VERSION_')) {
     /*
 	 * White-list of valid controllers that this script is allowed to run.
 	 */
-    $controller_white_list = array('oauth2', 'product', 'order', 'cronrates');
+    $controllerWhiteList = array('oauth2', 'product', 'order', 'cronrates');
     /*
 	 * If this file is symlinked, then we need to parse the `SCRIPT_FILENAME` to get the path of the PS root dir.
 	 * This is because __FILE__ resolves the symlink source path.
@@ -40,42 +40,42 @@ if (!defined('_PS_VERSION_')) {
 	 * PS root dir, is a solution.
 	 */
     if (!empty($_SERVER['SCRIPT_FILENAME'])) {
-        $ps_dir = dirname(dirname(dirname($_SERVER['SCRIPT_FILENAME'])));
+        $psDir = dirname(dirname(dirname($_SERVER['SCRIPT_FILENAME'])));
     }
 
     /*
 	 * If the PS dir is not set, or we cannot resolve the config file, try to to get the path relative to this file.
 	 * This only works if this file is NOT symlinked.
 	 */
-    if (!isset($ps_dir) || !file_exists($ps_dir.'/config/config.inc.php')) {
-        $ps_dir = dirname(__FILE__).'/../..';
+    if (!isset($psDir) || !file_exists($psDir.'/config/config.inc.php')) {
+        $psDir = dirname(__FILE__).'/../..';
     }
 
-    $controller_dir = $ps_dir.'/modules/nostotagging/controllers/front';
+    $controllerDir = $psDir.'/modules/nostotagging/controllers/front';
 
     /** @noinspection PhpIncludeInspection */
-    require_once($ps_dir.'/config/config.inc.php');
+    require_once($psDir.'/config/config.inc.php');
     $controller = Tools::strtolower((string)Tools::getValue('controller'));
     if (!empty($controller)
-        && in_array(Tools::strtolower($controller), $controller_white_list)
+        && in_array(Tools::strtolower($controller), $controllerWhiteList)
     ) {
-        $class_file = $controller_dir.'/'.$controller.'.php';
+        $classFile = $controllerDir.'/'.$controller.'.php';
         /** @noinspection PhpIncludeInspection */
-        require_once($class_file);
+        require_once($classFile);
         // ControllerFactory is deprecated since Prestashop 1.5 and was removed in 1.7
         if (!method_exists('ControllerFactory', 'getController')) {
             switch ($controller) {
-            case 'product':
-                $nosto_controller = new NostoTaggingProductModuleFrontController();
+                case 'product':
+                    $nostoController = new NostoTaggingProductModuleFrontController();
                     break;
-            case 'order':
-                $nosto_controller = new NostoTaggingOrderModuleFrontController();
+                case 'order':
+                    $nostoController = new NostoTaggingOrderModuleFrontController();
                     break;
-            default:
+                default:
                     die();
             }
 
-            $nosto_controller->initContent();
+            $nostoController->initContent();
         } else {
             /** @noinspection PhpDeprecationInspection */
             ControllerFactory::getController(

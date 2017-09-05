@@ -85,5 +85,5 @@ abstract class NostoBaseController extends ModuleAdminController
      * @return bool should it be redirect to admin after executing this method.Return true means
      *     redirect to admin url
      */
-    public abstract function execute();
+    abstract public function execute();
 }

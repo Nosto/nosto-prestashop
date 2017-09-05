@@ -25,7 +25,6 @@
 
 use Nosto\Object\Signup\Signup as NostoSDKAccountSignup;
 
-
 class NostoAccountSignup extends NostoSDKAccountSignup
 {
     const PS_LANG_DEFAULT = 'PS_LANG_DEFAULT';
@@ -139,29 +138,31 @@ class NostoAccountSignup extends NostoSDKAccountSignup
         $shop = NostoHelperContext::getShop();
         $ssl = Configuration::get(NostoHelperUrl::PS_SSL_ENABLED);
         $rewrite = (int)Configuration::get(NostoHelperUrl::PS_REWRITING_SETTINGS, null, null, $shop->id);
-        $multi_lang = (Language::countActiveLanguages(NostoHelperContext::getShopId()) > 1);
+        $multiLang = (Language::countActiveLanguages(NostoHelperContext::getShopId()) > 1);
+
         $base = ($ssl ? 'https://' . ShopUrl::getMainShopDomainSSL() : 'http://' . ShopUrl::getMainShopDomain())
             . $shop->getBaseURI();
         $lang = '';
-        if ($multi_lang) {
+        if ($multiLang) {
             if ($rewrite) {
                 $lang = NostoHelperContext::getLanguage()->iso_code . '/';
             } else {
                 $lang = self::ID_LANG . NostoHelperContext::getLanguageId();
             }
         }
+
         return $base . $lang;
     }
 
     protected static function buildCurrencies()
     {
-        $nosto_currencies = array();
+        $nostoCurrencies = array();
         $currencies = NostoHelperCurrency::getCurrencies(true);
         foreach ($currencies as $currency) {
-            $nosto_currency = NostoHelperCurrency::getNostoCurrency($currency);
-            $nosto_currencies[$currency['iso_code']] = $nosto_currency;
+            $nostoCurrency = NostoHelperCurrency::getNostoCurrency($currency);
+            $nostoCurrencies[$currency['iso_code']] = $nostoCurrency;
         }
 
-        return $nosto_currencies;
+        return $nostoCurrencies;
     }
 }

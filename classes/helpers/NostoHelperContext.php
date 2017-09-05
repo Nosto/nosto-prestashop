@@ -66,7 +66,7 @@ class NostoHelperContext
 
     public static function runWithEachNostoAccount($callable)
     {
-        self::runInAContextForEachLanguageEachShop(function () use ($callable) {
+        self::runInContextForEachLanguageEachShop(function () use ($callable) {
             $account = NostoHelperAccount::find();
             if ($account === null) {
                 return null;
@@ -76,7 +76,7 @@ class NostoHelperContext
         });
     }
 
-    public static function runInAContextForEachLanguageEachShop($callable)
+    public static function runInContextForEachLanguageEachShop($callable)
     {
         foreach (Shop::getShops() as $shop) {
             $shopId = isset($shop['id_shop']) ? $shop['id_shop'] : null;
@@ -110,8 +110,7 @@ class NostoHelperContext
         $currencyId = false,
         $employeeId = false,
         $countryId = false
-    )
-    {
+    ) {
         $context = Context::getContext();
         self::$backupContextStack[] = $context->cloneContext();
 

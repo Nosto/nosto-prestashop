@@ -36,14 +36,16 @@ class NostoUpdateExchangeRateController extends NostoBaseController
      */
     public function execute()
     {
-        $nosto_account = Nosto::getAccount();
+        $nostoAccount = Nosto::getAccount();
         $operation = new NostoRatesService();
-        if ($nosto_account && $operation->updateCurrencyExchangeRates($nosto_account)
+        if ($nostoAccount && $operation->updateCurrencyExchangeRates($nostoAccount)
         ) {
-            NostoHelperFlash::add('success',
-                $this->l('Exchange rates successfully updated to Nosto'));
+            NostoHelperFlash::add(
+                'success',
+                $this->l('Exchange rates successfully updated to Nosto')
+            );
         } else {
-            if (!$nosto_account->getApiToken(NostoSDKAPIToken::API_EXCHANGE_RATES)) {
+            if (!$nostoAccount->getApiToken(NostoSDKAPIToken::API_EXCHANGE_RATES)) {
                 $message = 'Failed to update exchange rates to Nosto due to a missing API token. 
                             Please, reconnect your account with Nosto';
             } else {
