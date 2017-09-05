@@ -301,15 +301,16 @@ class NostoHelperUrl
      */
     public static function getContextShopUrl()
     {
-        $shop = NostoHelperContext::getShop();
-        $ssl = Configuration::get(NostoHelperUrl::PS_SSL_ENABLED);
-        $rewrite = (int)Configuration::get(NostoHelperUrl::PS_REWRITING_SETTINGS, null, null, $shop->id);
+        $base = self::getBaseUrl();
         $multiLang = (Language::countActiveLanguages(NostoHelperContext::getShopId()) > 1);
-
-        $base = ($ssl ? 'https://' . ShopUrl::getMainShopDomainSSL() : 'http://' . ShopUrl::getMainShopDomain())
-            . $shop->getBaseURI();
         $lang = '';
         if ($multiLang) {
+            $rewrite = (int)Configuration::get(
+                NostoHelperUrl::PS_REWRITING_SETTINGS,
+                null,
+                null,
+                NostoHelperContext::getShopId()
+            );
             if ($rewrite) {
                 $lang = NostoHelperContext::getLanguage()->iso_code . '/';
             } else {
