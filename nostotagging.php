@@ -165,8 +165,7 @@ class NostoTagging extends Module
         $success = false;
         if (parent::install()) {
             $success = true;
-            if (
-                !$this->registerHook('displayCategoryTop')
+            if (!$this->registerHook('displayCategoryTop')
                 || !$this->registerHook('displayCategoryFooter')
                 || !$this->registerHook('displaySearchTop')
                 || !$this->registerHook('displaySearchFooter')
@@ -175,7 +174,6 @@ class NostoTagging extends Module
                 || !$this->registerHook('footer')
                 || !$this->registerHook('productFooter')
                 || !$this->registerHook('shoppingCart')
-                || !$this->registerHook('orderConfirmation')
                 || !$this->registerHook('postUpdateOrderStatus')
                 || !$this->registerHook('paymentTop')
                 || !$this->registerHook('home')
@@ -605,33 +603,6 @@ class NostoTagging extends Module
     public function hookShoppingCart()
     {
         return $this->hookDisplayShoppingCartFooter();
-    }
-
-    /**
-     * Backwards compatibility layout hook for adding content to the order page below the itemised
-     * order listing.
-     *
-     * @return string The HTML to output
-     */
-    public function hookDisplayOrderConfirmation()
-    {
-        if (!Nosto::isContextConnected()) {
-            return '';
-        }
-
-        return ''; //TODO: Nothing rendered here?!?!
-    }
-
-    /**
-     * Backwards compatibility layout hook for adding content to the order page below the itemised
-     * order listing. This hook should not have any logic and should only delegate to another hook.
-     *
-     * @see NostoTagging::hookDisplayOrderConfirmation()
-     * @return string The HTML to output
-     */
-    public function hookOrderConfirmation()
-    {
-        return $this->hookDisplayOrderConfirmation();
     }
 
     /**

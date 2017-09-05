@@ -292,4 +292,31 @@ class NostoHelperUrl
         $base = ($ssl ? 'https://' . ShopUrl::getMainShopDomainSSL() : 'http://' . ShopUrl::getMainShopDomain());
         return $base . $shop->getBaseURI();
     }
+
+
+    /**
+     * Returns the current shop's url from the context and language.
+     *
+     * @return string the absolute url.
+     */
+    public static function getContextShopUrl()
+    {
+        $shop = NostoHelperContext::getShop();
+        $ssl = Configuration::get(NostoHelperUrl::PS_SSL_ENABLED);
+        $rewrite = (int)Configuration::get(NostoHelperUrl::PS_REWRITING_SETTINGS, null, null, $shop->id);
+        $multiLang = (Language::countActiveLanguages(NostoHelperContext::getShopId()) > 1);
+
+        $base = ($ssl ? 'https://' . ShopUrl::getMainShopDomainSSL() : 'http://' . ShopUrl::getMainShopDomain())
+            . $shop->getBaseURI();
+        $lang = '';
+        if ($multiLang) {
+            if ($rewrite) {
+                $lang = NostoHelperContext::getLanguage()->iso_code . '/';
+            } else {
+                $lang = self::ID_LANG . NostoHelperContext::getLanguageId();
+            }
+        }
+
+        return $base . $lang;
+    }
 }

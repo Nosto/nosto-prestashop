@@ -102,7 +102,7 @@ class NostoAccountSignup extends NostoSDKAccountSignup
             function () use (&$nostoSignup) {
                 $nostoSignup->setTitle(Configuration::get(NostoAccountSignup::PS_SHOP_NAME));
                 $nostoSignup->setName(Tools::substr(sha1((string)rand()), 0, 8));
-                $nostoSignup->setFrontPageUrl(self::getContextShopUrl());
+                $nostoSignup->setFrontPageUrl(NostoHelperUrl::getContextShopUrl());
                 $nostoSignup->setCurrencyCode(NostoHelperContext::getCurrency()->iso_code);
                 $nostoSignup->setLanguageCode(NostoHelperContext::getLanguage()->iso_code);
                 $nostoSignup->setOwnerLanguageCode(NostoHelperContext::getLanguage()->iso_code);
@@ -126,32 +126,6 @@ class NostoAccountSignup extends NostoSDKAccountSignup
         );
 
         return $nostoSignup;
-    }
-
-    /**
-     * Returns the current shop's url from the context and language.
-     *
-     * @return string the absolute url.
-     */
-    protected static function getContextShopUrl() //TODO: Why is this not in the helper?
-    {
-        $shop = NostoHelperContext::getShop();
-        $ssl = Configuration::get(NostoHelperUrl::PS_SSL_ENABLED);
-        $rewrite = (int)Configuration::get(NostoHelperUrl::PS_REWRITING_SETTINGS, null, null, $shop->id);
-        $multiLang = (Language::countActiveLanguages(NostoHelperContext::getShopId()) > 1);
-
-        $base = ($ssl ? 'https://' . ShopUrl::getMainShopDomainSSL() : 'http://' . ShopUrl::getMainShopDomain())
-            . $shop->getBaseURI();
-        $lang = '';
-        if ($multiLang) {
-            if ($rewrite) {
-                $lang = NostoHelperContext::getLanguage()->iso_code . '/';
-            } else {
-                $lang = self::ID_LANG . NostoHelperContext::getLanguageId();
-            }
-        }
-
-        return $base . $lang;
     }
 
     protected static function buildCurrencies()
