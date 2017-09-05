@@ -30,7 +30,7 @@ class NostoAccountSignup extends NostoSDKAccountSignup
     const PS_LANG_DEFAULT = 'PS_LANG_DEFAULT';
     const PS_COUNTRY_DEFAULT = 'PS_COUNTRY_DEFAULT';
     const PS_SHOP_NAME = 'PS_SHOP_NAME';
-    const ID_LANG = '?id_lang=';
+
     /**
      * @var string the API token used to identify an account creation.
      */

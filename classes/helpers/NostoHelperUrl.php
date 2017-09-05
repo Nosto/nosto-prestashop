@@ -313,7 +313,7 @@ class NostoHelperUrl
             if ($rewrite) {
                 $lang = NostoHelperContext::getLanguage()->iso_code . '/';
             } else {
-                $lang = self::ID_LANG . NostoHelperContext::getLanguageId();
+                $lang = '?' . self::ID_LANG . '=' . NostoHelperContext::getLanguageId();
             }
         }
 
