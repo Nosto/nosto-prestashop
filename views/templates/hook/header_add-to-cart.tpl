@@ -41,7 +41,7 @@
             var slotId = Nosto.resolveContextSlotId(element);
             if (slotId) {
                 nostojs(function (api) {
-                    api.recommendedProductAddedToCart(productId, slotId);
+                    api.recommendedProductAddedToCart(product.productId, slotId);
                 });
             }
         }
