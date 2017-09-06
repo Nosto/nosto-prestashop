@@ -27,6 +27,10 @@ use Nosto\Object\Signup\Signup as NostoSDKAccountSignup;
 
 class NostoAccountSignup extends NostoSDKAccountSignup
 {
+    const PS_LANG_DEFAULT = 'PS_LANG_DEFAULT';
+    const PS_COUNTRY_DEFAULT = 'PS_COUNTRY_DEFAULT';
+    const PS_SHOP_NAME = 'PS_SHOP_NAME';
+
     /**
      * @var string the API token used to identify an account creation.
      */
@@ -46,7 +50,7 @@ class NostoAccountSignup extends NostoSDKAccountSignup
      */
     private static function loadLanguageId()
     {
-        return (int)Configuration::get('PS_LANG_DEFAULT');
+        return (int)Configuration::get(self::PS_LANG_DEFAULT);
     }
 
     /**
@@ -55,7 +59,7 @@ class NostoAccountSignup extends NostoSDKAccountSignup
      */
     private static function loadCurrencyId()
     {
-        return (int)Configuration::get('PS_CURRENCY_DEFAULT');
+        return (int)Configuration::get(NostoHelperCurrency::PS_CURRENCY_DEFAULT);
     }
 
     /**
@@ -64,7 +68,7 @@ class NostoAccountSignup extends NostoSDKAccountSignup
      */
     private static function loadCountryId()
     {
-        return (int)Configuration::get('PS_COUNTRY_DEFAULT');
+        return (int)Configuration::get(self::PS_COUNTRY_DEFAULT);
     }
 
     /**
@@ -96,9 +100,9 @@ class NostoAccountSignup extends NostoSDKAccountSignup
 
         NostoHelperContext::runInContext(
             function () use (&$nostoSignup) {
-                $nostoSignup->setTitle(Configuration::get('PS_SHOP_NAME'));
+                $nostoSignup->setTitle(Configuration::get(NostoAccountSignup::PS_SHOP_NAME));
                 $nostoSignup->setName(Tools::substr(sha1((string)rand()), 0, 8));
-                $nostoSignup->setFrontPageUrl(self::getContextShopUrl());
+                $nostoSignup->setFrontPageUrl(NostoHelperUrl::getContextShopUrl());
                 $nostoSignup->setCurrencyCode(NostoHelperContext::getCurrency()->iso_code);
                 $nostoSignup->setLanguageCode(NostoHelperContext::getLanguage()->iso_code);
                 $nostoSignup->setOwnerLanguageCode(NostoHelperContext::getLanguage()->iso_code);
@@ -124,39 +128,15 @@ class NostoAccountSignup extends NostoSDKAccountSignup
         return $nostoSignup;
     }
 
-    /**
-     * Returns the current shop's url from the context and language.
-     *
-     * @return string the absolute url.
-     */
-    protected static function getContextShopUrl() //TODO: Why is this not in the helper?
-    {
-        $shop = NostoHelperContext::getShop();
-        $ssl = Configuration::get('PS_SSL_ENABLED');
-        $rewrite = (int)Configuration::get('PS_REWRITING_SETTINGS', null, null, $shop->id);
-        $multi_lang = (Language::countActiveLanguages(NostoHelperContext::getShopId()) > 1);
-        $base = ($ssl ? 'https://' . ShopUrl::getMainShopDomainSSL() : 'http://' . ShopUrl::getMainShopDomain())
-            . $shop->getBaseURI();
-        $lang = '';
-        if ($multi_lang) {
-            if ($rewrite) {
-                $lang = NostoHelperContext::getLanguage()->iso_code . '/';
-            } else {
-                $lang = '?id_lang=' . NostoHelperContext::getLanguageId();
-            }
-        }
-        return $base . $lang;
-    }
-
     protected static function buildCurrencies()
     {
-        $nosto_currencies = array();
+        $nostoCurrencies = array();
         $currencies = NostoHelperCurrency::getCurrencies(true);
         foreach ($currencies as $currency) {
-            $nosto_currency = NostoHelperCurrency::getNostoCurrency($currency);
-            $nosto_currencies[$currency['iso_code']] = $nosto_currency;
+            $nostoCurrency = NostoHelperCurrency::getNostoCurrency($currency);
+            $nostoCurrencies[$currency['iso_code']] = $nostoCurrency;
         }
 
-        return $nosto_currencies;
+        return $nostoCurrencies;
     }
 }

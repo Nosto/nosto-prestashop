@@ -41,10 +41,10 @@ class NostoBootstrap
         require_once($moduleDir . '/controllers/front/OauthTraitAdapter.php');
         require_once($moduleDir . '/classes/models/NostoNotification.php');
         require_once($moduleDir . '/classes/models/NostoExchangeRates.php');
-        require_once($moduleDir . '/classes/helpers/account.php');
+        require_once($moduleDir . '/classes/helpers/NostoHelperAccount.php');
         require_once($moduleDir . '/classes/managers/NostoCustomerManager.php');
         require_once($moduleDir . '/classes/managers/NostoAdminTabManager.php');
-        require_once($moduleDir . '/classes/helpers/config.php');
+        require_once($moduleDir . '/classes/helpers/NostoHelperConfig.php');
         require_once($moduleDir . '/classes/models/NostoCustomer.php');
         require_once($moduleDir . '/classes/helpers/NostoHelperFlash.php');
         require_once($moduleDir . '/classes/helpers/NostoHelperImage.php');
@@ -59,9 +59,9 @@ class NostoBootstrap
         require_once($moduleDir . '/classes/services/NostoRatesService.php');
         require_once($moduleDir . '/classes/services/NostoSettingsService.php');
         require_once($moduleDir . '/classes/services/NostoSignupService.php');
-        require_once($moduleDir . '/classes/helpers/url.php');
-        require_once($moduleDir . '/classes/helpers/currency.php');
-        require_once($moduleDir . '/classes/helpers/price.php');
+        require_once($moduleDir . '/classes/helpers/NostoHelperUrl.php');
+        require_once($moduleDir . '/classes/helpers/NostoHelperCurrency.php');
+        require_once($moduleDir . '/classes/helpers/NostoHelperPrice.php');
         require_once($moduleDir . '/classes/models/NostoCurrentUser.php');
         require_once($moduleDir . '/classes/models/meta/NostoAccountSignup.php');
         require_once($moduleDir . '/classes/models/meta/NostoAccountBilling.php');

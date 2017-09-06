@@ -160,9 +160,9 @@ class NostoProductService extends AbstractNostoService
         }
 
         foreach ($productsInStore as $nostoAccountName => $data) {
-            $nosto_account = $data[self::KEY_ACCOUNT];
+            $nostoAccount = $data[self::KEY_ACCOUNT];
             foreach ($data[self::KEY_DATA] as $batchIndex => $batches) {
-                $op = new NostoSDKUpsertProductOperation($nosto_account);
+                $op = new NostoSDKUpsertProductOperation($nostoAccount);
                 foreach ($batches as $product) {
                     $op->addProduct($product);
                 }
@@ -187,10 +187,8 @@ class NostoProductService extends AbstractNostoService
         if (isset($params['object'])) {
             $object = $params['object'];
             if ($object instanceof Product) {
-
                 //run over all the nosto account
-                NostoHelperContext::runWithEachNostoAccount(function () use ($object)
-                {
+                NostoHelperContext::runWithEachNostoAccount(function () use ($object) {
                     $this->updateProduct($object);
                 });
             }
@@ -208,8 +206,7 @@ class NostoProductService extends AbstractNostoService
             $object = $params['object'];
             if ($object instanceof Product) {
                 //run over all the nosto account
-                NostoHelperContext::runWithEachNostoAccount(function () use ($object)
-                {
+                NostoHelperContext::runWithEachNostoAccount(function () use ($object) {
                     $this->deleteProduct($object);
                 });
             }
@@ -218,10 +215,8 @@ class NostoProductService extends AbstractNostoService
 
     private function deleteProduct(Product $product)
     {
-        if (!Validate::isLoadedObject($product) || in_array(
-                $this->getProductCacheKey($product),
-                self::$processedProducts
-            )
+        if (!Validate::isLoadedObject($product)
+            || in_array($this->getProductCacheKey($product), self::$processedProducts)
         ) {
             return;
         }
@@ -229,8 +224,7 @@ class NostoProductService extends AbstractNostoService
         self::$processedProducts[] = $this->getProductCacheKey($product);
 
         $nostoAccount = NostoHelperAccount::find();
-        if (!$nostoAccount)
-        {
+        if (!$nostoAccount) {
             return;
         }
 

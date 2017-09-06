@@ -41,9 +41,9 @@ class NostoHelperImage
     {
         $productImages = array();
         $imagesTypes = ImageType::getImagesTypes();
-        foreach ($imagesTypes as $image_type) {
-            if (!empty($image_type['products']) && $image_type['products'] == 1) {
-                $productImages[] = $image_type;
+        foreach ($imagesTypes as $imageType) {
+            if (!empty($imageType['products']) && $imageType['products'] == 1) {
+                $productImages[] = $imageType;
             }
         }
 
@@ -86,8 +86,8 @@ class NostoHelperImage
     {
         $savedImageTypeId = NostoHelperConfig::getImageType();
         if ($savedImageTypeId) {
-            $image_type = new ImageType($savedImageTypeId);
-            $imageTypeName = $image_type->name;
+            $imageType = new ImageType($savedImageTypeId);
+            $imageTypeName = $imageType->name;
         } else {
             $imageTypeName = NostoHelperImage::chooseOptimalImageType();
         }

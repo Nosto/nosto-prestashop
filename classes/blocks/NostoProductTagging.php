@@ -25,6 +25,9 @@
  */
 class NostoProductTagging
 {
+    const ID_CATEGORY = "id_category";
+    const ID_PRODUCT = "id_product";
+
     /**
      * Renders the customer tagging by checking if the customer if currently logged in
      *
@@ -33,7 +36,7 @@ class NostoProductTagging
     public static function get()
     {
         $product = NostoHelperController::resolveObject(
-            "id_product",
+            self::ID_PRODUCT,
             Product::class,
             "getProduct"
         );
@@ -45,7 +48,7 @@ class NostoProductTagging
         $html = $nostoProduct ? $nostoProduct->toHtml() : '';
 
         $category = NostoHelperController::resolveObject(
-            "id_category",
+            self::ID_CATEGORY,
             Category::class,
             "getCategory"
         );

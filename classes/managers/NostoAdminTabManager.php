@@ -44,7 +44,7 @@ class NostoAdminTabManager
     /**
      * @var array translations for the Nosto `Personalization` menu item in PS 1.5.
      */
-    protected static $item_translations = array(
+    protected static $itemTranslations = array(
         'de' => 'Personalisierung',
         'fr' => 'Personnalisation',
         'es' => 'Personalización',
@@ -104,8 +104,8 @@ class NostoAdminTabManager
                 $tab->class_name = self::SUB_MENU_ITEM_CLASS;
                 $tab->name = array();
                 foreach ($languages as $lang) {
-                    if (isset(self::$item_translations[$lang['iso_code']])) {
-                        $tab->name[$lang['id_lang']] = self::$item_translations[$lang['iso_code']];
+                    if (isset(self::$itemTranslations[$lang['iso_code']])) {
+                        $tab->name[$lang['id_lang']] = self::$itemTranslations[$lang['iso_code']];
                     } else {
                         $tab->name[$lang['id_lang']] = 'Personalization';
                     }
@@ -160,11 +160,11 @@ class NostoAdminTabManager
     public static function uninstall()
     {
         $tabs = array(AdminNostoController::class, AdminNostoPersonalizationController::class);
-        foreach ($tabs as $tab_name) {
-            $id_tab = self::getAdminTabId($tab_name);
-            if ($id_tab) {
+        foreach ($tabs as $tabName) {
+            $tabId = self::getAdminTabId($tabName);
+            if ($tabId) {
                 /** @var TabCore $tab */
-                $tab = new Tab($id_tab);
+                $tab = new Tab($tabId);
                 $tab->delete();
             }
         }

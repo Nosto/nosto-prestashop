@@ -75,37 +75,36 @@ class NostoHelperConfig
      *
      * @param string $name the name of the config entry to save.
      * @param mixed $value the value to save.
-     * @param null|int $lang_id the language id to save it for.
+     * @param null|int $langugeId the language id to save it for.
      * @param bool $global if it should be saved for all shops or in current context.
-     * @param null|int $id_shop_group
-     * @param null|int $id_shop
+     * @param null|int $shopGroupId
+     * @param null|int $shopId
      * @return bool true is saved, false otherwise.
      */
     private static function write(
         $name,
         $value,
-        $lang_id = null,
+        $langugeId = null,
         $global = false,
-        $id_shop_group = null,
-        $id_shop = null
+        $shopGroupId = null,
+        $shopId = null
     ) {
         $callback = array(
             'Configuration',
             ($global && method_exists(
-                    'Configuration',
-                    'updateGlobalValue'
-                )) ? 'updateGlobalValue' : 'updateValue'
+                'Configuration',
+                'updateGlobalValue'
+            )) ? 'updateGlobalValue' : 'updateValue'
         );
         // Store this value for given language only if specified.
-        if (!is_array($value) && !empty($lang_id)) {
-            $value = array($lang_id => $value);
+        if (!is_array($value) && !empty($langugeId)) {
+            $value = array($langugeId => $value);
         }
-        if (
-            $global === false
-            && !empty($id_shop_group)
-            && !empty($id_shop)
+        if ($global === false
+            && !empty($shopGroupId)
+            && !empty($shopId)
         ) {
-            $return = call_user_func($callback, (string)$name, $value, $id_shop_group, $id_shop);
+            $return = call_user_func($callback, (string)$name, $value, $shopGroupId, $shopId);
         } else {
             $return = call_user_func($callback, (string)$name, $value);
         }
@@ -119,18 +118,18 @@ class NostoHelperConfig
      */
     public static function purge()
     {
-        $config_table = pSQL(_DB_PREFIX_ . 'configuration');
-        $config_lang_table = pSQL($config_table . '_lang');
+        $configTable = pSQL(_DB_PREFIX_ . 'configuration');
+        $configLangTable = pSQL($configTable . '_lang');
 
         Db::getInstance()->execute(
-            'DELETE `' . $config_lang_table . '` FROM `' . $config_lang_table . '`
-            LEFT JOIN `' . $config_table . '`
-            ON `' . $config_lang_table . '`.`id_configuration` = `' . $config_table . '`.`id_configuration`
-            WHERE `' . $config_table . '`.`name` LIKE "NOSTOTAGGING_%"'
+            'DELETE `' . $configLangTable . '` FROM `' . $configLangTable . '`
+            LEFT JOIN `' . $configTable . '`
+            ON `' . $configLangTable . '`.`id_configuration` = `' . $configTable . '`.`id_configuration`
+            WHERE `' . $configTable . '`.`name` LIKE "NOSTOTAGGING_%"'
         );
         Db::getInstance()->execute(
-            'DELETE FROM `' . $config_table . '`
-            WHERE `' . $config_table . '`.`name` LIKE "NOSTOTAGGING_%"'
+            'DELETE FROM `' . $configTable . '`
+            WHERE `' . $configTable . '`.`name` LIKE "NOSTOTAGGING_%"'
         );
 
         // Reload the config.
@@ -150,30 +149,30 @@ class NostoHelperConfig
         $shopId = (int)Shop::getContextShopID(true);
         $shopGroupId = (int)Shop::getContextShopGroupID(true);
         if ($shopId) {
-            $context_restriction = ' AND `id_shop` = ' . $shopId;
+            $contextRestriction = ' AND `id_shop` = ' . $shopId;
         } elseif ($shopGroupId) {
-            $context_restriction = '
+            $contextRestriction = '
                 AND `id_shop_group` = ' . $shopGroupId . '
                 AND (`id_shop` IS NULL OR `id_shop` = 0)
             ';
         } else {
-            $context_restriction = '
+            $contextRestriction = '
                 AND (`id_shop_group` IS NULL OR `id_shop_group` = 0)
                 AND (`id_shop` IS NULL OR `id_shop` = 0)
             ';
         }
 
-        $config_table = pSQL(_DB_PREFIX_ . 'configuration');
-        $config_lang_table = pSQL($config_table . '_lang');
+        $configTable = pSQL(_DB_PREFIX_ . 'configuration');
+        $configLangTable = pSQL($configTable . '_lang');
 
         if (!empty($languageId)) {
             Db::getInstance()->execute(
-                'DELETE `' . $config_lang_table . '` FROM `' . $config_lang_table . '`
-                INNER JOIN `' . $config_table . '`
-                ON `' . $config_lang_table . '`.`id_configuration` = `' . $config_table . '`.`id_configuration`
-                WHERE `' . $config_table . '`.`name` LIKE "NOSTOTAGGING_%"
+                'DELETE `' . $configLangTable . '` FROM `' . $configLangTable . '`
+                INNER JOIN `' . $configTable . '`
+                ON `' . $configLangTable . '`.`id_configuration` = `' . $configTable . '`.`id_configuration`
+                WHERE `' . $configTable . '`.`name` LIKE "NOSTOTAGGING_%"
                 AND `id_lang` = ' . (int)$languageId
-                . $context_restriction
+                . $contextRestriction
             );
         }
         // Reload the config.
@@ -245,13 +244,13 @@ class NostoHelperConfig
     /**
      * Gets a token from the config by name.
      *
-     * @param string $token_name the name of the token to get.
+     * @param string $tokenName the name of the token to get.
      * @return mixed
      */
-    public static function getToken($token_name)
+    public static function getToken($tokenName)
     {
         return Configuration::get(
-            self::getTokenConfigKey($token_name),
+            self::getTokenConfigKey($tokenName),
             NostoHelperContext::getLanguageId(),
             NostoHelperContext::getShopGroupId(),
             NostoHelperContext::getShopId()

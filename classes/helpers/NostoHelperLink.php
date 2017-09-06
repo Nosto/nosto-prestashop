@@ -30,6 +30,7 @@
  */
 class NostoHelperLink
 {
+    const PS_SSL_ENABLED_EVERYWHERE = 'PS_SSL_ENABLED_EVERYWHERE';
 
     /**
      * Returns a secure link object if SSL is enabled else falls back to the unsecured
@@ -41,7 +42,7 @@ class NostoHelperLink
      */
     public static function getLink()
     {
-        if (Configuration::get('PS_SSL_ENABLED_EVERYWHERE')) {
+        if (Configuration::get(self::PS_SSL_ENABLED_EVERYWHERE)) {
             $link = new Link('https://', 'https://');
         } else {
             $link = new Link('http://', 'http://');

@@ -119,15 +119,15 @@ class NostoProduct extends NostoSDKProduct
      */
     protected function amendSkus(Product $product)
     {
-        $attributes_groups = $product->getAttributesGroups(NostoHelperContext::getLanguageId());
+        $attributesGroups = $product->getAttributesGroups(NostoHelperContext::getLanguageId());
         $variants = array();
-        foreach ($attributes_groups as $attributes_group) {
-            $variants[$attributes_group['id_product_attribute']] = $attributes_group;
+        foreach ($attributesGroups as $attributesGroup) {
+            $variants[$attributesGroup['id_product_attribute']] = $attributesGroup;
         }
 
         $combinationIds = $product->getWsCombinations();
         foreach ($combinationIds as $combinationId) {
-            $combination = new Combination($combinationId['id'], NostoHelperContext::getLanguageId());
+            $combination = new Combination($combinationId[NostoTagging::ID], NostoHelperContext::getLanguageId());
             $this->addSku(NostoSku::loadData($product, $this, $combination, $variants[$combination->id]));
         }
     }
@@ -139,18 +139,18 @@ class NostoProduct extends NostoSDKProduct
      */
     protected function amendImage($product)
     {
-        $image_id = $product->getCoverWs();
-        if ((int)$image_id > 0) {
-            $image_type = NostoHelperImage::getTaggingImageTypeName();
-            if (empty($image_type)) {
+        $imageId = $product->getCoverWs();
+        if ((int)$imageId > 0) {
+            $imageType = NostoHelperImage::getTaggingImageTypeName();
+            if (empty($imageType)) {
                 return;
             }
 
             $link = NostoHelperLink::getLink();
             $url = $link->getImageLink(
                 $product->link_rewrite,
-                $product->id . '-' . $image_id,
-                $image_type
+                $product->id . '-' . $imageId,
+                $imageType
             );
             if ($url) {
                 $this->setImageUrl($url);
@@ -230,8 +230,8 @@ class NostoProduct extends NostoSDKProduct
      */
     protected function amendTags(Product $product)
     {
-        if (($product_tags = $product->getTags(NostoHelperContext::getLanguageId())) !== '') {
-            $tags = explode(', ', $product_tags);
+        if (($productTags = $product->getTags(NostoHelperContext::getLanguageId())) !== '') {
+            $tags = explode(', ', $productTags);
             foreach ($tags as $tag) {
                 $this->addTag1($tag);
             }
@@ -239,8 +239,8 @@ class NostoProduct extends NostoSDKProduct
 
         // If the product has no attributes (color, size etc.), then we mark
         // it as possible to add directly to cart.
-        $product_attributes = $product->getAttributesGroups(NostoHelperContext::getLanguageId());
-        if (empty($product_attributes)) {
+        $productAttributes = $product->getAttributesGroups(NostoHelperContext::getLanguageId());
+        if (empty($productAttributes)) {
             $this->addTag1(self::ADD_TO_CART);
         }
     }
@@ -257,8 +257,8 @@ class NostoProduct extends NostoSDKProduct
     protected function amendCategories(Product $product)
     {
         $productCategories = $product->getCategories();
-        foreach ($productCategories as $category_id) {
-            $category = new Category((int)$category_id, NostoHelperContext::getLanguageId());
+        foreach ($productCategories as $categoryId) {
+            $category = new Category((int)$categoryId, NostoHelperContext::getLanguageId());
             $category = NostoCategory::loadData($category);
             if (!empty($category)) {
                 $this->addCategory($category->getValue());

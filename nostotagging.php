@@ -72,12 +72,14 @@ class NostoTagging extends Module
      */
     const VISITOR_HASH_ALGO = 'sha256';
 
+    const ID = 'id';
+
     /**
      * Custom hooks to add for this module.
      *
      * @var array
      */
-    protected static $custom_hooks = array(
+    protected static $customHooks = array(
         array(
             'name' => 'displayCategoryTop',
             'title' => 'Category top',
@@ -163,8 +165,7 @@ class NostoTagging extends Module
         $success = false;
         if (parent::install()) {
             $success = true;
-            if (
-                !$this->registerHook('displayCategoryTop')
+            if (!$this->registerHook('displayCategoryTop')
                 || !$this->registerHook('displayCategoryFooter')
                 || !$this->registerHook('displaySearchTop')
                 || !$this->registerHook('displaySearchFooter')
@@ -173,7 +174,6 @@ class NostoTagging extends Module
                 || !$this->registerHook('footer')
                 || !$this->registerHook('productFooter')
                 || !$this->registerHook('shoppingCart')
-                || !$this->registerHook('orderConfirmation')
                 || !$this->registerHook('postUpdateOrderStatus')
                 || !$this->registerHook('paymentTop')
                 || !$this->registerHook('home')
@@ -191,7 +191,7 @@ class NostoTagging extends Module
                 $success = false;
                 $this->_errors[] = $this->l('Failed to create Nosto admin tab');
             }
-            if (!NostoHookManager::initHooks(self::$custom_hooks)) {
+            if (!NostoHookManager::initHooks(self::$customHooks)) {
                 $success = false;
                 $this->_errors[] = $this->l('Failed to register custom Nosto hooks');
             }
@@ -247,11 +247,11 @@ class NostoTagging extends Module
             $output .= $this->displayConfirmation($this->l($successMessage));
         }
 
-        foreach (NostoHelperFlash::getList('success') as $flash_message) {
-            $output .= $this->displayConfirmation($flash_message);
+        foreach (NostoHelperFlash::getList('success') as $flashMessage) {
+            $output .= $this->displayConfirmation($flashMessage);
         }
-        foreach (NostoHelperFlash::getList('error') as $flash_message) {
-            $output .= $this->displayError($flash_message);
+        foreach (NostoHelperFlash::getList('error') as $flashMessage) {
+            $output .= $this->displayError($flashMessage);
         }
 
         if (Shop::getContext() !== Shop::CONTEXT_SHOP) {
@@ -279,11 +279,11 @@ class NostoTagging extends Module
             'module_path' => $this->_path
         ));
 
-        $template_file = 'views/templates/admin/config-bootstrap.tpl';
+        $templateFile = 'views/templates/admin/config-bootstrap.tpl';
         if (_PS_VERSION_ < '1.6') {
-            $template_file = 'views/templates/admin/legacy-config-bootstrap.tpl';
+            $templateFile = 'views/templates/admin/legacy-config-bootstrap.tpl';
         }
-        $output .= $this->display(__FILE__, $template_file);
+        $output .= $this->display(__FILE__, $templateFile);
 
         return $output;
     }
@@ -341,8 +341,7 @@ class NostoTagging extends Module
     public function hookDisplayTop()
     {
         $html = '';
-        if (NostoHelperConfig::getNostotaggingRenderPosition()
-            !== NostoHelperConfig::NOSTOTAGGING_POSITION_FOOTER) {
+        if (NostoHelperConfig::getNostotaggingRenderPosition() !== NostoHelperConfig::NOSTOTAGGING_POSITION_FOOTER) {
             $html = NostoDefaultTagging::get($this);
             $html .= self::dispatchPseudoHooks();
         }
@@ -481,8 +480,7 @@ class NostoTagging extends Module
     public function hookDisplayFooter()
     {
         $html = '';
-        if (NostoHelperConfig::getNostotaggingRenderPosition()
-            === NostoHelperConfig::NOSTOTAGGING_POSITION_FOOTER) {
+        if (NostoHelperConfig::getNostotaggingRenderPosition() === NostoHelperConfig::NOSTOTAGGING_POSITION_FOOTER) {
             $html = NostoDefaultTagging::get($this);
             $html .= self::dispatchPseudoHooks();
         }
@@ -605,33 +603,6 @@ class NostoTagging extends Module
     public function hookShoppingCart()
     {
         return $this->hookDisplayShoppingCartFooter();
-    }
-
-    /**
-     * Backwards compatibility layout hook for adding content to the order page below the itemised
-     * order listing.
-     *
-     * @return string The HTML to output
-     */
-    public function hookDisplayOrderConfirmation()
-    {
-        if (!Nosto::isContextConnected()) {
-            return '';
-        }
-
-        return ''; //TODO: Nothing rendered here?!?!
-    }
-
-    /**
-     * Backwards compatibility layout hook for adding content to the order page below the itemised
-     * order listing. This hook should not have any logic and should only delegate to another hook.
-     *
-     * @see NostoTagging::hookDisplayOrderConfirmation()
-     * @return string The HTML to output
-     */
-    public function hookOrderConfirmation()
-    {
-        return $this->hookDisplayOrderConfirmation();
     }
 
     /**
@@ -989,8 +960,7 @@ class NostoTagging extends Module
         }
 
         $cookie = Context::getContext()->cookie;
-        if (
-            isset($cookie->nostoExchangeRatesUpdated)
+        if (isset($cookie->nostoExchangeRatesUpdated)
             && $cookie->nostoExchangeRatesUpdated == true //@codingStandardsIgnoreLine
         ) {
 
@@ -1036,11 +1006,11 @@ class NostoTagging extends Module
     {
         /* @var Employee $employee */
         $employee = $this->context->employee;
-        $logged_in = false;
+        $loggedIn = false;
         if ($employee instanceof Employee && $employee->id) {
-            $logged_in = true;
+            $loggedIn = true;
         }
 
-        return $logged_in;
+        return $loggedIn;
     }
 }

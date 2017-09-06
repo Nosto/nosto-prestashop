@@ -73,14 +73,12 @@ class NostoIndexController
      * Get Iframe url
      *
      * @param NostoSDKAccount $account NostoAccount|null
-     * @param $languageId int
      * @return null|string
      */
-    public function getIframeUrl(NostoSDKAccount $account, $languageId)
+    public function getIframeUrl(NostoSDKAccount $account)
     {
         $url = null;
-        if (
-            $account
+        if ($account
             && $account->isConnectedToNosto()
             && Shop::getContext() === Shop::CONTEXT_SHOP
         ) {
@@ -191,8 +189,11 @@ class NostoIndexController
             ),
             'multi_currency_method' => NostoHelperConfig::getMultiCurrencyMethod(),
             'nostotagging_position' => NostoHelperConfig::getNostotaggingRenderPosition(),
-            'nostotagging_ps_version_class' => 'ps-' . str_replace('.', '',
-                    Tools::substr(_PS_VERSION_, 0, 3)),
+            'nostotagging_ps_version_class' => 'ps-' . str_replace(
+                '.',
+                '',
+                Tools::substr(_PS_VERSION_, 0, 3)
+            ),
             'missing_tokens' => $missingTokens,
             'iframe_installation_url' => $iframeInstallationUrl,
             'iframe_origin' => self::getIframeOrigin(),
@@ -204,7 +205,7 @@ class NostoIndexController
         if ($account) {
             // Try to login employee to Nosto in order to get a url to the internal setting pages,
             // which are then shown in an iframe on the module config page.
-            $url = $this->getIframeUrl($account, NostoHelperContext::getLanguageId());
+            $url = $this->getIframeUrl($account);
             if (!empty($url)) {
                 $smartyMetaData['iframe_url'] = $url;
             }
@@ -227,7 +228,7 @@ class NostoIndexController
         $currentUrl = Tools::getHttpHost(true) . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '');
         $parsedUrl = NostoSDKHttpRequest::parseUrl($currentUrl);
         $parsedQueryString = NostoSDKHttpRequest::parseQueryString($parsedUrl['query']);
-        $valid_params = array(
+        $validParams = array(
             'controller',
             'token',
             'configure',
@@ -236,9 +237,9 @@ class NostoIndexController
             'tab',
         );
         $queryParams = array();
-        foreach ($valid_params as $valid_param) {
-            if (isset($parsedQueryString[$valid_param])) {
-                $queryParams[$valid_param] = $parsedQueryString[$valid_param];
+        foreach ($validParams as $validParam) {
+            if (isset($parsedQueryString[$validParam])) {
+                $queryParams[$validParam] = $parsedQueryString[$validParam];
             }
         }
         $parsedUrl['query'] = http_build_query($queryParams);

@@ -45,9 +45,9 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
         NostoHelperContext::runInContext(
             function () {
                 $collection = new ProductCollection();
-                if (!empty(Tools::getValue('id'))) {
+                if (!empty(Tools::getValue(NostoTagging::ID))) {
                     $product = new Product(
-                        Tools::getValue('id'),
+                        Tools::getValue(NostoTagging::ID),
                         true,
                         NostoHelperContext::getLanguageId(),
                         NostoHelperContext::getShopId()
@@ -80,7 +80,6 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
             false,
             $employee->id
         );
-
     }
 
     /**
