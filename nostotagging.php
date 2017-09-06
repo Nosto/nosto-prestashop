@@ -23,8 +23,6 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use Nosto\NostoException;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -923,7 +921,7 @@ class NostoTagging extends Module
      * Method for resolving correct smarty object
      *
      * @return Smarty|Smarty_Data
-     * @throws NostoException
+     * @throws \Nosto\NostoException
      */
     protected function getSmarty()
     {
@@ -933,7 +931,7 @@ class NostoTagging extends Module
             return $this->context->smarty;
         }
 
-        throw new NostoException('Could not find smarty');
+        throw new \Nosto\NostoException('Could not find smarty');
     }
 
     /**
@@ -991,7 +989,7 @@ class NostoTagging extends Module
                 $operation = new NostoRatesService();
                 $operation->updateExchangeRatesForAllStores();
                 $this->defineExchangeRatesAsUpdated();
-            } catch (NostoException $e) {
+            } catch (\Nosto\NostoException $e) {
                 NostoHelperLogger::error($e, 'Exchange rate sync failed with error');
             }
         }

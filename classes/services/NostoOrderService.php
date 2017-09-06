@@ -52,37 +52,39 @@ class NostoOrderService extends AbstractNostoService
      */
     public function sendOrder(Order $order)
     {
-        try {
-            $nostoOrder = NostoOrder::loadData($order);
-            $account = NostoHelperAccount::find();
-            if ($account !== null && $account->isConnectedToNosto()) {
-                $customerId = NostoCustomerManager::getNostoId($order);
+        NostoHelperContext::runWithEachNostoAccount(function () use ($order) {
+            try {
+                $nostoOrder = NostoOrder::loadData($order);
+                $account = NostoHelperAccount::find();
+                if ($account !== null && $account->isConnectedToNosto()) {
+                    $customerId = NostoCustomerManager::getNostoId($order);
 
-                $operation = new NostoSDKOrderConfirmOperation($account);
-                $operation->send($nostoOrder, $customerId);
-                try {
-                    if (self::$syncInventoriesAfterOrder === true) {
-                        $purchasedItems = $nostoOrder->getPurchasedItems();
-                        $products = array();
-                        foreach ($purchasedItems as $item) {
-                            $productId = $item->getProductId();
-                            if (empty($productId) || $productId < 0) {
-                                continue;
+                    $operation = new NostoSDKOrderConfirmOperation($account);
+                    $operation->send($nostoOrder, $customerId);
+                    try {
+                        if (self::$syncInventoriesAfterOrder === true) {
+                            $purchasedItems = $nostoOrder->getPurchasedItems();
+                            $products = array();
+                            foreach ($purchasedItems as $item) {
+                                $productId = $item->getProductId();
+                                if (empty($productId) || $productId < 0) {
+                                    continue;
+                                }
+                                $product = new Product($productId);
+                                if ($product instanceof Product) {
+                                    $products[] = $product;
+                                }
                             }
-                            $product = new Product($productId);
-                            if ($product instanceof Product) {
-                                $products[] = $product;
-                            }
+                            $nostoProductOperation = new NostoProductService();
+                            $nostoProductOperation->updateBatch($products);
                         }
-                        $nostoProductOperation = new NostoProductService();
-                        $nostoProductOperation->updateBatch($products);
+                    } catch (Exception $e) {
+                        NostoHelperLogger::error($e, 'Failed to synchronize products after order');
                     }
-                } catch (Exception $e) {
-                    NostoHelperLogger::error($e, 'Failed to synchronize products after order');
                 }
+            } catch (Exception $e) {
+                NostoHelperLogger::error($e, 'Failed to send order confirmation');
             }
-        } catch (Exception $e) {
-            NostoHelperLogger::error($e, 'Failed to send order confirmation');
-        }
+        });
     }
 }
