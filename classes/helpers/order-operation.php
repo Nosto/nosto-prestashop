@@ -77,7 +77,6 @@ class NostoTaggingHelperOrderOperation extends NostoTaggingHelperOperation
         }
     }
 
-
     /**
      * Sends product updates to Nosto to keep up with the inventory level
      *
