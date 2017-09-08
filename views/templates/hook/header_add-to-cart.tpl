@@ -29,30 +29,58 @@
     }
     {/literal}
     Nosto.addProductToCart = function (productId, element) {
-        if (typeof nostojs !== 'undefined' && typeof element == 'object') {
+        var productData = {
+            "productId": productId
+        };
+        Nosto.addSkuToCart(productData, element);
+    };
+
+    //Product object must have fields productId and skuId productId: 123, skuId: 321
+    Nosto.addSkuToCart = function (product, element) {
+        if (typeof nostojs !== 'undefined' && typeof element === 'object') {
             var slotId = Nosto.resolveContextSlotId(element);
             if (slotId) {
                 nostojs(function (api) {
-                    api.recommendedProductAddedToCart(productId, slotId);
+                    api.recommendedProductAddedToCart(product.productId, slotId);
                 });
             }
         }
-        var form = document.createElement("form");
-        form.setAttribute("method", "post");
-        form.setAttribute("action", "{$add_to_cart_url|escape:"javascript":"UTF-8"}");
 
+        //ajaxCart is prestashop object
+        if (ajaxCart && ajaxCart.add && $('.cart_block').length) {
+            try {
+                ajaxCart.add(product.productId, product.skuId, true, null, 1, null);
+
+                return;//done with ajax way
+            } catch (e) {
+                console.log(e);
+            }
+        }
+
+        //if ajax way failed, submit a form to add it to cart
         var hiddenFields = {
-            "id_product": productId,
+            "qty": 1,
+            "controller": "cart",
+            "id_product": product.productId,
+            "ipa": product.skuId,
             "add": 1,
             "token": "{$static_token|escape:"javascript":"UTF-8"}"
         };
+        Nosto.postAddToCartForm(hiddenFields, "{$add_to_cart_url|escape:"javascript":"UTF-8"}");
+    };
 
-        for(var key in hiddenFields) {
-            if(hiddenFields.hasOwnProperty(key)) {
+    Nosto.postAddToCartForm = function (data, url) {
+
+        var form = document.createElement("form");
+        form.setAttribute("method", "post");
+        form.setAttribute("action", url);
+
+        for (var key in data) {
+            if (data.hasOwnProperty(key)) {
                 var hiddenField = document.createElement("input");
                 hiddenField.setAttribute("type", "hidden");
                 hiddenField.setAttribute("name", key);
-                hiddenField.setAttribute("value", hiddenFields[key]);
+                hiddenField.setAttribute("value", data[key]);
                 form.appendChild(hiddenField);
             }
         }
@@ -60,14 +88,18 @@
         document.body.appendChild(form);
         form.submit();
     };
+
     Nosto.resolveContextSlotId = function (element) {
+        if (!element) {
+            return false;
+        }
         var m = 20;
         var n = 0;
         var e = element;
         while (typeof e.parentElement !== "undefined" && e.parentElement) {
             ++n;
             e = e.parentElement;
-            if (e.getAttribute('class') == 'nosto_element' && e.getAttribute('id')) {
+            if (e.getAttribute('class') === 'nosto_element' && e.getAttribute('id')) {
                 return e.getAttribute('id');
             }
             if (n >= m) {

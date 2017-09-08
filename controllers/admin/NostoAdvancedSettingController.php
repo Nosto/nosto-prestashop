@@ -25,76 +25,46 @@
 
 require_once 'NostoBaseController.php';
 
+use Nosto\NostoException as NostoSDKException;
+
 class NostoAdvancedSettingController extends NostoBaseController
 {
     /**
      * @inheritdoc
+     *
+     * @suppress PhanDeprecatedFunction
      */
     public function execute()
     {
-        $languageId = $this->getLanguageId();
+        NostoHelperConfig::saveMultiCurrencyMethod(Tools::getValue('multi_currency_method'));
+        NostoHelperConfig::saveSkuEnabled((bool)Tools::getValue('nosto_sku_switch'));
+        NostoHelperConfig::saveNostoTaggingRenderPosition(Tools::getValue('nostotagging_position'));
+        NostoHelperConfig::saveImageType(Tools::getValue('image_type'));
+        $account = Nosto::getAccount();
+        $accountMeta = NostoAccountSignup::loadData();
 
-        /** @var EmployeeCore $employee */
-        $employee = $this->context->employee;
-
-        $shopId = null;
-        $shopGroupId = null;
-        if ($this->context->shop instanceof Shop) {
-            $shopId = $this->context->shop->id;
-            $shopGroupId = $this->context->shop->id_shop_group;
-        }
-
-
-        /** @var NostoTaggingHelperConfig $configHelper */
-        $configHelper = Nosto::helper('nosto_tagging/config');
-        /** @var NostoTaggingHelperFlashMessage $flashHelper */
-        $flashHelper = Nosto::helper('nosto_tagging/flash_message');
-        $configHelper->saveMultiCurrencyMethod(
-            Tools::getValue('multi_currency_method'),
-            $languageId,
-            $shopGroupId,
-            $shopId
-        );
-        $configHelper->saveNostoTaggingRenderPosition(
-            Tools::getValue('nostotagging_position'),
-            $languageId,
-            $shopGroupId,
-            $shopId
-        );
-        $configHelper->saveImageType(
-            Tools::getValue('image_type'),
-            $languageId,
-            $shopGroupId,
-            $shopId
-        );
-        $account = NostoTaggingHelperAccount::find($languageId, $shopGroupId, $shopId);
-        $accountMeta = new NostoTaggingMetaAccount();
-        $accountMeta->loadData($this->context, $languageId);
-
-        // Make sure we Nosto is installed for the current store
         if (!empty($account) && $account->isConnectedToNosto()) {
             try {
-                NostoTaggingHelperAccount::updateSettings($account, $accountMeta);
-                $flashHelper->add('success', $this->l('The settings have been saved.'));
-            } catch (NostoException $e) {
-                /* @var NostoTaggingHelperLogger $logger */
-                $logger = Nosto::helper('nosto_tagging/logger');
-                $logger->error(
-                    __CLASS__ . '::' . __FUNCTION__ . ' - ' . $e->getMessage(),
-                    $e->getCode(),
-                    'Employee',
-                    (int)$employee->id
-                );
-
-                $flashHelper->add(
+                $operation = new NostoSettingsService($account);
+                $operation->update($accountMeta);
+                NostoHelperFlash::add('success', $this->l('The settings have been saved.'));
+            } catch (NostoSDKException $e) {
+                NostoHelperLogger::error($e, 'Unable to update Nosto account settings');
+                NostoHelperFlash::add(
                     'error',
                     $this->l('There was an error saving the settings. Please, see log for details.')
                 );
             }
+
             // Also update the exchange rates if multi currency is used
-            if ($accountMeta->getUseCurrencyExchangeRates()) {
-                NostoTaggingHelperAccount::updateCurrencyExchangeRates($account, $this->context);
+            if ($accountMeta->getUseExchangeRates()) {
+                $operation = new NostoRatesService();
+                $operation->updateCurrencyExchangeRates($account);
             }
+        } else {
+            $message = "Couldn't save advanced settings since there is no connected nosto account.";
+            NostoHelperLogger::info($message);
+            NostoHelperFlash::add('error', $this->l($message));
         }
 
         return true;

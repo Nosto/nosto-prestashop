@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 2013-2017 Nosto Solutions Ltd
  *
@@ -23,8 +24,19 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
+use Nosto\Helper\IframeHelper as NostoSDKIframeHelper;
+use Nosto\Nosto as NostoSDK;
+use Nosto\Object\Signup\Account as NostoSDKAccount;
+use Nosto\Request\Api\Token as NostoSDKAPIToken;
+use Nosto\Request\Http\HttpRequest as NostoSDKHttpRequest;
+use Nosto\Types\Signup\AccountInterface as NostoSDKAccountInterface;
+use Nosto\NostoException as NostoSDKException;
+
 class NostoIndexController
 {
+    const DEFAULT_SERVER_ADDRESS = 'connect.nosto.com';
+    const DEFAULT_IFRAME_ORIGIN_REGEXP = '(https:\/\/(.*)\.hub\.nosto\.com)|(https:\/\/my\.nosto\.com)';
+
     /**
      * Get the associative array for setting to smarty with all the controller's url
      *
@@ -34,8 +46,8 @@ class NostoIndexController
     public function getControllerUrls($employeeId)
     {
         $urlMap = array();
-        foreach (NostoTaggingHelperAdminTab::NOSTO_CONTROLLER_CLASSES as $controllerName) {
-            $controllerUrl = NostoTaggingHelperUrl::getControllerUrl(
+        foreach (NostoAdminTabManager::$controllers as $controllerName) {
+            $controllerUrl = NostoHelperUrl::getControllerUrl(
                 $controllerName,
                 $employeeId
             );
@@ -47,36 +59,35 @@ class NostoIndexController
     }
 
     /**
-     * Get Iframe url
-     * @Context $context
-     * @param $account NostoAccount|null
-     * @param $languageId int
-     * @param $employeeId int
-     * @return string|null
+     * Returns the iframe origin where messages are allowed
+     *
+     * @return false|string
      */
-    public function getIframeUrl(Context $context, $account, $languageId, $employeeId)
+    public static function getIframeOrigin()
+    {
+        return NostoSDK::getEnvVariable('NOSTO_IFRAME_ORIGIN_REGEXP', self::DEFAULT_IFRAME_ORIGIN_REGEXP);
+    }
+
+
+    /**
+     * Get Iframe url
+     *
+     * @param NostoSDKAccount $account NostoAccount|null
+     * @return null|string
+     */
+    public function getIframeUrl(NostoSDKAccount $account)
     {
         $url = null;
-        if (
-            $account
+        if ($account
             && $account->isConnectedToNosto()
             && Shop::getContext() === Shop::CONTEXT_SHOP
         ) {
             try {
-                $meta = new NostoTaggingMetaAccountIframe();
-                $meta->setUniqueId($this->getUniqueInstallationId());
-                $meta->loadData($context, $languageId);
-                $url = $account->getIframeUrl($meta);
-
-            } catch (NostoException $e) {
-                /* @var NostoTaggingHelperLogger $logger */
-                $logger = Nosto::helper('nosto_tagging/logger');
-                $logger->error(
-                    __CLASS__ . '::' . __FUNCTION__ . ' - ' . $e->getMessage(),
-                    $e->getCode(),
-                    'Employee',
-                    (int)$employeeId
-                );
+                $currentUser = NostoCurrentUser::loadData();
+                $meta = NostoIframe::loadData();
+                $url = NostoSDKIframeHelper::getUrl($meta, $account, $currentUser);
+            } catch (NostoSDKException $e) {
+                NostoHelperLogger::error($e, 'Unable to load the Nosto IFrame');
             }
         }
 
@@ -85,62 +96,66 @@ class NostoIndexController
 
     public function getSmartyMetaData(NostoTagging $nostoTagging)
     {
-        $context = $nostoTagging->getContext();
-
         // Always update the url to the module admin page when we access it.
         // This can then later be used by the oauth2 controller to redirect the user back.
         $adminUrl = $this->getAdminUrl();
 
-        /** @var NostoTaggingHelperConfig $configHelper */
-        $configHelper = Nosto::helper('nosto_tagging/config');
-        $configHelper->saveAdminUrl($adminUrl);
-        $output = '';
-        $languages = Language::getLanguages(true, $context->shop->id);
-        /** @var EmployeeCore $employee */
-        $employee = $context->employee;
-        $accountEmail = $employee->email;
-        /** @var NostoTaggingHelperUrl $urlHelper */
-        $urlHelper = Nosto::helper('nosto_tagging/url');
+        NostoHelperConfig::saveAdminUrl($adminUrl);
+        $languages = Language::getLanguages(true, NostoHelperContext::getShopId());
+
         $shopId = null;
         $shopGroupId = null;
-        if ($context->shop instanceof Shop) {
-            $shopId = $context->shop->id;
-            $shopGroupId = $context->shop->id_shop_group;
+        if (NostoHelperContext::getShop() instanceof Shop) {
+            $shopId = NostoHelperContext::getShopId();
+            $shopGroupId = NostoHelperContext::getShopGroupId();
         }
 
-        $languageId = (int)Tools::getValue('language_id', 0);
+        $languageId = (int)Tools::getValue('nostotagging_current_language', 0);
 
         // Choose current language if it has not been set.
         if (!isset($currentLanguage)) {
-            $currentLanguage = NostoTagging::ensureAdminLanguage($languages, $languageId);
+            $currentLanguage = NostoHelperLanguage::ensureAdminLanguage($languages, $languageId);
             $languageId = (int)$currentLanguage['id_lang'];
         }
-        /** @var NostoAccount $account */
-        $account = NostoTaggingHelperAccount::find($languageId, $shopGroupId, $shopId);
+
+        return NostoHelperContext::runInContext(
+            function () use ($nostoTagging, $languages, $currentLanguage) {
+                return self::generateSmartyData($nostoTagging, $languages, $currentLanguage);
+            },
+            $languageId,
+            $shopId
+        );
+    }
+
+    private function generateSmartyData(NostoTagging $nostoTagging, $languages, $currentLanguage)
+    {
+        $account = Nosto::getAccount();
         $missingTokens = true;
         if (
-            $account instanceof NostoAccountInterface
-            && $account->getApiToken(NostoApiToken::API_EXCHANGE_RATES)
-            && $account->getApiToken(NostoApiToken::API_SETTINGS)
+            $account instanceof NostoSDKAccountInterface
+            && $account->getApiToken(NostoSDKAPIToken::API_EXCHANGE_RATES)
+            && $account->getApiToken(NostoSDKAPIToken::API_SETTINGS)
         ) {
             $missingTokens = false;
         }
         // When no account is found we will show the installation URL
         if (
-            $account instanceof NostoAccountInterface === false
+            $account instanceof NostoSDKAccountInterface === false
             && Shop::getContext() === Shop::CONTEXT_SHOP
         ) {
-            $accountIframe = new NostoTaggingMetaAccountIframe();
-            $accountIframe->loadData($context, $languageId);
-            /* @var NostoHelperIframe $iframeHelper */
-            $iframeHelper = Nosto::helper('iframe');
-            $iframeInstallationUrl = $iframeHelper->getUrl($accountIframe, null, array('v' => 1));
+            $currentUser = NostoCurrentUser::loadData();
+            $accountIframe = NostoIframe::loadData();
+            $iframeInstallationUrl = NostoSDKIframeHelper::getUrl(
+                $accountIframe,
+                $account,
+                $currentUser,
+                array('v' => 1)
+            );
         } else {
             $iframeInstallationUrl = null;
         }
 
-        /** @var NostoTaggingHelperImage $helper_images */
-        $helper_images = Nosto::helper('nosto_tagging/image');
+        $accountEmail = NostoHelperContext::getEmployee()->email;
 
         $smartyMetaData = array(
             'nostotagging_form_action' => $this->getAdminUrl(),
@@ -165,72 +180,55 @@ class NostoIndexController
                 ),
                 'exchange_rate_crontab_example' => sprintf(
                     '0 0 * * * curl --silent %s > /dev/null 2>&1',
-                    $urlHelper->getModuleUrl(
+                    NostoHelperUrl::getModuleUrl(
                         'nostotagging',
-                        null,
                         'cronRates',
-                        $currentLanguage['id_lang'],
-                        $shopId,
-                        array('token' => NostoTagging::getCronAccessToken())
+                        array('token' => NostoHelperCron::getCronAccessToken())
                     )
                 ),
             ),
-            'multi_currency_method' => $configHelper->getMultiCurrencyMethod(
-                $currentLanguage['id_lang'],
-                $shopGroupId,
-                $shopId
+            'multi_currency_method' => NostoHelperConfig::getMultiCurrencyMethod(),
+            'nostotagging_position' => NostoHelperConfig::getNostotaggingRenderPosition(),
+            'nostotagging_ps_version_class' => 'ps-' . str_replace(
+                '.',
+                '',
+                Tools::substr(_PS_VERSION_, 0, 3)
             ),
-            'nostotagging_position' => $configHelper->getNostotaggingRenderPosition(
-                $currentLanguage['id_lang'],
-                $shopGroupId,
-                $shopId
-            ),
-            'nostotagging_ps_version_class' => 'ps-' . str_replace('.', '', Tools::substr(_PS_VERSION_, 0, 3)),
             'missing_tokens' => $missingTokens,
             'iframe_installation_url' => $iframeInstallationUrl,
-            'iframe_origin' => $urlHelper->getIframeOrigin(),
-            'image_types' => $helper_images->getProductImageTypes(),
-            'current_image_type' => $configHelper->getImageType(
-                $currentLanguage['id_lang'],
-                $shopGroupId,
-                $shopId
-            )
+            'iframe_origin' => self::getIframeOrigin(),
+            'image_types' => NostoHelperImage::getProductImageTypes(),
+            'current_image_type' => NostoHelperConfig::getImageType(),
+            'sku_enabled' => NostoHelperConfig::getSkuEnabled()
         );
 
-        // Try to login employee to Nosto in order to get a url to the internal setting pages,
-        // which are then shown in an iframe on the module config page.
-        $url = $this->getIframeUrl($context, $account, $languageId, $employee->id);
-        if (!empty($url)) {
-            $smartyMetaData['iframe_url'] = $url;
+        if ($account) {
+            // Try to login employee to Nosto in order to get a url to the internal setting pages,
+            // which are then shown in an iframe on the module config page.
+            $url = $this->getIframeUrl($account);
+            if (!empty($url)) {
+                $smartyMetaData['iframe_url'] = $url;
+            }
         }
 
-        $controllerUrls = $this->getControllerUrls($employee->id);
+        $controllerUrls = $this->getControllerUrls(NostoHelperContext::getEmployee()->id);
 
         return array_merge($controllerUrls, $smartyMetaData);
     }
 
     /**
-     * Returns a unique ID that identifies this PS installation.
-     *
-     * @return string the unique ID.
-     */
-    public function getUniqueInstallationId()
-    {
-        return sha1(NostoTagging::MODULE_NAME . _COOKIE_KEY_);
-    }
-
-    /**
      * Returns the admin url.
-     * Note the url is parsed from the current url, so this can only work if called when on the admin page.
+     * Note the url is parsed from the current url, so this can only work if called when on the
+     * admin page.
      *
      * @return string the url.
      */
     protected function getAdminUrl()
     {
         $currentUrl = Tools::getHttpHost(true) . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '');
-        $parsedUrl = NostoHttpRequest::parseUrl($currentUrl);
-        $parsedQueryString = NostoHttpRequest::parseQueryString($parsedUrl['query']);
-        $valid_params = array(
+        $parsedUrl = NostoSDKHttpRequest::parseUrl($currentUrl);
+        $parsedQueryString = NostoSDKHttpRequest::parseQueryString($parsedUrl['query']);
+        $validParams = array(
             'controller',
             'token',
             'configure',
@@ -239,13 +237,13 @@ class NostoIndexController
             'tab',
         );
         $queryParams = array();
-        foreach ($valid_params as $valid_param) {
-            if (isset($parsedQueryString[$valid_param])) {
-                $queryParams[$valid_param] = $parsedQueryString[$valid_param];
+        foreach ($validParams as $validParam) {
+            if (isset($parsedQueryString[$validParam])) {
+                $queryParams[$validParam] = $parsedQueryString[$validParam];
             }
         }
         $parsedUrl['query'] = http_build_query($queryParams);
 
-        return NostoHttpRequest::buildUrl($parsedUrl);
+        return NostoSDKHttpRequest::buildUrl($parsedUrl);
     }
 }

@@ -30,5 +30,4 @@ require_once 'AdminNostoController.php';
  */
 class AdminNostoPersonalizationController extends AdminNostoController
 {
-
 }

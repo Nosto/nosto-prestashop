@@ -23,5 +23,4 @@
 *}
 
 <meta name="nosto-version" content="{$nosto_version|escape:'htmlall':'UTF-8'}">
-<meta name="nosto-unique-id" content="{$nosto_unique_id|escape:'htmlall':'UTF-8'}">
 <meta name="nosto-language" content="{$nosto_language|escape:'htmlall':'UTF-8'}">

@@ -24,29 +24,23 @@
 <script type="text/javascript">
   var nostoRecosLoaded = false;
   nostojs(function(api){
-    api.listen('postrender', function(api){
-      nostoRecosLoaded = true;
+      api.listen('postrender', function () {
+          nostoRecosLoaded = true;
     });
     if (window.jQuery) {
       var $center_column = jQuery('#center_column, #content-wrapper');
-      var $hidden_elements = jQuery('#hidden_nosto_elements');
       var slotsMoved = false;
-      if ($center_column && $hidden_elements) {
-        $hidden_elements.find('.prepend .hidden_nosto_element').each(function () {
+      if ($center_column) {
+        jQuery('.hidden_nosto_element').each(function () {
           var $slot = jQuery(this), nostoId = $slot.data('nosto-id');
           if (nostoId && !jQuery('#' + nostoId).length) {
             $slot.attr('id', nostoId);
             $slot.attr('class', 'nosto_element');
-            $slot.prependTo($center_column);
-            slotsMoved = true;
-          }
-        });
-        $hidden_elements.find('.append .hidden_nosto_element').each(function () {
-          var $slot = jQuery(this), nostoId = $slot.data('nosto-id');
-          if (nostoId && !jQuery('#' + nostoId).length) {
-            $slot.attr('id', nostoId);
-            $slot.attr('class', 'nosto_element');
-            $slot.appendTo($center_column);
+            if($slot.attr('nosto_insert_position') === 'prepend') {
+              $slot.prependTo($center_column);
+            } else {
+              $slot.appendTo($center_column);
+            }
             slotsMoved = true;
           }
         });
@@ -54,7 +48,6 @@
           api.loadRecommendations();
         }
       }
-      $hidden_elements.remove();
     }
   });
 </script>

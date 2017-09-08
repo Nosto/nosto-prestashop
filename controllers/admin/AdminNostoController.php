@@ -30,6 +30,7 @@ class AdminNostoController extends ModuleAdminController
 {
     /**
      * @inheritdoc
+     * @suppress
      */
     public function initContent()
     {
@@ -38,9 +39,10 @@ class AdminNostoController extends ModuleAdminController
             return;
         }
 
-        $id_tab = (int)Tab::getIdFromClassName('AdminModules');
-        $id_employee = (int)$this->context->cookie->id_employee;
-        $token = Tools::getAdminToken('AdminModules'.$id_tab.$id_employee);
-        Tools::redirectAdmin('index.php?controller=AdminModules&configure=nostotagging&token='.$token);
+        $idTab = NostoAdminTabManager::getAdminTabId(AdminModulesController::class);
+        /** @noinspection PhpUndefinedFieldInspection */
+        $idEmployee = (int)$this->context->cookie->id_employee;
+        $token = Tools::getAdminToken('AdminModules' . $idTab . $idEmployee);
+        Tools::redirectAdmin('index.php?controller=AdminModules&configure=nostotagging&token=' . $token);
     }
 }

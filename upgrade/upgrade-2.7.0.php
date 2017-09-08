@@ -34,16 +34,13 @@ if (!defined('_PS_VERSION_')) {
  *
  * @param NostoTagging $object
  * @return bool
+ * @suppress PhanUnreferencedMethod
  */
 function upgrade_module_2_7_0($object)
 {
-    /* @var NostoTaggingHelperCustomer $helper_customer */
-    $helper_customer = Nosto::helper('nosto_tagging/customer');
-    $helper_customer->createCustomerReferenceTable();
+    NostoCustomerManager::createCustomerReferenceTable();
     $success = $object->registerHook('displayBackOfficeTop');
-    /** @var NostoTaggingHelperConfig $helper_config */
-    $helper_config = Nosto::helper('nosto_tagging/config');
-    $helper_config->clearCache();
+    NostoHelperConfig::clearCache();
 
     return $success;
 }

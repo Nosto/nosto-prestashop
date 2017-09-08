@@ -33,6 +33,7 @@ if (!defined('_PS_VERSION_')) {
  * Creates "action{MODEL}LoadAfter" hooks dispatched by the tagging model.
  *
  * @return bool
+ * @suppress PhanUnreferencedMethod
  */
 function upgrade_module_2_5_0()
 {
@@ -57,15 +58,15 @@ function upgrade_module_2_5_0()
     $success = true;
     foreach ($hooks as $hook) {
         $callback = array('Hook', (method_exists('Hook', 'getIdByName')) ? 'getIdByName' : 'get');
-        $id_hook = call_user_func($callback, $hook['name']);
-        if (empty($id_hook)) {
-            $new_hook = new Hook();
-            $new_hook->name = $hook['name'];
-            $new_hook->title = $hook['title'];
-            $new_hook->description = $hook['description'];
-            $new_hook->add();
-            $id_hook = $new_hook->id;
-            if (!$id_hook) {
+        $idHook = call_user_func($callback, $hook['name']);
+        if (empty($idHook)) {
+            $newHook = new Hook();
+            $newHook->name = $hook['name'];
+            $newHook->title = $hook['title'];
+            $newHook->description = $hook['description'];
+            $newHook->add();
+            $idHook = $newHook->id;
+            if (!$idHook) {
                 $success = false;
             }
         }

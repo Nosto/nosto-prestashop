@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 2013-2017 Nosto Solutions Ltd
  *
@@ -22,12 +23,12 @@
  * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
-
-
 abstract class NostoBaseController extends ModuleAdminController
 {
     /**
      * @inheritdoc
+     *
+     * @suppress PhanDeprecatedFunction
      */
     public function initContent()
     {
@@ -36,22 +37,27 @@ abstract class NostoBaseController extends ModuleAdminController
             return;
         }
 
-        /** @var NostoTaggingHelperFlashMessage $flashHelper */
-        $flashHelper = Nosto::helper('nosto_tagging/flash_message');
-
-        //check language
         $languages = Language::getLanguages(true, $this->context->shop->id);
-        $currentLanguage = NostoTagging::ensureAdminLanguage($languages, $this->getLanguageId());
+        $handlingLanguage = NostoHelperLanguage::ensureAdminLanguage($languages, $this->getLanguageId());
         if (Shop::getContext() !== Shop::CONTEXT_SHOP) {
             $this->redirectToAdmin();
             return;
-        } elseif ($currentLanguage['id_lang'] != $this->getLanguageId()) {
-            $flashHelper->add('error', $this->l('Language cannot be empty.'));
+        } elseif ($handlingLanguage['id_lang'] != $this->getLanguageId()) {
+            NostoHelperFlash::add('error', $this->l('Language cannot be empty.'));
             $this->redirectToAdmin();
             return;
         }
 
-        if ($this->execute() === true) {
+        //run the code in a context with language id set to the language admin chose
+        $redirectToAdminPage = NostoHelperContext::runInContext(
+            function () {
+                return $this->execute();
+            },
+            $handlingLanguage['id_lang'],
+            NostoHelperContext::getShopId()
+        );
+
+        if ($redirectToAdminPage) {
             $this->redirectToAdmin();
         }
     }
@@ -64,6 +70,9 @@ abstract class NostoBaseController extends ModuleAdminController
         return (int)Tools::getValue(NostoTagging::MODULE_NAME . '_current_language');
     }
 
+    /**
+     * @suppress PhanDeprecatedFunction
+     */
     protected function redirectToAdmin()
     {
         $tabId = (int)Tab::getIdFromClassName('AdminModules');
@@ -73,7 +82,8 @@ abstract class NostoBaseController extends ModuleAdminController
     }
 
     /**
-     * @return bool should it be redirect to admin after executing this method.Return true means redirect to admin url
+     * @return bool should it be redirect to admin after executing this method.Return true means
+     *     redirect to admin url
      */
-    abstract function execute();
+    abstract public function execute();
 }

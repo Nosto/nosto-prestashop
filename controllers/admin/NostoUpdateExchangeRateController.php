@@ -25,50 +25,34 @@
 
 require_once 'NostoBaseController.php';
 
+use Nosto\Request\Api\Token as NostoSDKAPIToken;
+
 class NostoUpdateExchangeRateController extends NostoBaseController
 {
     /**
      * @inheritdoc
+     *
+     * @suppress PhanDeprecatedFunction
      */
     public function execute()
     {
-        $languageId = $this->getLanguageId();
-
-        /** @var NostoTaggingHelperFlashMessage $flashHelper */
-        $flashHelper = Nosto::helper('nosto_tagging/flash_message');
-
-        $shopId = null;
-        $shopGroupId = null;
-        if ($this->context->shop instanceof Shop) {
-            $shopId = $this->context->shop->id;
-            $shopGroupId = $this->context->shop->id_shop_group;
-        }
-
-        $nostoAccount = NostoTaggingHelperAccount::find($languageId, $shopGroupId, $shopId);
-        if ($nostoAccount &&
-            NostoTaggingHelperAccount::updateCurrencyExchangeRates(
-                $nostoAccount,
-                $this->context
-            )
+        $nostoAccount = Nosto::getAccount();
+        $operation = new NostoRatesService();
+        if ($nostoAccount && $operation->updateCurrencyExchangeRates($nostoAccount)
         ) {
-            $flashHelper->add(
+            NostoHelperFlash::add(
                 'success',
-                $this->l(
-                    'Exchange rates successfully updated to Nosto'
-                )
+                $this->l('Exchange rates successfully updated to Nosto')
             );
         } else {
-            if (!$nostoAccount->getApiToken(NostoApiToken::API_EXCHANGE_RATES)) {
+            if (!$nostoAccount->getApiToken(NostoSDKAPIToken::API_EXCHANGE_RATES)) {
                 $message = 'Failed to update exchange rates to Nosto due to a missing API token. 
                             Please, reconnect your account with Nosto';
             } else {
                 $message = 'There was an error updating the exchange rates. 
                             See Prestashop logs for more information.';
             }
-            $flashHelper->add(
-                'error',
-                $this->l($message)
-            );
+            NostoHelperFlash::add('error', $this->l($message));
         }
 
         return true;

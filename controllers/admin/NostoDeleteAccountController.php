@@ -32,13 +32,8 @@ class NostoDeleteAccountController extends NostoBaseController
      */
     public function execute()
     {
-        /** @var NostoTaggingHelperConfig $configHelper */
-        $configHelper = Nosto::helper('nosto_tagging/config');
-
-        $account = NostoTaggingHelperAccount::findByContext($this->context);
-        $configHelper->clearCache();
-        NostoTaggingHelperAccount::delete($account, $this->getLanguageId());
-
+        NostoHelperConfig::clearCache();
+        NostoHelperAccount::delete();
         return true;
     }
 }

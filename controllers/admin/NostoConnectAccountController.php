@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 2013-2017 Nosto Solutions Ltd
  *
@@ -22,7 +23,10 @@
  * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
+
 require_once 'NostoBaseController.php';
+
+use Nosto\Helper\OAuthHelper as NostoSDKOAuthHelper;
 
 class NostoConnectAccountController extends NostoBaseController
 {
@@ -31,12 +35,8 @@ class NostoConnectAccountController extends NostoBaseController
      */
     public function execute()
     {
-        $meta = new NostoTaggingMetaOauth();
-        $meta->setModuleName(NostoTagging::MODULE_NAME);
-        $meta->loadData($this->context, $this->getLanguageId());
-        $client = new NostoOAuthClient($meta);
-        Tools::redirect($client->getAuthorizationUrl(), '');
-
+        $meta = NostoOAuth::loadData(NostoTagging::MODULE_NAME);
+        Tools::redirect(NostoSDKOAuthHelper::getAuthorizationUrl($meta), '');
         return false;
     }
 }
