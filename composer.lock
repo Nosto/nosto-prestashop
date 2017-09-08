@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "fdda0cae39bd10ea1751e4c67b89b100",
+    "content-hash": "63760f64728ce68dbf6d6774d12583eb",
     "packages": [
         {
             "name": "nosto/php-sdk",
-            "version": "dev-feature/progammatic-markup-generation",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Nosto/nosto-php-sdk.git",
-                "reference": "ed116e9"
+                "reference": "5f0474a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Nosto/nosto-php-sdk/zipball/ed116e9",
-                "reference": "ed116e9",
+                "url": "https://api.github.com/repos/Nosto/nosto-php-sdk/zipball/5f0474a",
+                "reference": "5f0474a",
                 "shasum": ""
             },
             "require": {
@@ -51,7 +51,7 @@
                 "BSD-3-Clause"
             ],
             "description": "PHP SDK for developing Nosto modules for e-commerce platforms",
-            "time": "2017-08-22 15:04:10"
+            "time": "2017-08-23 08:48:07"
         },
         {
             "name": "phpseclib/phpseclib",
@@ -202,12 +202,12 @@
             "version": "0.8.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/etsy/phan.git",
+                "url": "https://github.com/phan/phan.git",
                 "reference": "685bb56bf88a1485bb76a3e3cc2469357d1bd8e4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/etsy/phan/zipball/685bb56bf88a1485bb76a3e3cc2469357d1bd8e4",
+                "url": "https://api.github.com/repos/phan/phan/zipball/685bb56bf88a1485bb76a3e3cc2469357d1bd8e4",
                 "reference": "685bb56bf88a1485bb76a3e3cc2469357d1bd8e4",
                 "shasum": ""
             },

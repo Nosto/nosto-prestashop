@@ -144,8 +144,16 @@ class NostoAdminTabManager
         /** @noinspection PhpDeprecationInspection */
         $tab->id = (int)Tab::getIdFromClassName($className);
         $tab->active = true;
+        $languages = Language::getLanguages(true);
+        if ($languages) {
+            $tab->name = array();
+            foreach ($languages as $lang) {
+                    $tab->name[$lang['id_lang']] = 'NostoController' . $className;
+            }
+        } else {
+            $tab->name = 'NostoController' . $className;
+        }
         $tab->class_name = $className;
-        $tab->name = 'NostoController' . $className;
 
         $tab->id_parent = -1;
         $tab->module = NostoTagging::MODULE_NAME;

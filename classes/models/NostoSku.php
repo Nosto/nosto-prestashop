@@ -68,7 +68,7 @@ class NostoSku extends NostoSDKSku
     protected function amendPrice(Combination $combination)
     {
         $baseCurrency = NostoHelperCurrency::getBaseCurrency();
-        if (Nosto::useMultipleCurrencies()) {
+        if (NostoHelperConfig::useMultipleCurrencies()) {
             $taggingCurrency = $baseCurrency;
         } else {
             $taggingCurrency = NostoHelperContext::getCurrency();

@@ -109,8 +109,8 @@ class NostoAccountSignup extends NostoSDKAccountSignup
                 $nostoSignup->setOwner(NostoAccountOwner::loadData());
                 $nostoSignup->setBillingDetails(NostoAccountBilling::loadData());
                 $nostoSignup->setCurrencies(self::buildCurrencies());
-                if (Nosto::useMultipleCurrencies()) {
-                    $nostoSignup->setUseCurrencyExchangeRates(Nosto::useMultipleCurrencies());
+                if (NostoHelperConfig::useMultipleCurrencies()) {
+                    $nostoSignup->setUseCurrencyExchangeRates(NostoHelperConfig::useMultipleCurrencies());
                     $nostoSignup->setDefaultVariantId(NostoHelperCurrency::getBaseCurrency()->iso_code);
                 }
 
