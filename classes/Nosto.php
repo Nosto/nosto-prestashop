@@ -25,7 +25,6 @@
  */
 class Nosto
 {
-
     /**
      * Checks if Nosto is installed to a given store and language
      *
@@ -39,15 +38,5 @@ class Nosto
     public static function getAccount()
     {
         return NostoHelperAccount::find();
-    }
-
-    /**
-     * Checks if multiple currencies are used in tagging
-     *
-     * @return bool the multi currency method.
-     */
-    public static function useMultipleCurrencies()
-    {
-        return NostoHelperConfig::getMultiCurrencyMethod() !== NostoHelperConfig::MULTI_CURRENCY_METHOD_DISABLED;
     }
 }

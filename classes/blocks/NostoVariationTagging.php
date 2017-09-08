@@ -32,7 +32,7 @@ class NostoVariationTagging
      */
     public static function get()
     {
-        if (!Nosto::useMultipleCurrencies()) {
+        if (!NostoHelperConfig::useMultipleCurrencies()) {
             return null;
         }
 

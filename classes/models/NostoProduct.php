@@ -43,7 +43,7 @@ class NostoProduct extends NostoSDKProduct
         $nostoProduct = new NostoProduct();
         $baseCurrency = NostoHelperCurrency::getBaseCurrency();
 
-        if (Nosto::useMultipleCurrencies()) {
+        if (NostoHelperConfig::useMultipleCurrencies()) {
             $nostoProduct->setVariationId($baseCurrency->iso_code);
             $taggingCurrency = $baseCurrency;
         } else {

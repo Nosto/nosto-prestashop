@@ -38,7 +38,7 @@ class NostoCheckMulticurrencyNotification extends NostoNotification
     {
         $connected = NostoHelperAccount::existsAndIsConnected();
         if ($connected) {
-            if (!Nosto::useMultipleCurrencies()) {
+            if (!NostoHelperConfig::useMultipleCurrencies()) {
                 $currencies = NostoHelperCurrency::getCurrencies(true);
                 if (count($currencies) > 1) {
                     return new NostoNotification(
