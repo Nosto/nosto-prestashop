@@ -97,7 +97,7 @@ class NostoProduct extends NostoSDKProduct
      */
     protected function amendAlternateImages(Product $product)
     {
-        $images = Image::getImages((int)NostoHelperContext::getLanguageId(), (int)$product->id);
+        $images = $product->getImages((int)NostoHelperContext::getLanguageId());
         foreach ($images as $image) {
             $imageType = NostoHelperImage::getTaggingImageTypeName();
             if (empty($imageType)) {
@@ -154,6 +154,15 @@ class NostoProduct extends NostoSDKProduct
             );
             if ($url) {
                 $this->setImageUrl($url);
+            }
+        } else {
+            //If the product cover has not been set. Get default combination and its first image
+            $defaultId = $product->getDefaultIdProductAttribute();
+            if ($defaultId !== null) {
+                $defaultCombination = new Combination($defaultId, NostoHelperContext::getLanguageId());
+                $this->setImageUrl(
+                    NostoSku::loadData($product, $this, $defaultCombination, array())->getImageUrl()
+                );
             }
         }
     }
