@@ -84,9 +84,9 @@ class NostoTaggingHelperOrderOperation extends NostoTaggingHelperOperation
      */
     private function syncInventoryLevel(NostoTaggingOrder $order)
     {
+        $emulateEmployee = false;
         try {
             if (self::$syncInventoriesAfterOrder === true) {
-                $emulateEmployee = false;
                 if (!is_object(Context::getContext()->employee) && !is_object(Context::getContext()->cart)) {
                     Context::getContext()->employee = new Employee();
                     $emulateEmployee = true;
@@ -108,10 +108,6 @@ class NostoTaggingHelperOrderOperation extends NostoTaggingHelperOperation
                 /* @var $nostoProductOperation NostoTaggingHelperProductOperation */
                 $nostoProductOperation = Nosto::helper('nosto_tagging/product_operation');
                 $nostoProductOperation->updateBatch($products);
-
-                if ($emulateEmployee) {
-                    Context::getContext()->employee = null;
-                }
             }
         } catch (Exception $e) {
             /* @var NostoTaggingHelperLogger $logger */
@@ -120,6 +116,10 @@ class NostoTaggingHelperOrderOperation extends NostoTaggingHelperOperation
                 'Failed to update inventory level after order updated: %s',
                 $e->getMessage()
             );
+        }
+
+        if ($emulateEmployee) {
+            Context::getContext()->employee = null;
         }
     }
 }
