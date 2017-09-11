@@ -84,42 +84,23 @@ class NostoTaggingHelperOrderOperation extends NostoTaggingHelperOperation
      */
     private function syncInventoryLevel(NostoTaggingOrder $order)
     {
-        $emulateEmployee = false;
-        try {
-            if (self::$syncInventoriesAfterOrder === true) {
-                if (!is_object(Context::getContext()->employee) && !is_object(Context::getContext()->cart)) {
-                    Context::getContext()->employee = new Employee();
-                    $emulateEmployee = true;
+        if (self::$syncInventoriesAfterOrder === true) {
+            $purchasedtems = $order->getPurchasedItems();
+            $products = array();
+            /* @var NostoOrderPurchasedItem $item */
+            foreach ($purchasedtems as $item) {
+                $productId = $item->getProductId();
+                if (empty($productId) || $productId < 0) {
+                    continue;
                 }
-
-                $purchasedtems = $order->getPurchasedItems();
-                $products = array();
-                /* @var NostoOrderPurchasedItem $item */
-                foreach ($purchasedtems as $item) {
-                    $productId = $item->getProductId();
-                    if (empty($productId) || $productId < 0) {
-                        continue;
-                    }
-                    $product = new Product($productId);
-                    if ($product instanceof Product) {
-                        $products[] = $product;
-                    }
+                $product = new Product($productId);
+                if ($product instanceof Product) {
+                    $products[] = $product;
                 }
-                /* @var $nostoProductOperation NostoTaggingHelperProductOperation */
-                $nostoProductOperation = Nosto::helper('nosto_tagging/product_operation');
-                $nostoProductOperation->updateBatch($products);
             }
-        } catch (Exception $e) {
-            /* @var NostoTaggingHelperLogger $logger */
-            $logger = Nosto::helper('nosto_tagging/logger');
-            $logger->error(
-                'Failed to update inventory level after order updated: %s',
-                $e->getMessage()
-            );
-        }
-
-        if ($emulateEmployee) {
-            Context::getContext()->employee = null;
+            /* @var $nostoProductOperation NostoTaggingHelperProductOperation */
+            $nostoProductOperation = Nosto::helper('nosto_tagging/product_operation');
+            $nostoProductOperation->updateBatch($products);
         }
     }
 }
