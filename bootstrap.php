@@ -47,7 +47,6 @@ class NostoBootstrap
         require_once($moduleDir . '/classes/helpers/NostoHelperConfig.php');
         require_once($moduleDir . '/classes/models/NostoCustomer.php');
         require_once($moduleDir . '/classes/helpers/NostoHelperFlash.php');
-        require_once($moduleDir . '/classes/helpers/NostoHelperImage.php');
         require_once($moduleDir . '/classes/helpers/NostoHelperHook.php');
         require_once($moduleDir . '/classes/helpers/NostoHelperLanguage.php');
         require_once($moduleDir . '/classes/helpers/NostoHelperLogger.php');
@@ -97,7 +96,6 @@ class NostoBootstrap
         require_once($moduleDir . '/classes/helpers/NostoHelperCookie.php');
         require_once($moduleDir . '/classes/helpers/NostoHelperCron.php');
         require_once($moduleDir . '/classes/helpers/NostoHelperFlash.php');
-        require_once($moduleDir . '/classes/helpers/NostoHelperImage.php');
         require_once($moduleDir . '/classes/helpers/NostoHelperLink.php');
         require_once($moduleDir . '/classes/helpers/NostoHelperLogger.php');
         require_once($moduleDir . '/classes/helpers/NostoHelperContext.php');

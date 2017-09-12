@@ -99,13 +99,8 @@ class NostoProduct extends NostoSDKProduct
     {
         $images = $product->getImages((int)NostoHelperContext::getLanguageId());
         foreach ($images as $image) {
-            $imageType = NostoHelperImage::getTaggingImageTypeName();
-            if (empty($imageType)) {
-                return;
-            }
-
             $link = NostoHelperLink::getLink();
-            $url = $link->getImageLink($product->link_rewrite, $image['id_image'], $imageType);
+            $url = $link->getImageLink($product->link_rewrite, $image['id_image'], null);
             if ($url) {
                 $this->addAlternateImageUrls($url);
             }
@@ -141,16 +136,11 @@ class NostoProduct extends NostoSDKProduct
     {
         $imageId = $product->getCoverWs();
         if ((int)$imageId > 0) {
-            $imageType = NostoHelperImage::getTaggingImageTypeName();
-            if (empty($imageType)) {
-                return;
-            }
-
             $link = NostoHelperLink::getLink();
             $url = $link->getImageLink(
                 $product->link_rewrite,
                 $product->id . '-' . $imageId,
-                $imageType
+                null
             );
             if ($url) {
                 $this->setImageUrl($url);

@@ -39,7 +39,6 @@ class NostoHelperConfig
     const MULTI_CURRENCY_METHOD_EXCHANGE_RATE = 'exchangeRate';
     const MULTI_CURRENCY_METHOD_DISABLED = 'disabled';
     const NOSTOTAGGING_POSITION = 'NOSTOTAGGING_POSITION';
-    const NOSTOTAGGING_IMAGE_TYPE = 'NOSTOTAGGING_IMAGE_TYPE';
     const NOSTOTAGGING_POSITION_TOP = 'top';
     const NOSTOTAGGING_POSITION_FOOTER = 'footer';
 
@@ -434,40 +433,6 @@ class NostoHelperConfig
     {
         if (method_exists('Tools', 'clearCompile')) {
             Tools::clearCompile($smarty);
-        }
-    }
-
-    /**
-     * Returns the image type to be used for Nosto tagging
-     *
-     * @return int
-     */
-    public static function getImageType()
-    {
-        $type = self::read(self::NOSTOTAGGING_IMAGE_TYPE);
-
-        return !empty($type) ? $type : null;
-    }
-
-    /**
-     * Saves the image type to be used for Nosto tagging
-     *
-     * @param int $type the image type id
-     * @return bool true if saving the configuration was successful, false otherwise
-     */
-    public static function saveImageType($type)
-    {
-        if (NostoHelperContext::getShop() instanceof Shop) {
-            return self::write(
-                self::NOSTOTAGGING_IMAGE_TYPE,
-                $type,
-                NostoHelperContext::getLanguageId(),
-                false,
-                NostoHelperContext::getShopGroupId(),
-                NostoHelperContext::getShopId()
-            );
-        } else {
-            return self::write(self::NOSTOTAGGING_IMAGE_TYPE, $type, NostoHelperContext::getLanguageId());
         }
     }
 }
