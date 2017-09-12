@@ -134,7 +134,48 @@ class NostoProduct extends NostoSDKProduct
      */
     protected function amendImage($product)
     {
-        $imageId = $product->getCoverWs();
+        $imageId = null;
+
+        $defaultCombinationImages = null;
+        $defaultId = $product->getDefaultIdProductAttribute();
+        if ($defaultId !== null) {
+            //The images for default combination
+            $defaultCombinationImages = Product::_getAttributeImageAssociations($defaultId);
+        }
+
+        $coverImageId = $product->getCoverWs();
+        if ((int)$coverImageId > 0) {
+            //Take the cover image as the product image only if the cover image is enable for the default combination,
+            //or the default combination doesn't have any image
+            if (!$defaultCombinationImages || in_array($coverImageId, $defaultCombinationImages)) {
+                $imageId = $coverImageId;
+            }
+        }
+
+        //No image found, take the first from the default combination
+        if (!$imageId && $defaultCombinationImages) {
+            foreach ($defaultCombinationImages as $combinationImageId) {
+                if ((int)$combinationImageId > 0) {
+                    $imageId = $combinationImageId;
+                    break;
+                }
+            }
+        }
+
+        //No image found, take the first from the product
+        if (!$imageId) {
+            //All the product images enabled for current shop
+            $productImages = $product->getImages((int)NostoHelperContext::getLanguageId());
+            if ($productImages) {
+                foreach ($productImages as $productImage) {
+                    if ((int)$productImage['id_image'] > 0) {
+                        $imageId = $productImage['id_image'];
+                        break;
+                    }
+                }
+            }
+        }
+
         if ((int)$imageId > 0) {
             $link = NostoHelperLink::getLink();
             $url = $link->getImageLink(
@@ -142,18 +183,7 @@ class NostoProduct extends NostoSDKProduct
                 $product->id . '-' . $imageId,
                 null
             );
-            if ($url) {
-                $this->setImageUrl($url);
-            }
-        } else {
-            //If the product cover has not been set. Get default combination and its first image
-            $defaultId = $product->getDefaultIdProductAttribute();
-            if ($defaultId !== null) {
-                $defaultCombination = new Combination($defaultId, NostoHelperContext::getLanguageId());
-                $this->setImageUrl(
-                    NostoSku::loadData($product, $this, $defaultCombination, array())->getImageUrl()
-                );
-            }
+            $this->setImageUrl($url);
         }
     }
 
