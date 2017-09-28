@@ -123,7 +123,16 @@ class NostoProduct extends NostoSDKProduct
 
         $combinationIds = $product->getWsCombinations();
         foreach ($combinationIds as $combinationId) {
-            $combination = new Combination($combinationId[NostoTagging::ID], NostoHelperContext::getLanguageId());
+            //Before 1.6, Combination doesn't support language
+            if (version_compare(_PS_VERSION_, '1.6') < 0) {
+                $combination = new Combination($combinationId[NostoTagging::ID]);
+            } else {
+                $combination = new Combination($combinationId[NostoTagging::ID], NostoHelperContext::getLanguageId());
+            }
+            if ($combination->id === null) {
+                NostoHelperLogger::info('Could not find combination with id:' . $combinationId[NostoTagging::ID]);
+                continue;
+            }
             $this->addSku(NostoSku::loadData($product, $this, $combination, $variants[$combination->id]));
         }
     }
