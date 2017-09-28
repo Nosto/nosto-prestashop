@@ -100,6 +100,7 @@ class NostoProduct extends NostoSDKProduct
         $images = $product->getImages((int)NostoHelperContext::getLanguageId());
         foreach ($images as $image) {
             $link = NostoHelperLink::getLink();
+            //Set type to null means original image
             $url = $link->getImageLink($product->link_rewrite, $image['id_image'], null);
             if ($url) {
                 $this->addAlternateImageUrls($url);
