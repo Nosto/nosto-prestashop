@@ -33,7 +33,7 @@ class NostoSearchTagging
     public static function get()
     {
         $searchTerm = Tools::getValue('search_query', Tools::getValue('s'));
-        if (is_null($searchTerm)) {
+        if (!is_string($searchTerm) || $searchTerm == '') {
             return null;
         }
 
