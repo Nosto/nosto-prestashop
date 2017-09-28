@@ -38,7 +38,7 @@ class NostoHiddenElement
      */
     public static function append($nostoDataId)
     {
-        if (!Nosto::isContextConnected()) {
+        if (!NostoHelperAccount::existsAndIsConnected()) {
             return '';
         }
 
@@ -54,7 +54,7 @@ class NostoHiddenElement
      */
     public static function prepend($nostoDataId)
     {
-        if (!Nosto::isContextConnected()) {
+        if (!NostoHelperAccount::existsAndIsConnected()) {
             return '';
         }
 

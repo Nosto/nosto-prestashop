@@ -129,7 +129,7 @@ class NostoIndexController
 
     private function generateSmartyData(NostoTagging $nostoTagging, $languages, $currentLanguage)
     {
-        $account = Nosto::getAccount();
+        $account = NostoHelperAccount::find();
         $missingTokens = true;
         if ($account instanceof NostoSDKAccountInterface
             && $account->getApiToken(NostoSDKAPIToken::API_EXCHANGE_RATES)

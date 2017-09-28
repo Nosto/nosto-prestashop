@@ -100,7 +100,7 @@
         <exec executable="sed">
             <arg value="-i"/>
             <arg value="-e"/>
-            <arg value="s/__DIR__/dir\(__FILE__\)/g"/>
+            <arg value="s/__DIR__/dirname\(__FILE__\)/g"/>
             <arg value="${buildsrc}/libs/autoload.php"/>
         </exec>
         <delete file="${buildsrc}/libs/autoload.php-e"/>
@@ -139,6 +139,7 @@
         <delete file="${buildsrc}/libs/nosto/php-sdk/Gruntfile.js"/>
         <delete file="${buildsrc}/libs/nosto/php-sdk/package.json"/>
         <delete file="${buildsrc}/libs/nosto/php-sdk/composer.json"/>
+        <delete file="${buildsrc}/.env"/>
     </target>
 
     <target name="updatedependencies">

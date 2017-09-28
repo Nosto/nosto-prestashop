@@ -90,7 +90,10 @@ class NostoIframe extends NostoSDKIframe
 
         try {
             //Check the recent visits and sales and get the shop traffic for the qualification
-            if (class_exists("AdminStatsControllerCore")) {
+            if (class_exists('AdminStatsControllerCore')
+                && method_exists('AdminStatsControllerCore', 'getTotalSales')
+                && method_exists('AdminStatsControllerCore', 'getVisits')
+            ) {
                 $today = date("Y-m-d");
                 $daysBack = new DateTime();
                 $beginDate = $daysBack->sub(new DateInterval("P30D"))->format("Y-m-d");

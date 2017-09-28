@@ -148,10 +148,10 @@ class NostoAdminTabManager
         if ($languages) {
             $tab->name = array();
             foreach ($languages as $lang) {
-                    $tab->name[$lang['id_lang']] = 'NostoController' . $className;
+                    $tab->name[$lang['id_lang']] = $className;
             }
         } else {
-            $tab->name = 'NostoController' . $className;
+            $tab->name = $className;
         }
         $tab->class_name = $className;
 
