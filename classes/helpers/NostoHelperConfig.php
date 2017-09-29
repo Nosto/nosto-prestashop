@@ -103,7 +103,7 @@ class NostoHelperConfig
             && !empty($shopGroupId)
             && !empty($shopId)
         ) {
-            $return = call_user_func($callback, (string)$name, $value, $shopGroupId, $shopId);
+            $return = call_user_func($callback, (string)$name, $value, false, $shopGroupId, $shopId);
         } else {
             $return = call_user_func($callback, (string)$name, $value);
         }
