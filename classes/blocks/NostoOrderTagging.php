@@ -31,7 +31,12 @@ class NostoOrderTagging
      */
     public static function get()
     {
-        $order = NostoHelperController::resolveObject("id_order", Order::class, "getOrder");
+        $order = NostoHelperController::resolveObject(
+            "id_order",
+            Order::class,
+            "getOrder",
+            false
+        );
         if (!$order instanceof Order) {
             return null;
         }
