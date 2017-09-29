@@ -182,7 +182,7 @@ class NostoHelperPrice
 
         return Tools::ps_round(
             $price,
-            $decimals * _PS_PRICE_COMPUTE_PRECISION_
+            $decimals * _PS_PRICE_DISPLAY_PRECISION_
         );
     }
 }
