@@ -145,6 +145,7 @@ class NostoSku extends NostoSDKSku
                 $imageId = $image[NostoTagging::ID];
                 if ((int)$imageId > 0) {
                     $link = NostoHelperLink::getLink();
+                    //image type null means original image
                     $url = $link->getImageLink(
                         $product->link_rewrite,
                         $combination->id_product . '-' . $imageId,
