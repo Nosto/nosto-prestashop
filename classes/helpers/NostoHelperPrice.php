@@ -169,10 +169,20 @@ class NostoHelperPrice
      * Rounds the price according to the PS rounding mode setting.
      *
      * @param float $price the price to round.
+     * @param Currency|null $currency
      * @return float the rounded price.
      */
-    protected static function roundPrice($price)
+    public static function roundPrice($price, Currency $currency = null)
     {
-        return Tools::ps_round($price, 2);
+        if ($currency === null) {
+            $currency = NostoHelperContext::getCurrency();
+        }
+        //if the decimals is disabled for this currency, then the precision should be 0
+        $currencyDecimalsEnabled = $currency ? (int)$currency->decimals : 1;
+
+        return Tools::ps_round(
+            $price,
+            $currencyDecimalsEnabled * _PS_PRICE_DISPLAY_PRECISION_
+        );
     }
 }

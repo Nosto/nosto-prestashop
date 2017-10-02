@@ -148,10 +148,11 @@ class NostoAdminTabManager
         if ($languages) {
             $tab->name = array();
             foreach ($languages as $lang) {
-                    $tab->name[$lang['id_lang']] = 'NostoController' . $className;
+                    $tab->name[$lang['id_lang']] = $className;
             }
         } else {
-            $tab->name = 'NostoController' . $className;
+            //In prestashop 1.5, the tab name length is limited to max 32
+            $tab->name = $className;
         }
         $tab->class_name = $className;
 

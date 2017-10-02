@@ -25,7 +25,7 @@
 
 require_once(dirname(__FILE__) . '/api.php');
 
-use Nosto\Object\Product\ProductCollection;
+use Nosto\Object\Product\ProductCollection as NostoSDKProductCollection;
 
 /**
  * Front controller for gathering all products from the shop and sending the meta-data to Nosto.
@@ -44,7 +44,7 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
 
         NostoHelperContext::runInContext(
             function () {
-                $collection = new ProductCollection();
+                $collection = new NostoSDKProductCollection();
                 if (!empty(Tools::getValue(NostoTagging::ID))) {
                     $product = new Product(
                         Tools::getValue(NostoTagging::ID),

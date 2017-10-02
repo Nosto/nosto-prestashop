@@ -140,7 +140,7 @@ class NostoTagging extends Module
         $this->bootstrap = true; // Necessary for Bootstrap CSS initialisation in the UI
         $this->author = 'Nosto';
         $this->need_instance = 1;
-        $this->ps_versions_compliancy = array('min' => '1.5', 'max' => _PS_VERSION_);
+        $this->ps_versions_compliancy = array('min' => '1.5.5.0', 'max' => '2');
         $this->module_key = '8d80397cab6ca02dfe8ef681b48c37a3';
 
         parent::__construct();
@@ -914,7 +914,7 @@ class NostoTagging extends Module
      */
     public function render($template)
     {
-        return parent::display(__FILE__, $template);
+        return $this->display(__FILE__, $template);
     }
 
     /**
@@ -974,6 +974,26 @@ class NostoTagging extends Module
     public function hookActionObjectCurrencyUpdateAfter()
     {
         return $this->updateExchangeRatesIfNeeded(true);
+    }
+
+    /**
+     * Override method.
+     * Check smarty before calling Module.display()
+     *
+     * @param string $file
+     * @param string $template
+     * @param string|null $cache_id
+     * @param string|null $compile_id
+     * @return
+     */
+    public function display($file, $template, $cache_id = null, $compile_id = null)
+    {
+        if ($this->smarty == null) {
+            NostoHelperLogger::info('Module::smarty is null, skip rendering nosto content');
+            return null;
+        }
+
+        return parent::display($file, $template, $cache_id, $compile_id);
     }
 
     /**

@@ -129,18 +129,16 @@ class NostoIndexController
 
     private function generateSmartyData(NostoTagging $nostoTagging, $languages, $currentLanguage)
     {
-        $account = Nosto::getAccount();
+        $account = NostoHelperAccount::find();
         $missingTokens = true;
-        if (
-            $account instanceof NostoSDKAccountInterface
+        if ($account instanceof NostoSDKAccountInterface
             && $account->getApiToken(NostoSDKAPIToken::API_EXCHANGE_RATES)
             && $account->getApiToken(NostoSDKAPIToken::API_SETTINGS)
         ) {
             $missingTokens = false;
         }
         // When no account is found we will show the installation URL
-        if (
-            $account instanceof NostoSDKAccountInterface === false
+        if ($account instanceof NostoSDKAccountInterface === false
             && Shop::getContext() === Shop::CONTEXT_SHOP
         ) {
             $currentUser = NostoCurrentUser::loadData();
@@ -197,8 +195,6 @@ class NostoIndexController
             'missing_tokens' => $missingTokens,
             'iframe_installation_url' => $iframeInstallationUrl,
             'iframe_origin' => self::getIframeOrigin(),
-            'image_types' => NostoHelperImage::getProductImageTypes(),
-            'current_image_type' => NostoHelperConfig::getImageType(),
             'sku_enabled' => NostoHelperConfig::getSkuEnabled()
         );
 

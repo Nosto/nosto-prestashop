@@ -97,15 +97,11 @@ class NostoProduct extends NostoSDKProduct
      */
     protected function amendAlternateImages(Product $product)
     {
-        $images = Image::getImages((int)NostoHelperContext::getLanguageId(), (int)$product->id);
+        $images = $product->getImages((int)NostoHelperContext::getLanguageId());
         foreach ($images as $image) {
-            $imageType = NostoHelperImage::getTaggingImageTypeName();
-            if (empty($imageType)) {
-                return;
-            }
-
             $link = NostoHelperLink::getLink();
-            $url = $link->getImageLink($product->link_rewrite, $image['id_image'], $imageType);
+            //Set type to null means original image
+            $url = $link->getImageLink($product->link_rewrite, $image['id_image'], null);
             if ($url) {
                 $this->addAlternateImageUrls($url);
             }
@@ -127,7 +123,16 @@ class NostoProduct extends NostoSDKProduct
 
         $combinationIds = $product->getWsCombinations();
         foreach ($combinationIds as $combinationId) {
-            $combination = new Combination($combinationId[NostoTagging::ID], NostoHelperContext::getLanguageId());
+            //Before 1.6, Combination doesn't support language
+            if (version_compare(_PS_VERSION_, '1.6') < 0) {
+                $combination = new Combination($combinationId[NostoTagging::ID]);
+            } else {
+                $combination = new Combination($combinationId[NostoTagging::ID], NostoHelperContext::getLanguageId());
+            }
+            if ($combination->id === null) {
+                NostoHelperLogger::info('Could not find combination with id:' . $combinationId[NostoTagging::ID]);
+                continue;
+            }
             $this->addSku(NostoSku::loadData($product, $this, $combination, $variants[$combination->id]));
         }
     }
@@ -139,22 +144,56 @@ class NostoProduct extends NostoSDKProduct
      */
     protected function amendImage($product)
     {
-        $imageId = $product->getCoverWs();
-        if ((int)$imageId > 0) {
-            $imageType = NostoHelperImage::getTaggingImageTypeName();
-            if (empty($imageType)) {
-                return;
-            }
+        $imageId = null;
 
+        $defaultCombinationImages = null;
+        $defaultId = $product->getDefaultIdProductAttribute();
+        if ($defaultId !== null) {
+            //The images for default combination
+            $defaultCombinationImages = Product::_getAttributeImageAssociations($defaultId);
+        }
+
+        $coverImageId = $product->getCoverWs();
+        if ((int)$coverImageId > 0) {
+            //Take the cover image as the product image only if the cover image is enable for the default combination,
+            //or the default combination doesn't have any image
+            if (!$defaultCombinationImages || in_array($coverImageId, $defaultCombinationImages)) {
+                $imageId = $coverImageId;
+            }
+        }
+
+        //No image found, take the first from the default combination
+        if (!$imageId && $defaultCombinationImages) {
+            foreach ($defaultCombinationImages as $combinationImageId) {
+                if ((int)$combinationImageId > 0) {
+                    $imageId = $combinationImageId;
+                    break;
+                }
+            }
+        }
+
+        //No image found, take the first from the product
+        if (!$imageId) {
+            //All the product images enabled for current shop
+            $productImages = $product->getImages((int)NostoHelperContext::getLanguageId());
+            if ($productImages) {
+                foreach ($productImages as $productImage) {
+                    if ((int)$productImage['id_image'] > 0) {
+                        $imageId = $productImage['id_image'];
+                        break;
+                    }
+                }
+            }
+        }
+
+        if ((int)$imageId > 0) {
             $link = NostoHelperLink::getLink();
             $url = $link->getImageLink(
                 $product->link_rewrite,
                 $product->id . '-' . $imageId,
-                $imageType
+                null
             );
-            if ($url) {
-                $this->setImageUrl($url);
-            }
+            $this->setImageUrl($url);
         }
     }
 

@@ -39,29 +39,36 @@
                value="">
         <input type="hidden" id="nostotagging_account_details" name="nostotagging_account_details"
                value="">
-        {if $nostotagging_account_authorized}
-            <div class="panel" id="nosto-settings">
-                <div class="panel-heading">
-                    <i class="icon-cog"></i>&nbsp;Settings
-                    {if count($nostotagging_languages) > 1}
-                        <div class="col-md-1">
-                            {l s='Manage accounts:' mod='nostotagging'}
-                        </div>
-                        <div class="col-md-2">
-                            <label for="nostotagging_language"></label>
-                            <select id="nostotagging_language">
-                                {foreach from=$nostotagging_languages item=language}
-                                    <option value="{$language.id_lang|escape:'htmlall':'UTF-8'}"
-                                            {if $language.id_lang == $nostotagging_current_language.id_lang}selected="selected"{/if}>
-                                        {$language.name|escape:'htmlall':'UTF-8'}
-                                    </option>
-                                {/foreach}
-                            </select>
-                        </div>
-                    {/if}
-                    <span class="pull-right clickable"><i class="icon-chevron-up"></i></span>
-                </div>
-                <div class="panel-body">
+
+        <div class="panel" id="nosto-settings">
+            <div class="panel-heading">
+                {if count($nostotagging_languages) > 1}
+                    <div class="col-md-1">
+                        {l s='Manage accounts:' mod='nostotagging'}
+                    </div>
+                    <div class="col-md-2">
+                        <select id="nostotagging_language">
+                            {foreach from=$nostotagging_languages item=language}
+                                <option value="{$language.id_lang|escape:'htmlall':'UTF-8'}"
+                                        {if $language.id_lang == $nostotagging_current_language.id_lang}selected="selected"{/if}>
+                                    {$language.name|escape:'htmlall':'UTF-8'}
+                                </option>
+                            {/foreach}
+                        </select>
+                    </div>
+                {else}
+                    <div class="col-md-3">
+                    </div>
+                {/if}
+                {if $nostotagging_account_authorized}
+                    <span class="pull-right clickable panel-collapsed">
+                        <i class="icon-chevron-down"></i>
+                        {l s='Settings' mod='nostotagging'}
+                    </span>
+                {/if}
+            </div>
+            {if $nostotagging_account_authorized}
+                <div class="panel-body" style="display:none">
                     <div class="form-wrapper nostotagging_settings">
                         <div class="form-group">
                             <div class="col-lg-offset-3">
@@ -122,37 +129,6 @@
                                                value="footer"
                                                {if $nostotagging_position==="footer"}checked="checked"{/if}>
                                         {l s='Footer' mod='nostotagging'}
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <hr>
-                        <div class="form-group">
-                            <label class="control-label col-lg-3" for="image_type">
-                            <span class="label-tooltip" data-toggle="tooltip" title=""
-                                  data-original-title="{l s='Choose which image type Nosto will use in recommendations' mod='nostotagging'}">
-                                {l s='Image type for recommendations' mod='nostotagging'}
-                            </span>
-                            </label>
-
-                            <div class="col-lg-9">
-                                {foreach from=$image_types item=image_type}
-                                    <div class="radio ">
-                                        <label>
-                                            <input type="radio" name="image_type"
-                                                   value="{$image_type['id_image_type']|escape:'quotes':'UTF-8'}"
-                                                   {if $current_image_type===$image_type['id_image_type']}checked="checked"{/if}/>
-                                            {$image_type['name']|escape:'quotes':'UTF-8'}
-                                            ({$image_type['width']|escape:'quotes':'UTF-8'}
-                                            x {$image_type['height']|escape:'quotes':'UTF-8'})
-                                        </label>
-                                    </div>
-                                {/foreach}
-                                <div class="radio">
-                                    <label>
-                                        <input type="radio" name="image_type" value="0"
-                                               {if !$current_image_type}checked="checked"{/if}/>
-                                        {l s='Not defined' mod='nostotagging'}
                                     </label>
                                 </div>
                             </div>
@@ -234,16 +210,16 @@
                         </div>
                     </div>
                 </div>
-                <div class="panel-footer">
+                <div class="panel-footer"  style="display:none">
                     <button type="submit" onclick="Nosto.saveAdvancedSettings()" value="1"
                             name="submit_nostotagging_advanced_settings"
                             class="btn btn-default pull-right">
                         <i class="process-icon-save"></i> Save
                     </button>
                 </div>
-            </div>
-        {/if}
-        <div class="panel">
+            {/if}
+
+            <div class="panel">
             <div class="panel-heading">
                 <i class="icon-desktop"></i>&nbsp;Account
             </div>
@@ -267,6 +243,7 @@
                     </div>
                 </div>
             {/if}
+        </div>
         </div>
     </form>
     <script type="text/javascript"

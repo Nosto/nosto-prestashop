@@ -120,17 +120,17 @@ class NostoOrder extends NostoSDKOrder
         foreach ($orderCollection as $item) {
             /** @var $item Order */
             $products = array_merge($products, $item->getProducts());
-            $totalDiscountsTaxIncl = Tools::ps_round(
+            $totalDiscountsTaxIncl = NostoHelperPrice::roundPrice(
                 $totalDiscountsTaxIncl + $item->total_discounts_tax_incl,
-                2
+                $currency
             );
-            $totalShippingTaxIncl = Tools::ps_round(
+            $totalShippingTaxIncl = NostoHelperPrice::roundPrice(
                 $totalShippingTaxIncl + $item->total_shipping_tax_incl,
-                2
+                $currency
             );
-            $totalWrappingTaxIncl = Tools::ps_round(
+            $totalWrappingTaxIncl = NostoHelperPrice::roundPrice(
                 $totalWrappingTaxIncl + $item->total_wrapping_tax_incl,
-                2
+                $currency
             );
         }
 
@@ -161,9 +161,9 @@ class NostoOrder extends NostoSDKOrder
                         } else {
                             $productPriceWt = 0;
                         }
-                        $totalGiftTaxIncl = Tools::ps_round(
+                        $totalGiftTaxIncl = NostoHelperPrice::roundPrice(
                             $totalGiftTaxIncl + $productPriceWt,
-                            2
+                            $currency
                         );
                         $giftProduct = $product;
                         $giftProduct['product_quantity'] = 1;
@@ -211,9 +211,9 @@ class NostoOrder extends NostoSDKOrder
 
             if ($totalDiscountsTaxIncl > 0) {
                 // Subtract possible gift product price from total as gifts are tagged with price zero (0).
-                $totalDiscountsTaxIncl = Tools::ps_round(
+                $totalDiscountsTaxIncl = NostoHelperPrice::roundPrice(
                     $totalDiscountsTaxIncl - $totalGiftTaxIncl,
-                    2
+                    $currency
                 );
                 if ($totalDiscountsTaxIncl > 0) {
                     $purchasedItem = new NostoOrderPurchasedItem();

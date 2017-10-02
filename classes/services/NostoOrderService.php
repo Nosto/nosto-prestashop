@@ -53,38 +53,52 @@ class NostoOrderService extends AbstractNostoService
     public function sendOrder(Order $order)
     {
         NostoHelperContext::runWithEachNostoAccount(function () use ($order) {
-            try {
-                $nostoOrder = NostoOrder::loadData($order);
-                $account = NostoHelperAccount::find();
-                if ($account !== null && $account->isConnectedToNosto()) {
-                    $customerId = NostoCustomerManager::getNostoId($order);
-
-                    $operation = new NostoSDKOrderConfirmOperation($account);
-                    $operation->send($nostoOrder, $customerId);
+            // We need to forge the employee in order to get a price for a product
+            $employeeId = false;
+            if (!is_object(Context::getContext()->employee) && !is_object(Context::getContext()->cart)) {
+                //if employee is null and cart is null, new Product() kills the process. (SoNice issue)
+                $employeeId = 0;
+            }
+            NostoHelperContext::runInContext(
+                function () use ($order) {
                     try {
-                        if (self::$syncInventoriesAfterOrder === true) {
-                            $purchasedItems = $nostoOrder->getPurchasedItems();
-                            $products = array();
-                            foreach ($purchasedItems as $item) {
-                                $productId = $item->getProductId();
-                                if (empty($productId) || $productId < 0) {
-                                    continue;
+                        $nostoOrder = NostoOrder::loadData($order);
+                        $account = NostoHelperAccount::find();
+                        if ($account !== null && $account->isConnectedToNosto()) {
+                            $customerId = NostoCustomerManager::getNostoId($order);
+
+                            $operation = new NostoSDKOrderConfirmOperation($account);
+                            $operation->send($nostoOrder, $customerId);
+                            try {
+                                if (self::$syncInventoriesAfterOrder === true) {
+                                    $purchasedItems = $nostoOrder->getPurchasedItems();
+                                    $products = array();
+                                    foreach ($purchasedItems as $item) {
+                                        $productId = $item->getProductId();
+                                        if (empty($productId) || $productId < 0) {
+                                            continue;
+                                        }
+                                        $product = new Product($productId);
+                                        if ($product instanceof Product) {
+                                            $products[] = $product;
+                                        }
+                                    }
+                                    $nostoProductOperation = new NostoProductService();
+                                    $nostoProductOperation->updateBatch($products);
                                 }
-                                $product = new Product($productId);
-                                if ($product instanceof Product) {
-                                    $products[] = $product;
-                                }
+                            } catch (Exception $e) {
+                                NostoHelperLogger::error($e, 'Failed to synchronize products after order');
                             }
-                            $nostoProductOperation = new NostoProductService();
-                            $nostoProductOperation->updateBatch($products);
                         }
                     } catch (Exception $e) {
-                        NostoHelperLogger::error($e, 'Failed to synchronize products after order');
+                        NostoHelperLogger::error($e, 'Failed to send order confirmation');
                     }
-                }
-            } catch (Exception $e) {
-                NostoHelperLogger::error($e, 'Failed to send order confirmation');
-            }
+                },
+                false,
+                false,
+                false,
+                $employeeId
+            );
         });
     }
 }

@@ -62,11 +62,12 @@ class NostoHelperController
      * @param string $idName the name of the query parameter containing the id
      * @param string $klass the classname of the object to instantiate
      * @param string $method the accessor method in the base controller
+     * @param bool $multiLanguageObject
      * @return mixed the resolved object or null
      *
      * @suppress PhanTypeMismatchArgument
      */
-    public static function resolveObject($idName, $klass, $method)
+    public static function resolveObject($idName, $klass, $method, $multiLanguageObject = true)
     {
         $object = null;
         if (method_exists(Context::getContext()->controller, $method)) {
@@ -81,7 +82,7 @@ class NostoHelperController
                 $object = new $klass
                 (
                     (int)$id,
-                    NostoHelperContext::getLanguageId(),
+                    $multiLanguageObject ? NostoHelperContext::getLanguageId() : null,
                     NostoHelperContext::getShopId()
                 );
             }

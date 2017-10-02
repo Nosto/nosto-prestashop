@@ -49,7 +49,7 @@ class NostoHeaderContent
      */
     public static function get(NostoTagging $module)
     {
-        $account = Nosto::getAccount();
+        $account = NostoHelperAccount::find();
         if ($account === null) {
             return '';
         }
