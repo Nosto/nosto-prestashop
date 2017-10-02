@@ -50,11 +50,15 @@ class NostoPageTypeTagging
             return '';
         }
 
-        $pageType = new MarkupableString(
-            self::$controllers[NostoHelperController::getControllerName()],
-            'nosto_page_type'
-        );
+        if (array_key_exists(NostoHelperController::getControllerName(), self::$controllers)) {
+            $pageType = new MarkupableString(
+                self::$controllers[NostoHelperController::getControllerName()],
+                'nosto_page_type'
+            );
 
-        return $pageType->toHtml();
+            return $pageType->toHtml();
+        } else {
+            return '';
+        }
     }
 }

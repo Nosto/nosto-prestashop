@@ -178,11 +178,11 @@ class NostoHelperPrice
             $currency = NostoHelperContext::getCurrency();
         }
         //if the decimals is disabled for this currency, then the precision should be 0
-        $decimals = $currency ? (int)$currency->decimals : 1;
+        $currencyDecimalsEnabled = $currency ? (int)$currency->decimals : 1;
 
         return Tools::ps_round(
             $price,
-            $decimals * _PS_PRICE_DISPLAY_PRECISION_
+            $currencyDecimalsEnabled * _PS_PRICE_DISPLAY_PRECISION_
         );
     }
 }
