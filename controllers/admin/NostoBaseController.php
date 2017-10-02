@@ -71,6 +71,7 @@ abstract class NostoBaseController extends ModuleAdminController
     }
 
     /**
+     * @param int $languageId
      * @suppress PhanDeprecatedFunction
      */
     protected function redirectToAdmin($languageId)
