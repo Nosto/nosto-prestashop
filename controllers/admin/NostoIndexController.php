@@ -107,7 +107,6 @@ class NostoIndexController
         $shopGroupId = null;
         if (NostoHelperContext::getShop() instanceof Shop) {
             $shopId = NostoHelperContext::getShopId();
-            $shopGroupId = NostoHelperContext::getShopGroupId();
         }
 
         $languageId = (int)Tools::getValue('nostotagging_current_language', 0);
