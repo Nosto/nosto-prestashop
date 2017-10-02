@@ -151,6 +151,7 @@ class NostoAdminTabManager
                     $tab->name[$lang['id_lang']] = $className;
             }
         } else {
+            //In prestashop 1.5, the tab name length is limited to max 32
             $tab->name = $className;
         }
         $tab->class_name = $className;
