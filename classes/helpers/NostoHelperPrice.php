@@ -156,6 +156,15 @@ class NostoHelperPrice
                     $options['use_customer_price']
                 );
 
+                //A hack to fix the multi-currency issue. Function Tools::convertPrice() caches the
+                //default currency. If multi-store is enabled and default currencies are different in
+                //different stores, it cause problem. Big number 1000,000 is used to avoid rounding issue.
+                $exchangeRate = Tools::convertPrice(
+                    1000000,
+                    (int)Configuration::get('PS_CURRENCY_DEFAULT')
+                ) / 1000000;
+                $value *= $exchangeRate;
+
                 return NostoHelperPrice::roundPrice($value);
             },
             false,
