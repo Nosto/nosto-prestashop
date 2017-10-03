@@ -258,7 +258,7 @@ class NostoTagging extends Module
 
         if (!Module::isEnabled($this->name)) {
             $output .= $this->displayError(
-                $this->l('Nosto module is inactivated for this store. Please activate it before continue.')
+                $this->l('Nosto is deactivated for this store view. Please activate it before continuing.')
             );
         }
 
