@@ -256,6 +256,12 @@ class NostoTagging extends Module
             $output .= $this->displayError($this->l('Please choose a shop to configure Nosto for.'));
         }
 
+        if (!Module::isEnabled($this->name)) {
+            $output .= $this->displayError(
+                $this->l('Nosto is deactivated for this store view. Please activate it before continuing.')
+            );
+        }
+
         return $output;
     }
 
@@ -268,6 +274,16 @@ class NostoTagging extends Module
     public function getContent()
     {
         $output = $this->displayMessages();
+
+        //If scope is not on shop level, skip rendering nosto page
+        if (Shop::getContext() !== Shop::CONTEXT_SHOP) {
+            return $output;
+        }
+
+        //if nosto module is inactivated for this shop, skip rendering nosto page
+        if (!Module::isEnabled($this->name)) {
+            return $output;
+        }
 
         $indexController = new NostoIndexController();
         $smartyMetaData = $indexController->getSmartyMetaData($this);

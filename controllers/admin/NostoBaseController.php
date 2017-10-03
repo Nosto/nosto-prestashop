@@ -40,11 +40,11 @@ abstract class NostoBaseController extends ModuleAdminController
         $languages = Language::getLanguages(true, $this->context->shop->id);
         $handlingLanguage = NostoHelperLanguage::ensureAdminLanguage($languages, $this->getLanguageId());
         if (Shop::getContext() !== Shop::CONTEXT_SHOP) {
-            $this->redirectToAdmin();
+            $this->redirectToAdmin($handlingLanguage['id_lang']);
             return;
         } elseif ($handlingLanguage['id_lang'] != $this->getLanguageId()) {
             NostoHelperFlash::add('error', $this->l('Language cannot be empty.'));
-            $this->redirectToAdmin();
+            $this->redirectToAdmin($handlingLanguage['id_lang']);
             return;
         }
 
@@ -58,7 +58,7 @@ abstract class NostoBaseController extends ModuleAdminController
         );
 
         if ($redirectToAdminPage) {
-            $this->redirectToAdmin();
+            $this->redirectToAdmin($handlingLanguage['id_lang']);
         }
     }
 
@@ -71,14 +71,21 @@ abstract class NostoBaseController extends ModuleAdminController
     }
 
     /**
+     * @param int $languageId
      * @suppress PhanDeprecatedFunction
      */
-    protected function redirectToAdmin()
+    protected function redirectToAdmin($languageId)
     {
         $tabId = (int)Tab::getIdFromClassName('AdminModules');
         $employeeId = (int)$this->context->cookie->id_employee;
         $token = Tools::getAdminToken('AdminModules' . $tabId . $employeeId);
-        Tools::redirectAdmin('index.php?controller=AdminModules&configure=nostotagging&token=' . $token);
+        Tools::redirectAdmin(
+            'index.php?controller=AdminModules&configure=nostotagging'
+            . '&nostotagging_current_language='
+            . $languageId
+            . '&token='
+            . $token
+        );
     }
 
     /**
