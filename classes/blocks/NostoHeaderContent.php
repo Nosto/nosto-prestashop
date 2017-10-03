@@ -68,6 +68,7 @@ class NostoHeaderContent
         $html = $module->render('views/templates/hook/header_meta-tags.tpl');
         $html .= $module->render('views/templates/hook/header_embed-script.tpl');
         $html .= $module->render('views/templates/hook/header_add-to-cart.tpl');
+        $html .= $module->render('views/templates/hook/header_prestashop-add-to-cart-event-handler.tpl');
         $html .= NostoPageTypeTagging::get();
 
         return $html;
