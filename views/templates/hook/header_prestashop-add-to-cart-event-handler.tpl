@@ -39,7 +39,7 @@
                 //resend cart tagging and reload recommendations
                 if (typeof nostojs === 'function') {
                     nostojs(function (api) {
-                        api.resendCartTagging("nosto_cart_tagging");
+                        api.resendCartTagging();
                         api.loadRecommendations();
                     });
                 }
