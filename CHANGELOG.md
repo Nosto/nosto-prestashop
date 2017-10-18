@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
+## 2.8.8
+- Fix a bug that causes issue on prestashop ajax request
+
 ## 2.8.7-RC1
 - Add a workaround for a third party prestashop bug
 
