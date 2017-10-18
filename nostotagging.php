@@ -49,6 +49,7 @@ if ((basename(__FILE__) === 'nostotagging.php')) {
  */
 class NostoTagging extends Module
 {
+    const AJAX_REQUEST_PARAMETER_KEY = 'ajax';
     /** @var bool */
     public $bootstrap;
     /**
@@ -883,7 +884,12 @@ class NostoTagging extends Module
      */
     public function hookDisplayBackOfficeTop()
     {
-        NostoNotificationManager::checkAndDisplay($this);
+        //Do not render any thing when it is a ajax request
+        if (array_key_exists(self::AJAX_REQUEST_PARAMETER_KEY, $_REQUEST)
+            && $_REQUEST[self::AJAX_REQUEST_PARAMETER_KEY] != 1
+        ) {
+            NostoNotificationManager::checkAndDisplay($this);
+        }
     }
 
     /**
