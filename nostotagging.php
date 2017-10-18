@@ -883,7 +883,10 @@ class NostoTagging extends Module
      */
     public function hookDisplayBackOfficeTop()
     {
-        NostoNotificationManager::checkAndDisplay($this);
+        //Do not render any thing when it is a ajax request
+        if ($_REQUEST['ajax'] != 1) {
+            NostoNotificationManager::checkAndDisplay($this);
+        }
     }
 
     /**
