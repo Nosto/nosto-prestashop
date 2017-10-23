@@ -431,27 +431,7 @@ class NostoTagging extends Module
                 $multi_currency_method = Tools::getValue('multi_currency_method');
                 $helper_config->saveMultiCurrencyMethod($language_id, $multi_currency_method);
                 $helper_config->saveNostoTaggingRenderPosition($language_id, Tools::getValue('nostotagging_position'));
-
-                // Check that only one tax rule group is in use, otherwise revert back to disabled
-                if (
-                    $multi_currency_method === NostoTaggingHelperConfig::MULTI_CURRENCY_METHOD_TAX_RULES_EXCHANGE_RATE
-                ) {
-                    $forged_context = $context_factory->forgeContext($language_id, $shop_id);
-                    $tax_rule_groups_in_use = $helper_currency->getTaxGroupsInUse($forged_context);
-                    if (count($tax_rule_groups_in_use) > 1) {
-                        $helper_flash->add(
-                            'error',
-                            $this->l(
-                                'You cannot use this multi currency method 
-                                when multiple tax rule groups are used for products.'
-                            )
-                        );
-                        $helper_config->saveMultiCurrencyMethod(
-                            $language_id,
-                            NostoTaggingHelperConfig::MULTI_CURRENCY_METHOD_DISABLED
-                        );
-                    }
-                }
+                
                 $account = $helper_account->find($language_id);
                 $account_meta = new NostoTaggingMetaAccount();
                 $account_meta->loadData($this->context, $language_id);
