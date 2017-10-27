@@ -61,17 +61,17 @@ class NostoHelperVariation
 
         $sql = sprintf(
             "
-                SELECT 
+                SELECT
                     DISTINCT tr.id_country
-                FROM 
+                FROM
                     %sproduct p
                 INNER JOIN
-					%stax_rules_group trg ON (p.id_tax_rules_group = trg.id_tax_rules_group)
-				$innerJoinShop
+                    %stax_rules_group trg ON (p.id_tax_rules_group = trg.id_tax_rules_group)
+                $innerJoinShop
                 INNER JOIN
-					%stax_rule tr ON trg.id_tax_rules_group = tr.id_tax_rules_group					
-				INNER JOIN 
-				    %scountry c ON c.id_country = tr.id_country
+                    %stax_rule tr ON trg.id_tax_rules_group = tr.id_tax_rules_group					
+                INNER JOIN
+                    %scountry c ON c.id_country = tr.id_country
                 WHERE
                     trg.active = 1 AND c.active = 1 $shopFilter
            ",
