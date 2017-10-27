@@ -1,5 +1,4 @@
 <?php
-
 /**
  * 2013-2016 Nosto Solutions Ltd
  *
@@ -23,35 +22,79 @@
  * @copyright 2013-2016 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
-use \Nosto\Object\ MarkupableString;
 
-class NostoVariation extends MarkupableString
+use Nosto\Object\Product\Variation as NostoSDKVariation;
+
+class NostoVariation extends NostoSDKVariation
 {
     /**
-     * Constructor
+     * Loads the Variation info from a Magento product model.
      *
-     * @param string $variationId
+     * @param Product $product the product model.
+     * @param array $variationKey
+     * @param string $productAvailability
+     * @return NostoVariation
      */
-    public function __construct($variationId)
-    {
-        parent::__construct($variationId, 'nosto_price_variation');
-    }
+    public static function loadData(
+        Product $product,
+        $variationKey,
+        $productAvailability
+    ) {
+        $currencyId = $variationKey['id_currency'];
+        if (!$currencyId) {
+            $currencyId = NostoHelperCurrency::getBaseCurrency()->id;
+        }
 
-    public static function loadData()
-    {
-        $nostoVariation = new NostoVariation(NostoHelperContext::getCurrency()->iso_code);
+        $countryId = $variationKey['id_country'];
+        if (!$countryId) {
+            //get default countryId
+            $defaultCountryId = Configuration::get('PS_COUNTRY_DEFAULT');
+            $countryIds = NostoHelperVariation::getVariationCountries(NostoHelperContext::getShopId());
+            if ($defaultCountryId && !in_array($defaultCountryId, $countryIds)) {
+                //If the country id is 0, and the default country id is not being used,
+                //take the default country id to get the tax from default country
+                $countryId = $defaultCountryId;
+            }
+        }
 
-        NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoVariation), array(
-            'nosto_variation' => $nostoVariation
-        ));
-        return $nostoVariation;
-    }
+        return NostoHelperContext::runInContext(
+            function () use ($product, $variationKey, $productAvailability) {
+                $product = new Product(
+                    $product->id,
+                    true,
+                    NostoHelperContext::getLanguageId(),
+                    NostoHelperContext::getShopId()
+                );
+                $nostoVariation = new NostoVariation();
+                $variationId = NostoHelperVariation::getVariationIdFromCountryCurrency(
+                    NostoHelperContext::getCurrencyId(),
+                    $variationKey['id_country'],
+                    $variationKey['id_group']
+                );
+                $nostoVariation->setId($variationId);
+                $nostoVariation->setAvailability($productAvailability);
+                $nostoVariation->setPriceCurrencyCode(
+                    Tools::strtoupper(NostoHelperContext::getCurrency()->iso_code)
+                );
 
-    /**
-     * @return mixed
-     */
-    public function getVariationId()
-    {
-        return $this->getValue();
+                $nostoVariation->setListPrice(
+                    NostoHelperPrice::getProductPriceForGroup(
+                        $product->id,
+                        $variationKey['id_group'],
+                        false
+                    )
+                );
+                $nostoVariation->setPrice(
+                    NostoHelperPrice::getProductPriceForGroup($product->id, $variationKey['id_group'])
+                );
+
+                return $nostoVariation;
+            },
+            false,
+            false,
+            $currencyId,
+            false,
+            $countryId
+        );
     }
 }

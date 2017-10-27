@@ -186,6 +186,7 @@ class NostoIndexController
             ),
             'multi_currency_method' => NostoHelperConfig::getMultiCurrencyMethod(),
             'nostotagging_position' => NostoHelperConfig::getNostotaggingRenderPosition(),
+            'nostotagging_variation_switch' => NostoHelperConfig::getVariationEnabled(),
             'nostotagging_ps_version_class' => 'ps-' . str_replace(
                 '.',
                 '',

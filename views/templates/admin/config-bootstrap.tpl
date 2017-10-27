@@ -191,7 +191,7 @@
                                 </div>
                             </div>
                         {/if}
-
+                        <hr>
                         <div class="form-group">
                             <label class="control-label col-lg-3">
                                 <span title="" data-toggle="tooltip" class="label-tooltip" data-original-title="{l s='Send SKU data to Nosto for recommendation' mod='nostotagging'}" data-html="true">
@@ -204,6 +204,24 @@
                                     <label for="nosto_sku_switch_on" class="radioCheck">Yes</label>
                                     <input type="radio" name="nosto_sku_switch" id="nosto_sku_switch_off" value="0" {if $sku_enabled !== true}checked="checked" {/if}/>
                                     <label for="nosto_sku_switch_off" class="radioCheck">No</label>
+                                    <a class="slide-button btn"></a>
+                                </span>
+                            </div>
+                        </div>
+                        <hr>
+                        <!-- Price variation -->
+                        <div class="form-group">
+                            <label class="control-label col-lg-3">
+                                <span title="" data-toggle="tooltip" class="label-tooltip" data-original-title="{l s='Price variation' mod='nostotagging'}" data-html="true">
+                                    {l s='Send price variation data to Nosto' mod='nostotagging'}
+                                </span>
+                            </label>
+                            <div class="col-lg-9">
+                                <span class="switch prestashop-switch fixed-width-lg">
+                                    <input type="radio" name="nosto_variation_switch" id="nosto_variation_switch_on"  value="1" {if $nostotagging_variation_switch === true}checked="checked" {/if}/>
+                                    <label for="nosto_variation_switch_on" class="radioCheck">Yes</label>
+                                    <input type="radio" name="nosto_variation_switch" id="nosto_variation_switch_off" value="0" {if $nostotagging_variation_switch !== true}checked="checked" {/if}/>
+                                    <label for="nosto_variation_switch_off" class="radioCheck">No</label>
                                     <a class="slide-button btn"></a>
                                 </span>
                             </div>

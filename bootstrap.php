@@ -46,6 +46,7 @@ class NostoBootstrap
         require_once($moduleDir . '/classes/helpers/NostoHelperConfig.php');
         require_once($moduleDir . '/classes/models/NostoCustomer.php');
         require_once($moduleDir . '/classes/helpers/NostoHelperFlash.php');
+        require_once($moduleDir . '/classes/helpers/NostoHelperPriceVariation.php');
         require_once($moduleDir . '/classes/helpers/NostoHelperHook.php');
         require_once($moduleDir . '/classes/helpers/NostoHelperLanguage.php');
         require_once($moduleDir . '/classes/helpers/NostoHelperLogger.php');
@@ -72,12 +73,15 @@ class NostoBootstrap
         require_once($moduleDir . '/classes/models/NostoOrder.php');
         require_once($moduleDir . '/classes/models/order/NostoOrderBuyer.php');
         require_once($moduleDir . '/classes/models/NostoVariation.php');
+        require_once($moduleDir . '/classes/models/NostoCurrentVariation.php');
         require_once($moduleDir . '/classes/models/order/NostoOrderPurchasedItem.php');
         require_once($moduleDir . '/classes/models/order/NostoOrderStatus.php');
         require_once($moduleDir . '/classes/models/NostoProduct.php');
         require_once($moduleDir . '/classes/models/NostoSku.php');
         require_once($moduleDir . '/classes/models/NostoBrand.php');
         require_once($moduleDir . '/classes/models/NostoSearch.php');
+        require_once($moduleDir . '/classes/models/variation/NostoVariationCollection.php');
+        require_once($moduleDir . '/classes/models/NostoVariation.php');
         require_once($moduleDir . '/classes/blocks/NostoBrandTagging.php');
         require_once($moduleDir . '/classes/blocks/NostoCartTagging.php');
         require_once($moduleDir . '/classes/blocks/NostoCategoryTagging.php');
