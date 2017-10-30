@@ -40,7 +40,7 @@ class NostoHelperContext
      * @param bool|int $idShop the shop identifier. False means do not manipulate it
      * @param bool|int $currencyId the currency id. False means do not manipulate it
      * @param bool|int $employeeId the employee id. False means do not manipulate it
-     * @param bool|int $countyId the country id. False means do not manipulate it
+     * @param bool|int $countryId the country id. False means do not manipulate it
      * @return mixed the return value of the anonymous function
      */
     public static function runInContext(
@@ -51,17 +51,17 @@ class NostoHelperContext
         $employeeId = false,
         $countryId = false
     ) {
-        $retval = null;
+        $retVal = null;
 
         self::emulateContext($idLang, $idShop, $currencyId, $employeeId, $countryId);
         try {
-            $retval = $callable();
+            $retVal = $callable();
         } catch (Exception $e) {
             NostoHelperLogger::log($e->getMessage());
         }
         self::revertToOriginalContext();
 
-        return $retval;
+        return $retVal;
     }
 
     public static function runWithEachNostoAccount($callable)
@@ -100,7 +100,7 @@ class NostoHelperContext
      * @param bool|int $shopId the shop identifier. False means do not manipulate it
      * @param bool|int $currencyId the currency id. False means do not manipulate it
      * @param bool|int $employeeId the employee id. False means do not manipulate it
-     * @param bool|int $countyId the country id. False means do not manipulate it
+     * @param bool|int $countryId the country id. False means do not manipulate it
      *
      * @suppress PhanTypeMismatchArgument
      */
@@ -134,7 +134,7 @@ class NostoHelperContext
             ShopUrl::resetMainDomainCache();
         }
 
-        //clean local cache. Otherwish it may get the wrong quantity data or other data
+        //clean local cache. Otherwise it may get the wrong quantity data or other data
         Cache::clean("*");
 
         if ($languageId !== false) {

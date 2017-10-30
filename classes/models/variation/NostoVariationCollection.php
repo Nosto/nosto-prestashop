@@ -37,23 +37,12 @@ class NostoVariationCollection extends NostoSDKVariationCollection
         Product $product,
         $productAvailability
     ) {
-        $defaultVariationKey = array(0, 0, 0);
         $variationKeys = NostoHelperVariation::getAllVariationKeys();
 
         foreach ($variationKeys as $variationKey) {
-            //skip default variation
-            if ($variationKey == $defaultVariationKey) {
-                continue;
-            }
             $variation = NostoVariation::loadData($product, $variationKey, $productAvailability);
             $this->append($variation);
         }
-
-        $variation = NostoVariation::loadData($product, array(
-            'id_currency' => 1,
-            'id_country' => 21,
-            'id_group' => 1
-        ), $productAvailability);
     }
 
     /**

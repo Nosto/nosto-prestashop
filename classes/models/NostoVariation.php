@@ -28,7 +28,7 @@ use Nosto\Object\Product\Variation as NostoSDKVariation;
 class NostoVariation extends NostoSDKVariation
 {
     /**
-     * Loads the Variation info from a Magento product model.
+     * Loads the Variation info from a prestashop product model.
      *
      * @param Product $product the product model.
      * @param array $variationKey
@@ -40,21 +40,9 @@ class NostoVariation extends NostoSDKVariation
         $variationKey,
         $productAvailability
     ) {
-        $currencyId = $variationKey['id_currency'];
+        $currencyId = $variationKey[NostoHelperVariation::ID_CURRENCY];
         if (!$currencyId) {
             $currencyId = NostoHelperCurrency::getBaseCurrency()->id;
-        }
-
-        $countryId = $variationKey['id_country'];
-        if (!$countryId) {
-            //get default countryId
-            $defaultCountryId = Configuration::get('PS_COUNTRY_DEFAULT');
-            $countryIds = NostoHelperVariation::getVariationCountries(NostoHelperContext::getShopId());
-            if ($defaultCountryId && !in_array($defaultCountryId, $countryIds)) {
-                //If the country id is 0, and the default country id is not being used,
-                //take the default country id to get the tax from default country
-                $countryId = $defaultCountryId;
-            }
         }
 
         return NostoHelperContext::runInContext(
@@ -66,10 +54,10 @@ class NostoVariation extends NostoSDKVariation
                     NostoHelperContext::getShopId()
                 );
                 $nostoVariation = new NostoVariation();
-                $variationId = NostoHelperVariation::getVariationIdFromCountryCurrency(
+                $variationId = NostoHelperVariation::getVariationId(
                     NostoHelperContext::getCurrencyId(),
-                    $variationKey['id_country'],
-                    $variationKey['id_group']
+                    $variationKey[NostoHelperVariation::ID_COUNTRY],
+                    $variationKey[NostoHelperVariation::ID_GROUP]
                 );
                 $nostoVariation->setId($variationId);
                 $nostoVariation->setAvailability($productAvailability);
@@ -80,12 +68,15 @@ class NostoVariation extends NostoSDKVariation
                 $nostoVariation->setListPrice(
                     NostoHelperPrice::getProductPriceForGroup(
                         $product->id,
-                        $variationKey['id_group'],
+                        $variationKey[NostoHelperVariation::ID_GROUP],
                         false
                     )
                 );
                 $nostoVariation->setPrice(
-                    NostoHelperPrice::getProductPriceForGroup($product->id, $variationKey['id_group'])
+                    NostoHelperPrice::getProductPriceForGroup(
+                        $product->id,
+                        $variationKey[NostoHelperVariation::ID_GROUP]
+                    )
                 );
 
                 return $nostoVariation;
@@ -94,7 +85,7 @@ class NostoVariation extends NostoSDKVariation
             false,
             $currencyId,
             false,
-            $countryId
+            $variationKey[NostoHelperVariation::ID_COUNTRY]
         );
     }
 }

@@ -28,17 +28,23 @@
  */
 class NostoHelperVariation
 {
-    const CURRENCY = 'id_currency';
-    const COUNTRY = 'id_country';
-    const GROUP = 'id_group';
+    const ANY = 'ANY';
+    const ID_COUNTRY = 'id_country';
+    const ID_GROUP = 'id_group';
+    const ID_CURRENCY = 'id_currency';
+    const COUNTRY = 'country';
+    const GROUP = 'group';
+    /** cache timeout in second */
+    const CACHE_TIMEOUT = 600;
 
     /**
-     * Returns an array of tax rule groups that are assigned to any product
+     * Returns an array of country ids being used in tax rule groups that are assigned to any product
      *
-     * @return array
+     * @return array of country ids
      */
-    public static function getCountriesBeingUsedInTaxRules($shopId = null)
+    public static function getCountriesBeingUsedInTaxRules()
     {
+        $shopId = NostoHelperContext::getShopId();
         $cache = Cache::getInstance();
         $cacheKey = 'NostoHelperPriceVariation-getCountriesBeingUsedInTaxRules-' . $shopId;
         if ($cache->exists($cacheKey)) {
@@ -83,38 +89,45 @@ class NostoHelperVariation
 
         $rows = Db::getInstance()->executeS($sql);
         foreach ($rows as $row) {
-            $res[] = $row['id_country'];
+            $res[] = $row[self::ID_COUNTRY];
         }
 
         //cache for 10 minutes
-        $cache->set($cache, $res, 600);
-        
+        $cache->set($cache, $res, self::CACHE_TIMEOUT);
+
         return $res;
     }
 
-    public static function getAllCountriesAndGroupFromSpecificPrices($shopId = null)
+    /**
+     * Get countries and groups are used in the specific prices, including
+     * product specific prices and catalog price rules
+     * @return array with 2 keys: 'country', 'group'
+     */
+    public static function getAllCountriesAndGroupsFromSpecificPrices()
     {
+        $shopId = NostoHelperContext::getShopId();
         $cache = Cache::getInstance();
-        $cacheKey = 'NostoHelperPriceVariation-getAllCountriesAndGroupFromSpecificPrices-' . $shopId;
+        $cacheKey = 'NostoHelperPriceVariation-getAllCountriesAndGroupsFromSpecificPrices-' . $shopId;
         if ($cache->exists($cacheKey)) {
             return $cache->get($cacheKey);
         }
 
         $res = array(
-            'country' => array(0),
-            'group' => array(0)
+            self::COUNTRY => array(0),
+            '' . self::GROUP . '' => array(0)
         );
 
+        $filter = $shopId ? ' WHERE `id_shop` = ' . (int)$shopId : '';
         $result = Db::getInstance()->executeS(
-            'SELECT DISTINCT id_country, id_group FROM `' . _DB_PREFIX_ . 'specific_price` '
-            . ($shopId != null ? ' WHERE `id_shop` = ' . (int)$shopId : '')
+            sprintf('SELECT DISTINCT id_country, id_group FROM `%sspecific_price` ', _DB_PREFIX_)
+            . $filter
         );
         if ($result && is_array($result)) {
             $countryIds = array();
             $groupIds = array();
             foreach ($result as $row) {
-                $countryIds[] = $row['id_country'];
-                $groupIds[] = $row['id_group'];
+                $countryIds[] = $row[self::ID_COUNTRY];
+                $groupIds[] = $row[self::ID_GROUP];
 
             }
             $countryIds = array_unique($countryIds);
@@ -129,36 +142,46 @@ class NostoHelperVariation
             }
 
             $res = array(
-                'country' => $countryIds,
-                'group' => $groupIds
+                self::COUNTRY => $countryIds,
+                self::GROUP => $groupIds
             );
         }
 
         //cache for 10 minutes
-        $cache->set($cache, $res, 600);
+        $cache->set($cache, $res, self::CACHE_TIMEOUT);
 
         return $res;
     }
 
-    public static function getVariationCountries($shopId)
+    /**
+     * Get all the countries are used in tax rules and specific price
+     * @return array of country ids
+     */
+    public static function getVariationCountries()
     {
+        $shopId = NostoHelperContext::getShopId();
         $cache = Cache::getInstance();
         $cacheKey = 'NostoHelperPriceVariation-getVariationCountries-' . $shopId;
         if ($cache->exists($cacheKey)) {
             return $cache->get($cacheKey);
         }
 
-        $countryIds = self::getAllCountriesAndGroupFromSpecificPrices($shopId)['country'];
-        $countryIdsFromTaxRules = self::getCountriesBeingUsedInTaxRules($shopId);
+        $countryIds = self::getAllCountriesAndGroupsFromSpecificPrices()[self::COUNTRY];
+        $countryIdsFromTaxRules = self::getCountriesBeingUsedInTaxRules();
         $countryIds = array_unique(array_merge($countryIds, $countryIdsFromTaxRules));
         //cache for 10 minutes
-        $cache->set($cache, $countryIds, 600);
+        $cache->set($cache, $countryIds, self::CACHE_TIMEOUT);
 
         return $countryIds;
     }
 
-    public static function getAllVariationKeys($shopId = null)
+    /**
+     * Get all the variation keys
+     * @return array Each if the element is an array with 3 keys: id_currency, id_country, id_group
+     */
+    public static function getAllVariationKeys()
     {
+        $shopId = NostoHelperContext::getShopId();
         $cache = Cache::getInstance();
         $cacheKey = 'NostoHelperPriceVariation-getVariationCountries-' . $shopId;
         if ($cache->exists($cacheKey)) {
@@ -169,68 +192,79 @@ class NostoHelperVariation
         $allCurrencies = NostoHelperCurrency::getCurrencies(true);
         /** @var array $currency */
         foreach ($allCurrencies as $currency) {
-            $currencyFactor[] = $currency['id_currency'];
+            $currencyFactor[] = $currency[self::ID_CURRENCY];
         }
         if (empty($currencyFactor)) {
             $currencyFactor[] = 0;
         }
 
-        $countryFactor = self::getVariationCountries($shopId = null);
+        $countryFactor = self::getVariationCountries();
 
-        $groupFactor = self::getAllCountriesAndGroupFromSpecificPrices($shopId)['group'];
+        $groupFactor = self::getAllCountriesAndGroupsFromSpecificPrices()[self::GROUP];
 
         $variationKeys = array();
         foreach ($currencyFactor as $currencyId) {
             foreach ($countryFactor as $countryId) {
                 foreach ($groupFactor as $groupId) {
                     $variationKeys[] = array(
-                        'id_currency' => $currencyId,
-                        'id_country' => $countryId,
-                        'id_group' => $groupId
+                        self::ID_CURRENCY => $currencyId,
+                        self::ID_COUNTRY => $countryId,
+                        self::ID_GROUP => $groupId
                     );
                 }
             }
         }
 
         //cache for 10 minutes
-        $cache->set($cache, $variationKeys, 600);
+        $cache->set($cache, $variationKeys, self::CACHE_TIMEOUT);
 
         return $variationKeys;
     }
 
-    public static function getAllVariationIds($shopId = null)
+    /**
+     * Get all the variation ids
+     * @return array variation ids in string
+     */
+    public static function getAllVariationIds()
     {
-        $variationKeys = self::getAllVariationKeys($shopId);
+        $variationKeys = self::getAllVariationKeys();
         $variationIds = array();
         foreach ($variationKeys as $variationKey) {
-            $variationIds[] = self::getVariationIdFromCountryCurrency(
-                $variationKey['id_currency'],
-                $variationKey['id_country'],
-                $variationKey['id_group']
+            $variationIds[] = self::getVariationId(
+                $variationKey[self::ID_CURRENCY],
+                $variationKey[self::ID_COUNTRY],
+                $variationKey[self::ID_GROUP]
             );
         }
 
         return $variationIds;
     }
 
-    public static function getVariationIdFromCountryCurrency($currencyId, $countryId, $customerGroupId)
+    /**
+     * Get variation id from currency id, country id and group id
+     * @param $currencyId
+     * @param $countryId
+     * @param $customerGroupId
+     * @return string variation id
+     */
+    public static function getVariationId($currencyId, $countryId, $customerGroupId)
     {
         if ($countryId == 0) {
-            $countryCode = 'ANY';
+            $countryCode = self::ANY;
         } else {
             $country = new Country($countryId);
             $countryCode = $country->iso_code;
         }
 
         if ($currencyId == 0) {
-            $currencyCode = 'ANY';
+            $currencyCode = self::ANY;
         } else {
             $currency = new Currency($currencyId);
             $currencyCode = $currency->iso_code;
         }
 
         if ($customerGroupId == 0) {
-            $customerGroupName = 'ANY';
+            $customerGroupName = self::ANY;
         } else {
             $group = new Group($customerGroupId);
             if (is_array($group->name) && array_key_exists(NostoHelperContext::getLanguageId(), $group->name)) {
@@ -242,5 +276,4 @@ class NostoHelperVariation
 
         return strtoupper($currencyCode . '-' . $countryCode . '-' . $customerGroupName);
     }
-
 }
