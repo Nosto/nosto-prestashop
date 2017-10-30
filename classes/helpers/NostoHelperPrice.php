@@ -174,6 +174,14 @@ class NostoHelperPrice
         );
     }
 
+    /**
+     * Get product price based on customer group
+     * @param $productId
+     * @param $groupId customer group id
+     * @param bool $useReduction use group reduction or not
+     * @param int $decimals
+     * @return float price
+     */
     public static function getProductPriceForGroup(
         $productId,
         $groupId,
@@ -205,9 +213,9 @@ class NostoHelperPrice
         //default currency. If multi-store is enabled and default currencies are different in
         //different stores, it cause problem. Big number 1000,000 is used to avoid rounding issue.
         $exchangeRate = Tools::convertPrice(
-                1000000,
-                (int)Configuration::get('PS_CURRENCY_DEFAULT')
-            ) / 1000000;
+            1000000,
+            (int)Configuration::get('PS_CURRENCY_DEFAULT')
+        ) / 1000000;
         $price *= $exchangeRate;
 
         return NostoHelperPrice::roundPrice($price);

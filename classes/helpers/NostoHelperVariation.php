@@ -129,7 +129,6 @@ class NostoHelperVariation
             foreach ($result as $row) {
                 $countryIds[] = $row[self::ID_COUNTRY];
                 $groupIds[] = $row[self::ID_GROUP];
-
             }
             $countryIds = array_unique($countryIds);
             $groupIds = array_unique($groupIds);
