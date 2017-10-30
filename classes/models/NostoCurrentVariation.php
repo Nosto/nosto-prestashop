@@ -42,32 +42,27 @@ class NostoCurrentVariation extends MarkupableString
         $nostoVariation = null;
         if (NostoHelperConfig::getVariationEnabled()) {
             $groupId = Group::getCurrent() ? Group::getCurrent()->id : 0;
-            $currentVariationKey = array(
-                NostoHelperVariation::ID_CURRENCY => NostoHelperContext::getCurrencyId(),
-                NostoHelperVariation::ID_COUNTRY => NostoHelperContext::getCountryId(),
-                NostoHelperVariation::ID_GROUP => $groupId
+            $currentVariationKey = new NostoVariationKey(
+                NostoHelperContext::getCurrencyId(),
+                NostoHelperContext::getCountryId(),
+                $groupId
             );
 
-            $allKeys = NostoHelperVariation::getAllVariationKeys();
+            $keyCollection = new NostoVariationKeyCollection();
+            $keyCollection->loadData();
 
-            if (!in_array($currentVariationKey, $allKeys)) {
-                $currentVariationKey[NostoHelperVariation::ID_COUNTRY] = 0;
-                if (!in_array($currentVariationKey, $allKeys)) {
-                    $currentVariationKey[NostoHelperVariation::ID_COUNTRY] = NostoHelperContext::getCountryId();
-                    $currentVariationKey[NostoHelperVariation::ID_GROUP] = 0;
-                    if (!in_array($currentVariationKey, $allKeys)) {
-                        $currentVariationKey[NostoHelperVariation::ID_COUNTRY] = 0;
+            if (!$keyCollection->contains($currentVariationKey)) {
+                $currentVariationKey->setCountryId(0);
+                if (!$keyCollection->contains($currentVariationKey)) {
+                    $currentVariationKey->setCountryId(NostoHelperContext::getCountryId());
+                    $currentVariationKey->setGroupId(0);
+                    if (!$keyCollection->contains($currentVariationKey)) {
+                        $currentVariationKey->setCountryId(0);
                     }
                 }
             }
 
-            $nostoVariation = new NostoCurrentVariation(
-                NostoHelperVariation::getVariationId(
-                    $currentVariationKey[NostoHelperVariation::ID_CURRENCY],
-                    $currentVariationKey[NostoHelperVariation::ID_COUNTRY],
-                    $currentVariationKey[NostoHelperVariation::ID_GROUP]
-                )
-            );
+            $nostoVariation = new NostoCurrentVariation($currentVariationKey->getVariationId());
         } elseif (NostoHelperConfig::useMultipleCurrencies()) {
             $nostoVariation = new NostoCurrentVariation(NostoHelperContext::getCurrency()->iso_code);
         }

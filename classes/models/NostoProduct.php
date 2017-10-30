@@ -86,6 +86,7 @@ class NostoProduct extends NostoSDKProduct
     {
         $variations = new NostoVariationCollection();
         $variations->loadData($product, $this->getAvailability());
+        //Take the first variation as the default variation
         if ($variations->count() > 0) {
             $defaultVariation = $variations->shift();
             $this->setVariationId($defaultVariation->getId());

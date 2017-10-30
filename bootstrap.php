@@ -81,6 +81,8 @@ class NostoBootstrap
         require_once($moduleDir . '/classes/models/NostoBrand.php');
         require_once($moduleDir . '/classes/models/NostoSearch.php');
         require_once($moduleDir . '/classes/models/variation/NostoVariationCollection.php');
+        require_once($moduleDir . '/classes/models/variation/NostoVariationKeyCollection.php');
+        require_once($moduleDir . '/classes/models/variation/NostoVariationKey.php');
         require_once($moduleDir . '/classes/models/NostoVariation.php');
         require_once($moduleDir . '/classes/blocks/NostoBrandTagging.php');
         require_once($moduleDir . '/classes/blocks/NostoCartTagging.php');

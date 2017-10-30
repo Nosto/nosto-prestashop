@@ -37,9 +37,10 @@ class NostoVariationCollection extends NostoSDKVariationCollection
         Product $product,
         $productAvailability
     ) {
-        $variationKeys = NostoHelperVariation::getAllVariationKeys();
+        $keyCollection = new NostoVariationKeyCollection();
+        $keyCollection->loadData();
 
-        foreach ($variationKeys as $variationKey) {
+        foreach ($keyCollection as $variationKey) {
             $variation = NostoVariation::loadData($product, $variationKey, $productAvailability);
             $this->append($variation);
         }
@@ -47,7 +48,7 @@ class NostoVariationCollection extends NostoSDKVariationCollection
 
     /**
      * Take the first of the collection and return it
-     * @return NostoVariation Return the first value, or NULL if collection is empty
+     * @return NostoVariation return the first value, or null if collection is empty
      */
     public function shift()
     {

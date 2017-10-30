@@ -31,7 +31,7 @@ class NostoVariation extends NostoSDKVariation
      * Loads the Variation info from a prestashop product model.
      *
      * @param Product $product the product model.
-     * @param array $variationKey
+     * @param NostoVariationKey $variationKey
      * @param string $productAvailability
      * @return NostoVariation
      */
@@ -40,11 +40,6 @@ class NostoVariation extends NostoSDKVariation
         $variationKey,
         $productAvailability
     ) {
-        $currencyId = $variationKey[NostoHelperVariation::ID_CURRENCY];
-        if (!$currencyId) {
-            $currencyId = NostoHelperCurrency::getBaseCurrency()->id;
-        }
-
         return NostoHelperContext::runInContext(
             function () use ($product, $variationKey, $productAvailability) {
                 $product = new Product(
@@ -54,11 +49,7 @@ class NostoVariation extends NostoSDKVariation
                     NostoHelperContext::getShopId()
                 );
                 $nostoVariation = new NostoVariation();
-                $variationId = NostoHelperVariation::getVariationId(
-                    NostoHelperContext::getCurrencyId(),
-                    $variationKey[NostoHelperVariation::ID_COUNTRY],
-                    $variationKey[NostoHelperVariation::ID_GROUP]
-                );
+                $variationId = $variationKey->getVariationId();
                 $nostoVariation->setId($variationId);
                 $nostoVariation->setAvailability($productAvailability);
                 $nostoVariation->setPriceCurrencyCode(
@@ -68,14 +59,14 @@ class NostoVariation extends NostoSDKVariation
                 $nostoVariation->setListPrice(
                     NostoHelperPrice::getProductPriceForGroup(
                         $product->id,
-                        $variationKey[NostoHelperVariation::ID_GROUP],
+                        $variationKey->getGroupId(),
                         false
                     )
                 );
                 $nostoVariation->setPrice(
                     NostoHelperPrice::getProductPriceForGroup(
                         $product->id,
-                        $variationKey[NostoHelperVariation::ID_GROUP]
+                        $variationKey->getGroupId()
                     )
                 );
 
@@ -83,9 +74,9 @@ class NostoVariation extends NostoSDKVariation
             },
             false,
             false,
-            $currencyId,
+            $variationKey->getCurrencyId(),
             false,
-            $variationKey[NostoHelperVariation::ID_COUNTRY]
+            $variationKey->getCountryId()
         );
     }
 }

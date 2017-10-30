@@ -56,7 +56,8 @@ class NostoHelperVariation
         $shopFilter = '';
         if ($shopId) {
             $innerJoinShop = sprintf(
-                'INNER JOIN %stax_rules_group trg ON (p.id_tax_rules_group = trg.id_tax_rules_group)',
+                'INNER JOIN %stax_rules_group_shop trgs ON '
+                . '(trg.id_tax_rules_group = trgs.id_tax_rules_group)',
                 _DB_PREFIX_
             );
             $shopFilter = sprintf(
@@ -173,107 +174,5 @@ class NostoHelperVariation
         $cache->set($cache, $countryIds, self::CACHE_TIMEOUT);
 
         return $countryIds;
-    }
-
-    /**
-     * Get all the variation keys
-     * @return array Each if the element is an array with 3 keys: id_currency, id_country, id_group
-     */
-    public static function getAllVariationKeys()
-    {
-        $shopId = NostoHelperContext::getShopId();
-        $cache = Cache::getInstance();
-        $cacheKey = 'NostoHelperPriceVariation-getVariationCountries-' . $shopId;
-        if ($cache->exists($cacheKey)) {
-            return $cache->get($cacheKey);
-        }
-
-        $currencyFactor = array();
-        $allCurrencies = NostoHelperCurrency::getCurrencies(true);
-        /** @var array $currency */
-        foreach ($allCurrencies as $currency) {
-            $currencyFactor[] = $currency[self::ID_CURRENCY];
-        }
-        if (empty($currencyFactor)) {
-            $currencyFactor[] = 0;
-        }
-
-        $countryFactor = self::getVariationCountries();
-
-        $groupFactor = self::getAllCountriesAndGroupsFromSpecificPrices()[self::GROUP];
-
-        $variationKeys = array();
-        foreach ($currencyFactor as $currencyId) {
-            foreach ($countryFactor as $countryId) {
-                foreach ($groupFactor as $groupId) {
-                    $variationKeys[] = array(
-                        self::ID_CURRENCY => $currencyId,
-                        self::ID_COUNTRY => $countryId,
-                        self::ID_GROUP => $groupId
-                    );
-                }
-            }
-        }
-
-        //cache for 10 minutes
-        $cache->set($cache, $variationKeys, self::CACHE_TIMEOUT);
-
-        return $variationKeys;
-    }
-
-    /**
-     * Get all the variation ids
-     * @return array variation ids in string
-     */
-    public static function getAllVariationIds()
-    {
-        $variationKeys = self::getAllVariationKeys();
-        $variationIds = array();
-        foreach ($variationKeys as $variationKey) {
-            $variationIds[] = self::getVariationId(
-                $variationKey[self::ID_CURRENCY],
-                $variationKey[self::ID_COUNTRY],
-                $variationKey[self::ID_GROUP]
-            );
-        }
-
-        return $variationIds;
-    }
-
-    /**
-     * Get variation id from currency id, country id and group id
-     * @param $currencyId
-     * @param $countryId
-     * @param $customerGroupId
-     * @return string variation id
-     */
-    public static function getVariationId($currencyId, $countryId, $customerGroupId)
-    {
-        if ($countryId == 0) {
-            $countryCode = self::ANY;
-        } else {
-            $country = new Country($countryId);
-            $countryCode = $country->iso_code;
-        }
-
-        if ($currencyId == 0) {
-            $currencyCode = self::ANY;
-        } else {
-            $currency = new Currency($currencyId);
-            $currencyCode = $currency->iso_code;
-        }
-
-        if ($customerGroupId == 0) {
-            $customerGroupName = self::ANY;
-        } else {
-            $group = new Group($customerGroupId);
-            if (is_array($group->name) && array_key_exists(NostoHelperContext::getLanguageId(), $group->name)) {
-                $customerGroupName = $group->name[NostoHelperContext::getLanguageId()];
-            } else {
-                $customerGroupName = $group->name;
-            }
-        }
-
-        return strtoupper($currencyCode . '-' . $countryCode . '-' . $customerGroupName);
     }
 }
