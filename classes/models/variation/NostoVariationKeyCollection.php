@@ -44,7 +44,7 @@ class NostoVariationKeyCollection extends NostoSDKAbstractCollection
     {
         $shopId = NostoHelperContext::getShopId();
         $cache = Cache::getInstance();
-        $cacheKey = 'NostoHelperPriceVariation-getVariationCountries-' . $shopId;
+        $cacheKey = 'NostoVariationKeyCollection-loadData-' . $shopId;
         if ($cache->exists($cacheKey)) {
             $this->var = $cache->get($cacheKey);
         } else {
@@ -72,14 +72,14 @@ class NostoVariationKeyCollection extends NostoSDKAbstractCollection
                     }
                 }
             }
+
+            NostoHelperHook::dispatchHookActionLoadAfter(get_class($this), array(
+                'nosto_variation_key_collection' => $this
+            ));
+
+            //cache for 10 minutes
+            $cache->set($cacheKey, $this->var, NostoHelperVariation::CACHE_TIMEOUT);
         }
-
-        NostoHelperHook::dispatchHookActionLoadAfter(get_class($this), array(
-            'nosto_variation_key_collection' => $this
-        ));
-
-        //cache for 10 minutes
-        $cache->set($cache, $this->var, NostoHelperVariation::CACHE_TIMEOUT);
     }
 
     /**

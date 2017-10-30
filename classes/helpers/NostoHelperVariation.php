@@ -94,7 +94,7 @@ class NostoHelperVariation
         }
 
         //cache for 10 minutes
-        $cache->set($cache, $res, self::CACHE_TIMEOUT);
+        $cache->set($cacheKey, $res, self::CACHE_TIMEOUT);
 
         return $res;
     }
@@ -149,7 +149,7 @@ class NostoHelperVariation
         }
 
         //cache for 10 minutes
-        $cache->set($cache, $res, self::CACHE_TIMEOUT);
+        $cache->set($cacheKey, $res, self::CACHE_TIMEOUT);
 
         return $res;
     }
