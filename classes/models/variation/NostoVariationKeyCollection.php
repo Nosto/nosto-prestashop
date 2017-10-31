@@ -59,10 +59,7 @@ class NostoVariationKeyCollection extends NostoSDKAbstractCollection
             }
 
             $countryFactor = NostoHelperVariation::getVariationCountries();
-
-            $groupFactor = NostoHelperVariation::getAllCountriesAndGroupsFromSpecificPrices()[
-                NostoHelperVariation::GROUP
-            ];
+            $groupFactor = NostoHelperVariation::getGroupsBeingUsedInSpecificPrices();
 
             $this->var = array();
             foreach ($currencyFactor as $currencyId) {
@@ -77,7 +74,7 @@ class NostoVariationKeyCollection extends NostoSDKAbstractCollection
                 'nosto_variation_key_collection' => $this
             ));
 
-            //cache for 10 minutes
+            //cache for 5 minutes
             $cache->set($cacheKey, $this->var, NostoHelperVariation::CACHE_TIMEOUT);
         }
     }

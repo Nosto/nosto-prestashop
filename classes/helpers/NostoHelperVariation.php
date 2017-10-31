@@ -35,7 +35,7 @@ class NostoHelperVariation
     const COUNTRY = 'country';
     const GROUP = 'group';
     /** cache timeout in second */
-    const CACHE_TIMEOUT = 600;
+    const CACHE_TIMEOUT = 300;
 
     /**
      * Returns an array of country ids being used in tax rule groups that are assigned to any product
@@ -93,64 +93,89 @@ class NostoHelperVariation
             $res[] = $row[self::ID_COUNTRY];
         }
 
-        //cache for 10 minutes
+        //cache for 5 minutes
         $cache->set($cacheKey, $res, self::CACHE_TIMEOUT);
 
         return $res;
     }
 
     /**
-     * Get countries and groups are used in the specific prices, including
+     * Get groups are used in the specific prices, including
      * product specific prices and catalog price rules
-     * @return array with 2 keys: 'country', 'group'
+     * @return array of group ids
      */
-    public static function getAllCountriesAndGroupsFromSpecificPrices()
+    public static function getGroupsBeingUsedInSpecificPrices()
     {
         $shopId = NostoHelperContext::getShopId();
         $cache = Cache::getInstance();
-        $cacheKey = 'NostoHelperPriceVariation-getAllCountriesAndGroupsFromSpecificPrices-' . $shopId;
+        $cacheKey = 'NostoHelperPriceVariation-getGroupsBeingUsedInSpecificPrices-' . $shopId;
         if ($cache->exists($cacheKey)) {
             return $cache->get($cacheKey);
         }
 
-        $res = array(
-            self::COUNTRY => array(0),
-            '' . self::GROUP . '' => array(0)
-        );
-
         $filter = $shopId ? ' WHERE `id_shop` = ' . (int)$shopId : '';
         $result = Db::getInstance()->executeS(
-            sprintf('SELECT DISTINCT id_country, id_group FROM `%sspecific_price` ', _DB_PREFIX_)
+            sprintf('SELECT DISTINCT id_group FROM `%sspecific_price` ', _DB_PREFIX_)
             . $filter
         );
+        $groupIds = array();
         if ($result && is_array($result)) {
-            $countryIds = array();
-            $groupIds = array();
             foreach ($result as $row) {
-                $countryIds[] = $row[self::ID_COUNTRY];
                 $groupIds[] = $row[self::ID_GROUP];
             }
-            $countryIds = array_unique($countryIds);
-            $groupIds = array_unique($groupIds);
-            //make sure it always has 'any'
-            if (!in_array(0, $countryIds)) {
-                $countryIds[] = 0;
-            }
-            //make sure it always has 'any'
-            if (!in_array(0, $groupIds)) {
-                $groupIds[] = 0;
-            }
-
-            $res = array(
-                self::COUNTRY => $countryIds,
-                self::GROUP => $groupIds
-            );
+        }
+        //make sure it always has 'any'
+        if (!in_array(0, $groupIds)) {
+            $groupIds[] = 0;
         }
 
-        //cache for 10 minutes
-        $cache->set($cacheKey, $res, self::CACHE_TIMEOUT);
+        //cache for 5 minutes
+        $cache->set($cacheKey, $groupIds, self::CACHE_TIMEOUT);
 
-        return $res;
+        return $groupIds;
+    }
+
+    /**
+     * Get countries are used in the specific prices, including
+     * product specific prices and catalog price rules
+     * @return array of country ids
+     */
+    public static function getCountriesBeingUsedInSpecificPrices()
+    {
+        $shopId = NostoHelperContext::getShopId();
+        $cache = Cache::getInstance();
+        $cacheKey = 'NostoHelperPriceVariation-getCountriesBeingUsedInSpecificPrices-' . $shopId;
+        if ($cache->exists($cacheKey)) {
+            return $cache->get($cacheKey);
+        }
+
+        $filter = $shopId ? ' and sp.id_shop = ' . (int)$shopId : '';
+        $result = Db::getInstance()->executeS(
+            sprintf(
+                "SELECT DISTINCT sp.id_country FROM `%sspecific_price` sp
+                INNER JOIN `%scountry` c ON c.id_country = sp.id_country
+                WHERE c.active = TRUE
+                $filter
+                ",
+                _DB_PREFIX_,
+                _DB_PREFIX_
+            )
+        );
+        $countryIds = array();
+        if (is_array($result)) {
+            foreach ($result as $row) {
+                $countryIds[] = $row[self::ID_COUNTRY];
+            }
+        }
+        //make sure it always has 'any'
+        if (!in_array(0, $countryIds)) {
+            $countryIds[] = 0;
+        }
+
+        //cache for 5 minutes
+        $cache->set($cacheKey, $countryIds, self::CACHE_TIMEOUT);
+
+        return $countryIds;
     }
 
     /**
@@ -166,10 +191,10 @@ class NostoHelperVariation
             return $cache->get($cacheKey);
         }
 
-        $countryIds = self::getAllCountriesAndGroupsFromSpecificPrices()[self::COUNTRY];
+        $countryIds = self::getCountriesBeingUsedInSpecificPrices();
         $countryIdsFromTaxRules = self::getCountriesBeingUsedInTaxRules();
         $countryIds = array_unique(array_merge($countryIds, $countryIdsFromTaxRules));
-        //cache for 10 minutes
+        //cache for 5 minutes
         $cache->set($cache, $countryIds, self::CACHE_TIMEOUT);
 
         return $countryIds;
