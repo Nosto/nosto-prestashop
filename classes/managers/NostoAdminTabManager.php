@@ -75,7 +75,7 @@ class NostoAdminTabManager
             return false;
         }
 
-        $idTab = self::getAdminTabId(AdminNostoController::class);
+        $idTab = self::getAdminTabId('AdminNostoController');
         if ($idTab) {
             $mainTabAdded = new Tab($idTab);
         } else {
@@ -95,7 +95,7 @@ class NostoAdminTabManager
 
         // For PS 1.6 it is enough to have the main menu, for PS 1.5 and 1.7 we need a sub-menu.
         if ($mainTabAdded && (_PS_VERSION_ < '1.6' || _PS_VERSION_ >= '1.7')) {
-            $idTab = self::getAdminTabId(AdminNostoPersonalizationController::class);
+            $idTab = self::getAdminTabId('AdminNostoPersonalizationController');
             if ($idTab) {
                 $subTabAdded = new Tab($idTab);
             } else {
@@ -110,7 +110,7 @@ class NostoAdminTabManager
                         $tab->name[$lang['id_lang']] = 'Personalization';
                     }
                 }
-                $tab->id_parent = self::getAdminTabId(AdminNostoController::class);
+                $tab->id_parent = self::getAdminTabId('AdminNostoController');
                 $tab->module = NostoTagging::MODULE_NAME;
                 $subTabAdded = $tab->add();
             }
@@ -168,7 +168,7 @@ class NostoAdminTabManager
      */
     public static function uninstall()
     {
-        $tabs = array(AdminNostoController::class, AdminNostoPersonalizationController::class);
+        $tabs = array('AdminNostoController', 'AdminNostoPersonalizationController');
         foreach ($tabs as $tabName) {
             $tabId = self::getAdminTabId($tabName);
             if ($tabId) {

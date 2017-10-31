@@ -32,7 +32,7 @@ class NostoBrandTagging
      */
     public static function get()
     {
-        $brand = NostoHelperController::resolveObject("id_manufacturer", Manufacturer::class, "getManufacturer");
+        $brand = NostoHelperController::resolveObject("id_manufacturer", 'Manufacturer', "getManufacturer");
         if (!$brand instanceof Manufacturer) {
             return null;
         }

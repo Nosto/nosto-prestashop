@@ -39,7 +39,7 @@ class AdminNostoController extends ModuleAdminController
             return;
         }
 
-        $idTab = NostoAdminTabManager::getAdminTabId(AdminModulesController::class);
+        $idTab = NostoAdminTabManager::getAdminTabId('AdminModulesController');
         /** @noinspection PhpUndefinedFieldInspection */
         $idEmployee = (int)$this->context->cookie->id_employee;
         $token = Tools::getAdminToken('AdminModules' . $idTab . $idEmployee);

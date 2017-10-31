@@ -71,7 +71,8 @@ class NostoHelperUrl
         try {
             $idLang = NostoHelperContext::getLanguageId();
 
-            $row = Category::getHomeCategories($idLang, true)[0];
+            $rows = Category::getHomeCategories($idLang, true);
+            $row = $rows[0];
             $categoryId = isset($row['id_category']) ? (int)$row['id_category'] : 0;
 
             $category = new Category($categoryId, $idLang);
