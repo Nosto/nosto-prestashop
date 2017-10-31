@@ -146,7 +146,7 @@ class NostoProduct extends NostoSDKProduct
     {
         $imageId = null;
 
-        $defaultCombinationImages = null;
+        $defaultCombinationImages = array();
         $defaultId = $product->getDefaultIdProductAttribute();
         if ($defaultId !== null) {
             //The images for default combination
@@ -228,8 +228,8 @@ class NostoProduct extends NostoSDKProduct
     /**
      * Returns the product price including discounts and taxes for the given currency.
      *
-     * @param Product|ProductCore $product the product.
-     * @param Currency|CurrencyCore $currency the currency.
+     * @param Product $product the product.
+     * @param Currency $currency the currency.
      * @return float the price.
      */
     public static function getPriceInclTax(Product $product, Currency $currency)
@@ -244,8 +244,8 @@ class NostoProduct extends NostoSDKProduct
     /**
      * Returns the product list price including taxes for the given currency.
      *
-     * @param Product|ProductCore $product the product.
-     * @param Currency|CurrencyCore $currency the currency.
+     * @param Product $product the product.
+     * @param Currency $currency the currency.
      * @return float the price.
      */
     public static function getListPriceInclTax(Product $product, Currency $currency)

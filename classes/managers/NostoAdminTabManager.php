@@ -137,6 +137,7 @@ class NostoAdminTabManager
      * @return bool|int tab id
      *
      * @suppress PhanDeprecatedFunction
+     * @suppress PhanTypeMismatchArgument
      */
     public static function registerController($className)
     {

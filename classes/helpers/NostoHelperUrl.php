@@ -150,6 +150,7 @@ class NostoHelperUrl
      * @param array $params additional params to add to the url.
      * @param int|null $productAttributeId product attribute id
      * @return string the product page url.
+     * @suppress PhanTypeMismatchArgument
      */
     public static function getProductUrl($product, array $params = array(), $productAttributeId = 0)
     {
