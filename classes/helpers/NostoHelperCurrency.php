@@ -64,7 +64,7 @@ class NostoHelperCurrency
         if ($baseIdCurrency === 0) {
             $baseIdCurrency = (int)Configuration::get(
                 self::PS_CURRENCY_DEFAULT,
-                null,
+                0,
                 NostoHelperContext::getShopGroupId(),
                 NostoHelperContext::getShopId()
             );

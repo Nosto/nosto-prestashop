@@ -40,8 +40,8 @@ class NostoHelperPrice
     /**
      * Returns the product wholesale price including taxes for the given currency.
      *
-     * @param Product|ProductCore $product the product.
-     * @return float the price.
+     * @param Product $product the product.
+     * @return float|null the price.
      */
     public static function getProductWholesalePriceInclTax(Product $product)
     {
@@ -100,7 +100,7 @@ class NostoHelperPrice
      * The price is rounded according to the configured rounding mode in PS.
      *
      * @param int $idProduct the product ID.
-     * @param Currency|CurrencyCore $currency the currency object.
+     * @param Currency $currency the currency object.
      * @param array $options options for the Product::getPriceStatic method.
      * @return float the price.
      */
@@ -110,7 +110,7 @@ class NostoHelperPrice
         array $options = array()
     ) {
         $employeeId = NostoHelperContext::getEmployeeId();
-        if (!NostoHelperContext::getEmployee()) {
+        if ($employeeId === null) {
             $employee = new Employee();
             $employeeId = $employee->id;
         }
