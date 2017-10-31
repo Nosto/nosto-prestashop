@@ -208,7 +208,6 @@ class NostoHelperPrice
             $useReduction
         );
 
-
         //A hack to fix the multi-currency issue. Function Tools::convertPrice() caches the
         //default currency. If multi-store is enabled and default currencies are different in
         //different stores, it cause problem. Big number 1000,000 is used to avoid rounding issue.
