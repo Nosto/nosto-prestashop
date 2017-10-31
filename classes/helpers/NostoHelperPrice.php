@@ -176,8 +176,8 @@ class NostoHelperPrice
 
     /**
      * Get product price based on customer group
-     * @param $productId
-     * @param $groupId customer group id
+     * @param int $productId
+     * @param int $groupId customer group id
      * @param bool $useReduction use group reduction or not
      * @param int $decimals
      * @return float price
