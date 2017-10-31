@@ -21,7 +21,7 @@ pipeline {
     stage('Code Sniffer') {
       steps {
         catchError {
-          sh "./libs/bin/phpcs --standard=ruleset.xml --severity=10 --report=checkstyle --report-file=chkphpcs.xml app lib || true"
+          sh "./libs/bin/phpcs --standard=ruleset.xml --severity=10 --report=checkstyle --report-file=chkphpcs.xml . || true"
         }
       }
     }
