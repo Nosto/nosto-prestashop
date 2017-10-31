@@ -67,7 +67,7 @@ class NostoHelperContext
     public static function runWithEachNostoAccount($callable)
     {
         self::runInContextForEachLanguageEachShop(function () use ($callable) {
-            $account = NostoHelperAccount::find();
+            $account = NostoHelperAccount::getAccount();
             if ($account === null) {
                 return null;
             } else {

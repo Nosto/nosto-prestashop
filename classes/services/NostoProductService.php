@@ -133,7 +133,7 @@ class NostoProductService extends AbstractNostoService
             }
             self::$processedProducts[] = $this->getProductCacheKey($product);
 
-            $nostoAccount = NostoHelperAccount::find();
+            $nostoAccount = NostoHelperAccount::getAccount();
             if (!$nostoAccount) {
                 continue;
             }
@@ -225,7 +225,7 @@ class NostoProductService extends AbstractNostoService
 
         self::$processedProducts[] = $this->getProductCacheKey($product);
 
-        $nostoAccount = NostoHelperAccount::find();
+        $nostoAccount = NostoHelperAccount::getAccount();
         if (!$nostoAccount) {
             return;
         }

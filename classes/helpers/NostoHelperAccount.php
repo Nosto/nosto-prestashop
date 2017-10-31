@@ -83,7 +83,7 @@ class NostoHelperAccount
      * @return NostoSDKAccount|null the account with loaded API tokens, or null if not found.
      * @internal param int|null $lang_id the ID of the language.
      */
-    public static function find()
+    public static function getAccount()
     {
         $accountName = NostoHelperConfig::getAccountName();
         if (!empty($accountName)) {
@@ -114,7 +114,7 @@ class NostoHelperAccount
      */
     public static function existsAndIsConnected()
     {
-        $account = self::find();
+        $account = self::getAccount();
         return ($account !== null && $account->isConnectedToNosto());
     }
 }

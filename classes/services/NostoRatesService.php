@@ -38,7 +38,7 @@ class NostoRatesService extends AbstractNostoService
         NostoHelperContext::runWithEachNostoAccount(function () use ($nostoRatesService) {
             $useMultipleCurrencies = NostoHelperConfig::useMultipleCurrencies();
             if ($useMultipleCurrencies) {
-                $account = NostoHelperAccount::find();
+                $account = NostoHelperAccount::getAccount();
                 $nostoRatesService->updateCurrencyExchangeRates($account);
             }
         });
