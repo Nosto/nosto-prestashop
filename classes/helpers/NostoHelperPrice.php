@@ -189,7 +189,7 @@ class NostoHelperPrice
         //if the decimals is disabled for this currency, then the precision should be 0
         $currencyDecimalsEnabled = $currency ? (int)$currency->decimals : 1;
 
-        return Tools::ps_round(
+        return (float)Tools::ps_round(
             $price,
             $currencyDecimalsEnabled * _PS_PRICE_DISPLAY_PRECISION_
         );
