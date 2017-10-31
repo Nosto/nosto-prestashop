@@ -81,7 +81,6 @@ class NostoHelperAccount
      * Finds and returns an account for given criteria.
      *
      * @return NostoSDKAccount|null the account with loaded API tokens, or null if not found.
-     * @internal param int|null $lang_id the ID of the language.
      */
     public static function getAccount()
     {
