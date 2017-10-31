@@ -46,7 +46,6 @@ pipeline {
       steps {
         script {
           version = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
-          sh 'chmod 644 *.zip'
         }
       }
     }
