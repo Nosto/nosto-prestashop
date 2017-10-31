@@ -12,7 +12,7 @@ ENV         NOSTO_OAUTH_BASE_URL https://staging.nosto.com/oauth
 ENV         NOSTO_WEB_HOOK_BASE_URL https://staging.nosto.com
 ENV         NOSTO_IFRAME_ORIGIN_REGEXP .*
 
-ENV         MYSQL_ENV_MYSQL_DATABASE magento2
+ENV         MYSQL_ENV_MYSQL_DATABASE prestashop
 ENV         MYSQL_ENV_MYSQL_USER root
 ENV         MYSQL_ENV_MYSQL_ROOT root
 ENV         COMPOSER_ALLOW_SUPERUSER 1
