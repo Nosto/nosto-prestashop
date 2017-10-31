@@ -35,7 +35,7 @@ class NostoCurrentUser extends NostoSDKUser
     public static function loadData()
     {
         $nostoUser = new NostoCurrentUser();
-        if (!empty(NostoHelperContext::getEmployee())) {
+        if (!NostoHelperContext::getEmployee()) {
             $nostoUser->setFirstName(NostoHelperContext::getEmployee()->firstname);
             $nostoUser->setLastName(NostoHelperContext::getEmployee()->lastname);
             $nostoUser->setEmail(NostoHelperContext::getEmployee()->email);

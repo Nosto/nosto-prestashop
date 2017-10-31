@@ -45,7 +45,7 @@ class OauthTraitAdapter
      * "return_url" sent in the first step of the authorization cycle, and requires it to be from
      * the same domain that the account is configured for and only redirects to that domain.
      *
-     * @param $moduleName module name
+     * @param string $moduleName module name
      * @return void
      */
     public function initContent($moduleName)
@@ -64,11 +64,12 @@ class OauthTraitAdapter
      */
     public function getMeta()
     {
+        $oauthTraitAdapter = $this;
         return NostoHelperContext::runInContext(
-            function () {
-                return NostoOAuth::loadData($this->moduleName);
+            function () use ($oauthTraitAdapter) {
+                return NostoOAuth::loadData($oauthTraitAdapter->moduleName);
             },
-            $this->languageId
+            $oauthTraitAdapter->languageId
         );
     }
 

@@ -110,7 +110,7 @@ class NostoHelperPrice
         array $options = array()
     ) {
         $employeeId = NostoHelperContext::getEmployeeId();
-        if (empty(NostoHelperContext::getEmployee())) {
+        if (!NostoHelperContext::getEmployee()) {
             $employee = new Employee();
             $employeeId = $employee->id;
         }

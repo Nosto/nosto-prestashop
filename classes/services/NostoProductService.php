@@ -188,8 +188,9 @@ class NostoProductService extends AbstractNostoService
             $object = $params['object'];
             if ($object instanceof Product) {
                 //run over all the nosto account
-                NostoHelperContext::runWithEachNostoAccount(function () use ($object) {
-                    $this->updateProduct($object);
+                $nostoProductService = $this;
+                NostoHelperContext::runWithEachNostoAccount(function () use ($object, $nostoProductService) {
+                    $nostoProductService->updateProduct($object);
                 });
             }
         }
@@ -206,8 +207,9 @@ class NostoProductService extends AbstractNostoService
             $object = $params['object'];
             if ($object instanceof Product) {
                 //run over all the nosto account
-                NostoHelperContext::runWithEachNostoAccount(function () use ($object) {
-                    $this->deleteProduct($object);
+                $nostoProductService = $this;
+                NostoHelperContext::runWithEachNostoAccount(function () use ($object, $nostoProductService) {
+                    $nostoProductService->deleteProduct($object);
                 });
             }
         }
