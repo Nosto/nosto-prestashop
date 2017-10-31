@@ -30,9 +30,5 @@
         }
       }
     }
-  ],
-  "scripts": {
-    "post-install-cmd": "\"libs/bin/phpcs\" --config-set installed_paths libs/wimg/php-compatibility",
-    "post-update-cmd" : "\"libs/bin/phpcs\" --config-set installed_paths libs/wimg/php-compatibility"
-  }
+  ]
 }
