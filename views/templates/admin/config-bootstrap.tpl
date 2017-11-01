@@ -135,22 +135,27 @@
                         </div>
                         <hr>
                         <div class="form-group">
+                            <div class="alert alert-danger col-lg-9 col-lg-offset-3 multi-currency-variation-alert">
+                                <p>
+                                    {l s='Multi currency and price variation could not be enabled in the same time' mod='nostotagging'}
+                                </p>
+                            </div>
                             <label class="control-label col-lg-3" for="multi_currency_method">
                                 {l s='Multi Currency Method' mod='nostotagging'}
                             </label>
                             <div class="col-lg-9">
                                 <div class="radio ">
                                     <label>
-                                        <input type="radio" name="multi_currency_method"
-                                               value="disabled"
+                                        <input type="radio" name="multi_currency_method" value="disabled"
+                                               onchange="Nosto.checkMultiCurrencyVariationConflict()"
                                                {if $multi_currency_method==="disabled"}checked="checked"{/if}/>
                                         {l s='Disabled' mod='nostotagging'}
                                     </label>
                                 </div>
                                 <div class="radio ">
                                     <label>
-                                        <input type="radio" name="multi_currency_method"
-                                               value="exchangeRates"
+                                        <input type="radio" name="multi_currency_method" value="exchangeRates"
+                                               onchange="Nosto.checkMultiCurrencyVariationConflict()"
                                                {if $multi_currency_method==="exchangeRates"}checked="checked"{/if}/>
                                         {l s='Exchange rates' mod='nostotagging'}
                                     </label>
@@ -209,6 +214,12 @@
                             </div>
                         </div>
                         <hr>
+                        <div class="alert alert-danger col-lg-9 col-lg-offset-3 multi-currency-variation-alert">
+                            <p>
+                                {l s='Multi currency and price variation could not be enabled in the same time' mod='nostotagging'}
+                            </p>
+                        </div>
+
                         <!-- Price variation -->
                         <div class="form-group">
                             <label class="control-label col-lg-3">
@@ -218,9 +229,11 @@
                             </label>
                             <div class="col-lg-9">
                                 <span class="switch prestashop-switch fixed-width-lg">
-                                    <input type="radio" name="nosto_variation_switch" id="nosto_variation_switch_on"  value="1" {if $nostotagging_variation_switch === true}checked="checked" {/if}/>
+                                    <input type="radio" name="nosto_variation_switch" id="nosto_variation_switch_on"  value="1" {if $nostotagging_variation_switch === true}checked="checked" {/if}
+                                           onchange="Nosto.checkMultiCurrencyVariationConflict()"/>
                                     <label for="nosto_variation_switch_on" class="radioCheck">Yes</label>
-                                    <input type="radio" name="nosto_variation_switch" id="nosto_variation_switch_off" value="0" {if $nostotagging_variation_switch !== true}checked="checked" {/if}/>
+                                    <input type="radio" name="nosto_variation_switch" id="nosto_variation_switch_off" value="0" {if $nostotagging_variation_switch !== true}checked="checked" {/if}
+                                           onchange="Nosto.checkMultiCurrencyVariationConflict()"/>
                                     <label for="nosto_variation_switch_off" class="radioCheck">No</label>
                                     <a class="slide-button btn"></a>
                                 </span>
@@ -231,6 +244,7 @@
                 <div class="panel-footer"  style="display:none">
                     <button type="submit" onclick="Nosto.saveAdvancedSettings()" value="1"
                             name="submit_nostotagging_advanced_settings"
+                            id="submit_nostotagging_advanced_settings"
                             class="btn btn-default pull-right">
                         <i class="process-icon-save"></i> Save
                     </button>
@@ -340,6 +354,18 @@
                 var action = "{/literal}{$NostoUpdateExchangeRateUrl|escape:javascript}{literal}";
                 submitAction(action);
             };
+
+            window.Nosto.checkMultiCurrencyVariationConflict = function () {
+                if ($("input[name='multi_currency_method']:checked").val() == 'exchangeRates'
+                    && $("input[name='nosto_variation_switch']:checked").val() == '1' ) {
+                    $('.multi-currency-variation-alert').show();
+                    $('#submit_nostotagging_advanced_settings').attr("disabled", "disabled");
+                } else {
+                    $('.multi-currency-variation-alert').hide();
+                    $('#submit_nostotagging_advanced_settings').removeAttr("disabled");
+                }
+            }
+            Nosto.checkMultiCurrencyVariationConflict();
 
             window.Nosto.saveAdvancedSettings = function () {
                 var action = "{/literal}{$NostoAdvancedSettingUrl|escape:javascript}{literal}";
