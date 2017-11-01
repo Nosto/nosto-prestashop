@@ -302,6 +302,7 @@ class NostoHelperUrl
      * Returns the current shop's url from the context and language.
      *
      * @return string the absolute url.
+     * @suppress PhanTypeMismatchArgument
      */
     public static function getContextShopUrl()
     {

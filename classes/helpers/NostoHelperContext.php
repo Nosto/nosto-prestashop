@@ -201,7 +201,7 @@ class NostoHelperContext
      */
     public static function getLanguageId()
     {
-        return self::getLanguage() ? self::getLanguage()->id : null;
+        return self::getLanguage() ? (int)self::getLanguage()->id : null;
     }
 
     /**
@@ -211,7 +211,7 @@ class NostoHelperContext
      */
     public static function getCurrencyId()
     {
-        return self::getCurrency() ? self::getCurrency()->id : null;
+        return self::getCurrency() ? (int)self::getCurrency()->id : null;
     }
 
     /**
@@ -231,7 +231,7 @@ class NostoHelperContext
      */
     public static function getCountryId()
     {
-        return self::getCountry() ? self::getCountry()->id : null;
+        return self::getCountry() ? (int)self::getCountry()->id : null;
     }
 
     /**
