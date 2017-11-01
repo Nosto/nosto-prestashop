@@ -48,17 +48,15 @@ class NostoHelperPrice
         $wholesalePriceExcTaxes = $product->wholesale_price;
         if ($wholesalePriceExcTaxes > 0) {
             if ($product->tax_rate > 0) {
-                $wholesalePriceIncTaxes = NostoHelperPrice::roundPrice(
+                return NostoHelperPrice::roundPrice(
                     $wholesalePriceExcTaxes * (1 + $product->tax_rate / 100)
                 );
             } else {
-                $wholesalePriceIncTaxes = $wholesalePriceExcTaxes;
+                return $wholesalePriceExcTaxes;
             }
         } else {
-            $wholesalePriceIncTaxes = null;
+            return null;
         }
-
-        return $wholesalePriceIncTaxes;
     }
 
     /**
