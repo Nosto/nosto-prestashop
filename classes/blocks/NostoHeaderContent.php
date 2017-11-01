@@ -61,7 +61,11 @@ class NostoHeaderContent
             'account_name' => $account->getName(),
             'nosto_version' => $module->version,
             'nosto_language' => Tools::strtolower(NostoHelperContext::getLanguage()->iso_code),
-            'add_to_cart_url' => $link->getPageLink('NostoCart.php'),
+            'add_to_cart_url' => $link->getPageLink('cart.php'),
+            'reload_cart_url' => NostoHelperUrl::getModuleUrl(
+                NostoTagging::MODULE_NAME,
+                'reloadCart'
+            ),
             'static_token' => Tools::getToken(false)
         ));
 

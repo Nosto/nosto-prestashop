@@ -23,12 +23,11 @@
 *}
 
 <script type="text/javascript">
-    if ($) {
+    if ($ && $ == jQuery) {
         Window.Nosto = Window.Nosto || {};
-        Nosto.reloadCartTagging = function (url) {
+        Nosto.reloadCartTagging = function () {
             $.ajax({
-                url: url,
-                data: 'fc=module&module=nostotagging&controller=reloadCart'
+                url: "{$reload_cart_url|escape:"javascript":"UTF-8"}",
             }).done(function(data) {
                 if ($('.nosto_cart').length > 0) {
                     $('.nosto_cart').replaceWith(data);
@@ -57,18 +56,17 @@
                 );
             } else {
                 $(document).ajaxComplete(function (event, xhr, settings) {
-                    if (settings.crossDomain) {
+                    if (!settings || settings.crossDomain) {
                         return;
                     }
                     //check controller
                     if ((!settings.data || settings.data.indexOf('controller=cart') < 0)
                         && (settings.url.indexOf('controller=cart') < 0)) {
-
                         return;
                     }
 
                     //reload cart tagging
-                    Nosto.reloadCartTagging(settings.url);
+                    Nosto.reloadCartTagging();
                 });
             }
         });
