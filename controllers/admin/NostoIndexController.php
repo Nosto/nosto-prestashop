@@ -66,7 +66,6 @@ class NostoIndexController
      */
     public function getIframeUrl(NostoSDKAccount $account)
     {
-        $url = null;
         if ($account
             && $account->isConnectedToNosto()
             && Shop::getContext() === Shop::CONTEXT_SHOP
@@ -74,13 +73,13 @@ class NostoIndexController
             try {
                 $currentUser = NostoCurrentUser::loadData();
                 $meta = NostoIframe::loadData();
-                $url = NostoSDKIframeHelper::getUrl($meta, $account, $currentUser);
+                return NostoSDKIframeHelper::getUrl($meta, $account, $currentUser);
             } catch (NostoSDKException $e) {
                 NostoHelperLogger::error($e, 'Unable to load the Nosto IFrame');
             }
         }
 
-        return $url;
+        return null;
     }
 
     public function getSmartyMetaData(NostoTagging $nostoTagging)
