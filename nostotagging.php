@@ -1006,13 +1006,13 @@ class NostoTagging extends Module
      * @param string $template
      * @param string|null $cache_id
      * @param string|null $compile_id
-     * @return
+     * @return string
      */
     public function display($file, $template, $cache_id = null, $compile_id = null)
     {
         if ($this->smarty == null) {
             NostoHelperLogger::info('Module::smarty is null, skip rendering nosto content');
-            return null;
+            return '';
         }
 
         return parent::display($file, $template, $cache_id, $compile_id);

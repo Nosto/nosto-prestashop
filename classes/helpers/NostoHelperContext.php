@@ -36,8 +36,8 @@ class NostoHelperContext
      * context after the the function invocation
      *
      * @param $callable
-     * @param bool|int $idLang the language identifier. False means do not manipulate it
-     * @param bool|int $idShop the shop identifier. False means do not manipulate it
+     * @param bool|int $languageId the language identifier. False means do not manipulate it
+     * @param bool|int $shopId the shop identifier. False means do not manipulate it
      * @param bool|int $currencyId the currency id. False means do not manipulate it
      * @param bool|int $employeeId the employee id. False means do not manipulate it
      * @param bool|int $countryId the country id. False means do not manipulate it
@@ -45,15 +45,15 @@ class NostoHelperContext
      */
     public static function runInContext(
         $callable,
-        $idLang = false,
-        $idShop = false,
+        $languageId = false,
+        $shopId = false,
         $currencyId = false,
         $employeeId = false,
         $countryId = false
     ) {
         $retVal = null;
 
-        self::emulateContext($idLang, $idShop, $currencyId, $employeeId, $countryId);
+        self::emulateContext($languageId, $shopId, $currencyId, $employeeId, $countryId);
         try {
             $retVal = $callable();
         } catch (Exception $e) {

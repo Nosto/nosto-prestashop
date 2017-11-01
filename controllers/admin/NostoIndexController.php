@@ -73,7 +73,7 @@ class NostoIndexController
      * Get Iframe url
      *
      * @param NostoSDKAccount $account NostoAccount|null
-     * @return null|string
+     * @return string|null
      */
     public function getIframeUrl(NostoSDKAccount $account)
     {
@@ -103,7 +103,7 @@ class NostoIndexController
         NostoHelperConfig::saveAdminUrl($adminUrl);
         $languages = Language::getLanguages(true, NostoHelperContext::getShopId());
 
-        $shopId = null;
+        $shopId = 0;
         $shopGroupId = null;
         if (NostoHelperContext::getShop() instanceof Shop) {
             $shopId = NostoHelperContext::getShopId();

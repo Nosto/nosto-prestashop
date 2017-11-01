@@ -107,7 +107,6 @@ class NostoProductService extends AbstractNostoService
      */
     private function update(array $products)
     {
-        NostoSDKHttpRequest::$responseTimeout = self::$apiWaitTimeout;
         $productsInStore = array();
         $counter = 0;
         $batch = 1;
@@ -163,6 +162,7 @@ class NostoProductService extends AbstractNostoService
             $nostoAccount = $data[self::KEY_ACCOUNT];
             foreach ($data[self::KEY_DATA] as $batchIndex => $batches) {
                 $op = new NostoSDKUpsertProductOperation($nostoAccount);
+                $op->setResponseTimeout(self::$apiWaitTimeout);
                 foreach ($batches as $product) {
                     $op->addProduct($product);
                 }
