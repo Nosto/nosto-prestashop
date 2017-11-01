@@ -103,6 +103,7 @@ class NostoHelperContext
      * @param bool|int $countryId the country id. False means do not manipulate it
      *
      * @suppress PhanTypeMismatchArgument
+     * @suppress PhanTypeMismatchProperty
      */
     public static function emulateContext(
         $languageId = false,
