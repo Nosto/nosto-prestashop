@@ -31,7 +31,7 @@ class NostoHelperController
         $result = false;
 
         // For prestashop 1.5 and 1.6 we can in most cases access the current controllers php_self property.
-        if (!isset(Context::getContext()->controller->php_self)
+        if (isset(Context::getContext()->controller->php_self)
             && Context::getContext()->controller->php_self
         ) {
             $result = Context::getContext()->controller->php_self;
