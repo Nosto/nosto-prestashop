@@ -59,17 +59,6 @@ class NostoIndexController
     }
 
     /**
-     * Returns the iframe origin where messages are allowed
-     *
-     * @return false|string
-     */
-    public static function getIframeOrigin()
-    {
-        return NostoSDK::getEnvVariable('NOSTO_IFRAME_ORIGIN_REGEXP', self::DEFAULT_IFRAME_ORIGIN_REGEXP);
-    }
-
-
-    /**
      * Get Iframe url
      *
      * @param NostoSDKAccount $account NostoAccount|null
@@ -103,11 +92,8 @@ class NostoIndexController
         NostoHelperConfig::saveAdminUrl($adminUrl);
         $languages = Language::getLanguages(true, NostoHelperContext::getShopId());
 
-        $shopId = 0;
         $shopGroupId = null;
-        if (NostoHelperContext::getShop() instanceof Shop) {
-            $shopId = NostoHelperContext::getShopId();
-        }
+        $shopId = (int)NostoHelperContext::getShopId();
 
         $languageId = (int)Tools::getValue('nostotagging_current_language', 0);
 
@@ -193,7 +179,7 @@ class NostoIndexController
             ),
             'missing_tokens' => $missingTokens,
             'iframe_installation_url' => $iframeInstallationUrl,
-            'iframe_origin' => self::getIframeOrigin(),
+            'iframe_origin' => NostoSDK::getIframeOriginRegex(),
             'sku_enabled' => NostoHelperConfig::getSkuEnabled()
         );
 

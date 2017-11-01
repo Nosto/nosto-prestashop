@@ -31,16 +31,6 @@ class NostoHeaderContent
     const DEFAULT_SERVER_ADDRESS = 'connect.nosto.com';
 
     /**
-     * Get the Nosto server address for the shop frontend JavaScripts.
-     *
-     * @return string the url.
-     */
-    public static function getServerAddress()
-    {
-        return NostoSDK::getEnvVariable('NOSTO_SERVER_URL', self::DEFAULT_SERVER_ADDRESS);
-    }
-
-    /**
      * Renders the meta and script tagging by checking the version, the language and the URL
      * of the add-to-cart controller
      *
@@ -54,7 +44,7 @@ class NostoHeaderContent
             return '';
         }
 
-        $serverAddress = self::getServerAddress();
+        $serverAddress = NostoSDK::getServerUrl();
         $link = NostoHelperLink::getLink();
         Context::getContext()->smarty->assign(array(
             'server_address' => $serverAddress,
