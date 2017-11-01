@@ -55,21 +55,21 @@ class NostoHelperCurrency
      */
     public static function getBaseCurrency()
     {
-        $baseIdCurrency = (int)Configuration::get(
+        $baseCurrencyId = (int)Configuration::get(
             self::PS_CURRENCY_DEFAULT,
             NostoHelperContext::getLanguageId(),
             NostoHelperContext::getShopGroupId(),
             NostoHelperContext::getShopId()
         );
-        if ($baseIdCurrency === 0) {
-            $baseIdCurrency = (int)Configuration::get(
+        if ($baseCurrencyId === 0) {
+            $baseCurrencyId = (int)Configuration::get(
                 self::PS_CURRENCY_DEFAULT,
                 null,
                 NostoHelperContext::getShopGroupId(),
                 NostoHelperContext::getShopId()
             );
         }
-        $baseCurrency = self::loadCurrency($baseIdCurrency);
+        $baseCurrency = self::loadCurrency($baseCurrencyId);
         if (!Validate::isLoadedObject($baseCurrency)) {
             throw new NostoSDKException(
                 sprintf(

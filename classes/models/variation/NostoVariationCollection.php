@@ -39,10 +39,19 @@ class NostoVariationCollection extends NostoSDKVariationCollection
     ) {
         $keyCollection = new NostoVariationKeyCollection();
         $keyCollection->loadData();
+        $defaultVariationKey = $keyCollection->getDefaultVariationKey();
+
+        //Always put the default variation to first one
+        $this->append(
+            NostoVariation::loadData($product, $defaultVariationKey, $productAvailability)
+        );
 
         foreach ($keyCollection as $variationKey) {
-            $variation = NostoVariation::loadData($product, $variationKey, $productAvailability);
-            $this->append($variation);
+            //skip the default
+            if ($defaultVariationKey != $variationKey) {
+                $variation = NostoVariation::loadData($product, $variationKey, $productAvailability);
+                $this->append($variation);
+            }
         }
     }
 

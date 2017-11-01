@@ -80,6 +80,28 @@ class NostoVariationKeyCollection extends NostoSDKAbstractCollection
     }
 
     /**
+     * Get default variation key
+     * @return NostoVariationKey
+     */
+    public function getDefaultVariationKey()
+    {
+        $defaultVariationKey = new NostoVariationKey(
+            NostoHelperCurrency::getBaseCurrency()->id,
+            0,
+            0
+        );
+
+        //In case the base currency is disabled in this shop, take the first one
+        if (!$this->contains($defaultVariationKey)
+            && $this->count() > 0
+        ) {
+            $defaultVariationKey = $this->var[0];
+        }
+
+        return $defaultVariationKey;
+    }
+
+    /**
      * @param NostoVariationKey $variationKey
      * @return bool
      */
