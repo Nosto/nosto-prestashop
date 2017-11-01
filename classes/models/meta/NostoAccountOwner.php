@@ -35,7 +35,7 @@ class NostoAccountOwner extends NostoSDKSignupOwner
     public static function loadData()
     {
         $nostoOwner = new NostoAccountOwner();
-        if (!NostoHelperContext::getEmployee()) {
+        if (NostoHelperContext::getEmployee()) {
             $nostoOwner->setFirstName(NostoHelperContext::getEmployee()->firstname);
             $nostoOwner->setLastName(NostoHelperContext::getEmployee()->lastname);
             $nostoOwner->setEmail(NostoHelperContext::getEmployee()->email);

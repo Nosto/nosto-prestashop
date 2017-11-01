@@ -46,7 +46,7 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
         NostoHelperContext::runInContext(
             function () use ($controller) {
                 $collection = new NostoSDKProductCollection();
-                if (!Tools::getValue(NostoTagging::ID)) {
+                if (Tools::getValue(NostoTagging::ID)) {
                     $product = new Product(
                         Tools::getValue(NostoTagging::ID),
                         true,
