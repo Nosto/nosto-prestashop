@@ -64,7 +64,7 @@ class NostoHelperPrice
     /**
      * Returns the cart item price including taxes for the given currency.
      *
-     * @param Cart|CartCore $cart the cart.
+     * @param Cart $cart the cart.
      * @param array $item the cart item.
      * @param Currency $currency the currency.
      * @return float the price.
@@ -161,7 +161,7 @@ class NostoHelperPrice
                 //different stores, it cause problem. Big number 1000,000 is used to avoid rounding issue.
                 $exchangeRate = Tools::convertPrice(
                     1000000,
-                    (int)Configuration::get('PS_CURRENCY_DEFAULT')
+                    Currency::getCurrencyInstance(Configuration::get('PS_CURRENCY_DEFAULT'))
                 ) / 1000000;
                 $value *= $exchangeRate;
 

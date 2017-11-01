@@ -50,4 +50,23 @@ class NostoHelperLink
 
         return $link;
     }
+
+    /**
+     * Returns a link to a product image for display
+     * Note: the new image filesystem stores product images in subdirectories of img/p/.
+     *
+     * @param string $rewrite rewrite link of the image
+     * @param string $ids  id part of the image filename - can be
+     * "id_product-id_image" (legacy support, recommended) or "id_image" (new)
+     * @param string|null $type null means original image
+     *
+     * @return string
+     * @suppress PhanTypeMismatchArgument
+     */
+    public static function getImageLink($rewrite, $ids, $type = null)
+    {
+        $link = NostoHelperLink::getLink();
+
+        return $link->getImageLink($rewrite, $ids, $type);
+    }
 }

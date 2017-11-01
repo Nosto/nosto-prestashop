@@ -185,6 +185,7 @@ class NostoHelperUrl
      * @param Category|CategoryCore $category the category model.
      * @param array $params additional params to add to the url.
      * @return string the category page url.
+     * @suppress PhanTypeMismatchArgument
      */
     public static function getCategoryUrl($category, array $params = array())
     {
