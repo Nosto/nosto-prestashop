@@ -209,6 +209,7 @@ class NostoHelperUrl
      * @param string $controller the controller name.
      * @param array $params additional params to add to the url.
      * @return string the page url.
+     * @suppress PhanTypeMismatchArgument
      */
     public static function getPageUrl($controller, array $params = array())
     {

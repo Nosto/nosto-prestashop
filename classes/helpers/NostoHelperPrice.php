@@ -161,7 +161,7 @@ class NostoHelperPrice
                 //different stores, it cause problem. Big number 1000,000 is used to avoid rounding issue.
                 $exchangeRate = Tools::convertPrice(
                     1000000,
-                    Currency::getCurrencyInstance(Configuration::get('PS_CURRENCY_DEFAULT'))
+                    Currency::getCurrencyInstance((int)Configuration::get('PS_CURRENCY_DEFAULT'))
                 ) / 1000000;
                 $value *= $exchangeRate;
 
