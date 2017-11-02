@@ -119,7 +119,7 @@ class NostoVariationKey
             $customerGroupName = NostoHelperVariation::ANY;
         } else {
             $group = new Group($this->groupId);
-            $name = $group-name;
+            $name = $group->name;
             if (is_array($name) && array_key_exists(NostoHelperContext::getLanguageId(), $name)) {
                 $customerGroupName = $name[NostoHelperContext::getLanguageId()];
             } elseif (is_scalar($name)) {
