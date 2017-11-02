@@ -32,11 +32,13 @@ class NostoVariationTagging
      */
     public static function get()
     {
-        if (!NostoHelperConfig::useMultipleCurrencies()) {
+        if (!NostoHelperConfig::useMultipleCurrencies()
+            && !NostoHelperConfig::getVariationEnabled()
+        ) {
             return null;
         }
 
-        $priceVariation = NostoVariation::loadData();
+        $priceVariation = NostoCurrentVariation::loadData();
 
         return $priceVariation ? $priceVariation->toHtml() : null;
     }
