@@ -36,7 +36,7 @@ class NostoUpdateExchangeRateController extends NostoBaseController
      */
     public function execute()
     {
-        $nostoAccount = NostoHelperAccount::find();
+        $nostoAccount = NostoHelperAccount::getAccount();
         $operation = new NostoRatesService();
         if ($nostoAccount && $operation->updateCurrencyExchangeRates($nostoAccount)
         ) {

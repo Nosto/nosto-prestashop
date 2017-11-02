@@ -107,7 +107,6 @@ class NostoProductService extends AbstractNostoService
      */
     private function update(array $products)
     {
-        NostoSDKHttpRequest::$responseTimeout = self::$apiWaitTimeout;
         $productsInStore = array();
         $counter = 0;
         $batch = 1;
@@ -133,7 +132,7 @@ class NostoProductService extends AbstractNostoService
             }
             self::$processedProducts[] = $this->getProductCacheKey($product);
 
-            $nostoAccount = NostoHelperAccount::find();
+            $nostoAccount = NostoHelperAccount::getAccount();
             if (!$nostoAccount) {
                 continue;
             }
@@ -163,6 +162,7 @@ class NostoProductService extends AbstractNostoService
             $nostoAccount = $data[self::KEY_ACCOUNT];
             foreach ($data[self::KEY_DATA] as $batchIndex => $batches) {
                 $op = new NostoSDKUpsertProductOperation($nostoAccount);
+                $op->setResponseTimeout(self::$apiWaitTimeout);
                 foreach ($batches as $product) {
                     $op->addProduct($product);
                 }
@@ -188,8 +188,9 @@ class NostoProductService extends AbstractNostoService
             $object = $params['object'];
             if ($object instanceof Product) {
                 //run over all the nosto account
-                NostoHelperContext::runWithEachNostoAccount(function () use ($object) {
-                    $this->updateProduct($object);
+                $nostoProductService = $this;
+                NostoHelperContext::runWithEachNostoAccount(function () use ($object, $nostoProductService) {
+                    $nostoProductService->updateProduct($object);
                 });
             }
         }
@@ -206,8 +207,9 @@ class NostoProductService extends AbstractNostoService
             $object = $params['object'];
             if ($object instanceof Product) {
                 //run over all the nosto account
-                NostoHelperContext::runWithEachNostoAccount(function () use ($object) {
-                    $this->deleteProduct($object);
+                $nostoProductService = $this;
+                NostoHelperContext::runWithEachNostoAccount(function () use ($object, $nostoProductService) {
+                    $nostoProductService->deleteProduct($object);
                 });
             }
         }
@@ -223,7 +225,7 @@ class NostoProductService extends AbstractNostoService
 
         self::$processedProducts[] = $this->getProductCacheKey($product);
 
-        $nostoAccount = NostoHelperAccount::find();
+        $nostoAccount = NostoHelperAccount::getAccount();
         if (!$nostoAccount) {
             return;
         }

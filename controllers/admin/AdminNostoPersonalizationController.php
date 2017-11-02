@@ -30,4 +30,12 @@ require_once 'AdminNostoController.php';
  */
 class AdminNostoPersonalizationController extends AdminNostoController
 {
+    /**
+     * A way to get class name for php 5.3 and lower
+     * @return string class Name
+     */
+    public static function getClassName()
+    {
+        return get_called_class();
+    }
 }

@@ -29,6 +29,15 @@
 class AdminNostoController extends ModuleAdminController
 {
     /**
+     * A way to get class name for php 5.3 and lower
+     * @return string class Name
+     */
+    public static function getClassName()
+    {
+        return get_called_class();
+    }
+
+    /**
      * @inheritdoc
      * @suppress
      */
@@ -39,7 +48,7 @@ class AdminNostoController extends ModuleAdminController
             return;
         }
 
-        $idTab = NostoAdminTabManager::getAdminTabId(AdminModulesController::class);
+        $idTab = NostoAdminTabManager::getAdminTabId('AdminModulesController');
         /** @noinspection PhpUndefinedFieldInspection */
         $idEmployee = (int)$this->context->cookie->id_employee;
         $token = Tools::getAdminToken('AdminModules' . $idTab . $idEmployee);

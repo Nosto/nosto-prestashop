@@ -59,25 +59,13 @@ class NostoIndexController
     }
 
     /**
-     * Returns the iframe origin where messages are allowed
-     *
-     * @return false|string
-     */
-    public static function getIframeOrigin()
-    {
-        return NostoSDK::getEnvVariable('NOSTO_IFRAME_ORIGIN_REGEXP', self::DEFAULT_IFRAME_ORIGIN_REGEXP);
-    }
-
-
-    /**
      * Get Iframe url
      *
      * @param NostoSDKAccount $account NostoAccount|null
-     * @return null|string
+     * @return string|null
      */
     public function getIframeUrl(NostoSDKAccount $account)
     {
-        $url = null;
         if ($account
             && $account->isConnectedToNosto()
             && Shop::getContext() === Shop::CONTEXT_SHOP
@@ -85,13 +73,13 @@ class NostoIndexController
             try {
                 $currentUser = NostoCurrentUser::loadData();
                 $meta = NostoIframe::loadData();
-                $url = NostoSDKIframeHelper::getUrl($meta, $account, $currentUser);
+                return NostoSDKIframeHelper::getUrl($meta, $account, $currentUser);
             } catch (NostoSDKException $e) {
                 NostoHelperLogger::error($e, 'Unable to load the Nosto IFrame');
             }
         }
 
-        return $url;
+        return null;
     }
 
     public function getSmartyMetaData(NostoTagging $nostoTagging)
@@ -103,11 +91,8 @@ class NostoIndexController
         NostoHelperConfig::saveAdminUrl($adminUrl);
         $languages = Language::getLanguages(true, NostoHelperContext::getShopId());
 
-        $shopId = null;
         $shopGroupId = null;
-        if (NostoHelperContext::getShop() instanceof Shop) {
-            $shopId = NostoHelperContext::getShopId();
-        }
+        $shopId = (int)NostoHelperContext::getShopId();
 
         $languageId = (int)Tools::getValue('nostotagging_current_language', 0);
 
@@ -128,7 +113,7 @@ class NostoIndexController
 
     private function generateSmartyData(NostoTagging $nostoTagging, $languages, $currentLanguage)
     {
-        $account = NostoHelperAccount::find();
+        $account = NostoHelperAccount::getAccount();
         $missingTokens = true;
         if ($account instanceof NostoSDKAccountInterface
             && $account->getApiToken(NostoSDKAPIToken::API_EXCHANGE_RATES)
@@ -193,7 +178,7 @@ class NostoIndexController
             ),
             'missing_tokens' => $missingTokens,
             'iframe_installation_url' => $iframeInstallationUrl,
-            'iframe_origin' => self::getIframeOrigin(),
+            'iframe_origin' => NostoSDK::getIframeOriginRegex(),
             'sku_enabled' => NostoHelperConfig::getSkuEnabled()
         );
 

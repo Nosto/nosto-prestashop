@@ -40,7 +40,7 @@ class NostoSku extends NostoSDKSku
         Product $product,
         NostoProduct $nostoProduct,
         Combination $combination,
-        array $attributesGroup
+        $attributesGroup
     ) {
         if (!Validate::isLoadedObject($combination)) {
             return null;
@@ -144,12 +144,9 @@ class NostoSku extends NostoSDKSku
 
                 $imageId = $image[NostoTagging::ID];
                 if ((int)$imageId > 0) {
-                    $link = NostoHelperLink::getLink();
-                    //image type null means original image
-                    $url = $link->getImageLink(
+                    $url = NostoHelperLink::getImageLink(
                         $product->link_rewrite,
-                        $combination->id_product . '-' . $imageId,
-                        null
+                        $combination->id_product . '-' . $imageId
                     );
                     if ($url) {
                         $this->setImageUrl($url);
@@ -183,7 +180,7 @@ class NostoSku extends NostoSDKSku
      * Returns the product price including discounts and taxes for the given currency.
      *
      * @param Combination $combination the product.
-     * @param Currency|CurrencyCore $currency the currency.
+     * @param Currency $currency the currency.
      * @return float the price.
      */
     public static function getPriceInclTax(Combination $combination, Currency $currency)
@@ -199,7 +196,7 @@ class NostoSku extends NostoSDKSku
      * Returns the product list price including taxes for the given currency.
      *
      * @param Combination $combination the product.
-     * @param Currency|CurrencyCore $currency the currency.
+     * @param Currency $currency the currency.
      * @return float the price.
      */
     public static function getListPriceInclTax(Combination $combination, Currency $currency)
