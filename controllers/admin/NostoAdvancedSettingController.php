@@ -39,7 +39,9 @@ class NostoAdvancedSettingController extends NostoBaseController
         NostoHelperConfig::saveMultiCurrencyMethod(Tools::getValue('multi_currency_method'));
         NostoHelperConfig::saveSkuEnabled((bool)Tools::getValue('nosto_sku_switch'));
         NostoHelperConfig::saveNostoTaggingRenderPosition(Tools::getValue('nostotagging_position'));
-        $account = NostoHelperAccount::find();
+        NostoHelperConfig::saveVariationEnabled(Tools::getValue('nosto_variation_switch'));
+      
+        $account = NostoHelperAccount::getAccount();
         $accountMeta = NostoAccountSignup::loadData();
 
         if (!empty($account) && $account->isConnectedToNosto()) {

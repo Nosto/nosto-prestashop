@@ -39,31 +39,36 @@ class NostoProduct extends NostoSDKProduct
             return null;
         }
 
-
         $nostoProduct = new NostoProduct();
-        $baseCurrency = NostoHelperCurrency::getBaseCurrency();
 
-        if (NostoHelperConfig::useMultipleCurrencies()) {
-            $nostoProduct->setVariationId($baseCurrency->iso_code);
-            $taggingCurrency = $baseCurrency;
-        } else {
-            $taggingCurrency = NostoHelperContext::getCurrency();
-        }
         $nostoProduct->setUrl(NostoHelperUrl::getProductUrl($product));
         $nostoProduct->setProductId((string)$product->id);
         $nostoProduct->setName($product->name);
-        $nostoProduct->setPriceCurrencyCode(Tools::strtoupper($taggingCurrency->iso_code));
         $nostoProduct->setAvailability(self::checkAvailability($product));
         $nostoProduct->amendTags($product);
         $nostoProduct->amendCategories($product);
         $nostoProduct->setDescription($product->description_short . $product->description);
         $nostoProduct->setInventoryLevel((int)$product->quantity);
-        $nostoProduct->setPrice(self::getPriceInclTax($product, $taggingCurrency));
-        $nostoProduct->setListPrice(self::getListPriceInclTax($product, $taggingCurrency));
         $nostoProduct->amendBrand($product);
         $nostoProduct->amendImage($product);
         $nostoProduct->amendAlternateImages($product);
         $nostoProduct->amendSupplierCost($product);
+
+        if (NostoHelperConfig::getVariationEnabled()) {
+            $nostoProduct->amendVariation($product);
+        } else {
+            $baseCurrency = NostoHelperCurrency::getBaseCurrency();
+
+            if (NostoHelperConfig::useMultipleCurrencies()) {
+                $nostoProduct->setVariationId($baseCurrency->iso_code);
+                $taggingCurrency = $baseCurrency;
+            } else {
+                $taggingCurrency = NostoHelperContext::getCurrency();
+            }
+            $nostoProduct->setPriceCurrencyCode(Tools::strtoupper($taggingCurrency->iso_code));
+            $nostoProduct->setPrice(self::getPriceInclTax($product, $taggingCurrency));
+            $nostoProduct->setListPrice(self::getListPriceInclTax($product, $taggingCurrency));
+        }
 
         if (NostoHelperConfig::getSkuEnabled()) {
             $nostoProduct->amendSkus($product);
@@ -75,6 +80,21 @@ class NostoProduct extends NostoSDKProduct
         ));
 
         return $nostoProduct;
+    }
+
+    protected function amendVariation($product)
+    {
+        $variations = new NostoVariationCollection();
+        $variations->loadData($product, $this->getAvailability());
+        //Take the first variation as the default variation
+        if ($variations->count() > 0) {
+            $defaultVariation = $variations->shift();
+            $this->setVariationId($defaultVariation->getId());
+            $this->setPrice($defaultVariation->getPrice());
+            $this->setListPrice($defaultVariation->getListPrice());
+            $this->setPriceCurrencyCode($defaultVariation->getPriceCurrencyCode());
+        }
+        $this->setVariations($variations);
     }
 
     /**
@@ -99,9 +119,7 @@ class NostoProduct extends NostoSDKProduct
     {
         $images = $product->getImages((int)NostoHelperContext::getLanguageId());
         foreach ($images as $image) {
-            $link = NostoHelperLink::getLink();
-            //Set type to null means original image
-            $url = $link->getImageLink($product->link_rewrite, $image['id_image'], null);
+            $url = NostoHelperLink::getImageLink($product->link_rewrite, $image['id_image']);
             if ($url) {
                 $this->addAlternateImageUrls($url);
             }
@@ -146,7 +164,7 @@ class NostoProduct extends NostoSDKProduct
     {
         $imageId = null;
 
-        $defaultCombinationImages = null;
+        $defaultCombinationImages = array();
         $defaultId = $product->getDefaultIdProductAttribute();
         if ($defaultId !== null) {
             //The images for default combination
@@ -187,11 +205,9 @@ class NostoProduct extends NostoSDKProduct
         }
 
         if ((int)$imageId > 0) {
-            $link = NostoHelperLink::getLink();
-            $url = $link->getImageLink(
+            $url = NostoHelperLink::getImageLink(
                 $product->link_rewrite,
-                $product->id . '-' . $imageId,
-                null
+                $product->id . '-' . $imageId
             );
             $this->setImageUrl($url);
         }
@@ -228,8 +244,8 @@ class NostoProduct extends NostoSDKProduct
     /**
      * Returns the product price including discounts and taxes for the given currency.
      *
-     * @param Product|ProductCore $product the product.
-     * @param Currency|CurrencyCore $currency the currency.
+     * @param Product $product the product.
+     * @param Currency $currency the currency.
      * @return float the price.
      */
     public static function getPriceInclTax(Product $product, Currency $currency)
@@ -244,8 +260,8 @@ class NostoProduct extends NostoSDKProduct
     /**
      * Returns the product list price including taxes for the given currency.
      *
-     * @param Product|ProductCore $product the product.
-     * @param Currency|CurrencyCore $currency the currency.
+     * @param Product $product the product.
+     * @param Currency $currency the currency.
      * @return float the price.
      */
     public static function getListPriceInclTax(Product $product, Currency $currency)

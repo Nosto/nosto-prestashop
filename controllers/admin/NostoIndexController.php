@@ -25,6 +25,7 @@
  */
 
 use Nosto\Helper\IframeHelper as NostoSDKIframeHelper;
+use Nosto\Helper\SerializationHelper as NostoSDKSerializationHelper;
 use Nosto\Nosto as NostoSDK;
 use Nosto\Object\Signup\Account as NostoSDKAccount;
 use Nosto\Request\Api\Token as NostoSDKAPIToken;
@@ -59,25 +60,13 @@ class NostoIndexController
     }
 
     /**
-     * Returns the iframe origin where messages are allowed
-     *
-     * @return false|string
-     */
-    public static function getIframeOrigin()
-    {
-        return NostoSDK::getEnvVariable('NOSTO_IFRAME_ORIGIN_REGEXP', self::DEFAULT_IFRAME_ORIGIN_REGEXP);
-    }
-
-
-    /**
      * Get Iframe url
      *
      * @param NostoSDKAccount $account NostoAccount|null
-     * @return null|string
+     * @return string|null
      */
     public function getIframeUrl(NostoSDKAccount $account)
     {
-        $url = null;
         if ($account
             && $account->isConnectedToNosto()
             && Shop::getContext() === Shop::CONTEXT_SHOP
@@ -85,13 +74,13 @@ class NostoIndexController
             try {
                 $currentUser = NostoCurrentUser::loadData();
                 $meta = NostoIframe::loadData();
-                $url = NostoSDKIframeHelper::getUrl($meta, $account, $currentUser);
+                return NostoSDKIframeHelper::getUrl($meta, $account, $currentUser);
             } catch (NostoSDKException $e) {
                 NostoHelperLogger::error($e, 'Unable to load the Nosto IFrame');
             }
         }
 
-        return $url;
+        return null;
     }
 
     public function getSmartyMetaData(NostoTagging $nostoTagging)
@@ -103,11 +92,8 @@ class NostoIndexController
         NostoHelperConfig::saveAdminUrl($adminUrl);
         $languages = Language::getLanguages(true, NostoHelperContext::getShopId());
 
-        $shopId = null;
         $shopGroupId = null;
-        if (NostoHelperContext::getShop() instanceof Shop) {
-            $shopId = NostoHelperContext::getShopId();
-        }
+        $shopId = (int)NostoHelperContext::getShopId();
 
         $languageId = (int)Tools::getValue('nostotagging_current_language', 0);
 
@@ -128,7 +114,7 @@ class NostoIndexController
 
     private function generateSmartyData(NostoTagging $nostoTagging, $languages, $currentLanguage)
     {
-        $account = NostoHelperAccount::find();
+        $account = NostoHelperAccount::getAccount();
         $missingTokens = true;
         if ($account instanceof NostoSDKAccountInterface
             && $account->getApiToken(NostoSDKAPIToken::API_EXCHANGE_RATES)
@@ -153,6 +139,8 @@ class NostoIndexController
         }
 
         $accountEmail = NostoHelperContext::getEmployee()->email;
+        $variationKeys = new NostoVariationKeyCollection();
+        $variationKeys->loadData();
 
         $smartyMetaData = array(
             'nostotagging_form_action' => $this->getAdminUrl(),
@@ -186,6 +174,7 @@ class NostoIndexController
             ),
             'multi_currency_method' => NostoHelperConfig::getMultiCurrencyMethod(),
             'nostotagging_position' => NostoHelperConfig::getNostotaggingRenderPosition(),
+            'nostotagging_variation_switch' => NostoHelperConfig::getVariationEnabled(),
             'nostotagging_ps_version_class' => 'ps-' . str_replace(
                 '.',
                 '',
@@ -193,8 +182,21 @@ class NostoIndexController
             ),
             'missing_tokens' => $missingTokens,
             'iframe_installation_url' => $iframeInstallationUrl,
-            'iframe_origin' => self::getIframeOrigin(),
-            'sku_enabled' => NostoHelperConfig::getSkuEnabled()
+            'iframe_origin' =>  NostoSDK::getIframeOriginRegex(),
+            'sku_enabled' => NostoHelperConfig::getSkuEnabled(),
+            'variation_keys' => NostoSDKSerializationHelper::serialize($variationKeys),
+            'variation_countries_from_tax_rule' => implode(
+                ', ',
+                NostoHelperVariation::getCountriesBeingUsedInTaxRules()
+            ),
+            'variation_countries_from_price_rule' => implode(
+                ', ',
+                NostoHelperVariation::getCountriesBeingUsedInSpecificPrices()
+            ),
+            'variation_groups' => implode(
+                ', ',
+                NostoHelperVariation::getGroupsBeingUsedInSpecificPrices()
+            )
         );
 
         if ($account) {

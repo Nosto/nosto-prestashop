@@ -33,7 +33,7 @@ class NostoOrderTagging
     {
         $order = NostoHelperController::resolveObject(
             "id_order",
-            Order::class,
+            'Order',
             "getOrder",
             false
         );

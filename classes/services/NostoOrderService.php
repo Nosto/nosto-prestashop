@@ -63,7 +63,7 @@ class NostoOrderService extends AbstractNostoService
                 function () use ($order) {
                     try {
                         $nostoOrder = NostoOrder::loadData($order);
-                        $account = NostoHelperAccount::find();
+                        $account = NostoHelperAccount::getAccount();
                         if ($account !== null && $account->isConnectedToNosto()) {
                             $customerId = NostoCustomerManager::getNostoId($order);
 

@@ -49,6 +49,7 @@ if ((basename(__FILE__) === 'nostotagging.php')) {
  */
 class NostoTagging extends Module
 {
+    const AJAX_REQUEST_PARAMETER_KEY = 'ajax';
     /** @var bool */
     public $bootstrap;
     /**
@@ -883,7 +884,12 @@ class NostoTagging extends Module
      */
     public function hookDisplayBackOfficeTop()
     {
-        NostoNotificationManager::checkAndDisplay($this);
+        //Do not render any thing when it is a ajax request
+        if (array_key_exists(self::AJAX_REQUEST_PARAMETER_KEY, $_REQUEST)
+            && $_REQUEST[self::AJAX_REQUEST_PARAMETER_KEY] != 1
+        ) {
+            NostoNotificationManager::checkAndDisplay($this);
+        }
     }
 
     /**
@@ -1000,13 +1006,13 @@ class NostoTagging extends Module
      * @param string $template
      * @param string|null $cache_id
      * @param string|null $compile_id
-     * @return
+     * @return string
      */
     public function display($file, $template, $cache_id = null, $compile_id = null)
     {
         if ($this->smarty == null) {
             NostoHelperLogger::info('Module::smarty is null, skip rendering nosto content');
-            return null;
+            return '';
         }
 
         return parent::display($file, $template, $cache_id, $compile_id);

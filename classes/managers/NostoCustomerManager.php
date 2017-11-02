@@ -134,7 +134,7 @@ class NostoCustomerManager
      * as the key
      *
      * @param Order $order the order whose 2c.cid cookie to look up
-     * @return bool|string the customers Nosto id or false if not found.
+     * @return string|null the customers Nosto id or false if not found.
      */
     public static function getNostoId(Order $order)
     {
@@ -143,7 +143,12 @@ class NostoCustomerManager
         $sql = 'SELECT `id_nosto_customer` FROM `' . $table . '` WHERE `id_cart` = ' . $cartId .
             ' ORDER BY `date_add` ASC';
 
-        return Db::getInstance()->getValue($sql);
+        $result = Db::getInstance()->getValue($sql);
+        if (is_string($result)) {
+            return $result;
+        } else {
+            return null;
+        }
     }
 
     /**

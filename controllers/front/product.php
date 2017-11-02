@@ -42,10 +42,11 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
         // We need to forge the employee in order to get a price for a product
         $employee = new Employee();
 
+        $controller = $this;
         NostoHelperContext::runInContext(
-            function () {
+            function () use ($controller) {
                 $collection = new NostoSDKProductCollection();
-                if (!empty(Tools::getValue(NostoTagging::ID))) {
+                if (Tools::getValue(NostoTagging::ID)) {
                     $product = new Product(
                         Tools::getValue(NostoTagging::ID),
                         true,
@@ -58,7 +59,7 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
                     $nostoProduct = NostoProduct::loadData($product);
                     $collection->append($nostoProduct);
                 } else {
-                    foreach ($this->getProductIds() as $idProduct) {
+                    foreach ($controller->getProductIds() as $idProduct) {
                         $product = new Product(
                             $idProduct,
                             true,
@@ -73,7 +74,7 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
                         $collection->append($nostoProduct);
                     }
                 }
-                $this->encryptOutput($collection);
+                $controller->encryptOutput($collection);
             },
             false,
             false,

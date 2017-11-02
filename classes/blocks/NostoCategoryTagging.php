@@ -32,7 +32,7 @@ class NostoCategoryTagging
      */
     public static function get()
     {
-        $category = NostoHelperController::resolveObject("id_category", Category::class, "getCategory");
+        $category = NostoHelperController::resolveObject("id_category", 'Category', "getCategory");
         if (!$category instanceof Category) {
             // An edge-case for this tagging block that if the category isn't found, it will use
             // the last viewed category

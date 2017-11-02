@@ -49,9 +49,10 @@ abstract class NostoBaseController extends ModuleAdminController
         }
 
         //run the code in a context with language id set to the language admin chose
+        $controller = $this;
         $redirectToAdminPage = NostoHelperContext::runInContext(
-            function () {
-                return $this->execute();
+            function () use ($controller) {
+                return $controller->execute();
             },
             $handlingLanguage['id_lang'],
             NostoHelperContext::getShopId()
