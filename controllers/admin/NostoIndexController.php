@@ -25,6 +25,7 @@
  */
 
 use Nosto\Helper\IframeHelper as NostoSDKIframeHelper;
+use Nosto\Helper\SerializationHelper as NostoSDKSerializationHelper;
 use Nosto\Nosto as NostoSDK;
 use Nosto\Object\Signup\Account as NostoSDKAccount;
 use Nosto\Request\Api\Token as NostoSDKAPIToken;
@@ -153,6 +154,8 @@ class NostoIndexController
         }
 
         $accountEmail = NostoHelperContext::getEmployee()->email;
+        $variationKeys = new NostoVariationKeyCollection();
+        $variationKeys->loadData();
 
         $smartyMetaData = array(
             'nostotagging_form_action' => $this->getAdminUrl(),
@@ -195,7 +198,20 @@ class NostoIndexController
             'missing_tokens' => $missingTokens,
             'iframe_installation_url' => $iframeInstallationUrl,
             'iframe_origin' => self::getIframeOrigin(),
-            'sku_enabled' => NostoHelperConfig::getSkuEnabled()
+            'sku_enabled' => NostoHelperConfig::getSkuEnabled(),
+            'variation_keys' => NostoSDKSerializationHelper::serialize($variationKeys),
+            'variation_countries_from_tax_rule' => implode(
+                ', ',
+                NostoHelperVariation::getCountriesBeingUsedInTaxRules()
+            ),
+            'variation_countries_from_price_rule' => implode(
+                ', ',
+                NostoHelperVariation::getCountriesBeingUsedInSpecificPrices()
+            ),
+            'variation_groups' => implode(
+                ', ',
+                NostoHelperVariation::getGroupsBeingUsedInSpecificPrices()
+            )
         );
 
         if ($account) {
