@@ -226,7 +226,7 @@
             {if $nostotagging_account_authorized}
                 {if !empty($iframe_url)}
                     <div class="row nostotagging_iframe_container"
-                         style="margin-left: -25px;margin-right: -25px;margin-top: -15px;">
+                         style="margin-left: -25px;margin-right: -25px;margin-top: 15px;">
                         <div class="col-md-12">
                             <iframe id="nostotagging_iframe" frameborder="0" width="100%"
                                     scrolling="no"
@@ -236,7 +236,7 @@
                 {/if}
             {else}
                 <div class="row nostotagging_iframe_container"
-                     style="margin-left: -25px;margin-right: -25px;margin-top: -15px;">
+                     style="margin-left: -25px;margin-right: -25px;margin-top: 15px;">
                     <div class="col-md-12">
                         <iframe id="nostotagging_iframe" frameborder="0" width="100%" scrolling="no"
                                 src="{$iframe_installation_url|escape:'htmlall':'UTF-8'}"></iframe>
