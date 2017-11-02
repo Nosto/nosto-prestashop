@@ -195,7 +195,7 @@ class NostoHelperVariation
         $countryIdsFromTaxRules = self::getCountriesBeingUsedInTaxRules();
         $countryIds = array_unique(array_merge($countryIds, $countryIdsFromTaxRules));
         //cache for 5 minutes
-        $cache->set($cache, $countryIds, self::CACHE_TIMEOUT);
+        $cache->set($cacheKey, $countryIds, self::CACHE_TIMEOUT);
 
         return $countryIds;
     }

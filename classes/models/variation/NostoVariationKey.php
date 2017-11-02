@@ -96,6 +96,7 @@ class NostoVariationKey
     /**
      * Get variation id from currency id, country id and group id
      * @return string variation id
+     * @suppress PhanTypeMismatchArgument
      */
     public function getVariationId()
     {

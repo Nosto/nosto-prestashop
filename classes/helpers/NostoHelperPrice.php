@@ -179,6 +179,7 @@ class NostoHelperPrice
      * @param bool $useReduction use group reduction or not
      * @param int $decimals
      * @return float price
+     * @suppress PhanTypeMismatchArgument
      */
     public static function getProductPriceForGroup(
         $productId,
@@ -193,7 +194,7 @@ class NostoHelperPrice
             null,
             NostoHelperContext::getCountryId(),
             0,
-            null,
+            '',
             NostoHelperContext::getCurrencyId(),
             $groupId,
             2,
@@ -211,7 +212,7 @@ class NostoHelperPrice
         //different stores, it cause problem. Big number 1000,000 is used to avoid rounding issue.
         $exchangeRate = Tools::convertPrice(
             1000000,
-            (int)Configuration::get('PS_CURRENCY_DEFAULT')
+            Currency::getCurrencyInstance((int)Configuration::get('PS_CURRENCY_DEFAULT'))
         ) / 1000000;
         $price *= $exchangeRate;
 
