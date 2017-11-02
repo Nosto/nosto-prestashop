@@ -38,7 +38,7 @@
             <div class="toolbar-placeholder">
                 <div class="toolbarBox toolbarHead">
                     <ul>
-                        <li id="nosto_settings_save_button" style="display: none;position: absolute;right: 70px;">
+                        <li id="submit_nostotagging_advanced_settings" style="display: none;position: absolute;right: 70px;">
                             <a id="desc-configuration-save" class="toolbar_btn" href="#" title="Save" onclick="Nosto.saveAdvancedSettings()">
                                 <span class="process-icon-save"></span>
                                 <div style="text-align:center">{l s='Save' mod='nostotagging'}</div>
@@ -107,12 +107,19 @@
 
                             <label>{l s='Multi Currency Method' mod='nostotagging'}</label>
                             <div class="margin-form">
-                                <input type="radio" name="multi_currency_method" id="multi_currency_method_0" value="disabled" {if $multi_currency_method==="disabled"}checked="checked"{/if}>
+                                <div class="warn multi-currency-variation-alert">
+                                    <p>
+                                        {l s='Multi currency and price variation could not be enabled in the same time' mod='nostotagging'}
+                                    </p>
+                                </div>
+                                <input type="radio" name="multi_currency_method" id="multi_currency_method_0" value="disabled" {if $multi_currency_method==="disabled"}checked="checked"{/if}
+                                       onchange="Nosto.checkMultiCurrencyVariationConflict()"/>
                                 <label class="t" for="multi_currency_method_0">
                                     {l s='Disabled' mod='nostotagging'}
                                 </label>
                                 <br>
-                                <input type="radio" name="multi_currency_method" id="multi_currency_method_1" value="exchangeRates" {if $multi_currency_method==="exchangeRates"}checked="checked"{/if}>
+                                <input type="radio" name="multi_currency_method" id="multi_currency_method_1" value="exchangeRates" {if $multi_currency_method==="exchangeRates"}checked="checked"{/if}
+                                       onchange="Nosto.checkMultiCurrencyVariationConflict()"/>
                                 <label class="t" for="multi_currency_method_1">
                                     {l s='Exchange rates' mod='nostotagging'}
                                 </label>
@@ -156,14 +163,21 @@
                                 <p class="preference_description">{l s='Send SKU data to Nosto for recommendation' mod='nostotagging'}</p>
                             </div>
                             <hr>
-
                             <label>{l s='Send price varations to Nosto' mod='nostotagging'}</label>
                             <div class="margin-form">
+                                <div class="warn multi-currency-variation-alert">
+                                    <p>
+                                        {l s='Multi currency and price variation could not be enabled in the same time' mod='nostotagging'}
+                                    </p>
+                                </div>
+
                                 <label class="t" for="nosto_variation_switch_on"><img src="../img/admin/enabled.gif" alt="Yes" title="Yes"></label>
-                                <input type="radio" name="nosto_variation_switch" id="nosto_variation_switch_on" value="1" {if $variation_enabled === true}checked="checked" {/if}>
+                                <input type="radio" name="nosto_variation_switch" id="nosto_variation_switch_on" value="1" {if $nostotagging_variation_switch === true}checked="checked" {/if}
+                                       onchange="Nosto.checkMultiCurrencyVariationConflict()"/>
                                 <label class="t" for="nosto_variation_switch_on"> {l s='Yes' mod='nostotagging'}</label>
                                 <label class="t" for="nosto_variation_switch_off"><img src="../img/admin/disabled.gif" alt="No" title="No" style="margin-left: 10px;"></label>
-                                <input type="radio" name="nosto_variation_switch" id="nosto_variation_switch_off" value="0" {if $variation_enabled !== true}checked="checked" {/if}>
+                                <input type="radio" name="nosto_variation_switch" id="nosto_variation_switch_off" value="0" {if $nostotagging_variation_switch !== true}checked="checked" {/if}
+                                       onchange="Nosto.checkMultiCurrencyVariationConflict()"/>
                                 <label class="t" for="nosto_variation_switch_off"> {l s='No' mod='nostotagging'}</label>
                                 <p class="preference_description">{l s='Send price variations to Nosto for recommendation' mod='nostotagging'}</p>
                             </div>
@@ -265,9 +279,28 @@
                 submitAction(action);
             };
 
+            window.Nosto.checkMultiCurrencyVariationConflict = function () {
+                if ($("input[name='multi_currency_method']:checked").val() == 'exchangeRates'
+                    && $("input[name='nosto_variation_switch']:checked").val() == '1' ) {
+                    $('.multi-currency-variation-alert').show();
+                    $('#desc-configuration-save').hide();
+                } else {
+                    $('.multi-currency-variation-alert').hide();
+                    $('#desc-configuration-save').show();
+                }
+            }
+            Nosto.checkMultiCurrencyVariationConflict();
+
             window.Nosto.saveAdvancedSettings = function () {
                 var action = "{/literal}{$NostoAdvancedSettingUrl|escape:javascript}{literal}";
                 submitAction(action);
+            };
+
+            window.Nosto.showVariationKeys = function () {
+                console.log("Variation keys: {/literal}{$variation_keys|escape:javascript}{literal}");
+                console.log("Countries from tax rules: {/literal}{$variation_countries_from_tax_rule|escape:javascript}{literal}");
+                console.log("Countries from specific price rules: {/literal}{$variation_countries_from_price_rule|escape:javascript}{literal}");
+                console.log("Groups from specific price rules: {/literal}{$variation_groups|escape:javascript}{literal}");
             };
 
             window.addEventListener("message", receiveMessage, false);
@@ -279,9 +312,9 @@
                 shown.slideUp().removeClass('panel-showing').addClass('panel-collapsed');
 
                 if (hidden.length > 0) {
-                    $('#nosto_settings_save_button').show();
+                    $('#submit_nostotagging_advanced_settings').show();
                 } else {
-                    $('#nosto_settings_save_button').hide();
+                    $('#submit_nostotagging_advanced_settings').hide();
                 }
             }
 
