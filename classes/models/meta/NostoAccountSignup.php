@@ -124,11 +124,11 @@ class NostoAccountSignup extends NostoSDKAccountSignup
                     'nosto_account_signup' => $nostoSignup
                 ));
             },
-            $languageId,
+            (int)$languageId,
             false,
-            $currencyId,
+            (int)$currencyId,
             false,
-            $countryId
+            (int)$countryId
         );
 
         return $nostoSignup;

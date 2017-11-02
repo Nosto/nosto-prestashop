@@ -40,31 +40,29 @@ class NostoHelperPrice
     /**
      * Returns the product wholesale price including taxes for the given currency.
      *
-     * @param Product|ProductCore $product the product.
-     * @return float the price.
+     * @param Product $product the product.
+     * @return float|null the price.
      */
     public static function getProductWholesalePriceInclTax(Product $product)
     {
         $wholesalePriceExcTaxes = $product->wholesale_price;
         if ($wholesalePriceExcTaxes > 0) {
             if ($product->tax_rate > 0) {
-                $wholesalePriceIncTaxes = NostoHelperPrice::roundPrice(
+                return NostoHelperPrice::roundPrice(
                     $wholesalePriceExcTaxes * (1 + $product->tax_rate / 100)
                 );
             } else {
-                $wholesalePriceIncTaxes = $wholesalePriceExcTaxes;
+                return $wholesalePriceExcTaxes;
             }
         } else {
-            $wholesalePriceIncTaxes = null;
+            return null;
         }
-
-        return $wholesalePriceIncTaxes;
     }
 
     /**
      * Returns the cart item price including taxes for the given currency.
      *
-     * @param Cart|CartCore $cart the cart.
+     * @param Cart $cart the cart.
      * @param array $item the cart item.
      * @param Currency $currency the currency.
      * @return float the price.
@@ -100,7 +98,7 @@ class NostoHelperPrice
      * The price is rounded according to the configured rounding mode in PS.
      *
      * @param int $idProduct the product ID.
-     * @param Currency|CurrencyCore $currency the currency object.
+     * @param Currency $currency the currency object.
      * @param array $options options for the Product::getPriceStatic method.
      * @return float the price.
      */
@@ -110,7 +108,7 @@ class NostoHelperPrice
         array $options = array()
     ) {
         $employeeId = NostoHelperContext::getEmployeeId();
-        if (empty(NostoHelperContext::getEmployee())) {
+        if ($employeeId === null) {
             $employee = new Employee();
             $employeeId = $employee->id;
         }
@@ -161,7 +159,7 @@ class NostoHelperPrice
                 //different stores, it cause problem. Big number 1000,000 is used to avoid rounding issue.
                 $exchangeRate = Tools::convertPrice(
                     1000000,
-                    (int)Configuration::get('PS_CURRENCY_DEFAULT')
+                    Currency::getCurrencyInstance((int)Configuration::get('PS_CURRENCY_DEFAULT'))
                 ) / 1000000;
                 $value *= $exchangeRate;
 
@@ -234,7 +232,7 @@ class NostoHelperPrice
         //if the decimals is disabled for this currency, then the precision should be 0
         $currencyDecimalsEnabled = $currency ? (int)$currency->decimals : 1;
 
-        return Tools::ps_round(
+        return (float)Tools::ps_round(
             $price,
             $currencyDecimalsEnabled * _PS_PRICE_DISPLAY_PRECISION_
         );

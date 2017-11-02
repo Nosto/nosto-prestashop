@@ -75,7 +75,7 @@ class NostoAdminTabManager
             return false;
         }
 
-        $idTab = self::getAdminTabId(AdminNostoController::class);
+        $idTab = self::getAdminTabId(AdminNostoController::getClassName());
         if ($idTab) {
             $mainTabAdded = new Tab($idTab);
         } else {
@@ -95,7 +95,7 @@ class NostoAdminTabManager
 
         // For PS 1.6 it is enough to have the main menu, for PS 1.5 and 1.7 we need a sub-menu.
         if ($mainTabAdded && (_PS_VERSION_ < '1.6' || _PS_VERSION_ >= '1.7')) {
-            $idTab = self::getAdminTabId(AdminNostoPersonalizationController::class);
+            $idTab = self::getAdminTabId(AdminNostoPersonalizationController::getClassName());
             if ($idTab) {
                 $subTabAdded = new Tab($idTab);
             } else {
@@ -110,7 +110,7 @@ class NostoAdminTabManager
                         $tab->name[$lang['id_lang']] = 'Personalization';
                     }
                 }
-                $tab->id_parent = self::getAdminTabId(AdminNostoController::class);
+                $tab->id_parent = self::getAdminTabId(AdminNostoController::getClassName());
                 $tab->module = NostoTagging::MODULE_NAME;
                 $subTabAdded = $tab->add();
             }
@@ -137,6 +137,7 @@ class NostoAdminTabManager
      * @return bool|int tab id
      *
      * @suppress PhanDeprecatedFunction
+     * @suppress PhanTypeMismatchProperty
      */
     public static function registerController($className)
     {
@@ -144,11 +145,11 @@ class NostoAdminTabManager
         /** @noinspection PhpDeprecationInspection */
         $tab->id = (int)Tab::getIdFromClassName($className);
         $tab->active = true;
-        $languages = Language::getLanguages(true);
+        $languages = Language::getLanguages(true, false, true);
         if ($languages) {
             $tab->name = array();
             foreach ($languages as $lang) {
-                    $tab->name[$lang['id_lang']] = $className;
+                $tab->name[(int)$lang['id_lang']] = $className;
             }
         } else {
             //In prestashop 1.5, the tab name length is limited to max 32
@@ -168,7 +169,7 @@ class NostoAdminTabManager
      */
     public static function uninstall()
     {
-        $tabs = array(AdminNostoController::class, AdminNostoPersonalizationController::class);
+        $tabs = array(AdminNostoController::getClassName(), AdminNostoPersonalizationController::getClassName());
         foreach ($tabs as $tabName) {
             $tabId = self::getAdminTabId($tabName);
             if ($tabId) {

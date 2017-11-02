@@ -332,6 +332,9 @@
                         action = "{/literal}{$NostoCreateAccountUrl|escape:javascript}{literal}";
                     } else if (data.type === 'connectAccount' || data.type === 'syncAccount') {
                         action = "{/literal}{$NostoConnectAccountUrl|escape:javascript}{literal}";
+                    } else if (data.type === 'removeAccount') {
+                        Nosto.deleteNostoAccount();
+                        return;
                     }
                     submitAction(action);
                 }

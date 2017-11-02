@@ -27,6 +27,7 @@
 <ruleset name="Prestashop">
     <config name="installed_paths" value="libs/wimg/php-compatibility/" />
     <description>Prestashop coding standard.</description>
+    <rule ref="PHPCompatibility"/>
     <rule ref="PSR2">
         <exclude name="PSR1.Classes.ClassDeclaration.MissingNamespace"/>
         <exclude name="PSR1.Files.SideEffects.FoundWithSymbols">
@@ -69,7 +70,7 @@
     <rule ref="Squiz.NamingConventions.ValidVariableName.NotCamelCaps"/>
     <rule ref="Squiz.NamingConventions.ValidVariableName.MemberNotCamelCaps"/>
     <rule ref="Squiz.NamingConventions.ValidVariableName.StringNotCamelCaps"/>
-    <config name="testVersion" value="5.2"/>
+    <config name="testVersion" value="5.3"/>
     <exclude-pattern>/build/</exclude-pattern>
     <exclude-pattern>/libs/</exclude-pattern>
     <exclude-pattern>/.phan/</exclude-pattern>

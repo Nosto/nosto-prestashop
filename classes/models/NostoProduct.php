@@ -119,9 +119,7 @@ class NostoProduct extends NostoSDKProduct
     {
         $images = $product->getImages((int)NostoHelperContext::getLanguageId());
         foreach ($images as $image) {
-            $link = NostoHelperLink::getLink();
-            //Set type to null means original image
-            $url = $link->getImageLink($product->link_rewrite, $image['id_image'], null);
+            $url = NostoHelperLink::getImageLink($product->link_rewrite, $image['id_image']);
             if ($url) {
                 $this->addAlternateImageUrls($url);
             }
@@ -166,7 +164,7 @@ class NostoProduct extends NostoSDKProduct
     {
         $imageId = null;
 
-        $defaultCombinationImages = null;
+        $defaultCombinationImages = array();
         $defaultId = $product->getDefaultIdProductAttribute();
         if ($defaultId !== null) {
             //The images for default combination
@@ -207,11 +205,9 @@ class NostoProduct extends NostoSDKProduct
         }
 
         if ((int)$imageId > 0) {
-            $link = NostoHelperLink::getLink();
-            $url = $link->getImageLink(
+            $url = NostoHelperLink::getImageLink(
                 $product->link_rewrite,
-                $product->id . '-' . $imageId,
-                null
+                $product->id . '-' . $imageId
             );
             $this->setImageUrl($url);
         }
@@ -248,8 +244,8 @@ class NostoProduct extends NostoSDKProduct
     /**
      * Returns the product price including discounts and taxes for the given currency.
      *
-     * @param Product|ProductCore $product the product.
-     * @param Currency|CurrencyCore $currency the currency.
+     * @param Product $product the product.
+     * @param Currency $currency the currency.
      * @return float the price.
      */
     public static function getPriceInclTax(Product $product, Currency $currency)
@@ -264,8 +260,8 @@ class NostoProduct extends NostoSDKProduct
     /**
      * Returns the product list price including taxes for the given currency.
      *
-     * @param Product|ProductCore $product the product.
-     * @param Currency|CurrencyCore $currency the currency.
+     * @param Product $product the product.
+     * @param Currency $currency the currency.
      * @return float the price.
      */
     public static function getListPriceInclTax(Product $product, Currency $currency)

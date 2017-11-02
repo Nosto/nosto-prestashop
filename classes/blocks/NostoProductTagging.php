@@ -37,7 +37,7 @@ class NostoProductTagging
     {
         $product = NostoHelperController::resolveObject(
             self::ID_PRODUCT,
-            Product::class,
+            'Product',
             "getProduct"
         );
         if (!$product instanceof Product) {
@@ -49,7 +49,7 @@ class NostoProductTagging
 
         $category = NostoHelperController::resolveObject(
             self::ID_CATEGORY,
-            Category::class,
+            'Category',
             "getCategory"
         );
         if (Validate::isLoadedObject($category)) {

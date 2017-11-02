@@ -36,8 +36,8 @@ class NostoHelperContext
      * context after the the function invocation
      *
      * @param $callable
-     * @param bool|int $idLang the language identifier. False means do not manipulate it
-     * @param bool|int $idShop the shop identifier. False means do not manipulate it
+     * @param bool|int $languageId the language identifier. False means do not manipulate it
+     * @param bool|int $shopId the shop identifier. False means do not manipulate it
      * @param bool|int $currencyId the currency id. False means do not manipulate it
      * @param bool|int $employeeId the employee id. False means do not manipulate it
      * @param bool|int $countryId the country id. False means do not manipulate it
@@ -45,15 +45,15 @@ class NostoHelperContext
      */
     public static function runInContext(
         $callable,
-        $idLang = false,
-        $idShop = false,
+        $languageId = false,
+        $shopId = false,
         $currencyId = false,
         $employeeId = false,
         $countryId = false
     ) {
         $retVal = null;
 
-        self::emulateContext($idLang, $idShop, $currencyId, $employeeId, $countryId);
+        self::emulateContext($languageId, $shopId, $currencyId, $employeeId, $countryId);
         try {
             $retVal = $callable();
         } catch (Exception $e) {
@@ -67,7 +67,7 @@ class NostoHelperContext
     public static function runWithEachNostoAccount($callable)
     {
         self::runInContextForEachLanguageEachShop(function () use ($callable) {
-            $account = NostoHelperAccount::find();
+            $account = NostoHelperAccount::getAccount();
             if ($account === null) {
                 return null;
             } else {
@@ -103,6 +103,7 @@ class NostoHelperContext
      * @param bool|int $countryId the country id. False means do not manipulate it
      *
      * @suppress PhanTypeMismatchArgument
+     * @suppress PhanTypeMismatchProperty
      */
     public static function emulateContext(
         $languageId = false,
@@ -201,7 +202,7 @@ class NostoHelperContext
      */
     public static function getLanguageId()
     {
-        return self::getLanguage() ? self::getLanguage()->id : null;
+        return self::getLanguage() ? (int)self::getLanguage()->id : null;
     }
 
     /**
@@ -211,7 +212,7 @@ class NostoHelperContext
      */
     public static function getCurrencyId()
     {
-        return self::getCurrency() ? self::getCurrency()->id : null;
+        return self::getCurrency() ? (int)self::getCurrency()->id : null;
     }
 
     /**
@@ -231,7 +232,7 @@ class NostoHelperContext
      */
     public static function getCountryId()
     {
-        return self::getCountry() ? self::getCountry()->id : null;
+        return self::getCountry() ? (int)self::getCountry()->id : null;
     }
 
     /**

@@ -40,8 +40,8 @@ class NostoAdvancedSettingController extends NostoBaseController
         NostoHelperConfig::saveSkuEnabled((bool)Tools::getValue('nosto_sku_switch'));
         NostoHelperConfig::saveNostoTaggingRenderPosition(Tools::getValue('nostotagging_position'));
         NostoHelperConfig::saveVariationEnabled(Tools::getValue('nosto_variation_switch'));
-
-        $account = NostoHelperAccount::find();
+      
+        $account = NostoHelperAccount::getAccount();
         $accountMeta = NostoAccountSignup::loadData();
 
         if (!empty($account) && $account->isConnectedToNosto()) {

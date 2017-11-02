@@ -71,7 +71,8 @@ class NostoHelperUrl
         try {
             $idLang = NostoHelperContext::getLanguageId();
 
-            $row = Category::getHomeCategories($idLang, true)[0];
+            $rows = Category::getHomeCategories($idLang, true);
+            $row = $rows[0];
             $categoryId = isset($row['id_category']) ? (int)$row['id_category'] : 0;
 
             $category = new Category($categoryId, $idLang);
@@ -149,6 +150,7 @@ class NostoHelperUrl
      * @param array $params additional params to add to the url.
      * @param int|null $productAttributeId product attribute id
      * @return string the product page url.
+     * @suppress PhanTypeMismatchArgument
      */
     public static function getProductUrl($product, array $params = array(), $productAttributeId = 0)
     {
@@ -183,6 +185,7 @@ class NostoHelperUrl
      * @param Category|CategoryCore $category the category model.
      * @param array $params additional params to add to the url.
      * @return string the category page url.
+     * @suppress PhanTypeMismatchArgument
      */
     public static function getCategoryUrl($category, array $params = array())
     {
@@ -206,6 +209,7 @@ class NostoHelperUrl
      * @param string $controller the controller name.
      * @param array $params additional params to add to the url.
      * @return string the page url.
+     * @suppress PhanTypeMismatchArgument
      */
     public static function getPageUrl($controller, array $params = array())
     {
@@ -298,6 +302,7 @@ class NostoHelperUrl
      * Returns the current shop's url from the context and language.
      *
      * @return string the absolute url.
+     * @suppress PhanTypeMismatchArgument
      */
     public static function getContextShopUrl()
     {
