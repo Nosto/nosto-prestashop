@@ -28,15 +28,17 @@
         var Nosto = {};
     }
     {/literal}
-    Nosto.addProductToCart = function (productId, element) {
+    Nosto.addProductToCart = function (productId, element, quantity) {
+        quantity = quantity || 1;
         var productData = {
             "productId": productId
         };
-        Nosto.addSkuToCart(productData, element);
+        Nosto.addSkuToCart(productData, element, quantity);
     };
 
     //Product object must have fields productId and skuId productId: 123, skuId: 321
-    Nosto.addSkuToCart = function (product, element) {
+    Nosto.addSkuToCart = function (product, element, quantity) {
+        quantity = quantity || 1;
         if (typeof nostojs !== 'undefined' && typeof element === 'object') {
             var slotId = Nosto.resolveContextSlotId(element);
             if (slotId) {
@@ -49,7 +51,7 @@
         //ajaxCart is prestashop object
         if (ajaxCart && ajaxCart.add && $('.cart_block').length) {
             try {
-                ajaxCart.add(product.productId, product.skuId, true, null, 1, null);
+                ajaxCart.add(product.productId, product.skuId, true, null, quantity, null);
 
                 return;//done with ajax way
             } catch (e) {
@@ -59,7 +61,7 @@
 
         //if ajax way failed, submit a form to add it to cart
         var hiddenFields = {
-            "qty": 1,
+            "qty": quantity,
             "controller": "cart",
             "id_product": product.productId,
             "ipa": product.skuId,
