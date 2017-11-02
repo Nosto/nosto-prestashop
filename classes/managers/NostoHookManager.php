@@ -38,17 +38,17 @@ class NostoHookManager
         $success = true;
         if (!empty($hooks)) {
             /** @var array $hook */
-            foreach ($hooks as $hook) {
+            foreach ($hooks as $hookInfo) {
                 $callback = array(
                     'Hook',
                     (method_exists('Hook', 'getIdByName')) ? 'getIdByName' : 'get'
                 );
-                $idHook = call_user_func($callback, $hook['name']);
+                $idHook = call_user_func($callback, $hookInfo['name']);
                 if (empty($idHook)) {
                     $hook = new Hook();
-                    $hook->name = pSQL($hook['name']);
-                    $hook->title = pSQL($hook['title']);
-                    $hook->description = pSQL($hook['description']);
+                    $hook->name = pSQL($hookInfo['name']);
+                    $hook->title = pSQL($hookInfo['title']);
+                    $hook->description = pSQL($hookInfo['description']);
                     $hook->add();
                     $idHook = $hook->id;
                     if (!$idHook) {

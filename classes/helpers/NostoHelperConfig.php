@@ -34,6 +34,7 @@ class NostoHelperConfig
     const CRON_ACCESS_TOKEN = 'NOSTOTAGGING_CRON_ACCESS_TOKEN';
     const MULTI_CURRENCY_METHOD = 'NOSTOTAGGING_MC_METHOD';
     const SKU_SWITCH = 'NOSTOTAGGING_SKU_SWITCH';
+    const VARIATION_SWITCH = 'NOSTOTAGGING_VARIATION_SWITCH';
     const TOKEN_CONFIG_PREFIX = 'NOSTOTAGGING_API_TOKEN_';
     const MULTI_CURRENCY_METHOD_VARIATION = 'priceVariation';
     const MULTI_CURRENCY_METHOD_EXCHANGE_RATE = 'exchangeRate';
@@ -188,18 +189,7 @@ class NostoHelperConfig
      */
     public static function saveAccountName($accountName)
     {
-        if (NostoHelperContext::getShop() instanceof Shop) {
-            return self::write(
-                self::ACCOUNT_NAME,
-                $accountName,
-                NostoHelperContext::getLanguageId(),
-                false,
-                NostoHelperContext::getShopGroupId(),
-                NostoHelperContext::getShopId()
-            );
-        } else {
-            return self::write(self::ACCOUNT_NAME, $accountName, NostoHelperContext::getLanguageId());
-        }
+        return self::saveSetting(self::ACCOUNT_NAME, $accountName);
     }
 
     /**
@@ -226,18 +216,7 @@ class NostoHelperConfig
      */
     public static function saveToken($tokeName, $tokenValue)
     {
-        if (NostoHelperContext::getShop() instanceof Shop) {
-            return self::write(
-                self::getTokenConfigKey($tokeName),
-                $tokenValue,
-                NostoHelperContext::getLanguageId(),
-                false,
-                NostoHelperContext::getShopGroupId(),
-                NostoHelperContext::getShopId()
-            );
-        } else {
-            return self::write(self::getTokenConfigKey($tokeName), $tokenValue, NostoHelperContext::getLanguageId());
-        }
+        return self::saveSetting(self::getTokenConfigKey($tokeName), $tokenValue);
     }
 
     /**
@@ -347,18 +326,7 @@ class NostoHelperConfig
      */
     public static function saveMultiCurrencyMethod($method)
     {
-        if (NostoHelperContext::getShop() instanceof Shop) {
-            return self::write(
-                self::MULTI_CURRENCY_METHOD,
-                $method,
-                NostoHelperContext::getLanguageId(),
-                false,
-                NostoHelperContext::getShopGroupId(),
-                NostoHelperContext::getShopId()
-            );
-        } else {
-            return self::write(self::MULTI_CURRENCY_METHOD, $method, NostoHelperContext::getLanguageId());
-        }
+        return self::saveSetting(self::MULTI_CURRENCY_METHOD, $method);
     }
 
     /**
@@ -378,39 +346,47 @@ class NostoHelperConfig
      */
     public static function saveSkuEnabled($enabled)
     {
-        if (NostoHelperContext::getShop() instanceof Shop) {
-            return self::write(
-                self::SKU_SWITCH,
-                $enabled,
-                NostoHelperContext::getLanguageId(),
-                false,
-                NostoHelperContext::getShopGroupId(),
-                NostoHelperContext::getShopId()
-            );
-        } else {
-            return self::write(self::SKU_SWITCH, $enabled, NostoHelperContext::getLanguageId());
-        }
+        return self::saveSetting(self::SKU_SWITCH, $enabled);
     }
 
     /**
      * Saves the position where to render Nosto tagging
      *
-     * @param string $method the multi currency method.
+     * @param string $position
      * @return bool true if saving the configuration was successful, false otherwise
      */
-    public static function saveNostoTaggingRenderPosition($method)
+    public static function saveNostoTaggingRenderPosition($position)
+    {
+        return self::saveSetting(self::NOSTOTAGGING_POSITION, $position);
+    }
+
+    public static function saveVariationEnabled($enabled)
+    {
+        return self::saveSetting(self::VARIATION_SWITCH, $enabled);
+    }
+
+    /**
+     * Is variation feature enabled
+     * @return bool true if variation feature has been enabled, false otherwise
+     */
+    public static function getVariationEnabled()
+    {
+        return (bool)self::read(self::VARIATION_SWITCH);
+    }
+
+    public static function saveSetting($configName, $value)
     {
         if (NostoHelperContext::getShop() instanceof Shop) {
             return self::write(
-                self::NOSTOTAGGING_POSITION,
-                $method,
+                $configName,
+                $value,
                 NostoHelperContext::getLanguageId(),
                 false,
                 NostoHelperContext::getShopGroupId(),
                 NostoHelperContext::getShopId()
             );
         } else {
-            return self::write(self::NOSTOTAGGING_POSITION, $method, NostoHelperContext::getLanguageId());
+            return self::write(self::SKU_SWITCH, $value, NostoHelperContext::getLanguageId());
         }
     }
 
