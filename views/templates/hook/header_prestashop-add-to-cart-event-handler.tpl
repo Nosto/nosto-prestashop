@@ -24,7 +24,7 @@
 
 <script type="text/javascript">
     if ($ && $ == jQuery) {
-        Window.Nosto = Window.Nosto || {};
+        window.Nosto = window.Nosto || {};
         Nosto.reloadCartTagging = function () {
             $.ajax({
                 url: "{$reload_cart_url|escape:"javascript":"UTF-8"}",
