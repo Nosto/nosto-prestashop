@@ -23,11 +23,9 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-define('NOSTO_VERSION', NostoTagging::PLUGIN_VERSION);
 class NostoBootstrap
 {
-
-    public static function init($moduleDir, $moduleVersion)
+    public static function init($moduleDir)
     {
         require_once($moduleDir . '/libs/autoload.php');
         require_once($moduleDir . '/controllers/admin/NostoBaseController.php');
@@ -112,8 +110,6 @@ class NostoBootstrap
             $dotenv = new Dotenv\Dotenv($moduleDir); // @codingStandardsIgnoreLine
             $dotenv->overload();
         }
-
-        \Nosto\Request\Http\HttpRequest::buildUserAgent('Prestashop', _PS_VERSION_, $moduleVersion);
     }
 }
-NostoBootstrap::init(NOSTO_DIR, NOSTO_VERSION);
+NostoBootstrap::init(NOSTO_DIR);

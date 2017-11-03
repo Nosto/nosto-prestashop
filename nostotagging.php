@@ -155,6 +155,12 @@ class NostoTagging extends Module
             'Increase your conversion rate and average order value by delivering your customers personalized product
             recommendations throughout their shopping journey.'
         );
+
+        \Nosto\Request\Http\HttpRequest::buildUserAgent(
+            'Prestashop',
+            _PS_VERSION_,
+            self::PLUGIN_VERSION
+        );
     }
 
     /**
