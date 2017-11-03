@@ -125,6 +125,11 @@ class NostoTagging extends Module
             'title' => 'After load nosto exchange rates',
             'description' => 'Action hook fired after a Nosto exchange rate collection has been initialized.',
         ),
+        array(
+            'name' => 'actionNostoVariationKeyCollectionLoadAfter',
+            'title' => 'After load nosto variation key collection',
+            'description' => 'Action hook fired after a Nosto variation key collection has been initialized.',
+        ),
     );
 
     /**
