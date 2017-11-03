@@ -73,6 +73,7 @@ class NostoTagging extends Module
 
     const ID = 'id';
 
+    private $topHookExecuted = false;
     /**
      * Custom hooks to add for this module.
      *
@@ -356,9 +357,12 @@ class NostoTagging extends Module
     public function hookDisplayTop()
     {
         $html = '';
-        if (NostoHelperConfig::getNostotaggingRenderPosition() !== NostoHelperConfig::NOSTOTAGGING_POSITION_FOOTER) {
+        if (NostoHelperConfig::getNostotaggingRenderPosition() !== NostoHelperConfig::NOSTOTAGGING_POSITION_FOOTER
+            && $this->topHookExecuted !== true
+        ) {
             $html = NostoDefaultTagging::get($this);
             $html .= self::dispatchPseudoHooks();
+            $this->topHookExecuted = true;
         }
 
         return $html;
