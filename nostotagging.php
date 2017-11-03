@@ -34,11 +34,10 @@ if (!defined('_PS_VERSION_')) {
  */
 if ((basename(__FILE__) === 'nostotagging.php')) {
     define('NOSTO_DIR', dirname(__FILE__));
-    /** @noinspection PhpIncludeInspection */
     define('NOSTO_VERSION', NostoTagging::PLUGIN_VERSION);
+    /** @noinspection PhpIncludeInspection */
     require_once(dirname(__FILE__) . "/bootstrap.php");
 }
-
 
 /**
  * Main module class the is responsible for all the module behaviour. This class is to be kept
