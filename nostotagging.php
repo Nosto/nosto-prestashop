@@ -35,6 +35,7 @@ if (!defined('_PS_VERSION_')) {
 if ((basename(__FILE__) === 'nostotagging.php')) {
     define('NOSTO_DIR', dirname(__FILE__));
     /** @noinspection PhpIncludeInspection */
+    define('NOSTO_VERSION', NostoTagging::PLUGIN_VERSION);
     require_once(dirname(__FILE__) . "/bootstrap.php");
 }
 
@@ -57,7 +58,7 @@ class NostoTagging extends Module
      *
      * @var string
      */
-    const PLUGIN_VERSION = NOSTO_VERSION;
+    const PLUGIN_VERSION = '3.0.0';
 
     /**
      * Internal name of the Nosto plug-in
