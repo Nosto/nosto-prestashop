@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2016 Nosto Solutions Ltd
+ * 2013-2017 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,7 +19,7 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2016 Nosto Solutions Ltd
+ * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
@@ -179,6 +179,7 @@ class NostoHelperPrice
      * @param bool $useReduction use group reduction or not
      * @param int $decimals
      * @return float price
+     * @suppress PhanTypeMismatchArgument
      */
     public static function getProductPriceForGroup(
         $productId,
@@ -193,7 +194,7 @@ class NostoHelperPrice
             null,
             NostoHelperContext::getCountryId(),
             0,
-            null,
+            '',
             NostoHelperContext::getCurrencyId(),
             $groupId,
             2,
@@ -211,7 +212,7 @@ class NostoHelperPrice
         //different stores, it cause problem. Big number 1000,000 is used to avoid rounding issue.
         $exchangeRate = Tools::convertPrice(
             1000000,
-            (int)Configuration::get('PS_CURRENCY_DEFAULT')
+            Currency::getCurrencyInstance((int)Configuration::get('PS_CURRENCY_DEFAULT'))
         ) / 1000000;
         $price *= $exchangeRate;
 
