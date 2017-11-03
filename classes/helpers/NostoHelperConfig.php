@@ -377,7 +377,7 @@ class NostoHelperConfig
     public static function saveSetting($configName, $value)
     {
         if (NostoHelperContext::getShop() instanceof Shop) {
-            return self::write(
+            $result = self::write(
                 $configName,
                 $value,
                 NostoHelperContext::getLanguageId(),
@@ -386,8 +386,15 @@ class NostoHelperConfig
                 NostoHelperContext::getShopId()
             );
         } else {
-            return self::write(self::SKU_SWITCH, $value, NostoHelperContext::getLanguageId());
+            $result = self::write(self::SKU_SWITCH, $value, NostoHelperContext::getLanguageId());
         }
+
+        //Reload configuration from database. Prestashop caches the configuration data,
+        //and if the configuration key is new (not available before this http request),
+        //Configuration::get() always return false in the same http request even the value has been changed
+        Configuration::loadConfiguration();
+
+        return $result;
     }
 
     /**
