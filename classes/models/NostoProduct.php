@@ -89,7 +89,7 @@ class NostoProduct extends NostoSDKProduct
         //Take the first variation as the default variation
         if ($variations->count() > 0) {
             $defaultVariation = $variations->shift();
-            $this->setVariationId($defaultVariation->getId());
+            $this->setVariationId($defaultVariation->getVariationId());
             $this->setPrice($defaultVariation->getPrice());
             $this->setListPrice($defaultVariation->getListPrice());
             $this->setPriceCurrencyCode($defaultVariation->getPriceCurrencyCode());

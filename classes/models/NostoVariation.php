@@ -50,7 +50,7 @@ class NostoVariation extends NostoSDKVariation
                 );
                 $nostoVariation = new NostoVariation();
                 $variationId = $variationKey->getVariationId();
-                $nostoVariation->setId($variationId);
+                $nostoVariation->setVariationId($variationId);
                 $nostoVariation->setAvailability($productAvailability);
                 $nostoVariation->setPriceCurrencyCode(
                     Tools::strtoupper(NostoHelperContext::getCurrency()->iso_code)

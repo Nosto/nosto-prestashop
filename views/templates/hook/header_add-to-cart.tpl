@@ -49,7 +49,7 @@
         }
 
         //ajaxCart is prestashop object
-        if (ajaxCart && ajaxCart.add && $('.cart_block').length) {
+        if (window.ajaxCart && ajaxCart.add && $('.cart_block').length) {
             try {
                 ajaxCart.add(product.productId, product.skuId, true, null, quantity, null);
 

@@ -23,29 +23,29 @@
 *}
 
 <script type="text/javascript">
-    if ($ && $ == jQuery) {
-        window.Nosto = window.Nosto || {};
-        Nosto.reloadCartTagging = function () {
-            $.ajax({
-                url: "{$reload_cart_url|escape:"javascript":"UTF-8"}",
-            }).done(function(data) {
-                if ($('.nosto_cart').length > 0) {
-                    $('.nosto_cart').replaceWith(data);
-                } else {
-                    $('body').append(data);
-                }
+    nostojs(function(api){
+        if (window.$ && window.$ == window.jQuery) {
+            window.Nosto = window.Nosto || {};
+            Nosto.reloadCartTagging = function () {
+                $.ajax({
+                    url: "{$reload_cart_url|escape:"javascript":"UTF-8"}",
+                }).done(function(data) {
+                    if ($('.nosto_cart').length > 0) {
+                        $('.nosto_cart').replaceWith(data);
+                    } else {
+                        $('body').append(data);
+                    }
 
-                //resend cart tagging and reload recommendations
-                if (typeof nostojs === 'function') {
-                    nostojs(function (api) {
-                        api.resendCartTagging();
-                        api.loadRecommendations();
-                    });
-                }
-            });
-        };
+                    //resend cart tagging and reload recommendations
+                    if (typeof nostojs === 'function') {
+                        nostojs(function (api) {
+                            api.resendCartTagging();
+                            api.loadRecommendations();
+                        });
+                    }
+                });
+            };
 
-        $(document).ready(function(){
             //On prestashop 1.7+, use prestashop built-in js object
             if (window.prestashop && prestashop._events && prestashop._events.updateCart) {
                 prestashop.on(
@@ -69,6 +69,7 @@
                     Nosto.reloadCartTagging();
                 });
             }
-        });
-    }
+        }
+    });
+
 </script>
