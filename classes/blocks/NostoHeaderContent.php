@@ -52,12 +52,17 @@ class NostoHeaderContent
             'nosto_version' => $module->version,
             'nosto_language' => Tools::strtolower(NostoHelperContext::getLanguage()->iso_code),
             'add_to_cart_url' => $link->getPageLink('cart.php'),
+            'reload_cart_url' => NostoHelperUrl::getModuleUrl(
+                NostoTagging::MODULE_NAME,
+                'reloadCart'
+            ),
             'static_token' => Tools::getToken(false)
         ));
 
         $html = $module->render('views/templates/hook/header_meta-tags.tpl');
         $html .= $module->render('views/templates/hook/header_embed-script.tpl');
         $html .= $module->render('views/templates/hook/header_add-to-cart.tpl');
+        $html .= $module->render('views/templates/hook/header_prestashop-add-to-cart-event-handler.tpl');
         $html .= NostoPageTypeTagging::get();
 
         return $html;

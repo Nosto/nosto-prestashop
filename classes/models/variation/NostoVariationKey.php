@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2016 Nosto Solutions Ltd
+ * 2013-2017 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,7 +19,7 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2016 Nosto Solutions Ltd
+ * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
@@ -96,6 +96,7 @@ class NostoVariationKey
     /**
      * Get variation id from currency id, country id and group id
      * @return string variation id
+     * @suppress PhanTypeMismatchArgument
      */
     public function getVariationId()
     {
@@ -118,10 +119,11 @@ class NostoVariationKey
             $customerGroupName = NostoHelperVariation::ANY;
         } else {
             $group = new Group($this->groupId);
-            if (is_array($group->name) && array_key_exists(NostoHelperContext::getLanguageId(), $group->name)) {
-                $customerGroupName = $group->name[NostoHelperContext::getLanguageId()];
-            } elseif (is_scalar($group->name)) {
-                $customerGroupName = $group->name;
+            $name = $group->name;
+            if (is_array($name) && array_key_exists(NostoHelperContext::getLanguageId(), $name)) {
+                $customerGroupName = $name[NostoHelperContext::getLanguageId()];
+            } elseif (is_scalar($name)) {
+                $customerGroupName = $name;
             }
         }
 

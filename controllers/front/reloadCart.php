@@ -1,5 +1,4 @@
 <?php
-
 /**
  * 2013-2017 Nosto Solutions Ltd
  *
@@ -23,36 +22,20 @@
  * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
-use \Nosto\Object\MarkupableString;
 
-class NostoBrand extends MarkupableString
+require_once(dirname(__FILE__) . '/api.php');
+
+/**
+ * Front controller for reload cart tagging
+ */
+class NostoTaggingReloadCartModuleFrontController extends NostoTaggingApiModuleFrontController
 {
     /**
-     * Loads the brand data from supplied manufacturer object.
-     *
-     * @param Manufacturer $manufacturer the manufacturer model to process
-     * @return NostoBrand|null the brand object
+     * @inheritdoc
      */
-    public static function loadData(Manufacturer $manufacturer)
+    public function initContent()
     {
-        if (!Validate::isLoadedObject($manufacturer)) {
-            return null;
-        }
-
-        $nostoBrand = new NostoBrand(DIRECTORY_SEPARATOR . $manufacturer->name, 'nosto_category');
-
-        NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoBrand), array(
-            'manufacturer' => $manufacturer,
-            'nosto_brand' => $nostoBrand
-        ));
-        return $nostoBrand;
-    }
-
-    /**
-     * @return string
-     */
-    public function getBrand()
-    {
-        return $this->getValue();
+        echo NostoCartTagging::get();
+        die();
     }
 }

@@ -2,7 +2,7 @@
   "name": "nosto/nostotagging",
   "description": "Nosto Module for Prestashop",
   "require": {
-    "nosto/php-sdk": "dev-develop#0b9ba3d"
+    "nosto/php-sdk": "dev-bugfix/fix-variation-id-tagging#adedd6f"
   },
   "require-dev": {
     "phing/phing": "2.*",
@@ -31,8 +31,8 @@
       }
     }
   ],
-  "scripts": {
-    "post-install-cmd": "\"libs/bin/phpcs\" --config-set installed_paths libs/wimg/php-compatibility",
-    "post-update-cmd" : "\"libs/bin/phpcs\" --config-set installed_paths libs/wimg/php-compatibility"
+  "scripts-dev": {
+    "post-install-cmd": "if [ -f ./libs/bin/phpcs ]; then \"libs/bin/phpcs\" --config-set installed_paths libs/wimg/php-compatibility; fi",
+    "post-update-cmd" : "if [ -f ./libs/bin/phpcs ]; then \"libs/bin/phpcs\" --config-set installed_paths libs/wimg/php-compatibility; fi"
   }
 }

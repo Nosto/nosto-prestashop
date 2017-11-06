@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2016 Nosto Solutions Ltd
+ * 2013-2017 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,7 +19,7 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2016 Nosto Solutions Ltd
+ * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
@@ -34,9 +34,8 @@ if (!defined('_PS_VERSION_')) {
  */
 if ((basename(__FILE__) === 'nostotagging.php')) {
     define('NOSTO_DIR', dirname(__FILE__));
-    define('NOSTO_VERSION', NostoTagging::PLUGIN_VERSION);
     /** @noinspection PhpIncludeInspection */
-    require_once("bootstrap.php");
+    require_once(dirname(__FILE__) . "/bootstrap.php");
 }
 
 /**
@@ -57,7 +56,7 @@ class NostoTagging extends Module
      *
      * @var string
      */
-    const PLUGIN_VERSION = '2.8.6';
+    const PLUGIN_VERSION = '3.0.0';
 
     /**
      * Internal name of the Nosto plug-in
@@ -73,6 +72,7 @@ class NostoTagging extends Module
 
     const ID = 'id';
 
+    private $topHookExecuted = false;
     /**
      * Custom hooks to add for this module.
      *
@@ -124,6 +124,11 @@ class NostoTagging extends Module
             'title' => 'After load nosto exchange rates',
             'description' => 'Action hook fired after a Nosto exchange rate collection has been initialized.',
         ),
+        array(
+            'name' => 'actionNostoVariationKeyCollectionLoadAfter',
+            'title' => 'After load nosto variation key collection',
+            'description' => 'Action hook fired after a Nosto variation key collection has been initialized.',
+        ),
     );
 
     /**
@@ -149,6 +154,12 @@ class NostoTagging extends Module
         $this->description = $this->l(
             'Increase your conversion rate and average order value by delivering your customers personalized product
             recommendations throughout their shopping journey.'
+        );
+
+        \Nosto\Request\Http\HttpRequest::buildUserAgent(
+            'Prestashop',
+            _PS_VERSION_,
+            self::PLUGIN_VERSION
         );
     }
 
@@ -356,9 +367,12 @@ class NostoTagging extends Module
     public function hookDisplayTop()
     {
         $html = '';
-        if (NostoHelperConfig::getNostotaggingRenderPosition() !== NostoHelperConfig::NOSTOTAGGING_POSITION_FOOTER) {
+        if (NostoHelperConfig::getNostotaggingRenderPosition() !== NostoHelperConfig::NOSTOTAGGING_POSITION_FOOTER
+            && $this->topHookExecuted !== true
+        ) {
             $html = NostoDefaultTagging::get($this);
             $html .= self::dispatchPseudoHooks();
+            $this->topHookExecuted = true;
         }
 
         return $html;

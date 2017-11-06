@@ -1,5 +1,5 @@
 {*
-* 2013-2016 Nosto Solutions Ltd
+* 2013-2017 Nosto Solutions Ltd
 *
 * NOTICE OF LICENSE
 *
@@ -18,7 +18,7 @@
 * needs please refer to http://www.prestashop.com for more information.
 *
 * @author    Nosto Solutions Ltd <contact@nosto.com>
-* @copyright 2013-2016 Nosto Solutions Ltd
+* @copyright 2013-2017 Nosto Solutions Ltd
 * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *}
 
@@ -49,7 +49,7 @@
         }
 
         //ajaxCart is prestashop object
-        if (ajaxCart && ajaxCart.add && $('.cart_block').length) {
+        if (window.ajaxCart && ajaxCart.add && $('.cart_block').length) {
             try {
                 ajaxCart.add(product.productId, product.skuId, true, null, quantity, null);
 

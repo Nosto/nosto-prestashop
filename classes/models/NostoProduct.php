@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2016 Nosto Solutions Ltd
+ * 2013-2017 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,7 +19,7 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2016 Nosto Solutions Ltd
+ * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
@@ -89,7 +89,7 @@ class NostoProduct extends NostoSDKProduct
         //Take the first variation as the default variation
         if ($variations->count() > 0) {
             $defaultVariation = $variations->shift();
-            $this->setVariationId($defaultVariation->getId());
+            $this->setVariationId($defaultVariation->getVariationId());
             $this->setPrice($defaultVariation->getPrice());
             $this->setListPrice($defaultVariation->getListPrice());
             $this->setPriceCurrencyCode($defaultVariation->getPriceCurrencyCode());

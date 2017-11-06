@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2016 Nosto Solutions Ltd
+ * 2013-2017 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,7 +19,7 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2016 Nosto Solutions Ltd
+ * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
@@ -75,7 +75,7 @@ class NostoHelperConfig
      *
      * @param string $name the name of the config entry to save.
      * @param mixed $value the value to save.
-     * @param null|int $langugeId the language id to save it for.
+     * @param null|int $languageId the language id to save it for.
      * @param bool $global if it should be saved for all shops or in current context.
      * @param null|int $shopGroupId
      * @param null|int $shopId
@@ -84,7 +84,7 @@ class NostoHelperConfig
     private static function write(
         $name,
         $value,
-        $langugeId = null,
+        $languageId = null,
         $global = false,
         $shopGroupId = null,
         $shopId = null
@@ -97,8 +97,8 @@ class NostoHelperConfig
             )) ? 'updateGlobalValue' : 'updateValue'
         );
         // Store this value for given language only if specified.
-        if (!is_array($value) && !empty($langugeId)) {
-            $value = array($langugeId => $value);
+        if (!is_array($value) && !empty($languageId)) {
+            $value = array($languageId => $value);
         }
         if ($global === false
             && !empty($shopGroupId)
@@ -377,7 +377,7 @@ class NostoHelperConfig
     public static function saveSetting($configName, $value)
     {
         if (NostoHelperContext::getShop() instanceof Shop) {
-            return self::write(
+            $result = self::write(
                 $configName,
                 $value,
                 NostoHelperContext::getLanguageId(),
@@ -386,8 +386,15 @@ class NostoHelperConfig
                 NostoHelperContext::getShopId()
             );
         } else {
-            return self::write(self::SKU_SWITCH, $value, NostoHelperContext::getLanguageId());
+            $result = self::write(self::SKU_SWITCH, $value, NostoHelperContext::getLanguageId());
         }
+
+        //Reload configuration from database. Prestashop caches the configuration data,
+        //and if the configuration key is new (not available before this http request),
+        //Configuration::get() always return false in the same http request even the value has been changed
+        Configuration::loadConfiguration();
+
+        return $result;
     }
 
     /**
