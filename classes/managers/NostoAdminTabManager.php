@@ -145,11 +145,11 @@ class NostoAdminTabManager
         /** @noinspection PhpDeprecationInspection */
         $tab->id = (int)Tab::getIdFromClassName($className);
         $tab->active = true;
-        $languages = Language::getLanguages(true, false, true);
-        if ($languages) {
+        $languageIds = Language::getLanguages(true, false, true);
+        if ($languageIds) {
             $tab->name = array();
-            foreach ($languages as $lang) {
-                $tab->name[(int)$lang['id_lang']] = $className;
+            foreach ($languageIds as $languageId) {
+                $tab->name[(int)$languageId] = $className;
             }
         } else {
             //In prestashop 1.5, the tab name length is limited to max 32
