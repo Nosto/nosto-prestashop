@@ -2,7 +2,7 @@
   "name": "nosto/nostotagging",
   "description": "Nosto Module for Prestashop",
   "require": {
-    "nosto/php-sdk": "dev-bugfix/fix-variation-id-tagging#adedd6f"
+    "nosto/php-sdk": "dev-release/3.1.0#8c7c295"
   },
   "require-dev": {
     "phing/phing": "2.*",
