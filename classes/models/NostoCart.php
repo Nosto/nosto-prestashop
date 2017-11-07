@@ -99,7 +99,11 @@ class NostoCart extends NostoSDKCart
             $nostoLineItem->setProductId($item['id_product']);
             $nostoLineItem->setQuantity((int)$item['cart_quantity']);
             $nostoLineItem->setName((string)$name);
-            $nostoLineItem->setPrice($item['price_wt']);
+            if (is_numeric($item['price_wt'])) {
+                $nostoLineItem->setPrice(
+                    NostoHelperPrice::roundPrice($item['price_wt'], $currency)
+                );
+            }
             $nostoLineItem->setPriceCurrencyCode((string)$currency->iso_code);
             $nostoCart->addItem($nostoLineItem);
         }

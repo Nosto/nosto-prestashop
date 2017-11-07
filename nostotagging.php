@@ -390,7 +390,7 @@ class NostoTagging extends Module
     {
         $methodName = 'pseudoHookLoadingPage';
         $methodName .= str_replace('-', '', NostoHelperController::getControllerName());
-        if (method_exists('NostoHeaderContent', $methodName)) {
+        if (method_exists(__CLASS__, $methodName)) {
             return self::$methodName();
         } else {
             // If the current page is not one of the ones we want to show recommendations on, just
@@ -899,8 +899,8 @@ class NostoTagging extends Module
     public function hookDisplayBackOfficeTop()
     {
         //Do not render any thing when it is a ajax request
-        if (array_key_exists(self::AJAX_REQUEST_PARAMETER_KEY, $_REQUEST)
-            && $_REQUEST[self::AJAX_REQUEST_PARAMETER_KEY] != 1
+        if (!array_key_exists(self::AJAX_REQUEST_PARAMETER_KEY, $_REQUEST)
+            || $_REQUEST[self::AJAX_REQUEST_PARAMETER_KEY] != 1
         ) {
             NostoNotificationManager::checkAndDisplay($this);
         }

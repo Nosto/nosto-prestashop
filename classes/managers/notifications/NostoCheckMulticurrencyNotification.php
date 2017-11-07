@@ -38,7 +38,9 @@ class NostoCheckMulticurrencyNotification extends NostoNotification
     {
         $connected = NostoHelperAccount::existsAndIsConnected();
         if ($connected) {
-            if (!NostoHelperConfig::useMultipleCurrencies()) {
+            if (!NostoHelperConfig::useMultipleCurrencies()
+                && !NostoHelperConfig::getVariationEnabled()
+            ) {
                 $currencies = NostoHelperCurrency::getCurrencies(true);
                 if (count($currencies) > 1) {
                     return new NostoNotification(
@@ -47,7 +49,7 @@ class NostoCheckMulticurrencyNotification extends NostoNotification
                         NostoSDKNotification::TYPE_MULTI_CURRENCY_DISABLED,
                         NostoSDKNotification::SEVERITY_WARNING,
                         'Your shop %s with language %s is using multiple currencies but' .
-                        ' the multi-currency feature for Nosto is disabled'
+                        ' the multi-currency and price variation features for Nosto are disabled'
                     );
                 }
 
