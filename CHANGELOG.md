@@ -2,6 +2,29 @@
 All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
+## 3.0.0
+### Added
+- Support product price variation tagging based on currency, country and customer group
+- Support product sku tagging
+- Reload recommendation after prestashop cart ajax actions
+- Show notification if nosto plugin is not activated for all shops
+- Support adding sku to shopping cart
+
+### Changed
+- Generate html tagging programmatically instead of using template
+- Javascript function addProductToCart now supports quantity parameter
+- Now nosto plugin always sends the original image to nosto
+
+### Fixed
+- Product price was incorrect if multi-store was enabled and shops had different base currencies
+- The hook selector was not working
+- Default variation id was not sent to nosto at the first time merchant turning on multi-currency
+- Fixed the price rounding to respect system rounding setting and currency rounding setting
+- Fixed the issue that product image url was incorrect in some situations such as product cover image was not enabled in the default combination
+
+## 2.8.9
+- Fixed a bug that nosto injects html content to prestashop ajax responses
+
 ## 2.8.6
 - Add a workaround for occasionally missing smarty before assigning variables
 
