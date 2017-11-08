@@ -24,16 +24,16 @@
 
 <script type="text/javascript">
     nostojs(function(api){
-        if (window.$ && window.$ == window.jQuery) {
-            window.Nosto = window.Nosto || {};
-            Nosto.reloadCartTagging = function () {
-                $.ajax({
-                    url: "{$reload_cart_url|escape:"javascript":"UTF-8"}",
-                }).done(function(data) {
-                    if ($('.nosto_cart').length > 0) {
-                        $('.nosto_cart').replaceWith(data);
+        window.Nosto = window.Nosto || {};
+        Nosto.reloadCartTagging = function () {
+            if (window.jQuery) {
+                jQuery.ajax({
+                    url: decodeURIComponent("{$reload_cart_url|escape:'url'}")
+                }).done(function (data) {
+                    if (jQuery('.nosto_cart').length > 0) {
+                        jQuery('.nosto_cart').replaceWith(data);
                     } else {
-                        $('body').append(data);
+                        jQuery('body').append(data);
                     }
 
                     //resend cart tagging and reload recommendations
@@ -44,32 +44,43 @@
                         });
                     }
                 });
-            };
-
-            //On prestashop 1.7+, use prestashop built-in js object
-            if (window.prestashop && prestashop._events && prestashop._events.updateCart) {
-                prestashop.on(
-                    'updateCart',
-                    function (event) {
-                        Nosto.reloadCartTagging(prestashop.urls.base_url + 'index.php');
-                    }
-                );
-            } else {
-                $(document).ajaxComplete(function (event, xhr, settings) {
-                    if (!settings || settings.crossDomain) {
-                        return;
-                    }
-                    //check controller
-                    if ((!settings.data || settings.data.indexOf('controller=cart') < 0)
-                        && (settings.url.indexOf('controller=cart') < 0)) {
-                        return;
-                    }
-
-                    //reload cart tagging
-                    Nosto.reloadCartTagging();
-                });
             }
-        }
+        };
+
+        var maxTry = 60;
+        var waitForJQuery = function () {
+            if (window.jQuery) {
+                //On prestashop 1.7+, use prestashop built-in js object
+                if (window.prestashop && prestashop._events && prestashop._events.updateCart) {
+                    prestashop.on(
+                        'updateCart',
+                        function (event) {
+                            Nosto.reloadCartTagging();
+                        }
+                    );
+                } else {
+                    jQuery(document).ajaxComplete(function (event, xhr, settings) {
+                        if (!settings || settings.crossDomain) {
+                            return;
+                        }
+                        //check controller
+                        if ((!settings.data || settings.data.indexOf('controller=cart') < 0)
+                            && (settings.url.indexOf('controller=cart') < 0)) {
+                            return;
+                        }
+
+                        //reload cart tagging
+                        Nosto.reloadCartTagging();
+                    });
+                }
+            } else if (maxTry > 0){
+                //jQuery is loaded to the page after nosto scripts on prestashop 1.7
+                //wait for it
+                maxTry--;
+                setTimeout(waitForJQuery, 500);
+            }
+        };
+        waitForJQuery();
     });
 
 </script>

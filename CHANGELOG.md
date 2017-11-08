@@ -21,6 +21,7 @@ This project adheres to Semantic Versioning(http://semver.org/).
 - Default variation id was not sent to nosto at the first time merchant turning on multi-currency
 - Fixed the price rounding to respect system rounding setting and currency rounding setting
 - Fixed the issue that product image url was incorrect in some situations such as product cover image was not enabled in the default combination
+- Fixed the issue that sometimes recommendation was not showing on prestashop 1.7 because jquery was loaded to the page after nosto javascript 
 
 ## 2.8.9
 - Fixed a bug that nosto injects html content to prestashop ajax responses
