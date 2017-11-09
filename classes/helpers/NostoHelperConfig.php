@@ -35,6 +35,7 @@ class NostoHelperConfig
     const MULTI_CURRENCY_METHOD = 'NOSTOTAGGING_MC_METHOD';
     const SKU_SWITCH = 'NOSTOTAGGING_SKU_SWITCH';
     const VARIATION_SWITCH = 'NOSTOTAGGING_VARIATION_SWITCH';
+    const VARIATION_TAX_RULE_SWITCH = 'NOSTOTAGGING_VARIATION_TAX_RULE_SWITCH';
     const TOKEN_CONFIG_PREFIX = 'NOSTOTAGGING_API_TOKEN_';
     const MULTI_CURRENCY_METHOD_VARIATION = 'priceVariation';
     const MULTI_CURRENCY_METHOD_EXCHANGE_RATE = 'exchangeRate';
@@ -372,6 +373,24 @@ class NostoHelperConfig
     public static function getVariationEnabled()
     {
         return (bool)self::read(self::VARIATION_SWITCH);
+    }
+
+    /**
+     * @param boolean $enabled Are countries used in tax rules used for price variations
+     * @return bool
+     */
+    public static function saveVariationTaxRuleEnabled($enabled)
+    {
+        return self::saveSetting(self::VARIATION_TAX_RULE_SWITCH, $enabled);
+    }
+
+    /**
+     * Are countries used in tax rules used for price variations
+     * @return bool true if variation feature has been enabled, false otherwise
+     */
+    public static function getVariationTaxRuleEnabled()
+    {
+        return (bool)self::read(self::VARIATION_TAX_RULE_SWITCH);
     }
 
     public static function saveSetting($configName, $value)

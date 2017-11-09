@@ -86,6 +86,7 @@ class NostoProduct extends NostoSDKProduct
             $this->setPrice($defaultVariation->getPrice());
             $this->setListPrice($defaultVariation->getListPrice());
             $this->setPriceCurrencyCode($defaultVariation->getPriceCurrencyCode());
+            $this->setAvailability($defaultVariation->getAvailability());
         }
         $this->setVariations($variations);
     }

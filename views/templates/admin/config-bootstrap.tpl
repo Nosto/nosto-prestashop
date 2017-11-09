@@ -239,6 +239,24 @@
                                 </span>
                             </div>
                         </div>
+
+                        <!-- Price variation tax rule -->
+                        <div class="form-group" id="nosto_variation_tax_rule_switch_div">
+                            <label class="control-label col-lg-3">
+                                <span title="" data-toggle="tooltip" class="label-tooltip" data-original-title="{l s='Include countries from tax rules for price variation ' mod='nostotagging'}" data-html="true">
+                                    {l s='Include countries from tax rules for price variation' mod='nostotagging'}
+                                </span>
+                            </label>
+                            <div class="col-lg-9">
+                                <span class="switch prestashop-switch fixed-width-lg">
+                                    <input type="radio" name="nosto_variation_tax_rule_switch" id="nosto_variation_tax_rule_switch_on"  value="1" {if $nostotagging_variation_tax_rule_switch === true}checked="checked" {/if}/>
+                                    <label for="nosto_variation_tax_rule_switch_on" class="radioCheck">Yes</label>
+                                    <input type="radio" name="nosto_variation_tax_rule_switch" id="nosto_variation_tax_rule_switch_off" value="0" {if $nostotagging_variation_tax_rule_switch !== true}checked="checked" {/if}/>
+                                    <label for="nosto_variation_tax_rule_switch_off" class="radioCheck">No</label>
+                                    <a class="slide-button btn"></a>
+                                </span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="panel-footer"  style="display:none">
@@ -366,6 +384,12 @@
                 } else {
                     $('.multi-currency-variation-alert').hide();
                     $('#submit_nostotagging_advanced_settings').removeAttr("disabled");
+                }
+
+                if ($("input[name='nosto_variation_switch']:checked").val() == '1') {
+                    $('#nosto_variation_tax_rule_switch_div').show();
+                } else {
+                    $('#nosto_variation_tax_rule_switch_div').hide();
                 }
             }
             Nosto.checkMultiCurrencyVariationConflict();

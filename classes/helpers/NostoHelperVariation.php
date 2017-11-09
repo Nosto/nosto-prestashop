@@ -51,22 +51,23 @@ class NostoHelperVariation
         }
 
         $res = array();
-        $innerJoinShop = '';
-        $shopFilter = '';
-        if ($shopId) {
-            $innerJoinShop = sprintf(
-                'INNER JOIN %stax_rules_group_shop trgs ON '
-                . '(trg.id_tax_rules_group = trgs.id_tax_rules_group)',
-                _DB_PREFIX_
-            );
-            $shopFilter = sprintf(
-                'AND trgs.id_shop = %s',
-                $shopId
-            );
-        }
+        if (NostoHelperConfig::getVariationTaxRuleEnabled()) {
+            $innerJoinShop = '';
+            $shopFilter = '';
+            if ($shopId) {
+                $innerJoinShop = sprintf(
+                    'INNER JOIN %stax_rules_group_shop trgs ON '
+                    . '(trg.id_tax_rules_group = trgs.id_tax_rules_group)',
+                    _DB_PREFIX_
+                );
+                $shopFilter = sprintf(
+                    'AND (trgs.id_shop = %s OR trgs.id_shop = 0)',
+                    $shopId
+                );
+            }
 
-        $sql = sprintf(
-            "
+            $sql = sprintf(
+                "
                 SELECT
                     DISTINCT tr.id_country
                 FROM
@@ -81,15 +82,16 @@ class NostoHelperVariation
                 WHERE
                     trg.active = 1 AND c.active = 1 $shopFilter
            ",
-            _DB_PREFIX_,
-            _DB_PREFIX_,
-            _DB_PREFIX_,
-            _DB_PREFIX_
-        );
+                _DB_PREFIX_,
+                _DB_PREFIX_,
+                _DB_PREFIX_,
+                _DB_PREFIX_
+            );
 
-        $rows = Db::getInstance()->executeS($sql);
-        foreach ($rows as $row) {
-            $res[] = $row[self::ID_COUNTRY];
+            $rows = Db::getInstance()->executeS($sql);
+            foreach ($rows as $row) {
+                $res[] = $row[self::ID_COUNTRY];
+            }
         }
 
         //cache for 5 minutes
@@ -111,7 +113,7 @@ class NostoHelperVariation
             return Cache::retrieve($cacheKey);
         }
 
-        $filter = $shopId ? ' WHERE `id_shop` = ' . (int)$shopId : '';
+        $filter = $shopId ? ' WHERE (`id_shop` = ' . $shopId . ' OR id_shop = 0)' : '';
         $result = Db::getInstance()->executeS(
             sprintf('SELECT DISTINCT id_group FROM `%sspecific_price` ', _DB_PREFIX_)
             . $filter
@@ -146,7 +148,7 @@ class NostoHelperVariation
             return Cache::retrieve($cacheKey);
         }
 
-        $filter = $shopId ? ' and sp.id_shop = ' . (int)$shopId : '';
+        $filter = $shopId ? ' and (sp.id_shop = ' . $shopId . ' OR sp.id_shop = 0)': '';
         $result = Db::getInstance()->executeS(
             sprintf(
                 "SELECT DISTINCT sp.id_country FROM `%sspecific_price` sp
