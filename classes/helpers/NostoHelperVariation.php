@@ -78,7 +78,7 @@ class NostoHelperVariation
                 %scountry c ON c.id_country = tr.id_country
             WHERE
                 trg.active = 1 AND c.active = 1 $shopFilter
-       ",
+            ",
             _DB_PREFIX_,
             _DB_PREFIX_,
             _DB_PREFIX_,
