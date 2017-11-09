@@ -34,8 +34,6 @@ class NostoHelperVariation
     const ID_CURRENCY = 'id_currency';
     const COUNTRY = 'country';
     const GROUP = 'group';
-    /** cache timeout in second */
-    const CACHE_TIMEOUT = 300;
 
     /**
      * Returns an array of country ids being used in tax rule groups that are assigned to any product
@@ -45,10 +43,9 @@ class NostoHelperVariation
     public static function getCountriesBeingUsedInTaxRules()
     {
         $shopId = NostoHelperContext::getShopId();
-        $cache = Cache::getInstance();
         $cacheKey = 'NostoHelperPriceVariation-getCountriesBeingUsedInTaxRules-' . $shopId;
-        if ($cache->exists($cacheKey)) {
-            return $cache->get($cacheKey);
+        if (Cache::isStored($cacheKey)) {
+            return Cache::retrieve($cacheKey);
         }
 
         $res = array();
@@ -61,27 +58,27 @@ class NostoHelperVariation
                 _DB_PREFIX_
             );
             $shopFilter = sprintf(
-                'AND trgs.id_shop = %s',
+                'AND (trgs.id_shop = %s OR trgs.id_shop = 0)',
                 $shopId
             );
         }
 
         $sql = sprintf(
             "
-                SELECT
-                    DISTINCT tr.id_country
-                FROM
-                    %sproduct p
-                INNER JOIN
-                    %stax_rules_group trg ON (p.id_tax_rules_group = trg.id_tax_rules_group)
-                $innerJoinShop
-                INNER JOIN
-                    %stax_rule tr ON trg.id_tax_rules_group = tr.id_tax_rules_group					
-                INNER JOIN
-                    %scountry c ON c.id_country = tr.id_country
-                WHERE
-                    trg.active = 1 AND c.active = 1 $shopFilter
-           ",
+            SELECT
+                DISTINCT tr.id_country
+            FROM
+                %sproduct p
+            INNER JOIN
+                %stax_rules_group trg ON (p.id_tax_rules_group = trg.id_tax_rules_group)
+            $innerJoinShop
+            INNER JOIN
+                %stax_rule tr ON trg.id_tax_rules_group = tr.id_tax_rules_group					
+            INNER JOIN
+                %scountry c ON c.id_country = tr.id_country
+            WHERE
+                trg.active = 1 AND c.active = 1 $shopFilter
+            ",
             _DB_PREFIX_,
             _DB_PREFIX_,
             _DB_PREFIX_,
@@ -93,8 +90,7 @@ class NostoHelperVariation
             $res[] = $row[self::ID_COUNTRY];
         }
 
-        //cache for 5 minutes
-        $cache->set($cacheKey, $res, self::CACHE_TIMEOUT);
+        Cache::store($cacheKey, $res);
 
         return $res;
     }
@@ -107,13 +103,12 @@ class NostoHelperVariation
     public static function getGroupsBeingUsedInSpecificPrices()
     {
         $shopId = NostoHelperContext::getShopId();
-        $cache = Cache::getInstance();
         $cacheKey = 'NostoHelperPriceVariation-getGroupsBeingUsedInSpecificPrices-' . $shopId;
-        if ($cache->exists($cacheKey)) {
-            return $cache->get($cacheKey);
+        if (Cache::isStored($cacheKey)) {
+            return Cache::retrieve($cacheKey);
         }
 
-        $filter = $shopId ? ' WHERE `id_shop` = ' . (int)$shopId : '';
+        $filter = $shopId ? ' WHERE (`id_shop` = ' . $shopId . ' OR id_shop = 0)' : '';
         $result = Db::getInstance()->executeS(
             sprintf('SELECT DISTINCT id_group FROM `%sspecific_price` ', _DB_PREFIX_)
             . $filter
@@ -129,8 +124,7 @@ class NostoHelperVariation
             $groupIds[] = 0;
         }
 
-        //cache for 5 minutes
-        $cache->set($cacheKey, $groupIds, self::CACHE_TIMEOUT);
+        Cache::store($cacheKey, $groupIds);
 
         return $groupIds;
     }
@@ -143,13 +137,12 @@ class NostoHelperVariation
     public static function getCountriesBeingUsedInSpecificPrices()
     {
         $shopId = NostoHelperContext::getShopId();
-        $cache = Cache::getInstance();
         $cacheKey = 'NostoHelperPriceVariation-getCountriesBeingUsedInSpecificPrices-' . $shopId;
-        if ($cache->exists($cacheKey)) {
-            return $cache->get($cacheKey);
+        if (Cache::isStored($cacheKey)) {
+            return Cache::retrieve($cacheKey);
         }
 
-        $filter = $shopId ? ' and sp.id_shop = ' . (int)$shopId : '';
+        $filter = $shopId ? ' and (sp.id_shop = ' . $shopId . ' OR sp.id_shop = 0)': '';
         $result = Db::getInstance()->executeS(
             sprintf(
                 "SELECT DISTINCT sp.id_country FROM `%sspecific_price` sp
@@ -172,8 +165,7 @@ class NostoHelperVariation
             $countryIds[] = 0;
         }
 
-        //cache for 5 minutes
-        $cache->set($cacheKey, $countryIds, self::CACHE_TIMEOUT);
+        Cache::store($cacheKey, $countryIds);
 
         return $countryIds;
     }
@@ -185,17 +177,17 @@ class NostoHelperVariation
     public static function getVariationCountries()
     {
         $shopId = NostoHelperContext::getShopId();
-        $cache = Cache::getInstance();
         $cacheKey = 'NostoHelperPriceVariation-getVariationCountries-' . $shopId;
-        if ($cache->exists($cacheKey)) {
-            return $cache->get($cacheKey);
+        if (Cache::isStored($cacheKey)) {
+            return Cache::retrieve($cacheKey);
         }
 
         $countryIds = self::getCountriesBeingUsedInSpecificPrices();
-        $countryIdsFromTaxRules = self::getCountriesBeingUsedInTaxRules();
-        $countryIds = array_unique(array_merge($countryIds, $countryIdsFromTaxRules));
-        //cache for 5 minutes
-        $cache->set($cacheKey, $countryIds, self::CACHE_TIMEOUT);
+        if (NostoHelperConfig::getVariationTaxRuleEnabled()) {
+            $countryIdsFromTaxRules = self::getCountriesBeingUsedInTaxRules();
+            $countryIds = array_unique(array_merge($countryIds, $countryIdsFromTaxRules));
+        }
+        Cache::store($cacheKey, $countryIds);
 
         return $countryIds;
     }

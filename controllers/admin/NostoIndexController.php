@@ -175,6 +175,7 @@ class NostoIndexController
             'multi_currency_method' => NostoHelperConfig::getMultiCurrencyMethod(),
             'nostotagging_position' => NostoHelperConfig::getNostotaggingRenderPosition(),
             'nostotagging_variation_switch' => NostoHelperConfig::getVariationEnabled(),
+            'nostotagging_variation_tax_rule_switch' => NostoHelperConfig::getVariationTaxRuleEnabled(),
             'nostotagging_ps_version_class' => 'ps-' . str_replace(
                 '.',
                 '',
@@ -182,7 +183,7 @@ class NostoIndexController
             ),
             'missing_tokens' => $missingTokens,
             'iframe_installation_url' => $iframeInstallationUrl,
-            'iframe_origin' =>  NostoSDK::getIframeOriginRegex(),
+            'iframe_origin' => NostoSDK::getIframeOriginRegex(),
             'sku_enabled' => NostoHelperConfig::getSkuEnabled(),
             'variation_keys' => NostoSDKSerializationHelper::serialize($variationKeys),
             'variation_countries_from_tax_rule' => implode(

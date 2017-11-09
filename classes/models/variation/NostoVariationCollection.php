@@ -24,6 +24,7 @@
  */
 
 use Nosto\Object\Product\VariationCollection as NostoSDKVariationCollection;
+use Nosto\Types\Product\ProductInterface as NostoSDKProductInterface;
 
 class NostoVariationCollection extends NostoSDKVariationCollection
 {
@@ -41,18 +42,45 @@ class NostoVariationCollection extends NostoSDKVariationCollection
         $keyCollection->loadData();
         $defaultVariationKey = $keyCollection->getDefaultVariationKey();
 
+        $hasTaxRules = false;
+        if (!NostoHelperConfig::getVariationTaxRuleEnabled()) {
+            $taxRuleGroupId = $product->getIdTaxRulesGroup();
+            if ($taxRuleGroupId) {
+                $taxRules = TaxRule::getTaxRulesByGroupId(NostoHelperContext::getLanguageId(), $taxRuleGroupId);
+                $hasTaxRules = is_array($taxRules) && count($taxRules) > 0;
+            }
+        }
+
         //Always put the default variation to first one
         $this->append(
-            NostoVariation::loadData($product, $defaultVariationKey, $productAvailability)
+            $this->buildVariation($product, $productAvailability, $hasTaxRules, $defaultVariationKey)
         );
 
+        /** @var NostoVariationKey $variationKey */
         foreach ($keyCollection as $variationKey) {
             //skip the default
             if ($defaultVariationKey != $variationKey) {
-                $variation = NostoVariation::loadData($product, $variationKey, $productAvailability);
-                $this->append($variation);
+                $this->append(
+                    $this->buildVariation($product, $productAvailability, $hasTaxRules, $variationKey)
+                );
             }
         }
+    }
+
+    private function buildVariation(
+        Product $product,
+        $productAvailability,
+        $hasTaxRules,
+        NostoVariationKey $variationKey
+    ) {
+        $variation = NostoVariation::loadData($product, $variationKey, $productAvailability);
+        //For those products having tax rules and tax rules are not being used for the variations,
+        //set the variations with "ANY" country to OutOfStock because the prices are variant for other countries
+        if ($hasTaxRules && $variationKey->getCountryId() === 0) {
+            $variation->setAvailability(NostoSDKProductInterface::OUT_OF_STOCK);
+        }
+
+        return $variation;
     }
 
     /**
