@@ -51,47 +51,45 @@ class NostoHelperVariation
         }
 
         $res = array();
-        if (NostoHelperConfig::getVariationTaxRuleEnabled()) {
-            $innerJoinShop = '';
-            $shopFilter = '';
-            if ($shopId) {
-                $innerJoinShop = sprintf(
-                    'INNER JOIN %stax_rules_group_shop trgs ON '
-                    . '(trg.id_tax_rules_group = trgs.id_tax_rules_group)',
-                    _DB_PREFIX_
-                );
-                $shopFilter = sprintf(
-                    'AND (trgs.id_shop = %s OR trgs.id_shop = 0)',
-                    $shopId
-                );
-            }
-
-            $sql = sprintf(
-                "
-                SELECT
-                    DISTINCT tr.id_country
-                FROM
-                    %sproduct p
-                INNER JOIN
-                    %stax_rules_group trg ON (p.id_tax_rules_group = trg.id_tax_rules_group)
-                $innerJoinShop
-                INNER JOIN
-                    %stax_rule tr ON trg.id_tax_rules_group = tr.id_tax_rules_group					
-                INNER JOIN
-                    %scountry c ON c.id_country = tr.id_country
-                WHERE
-                    trg.active = 1 AND c.active = 1 $shopFilter
-           ",
-                _DB_PREFIX_,
-                _DB_PREFIX_,
-                _DB_PREFIX_,
+        $innerJoinShop = '';
+        $shopFilter = '';
+        if ($shopId) {
+            $innerJoinShop = sprintf(
+                'INNER JOIN %stax_rules_group_shop trgs ON '
+                . '(trg.id_tax_rules_group = trgs.id_tax_rules_group)',
                 _DB_PREFIX_
             );
+            $shopFilter = sprintf(
+                'AND (trgs.id_shop = %s OR trgs.id_shop = 0)',
+                $shopId
+            );
+        }
 
-            $rows = Db::getInstance()->executeS($sql);
-            foreach ($rows as $row) {
-                $res[] = $row[self::ID_COUNTRY];
-            }
+        $sql = sprintf(
+            "
+            SELECT
+                DISTINCT tr.id_country
+            FROM
+                %sproduct p
+            INNER JOIN
+                %stax_rules_group trg ON (p.id_tax_rules_group = trg.id_tax_rules_group)
+            $innerJoinShop
+            INNER JOIN
+                %stax_rule tr ON trg.id_tax_rules_group = tr.id_tax_rules_group					
+            INNER JOIN
+                %scountry c ON c.id_country = tr.id_country
+            WHERE
+                trg.active = 1 AND c.active = 1 $shopFilter
+       ",
+            _DB_PREFIX_,
+            _DB_PREFIX_,
+            _DB_PREFIX_,
+            _DB_PREFIX_
+        );
+
+        $rows = Db::getInstance()->executeS($sql);
+        foreach ($rows as $row) {
+            $res[] = $row[self::ID_COUNTRY];
         }
 
         //cache for 5 minutes
@@ -190,8 +188,10 @@ class NostoHelperVariation
         }
 
         $countryIds = self::getCountriesBeingUsedInSpecificPrices();
-        $countryIdsFromTaxRules = self::getCountriesBeingUsedInTaxRules();
-        $countryIds = array_unique(array_merge($countryIds, $countryIdsFromTaxRules));
+        if (NostoHelperConfig::getVariationTaxRuleEnabled()) {
+            $countryIdsFromTaxRules = self::getCountriesBeingUsedInTaxRules();
+            $countryIds = array_unique(array_merge($countryIds, $countryIdsFromTaxRules));
+        }
         //cache for 5 minutes
         Cache::store($cacheKey, $countryIds, self::CACHE_TIMEOUT);
 
