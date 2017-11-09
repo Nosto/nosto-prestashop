@@ -44,8 +44,7 @@ class NostoVariationKeyCollection extends NostoSDKAbstractCollection
     {
         $shopId = NostoHelperContext::getShopId();
         $cacheKey = 'NostoVariationKeyCollection-loadData-' . $shopId;
-
-
+        
         if (Cache::isStored($cacheKey)) {
             $this->var = Cache::retrieve($cacheKey);
         } else {
