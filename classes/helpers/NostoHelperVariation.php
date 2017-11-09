@@ -34,8 +34,6 @@ class NostoHelperVariation
     const ID_CURRENCY = 'id_currency';
     const COUNTRY = 'country';
     const GROUP = 'group';
-    /** cache timeout in second */
-    const CACHE_TIMEOUT = 300;
 
     /**
      * Returns an array of country ids being used in tax rule groups that are assigned to any product
@@ -92,8 +90,7 @@ class NostoHelperVariation
             $res[] = $row[self::ID_COUNTRY];
         }
 
-        //cache for 5 minutes
-        Cache::store($cacheKey, $res, self::CACHE_TIMEOUT);
+        Cache::store($cacheKey, $res);
 
         return $res;
     }
@@ -127,8 +124,7 @@ class NostoHelperVariation
             $groupIds[] = 0;
         }
 
-        //cache for 5 minutes
-        Cache::store($cacheKey, $groupIds, self::CACHE_TIMEOUT);
+        Cache::store($cacheKey, $groupIds);
 
         return $groupIds;
     }
@@ -169,8 +165,7 @@ class NostoHelperVariation
             $countryIds[] = 0;
         }
 
-        //cache for 5 minutes
-        Cache::store($cacheKey, $countryIds, self::CACHE_TIMEOUT);
+        Cache::store($cacheKey, $countryIds);
 
         return $countryIds;
     }
@@ -192,8 +187,7 @@ class NostoHelperVariation
             $countryIdsFromTaxRules = self::getCountriesBeingUsedInTaxRules();
             $countryIds = array_unique(array_merge($countryIds, $countryIdsFromTaxRules));
         }
-        //cache for 5 minutes
-        Cache::store($cacheKey, $countryIds, self::CACHE_TIMEOUT);
+        Cache::store($cacheKey, $countryIds);
 
         return $countryIds;
     }

@@ -75,8 +75,7 @@ class NostoVariationKeyCollection extends NostoSDKAbstractCollection
                 'nosto_variation_key_collection' => $this
             ));
 
-            //cache for 5 minutes
-            Cache::store($cacheKey, $this->var, NostoHelperVariation::CACHE_TIMEOUT);
+            Cache::store($cacheKey, $this->var);
         }
     }
 
