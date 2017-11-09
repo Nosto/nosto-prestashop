@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
-  ~ 2013-2016 Nosto Solutions Ltd
+  ~ 2013-2017 Nosto Solutions Ltd
   ~
   ~ NOTICE OF LICENSE
   ~
@@ -19,7 +19,7 @@
   ~ needs please refer to http://www.prestashop.com for more information.
   ~
   ~ @author    Nosto Solutions Ltd <contact@nosto.com>
-  ~ @copyright 2013-2016 Nosto Solutions Ltd
+  ~ @copyright 2013-2017 Nosto Solutions Ltd
   ~ @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
   -->
 
@@ -27,6 +27,7 @@
 <ruleset name="Prestashop">
     <config name="installed_paths" value="libs/wimg/php-compatibility/" />
     <description>Prestashop coding standard.</description>
+    <rule ref="PHPCompatibility"/>
     <rule ref="PSR2">
         <exclude name="PSR1.Classes.ClassDeclaration.MissingNamespace"/>
         <exclude name="PSR1.Files.SideEffects.FoundWithSymbols">
@@ -34,7 +35,42 @@
         </exclude>
         <exclude name="PSR2.ControlStructures.ControlStructureSpacing.SpacingAfterOpenBrace"/>
     </rule>
-    <config name="testVersion" value="5.2"/>
+    <rule ref="Generic.Classes.DuplicateClassName"/>
+    <rule ref="Generic.CodeAnalysis.ForLoopShouldBeWhileLoop"/>
+    <rule ref="Generic.CodeAnalysis.UnconditionalIfStatement"/>
+    <rule ref="Generic.CodeAnalysis.UnnecessaryFinalModifier"/>
+    <rule ref="Generic.CodeAnalysis.UnusedFunctionParameter"/>
+    <rule ref="Generic.CodeAnalysis.UselessOverridingMethod"/>
+    <rule ref="Generic.Commenting.Todo"/>
+    <rule ref="Generic.Commenting.Fixme"/>
+    <rule ref="Generic.ControlStructures.InlineControlStructure"/>
+    <rule ref="Generic.Files.ByteOrderMark"/>
+    <rule ref="Generic.Files.LineEndings"/>
+    <rule ref="Generic.Formatting.DisallowMultipleStatements"/>
+    <rule ref="Generic.Formatting.NoSpaceAfterCast"/>
+    <rule ref="Generic.NamingConventions.UpperCaseConstantName"/>
+    <rule ref="Generic.NamingConventions.CamelCapsFunctionName"/>
+    <rule ref="Generic.WhiteSpace.DisallowTabIndent"/>
+    <rule ref="PEAR.Commenting.InlineComment"/>
+    <rule ref="PEAR.Formatting.MultiLineAssignment"/>
+    <rule ref="PEAR.WhiteSpace.ScopeClosingBrace"/>
+    <rule ref="PEAR.WhiteSpace.ScopeIndent"/>
+    <rule ref="Squiz.PHP.CommentedOutCode"/>
+    <rule ref="Squiz.PHP.Eval"/>
+    <rule ref="Squiz.PHP.GlobalKeyword"/>
+    <rule ref="Squiz.PHP.Heredoc"/>
+    <rule ref="Squiz.PHP.InnerFunctions"/>
+    <rule ref="Squiz.PHP.LowercasePHPFunctions"/>
+    <rule ref="Squiz.PHP.NonExecutableCode"/>
+    <rule ref="Squiz.Scope.StaticThisUsage"/>
+    <rule ref="Squiz.WhiteSpace.ObjectOperatorSpacing"/>
+    <rule ref="Squiz.WhiteSpace.OperatorSpacing"/>
+    <rule ref="Squiz.WhiteSpace.PropertyLabelSpacing"/>
+    <rule ref="Squiz.WhiteSpace.SemicolonSpacing"/>
+    <rule ref="Squiz.NamingConventions.ValidVariableName.NotCamelCaps"/>
+    <rule ref="Squiz.NamingConventions.ValidVariableName.MemberNotCamelCaps"/>
+    <rule ref="Squiz.NamingConventions.ValidVariableName.StringNotCamelCaps"/>
+    <config name="testVersion" value="5.3"/>
     <exclude-pattern>/build/</exclude-pattern>
     <exclude-pattern>/libs/</exclude-pattern>
     <exclude-pattern>/.phan/</exclude-pattern>

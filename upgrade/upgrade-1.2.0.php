@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2016 Nosto Solutions Ltd
+ * 2013-2017 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,7 +19,7 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2016 Nosto Solutions Ltd
+ * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
@@ -33,6 +33,8 @@ if (!defined('_PS_VERSION_')) {
  * Removes unused config variables.
  *
  * @return bool
+ *
+ * @suppress PhanUnreferencedMethod
  */
 function upgrade_module_1_2_0()
 {

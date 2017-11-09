@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2016 Nosto Solutions Ltd
+ * 2013-2017 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,7 +19,7 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2016 Nosto Solutions Ltd
+ * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
@@ -29,7 +29,17 @@
 class AdminNostoController extends ModuleAdminController
 {
     /**
+     * A way to get class name for php 5.3 and lower
+     * @return string class Name
+     */
+    public static function getClassName()
+    {
+        return get_called_class();
+    }
+
+    /**
      * @inheritdoc
+     * @suppress
      */
     public function initContent()
     {
@@ -38,9 +48,10 @@ class AdminNostoController extends ModuleAdminController
             return;
         }
 
-        $id_tab = (int)Tab::getIdFromClassName('AdminModules');
-        $id_employee = (int)$this->context->cookie->id_employee;
-        $token = Tools::getAdminToken('AdminModules'.$id_tab.$id_employee);
-        Tools::redirectAdmin('index.php?controller=AdminModules&configure=nostotagging&token='.$token);
+        $idTab = NostoAdminTabManager::getAdminTabId('AdminModulesController');
+        /** @noinspection PhpUndefinedFieldInspection */
+        $idEmployee = (int)$this->context->cookie->id_employee;
+        $token = Tools::getAdminToken('AdminModules' . $idTab . $idEmployee);
+        Tools::redirectAdmin('index.php?controller=AdminModules&configure=nostotagging&token=' . $token);
     }
 }

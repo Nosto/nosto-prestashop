@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2016 Nosto Solutions Ltd
+ * 2013-2017 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,7 +19,7 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2016 Nosto Solutions Ltd
+ * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
@@ -53,8 +53,8 @@ $_MODULE['<{nostotagging}default-bootstrap>config-bootstrap_ded40f2a77c30efc6062
 $_MODULE['<{nostotagging}default-bootstrap>config-bootstrap_2798dec4d8b5da67cba74122e7871c84'] = 'Change this settings to be \"Footer\" if your theme does not have displayTop hook';
 $_MODULE['<{nostotagging}default-bootstrap>config-bootstrap_0a127a7baeba865da50fa0d40a4a2334'] = 'Multi Currency Method';
 $_MODULE['<{nostotagging}default-bootstrap>config-bootstrap_b9f5c797ebbf55adccdd8539a65a0241'] = 'Disabled';
-$_MODULE['<{nostotagging}default-bootstrap>config-bootstrap_18da576f1ccd98e4d30d6df233764011'] = 'Exchange Rates';
-$_MODULE['<{nostotagging}default-bootstrap>config-bootstrap_af5b7d829394bc5cc6b9e438543b7d15'] = 'Changing this setting to \"Exchange Rates\" will enable multi currency feature in Nosto.';
+$_MODULE['<{nostotagging}default-bootstrap>config-bootstrap_18da576f1ccd98e4d30d6df233764011'] = 'Exchange NostoExchangeRates';
+$_MODULE['<{nostotagging}default-bootstrap>config-bootstrap_af5b7d829394bc5cc6b9e438543b7d15'] = 'Changing this setting to \"Exchange NostoExchangeRates\" will enable multi currency feature in Nosto.';
 $_MODULE['<{nostotagging}default-bootstrap>config-bootstrap_c9cc8cce247e49bae79f15173ce97354'] = 'Save ';
 $_MODULE['<{nostotagging}default-bootstrap>config-bootstrap_a59be03526b7789c28a80fe816cca4c1'] = 'Exchange rates';
 $_MODULE['<{nostotagging}default-bootstrap>config-bootstrap_8f76a793218248d062ced130c0ffd968'] = 'Update exchange rates';
@@ -79,8 +79,8 @@ $_MODULE['<{nostotagging}default-bootstrap>legacy-config-bootstrap_ded40f2a77c30
 $_MODULE['<{nostotagging}default-bootstrap>legacy-config-bootstrap_2798dec4d8b5da67cba74122e7871c84'] = 'Change this settings to be \"Footer\" if your theme does not have displayTop hook';
 $_MODULE['<{nostotagging}default-bootstrap>legacy-config-bootstrap_0a127a7baeba865da50fa0d40a4a2334'] = 'Multi Currency Method';
 $_MODULE['<{nostotagging}default-bootstrap>legacy-config-bootstrap_b9f5c797ebbf55adccdd8539a65a0241'] = 'Disabled';
-$_MODULE['<{nostotagging}default-bootstrap>legacy-config-bootstrap_18da576f1ccd98e4d30d6df233764011'] = 'Exchange Rates';
-$_MODULE['<{nostotagging}default-bootstrap>legacy-config-bootstrap_af5b7d829394bc5cc6b9e438543b7d15'] = 'Changing this setting to \"Exchange Rates\" will enable multi currency feature in Nosto.';
+$_MODULE['<{nostotagging}default-bootstrap>legacy-config-bootstrap_18da576f1ccd98e4d30d6df233764011'] = 'Exchange NostoExchangeRates';
+$_MODULE['<{nostotagging}default-bootstrap>legacy-config-bootstrap_af5b7d829394bc5cc6b9e438543b7d15'] = 'Changing this setting to \"Exchange NostoExchangeRates\" will enable multi currency feature in Nosto.';
 $_MODULE['<{nostotagging}default-bootstrap>legacy-config-bootstrap_c9cc8cce247e49bae79f15173ce97354'] = 'Save';
 $_MODULE['<{nostotagging}default-bootstrap>legacy-config-bootstrap_a59be03526b7789c28a80fe816cca4c1'] = 'Exchange rates';
 $_MODULE['<{nostotagging}default-bootstrap>legacy-config-bootstrap_8f76a793218248d062ced130c0ffd968'] = 'Update exchange rates';

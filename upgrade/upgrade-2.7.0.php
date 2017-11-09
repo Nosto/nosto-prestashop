@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2016 Nosto Solutions Ltd
+ * 2013-2017 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,7 +19,7 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2016 Nosto Solutions Ltd
+ * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
@@ -34,16 +34,13 @@ if (!defined('_PS_VERSION_')) {
  *
  * @param NostoTagging $object
  * @return bool
+ * @suppress PhanUnreferencedMethod
  */
 function upgrade_module_2_7_0($object)
 {
-    /* @var NostoTaggingHelperCustomer $helper_customer */
-    $helper_customer = Nosto::helper('nosto_tagging/customer');
-    $helper_customer->createCustomerReferenceTable();
+    NostoCustomerManager::createCustomerReferenceTable();
     $success = $object->registerHook('displayBackOfficeTop');
-    /** @var NostoTaggingHelperConfig $helper_config */
-    $helper_config = Nosto::helper('nosto_tagging/config');
-    $helper_config->clearCache();
+    NostoHelperConfig::clearCache();
 
     return $success;
 }

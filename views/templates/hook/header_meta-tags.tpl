@@ -1,5 +1,5 @@
 {*
-* 2013-2016 Nosto Solutions Ltd
+* 2013-2017 Nosto Solutions Ltd
 *
 * NOTICE OF LICENSE
 *
@@ -18,10 +18,9 @@
 * needs please refer to http://www.prestashop.com for more information.
 *
 * @author    Nosto Solutions Ltd <contact@nosto.com>
-* @copyright 2013-2016 Nosto Solutions Ltd
+* @copyright 2013-2017 Nosto Solutions Ltd
 * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *}
 
 <meta name="nosto-version" content="{$nosto_version|escape:'htmlall':'UTF-8'}">
-<meta name="nosto-unique-id" content="{$nosto_unique_id|escape:'htmlall':'UTF-8'}">
 <meta name="nosto-language" content="{$nosto_language|escape:'htmlall':'UTF-8'}">

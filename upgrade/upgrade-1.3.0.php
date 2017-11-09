@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2016 Nosto Solutions Ltd
+ * 2013-2017 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,7 +19,7 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2016 Nosto Solutions Ltd
+ * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
@@ -37,20 +37,21 @@ if (!defined('_PS_VERSION_')) {
  *
  * @param NostoTagging $object
  * @return bool
+ * @suppress PhanUnreferencedMethod
  */
 function upgrade_module_1_3_0($object)
 {
     // Purge the nosto configs the plugin have created so far and reload the config.
-    $config_table = pSQL(_DB_PREFIX_.'configuration');
-    $config_lang_table = pSQL($config_table.'_lang');
+    $configTable = pSQL(_DB_PREFIX_.'configuration');
+    $configLangTable = pSQL($configTable.'_lang');
     Db::getInstance()->execute('
-			DELETE `'.$config_lang_table.'` FROM `'.$config_lang_table.'`
-			LEFT JOIN `'.$config_table.'`
-			ON `'.$config_lang_table.'`.`id_configuration` = `'.$config_table.'`.`id_configuration`
-			WHERE `'.$config_table.'`.`name` LIKE "NOSTOTAGGING_%"');
+			DELETE `'.$configLangTable.'` FROM `'.$configLangTable.'`
+			LEFT JOIN `'.$configTable.'`
+			ON `'.$configLangTable.'`.`id_configuration` = `'.$configTable.'`.`id_configuration`
+			WHERE `'.$configTable.'`.`name` LIKE "NOSTOTAGGING_%"');
     Db::getInstance()->execute('
-			DELETE FROM `'.$config_table.'`
-			WHERE `'.$config_table.'`.`name` LIKE "NOSTOTAGGING_%"');
+			DELETE FROM `'.$configTable.'`
+			WHERE `'.$configTable.'`.`name` LIKE "NOSTOTAGGING_%"');
     Configuration::loadConfiguration();
 
     $object->registerHook('actionObjectUpdateAfter');

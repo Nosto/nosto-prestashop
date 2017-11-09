@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2016 Nosto Solutions Ltd
+ * 2013-2017 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,7 +19,7 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2016 Nosto Solutions Ltd
+ * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
@@ -36,11 +36,12 @@ if (!defined('_PS_VERSION_')) {
  *
  * @param NostoTagging $object
  * @return bool
+ * @suppress PhanUnreferencedMethod
  */
 function upgrade_module_2_1_0($object)
 {
-    $drop_table = 'DROP TABLE IF EXISTS `'.pSQL(_DB_PREFIX_).'nostotagging_customer_link`';
-    $create_table = 'CREATE TABLE IF NOT EXISTS `'.pSQL(_DB_PREFIX_).'nostotagging_customer_link` (
+    $dropTable = 'DROP TABLE IF EXISTS `'.pSQL(_DB_PREFIX_).'nostotagging_customer_link`';
+    $createTable = 'CREATE TABLE IF NOT EXISTS `'.pSQL(_DB_PREFIX_).'nostotagging_customer_link` (
 						`id_cart` INT(10) UNSIGNED NOT NULL,
 						`id_nosto_customer` VARCHAR(255) NOT NULL,
 						`date_add` DATETIME NOT NULL,
@@ -52,8 +53,8 @@ function upgrade_module_2_1_0($object)
         && $object->unregisterHook('actionPaymentConfirmation');
 
     // We just drop the table and re-create as it's easier and we don't want the data we loose.
-    return Db::getInstance()->execute($drop_table)
-        && Db::getInstance()->execute($create_table)
+    return Db::getInstance()->execute($dropTable)
+        && Db::getInstance()->execute($createTable)
         && $object->unregisterHook('paymentConfirm')
         && $object->registerHook('postUpdateOrderStatus')
         && $hooks;

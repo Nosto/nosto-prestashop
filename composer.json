@@ -2,15 +2,37 @@
   "name": "nosto/nostotagging",
   "description": "Nosto Module for Prestashop",
   "require": {
-    "nosto/php-sdk": "1.16.4"
+    "nosto/php-sdk": "3.1.0"
   },
   "require-dev": {
     "phing/phing": "2.*",
-    "phpmd/phpmd" : "@stable",
-    "squizlabs/php_codesniffer": "2.*",
-    "wimg/php-compatibility": "^7.1"
+    "phan/phan": "^0.8.9",
+    "phpmd/phpmd": "^2.5",
+    "squizlabs/php_codesniffer": "2.6.*",
+    "sebastian/phpcpd": "*",
+    "wimg/php-compatibility": "^8.0",
+    "prestashop/ps": "1.7.1.1",
+    "icanboogie/cldr": "1.8.0"
   },
   "config": {
     "vendor-dir": "libs"
+  },
+  "repositories": [
+    {
+      "type": "package",
+      "package": {
+        "name": "prestashop/ps",
+        "version": "v1.7.1.1",
+        "dist": {
+          "url": "https://github.com/PrestaShop/PrestaShop/archive/1.7.2.0.zip",
+          "type": "zip",
+          "reference": "1.7.1.1"
+        }
+      }
+    }
+  ],
+  "scripts-dev": {
+    "post-install-cmd": "if [ -f ./libs/bin/phpcs ]; then \"libs/bin/phpcs\" --config-set installed_paths libs/wimg/php-compatibility; fi",
+    "post-update-cmd" : "if [ -f ./libs/bin/phpcs ]; then \"libs/bin/phpcs\" --config-set installed_paths libs/wimg/php-compatibility; fi"
   }
 }

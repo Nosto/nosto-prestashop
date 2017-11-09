@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2016 Nosto Solutions Ltd
+ * 2013-2017 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,11 +19,13 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2016 Nosto Solutions Ltd
+ * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-require_once(dirname(__FILE__).'/api.php');
+require_once(dirname(__FILE__) . '/api.php');
+
+use Nosto\Object\Product\ProductCollection as NostoSDKProductCollection;
 
 /**
  * Front controller for gathering all products from the shop and sending the meta-data to Nosto.
@@ -37,32 +39,48 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
      */
     public function initContent()
     {
-        $context = $this->module->getContext();
-        $collection = new NostoExportProductCollection();
         // We need to forge the employee in order to get a price for a product
-        $context->employee = new Employee();
+        $employee = new Employee();
 
-        if (!empty(Tools::getValue('id'))) {
-            $product = new Product(Tools::getValue('id'), true, $context->language->id, $context->shop->id);
-            if (!Validate::isLoadedObject($product)) {
-                Controller::getController('PageNotFoundController')->run();
-            }
-            $nosto_product = new NostoTaggingProduct();
-            $nosto_product->loadData($context, $product);
-            $collection[] = $nosto_product;
-        } else {
-            foreach ($this->getProductIds() as $id_product) {
-                $product = new Product($id_product, true, $context->language->id, $context->shop->id);
-                if (!Validate::isLoadedObject($product)) {
-                    continue;
+        $controller = $this;
+        NostoHelperContext::runInContext(
+            function () use ($controller) {
+                $collection = new NostoSDKProductCollection();
+                if (Tools::getValue(NostoTagging::ID)) {
+                    $product = new Product(
+                        Tools::getValue(NostoTagging::ID),
+                        true,
+                        NostoHelperContext::getLanguageId(),
+                        NostoHelperContext::getShopId()
+                    );
+                    if (!Validate::isLoadedObject($product)) {
+                        Controller::getController('PageNotFoundController')->run();
+                    }
+                    $nostoProduct = NostoProduct::loadData($product);
+                    $collection->append($nostoProduct);
+                } else {
+                    foreach ($controller->getProductIds() as $idProduct) {
+                        $product = new Product(
+                            $idProduct,
+                            true,
+                            NostoHelperContext::getLanguageId(),
+                            NostoHelperContext::getShopId()
+                        );
+                        if (!Validate::isLoadedObject($product)) {
+                            continue;
+                        }
+
+                        $nostoProduct = NostoProduct::loadData($product);
+                        $collection->append($nostoProduct);
+                    }
                 }
-
-                $nosto_product = new NostoTaggingProduct();
-                $nosto_product->loadData($context, $product);
-                $collection[] = $nosto_product;
-            }
-        }
-        $this->encryptOutput($collection);
+                $controller->encryptOutput($collection);
+            },
+            false,
+            false,
+            false,
+            $employee->id
+        );
     }
 
     /**
@@ -72,7 +90,8 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
      */
     protected function getProductIds()
     {
-        $product_ids = array();
+        $productIds = array();
+        /** @noinspection SqlNoDataSourceInspection */
         $sql = sprintf(
             '
                 SELECT id_product
@@ -88,9 +107,9 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
 
         $rows = Db::getInstance()->executeS($sql);
         foreach ($rows as $row) {
-            $product_ids[] = (int)$row['id_product'];
+            $productIds[] = (int)$row['id_product'];
         }
 
-        return $product_ids;
+        return $productIds;
     }
 }
