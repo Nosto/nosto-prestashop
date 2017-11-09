@@ -45,10 +45,9 @@ class NostoHelperVariation
     public static function getCountriesBeingUsedInTaxRules()
     {
         $shopId = NostoHelperContext::getShopId();
-        $cache = Cache::getInstance();
         $cacheKey = 'NostoHelperPriceVariation-getCountriesBeingUsedInTaxRules-' . $shopId;
-        if ($cache->exists($cacheKey)) {
-            return $cache->get($cacheKey);
+        if (Cache::isStored($cacheKey)) {
+            return Cache::retrieve($cacheKey);
         }
 
         $res = array();
@@ -94,7 +93,7 @@ class NostoHelperVariation
         }
 
         //cache for 5 minutes
-        $cache->set($cacheKey, $res, self::CACHE_TIMEOUT);
+        Cache::store($cacheKey, $res, self::CACHE_TIMEOUT);
 
         return $res;
     }
@@ -107,10 +106,9 @@ class NostoHelperVariation
     public static function getGroupsBeingUsedInSpecificPrices()
     {
         $shopId = NostoHelperContext::getShopId();
-        $cache = Cache::getInstance();
         $cacheKey = 'NostoHelperPriceVariation-getGroupsBeingUsedInSpecificPrices-' . $shopId;
-        if ($cache->exists($cacheKey)) {
-            return $cache->get($cacheKey);
+        if (Cache::isStored($cacheKey)) {
+            return Cache::retrieve($cacheKey);
         }
 
         $filter = $shopId ? ' WHERE `id_shop` = ' . (int)$shopId : '';
@@ -130,7 +128,7 @@ class NostoHelperVariation
         }
 
         //cache for 5 minutes
-        $cache->set($cacheKey, $groupIds, self::CACHE_TIMEOUT);
+        Cache::store($cacheKey, $groupIds, self::CACHE_TIMEOUT);
 
         return $groupIds;
     }
@@ -143,10 +141,9 @@ class NostoHelperVariation
     public static function getCountriesBeingUsedInSpecificPrices()
     {
         $shopId = NostoHelperContext::getShopId();
-        $cache = Cache::getInstance();
         $cacheKey = 'NostoHelperPriceVariation-getCountriesBeingUsedInSpecificPrices-' . $shopId;
-        if ($cache->exists($cacheKey)) {
-            return $cache->get($cacheKey);
+        if (Cache::isStored($cacheKey)) {
+            return Cache::retrieve($cacheKey);
         }
 
         $filter = $shopId ? ' and sp.id_shop = ' . (int)$shopId : '';
@@ -173,7 +170,7 @@ class NostoHelperVariation
         }
 
         //cache for 5 minutes
-        $cache->set($cacheKey, $countryIds, self::CACHE_TIMEOUT);
+        Cache::store($cacheKey, $countryIds, self::CACHE_TIMEOUT);
 
         return $countryIds;
     }
@@ -185,17 +182,16 @@ class NostoHelperVariation
     public static function getVariationCountries()
     {
         $shopId = NostoHelperContext::getShopId();
-        $cache = Cache::getInstance();
         $cacheKey = 'NostoHelperPriceVariation-getVariationCountries-' . $shopId;
-        if ($cache->exists($cacheKey)) {
-            return $cache->get($cacheKey);
+        if (Cache::isStored($cacheKey)) {
+            return Cache::retrieve($cacheKey);
         }
 
         $countryIds = self::getCountriesBeingUsedInSpecificPrices();
         $countryIdsFromTaxRules = self::getCountriesBeingUsedInTaxRules();
         $countryIds = array_unique(array_merge($countryIds, $countryIdsFromTaxRules));
         //cache for 5 minutes
-        $cache->set($cacheKey, $countryIds, self::CACHE_TIMEOUT);
+        Cache::store($cacheKey, $countryIds, self::CACHE_TIMEOUT);
 
         return $countryIds;
     }

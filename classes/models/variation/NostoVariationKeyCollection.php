@@ -43,10 +43,11 @@ class NostoVariationKeyCollection extends NostoSDKAbstractCollection
     public function loadData()
     {
         $shopId = NostoHelperContext::getShopId();
-        $cache = Cache::getInstance();
         $cacheKey = 'NostoVariationKeyCollection-loadData-' . $shopId;
-        if ($cache->exists($cacheKey)) {
-            $this->var = $cache->get($cacheKey);
+
+
+        if (Cache::isStored($cacheKey)) {
+            $this->var = Cache::retrieve($cacheKey);
         } else {
             $currencyFactor = array();
             $allCurrencies = NostoHelperCurrency::getCurrencies(true);
@@ -75,7 +76,7 @@ class NostoVariationKeyCollection extends NostoSDKAbstractCollection
             ));
 
             //cache for 5 minutes
-            $cache->set($cacheKey, $this->var, NostoHelperVariation::CACHE_TIMEOUT);
+            Cache::store($cacheKey, $this->var, NostoHelperVariation::CACHE_TIMEOUT);
         }
     }
 
