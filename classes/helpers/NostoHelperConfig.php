@@ -386,7 +386,7 @@ class NostoHelperConfig
 
     /**
      * Are countries used in tax rules used for price variations
-     * @return bool true if variation feature has been enabled, false otherwise
+     * @return bool true if countries are used in tax rules used for price variations
      */
     public static function getVariationTaxRuleEnabled()
     {
