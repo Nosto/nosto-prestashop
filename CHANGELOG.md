@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
+## 3.0.1
+- Fix the issue that currency format was incorrect
+
 ## 3.0.0
 ### Added
 - Support product price variation tagging based on currency, country and customer group
