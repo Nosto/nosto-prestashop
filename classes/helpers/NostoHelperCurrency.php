@@ -235,7 +235,7 @@ class NostoHelperCurrency
         $currencyDecimalsEnabled = 1;
         /** @var Currency $currencyObject */
         $currencyObject = self::loadCurrency($currencyId);
-        if (!Validate::isLoadedObject($currencyObject)) {
+        if (Validate::isLoadedObject($currencyObject)) {
             $currencyDecimalsEnabled = $currencyObject->decimals;
         }
 
