@@ -180,9 +180,7 @@ class NostoHelperCurrency
         }
 
         $currencySymbol = $currency[self::SYMBOL_FIELD];
-        //if the decimals is disabled for this currency, then the precision should be 0
-        $currencyDecimalsEnabled = $currency[self::DECIMALS_ENABLED_FIELD] === 0 ? 0 : 1;
-        $pricePrecision = $currencyDecimalsEnabled * _PS_PRICE_DISPLAY_PRECISION_;
+        $pricePrecision = self::getDecimalWithCurrency($currency['id_currency']);
 
         return new NostoSDKCurrencyFormat(
             $symbolPosition,
@@ -216,10 +214,7 @@ class NostoHelperCurrency
         $symbolPosition = $symbolPos === 0;
         $groupSymbol = isset($symbols[self::GROUP_FIELD]) ? $symbols[self::GROUP_FIELD] : ',';
         $decimalSymbol = isset($symbols[self::DECIMAL_SYMBOL_FIELD]) ? $symbols[self::DECIMAL_SYMBOL_FIELD] : ',';
-
-        //if the decimals is disabled for this currency, then the precision should be 0
-        $currencyDecimalsEnabled = $currency[self::DECIMALS_ENABLED_FIELD] === 0 ? 0 : 1;
-        $pricePrecision = $currencyDecimalsEnabled * _PS_PRICE_DISPLAY_PRECISION_;
+        $pricePrecision = self::getDecimalWithCurrency($currency['id_currency']);
 
         return new NostoSDKCurrencyFormat(
             $symbolPosition,
@@ -228,6 +223,23 @@ class NostoHelperCurrency
             $groupSymbol,
             $pricePrecision
         );
+    }
+
+    /**
+     * Get price decimal with currency
+     * @param $currencyId
+     * @return int price decimal
+     */
+    public static function getDecimalWithCurrency($currencyId)
+    {
+        $currencyDecimalsEnabled = 1;
+        /** @var Currency $currencyObject */
+        $currencyObject = self::loadCurrency($currencyId);
+        if (!Validate::isLoadedObject($currencyObject)) {
+            $currencyDecimalsEnabled = $currencyObject->decimals;
+        }
+
+        return $currencyDecimalsEnabled * _PS_PRICE_DISPLAY_PRECISION_;
     }
 
     private static function currencyActive(array $currency)
