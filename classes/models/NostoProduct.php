@@ -61,6 +61,9 @@ class NostoProduct extends NostoSDKProduct
             $nostoProduct->setPriceCurrencyCode(Tools::strtoupper($taggingCurrency->iso_code));
             $nostoProduct->setPrice(self::getPriceInclTax($product, $taggingCurrency));
             $nostoProduct->setListPrice(self::getListPriceInclTax($product, $taggingCurrency));
+            if (NostoHelperConfig::useMultipleCurrencies()) {
+                $nostoProduct->setVariationId($taggingCurrency->iso_code);
+            }
         }
 
         if (NostoHelperConfig::getSkuEnabled()) {
