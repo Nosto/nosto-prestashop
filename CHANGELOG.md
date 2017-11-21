@@ -6,6 +6,7 @@ This project adheres to Semantic Versioning(http://semver.org/).
 - Fixed the issue that currency format was incorrect
 - Fixed the issue that configuration key was too long on prestashop 1.5
 - Fixed the product variation id is missing when multi-currency is enabled
+- Fixed the product brand was presented as "false" when brand was not set
 
 ## 3.0.0
 ### Added
