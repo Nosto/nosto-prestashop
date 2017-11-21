@@ -71,9 +71,9 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
     {
         $where = sprintf(
             '`id_shop_group` = %s AND `id_shop` = %s AND `id_lang` = %s',
-            pSQL(NostoHelperContext::getShopGroupId()),
-            pSQL(NostoHelperContext::getShopId()),
-            pSQL(NostoHelperContext::getLanguageId())
+            pSQL((string)NostoHelperContext::getShopGroupId()),
+            pSQL((string)NostoHelperContext::getShopId()),
+            pSQL((string)NostoHelperContext::getLanguageId())
         );
 
         /** @noinspection SqlNoDataSourceInspection */
