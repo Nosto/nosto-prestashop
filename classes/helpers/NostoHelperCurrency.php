@@ -36,6 +36,15 @@ class NostoHelperCurrency
     const CURRENCY_PRECISION = 2;
 
     const PS_CURRENCY_DEFAULT = 'PS_CURRENCY_DEFAULT';
+    const SYMBOL_FIELD = 'sign';
+    const DECIMALS_ENABLED_FIELD = 'decimals';
+    const DECIMAL_SYMBOL_FIELD = 'decimal';
+    const GROUP_FIELD = 'group';
+    const ACTIVE_FIELD = 'active';
+    const DELETED_FIELD = 'deleted';
+    const FORMAT_FIELD = 'format';
+    const STANDARD_FIELD = 'standard';
+    const ISO_CODE_FIELD = 'iso_code';
 
     /**
      * @param $id
@@ -126,10 +135,10 @@ class NostoHelperCurrency
                 NostoHelperLogger::error($e);
             }
         }
-        if (empty($currency['format'])) {
-            $currency['format'] = 2;  //Fallback to format 2
+        if (empty($currency[self::FORMAT_FIELD])) {
+            $currency[self::FORMAT_FIELD] = 2;  //Fallback to format 2
         }
-        switch ($currency['format']) {
+        switch ($currency[self::FORMAT_FIELD]) {
             /* X 0,000.00 */
             case 1:
                 $groupSymbol = ',';
@@ -165,16 +174,20 @@ class NostoHelperCurrency
                 throw new NostoSDKException(
                     sprintf(
                         'Unsupported PrestaShop currency format %d.',
-                        $currency['format']
+                        $currency[self::FORMAT_FIELD]
                     )
                 );
         }
+
+        $currencySymbol = $currency[self::SYMBOL_FIELD];
+        $pricePrecision = self::getDecimalWithCurrency($currency['id_currency']);
+
         return new NostoSDKCurrencyFormat(
             $symbolPosition,
-            $groupSymbol,
-            self::CURRENCY_GROUP_LENGTH,
+            $currencySymbol,
             $decimalSymbol,
-            self::CURRENCY_PRECISION
+            $groupSymbol,
+            $pricePrecision
         );
     }
 
@@ -191,33 +204,51 @@ class NostoHelperCurrency
     {
         $cldr = Tools::getCldr(null, NostoHelperContext::getLanguage()->language_code);
         /** @noinspection PhpParamsInspection */
-        $cldrCurrency = new \ICanBoogie\CLDR\Currency($cldr->getRepository(), $currency['iso_code']);
+        $cldrCurrency = new \ICanBoogie\CLDR\Currency($cldr->getRepository(), $currency[self::ISO_CODE_FIELD]);
         $localizedCurrency = $cldrCurrency->localize($cldr->getCulture());
-        $pattern = $localizedCurrency->locale->numbers->currency_formats['standard'];
+        $pattern = $localizedCurrency->locale->numbers->currency_formats[self::STANDARD_FIELD];
         $symbols = $localizedCurrency->locale->numbers->symbols;
         $symbolPos = Tools::strpos($pattern, self::CURRENCY_SYMBOL_MARKER);
 
         // Check if the currency symbol is before or after the amount.
         $symbolPosition = $symbolPos === 0;
-        $groupSymbol = isset($symbols['group']) ? $symbols['group'] : ',';
-        $decimalSymbol = isset($symbols['decimal']) ? $symbols['decimal'] : ',';
+        $groupSymbol = isset($symbols[self::GROUP_FIELD]) ? $symbols[self::GROUP_FIELD] : ',';
+        $decimalSymbol = isset($symbols[self::DECIMAL_SYMBOL_FIELD]) ? $symbols[self::DECIMAL_SYMBOL_FIELD] : ',';
+        $pricePrecision = self::getDecimalWithCurrency($currency['id_currency']);
 
         return new NostoSDKCurrencyFormat(
             $symbolPosition,
-            $groupSymbol,
-            self::CURRENCY_GROUP_LENGTH,
+            $currency[self::SYMBOL_FIELD],
             $decimalSymbol,
-            self::CURRENCY_PRECISION
+            $groupSymbol,
+            $pricePrecision
         );
+    }
+
+    /**
+     * Get price decimal with currency
+     * @param $currencyId
+     * @return int price decimal
+     */
+    public static function getDecimalWithCurrency($currencyId)
+    {
+        $currencyDecimalsEnabled = 1;
+        /** @var Currency $currencyObject */
+        $currencyObject = self::loadCurrency($currencyId);
+        if (Validate::isLoadedObject($currencyObject)) {
+            $currencyDecimalsEnabled = $currencyObject->decimals;
+        }
+
+        return $currencyDecimalsEnabled * _PS_PRICE_DISPLAY_PRECISION_;
     }
 
     private static function currencyActive(array $currency)
     {
         $active = true;
-        if (!$currency['active']) {
+        if (!$currency[self::ACTIVE_FIELD]) {
             $active = false;
         } else {
-            if (isset($currency['deleted']) && $currency['deleted']) {
+            if (isset($currency[self::DELETED_FIELD]) && $currency[self::DELETED_FIELD]) {
                 $active = false;
             }
         }

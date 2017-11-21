@@ -61,6 +61,9 @@ class NostoProduct extends NostoSDKProduct
             $nostoProduct->setPriceCurrencyCode(Tools::strtoupper($taggingCurrency->iso_code));
             $nostoProduct->setPrice(self::getPriceInclTax($product, $taggingCurrency));
             $nostoProduct->setListPrice(self::getListPriceInclTax($product, $taggingCurrency));
+            if (NostoHelperConfig::useMultipleCurrencies()) {
+                $nostoProduct->setVariationId($taggingCurrency->iso_code);
+            }
         }
 
         if (NostoHelperConfig::getSkuEnabled()) {
@@ -322,13 +325,13 @@ class NostoProduct extends NostoSDKProduct
      */
     protected function amendBrand(Product $product)
     {
-        if (empty($product->manufacturer_name) && !empty($product->id_manufacturer)) {
+        if (!empty($product->manufacturer_name)) {
+            $this->setBrand($product->manufacturer_name);
+        } elseif (!empty($product->id_manufacturer)) {
             $manufacturer = new Manufacturer($product->id_manufacturer, NostoHelperContext::getLanguageId());
-            if (!empty($manufacturer)) {
+            if (!empty($manufacturer) && !empty($manufacturer->name)) {
                 $this->setBrand($manufacturer->name);
             }
-        } else {
-            $this->setBrand($product->manufacturer_name);
         }
     }
 }
