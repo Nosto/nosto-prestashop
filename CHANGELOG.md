@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
+## 3.0.2
+- Fixed the issue that some products got incorrect images if there is a combination with id 0
+
 ## 3.0.1
 - Fixed the issue that currency format was incorrect
 - Fixed the issue that configuration key was too long on prestashop 1.5

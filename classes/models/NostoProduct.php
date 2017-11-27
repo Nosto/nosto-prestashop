@@ -163,7 +163,7 @@ class NostoProduct extends NostoSDKProduct
 
         $defaultCombinationImages = array();
         $defaultId = $product->getDefaultIdProductAttribute();
-        if ($defaultId !== null) {
+        if ($defaultId) {
             //The images for default combination
             $defaultCombinationImages = Product::_getAttributeImageAssociations($defaultId);
         }
