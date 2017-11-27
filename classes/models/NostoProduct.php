@@ -163,6 +163,8 @@ class NostoProduct extends NostoSDKProduct
 
         $defaultCombinationImages = array();
         $defaultId = $product->getDefaultIdProductAttribute();
+        //Some merchants may have images associated with combination id 0.
+        //Do not get the images for the combination if its id is 0
         if ($defaultId) {
             //The images for default combination
             $defaultCombinationImages = Product::_getAttributeImageAssociations($defaultId);
