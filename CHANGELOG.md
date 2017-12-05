@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
+## 3.0.3
+- Change product tag1, tag2 and tag3 tagging to tags1, tags2 and tags3 to compatible with nosto backend
+
 ## 3.0.2
 - Fixed the issue that some products got incorrect images if there was a combination with id 0
 
