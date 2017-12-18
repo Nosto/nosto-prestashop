@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2016 Nosto Solutions Ltd
+ * 2013-2017 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,7 +19,7 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2016 Nosto Solutions Ltd
+ * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
@@ -58,7 +58,7 @@ class NostoCart extends NostoSDKCart
         $nostoCart = new NostoCart();
         $cartRules = (array)$cart->getCartRules(CartRule::FILTER_ACTION_GIFT);
 
-        $gift_products = array();
+        $giftProducts = array();
         foreach ($cartRules as $cartRule) {
             if ((int)$cartRule['gift_product']) {
                 foreach ($products as $key => &$product) {
@@ -78,7 +78,7 @@ class NostoCart extends NostoSDKCart
                         $giftProduct['price_wt'] = 0;
                         $giftProduct['gift'] = true;
 
-                        $gift_products[] = $giftProduct;
+                        $giftProducts[] = $giftProduct;
 
                         break; // One gift product per cart rule
                     }
@@ -87,7 +87,7 @@ class NostoCart extends NostoSDKCart
             }
         }
 
-        $items = array_merge($products, $gift_products);
+        $items = array_merge($products, $giftProducts);
 
         foreach ($items as $item) {
             $name = $item['name'];
@@ -99,7 +99,11 @@ class NostoCart extends NostoSDKCart
             $nostoLineItem->setProductId($item['id_product']);
             $nostoLineItem->setQuantity((int)$item['cart_quantity']);
             $nostoLineItem->setName((string)$name);
-            $nostoLineItem->setPrice($item['price_wt']);
+            if (is_numeric($item['price_wt'])) {
+                $nostoLineItem->setPrice(
+                    NostoHelperPrice::roundPrice($item['price_wt'], $currency)
+                );
+            }
             $nostoLineItem->setPriceCurrencyCode((string)$currency->iso_code);
             $nostoCart->addItem($nostoLineItem);
         }

@@ -1,7 +1,6 @@
 <?php
-
 /**
- * 2013-2016 Nosto Solutions Ltd
+ * 2013-2017 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -20,38 +19,64 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2016 Nosto Solutions Ltd
+ * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
-use \Nosto\Object\ MarkupableString;
 
-class NostoVariation extends MarkupableString
+use Nosto\Object\Product\Variation as NostoSDKVariation;
+
+class NostoVariation extends NostoSDKVariation
 {
     /**
-     * Constructor
+     * Loads the Variation info from a prestashop product model.
      *
-     * @param string $variationId
+     * @param Product $product the product model.
+     * @param NostoVariationKey $variationKey
+     * @param string $productAvailability
+     * @return NostoVariation
      */
-    public function __construct($variationId)
-    {
-        parent::__construct($variationId, 'nosto_price_variation');
-    }
+    public static function loadData(
+        Product $product,
+        $variationKey,
+        $productAvailability
+    ) {
+        return NostoHelperContext::runInContext(
+            function () use ($product, $variationKey, $productAvailability) {
+                $product = new Product(
+                    $product->id,
+                    true,
+                    NostoHelperContext::getLanguageId(),
+                    NostoHelperContext::getShopId()
+                );
+                $nostoVariation = new NostoVariation();
+                $variationId = $variationKey->getVariationId();
+                $nostoVariation->setVariationId($variationId);
+                $nostoVariation->setAvailability($productAvailability);
+                $nostoVariation->setPriceCurrencyCode(
+                    Tools::strtoupper(NostoHelperContext::getCurrency()->iso_code)
+                );
 
-    public static function loadData()
-    {
-        $nostoVariation = new NostoVariation(NostoHelperContext::getCurrency()->iso_code);
+                $nostoVariation->setListPrice(
+                    NostoHelperPrice::getProductPriceForGroup(
+                        $product->id,
+                        $variationKey->getGroupId(),
+                        false
+                    )
+                );
+                $nostoVariation->setPrice(
+                    NostoHelperPrice::getProductPriceForGroup(
+                        $product->id,
+                        $variationKey->getGroupId()
+                    )
+                );
 
-        NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoVariation), array(
-            'nosto_variation' => $nostoVariation
-        ));
-        return $nostoVariation;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getVariationId()
-    {
-        return $this->getValue();
+                return $nostoVariation;
+            },
+            false,
+            false,
+            $variationKey->getCurrencyId(),
+            false,
+            $variationKey->getCountryId()
+        );
     }
 }

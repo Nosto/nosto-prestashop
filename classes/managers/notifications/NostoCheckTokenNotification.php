@@ -38,7 +38,7 @@ class NostoCheckTokenNotification extends NostoNotification
     {
         $connected = NostoHelperAccount::existsAndIsConnected();
         if ($connected) {
-            $account = NostoHelperAccount::find();
+            $account = NostoHelperAccount::getAccount();
             if ($account instanceof NostoSDKAccount && $account->hasMissingTokens()) {
                 return new NostoCheckTokenNotification(
                     NostoHelperContext::getShop(),

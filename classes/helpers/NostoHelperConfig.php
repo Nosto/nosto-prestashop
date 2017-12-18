@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2016 Nosto Solutions Ltd
+ * 2013-2017 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,7 +19,7 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2016 Nosto Solutions Ltd
+ * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
@@ -34,12 +34,13 @@ class NostoHelperConfig
     const CRON_ACCESS_TOKEN = 'NOSTOTAGGING_CRON_ACCESS_TOKEN';
     const MULTI_CURRENCY_METHOD = 'NOSTOTAGGING_MC_METHOD';
     const SKU_SWITCH = 'NOSTOTAGGING_SKU_SWITCH';
+    const VARIATION_SWITCH = 'NOSTOTAGGING_VARIATION_SWITCH';
+    const VARIATION_TAX_RULE_SWITCH = 'NOSTOTAGGING_TAX_RULE_SWITCH';
     const TOKEN_CONFIG_PREFIX = 'NOSTOTAGGING_API_TOKEN_';
     const MULTI_CURRENCY_METHOD_VARIATION = 'priceVariation';
     const MULTI_CURRENCY_METHOD_EXCHANGE_RATE = 'exchangeRate';
     const MULTI_CURRENCY_METHOD_DISABLED = 'disabled';
     const NOSTOTAGGING_POSITION = 'NOSTOTAGGING_POSITION';
-    const NOSTOTAGGING_IMAGE_TYPE = 'NOSTOTAGGING_IMAGE_TYPE';
     const NOSTOTAGGING_POSITION_TOP = 'top';
     const NOSTOTAGGING_POSITION_FOOTER = 'footer';
 
@@ -75,37 +76,36 @@ class NostoHelperConfig
      *
      * @param string $name the name of the config entry to save.
      * @param mixed $value the value to save.
-     * @param null|int $lang_id the language id to save it for.
+     * @param null|int $languageId the language id to save it for.
      * @param bool $global if it should be saved for all shops or in current context.
-     * @param null|int $id_shop_group
-     * @param null|int $id_shop
+     * @param null|int $shopGroupId
+     * @param null|int $shopId
      * @return bool true is saved, false otherwise.
      */
     private static function write(
         $name,
         $value,
-        $lang_id = null,
+        $languageId = null,
         $global = false,
-        $id_shop_group = null,
-        $id_shop = null
+        $shopGroupId = null,
+        $shopId = null
     ) {
         $callback = array(
             'Configuration',
             ($global && method_exists(
-                    'Configuration',
-                    'updateGlobalValue'
-                )) ? 'updateGlobalValue' : 'updateValue'
+                'Configuration',
+                'updateGlobalValue'
+            )) ? 'updateGlobalValue' : 'updateValue'
         );
         // Store this value for given language only if specified.
-        if (!is_array($value) && !empty($lang_id)) {
-            $value = array($lang_id => $value);
+        if (!is_array($value) && !empty($languageId)) {
+            $value = array($languageId => $value);
         }
-        if (
-            $global === false
-            && !empty($id_shop_group)
-            && !empty($id_shop)
+        if ($global === false
+            && !empty($shopGroupId)
+            && !empty($shopId)
         ) {
-            $return = call_user_func($callback, (string)$name, $value, $id_shop_group, $id_shop);
+            $return = call_user_func($callback, (string)$name, $value, false, $shopGroupId, $shopId);
         } else {
             $return = call_user_func($callback, (string)$name, $value);
         }
@@ -119,18 +119,18 @@ class NostoHelperConfig
      */
     public static function purge()
     {
-        $config_table = pSQL(_DB_PREFIX_ . 'configuration');
-        $config_lang_table = pSQL($config_table . '_lang');
+        $configTable = pSQL(_DB_PREFIX_ . 'configuration');
+        $configLangTable = pSQL($configTable . '_lang');
 
         Db::getInstance()->execute(
-            'DELETE `' . $config_lang_table . '` FROM `' . $config_lang_table . '`
-            LEFT JOIN `' . $config_table . '`
-            ON `' . $config_lang_table . '`.`id_configuration` = `' . $config_table . '`.`id_configuration`
-            WHERE `' . $config_table . '`.`name` LIKE "NOSTOTAGGING_%"'
+            'DELETE `' . $configLangTable . '` FROM `' . $configLangTable . '`
+            LEFT JOIN `' . $configTable . '`
+            ON `' . $configLangTable . '`.`id_configuration` = `' . $configTable . '`.`id_configuration`
+            WHERE `' . $configTable . '`.`name` LIKE "NOSTOTAGGING_%"'
         );
         Db::getInstance()->execute(
-            'DELETE FROM `' . $config_table . '`
-            WHERE `' . $config_table . '`.`name` LIKE "NOSTOTAGGING_%"'
+            'DELETE FROM `' . $configTable . '`
+            WHERE `' . $configTable . '`.`name` LIKE "NOSTOTAGGING_%"'
         );
 
         // Reload the config.
@@ -150,30 +150,30 @@ class NostoHelperConfig
         $shopId = (int)Shop::getContextShopID(true);
         $shopGroupId = (int)Shop::getContextShopGroupID(true);
         if ($shopId) {
-            $context_restriction = ' AND `id_shop` = ' . $shopId;
+            $contextRestriction = ' AND `id_shop` = ' . $shopId;
         } elseif ($shopGroupId) {
-            $context_restriction = '
+            $contextRestriction = '
                 AND `id_shop_group` = ' . $shopGroupId . '
                 AND (`id_shop` IS NULL OR `id_shop` = 0)
             ';
         } else {
-            $context_restriction = '
+            $contextRestriction = '
                 AND (`id_shop_group` IS NULL OR `id_shop_group` = 0)
                 AND (`id_shop` IS NULL OR `id_shop` = 0)
             ';
         }
 
-        $config_table = pSQL(_DB_PREFIX_ . 'configuration');
-        $config_lang_table = pSQL($config_table . '_lang');
+        $configTable = pSQL(_DB_PREFIX_ . 'configuration');
+        $configLangTable = pSQL($configTable . '_lang');
 
         if (!empty($languageId)) {
             Db::getInstance()->execute(
-                'DELETE `' . $config_lang_table . '` FROM `' . $config_lang_table . '`
-                INNER JOIN `' . $config_table . '`
-                ON `' . $config_lang_table . '`.`id_configuration` = `' . $config_table . '`.`id_configuration`
-                WHERE `' . $config_table . '`.`name` LIKE "NOSTOTAGGING_%"
+                'DELETE `' . $configLangTable . '` FROM `' . $configLangTable . '`
+                INNER JOIN `' . $configTable . '`
+                ON `' . $configLangTable . '`.`id_configuration` = `' . $configTable . '`.`id_configuration`
+                WHERE `' . $configTable . '`.`name` LIKE "NOSTOTAGGING_%"
                 AND `id_lang` = ' . (int)$languageId
-                . $context_restriction
+                . $contextRestriction
             );
         }
         // Reload the config.
@@ -190,18 +190,7 @@ class NostoHelperConfig
      */
     public static function saveAccountName($accountName)
     {
-        if (NostoHelperContext::getShop() instanceof Shop) {
-            return self::write(
-                self::ACCOUNT_NAME,
-                $accountName,
-                NostoHelperContext::getLanguageId(),
-                false,
-                NostoHelperContext::getShopGroupId(),
-                NostoHelperContext::getShopId()
-            );
-        } else {
-            return self::write(self::ACCOUNT_NAME, $accountName, NostoHelperContext::getLanguageId());
-        }
+        return self::saveSetting(self::ACCOUNT_NAME, $accountName);
     }
 
     /**
@@ -228,30 +217,19 @@ class NostoHelperConfig
      */
     public static function saveToken($tokeName, $tokenValue)
     {
-        if (NostoHelperContext::getShop() instanceof Shop) {
-            return self::write(
-                self::getTokenConfigKey($tokeName),
-                $tokenValue,
-                NostoHelperContext::getLanguageId(),
-                false,
-                NostoHelperContext::getShopGroupId(),
-                NostoHelperContext::getShopId()
-            );
-        } else {
-            return self::write(self::getTokenConfigKey($tokeName), $tokenValue, NostoHelperContext::getLanguageId());
-        }
+        return self::saveSetting(self::getTokenConfigKey($tokeName), $tokenValue);
     }
 
     /**
      * Gets a token from the config by name.
      *
-     * @param string $token_name the name of the token to get.
+     * @param string $tokenName the name of the token to get.
      * @return mixed
      */
-    public static function getToken($token_name)
+    public static function getToken($tokenName)
     {
         return Configuration::get(
-            self::getTokenConfigKey($token_name),
+            self::getTokenConfigKey($tokenName),
             NostoHelperContext::getLanguageId(),
             NostoHelperContext::getShopGroupId(),
             NostoHelperContext::getShopId()
@@ -349,18 +327,7 @@ class NostoHelperConfig
      */
     public static function saveMultiCurrencyMethod($method)
     {
-        if (NostoHelperContext::getShop() instanceof Shop) {
-            return self::write(
-                self::MULTI_CURRENCY_METHOD,
-                $method,
-                NostoHelperContext::getLanguageId(),
-                false,
-                NostoHelperContext::getShopGroupId(),
-                NostoHelperContext::getShopId()
-            );
-        } else {
-            return self::write(self::MULTI_CURRENCY_METHOD, $method, NostoHelperContext::getLanguageId());
-        }
+        return self::saveSetting(self::MULTI_CURRENCY_METHOD, $method);
     }
 
     /**
@@ -380,40 +347,73 @@ class NostoHelperConfig
      */
     public static function saveSkuEnabled($enabled)
     {
-        if (NostoHelperContext::getShop() instanceof Shop) {
-            return self::write(
-                self::SKU_SWITCH,
-                $enabled,
-                NostoHelperContext::getLanguageId(),
-                false,
-                NostoHelperContext::getShopGroupId(),
-                NostoHelperContext::getShopId()
-            );
-        } else {
-            return self::write(self::SKU_SWITCH, $enabled, NostoHelperContext::getLanguageId());
-        }
+        return self::saveSetting(self::SKU_SWITCH, $enabled);
     }
 
     /**
      * Saves the position where to render Nosto tagging
      *
-     * @param string $method the multi currency method.
+     * @param string $position
      * @return bool true if saving the configuration was successful, false otherwise
      */
-    public static function saveNostoTaggingRenderPosition($method)
+    public static function saveNostoTaggingRenderPosition($position)
+    {
+        return self::saveSetting(self::NOSTOTAGGING_POSITION, $position);
+    }
+
+    public static function saveVariationEnabled($enabled)
+    {
+        return self::saveSetting(self::VARIATION_SWITCH, $enabled);
+    }
+
+    /**
+     * Is variation feature enabled
+     * @return bool true if variation feature has been enabled, false otherwise
+     */
+    public static function getVariationEnabled()
+    {
+        return (bool)self::read(self::VARIATION_SWITCH);
+    }
+
+    /**
+     * @param boolean $enabled Are countries used in tax rules used for price variations
+     * @return bool
+     */
+    public static function saveVariationTaxRuleEnabled($enabled)
+    {
+        return self::saveSetting(self::VARIATION_TAX_RULE_SWITCH, $enabled);
+    }
+
+    /**
+     * Are countries used in tax rules used for price variations
+     * @return bool true if countries are used in tax rules used for price variations
+     */
+    public static function getVariationTaxRuleEnabled()
+    {
+        return (bool)self::read(self::VARIATION_TAX_RULE_SWITCH);
+    }
+
+    public static function saveSetting($configName, $value)
     {
         if (NostoHelperContext::getShop() instanceof Shop) {
-            return self::write(
-                self::NOSTOTAGGING_POSITION,
-                $method,
+            $result = self::write(
+                $configName,
+                $value,
                 NostoHelperContext::getLanguageId(),
                 false,
                 NostoHelperContext::getShopGroupId(),
                 NostoHelperContext::getShopId()
             );
         } else {
-            return self::write(self::NOSTOTAGGING_POSITION, $method, NostoHelperContext::getLanguageId());
+            $result = self::write(self::SKU_SWITCH, $value, NostoHelperContext::getLanguageId());
         }
+
+        //Reload configuration from database. Prestashop caches the configuration data,
+        //and if the configuration key is new (not available before this http request),
+        //Configuration::get() always return false in the same http request even the value has been changed
+        Configuration::loadConfiguration();
+
+        return $result;
     }
 
     /**
@@ -435,40 +435,6 @@ class NostoHelperConfig
     {
         if (method_exists('Tools', 'clearCompile')) {
             Tools::clearCompile($smarty);
-        }
-    }
-
-    /**
-     * Returns the image type to be used for Nosto tagging
-     *
-     * @return int
-     */
-    public static function getImageType()
-    {
-        $type = self::read(self::NOSTOTAGGING_IMAGE_TYPE);
-
-        return !empty($type) ? $type : null;
-    }
-
-    /**
-     * Saves the image type to be used for Nosto tagging
-     *
-     * @param int $type the image type id
-     * @return bool true if saving the configuration was successful, false otherwise
-     */
-    public static function saveImageType($type)
-    {
-        if (NostoHelperContext::getShop() instanceof Shop) {
-            return self::write(
-                self::NOSTOTAGGING_IMAGE_TYPE,
-                $type,
-                NostoHelperContext::getLanguageId(),
-                false,
-                NostoHelperContext::getShopGroupId(),
-                NostoHelperContext::getShopId()
-            );
-        } else {
-            return self::write(self::NOSTOTAGGING_IMAGE_TYPE, $type, NostoHelperContext::getLanguageId());
         }
     }
 }

@@ -34,13 +34,11 @@ class NostoHiddenElement
      * The hidden elements will be appended to the center_column block by js
      *
      * @param string $nostoDataId the identifier of the hidden element
-     * @param string $position must be one of:
-     *  NostoHiddenElement::INSERT_POSITION_PREPEND, NostoHiddenElement::INSERT_POSITION_APPEND
      * @return string the tagging
      */
-    public static function append($nostoDataId, $position = self::INSERT_POSITION_APPEND)
+    public static function append($nostoDataId)
     {
-        if (!Nosto::isContextConnected()) {
+        if (!NostoHelperAccount::existsAndIsConnected()) {
             return '';
         }
 
@@ -56,7 +54,7 @@ class NostoHiddenElement
      */
     public static function prepend($nostoDataId)
     {
-        if (!Nosto::isContextConnected()) {
+        if (!NostoHelperAccount::existsAndIsConnected()) {
             return '';
         }
 

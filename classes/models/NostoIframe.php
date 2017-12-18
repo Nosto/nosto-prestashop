@@ -24,7 +24,7 @@
  */
 
 /**
- * 2013-2016 Nosto Solutions Ltd
+ * 2013-2017 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -43,7 +43,7 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2016 Nosto Solutions Ltd
+ * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
@@ -90,7 +90,10 @@ class NostoIframe extends NostoSDKIframe
 
         try {
             //Check the recent visits and sales and get the shop traffic for the qualification
-            if (class_exists("AdminStatsControllerCore")) {
+            if (class_exists('AdminStatsControllerCore')
+                && method_exists('AdminStatsControllerCore', 'getTotalSales')
+                && method_exists('AdminStatsControllerCore', 'getVisits')
+            ) {
                 $today = date("Y-m-d");
                 $daysBack = new DateTime();
                 $beginDate = $daysBack->sub(new DateInterval("P30D"))->format("Y-m-d");

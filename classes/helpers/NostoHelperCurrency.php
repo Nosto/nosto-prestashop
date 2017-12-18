@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2016 Nosto Solutions Ltd
+ * 2013-2017 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,7 +19,7 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2016 Nosto Solutions Ltd
+ * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
@@ -35,7 +35,16 @@ class NostoHelperCurrency
     const CURRENCY_GROUP_LENGTH = 3;
     const CURRENCY_PRECISION = 2;
 
-    const CONFIG_KEY_CURRENCY_DEFAULT = 'PS_CURRENCY_DEFAULT';
+    const PS_CURRENCY_DEFAULT = 'PS_CURRENCY_DEFAULT';
+    const SYMBOL_FIELD = 'sign';
+    const DECIMALS_ENABLED_FIELD = 'decimals';
+    const DECIMAL_SYMBOL_FIELD = 'decimal';
+    const GROUP_FIELD = 'group';
+    const ACTIVE_FIELD = 'active';
+    const DELETED_FIELD = 'deleted';
+    const FORMAT_FIELD = 'format';
+    const STANDARD_FIELD = 'standard';
+    const ISO_CODE_FIELD = 'iso_code';
 
     /**
      * @param $id
@@ -55,22 +64,22 @@ class NostoHelperCurrency
      */
     public static function getBaseCurrency()
     {
-        $base_id_currency = (int)Configuration::get(
-            self::CONFIG_KEY_CURRENCY_DEFAULT,
+        $baseCurrencyId = (int)Configuration::get(
+            self::PS_CURRENCY_DEFAULT,
             NostoHelperContext::getLanguageId(),
             NostoHelperContext::getShopGroupId(),
             NostoHelperContext::getShopId()
         );
-        if ($base_id_currency === 0) {
-            $base_id_currency = (int)Configuration::get(
-                self::CONFIG_KEY_CURRENCY_DEFAULT,
-                null,
+        if ($baseCurrencyId === 0) {
+            $baseCurrencyId = (int)Configuration::get(
+                self::PS_CURRENCY_DEFAULT,
+                0,
                 NostoHelperContext::getShopGroupId(),
                 NostoHelperContext::getShopId()
             );
         }
-        $base_currency = self::loadCurrency($base_id_currency);
-        if (!Validate::isLoadedObject($base_currency)) {
+        $baseCurrency = self::loadCurrency($baseCurrencyId);
+        if (!Validate::isLoadedObject($baseCurrency)) {
             throw new NostoSDKException(
                 sprintf(
                     'Failed to find base currency for shop #%s and lang #%s.',
@@ -80,7 +89,7 @@ class NostoHelperCurrency
             );
         }
 
-        return $base_currency;
+        return $baseCurrency;
     }
 
     /**
@@ -91,16 +100,16 @@ class NostoHelperCurrency
      */
     public static function getCurrencies($onlyActive = false)
     {
-        $all_currencies = Currency::getCurrenciesByIdShop(NostoHelperContext::getShopId());
+        $allCurrencies = Currency::getCurrenciesByIdShop(NostoHelperContext::getShopId());
         if ($onlyActive === true) {
             $currencies = array();
-            foreach ($all_currencies as $currency) {
+            foreach ($allCurrencies as $currency) {
                 if (self::currencyActive($currency)) {
                     $currencies[] = $currency;
                 }
             }
         } else {
-            $currencies = $all_currencies;
+            $currencies = $allCurrencies;
         }
 
         return $currencies;
@@ -115,67 +124,70 @@ class NostoHelperCurrency
      */
     public static function getNostoCurrency(array $currency)
     {
-        if (
-            Context::getContext() instanceof Context
+        if (Context::getContext() instanceof Context
             && (_PS_VERSION_ >= '1.7')
         ) {
             // In Prestashop 1.7 we use the CLDR
             try {
-                $nosto_currency = self::createWithCldr($currency);
-                return $nosto_currency;
+                $nostoCurrency = self::createWithCldr($currency);
+                return $nostoCurrency;
             } catch (Exception $e) {
                 NostoHelperLogger::error($e);
             }
         }
-        if (empty($currency['format'])) {
-            $currency['format'] = 2;  //Fallback to format 2
+        if (empty($currency[self::FORMAT_FIELD])) {
+            $currency[self::FORMAT_FIELD] = 2;  //Fallback to format 2
         }
-        switch ($currency['format']) {
+        switch ($currency[self::FORMAT_FIELD]) {
             /* X 0,000.00 */
             case 1:
-                $group_symbol = ',';
-                $decimal_symbol = '.';
-                $symbol_position = true;
+                $groupSymbol = ',';
+                $decimalSymbol = '.';
+                $symbolPosition = true;
                 break;
             /* 0 000,00 X*/
             case 2:
-                $group_symbol = ' ';
-                $decimal_symbol = ',';
-                $symbol_position = false;
+                $groupSymbol = ' ';
+                $decimalSymbol = ',';
+                $symbolPosition = false;
                 break;
             /* X 0.000,00 */
             case 3:
-                $group_symbol = '.';
-                $decimal_symbol = ',';
-                $symbol_position = true;
+                $groupSymbol = '.';
+                $decimalSymbol = ',';
+                $symbolPosition = true;
                 break;
             /* 0,000.00 X */
             case 4:
-                $group_symbol = ',';
-                $decimal_symbol = '.';
-                $symbol_position = false;
+                $groupSymbol = ',';
+                $decimalSymbol = '.';
+                $symbolPosition = false;
                 break;
             /* X 0'000.00 */
             case 5:
-                $group_symbol = '\'';
-                $decimal_symbol = '.';
-                $symbol_position = true;
+                $groupSymbol = '\'';
+                $decimalSymbol = '.';
+                $symbolPosition = true;
                 break;
 
             default:
                 throw new NostoSDKException(
                     sprintf(
                         'Unsupported PrestaShop currency format %d.',
-                        $currency['format']
+                        $currency[self::FORMAT_FIELD]
                     )
                 );
         }
+
+        $currencySymbol = $currency[self::SYMBOL_FIELD];
+        $pricePrecision = self::getDecimalWithCurrency($currency['id_currency']);
+
         return new NostoSDKCurrencyFormat(
-            $symbol_position,
-            $group_symbol,
-            self::CURRENCY_GROUP_LENGTH,
-            $decimal_symbol,
-            self::CURRENCY_PRECISION
+            $symbolPosition,
+            $currencySymbol,
+            $decimalSymbol,
+            $groupSymbol,
+            $pricePrecision
         );
     }
 
@@ -192,33 +204,51 @@ class NostoHelperCurrency
     {
         $cldr = Tools::getCldr(null, NostoHelperContext::getLanguage()->language_code);
         /** @noinspection PhpParamsInspection */
-        $cldr_currency = new \ICanBoogie\CLDR\Currency($cldr->getRepository(), $currency['iso_code']);
-        $localized_currency = $cldr_currency->localize($cldr->getCulture());
-        $pattern = $localized_currency->locale->numbers->currency_formats['standard'];
-        $symbols = $localized_currency->locale->numbers->symbols;
-        $symbol_pos = Tools::strpos($pattern, self::CURRENCY_SYMBOL_MARKER);
+        $cldrCurrency = new \ICanBoogie\CLDR\Currency($cldr->getRepository(), $currency[self::ISO_CODE_FIELD]);
+        $localizedCurrency = $cldrCurrency->localize($cldr->getCulture());
+        $pattern = $localizedCurrency->locale->numbers->currency_formats[self::STANDARD_FIELD];
+        $symbols = $localizedCurrency->locale->numbers->symbols;
+        $symbolPos = Tools::strpos($pattern, self::CURRENCY_SYMBOL_MARKER);
 
         // Check if the currency symbol is before or after the amount.
-        $symbol_position = $symbol_pos === 0;
-        $group_symbol = isset($symbols['group']) ? $symbols['group'] : ',';
-        $decimal_symbol = isset($symbols['decimal']) ? $symbols['decimal'] : ',';
+        $symbolPosition = $symbolPos === 0;
+        $groupSymbol = isset($symbols[self::GROUP_FIELD]) ? $symbols[self::GROUP_FIELD] : ',';
+        $decimalSymbol = isset($symbols[self::DECIMAL_SYMBOL_FIELD]) ? $symbols[self::DECIMAL_SYMBOL_FIELD] : ',';
+        $pricePrecision = self::getDecimalWithCurrency($currency['id_currency']);
 
         return new NostoSDKCurrencyFormat(
-            $symbol_position,
-            $group_symbol,
-            self::CURRENCY_GROUP_LENGTH,
-            $decimal_symbol,
-            self::CURRENCY_PRECISION
+            $symbolPosition,
+            $currency[self::SYMBOL_FIELD],
+            $decimalSymbol,
+            $groupSymbol,
+            $pricePrecision
         );
+    }
+
+    /**
+     * Get price decimal with currency
+     * @param $currencyId
+     * @return int price decimal
+     */
+    public static function getDecimalWithCurrency($currencyId)
+    {
+        $currencyDecimalsEnabled = 1;
+        /** @var Currency $currencyObject */
+        $currencyObject = self::loadCurrency($currencyId);
+        if (Validate::isLoadedObject($currencyObject)) {
+            $currencyDecimalsEnabled = $currencyObject->decimals;
+        }
+
+        return $currencyDecimalsEnabled * _PS_PRICE_DISPLAY_PRECISION_;
     }
 
     private static function currencyActive(array $currency)
     {
         $active = true;
-        if (!$currency['active']) {
+        if (!$currency[self::ACTIVE_FIELD]) {
             $active = false;
         } else {
-            if (isset($currency['deleted']) && $currency['deleted']) {
+            if (isset($currency[self::DELETED_FIELD]) && $currency[self::DELETED_FIELD]) {
                 $active = false;
             }
         }

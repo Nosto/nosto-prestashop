@@ -31,16 +31,6 @@ class NostoHeaderContent
     const DEFAULT_SERVER_ADDRESS = 'connect.nosto.com';
 
     /**
-     * Get the Nosto server address for the shop frontend JavaScripts.
-     *
-     * @return string the url.
-     */
-    public static function getServerAddress()
-    {
-        return NostoSDK::getEnvVariable('NOSTO_SERVER_URL', self::DEFAULT_SERVER_ADDRESS);
-    }
-
-    /**
      * Renders the meta and script tagging by checking the version, the language and the URL
      * of the add-to-cart controller
      *
@@ -49,25 +39,30 @@ class NostoHeaderContent
      */
     public static function get(NostoTagging $module)
     {
-        $account = Nosto::getAccount();
+        $account = NostoHelperAccount::getAccount();
         if ($account === null) {
             return '';
         }
 
-        $serverAddress = self::getServerAddress();
+        $serverAddress = NostoSDK::getServerUrl();
         $link = NostoHelperLink::getLink();
         Context::getContext()->smarty->assign(array(
             'server_address' => $serverAddress,
             'account_name' => $account->getName(),
             'nosto_version' => $module->version,
             'nosto_language' => Tools::strtolower(NostoHelperContext::getLanguage()->iso_code),
-            'add_to_cart_url' => $link->getPageLink('NostoCart.php'),
+            'add_to_cart_url' => $link->getPageLink('cart.php'),
+            'reload_cart_url' => NostoHelperUrl::getModuleUrl(
+                NostoTagging::MODULE_NAME,
+                'reloadCart'
+            ),
             'static_token' => Tools::getToken(false)
         ));
 
         $html = $module->render('views/templates/hook/header_meta-tags.tpl');
         $html .= $module->render('views/templates/hook/header_embed-script.tpl');
         $html .= $module->render('views/templates/hook/header_add-to-cart.tpl');
+        $html .= $module->render('views/templates/hook/header_prestashop-add-to-cart-event-handler.tpl');
         $html .= NostoPageTypeTagging::get();
 
         return $html;

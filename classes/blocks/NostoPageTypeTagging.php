@@ -46,15 +46,19 @@ class NostoPageTypeTagging
      */
     public static function get()
     {
-        if (!Nosto::isContextConnected()) {
+        if (!NostoHelperAccount::existsAndIsConnected()) {
             return '';
         }
 
-        $pageType = new MarkupableString(
-            self::$controllers[NostoHelperController::getControllerName()],
-            'nosto_page_type'
-        );
+        if (array_key_exists(NostoHelperController::getControllerName(), self::$controllers)) {
+            $pageType = new MarkupableString(
+                self::$controllers[NostoHelperController::getControllerName()],
+                'nosto_page_type'
+            );
 
-        return $pageType->toHtml();
+            return $pageType->toHtml();
+        } else {
+            return '';
+        }
     }
 }

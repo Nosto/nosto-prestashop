@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2016 Nosto Solutions Ltd
+ * 2013-2017 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,7 +19,7 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2016 Nosto Solutions Ltd
+ * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
@@ -30,4 +30,12 @@ require_once 'AdminNostoController.php';
  */
 class AdminNostoPersonalizationController extends AdminNostoController
 {
+    /**
+     * A way to get class name for php 5.3 and lower
+     * @return string class Name
+     */
+    public static function getClassName()
+    {
+        return get_called_class();
+    }
 }

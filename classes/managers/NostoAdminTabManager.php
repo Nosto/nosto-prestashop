@@ -44,7 +44,7 @@ class NostoAdminTabManager
     /**
      * @var array translations for the Nosto `Personalization` menu item in PS 1.5.
      */
-    protected static $item_translations = array(
+    protected static $itemTranslations = array(
         'de' => 'Personalisierung',
         'fr' => 'Personnalisation',
         'es' => 'Personalización',
@@ -75,7 +75,7 @@ class NostoAdminTabManager
             return false;
         }
 
-        $idTab = self::getAdminTabId(AdminNostoController::class);
+        $idTab = self::getAdminTabId(AdminNostoController::getClassName());
         if ($idTab) {
             $mainTabAdded = new Tab($idTab);
         } else {
@@ -95,7 +95,7 @@ class NostoAdminTabManager
 
         // For PS 1.6 it is enough to have the main menu, for PS 1.5 and 1.7 we need a sub-menu.
         if ($mainTabAdded && (_PS_VERSION_ < '1.6' || _PS_VERSION_ >= '1.7')) {
-            $idTab = self::getAdminTabId(AdminNostoPersonalizationController::class);
+            $idTab = self::getAdminTabId(AdminNostoPersonalizationController::getClassName());
             if ($idTab) {
                 $subTabAdded = new Tab($idTab);
             } else {
@@ -104,13 +104,13 @@ class NostoAdminTabManager
                 $tab->class_name = self::SUB_MENU_ITEM_CLASS;
                 $tab->name = array();
                 foreach ($languages as $lang) {
-                    if (isset(self::$item_translations[$lang['iso_code']])) {
-                        $tab->name[$lang['id_lang']] = self::$item_translations[$lang['iso_code']];
+                    if (isset(self::$itemTranslations[$lang['iso_code']])) {
+                        $tab->name[$lang['id_lang']] = self::$itemTranslations[$lang['iso_code']];
                     } else {
                         $tab->name[$lang['id_lang']] = 'Personalization';
                     }
                 }
-                $tab->id_parent = self::getAdminTabId(AdminNostoController::class);
+                $tab->id_parent = self::getAdminTabId(AdminNostoController::getClassName());
                 $tab->module = NostoTagging::MODULE_NAME;
                 $subTabAdded = $tab->add();
             }
@@ -137,6 +137,7 @@ class NostoAdminTabManager
      * @return bool|int tab id
      *
      * @suppress PhanDeprecatedFunction
+     * @suppress PhanTypeMismatchProperty
      */
     public static function registerController($className)
     {
@@ -144,8 +145,17 @@ class NostoAdminTabManager
         /** @noinspection PhpDeprecationInspection */
         $tab->id = (int)Tab::getIdFromClassName($className);
         $tab->active = true;
+        $languageIds = Language::getLanguages(true, false, true);
+        if ($languageIds) {
+            $tab->name = array();
+            foreach ($languageIds as $languageId) {
+                $tab->name[(int)$languageId] = $className;
+            }
+        } else {
+            //In prestashop 1.5, the tab name length is limited to max 32
+            $tab->name = $className;
+        }
         $tab->class_name = $className;
-        $tab->name = 'NostoController' . $className;
 
         $tab->id_parent = -1;
         $tab->module = NostoTagging::MODULE_NAME;
@@ -159,12 +169,12 @@ class NostoAdminTabManager
      */
     public static function uninstall()
     {
-        $tabs = array(AdminNostoController::class, AdminNostoPersonalizationController::class);
-        foreach ($tabs as $tab_name) {
-            $id_tab = self::getAdminTabId($tab_name);
-            if ($id_tab) {
+        $tabs = array(AdminNostoController::getClassName(), AdminNostoPersonalizationController::getClassName());
+        foreach ($tabs as $tabName) {
+            $tabId = self::getAdminTabId($tabName);
+            if ($tabId) {
                 /** @var TabCore $tab */
-                $tab = new Tab($id_tab);
+                $tab = new Tab($tabId);
                 $tab->delete();
             }
         }

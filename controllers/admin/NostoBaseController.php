@@ -40,25 +40,26 @@ abstract class NostoBaseController extends ModuleAdminController
         $languages = Language::getLanguages(true, $this->context->shop->id);
         $handlingLanguage = NostoHelperLanguage::ensureAdminLanguage($languages, $this->getLanguageId());
         if (Shop::getContext() !== Shop::CONTEXT_SHOP) {
-            $this->redirectToAdmin();
+            $this->redirectToAdmin($handlingLanguage['id_lang']);
             return;
         } elseif ($handlingLanguage['id_lang'] != $this->getLanguageId()) {
             NostoHelperFlash::add('error', $this->l('Language cannot be empty.'));
-            $this->redirectToAdmin();
+            $this->redirectToAdmin($handlingLanguage['id_lang']);
             return;
         }
 
         //run the code in a context with language id set to the language admin chose
+        $controller = $this;
         $redirectToAdminPage = NostoHelperContext::runInContext(
-            function () {
-                return $this->execute();
+            function () use ($controller) {
+                return $controller->execute();
             },
             $handlingLanguage['id_lang'],
             NostoHelperContext::getShopId()
         );
 
         if ($redirectToAdminPage) {
-            $this->redirectToAdmin();
+            $this->redirectToAdmin($handlingLanguage['id_lang']);
         }
     }
 
@@ -71,19 +72,26 @@ abstract class NostoBaseController extends ModuleAdminController
     }
 
     /**
+     * @param int $languageId
      * @suppress PhanDeprecatedFunction
      */
-    protected function redirectToAdmin()
+    protected function redirectToAdmin($languageId)
     {
         $tabId = (int)Tab::getIdFromClassName('AdminModules');
         $employeeId = (int)$this->context->cookie->id_employee;
         $token = Tools::getAdminToken('AdminModules' . $tabId . $employeeId);
-        Tools::redirectAdmin('index.php?controller=AdminModules&configure=nostotagging&token=' . $token);
+        Tools::redirectAdmin(
+            'index.php?controller=AdminModules&configure=nostotagging'
+            . '&nostotagging_current_language='
+            . $languageId
+            . '&token='
+            . $token
+        );
     }
 
     /**
      * @return bool should it be redirect to admin after executing this method.Return true means
      *     redirect to admin url
      */
-    public abstract function execute();
+    abstract public function execute();
 }

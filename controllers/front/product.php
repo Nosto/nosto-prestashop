@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2016 Nosto Solutions Ltd
+ * 2013-2017 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,13 +19,13 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2016 Nosto Solutions Ltd
+ * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
 require_once(dirname(__FILE__) . '/api.php');
 
-use Nosto\Object\Product\ProductCollection;
+use Nosto\Object\Product\ProductCollection as NostoSDKProductCollection;
 
 /**
  * Front controller for gathering all products from the shop and sending the meta-data to Nosto.
@@ -42,12 +42,13 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
         // We need to forge the employee in order to get a price for a product
         $employee = new Employee();
 
+        $controller = $this;
         NostoHelperContext::runInContext(
-            function () {
-                $collection = new ProductCollection();
-                if (!empty(Tools::getValue('id'))) {
+            function () use ($controller) {
+                $collection = new NostoSDKProductCollection();
+                if (Tools::getValue(NostoTagging::ID)) {
                     $product = new Product(
-                        Tools::getValue('id'),
+                        Tools::getValue(NostoTagging::ID),
                         true,
                         NostoHelperContext::getLanguageId(),
                         NostoHelperContext::getShopId()
@@ -58,7 +59,7 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
                     $nostoProduct = NostoProduct::loadData($product);
                     $collection->append($nostoProduct);
                 } else {
-                    foreach ($this->getProductIds() as $idProduct) {
+                    foreach ($controller->getProductIds() as $idProduct) {
                         $product = new Product(
                             $idProduct,
                             true,
@@ -73,14 +74,13 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
                         $collection->append($nostoProduct);
                     }
                 }
-                $this->encryptOutput($collection);
+                $controller->encryptOutput($collection);
             },
             false,
             false,
             false,
             $employee->id
         );
-
     }
 
     /**

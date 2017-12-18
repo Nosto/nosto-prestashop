@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2016 Nosto Solutions Ltd
+ * 2013-2017 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,7 +19,7 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2016 Nosto Solutions Ltd
+ * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
@@ -40,9 +40,8 @@ class NostoSku extends NostoSDKSku
         Product $product,
         NostoProduct $nostoProduct,
         Combination $combination,
-        array $attributesGroup
-    )
-    {
+        $attributesGroup
+    ) {
         if (!Validate::isLoadedObject($combination)) {
             return null;
         }
@@ -68,15 +67,9 @@ class NostoSku extends NostoSDKSku
      */
     protected function amendPrice(Combination $combination)
     {
-        $base_currency = NostoHelperCurrency::getBaseCurrency();
-        if (Nosto::useMultipleCurrencies()) {
-            $tagging_currency = $base_currency;
-        } else {
-            $tagging_currency = NostoHelperContext::getCurrency();
-        }
-
-        $this->setListPrice(self::getListPriceInclTax($combination, $tagging_currency));
-        $this->setPrice(self::getPriceInclTax($combination, $tagging_currency));
+        $taggingCurrency = NostoHelperCurrency::getBaseCurrency();
+        $this->setListPrice(self::getListPriceInclTax($combination, $taggingCurrency));
+        $this->setPrice(self::getPriceInclTax($combination, $taggingCurrency));
     }
 
     /**
@@ -94,7 +87,8 @@ class NostoSku extends NostoSDKSku
             $attribute = new Attribute(
                 $attributeId,
                 NostoHelperContext::getLanguageId(),
-                NostoHelperContext::getShopId());
+                NostoHelperContext::getShopId()
+            );
             $attributeName = $attributesInfo['name'];
             $attributeGroup = new AttributeGroup(
                 $attribute->id_attribute_group,
@@ -138,22 +132,15 @@ class NostoSku extends NostoSDKSku
         $images = $combination->getWsImages();
         if ($images && is_array($images)) {
             foreach ($images as $image) {
-                if (!is_array($image) || !array_key_exists('id', $image)) {
+                if (!is_array($image) || !array_key_exists(NostoTagging::ID, $image)) {
                     continue;
                 }
 
-                $imageId = $image['id'];
+                $imageId = $image[NostoTagging::ID];
                 if ((int)$imageId > 0) {
-                    $imageType = NostoHelperImage::getTaggingImageTypeName();
-                    if (empty($imageType)) {
-                        return;
-                    }
-
-                    $link = NostoHelperLink::getLink();
-                    $url = $link->getImageLink(
+                    $url = NostoHelperLink::getImageLink(
                         $product->link_rewrite,
-                        $combination->id_product . '-' . $imageId,
-                        $imageType
+                        $combination->id_product . '-' . $imageId
                     );
                     if ($url) {
                         $this->setImageUrl($url);
@@ -187,7 +174,7 @@ class NostoSku extends NostoSDKSku
      * Returns the product price including discounts and taxes for the given currency.
      *
      * @param Combination $combination the product.
-     * @param Currency|CurrencyCore $currency the currency.
+     * @param Currency $currency the currency.
      * @return float the price.
      */
     public static function getPriceInclTax(Combination $combination, Currency $currency)
@@ -203,7 +190,7 @@ class NostoSku extends NostoSDKSku
      * Returns the product list price including taxes for the given currency.
      *
      * @param Combination $combination the product.
-     * @param Currency|CurrencyCore $currency the currency.
+     * @param Currency $currency the currency.
      * @return float the price.
      */
     public static function getListPriceInclTax(Combination $combination, Currency $currency)

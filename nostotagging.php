@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2016 Nosto Solutions Ltd
+ * 2013-2017 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,11 +19,9 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2016 Nosto Solutions Ltd
+ * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
-
-use Nosto\NostoException;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -36,9 +34,8 @@ if (!defined('_PS_VERSION_')) {
  */
 if ((basename(__FILE__) === 'nostotagging.php')) {
     define('NOSTO_DIR', dirname(__FILE__));
-    define('NOSTO_VERSION', NostoTagging::PLUGIN_VERSION);
     /** @noinspection PhpIncludeInspection */
-    require_once("bootstrap.php");
+    require_once(dirname(__FILE__) . "/bootstrap.php");
 }
 
 /**
@@ -51,6 +48,7 @@ if ((basename(__FILE__) === 'nostotagging.php')) {
  */
 class NostoTagging extends Module
 {
+    const AJAX_REQUEST_PARAMETER_KEY = 'ajax';
     /** @var bool */
     public $bootstrap;
     /**
@@ -58,7 +56,7 @@ class NostoTagging extends Module
      *
      * @var string
      */
-    const PLUGIN_VERSION = '2.8.6';
+    const PLUGIN_VERSION = '3.0.3';
 
     /**
      * Internal name of the Nosto plug-in
@@ -72,12 +70,15 @@ class NostoTagging extends Module
      */
     const VISITOR_HASH_ALGO = 'sha256';
 
+    const ID = 'id';
+
+    private $topHookExecuted = false;
     /**
      * Custom hooks to add for this module.
      *
      * @var array
      */
-    protected static $custom_hooks = array(
+    protected static $customHooks = array(
         array(
             'name' => 'displayCategoryTop',
             'title' => 'Category top',
@@ -123,6 +124,11 @@ class NostoTagging extends Module
             'title' => 'After load nosto exchange rates',
             'description' => 'Action hook fired after a Nosto exchange rate collection has been initialized.',
         ),
+        array(
+            'name' => 'actionNostoVariationKeyCollectionLoadAfter',
+            'title' => 'After load nosto variation key collection',
+            'description' => 'Action hook fired after a Nosto variation key collection has been initialized.',
+        ),
     );
 
     /**
@@ -140,7 +146,7 @@ class NostoTagging extends Module
         $this->bootstrap = true; // Necessary for Bootstrap CSS initialisation in the UI
         $this->author = 'Nosto';
         $this->need_instance = 1;
-        $this->ps_versions_compliancy = array('min' => '1.5', 'max' => _PS_VERSION_);
+        $this->ps_versions_compliancy = array('min' => '1.5.5.0', 'max' => '2');
         $this->module_key = '8d80397cab6ca02dfe8ef681b48c37a3';
 
         parent::__construct();
@@ -148,6 +154,12 @@ class NostoTagging extends Module
         $this->description = $this->l(
             'Increase your conversion rate and average order value by delivering your customers personalized product
             recommendations throughout their shopping journey.'
+        );
+
+        \Nosto\Request\Http\HttpRequest::buildUserAgent(
+            'Prestashop',
+            _PS_VERSION_,
+            self::PLUGIN_VERSION
         );
     }
 
@@ -163,8 +175,7 @@ class NostoTagging extends Module
         $success = false;
         if (parent::install()) {
             $success = true;
-            if (
-                !$this->registerHook('displayCategoryTop')
+            if (!$this->registerHook('displayCategoryTop')
                 || !$this->registerHook('displayCategoryFooter')
                 || !$this->registerHook('displaySearchTop')
                 || !$this->registerHook('displaySearchFooter')
@@ -173,7 +184,6 @@ class NostoTagging extends Module
                 || !$this->registerHook('footer')
                 || !$this->registerHook('productFooter')
                 || !$this->registerHook('shoppingCart')
-                || !$this->registerHook('orderConfirmation')
                 || !$this->registerHook('postUpdateOrderStatus')
                 || !$this->registerHook('paymentTop')
                 || !$this->registerHook('home')
@@ -191,7 +201,7 @@ class NostoTagging extends Module
                 $success = false;
                 $this->_errors[] = $this->l('Failed to create Nosto admin tab');
             }
-            if (!NostoHookManager::initHooks(self::$custom_hooks)) {
+            if (!NostoHookManager::initHooks(self::$customHooks)) {
                 $success = false;
                 $this->_errors[] = $this->l('Failed to register custom Nosto hooks');
             }
@@ -247,15 +257,21 @@ class NostoTagging extends Module
             $output .= $this->displayConfirmation($this->l($successMessage));
         }
 
-        foreach (NostoHelperFlash::getList('success') as $flash_message) {
-            $output .= $this->displayConfirmation($flash_message);
+        foreach (NostoHelperFlash::getList('success') as $flashMessage) {
+            $output .= $this->displayConfirmation($flashMessage);
         }
-        foreach (NostoHelperFlash::getList('error') as $flash_message) {
-            $output .= $this->displayError($flash_message);
+        foreach (NostoHelperFlash::getList('error') as $flashMessage) {
+            $output .= $this->displayError($flashMessage);
         }
 
         if (Shop::getContext() !== Shop::CONTEXT_SHOP) {
             $output .= $this->displayError($this->l('Please choose a shop to configure Nosto for.'));
+        }
+
+        if (!Module::isEnabled($this->name)) {
+            $output .= $this->displayError(
+                $this->l('Nosto is deactivated for this store view. Please activate it before continuing.')
+            );
         }
 
         return $output;
@@ -271,6 +287,16 @@ class NostoTagging extends Module
     {
         $output = $this->displayMessages();
 
+        //If scope is not on shop level, skip rendering nosto page
+        if (Shop::getContext() !== Shop::CONTEXT_SHOP) {
+            return $output;
+        }
+
+        //if nosto module is inactivated for this shop, skip rendering nosto page
+        if (!Module::isEnabled($this->name)) {
+            return $output;
+        }
+
         $indexController = new NostoIndexController();
         $smartyMetaData = $indexController->getSmartyMetaData($this);
         $this->getSmarty()->assign($smartyMetaData);
@@ -279,11 +305,11 @@ class NostoTagging extends Module
             'module_path' => $this->_path
         ));
 
-        $template_file = 'views/templates/admin/config-bootstrap.tpl';
+        $templateFile = 'views/templates/admin/config-bootstrap.tpl';
         if (_PS_VERSION_ < '1.6') {
-            $template_file = 'views/templates/admin/legacy-config-bootstrap.tpl';
+            $templateFile = 'views/templates/admin/legacy-config-bootstrap.tpl';
         }
-        $output .= $this->display(__FILE__, $template_file);
+        $output .= $this->display(__FILE__, $templateFile);
 
         return $output;
     }
@@ -341,10 +367,12 @@ class NostoTagging extends Module
     public function hookDisplayTop()
     {
         $html = '';
-        if (NostoHelperConfig::getNostotaggingRenderPosition()
-            !== NostoHelperConfig::NOSTOTAGGING_POSITION_FOOTER) {
+        if (NostoHelperConfig::getNostotaggingRenderPosition() !== NostoHelperConfig::NOSTOTAGGING_POSITION_FOOTER
+            && $this->topHookExecuted !== true
+        ) {
             $html = NostoDefaultTagging::get($this);
             $html .= self::dispatchPseudoHooks();
+            $this->topHookExecuted = true;
         }
 
         return $html;
@@ -362,7 +390,7 @@ class NostoTagging extends Module
     {
         $methodName = 'pseudoHookLoadingPage';
         $methodName .= str_replace('-', '', NostoHelperController::getControllerName());
-        if (method_exists('NostoHeaderContent', $methodName)) {
+        if (method_exists(__CLASS__, $methodName)) {
             return self::$methodName();
         } else {
             // If the current page is not one of the ones we want to show recommendations on, just
@@ -481,8 +509,7 @@ class NostoTagging extends Module
     public function hookDisplayFooter()
     {
         $html = '';
-        if (NostoHelperConfig::getNostotaggingRenderPosition()
-            === NostoHelperConfig::NOSTOTAGGING_POSITION_FOOTER) {
+        if (NostoHelperConfig::getNostotaggingRenderPosition() === NostoHelperConfig::NOSTOTAGGING_POSITION_FOOTER) {
             $html = NostoDefaultTagging::get($this);
             $html .= self::dispatchPseudoHooks();
         }
@@ -605,33 +632,6 @@ class NostoTagging extends Module
     public function hookShoppingCart()
     {
         return $this->hookDisplayShoppingCartFooter();
-    }
-
-    /**
-     * Backwards compatibility layout hook for adding content to the order page below the itemised
-     * order listing.
-     *
-     * @return string The HTML to output
-     */
-    public function hookDisplayOrderConfirmation()
-    {
-        if (!Nosto::isContextConnected()) {
-            return '';
-        }
-
-        return ''; //TODO: Nothing rendered here?!?!
-    }
-
-    /**
-     * Backwards compatibility layout hook for adding content to the order page below the itemised
-     * order listing. This hook should not have any logic and should only delegate to another hook.
-     *
-     * @see NostoTagging::hookDisplayOrderConfirmation()
-     * @return string The HTML to output
-     */
-    public function hookOrderConfirmation()
-    {
-        return $this->hookDisplayOrderConfirmation();
     }
 
     /**
@@ -898,7 +898,12 @@ class NostoTagging extends Module
      */
     public function hookDisplayBackOfficeTop()
     {
-        NostoNotificationManager::checkAndDisplay($this);
+        //Do not render any thing when it is a ajax request
+        if (!array_key_exists(self::AJAX_REQUEST_PARAMETER_KEY, $_REQUEST)
+            || $_REQUEST[self::AJAX_REQUEST_PARAMETER_KEY] != 1
+        ) {
+            NostoNotificationManager::checkAndDisplay($this);
+        }
     }
 
     /**
@@ -945,14 +950,14 @@ class NostoTagging extends Module
      */
     public function render($template)
     {
-        return parent::display(__FILE__, $template);
+        return $this->display(__FILE__, $template);
     }
 
     /**
      * Method for resolving correct smarty object
      *
      * @return Smarty|Smarty_Data
-     * @throws NostoException
+     * @throws \Nosto\NostoException
      */
     protected function getSmarty()
     {
@@ -962,7 +967,7 @@ class NostoTagging extends Module
             return $this->context->smarty;
         }
 
-        throw new NostoException('Could not find smarty');
+        throw new \Nosto\NostoException('Could not find smarty');
     }
 
     /**
@@ -989,8 +994,7 @@ class NostoTagging extends Module
         }
 
         $cookie = Context::getContext()->cookie;
-        if (
-            isset($cookie->nostoExchangeRatesUpdated)
+        if (isset($cookie->nostoExchangeRatesUpdated)
             && $cookie->nostoExchangeRatesUpdated == true //@codingStandardsIgnoreLine
         ) {
 
@@ -1009,6 +1013,26 @@ class NostoTagging extends Module
     }
 
     /**
+     * Override method.
+     * Check smarty before calling Module.display()
+     *
+     * @param string $file
+     * @param string $template
+     * @param string|null $cache_id
+     * @param string|null $compile_id
+     * @return string
+     */
+    public function display($file, $template, $cache_id = null, $compile_id = null)
+    {
+        if ($this->smarty == null) {
+            NostoHelperLogger::info('Module::smarty is null, skip rendering nosto content');
+            return '';
+        }
+
+        return parent::display($file, $template, $cache_id, $compile_id);
+    }
+
+    /**
      * Updates the exchange rates to Nosto if needed
      *
      * @param boolean $force if set to true cookie check is ignored
@@ -1021,7 +1045,7 @@ class NostoTagging extends Module
                 $operation = new NostoRatesService();
                 $operation->updateExchangeRatesForAllStores();
                 $this->defineExchangeRatesAsUpdated();
-            } catch (NostoException $e) {
+            } catch (\Nosto\NostoException $e) {
                 NostoHelperLogger::error($e, 'Exchange rate sync failed with error');
             }
         }
@@ -1036,11 +1060,11 @@ class NostoTagging extends Module
     {
         /* @var Employee $employee */
         $employee = $this->context->employee;
-        $logged_in = false;
+        $loggedIn = false;
         if ($employee instanceof Employee && $employee->id) {
-            $logged_in = true;
+            $loggedIn = true;
         }
 
-        return $logged_in;
+        return $loggedIn;
     }
 }

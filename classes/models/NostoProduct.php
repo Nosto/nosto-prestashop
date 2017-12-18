@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2016 Nosto Solutions Ltd
+ * 2013-2017 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,7 +19,7 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2016 Nosto Solutions Ltd
+ * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
@@ -39,31 +39,32 @@ class NostoProduct extends NostoSDKProduct
             return null;
         }
 
-
         $nostoProduct = new NostoProduct();
-        $baseCurrency = NostoHelperCurrency::getBaseCurrency();
 
-        if (Nosto::useMultipleCurrencies()) {
-            $nostoProduct->setVariationId($baseCurrency->iso_code);
-            $taggingCurrency = $baseCurrency;
-        } else {
-            $taggingCurrency = NostoHelperContext::getCurrency();
-        }
         $nostoProduct->setUrl(NostoHelperUrl::getProductUrl($product));
         $nostoProduct->setProductId((string)$product->id);
         $nostoProduct->setName($product->name);
-        $nostoProduct->setPriceCurrencyCode(Tools::strtoupper($taggingCurrency->iso_code));
         $nostoProduct->setAvailability(self::checkAvailability($product));
         $nostoProduct->amendTags($product);
         $nostoProduct->amendCategories($product);
         $nostoProduct->setDescription($product->description_short . $product->description);
         $nostoProduct->setInventoryLevel((int)$product->quantity);
-        $nostoProduct->setPrice(self::getPriceInclTax($product, $taggingCurrency));
-        $nostoProduct->setListPrice(self::getListPriceInclTax($product, $taggingCurrency));
         $nostoProduct->amendBrand($product);
         $nostoProduct->amendImage($product);
         $nostoProduct->amendAlternateImages($product);
         $nostoProduct->amendSupplierCost($product);
+
+        if (NostoHelperConfig::getVariationEnabled()) {
+            $nostoProduct->amendVariation($product);
+        } else {
+            $taggingCurrency = NostoHelperCurrency::getBaseCurrency();
+            $nostoProduct->setPriceCurrencyCode(Tools::strtoupper($taggingCurrency->iso_code));
+            $nostoProduct->setPrice(self::getPriceInclTax($product, $taggingCurrency));
+            $nostoProduct->setListPrice(self::getListPriceInclTax($product, $taggingCurrency));
+            if (NostoHelperConfig::useMultipleCurrencies()) {
+                $nostoProduct->setVariationId($taggingCurrency->iso_code);
+            }
+        }
 
         if (NostoHelperConfig::getSkuEnabled()) {
             $nostoProduct->amendSkus($product);
@@ -75,6 +76,22 @@ class NostoProduct extends NostoSDKProduct
         ));
 
         return $nostoProduct;
+    }
+
+    protected function amendVariation($product)
+    {
+        $variations = new NostoVariationCollection();
+        $variations->loadData($product, $this->getAvailability());
+        //Take the first variation as the default variation
+        if ($variations->count() > 0) {
+            $defaultVariation = $variations->shift();
+            $this->setVariationId($defaultVariation->getVariationId());
+            $this->setPrice($defaultVariation->getPrice());
+            $this->setListPrice($defaultVariation->getListPrice());
+            $this->setPriceCurrencyCode($defaultVariation->getPriceCurrencyCode());
+            $this->setAvailability($defaultVariation->getAvailability());
+        }
+        $this->setVariations($variations);
     }
 
     /**
@@ -97,15 +114,9 @@ class NostoProduct extends NostoSDKProduct
      */
     protected function amendAlternateImages(Product $product)
     {
-        $images = Image::getImages((int)NostoHelperContext::getLanguageId(), (int)$product->id);
+        $images = $product->getImages((int)NostoHelperContext::getLanguageId());
         foreach ($images as $image) {
-            $imageType = NostoHelperImage::getTaggingImageTypeName();
-            if (empty($imageType)) {
-                return;
-            }
-
-            $link = NostoHelperLink::getLink();
-            $url = $link->getImageLink($product->link_rewrite, $image['id_image'], $imageType);
+            $url = NostoHelperLink::getImageLink($product->link_rewrite, $image['id_image']);
             if ($url) {
                 $this->addAlternateImageUrls($url);
             }
@@ -119,15 +130,24 @@ class NostoProduct extends NostoSDKProduct
      */
     protected function amendSkus(Product $product)
     {
-        $attributes_groups = $product->getAttributesGroups(NostoHelperContext::getLanguageId());
+        $attributesGroups = $product->getAttributesGroups(NostoHelperContext::getLanguageId());
         $variants = array();
-        foreach ($attributes_groups as $attributes_group) {
-            $variants[$attributes_group['id_product_attribute']] = $attributes_group;
+        foreach ($attributesGroups as $attributesGroup) {
+            $variants[$attributesGroup['id_product_attribute']] = $attributesGroup;
         }
 
         $combinationIds = $product->getWsCombinations();
         foreach ($combinationIds as $combinationId) {
-            $combination = new Combination($combinationId['id'], NostoHelperContext::getLanguageId());
+            //Before 1.6, Combination doesn't support language
+            if (version_compare(_PS_VERSION_, '1.6') < 0) {
+                $combination = new Combination($combinationId[NostoTagging::ID]);
+            } else {
+                $combination = new Combination($combinationId[NostoTagging::ID], NostoHelperContext::getLanguageId());
+            }
+            if ($combination->id === null) {
+                NostoHelperLogger::info('Could not find combination with id:' . $combinationId[NostoTagging::ID]);
+                continue;
+            }
             $this->addSku(NostoSku::loadData($product, $this, $combination, $variants[$combination->id]));
         }
     }
@@ -139,22 +159,56 @@ class NostoProduct extends NostoSDKProduct
      */
     protected function amendImage($product)
     {
-        $image_id = $product->getCoverWs();
-        if ((int)$image_id > 0) {
-            $image_type = NostoHelperImage::getTaggingImageTypeName();
-            if (empty($image_type)) {
-                return;
-            }
+        $imageId = null;
 
-            $link = NostoHelperLink::getLink();
-            $url = $link->getImageLink(
-                $product->link_rewrite,
-                $product->id . '-' . $image_id,
-                $image_type
-            );
-            if ($url) {
-                $this->setImageUrl($url);
+        $defaultCombinationImages = array();
+        $defaultId = $product->getDefaultIdProductAttribute();
+        //Some merchants may have images associated with combination id 0.
+        //Do not get the images for the combination if its id is 0
+        if ($defaultId) {
+            //The images for default combination
+            $defaultCombinationImages = Product::_getAttributeImageAssociations($defaultId);
+        }
+
+        $coverImageId = $product->getCoverWs();
+        if ((int)$coverImageId > 0) {
+            //Take the cover image as the product image only if the cover image is enable for the default combination,
+            //or the default combination doesn't have any image
+            if (!$defaultCombinationImages || in_array($coverImageId, $defaultCombinationImages)) {
+                $imageId = $coverImageId;
             }
+        }
+
+        //No image found, take the first from the default combination
+        if (!$imageId && $defaultCombinationImages) {
+            foreach ($defaultCombinationImages as $combinationImageId) {
+                if ((int)$combinationImageId > 0) {
+                    $imageId = $combinationImageId;
+                    break;
+                }
+            }
+        }
+
+        //No image found, take the first from the product
+        if (!$imageId) {
+            //All the product images enabled for current shop
+            $productImages = $product->getImages((int)NostoHelperContext::getLanguageId());
+            if ($productImages) {
+                foreach ($productImages as $productImage) {
+                    if ((int)$productImage['id_image'] > 0) {
+                        $imageId = $productImage['id_image'];
+                        break;
+                    }
+                }
+            }
+        }
+
+        if ((int)$imageId > 0) {
+            $url = NostoHelperLink::getImageLink(
+                $product->link_rewrite,
+                $product->id . '-' . $imageId
+            );
+            $this->setImageUrl($url);
         }
     }
 
@@ -189,8 +243,8 @@ class NostoProduct extends NostoSDKProduct
     /**
      * Returns the product price including discounts and taxes for the given currency.
      *
-     * @param Product|ProductCore $product the product.
-     * @param Currency|CurrencyCore $currency the currency.
+     * @param Product $product the product.
+     * @param Currency $currency the currency.
      * @return float the price.
      */
     public static function getPriceInclTax(Product $product, Currency $currency)
@@ -205,8 +259,8 @@ class NostoProduct extends NostoSDKProduct
     /**
      * Returns the product list price including taxes for the given currency.
      *
-     * @param Product|ProductCore $product the product.
-     * @param Currency|CurrencyCore $currency the currency.
+     * @param Product $product the product.
+     * @param Currency $currency the currency.
      * @return float the price.
      */
     public static function getListPriceInclTax(Product $product, Currency $currency)
@@ -230,8 +284,8 @@ class NostoProduct extends NostoSDKProduct
      */
     protected function amendTags(Product $product)
     {
-        if (($product_tags = $product->getTags(NostoHelperContext::getLanguageId())) !== '') {
-            $tags = explode(', ', $product_tags);
+        if (($productTags = $product->getTags(NostoHelperContext::getLanguageId())) !== '') {
+            $tags = explode(', ', $productTags);
             foreach ($tags as $tag) {
                 $this->addTag1($tag);
             }
@@ -239,8 +293,8 @@ class NostoProduct extends NostoSDKProduct
 
         // If the product has no attributes (color, size etc.), then we mark
         // it as possible to add directly to cart.
-        $product_attributes = $product->getAttributesGroups(NostoHelperContext::getLanguageId());
-        if (empty($product_attributes)) {
+        $productAttributes = $product->getAttributesGroups(NostoHelperContext::getLanguageId());
+        if (empty($productAttributes)) {
             $this->addTag1(self::ADD_TO_CART);
         }
     }
@@ -257,8 +311,8 @@ class NostoProduct extends NostoSDKProduct
     protected function amendCategories(Product $product)
     {
         $productCategories = $product->getCategories();
-        foreach ($productCategories as $category_id) {
-            $category = new Category((int)$category_id, NostoHelperContext::getLanguageId());
+        foreach ($productCategories as $categoryId) {
+            $category = new Category((int)$categoryId, NostoHelperContext::getLanguageId());
             $category = NostoCategory::loadData($category);
             if (!empty($category)) {
                 $this->addCategory($category->getValue());
@@ -273,13 +327,13 @@ class NostoProduct extends NostoSDKProduct
      */
     protected function amendBrand(Product $product)
     {
-        if (empty($product->manufacturer_name) && !empty($product->id_manufacturer)) {
+        if (!empty($product->manufacturer_name)) {
+            $this->setBrand($product->manufacturer_name);
+        } elseif (!empty($product->id_manufacturer)) {
             $manufacturer = new Manufacturer($product->id_manufacturer, NostoHelperContext::getLanguageId());
-            if (!empty($manufacturer)) {
+            if (!empty($manufacturer) && !empty($manufacturer->name)) {
                 $this->setBrand($manufacturer->name);
             }
-        } else {
-            $this->setBrand($product->manufacturer_name);
         }
     }
 }

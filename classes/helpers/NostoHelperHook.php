@@ -38,5 +38,4 @@ class NostoHelperHook
         // name with "Nosto", e.g. "NostoProduct" => "NostoProduct".
         Hook::exec('action' . str_replace('NostoTagging', 'Nosto', $klass) . 'LoadAfter', $params);
     }
-
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2016 Nosto Solutions Ltd
+ * 2013-2017 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,7 +19,7 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2016 Nosto Solutions Ltd
+ * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
@@ -36,38 +36,38 @@ class NostoHelperContext
      * context after the the function invocation
      *
      * @param $callable
-     * @param bool|int $idLang the language identifier. False means do not manipulate it
-     * @param bool|int $idShop the shop identifier. False means do not manipulate it
+     * @param bool|int $languageId the language identifier. False means do not manipulate it
+     * @param bool|int $shopId the shop identifier. False means do not manipulate it
      * @param bool|int $currencyId the currency id. False means do not manipulate it
      * @param bool|int $employeeId the employee id. False means do not manipulate it
-     * @param bool|int $countyId the country id. False means do not manipulate it
+     * @param bool|int $countryId the country id. False means do not manipulate it
      * @return mixed the return value of the anonymous function
      */
     public static function runInContext(
         $callable,
-        $idLang = false,
-        $idShop = false,
+        $languageId = false,
+        $shopId = false,
         $currencyId = false,
         $employeeId = false,
         $countryId = false
     ) {
-        $retval = null;
+        $retVal = null;
 
-        self::emulateContext($idLang, $idShop, $currencyId, $employeeId, $countryId);
+        self::emulateContext($languageId, $shopId, $currencyId, $employeeId, $countryId);
         try {
-            $retval = $callable();
+            $retVal = $callable();
         } catch (Exception $e) {
             NostoHelperLogger::log($e->getMessage());
         }
         self::revertToOriginalContext();
 
-        return $retval;
+        return $retVal;
     }
 
     public static function runWithEachNostoAccount($callable)
     {
-        self::runInAContextForEachLanguageEachShop(function () use ($callable) {
-            $account = NostoHelperAccount::find();
+        self::runInContextForEachLanguageEachShop(function () use ($callable) {
+            $account = NostoHelperAccount::getAccount();
             if ($account === null) {
                 return null;
             } else {
@@ -76,7 +76,7 @@ class NostoHelperContext
         });
     }
 
-    public static function runInAContextForEachLanguageEachShop($callable)
+    public static function runInContextForEachLanguageEachShop($callable)
     {
         foreach (Shop::getShops() as $shop) {
             $shopId = isset($shop['id_shop']) ? $shop['id_shop'] : null;
@@ -100,9 +100,10 @@ class NostoHelperContext
      * @param bool|int $shopId the shop identifier. False means do not manipulate it
      * @param bool|int $currencyId the currency id. False means do not manipulate it
      * @param bool|int $employeeId the employee id. False means do not manipulate it
-     * @param bool|int $countyId the country id. False means do not manipulate it
+     * @param bool|int $countryId the country id. False means do not manipulate it
      *
      * @suppress PhanTypeMismatchArgument
+     * @suppress PhanTypeMismatchProperty
      */
     public static function emulateContext(
         $languageId = false,
@@ -110,8 +111,7 @@ class NostoHelperContext
         $currencyId = false,
         $employeeId = false,
         $countryId = false
-    )
-    {
+    ) {
         $context = Context::getContext();
         self::$backupContextStack[] = $context->cloneContext();
 
@@ -135,7 +135,7 @@ class NostoHelperContext
             ShopUrl::resetMainDomainCache();
         }
 
-        //clean local cache. Otherwish it may get the wrong quantity data or other data
+        //clean local cache. Otherwise it may get the wrong quantity data or other data
         Cache::clean("*");
 
         if ($languageId !== false) {
@@ -202,7 +202,7 @@ class NostoHelperContext
      */
     public static function getLanguageId()
     {
-        return self::getLanguage() ? self::getLanguage()->id : null;
+        return self::getLanguage() ? (int)self::getLanguage()->id : null;
     }
 
     /**
@@ -212,7 +212,7 @@ class NostoHelperContext
      */
     public static function getCurrencyId()
     {
-        return self::getCurrency() ? self::getCurrency()->id : null;
+        return self::getCurrency() ? (int)self::getCurrency()->id : null;
     }
 
     /**
@@ -232,7 +232,7 @@ class NostoHelperContext
      */
     public static function getCountryId()
     {
-        return self::getCountry() ? self::getCountry()->id : null;
+        return self::getCountry() ? (int)self::getCountry()->id : null;
     }
 
     /**

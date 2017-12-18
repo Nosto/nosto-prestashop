@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2016 Nosto Solutions Ltd
+ * 2013-2017 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,7 +19,7 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2016 Nosto Solutions Ltd
+ * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
@@ -70,7 +70,7 @@ class NostoHelperAccount
      */
     public static function deleteAll()
     {
-        NostoHelperContext::runInAContextForEachLanguageEachShop(function () {
+        NostoHelperContext::runInContextForEachLanguageEachShop(function () {
             self::delete();
         });
 
@@ -81,18 +81,17 @@ class NostoHelperAccount
      * Finds and returns an account for given criteria.
      *
      * @return NostoSDKAccount|null the account with loaded API tokens, or null if not found.
-     * @internal param int|null $lang_id the ID of the language.
      */
-    public static function find()
+    public static function getAccount()
     {
         $accountName = NostoHelperConfig::getAccountName();
         if (!empty($accountName)) {
             $account = new NostoSDKAccount($accountName);
             $tokens = array();
-            foreach (NostoSDKAPIToken::getApiTokenNames() as $token_name) {
-                $token_value = NostoHelperConfig::getToken($token_name);
-                if (!empty($token_value)) {
-                    $tokens[$token_name] = $token_value;
+            foreach (NostoSDKAPIToken::getApiTokenNames() as $tokenName) {
+                $tokenValue = NostoHelperConfig::getToken($tokenName);
+                if (!empty($tokenValue)) {
+                    $tokens[$tokenName] = $tokenValue;
                 }
             }
 
@@ -114,7 +113,7 @@ class NostoHelperAccount
      */
     public static function existsAndIsConnected()
     {
-        $account = self::find();
+        $account = self::getAccount();
         return ($account !== null && $account->isConnectedToNosto());
     }
 }

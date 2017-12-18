@@ -31,7 +31,9 @@ class NostoHelperController
         $result = false;
 
         // For prestashop 1.5 and 1.6 we can in most cases access the current controllers php_self property.
-        if (!empty(Context::getContext()->controller->php_self)) {
+        if (isset(Context::getContext()->controller->php_self)
+            && Context::getContext()->controller->php_self
+        ) {
             $result = Context::getContext()->controller->php_self;
         } elseif (($controller = Tools::getValue('controller')) !== false) {
             $result = $controller;
@@ -62,11 +64,12 @@ class NostoHelperController
      * @param string $idName the name of the query parameter containing the id
      * @param string $klass the classname of the object to instantiate
      * @param string $method the accessor method in the base controller
+     * @param bool $multiLanguageObject
      * @return mixed the resolved object or null
      *
      * @suppress PhanTypeMismatchArgument
      */
-    public static function resolveObject($idName, $klass, $method)
+    public static function resolveObject($idName, $klass, $method, $multiLanguageObject = true)
     {
         $object = null;
         if (method_exists(Context::getContext()->controller, $method)) {
@@ -81,7 +84,7 @@ class NostoHelperController
                 $object = new $klass
                 (
                     (int)$id,
-                    NostoHelperContext::getLanguageId(),
+                    $multiLanguageObject ? NostoHelperContext::getLanguageId() : null,
                     NostoHelperContext::getShopId()
                 );
             }

@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2016 Nosto Solutions Ltd
+ * 2013-2017 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,7 +19,7 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2016 Nosto Solutions Ltd
+ * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
@@ -27,6 +27,12 @@ use Nosto\Request\Http\HttpRequest as NostoSDKHttpRequest;
 
 class NostoHelperUrl
 {
+    const PS_REWRITING_SETTINGS = 'PS_REWRITING_SETTINGS';
+    const ID_LANG = 'id_lang';
+    const ID_PRODUCT = "id_product";
+    const PS_SSL_ENABLED = 'PS_SSL_ENABLED';
+    const PS_MULTISHOP_FEATURE_ACTIVE = 'PS_MULTISHOP_FEATURE_ACTIVE';
+
     /**
      * Returns a preview url to a product page.
      *
@@ -37,8 +43,8 @@ class NostoHelperUrl
         try {
             $idLang = NostoHelperContext::getLanguageId();
 
-            $row = Product::getProducts($idLang, 0, 1, "id_product", "ASC", false, true);
-            $productId = isset($row['id_product']) ? (int)$row['id_product'] : 0;
+            $row = Product::getProducts($idLang, 0, 1, self::ID_PRODUCT, "ASC", false, true);
+            $productId = isset($row[self::ID_PRODUCT]) ? (int)$row[self::ID_PRODUCT] : 0;
 
             $product = new Product($productId, $idLang, NostoHelperContext::getShopId());
             if (!Validate::isLoadedObject($product)) {
@@ -65,7 +71,8 @@ class NostoHelperUrl
         try {
             $idLang = NostoHelperContext::getLanguageId();
 
-            $row = Category::getHomeCategories($idLang, true)[0];
+            $rows = Category::getHomeCategories($idLang, true);
+            $row = $rows[0];
             $categoryId = isset($row['id_category']) ? (int)$row['id_category'] : 0;
 
             $category = new Category($categoryId, $idLang);
@@ -143,6 +150,7 @@ class NostoHelperUrl
      * @param array $params additional params to add to the url.
      * @param int|null $productAttributeId product attribute id
      * @return string the product page url.
+     * @suppress PhanTypeMismatchArgument
      */
     public static function getProductUrl($product, array $params = array(), $productAttributeId = 0)
     {
@@ -161,8 +169,8 @@ class NostoHelperUrl
             false,
             true
         );
-        if ((int)Configuration::get('PS_REWRITING_SETTINGS') === 0) {
-            $params['id_lang'] = $idLang;
+        if ((int)Configuration::get(self::PS_REWRITING_SETTINGS) === 0) {
+            $params[self::ID_LANG] = $idLang;
         }
 
         return NostoSDKHttpRequest::replaceQueryParamsInUrl($params, $url);
@@ -177,6 +185,7 @@ class NostoHelperUrl
      * @param Category|CategoryCore $category the category model.
      * @param array $params additional params to add to the url.
      * @return string the category page url.
+     * @suppress PhanTypeMismatchArgument
      */
     public static function getCategoryUrl($category, array $params = array())
     {
@@ -184,8 +193,8 @@ class NostoHelperUrl
         $idShop = NostoHelperContext::getShopId();
 
         $url = NostoHelperLink::getLink()->getCategoryLink($category, null, $idLang, null, $idShop);
-        if ((int)Configuration::get('PS_REWRITING_SETTINGS') === 0) {
-            $params['id_lang'] = $idLang;
+        if ((int)Configuration::get(self::PS_REWRITING_SETTINGS) === 0) {
+            $params[self::ID_LANG] = $idLang;
         }
 
         return NostoSDKHttpRequest::replaceQueryParamsInUrl($params, $url);
@@ -200,6 +209,7 @@ class NostoHelperUrl
      * @param string $controller the controller name.
      * @param array $params additional params to add to the url.
      * @return string the page url.
+     * @suppress PhanTypeMismatchArgument
      */
     public static function getPageUrl($controller, array $params = array())
     {
@@ -208,8 +218,8 @@ class NostoHelperUrl
 
         $url = NostoHelperLink::getLink()->getPageLink($controller, true, $idLang, null, false, $idShop);
 
-        if ((int)Configuration::get('PS_REWRITING_SETTINGS') === 0) {
-            $params['id_lang'] = $idLang;
+        if ((int)Configuration::get(self::PS_REWRITING_SETTINGS) === 0) {
+            $params[self::ID_LANG] = $idLang;
         }
 
         return NostoSDKHttpRequest::replaceQueryParamsInUrl($params, $url);
@@ -241,7 +251,7 @@ class NostoHelperUrl
             $params['fc'] = 'module';
             $params['module'] = $name;
             $params['controller'] = $controller;
-            $params['id_lang'] = $idLang;
+            $params[self::ID_LANG] = $idLang;
             return self::getBaseUrl() . 'index.php?' . http_build_query($params);
         } else {
             $link = NostoHelperLink::getLink();
@@ -275,9 +285,9 @@ class NostoHelperUrl
     private static function getBaseUrl()
     {
         $idShop = (int)NostoHelperContext::getShopId();
-        $ssl = Configuration::get('PS_SSL_ENABLED');
+        $ssl = Configuration::get(self::PS_SSL_ENABLED);
 
-        if (Configuration::get('PS_MULTISHOP_FEATURE_ACTIVE') && !is_null($idShop)) {
+        if (Configuration::get(self::PS_MULTISHOP_FEATURE_ACTIVE) && !is_null($idShop)) {
             $shop = new Shop($idShop);
         } else {
             $shop = NostoHelperContext::getShop();
@@ -285,5 +295,34 @@ class NostoHelperUrl
 
         $base = ($ssl ? 'https://' . ShopUrl::getMainShopDomainSSL() : 'http://' . ShopUrl::getMainShopDomain());
         return $base . $shop->getBaseURI();
+    }
+
+
+    /**
+     * Returns the current shop's url from the context and language.
+     *
+     * @return string the absolute url.
+     * @suppress PhanTypeMismatchArgument
+     */
+    public static function getContextShopUrl()
+    {
+        $base = self::getBaseUrl();
+        $multiLang = (Language::countActiveLanguages(NostoHelperContext::getShopId()) > 1);
+        $lang = '';
+        if ($multiLang) {
+            $rewrite = (int)Configuration::get(
+                NostoHelperUrl::PS_REWRITING_SETTINGS,
+                null,
+                null,
+                NostoHelperContext::getShopId()
+            );
+            if ($rewrite) {
+                $lang = NostoHelperContext::getLanguage()->iso_code . '/';
+            } else {
+                $lang = '?' . self::ID_LANG . '=' . NostoHelperContext::getLanguageId();
+            }
+        }
+
+        return $base . $lang;
     }
 }

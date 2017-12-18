@@ -34,7 +34,7 @@ class NostoDefaultTagging
      */
     public static function get(NostoTagging $module)
     {
-        if (!Nosto::isContextConnected()) {
+        if (!NostoHelperAccount::existsAndIsConnected()) {
             return '';
         }
 

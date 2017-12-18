@@ -1,5 +1,4 @@
 <?php
-
 /**
  * 2013-2017 Nosto Solutions Ltd
  *
@@ -23,31 +22,20 @@
  * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
-class Nosto
+
+require_once(dirname(__FILE__) . '/api.php');
+
+/**
+ * Front controller for reload cart tagging
+ */
+class NostoTaggingReloadCartModuleFrontController extends NostoTaggingApiModuleFrontController
 {
-
     /**
-     * Checks if Nosto is installed to a given store and language
-     *
-     * @return bool
+     * @inheritdoc
      */
-    public static function isContextConnected()
+    public function initContent()
     {
-        return NostoHelperAccount::existsAndIsConnected();
-    }
-
-    public static function getAccount()
-    {
-        return NostoHelperAccount::find();
-    }
-
-    /**
-     * Checks if multiple currencies are used in tagging
-     *
-     * @return bool the multi currency method.
-     */
-    public static function useMultipleCurrencies()
-    {
-        return NostoHelperConfig::getMultiCurrencyMethod() !== NostoHelperConfig::MULTI_CURRENCY_METHOD_DISABLED;
+        echo NostoCartTagging::get();
+        die();
     }
 }

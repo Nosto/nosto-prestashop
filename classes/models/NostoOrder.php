@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2016 Nosto Solutions Ltd
+ * 2013-2017 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,7 +19,7 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2016 Nosto Solutions Ltd
+ * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
@@ -77,9 +77,9 @@ class NostoOrder extends NostoSDKOrder
         $nostoOrder->setPaymentProvider('unknown');
 
         if (!empty($order->module)) {
-            $payment_module = Module::getInstanceByName($order->module);
-            if ($payment_module !== false && isset($payment_module->version)) {
-                $nostoOrder->setPaymentProvider($order->module . ' [' . $payment_module->version . ']');
+            $paymentModule = Module::getInstanceByName($order->module);
+            if ($paymentModule !== false && isset($paymentModule->version)) {
+                $nostoOrder->setPaymentProvider($order->module . ' [' . $paymentModule->version . ']');
             } else {
                 $nostoOrder->setPaymentProvider($order->module . ' [unknown]');
             }
@@ -102,35 +102,35 @@ class NostoOrder extends NostoSDKOrder
      */
     protected static function findPurchasedItems(Order $order)
     {
-        $purchased_items = array();
+        $purchasedItems = array();
 
         $currency = self::loadCurrency($order);
         if (!Validate::isLoadedObject($currency)) {
-            return $purchased_items;
+            return $purchasedItems;
         }
 
         $products = array();
-        $total_discounts_tax_incl = 0;
-        $total_shipping_tax_incl = 0;
-        $total_wrapping_tax_incl = 0;
-        $total_gift_tax_incl = 0;
+        $totalDiscountsTaxIncl = 0;
+        $totalShippingTaxIncl = 0;
+        $totalWrappingTaxIncl = 0;
+        $totalGiftTaxIncl = 0;
 
         // One order can be split into multiple orders, so we need to combine their data.
-        $order_collection = Order::getByReference($order->reference);
-        foreach ($order_collection as $item) {
+        $orderCollection = Order::getByReference($order->reference);
+        foreach ($orderCollection as $item) {
             /** @var $item Order */
             $products = array_merge($products, $item->getProducts());
-            $total_discounts_tax_incl = Tools::ps_round(
-                $total_discounts_tax_incl + $item->total_discounts_tax_incl,
-                2
+            $totalDiscountsTaxIncl = NostoHelperPrice::roundPrice(
+                $totalDiscountsTaxIncl + $item->total_discounts_tax_incl,
+                $currency
             );
-            $total_shipping_tax_incl = Tools::ps_round(
-                $total_shipping_tax_incl + $item->total_shipping_tax_incl,
-                2
+            $totalShippingTaxIncl = NostoHelperPrice::roundPrice(
+                $totalShippingTaxIncl + $item->total_shipping_tax_incl,
+                $currency
             );
-            $total_wrapping_tax_incl = Tools::ps_round(
-                $total_wrapping_tax_incl + $item->total_wrapping_tax_incl,
-                2
+            $totalWrappingTaxIncl = NostoHelperPrice::roundPrice(
+                $totalWrappingTaxIncl + $item->total_wrapping_tax_incl,
+                $currency
             );
         }
 
@@ -138,18 +138,18 @@ class NostoOrder extends NostoSDKOrder
         // The cart is the same even if the order is split into many objects.
         $cart = new Cart($order->id_cart);
         if (Validate::isLoadedObject($cart)) {
-            $cart_rules = (array)$cart->getCartRules();
+            $cartRules = (array)$cart->getCartRules();
         } else {
-            $cart_rules = array();
+            $cartRules = array();
         }
 
-        $gift_products = array();
-        foreach ($cart_rules as $cart_rule) {
-            if ((int)$cart_rule['gift_product']) {
+        $giftProducts = array();
+        foreach ($cartRules as $cartRule) {
+            if ((int)$cartRule['gift_product']) {
                 foreach ($products as $key => &$product) {
                     if (empty($product['gift'])
-                        && (int)$product['product_id'] === (int)$cart_rule['gift_product']
-                        && (int)$product['product_attribute_id'] === (int)$cart_rule['gift_product_attribute']
+                        && (int)$product['product_id'] === (int)$cartRule['gift_product']
+                        && (int)$product['product_attribute_id'] === (int)$cartRule['gift_product_attribute']
                     ) {
                         $product['product_quantity'] = (int)$product['product_quantity'];
                         $product['product_quantity']--;
@@ -157,19 +157,19 @@ class NostoOrder extends NostoSDKOrder
                             unset($products[$key]);
                         }
                         if (isset($product['product_price_wt'])) {
-                            $product_price_wt = $product['product_price_wt'];
+                            $productPriceWt = $product['product_price_wt'];
                         } else {
-                            $product_price_wt = 0;
+                            $productPriceWt = 0;
                         }
-                        $total_gift_tax_incl = Tools::ps_round(
-                            $total_gift_tax_incl + $product_price_wt,
-                            2
+                        $totalGiftTaxIncl = NostoHelperPrice::roundPrice(
+                            $totalGiftTaxIncl + $productPriceWt,
+                            $currency
                         );
-                        $gift_product = $product;
-                        $gift_product['product_quantity'] = 1;
-                        $gift_product['product_price_wt'] = 0;
-                        $gift_product['gift'] = true;
-                        $gift_products[] = $gift_product;
+                        $giftProduct = $product;
+                        $giftProduct['product_quantity'] = 1;
+                        $giftProduct['product_price_wt'] = 0;
+                        $giftProduct['gift'] = true;
+                        $giftProducts[] = $giftProduct;
 
                         break; // One gift product per cart rule
                     }
@@ -177,88 +177,88 @@ class NostoOrder extends NostoSDKOrder
                 unset($product);
             }
         }
-        $items = array_merge($products, $gift_products);
+        $items = array_merge($products, $giftProducts);
 
         $languageId = NostoHelperContext::getLanguageId();
         foreach ($items as $item) {
             $p = new Product($item['product_id'], false, $languageId);
             if (Validate::isLoadedObject($p)) {
-                $product_name = $p->name;
-                $id_attribute = (int)$item['product_attribute_id'];
-                $attribute_combinations = $p->getAttributeCombinationsById($id_attribute, $languageId);
-                if (!empty($attribute_combinations)) {
-                    $attribute_combination_names = array();
-                    foreach ($attribute_combinations as $attribute_combination) {
-                        $attribute_combination_names[] = $attribute_combination['attribute_name'];
+                $productName = $p->name;
+                $idAttribute = (int)$item['product_attribute_id'];
+                $attributeCombinations = $p->getAttributeCombinationsById($idAttribute, $languageId);
+                if (!empty($attributeCombinations)) {
+                    $attributeCombinationNames = array();
+                    foreach ($attributeCombinations as $attributeCombination) {
+                        $attributeCombinationNames[] = $attributeCombination['attribute_name'];
                     }
-                    if (!empty($attribute_combination_names)) {
-                        $product_name .= ' (' . implode(', ', $attribute_combination_names) . ')';
+                    if (!empty($attributeCombinationNames)) {
+                        $productName .= ' (' . implode(', ', $attributeCombinationNames) . ')';
                     }
                 }
 
-                $purchased_item = new NostoOrderPurchasedItem();
-                $purchased_item->setProductId((string)$p->id);
-                $purchased_item->setQuantity((int)$item['product_quantity']);
-                $purchased_item->setName((string)$product_name);
-                $purchased_item->setPrice($item['product_price_wt']);
-                $purchased_item->setPriceCurrencyCode((string)$currency->iso_code);
-                $purchased_items[] = $purchased_item;
+                $purchasedItem = new NostoOrderPurchasedItem();
+                $purchasedItem->setProductId((string)$p->id);
+                $purchasedItem->setQuantity((int)$item['product_quantity']);
+                $purchasedItem->setName((string)$productName);
+                $purchasedItem->setPrice($item['product_price_wt']);
+                $purchasedItem->setPriceCurrencyCode((string)$currency->iso_code);
+                $purchasedItems[] = $purchasedItem;
             }
         }
 
-        if (!empty($purchased_items)) {
+        if (!empty($purchasedItems)) {
             // Add special items for discounts, shipping and gift wrapping.
 
-            if ($total_discounts_tax_incl > 0) {
+            if ($totalDiscountsTaxIncl > 0) {
                 // Subtract possible gift product price from total as gifts are tagged with price zero (0).
-                $total_discounts_tax_incl = Tools::ps_round(
-                    $total_discounts_tax_incl - $total_gift_tax_incl,
-                    2
+                $totalDiscountsTaxIncl = NostoHelperPrice::roundPrice(
+                    $totalDiscountsTaxIncl - $totalGiftTaxIncl,
+                    $currency
                 );
-                if ($total_discounts_tax_incl > 0) {
-                    $purchased_item = new NostoOrderPurchasedItem();
-                    $purchased_item->setProductId("-1");
-                    $purchased_item->setQuantity(1);
-                    $purchased_item->setName('Discount');
+                if ($totalDiscountsTaxIncl > 0) {
+                    $purchasedItem = new NostoOrderPurchasedItem();
+                    $purchasedItem->setProductId("-1");
+                    $purchasedItem->setQuantity(1);
+                    $purchasedItem->setName('Discount');
                     // Note the negative value.
-                    $purchased_item->setPrice(-$total_discounts_tax_incl);
-                    $purchased_item->setPriceCurrencyCode((string)$currency->iso_code);
-                    $purchased_items[] = $purchased_item;
+                    $purchasedItem->setPrice(-$totalDiscountsTaxIncl);
+                    $purchasedItem->setPriceCurrencyCode((string)$currency->iso_code);
+                    $purchasedItems[] = $purchasedItem;
                 }
             }
 
             // Check is free shipping applies to the cart.
-            $free_shipping = false;
-            if (isset($cart_rules)) {
-                foreach ($cart_rules as $cart_rule) {
-                    if ((int)$cart_rule['free_shipping']) {
-                        $free_shipping = true;
+            $freeShipping = false;
+            if (isset($cartRules)) {
+                foreach ($cartRules as $cartRule) {
+                    if ((int)$cartRule['free_shipping']) {
+                        $freeShipping = true;
                         break;
                     }
                 }
             }
 
-            if (!$free_shipping && $total_shipping_tax_incl > 0) {
-                $purchased_item = new NostoOrderPurchasedItem();
-                $purchased_item->setProductId("-1");
-                $purchased_item->setQuantity(1);
-                $purchased_item->setName('Shipping');
-                $purchased_item->setPrice($total_shipping_tax_incl);
-                $purchased_item->setPriceCurrencyCode((string)$currency->iso_code);
-                $purchased_items[] = $purchased_item;
+            if (!$freeShipping && $totalShippingTaxIncl > 0) {
+                $purchasedItem = new NostoOrderPurchasedItem();
+                $purchasedItem->setProductId("-1");
+                $purchasedItem->setQuantity(1);
+                $purchasedItem->setName('Shipping');
+                $purchasedItem->setPrice($totalShippingTaxIncl);
+                $purchasedItem->setPriceCurrencyCode((string)$currency->iso_code);
+                $purchasedItems[] = $purchasedItem;
             }
 
-            if ($total_wrapping_tax_incl > 0) {
-                $purchased_item = new NostoOrderPurchasedItem();
-                $purchased_item->setProductId("-1");
-                $purchased_item->setQuantity(1);
-                $purchased_item->setName('Gift Wrapping');
-                $purchased_item->setPrice($total_wrapping_tax_incl);
-                $purchased_item->setPriceCurrencyCode((string)$currency->iso_code);
-                $purchased_items[] = $purchased_item;
+            if ($totalWrappingTaxIncl > 0) {
+                $purchasedItem = new NostoOrderPurchasedItem();
+                $purchasedItem->setProductId("-1");
+                $purchasedItem->setQuantity(1);
+                $purchasedItem->setName('Gift Wrapping');
+                $purchasedItem->setPrice($totalWrappingTaxIncl);
+                $purchasedItem->setPriceCurrencyCode((string)$currency->iso_code);
+                $purchasedItems[] = $purchasedItem;
             }
         }
 
-        return $purchased_items;
+        return $purchasedItems;
     }
 }

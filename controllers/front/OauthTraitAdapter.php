@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 2013-2016 Nosto Solutions Ltd
+ * 2013-2017 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -20,7 +20,7 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2016 Nosto Solutions Ltd
+ * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
@@ -45,7 +45,7 @@ class OauthTraitAdapter
      * "return_url" sent in the first step of the authorization cycle, and requires it to be from
      * the same domain that the account is configured for and only redirects to that domain.
      *
-     * @param $moduleName module name
+     * @param string $moduleName module name
      * @return void
      */
     public function initContent($moduleName)
@@ -64,11 +64,12 @@ class OauthTraitAdapter
      */
     public function getMeta()
     {
+        $oauthTraitAdapter = $this;
         return NostoHelperContext::runInContext(
-            function () {
-                return NostoOAuth::loadData($this->moduleName);
+            function () use ($oauthTraitAdapter) {
+                return NostoOAuth::loadData($oauthTraitAdapter->moduleName);
             },
-            $this->languageId
+            $oauthTraitAdapter->languageId
         );
     }
 
@@ -91,10 +92,10 @@ class OauthTraitAdapter
      */
     public function redirect(array $params)
     {
-        $admin_url = NostoHelperConfig::getAdminUrl();
-        if (!empty($admin_url)) {
-            $admin_url = NostoSDKHttpRequest::replaceQueryParamsInUrl($params, $admin_url);
-            Tools::redirect($admin_url, '');
+        $adminUrl = NostoHelperConfig::getAdminUrl();
+        if (!empty($adminUrl)) {
+            $adminUrl = NostoSDKHttpRequest::replaceQueryParamsInUrl($params, $adminUrl);
+            Tools::redirect($adminUrl, '');
             die;
         }
         $this->notFound();

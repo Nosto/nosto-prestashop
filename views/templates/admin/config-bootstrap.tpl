@@ -1,5 +1,5 @@
 {*
-* 2013-2016 Nosto Solutions Ltd
+* 2013-2017 Nosto Solutions Ltd
 *
 * NOTICE OF LICENSE
 *
@@ -18,7 +18,7 @@
 * needs please refer to http://www.prestashop.com for more information.
 *
 * @author    Nosto Solutions Ltd <contact@nosto.com>
-* @copyright 2013-2016 Nosto Solutions Ltd
+* @copyright 2013-2017 Nosto Solutions Ltd
 * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *}
 
@@ -39,29 +39,36 @@
                value="">
         <input type="hidden" id="nostotagging_account_details" name="nostotagging_account_details"
                value="">
-        {if $nostotagging_account_authorized}
-            <div class="panel" id="nosto-settings">
-                <div class="panel-heading">
-                    <i class="icon-cog"></i>&nbsp;Settings
-                    {if count($nostotagging_languages) > 1}
-                        <div class="col-md-1">
-                            {l s='Manage accounts:' mod='nostotagging'}
-                        </div>
-                        <div class="col-md-2">
-                            <label for="nostotagging_language"></label>
-                            <select id="nostotagging_language">
-                                {foreach from=$nostotagging_languages item=language}
-                                    <option value="{$language.id_lang|escape:'htmlall':'UTF-8'}"
-                                            {if $language.id_lang == $nostotagging_current_language.id_lang}selected="selected"{/if}>
-                                        {$language.name|escape:'htmlall':'UTF-8'}
-                                    </option>
-                                {/foreach}
-                            </select>
-                        </div>
-                    {/if}
-                    <span class="pull-right clickable"><i class="icon-chevron-up"></i></span>
-                </div>
-                <div class="panel-body">
+
+        <div class="panel" id="nosto-settings">
+            <div class="panel-heading">
+                {if count($nostotagging_languages) > 1}
+                    <div class="col-md-1">
+                        {l s='Manage accounts:' mod='nostotagging'}
+                    </div>
+                    <div class="col-md-2">
+                        <select id="nostotagging_language">
+                            {foreach from=$nostotagging_languages item=language}
+                                <option value="{$language.id_lang|escape:'htmlall':'UTF-8'}"
+                                        {if $language.id_lang == $nostotagging_current_language.id_lang}selected="selected"{/if}>
+                                    {$language.name|escape:'htmlall':'UTF-8'}
+                                </option>
+                            {/foreach}
+                        </select>
+                    </div>
+                {else}
+                    <div class="col-md-3">
+                    </div>
+                {/if}
+                {if $nostotagging_account_authorized}
+                    <span class="pull-right clickable panel-collapsed">
+                        <i class="icon-chevron-down"></i>
+                        {l s='Settings' mod='nostotagging'}
+                    </span>
+                {/if}
+            </div>
+            {if $nostotagging_account_authorized}
+                <div class="panel-body" style="display:none">
                     <div class="form-wrapper nostotagging_settings">
                         <div class="form-group">
                             <div class="col-lg-offset-3">
@@ -128,60 +135,34 @@
                         </div>
                         <hr>
                         <div class="form-group">
-                            <label class="control-label col-lg-3" for="image_type">
-                            <span class="label-tooltip" data-toggle="tooltip" title=""
-                                  data-original-title="{l s='Choose which image type Nosto will use in recommendations' mod='nostotagging'}">
-                                {l s='Image type for recommendations' mod='nostotagging'}
-                            </span>
-                            </label>
-
-                            <div class="col-lg-9">
-                                {foreach from=$image_types item=image_type}
-                                    <div class="radio ">
-                                        <label>
-                                            <input type="radio" name="image_type"
-                                                   value="{$image_type['id_image_type']|escape:'quotes':'UTF-8'}"
-                                                   {if $current_image_type===$image_type['id_image_type']}checked="checked"{/if}/>
-                                            {$image_type['name']|escape:'quotes':'UTF-8'}
-                                            ({$image_type['width']|escape:'quotes':'UTF-8'}
-                                            x {$image_type['height']|escape:'quotes':'UTF-8'})
-                                        </label>
-                                    </div>
-                                {/foreach}
-                                <div class="radio">
-                                    <label>
-                                        <input type="radio" name="image_type" value="0"
-                                               {if !$current_image_type}checked="checked"{/if}/>
-                                        {l s='Not defined' mod='nostotagging'}
-                                    </label>
-                                </div>
+                            <div class="alert alert-danger col-lg-9 col-lg-offset-3 multi-currency-variation-alert">
+                                <p>
+                                    {l s='Multi currency and price variation could not be enabled in the same time' mod='nostotagging'}
+                                </p>
                             </div>
-                        </div>
-                        <hr>
-                        <div class="form-group">
                             <label class="control-label col-lg-3" for="multi_currency_method">
                                 {l s='Multi Currency Method' mod='nostotagging'}
                             </label>
                             <div class="col-lg-9">
                                 <div class="radio ">
                                     <label>
-                                        <input type="radio" name="multi_currency_method"
-                                               value="disabled"
+                                        <input type="radio" name="multi_currency_method" value="disabled"
+                                               onchange="Nosto.checkMultiCurrencyVariationConflict()"
                                                {if $multi_currency_method==="disabled"}checked="checked"{/if}/>
                                         {l s='Disabled' mod='nostotagging'}
                                     </label>
                                 </div>
                                 <div class="radio ">
                                     <label>
-                                        <input type="radio" name="multi_currency_method"
-                                               value="exchangeRates"
+                                        <input type="radio" name="multi_currency_method" value="exchangeRates"
+                                               onchange="Nosto.checkMultiCurrencyVariationConflict()"
                                                {if $multi_currency_method==="exchangeRates"}checked="checked"{/if}/>
-                                        {l s='Exchange NostoExchangeRates' mod='nostotagging'}
+                                        {l s='Exchange rates' mod='nostotagging'}
                                     </label>
                                 </div>
                                 <p class="help-block">
                                     <i class="icon-warning-sign"></i>
-                                    {l s='Changing this setting to "Exchange NostoExchangeRates" will enable multi currency feature in Nosto.' mod='nostotagging'}
+                                    {l s='Changing this setting to "Exchange rates" will enable multi currency feature in Nosto.' mod='nostotagging'}
                                 </p>
                             </div>
                         </div>
@@ -215,7 +196,7 @@
                                 </div>
                             </div>
                         {/if}
-
+                        <hr>
                         <div class="form-group">
                             <label class="control-label col-lg-3">
                                 <span title="" data-toggle="tooltip" class="label-tooltip" data-original-title="{l s='Send SKU data to Nosto for recommendation' mod='nostotagging'}" data-html="true">
@@ -232,41 +213,87 @@
                                 </span>
                             </div>
                         </div>
+                        <hr>
+                        <div class="alert alert-danger col-lg-9 col-lg-offset-3 multi-currency-variation-alert">
+                            <p>
+                                {l s='Multi currency and price variation could not be enabled in the same time' mod='nostotagging'}
+                            </p>
+                        </div>
+
+                        <!-- Price variation -->
+                        <div class="form-group">
+                            <label class="control-label col-lg-3">
+                                <span title="" data-toggle="tooltip" class="label-tooltip" data-original-title="{l s='Price variation' mod='nostotagging'}" data-html="true">
+                                    {l s='Send price variation data to Nosto' mod='nostotagging'}
+                                </span>
+                            </label>
+                            <div class="col-lg-9">
+                                <span class="switch prestashop-switch fixed-width-lg">
+                                    <input type="radio" name="nosto_variation_switch" id="nosto_variation_switch_on"  value="1" {if $nostotagging_variation_switch === true}checked="checked" {/if}
+                                           onchange="Nosto.checkMultiCurrencyVariationConflict()"/>
+                                    <label for="nosto_variation_switch_on" class="radioCheck">Yes</label>
+                                    <input type="radio" name="nosto_variation_switch" id="nosto_variation_switch_off" value="0" {if $nostotagging_variation_switch !== true}checked="checked" {/if}
+                                           onchange="Nosto.checkMultiCurrencyVariationConflict()"/>
+                                    <label for="nosto_variation_switch_off" class="radioCheck">No</label>
+                                    <a class="slide-button btn"></a>
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Price variation tax rule -->
+                        <div class="form-group" id="nosto_variation_tax_rule_switch_div">
+                            <label class="control-label col-lg-3">
+                                <span title="" data-toggle="tooltip" class="label-tooltip" data-original-title="{l s='Include countries from tax rules for price variation ' mod='nostotagging'}" data-html="true">
+                                    {l s='Include countries from tax rules for price variation' mod='nostotagging'}
+                                </span>
+                            </label>
+                            <div class="col-lg-9">
+                                <span class="switch prestashop-switch fixed-width-lg">
+                                    <input type="radio" name="nosto_variation_tax_rule_switch" id="nosto_variation_tax_rule_switch_on"  value="1" {if $nostotagging_variation_tax_rule_switch === true}checked="checked" {/if}/>
+                                    <label for="nosto_variation_tax_rule_switch_on" class="radioCheck">Yes</label>
+                                    <input type="radio" name="nosto_variation_tax_rule_switch" id="nosto_variation_tax_rule_switch_off" value="0" {if $nostotagging_variation_tax_rule_switch !== true}checked="checked" {/if}/>
+                                    <label for="nosto_variation_tax_rule_switch_off" class="radioCheck">No</label>
+                                    <a class="slide-button btn"></a>
+                                </span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="panel-footer">
+                <div class="panel-footer"  style="display:none">
                     <button type="submit" onclick="Nosto.saveAdvancedSettings()" value="1"
                             name="submit_nostotagging_advanced_settings"
+                            id="submit_nostotagging_advanced_settings"
                             class="btn btn-default pull-right">
                         <i class="process-icon-save"></i> Save
                     </button>
                 </div>
-            </div>
-        {/if}
-        <div class="panel">
-            <div class="panel-heading">
-                <i class="icon-desktop"></i>&nbsp;Account
-            </div>
-            {if $nostotagging_account_authorized}
-                {if !empty($iframe_url)}
+            {/if}
+
+            <div class="panel">
+                <div class="panel-heading">
+                    <i class="icon-desktop"></i>
+                </div>
+                {if $nostotagging_account_authorized}
+                    {if !empty($iframe_url)}
+                        <div class="row nostotagging_iframe_container"
+                             style="margin-left: -25px;margin-right: -25px;margin-top: 15px;">
+                            <div class="col-md-12">
+                                <iframe id="nostotagging_iframe" frameborder="0" width="100%"
+                                        scrolling="no"
+                                        src="{$iframe_url|escape:'htmlall':'UTF-8'}"></iframe>
+                            </div>
+                        </div>
+                    {/if}
+                {else}
                     <div class="row nostotagging_iframe_container"
-                         style="margin-left: -25px;margin-right: -25px;margin-top: -15px;">
+                         style="margin-left: -25px;margin-right: -25px;margin-top: 15px;">
                         <div class="col-md-12">
-                            <iframe id="nostotagging_iframe" frameborder="0" width="100%"
-                                    scrolling="no"
-                                    src="{$iframe_url|escape:'htmlall':'UTF-8'}"></iframe>
+                            <iframe id="nostotagging_iframe" frameborder="0" width="100%" scrolling="no"
+                                    src="{$iframe_installation_url|escape:'htmlall':'UTF-8'}"></iframe>
                         </div>
                     </div>
                 {/if}
-            {else}
-                <div class="row nostotagging_iframe_container"
-                     style="margin-left: -25px;margin-right: -25px;margin-top: -15px;">
-                    <div class="col-md-12">
-                        <iframe id="nostotagging_iframe" frameborder="0" width="100%" scrolling="no"
-                                src="{$iframe_installation_url|escape:'htmlall':'UTF-8'}"></iframe>
-                    </div>
-                </div>
-            {/if}
+            </div>
         </div>
     </form>
     <script type="text/javascript"
@@ -323,6 +350,9 @@
                         action = "{/literal}{$NostoCreateAccountUrl|escape:javascript}{literal}";
                     } else if (data.type === 'connectAccount' || data.type === 'syncAccount') {
                         action = "{/literal}{$NostoConnectAccountUrl|escape:javascript}{literal}";
+                    } else if (data.type === 'removeAccount') {
+                        Nosto.deleteNostoAccount();
+                        return;
                     }
                     submitAction(action);
                 }
@@ -346,9 +376,34 @@
                 submitAction(action);
             };
 
+            window.Nosto.checkMultiCurrencyVariationConflict = function () {
+                if ($("input[name='multi_currency_method']:checked").val() == 'exchangeRates'
+                    && $("input[name='nosto_variation_switch']:checked").val() == '1' ) {
+                    $('.multi-currency-variation-alert').show();
+                    $('#submit_nostotagging_advanced_settings').attr("disabled", "disabled");
+                } else {
+                    $('.multi-currency-variation-alert').hide();
+                    $('#submit_nostotagging_advanced_settings').removeAttr("disabled");
+                }
+
+                if ($("input[name='nosto_variation_switch']:checked").val() == '1') {
+                    $('#nosto_variation_tax_rule_switch_div').show();
+                } else {
+                    $('#nosto_variation_tax_rule_switch_div').hide();
+                }
+            }
+            Nosto.checkMultiCurrencyVariationConflict();
+
             window.Nosto.saveAdvancedSettings = function () {
                 var action = "{/literal}{$NostoAdvancedSettingUrl|escape:javascript}{literal}";
                 submitAction(action);
+            };
+
+            window.Nosto.showVariationKeys = function () {
+                console.log("Variation keys: {/literal}{$variation_keys|escape:javascript}{literal}");
+                console.log("Countries from tax rules: {/literal}{$variation_countries_from_tax_rule|escape:javascript}{literal}");
+                console.log("Countries from specific price rules: {/literal}{$variation_countries_from_price_rule|escape:javascript}{literal}");
+                console.log("Groups from specific price rules: {/literal}{$variation_groups|escape:javascript}{literal}");
             };
 
             window.addEventListener("message", receiveMessage, false);
