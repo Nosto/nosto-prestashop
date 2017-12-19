@@ -143,7 +143,7 @@ class NostoCustomerManager
                 'date_upd' => date('Y-m-d H:i:s')
             );
 
-            if (!array_key_exists('restore_cart_hash', $existingLink)) {
+            if (!is_array($existingLink) || !$existingLink['restore_cart_hash']) {
                 $data['restore_cart_hash'] = $restoreCartHash;
             }
 
@@ -194,8 +194,9 @@ class NostoCustomerManager
     public static function getRestoreCartHash($cartId)
     {
         $table = self::getCustomerLinkTableName();
-        $sql = 'SELECT `restore_cart_hash` FROM `' . $table . '` WHERE `id_cart` = ' . $cartId .
-            ' ORDER BY `date_add` ASC';
+        $sql = 'SELECT `restore_cart_hash` FROM `' . $table
+            . '` WHERE `restore_cart_hash` IS NOT NULL AND `id_cart` = ' . $cartId
+            . ' ORDER BY `date_add` ASC';
 
         $result = Db::getInstance()->getValue($sql);
         if (is_string($result)) {
