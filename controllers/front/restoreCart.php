@@ -43,6 +43,7 @@ class NostoTaggingRestoreCartModuleFrontController extends ModuleFrontController
     {
         $redirectUrl = NostoHelperUrl::getContextShopUrl();
         $query = $_SERVER[self::QUERY_STRING];
+        $urlParameters = array();
         parse_str($query, $urlParameters);
         unset($urlParameters[self::HASH_PARAM]);
         $urlParameters = $this->removePrestashopParams($urlParameters);

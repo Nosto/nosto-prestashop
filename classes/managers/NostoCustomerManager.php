@@ -140,9 +140,12 @@ class NostoCustomerManager
             return Db::getInstance()->insert($table, $data, false, true, Db::INSERT, false);
         } else {
             $data = array(
-                'date_upd' => date('Y-m-d H:i:s'),
-                'restore_cart_hash' => $restoreCartHash
+                'date_upd' => date('Y-m-d H:i:s')
             );
+
+            if (!array_key_exists('restore_cart_hash', $existingLink)) {
+                $data['restore_cart_hash'] = $restoreCartHash;
+            }
 
             return Db::getInstance()->update($table, $data, $where, 0, false, true, false);
         }

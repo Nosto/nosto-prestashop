@@ -28,8 +28,6 @@ use Nosto\Object\Cart\LineItem as NostoSDKCartItem;
 
 class NostoCart extends NostoSDKCart
 {
-    public $restoreLink;
-
     /**
      * @param $idCurrency
      * @return Currency
@@ -113,12 +111,12 @@ class NostoCart extends NostoSDKCart
         if (NostoHelperContext::getCartId()) {
             $hash = NostoCustomerManager::getRestoreCartHash(NostoHelperContext::getCartId());
             if ($hash) {
-                $nostoCart->restoreLink = (
-                NostoHelperUrl::getModuleUrl(
-                    NostoTagging::MODULE_NAME,
-                    'restoreCart',
-                    array('h' => $hash)
-                )
+                $nostoCart->setRestoreLink(
+                    NostoHelperUrl::getModuleUrl(
+                        NostoTagging::MODULE_NAME,
+                        'restoreCart',
+                        array('h' => $hash)
+                    )
                 );
             }
         }
@@ -127,6 +125,7 @@ class NostoCart extends NostoSDKCart
             'cart' => $cart,
             'nosto_cart' => $nostoCart
         ));
+
         return $nostoCart;
     }
 }
