@@ -51,7 +51,7 @@ class NostoTaggingRestoreCartModuleFrontController extends ModuleFrontController
 
         if (NostoHelperAccount::getAccount() !== null) {
             if (Validate::isLoadedObject(NostoHelperContext::getCart())
-                && !empty(NostoHelperContext::getCart()->getProducts())
+                && NostoHelperContext::getCart()->getProducts()
             ) {
                 $redirectUrl = NostoHelperUrl::getPageUrl(self::CART_CONTROLLER, $urlParameters);
             } else {

@@ -162,7 +162,6 @@ class NostoCustomerManager
         return hash('sha256', uniqid(NostoTagging::MODULE_NAME));
     }
 
-
     /**
      * Returns the Nosto customer id for a given order by using the order's cart identifier
      * as the key
