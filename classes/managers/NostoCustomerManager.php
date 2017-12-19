@@ -66,6 +66,7 @@ class NostoCustomerManager
         $sql = 'CREATE TABLE IF NOT EXISTS `' . $table . '` (
 			`id_cart` INT(10) UNSIGNED NOT NULL,
 			`id_nosto_customer` VARCHAR(64) NOT NULL,
+			`restore_cart_hash` VARCHAR(64) NULL,
 			`date_add` DATETIME NOT NULL,
 			`date_upd` DATETIME NULL,
 			PRIMARY KEY (`id_cart`, `id_nosto_customer`)
@@ -88,6 +89,20 @@ class NostoCustomerManager
 			`customer_reference` VARCHAR(32) NOT NULL,
 			PRIMARY KEY (`id_customer`)
 		) ENGINE ' . _MYSQL_ENGINE_;
+
+        return Db::getInstance()->execute($sql);
+    }
+
+    /**
+     * Add restore-cart hash column to customer link table.
+     *
+     * @return bool if the creation of the table was successful
+     */
+    public static function addRestoreCartHashColumnToCustomerLinkTable()
+    {
+        $table = self::getCustomerLinkTableName();
+        $sql = 'ALTER TABLE ' . $table . ' 
+            ADD COLUMN `restore_cart_hash` VARCHAR(64) NULL AFTER `id_nosto_customer`';
 
         return Db::getInstance()->execute($sql);
     }
@@ -125,7 +140,8 @@ class NostoCustomerManager
             return Db::getInstance()->insert($table, $data, false, true, Db::INSERT, false);
         } else {
             $data = array(
-                'date_upd' => date('Y-m-d H:i:s')
+                'date_upd' => date('Y-m-d H:i:s'),
+                'restore_cart_hash' => $restoreCartHash
             );
 
             return Db::getInstance()->update($table, $data, $where, 0, false, true, false);
@@ -156,6 +172,44 @@ class NostoCustomerManager
         $table = self::getCustomerLinkTableName();
         $cartId = (int)$order->id_cart;
         $sql = 'SELECT `id_nosto_customer` FROM `' . $table . '` WHERE `id_cart` = ' . $cartId .
+            ' ORDER BY `date_add` ASC';
+
+        $result = Db::getInstance()->getValue($sql);
+        if (is_string($result)) {
+            return $result;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Returns the restore cart hash code for a given cart id
+     *
+     * @param int $cartId cart Id
+     * @return string|null the restore cart hash code
+     */
+    public static function getRestoreCartHash($cartId)
+    {
+        $table = self::getCustomerLinkTableName();
+        $sql = 'SELECT `restore_cart_hash` FROM `' . $table . '` WHERE `id_cart` = ' . $cartId .
+            ' ORDER BY `date_add` ASC';
+
+        $result = Db::getInstance()->getValue($sql);
+        if (is_string($result)) {
+            return $result;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Resolves the cart (quote) by the given hash
+     *
+     */
+    public static function getCartId($restoreCartHash)
+    {
+        $table = self::getCustomerLinkTableName();
+        $sql = 'SELECT `id_cart` FROM `' . $table . '` WHERE `restore_cart_hash` = "' . pSQL($restoreCartHash) . '"' .
             ' ORDER BY `date_add` ASC';
 
         $result = Db::getInstance()->getValue($sql);

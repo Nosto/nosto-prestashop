@@ -22,17 +22,67 @@
  * @copyright 2013-2016 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
-
-require_once(dirname(__FILE__) . '/api.php');
+use Nosto\NostoException as NostoSDKException;
 
 class NostoTaggingRestoreCartModuleFrontController extends ModuleFrontController
 {
+    const CART_CONTROLLER = 'cart';
+    const ID_CART = 'id_cart';
+    const QUERY_STRING = 'QUERY_STRING';
+    const ACTION = 'action';
+    const SHOW = 'show';
+    /**
+     * The name of the hash parameter to look from URL
+     */
+    const HASH_PARAM = 'h';
+
     /**
      * @inheritdoc
      */
     public function initContent()
     {
-        echo '<p>ok, chen</p>';
-        die();
+        $redirectUrl = NostoHelperUrl::getContextShopUrl();
+        $query = $_SERVER[self::QUERY_STRING];
+        parse_str($query, $urlParameters);
+        unset($urlParameters[self::HASH_PARAM]);
+        $urlParameters = $this->removePrestashopParams($urlParameters);
+        $urlParameters[self::ACTION] = self::SHOW;
+
+        if (NostoHelperAccount::getAccount() !== null) {
+            if (Validate::isLoadedObject(NostoHelperContext::getCart())
+                && !empty(NostoHelperContext::getCart()->getProducts())
+            ) {
+                $redirectUrl = NostoHelperUrl::getPageUrl(self::CART_CONTROLLER, $urlParameters);
+            } else {
+                $restoreCartHash = Tools::getValue(self::HASH_PARAM);
+                if (!$restoreCartHash) {
+                    NostoHelperLogger::error(new NostoSDKException('No hash provided for restore cart'));
+                } else {
+                    try {
+                        $cartId = NostoCustomerManager::getCartId($restoreCartHash);
+                        $newCart = new Cart($cartId);
+                        //restore the cart only if it had not been ordered yet
+                        if (Validate::isLoadedObject($newCart) && !$newCart->orderExists()) {
+                            NostoHelperContext::setCookieValue(self::ID_CART, $cartId);
+                            $redirectUrl = NostoHelperUrl::getPageUrl(self::CART_CONTROLLER, $urlParameters);
+                        }
+                    } catch (Exception $e) {
+                        NostoHelperLogger::error($e);
+                        NostoHelperFlash::add(
+                            'error',
+                            $this->module->l('Sorry, we could not find your cart')
+                        );
+                    }
+                }
+            }
+        }
+        Tools::redirect($redirectUrl);
+    }
+
+    private function removePrestashopParams($urlParameters)
+    {
+        $pretashopParamKeys = array_fill_keys(array('fc', 'module', 'controller', 'id_lang'), null);
+
+        return array_diff_key($urlParameters, $pretashopParamKeys);
     }
 }

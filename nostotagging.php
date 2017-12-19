@@ -56,7 +56,7 @@ class NostoTagging extends Module
      *
      * @var string
      */
-    const PLUGIN_VERSION = '3.0.3';
+    const PLUGIN_VERSION = '3.1.0';
 
     /**
      * Internal name of the Nosto plug-in
@@ -613,8 +613,6 @@ class NostoTagging extends Module
      */
     public function hookDisplayShoppingCartFooter()
     {
-        NostoCustomerManager::updateNostoId();
-
         $html = '';
         $html .= NostoRecommendationElement::get("nosto-page-cart1");
         $html .= NostoRecommendationElement::get("nosto-page-cart2");
