@@ -206,6 +206,26 @@ class NostoHelperContext
     }
 
     /**
+     * Get cart from current context
+     *
+     * @return Cart|null
+     */
+    public static function getCart()
+    {
+        return Context::getContext()->cart;
+    }
+
+    /**
+     * Get cart Id from current context
+     *
+     * @return int|null
+     */
+    public static function getCartId()
+    {
+        return self::getCart() ? (int)self::getCart()->id : null;
+    }
+
+    /**
      * Get currency Id from current context
      *
      * @return int|null
@@ -297,5 +317,15 @@ class NostoHelperContext
     public static function getShop()
     {
         return Context::getContext()->shop;
+    }
+
+    /**
+     * Set value to cookie
+     * @param $key
+     * @param $value
+     */
+    public static function setCookieValue($key, $value)
+    {
+        Context::getContext()->cookie->__set($key, $value);
     }
 }

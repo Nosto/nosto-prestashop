@@ -108,10 +108,22 @@ class NostoCart extends NostoSDKCart
             $nostoCart->addItem($nostoLineItem);
         }
 
+        $hash = NostoCustomerManager::getRestoreCartHash($cart->id);
+        if ($hash) {
+            $nostoCart->setRestoreLink(
+                NostoHelperUrl::getModuleUrl(
+                    NostoTagging::MODULE_NAME,
+                    'restoreCart',
+                    array('h' => $hash)
+                )
+            );
+        }
+
         NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoCart), array(
             'cart' => $cart,
             'nosto_cart' => $nostoCart
         ));
+
         return $nostoCart;
     }
 }
