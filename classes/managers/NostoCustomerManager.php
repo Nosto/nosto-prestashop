@@ -207,7 +207,8 @@ class NostoCustomerManager
 
     /**
      * Resolves the cart (quote) by the given hash
-     *
+     * @param string $restoreCartHash restore cart hash
+     * @return string|null
      */
     public static function getCartId($restoreCartHash)
     {
