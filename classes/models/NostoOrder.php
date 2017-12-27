@@ -114,24 +114,17 @@ class NostoOrder extends NostoSDKOrder
         $totalShippingTaxIncl = 0;
         $totalWrappingTaxIncl = 0;
         $totalGiftTaxIncl = 0;
+        $totalProductTaxIncl = 0;
 
         // One order can be split into multiple orders, so we need to combine their data.
         $orderCollection = Order::getByReference($order->reference);
         foreach ($orderCollection as $item) {
             /** @var $item Order */
             $products = array_merge($products, $item->getProducts());
-            $totalDiscountsTaxIncl = NostoHelperPrice::roundPrice(
-                $totalDiscountsTaxIncl + $item->total_discounts_tax_incl,
-                $currency
-            );
-            $totalShippingTaxIncl = NostoHelperPrice::roundPrice(
-                $totalShippingTaxIncl + $item->total_shipping_tax_incl,
-                $currency
-            );
-            $totalWrappingTaxIncl = NostoHelperPrice::roundPrice(
-                $totalWrappingTaxIncl + $item->total_wrapping_tax_incl,
-                $currency
-            );
+            $totalDiscountsTaxIncl += $item->total_discounts_tax_incl;
+            $totalShippingTaxIncl += $item->total_shipping_tax_incl;
+            $totalWrappingTaxIncl += $item->total_wrapping_tax_incl;
+            $totalProductTaxIncl += $item->total_products_wt;
         }
 
         // We need the cart rules used for the order to check for gift products and free shipping.
@@ -161,10 +154,7 @@ class NostoOrder extends NostoSDKOrder
                         } else {
                             $productPriceWt = 0;
                         }
-                        $totalGiftTaxIncl = NostoHelperPrice::roundPrice(
-                            $totalGiftTaxIncl + $productPriceWt,
-                            $currency
-                        );
+                        $totalGiftTaxIncl += $productPriceWt;
                         $giftProduct = $product;
                         $giftProduct['product_quantity'] = 1;
                         $giftProduct['product_price_wt'] = 0;
@@ -211,17 +201,14 @@ class NostoOrder extends NostoSDKOrder
 
             if ($totalDiscountsTaxIncl > 0) {
                 // Subtract possible gift product price from total as gifts are tagged with price zero (0).
-                $totalDiscountsTaxIncl = NostoHelperPrice::roundPrice(
-                    $totalDiscountsTaxIncl - $totalGiftTaxIncl,
-                    $currency
-                );
+                $totalDiscountsTaxIncl -= $totalGiftTaxIncl;
                 if ($totalDiscountsTaxIncl > 0) {
                     $purchasedItem = new NostoOrderPurchasedItem();
                     $purchasedItem->setProductId("-1");
                     $purchasedItem->setQuantity(1);
                     $purchasedItem->setName('Discount');
                     // Note the negative value.
-                    $purchasedItem->setPrice(-$totalDiscountsTaxIncl);
+                    $purchasedItem->setPrice(NostoHelperPrice::roundPrice(-$totalDiscountsTaxIncl, $currency));
                     $purchasedItem->setPriceCurrencyCode((string)$currency->iso_code);
                     $purchasedItems[] = $purchasedItem;
                 }
@@ -238,12 +225,30 @@ class NostoOrder extends NostoSDKOrder
                 }
             }
 
+            if ($freeShipping && $totalShippingTaxIncl > 0 && $totalDiscountsTaxIncl > 0) {
+                $totalDiscountsTaxIncl -= $totalShippingTaxIncl;
+            }
+
+            //deduct the gift product among from product among
+            $totalProductTaxIncl -= $totalGiftTaxIncl;
+            $discountPercentage = max(0, $totalDiscountsTaxIncl / $totalProductTaxIncl);
+
+            /** @var NostoOrderPurchasedItem $purchasedItem */
+            foreach ($purchasedItems as $purchasedItem) {
+                if ($purchasedItem->getProductId() === '-1') {
+                    continue;
+                }
+
+                $unitPrice = $purchasedItem->getUnitPrice() * (1 - $discountPercentage);
+                $purchasedItem->setPrice(NostoHelperPrice::roundPrice($unitPrice, $currency));
+            }
+
             if (!$freeShipping && $totalShippingTaxIncl > 0) {
                 $purchasedItem = new NostoOrderPurchasedItem();
                 $purchasedItem->setProductId("-1");
                 $purchasedItem->setQuantity(1);
                 $purchasedItem->setName('Shipping');
-                $purchasedItem->setPrice($totalShippingTaxIncl);
+                $purchasedItem->setPrice(NostoHelperPrice::roundPrice($totalShippingTaxIncl, $currency));
                 $purchasedItem->setPriceCurrencyCode((string)$currency->iso_code);
                 $purchasedItems[] = $purchasedItem;
             }
@@ -253,7 +258,7 @@ class NostoOrder extends NostoSDKOrder
                 $purchasedItem->setProductId("-1");
                 $purchasedItem->setQuantity(1);
                 $purchasedItem->setName('Gift Wrapping');
-                $purchasedItem->setPrice($totalWrappingTaxIncl);
+                $purchasedItem->setPrice(NostoHelperPrice::roundPrice($totalWrappingTaxIncl, $currency));
                 $purchasedItem->setPriceCurrencyCode((string)$currency->iso_code);
                 $purchasedItems[] = $purchasedItem;
             }
