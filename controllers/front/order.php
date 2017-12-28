@@ -43,7 +43,7 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
         $id = Tools::getValue(NostoTagging::ID);
         if (!empty($id)) {
             $orders = Order::getByReference($id);
-            if (empty($orders)) {
+            if ($orders->count() == 0) {
                 Controller::getController('PageNotFoundController')->run();
             }
             $nostoOrder = NostoOrder::loadData($orders[0]);
