@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "3dbdb129cb9e880a781864e54778e34c",
+    "content-hash": "216db43d3a1403de61560a1021363e4f",
     "packages": [
         {
             "name": "nosto/php-sdk",
-            "version": "dev-feature/add-sku-id-to-cart-and-order-tagging",
+            "version": "3.1.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Nosto/nosto-php-sdk.git",
-                "reference": "b70461b993a46b96d4986f10c9878308c2161480"
+                "reference": "0e54b96c0241c62b5a827240ac214856816bc2e9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Nosto/nosto-php-sdk/zipball/b70461b993a46b96d4986f10c9878308c2161480",
-                "reference": "b70461b993a46b96d4986f10c9878308c2161480",
+                "url": "https://api.github.com/repos/Nosto/nosto-php-sdk/zipball/0e54b96c0241c62b5a827240ac214856816bc2e9",
+                "reference": "0e54b96c0241c62b5a827240ac214856816bc2e9",
                 "shasum": ""
             },
             "require": {
@@ -51,7 +51,7 @@
                 "BSD-3-Clause"
             ],
             "description": "PHP SDK for developing Nosto modules for e-commerce platforms",
-            "time": "2017-12-28T08:28:11+00:00"
+            "time": "2017-12-28T12:09:55+00:00"
         },
         {
             "name": "phpseclib/phpseclib",
@@ -1971,9 +1971,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "nosto/php-sdk": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
