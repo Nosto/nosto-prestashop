@@ -29,6 +29,11 @@ use Nosto\Object\Cart\LineItem as NostoSDKCartItem;
 class NostoCart extends NostoSDKCart
 {
     /**
+     * The name of the hash parameter to look from URL
+     */
+    const HASH_PARAM = 'h';
+
+    /**
      * @param $idCurrency
      * @return Currency
      * @suppress PhanTypeMismatchArgument
@@ -115,7 +120,7 @@ class NostoCart extends NostoSDKCart
                 NostoHelperUrl::getModuleUrl(
                     NostoTagging::MODULE_NAME,
                     'restoreCart',
-                    array(NostoTaggingRestoreCartModuleFrontController::HASH_PARAM => $hash)
+                    array(self::HASH_PARAM => $hash)
                 )
             );
         }

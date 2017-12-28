@@ -22,6 +22,7 @@
  * @copyright 2013-2016 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
+
 use Nosto\NostoException as NostoSDKException;
 
 class NostoTaggingRestoreCartModuleFrontController extends ModuleFrontController
@@ -31,10 +32,6 @@ class NostoTaggingRestoreCartModuleFrontController extends ModuleFrontController
     const QUERY_STRING = 'QUERY_STRING';
     const ACTION = 'action';
     const SHOW = 'show';
-    /**
-     * The name of the hash parameter to look from URL
-     */
-    const HASH_PARAM = 'h';
 
     /**
      * @inheritdoc
@@ -45,7 +42,7 @@ class NostoTaggingRestoreCartModuleFrontController extends ModuleFrontController
         $query = $_SERVER[self::QUERY_STRING];
         $urlParameters = array();
         parse_str($query, $urlParameters);
-        unset($urlParameters[self::HASH_PARAM]);
+        unset($urlParameters[NostoCart::HASH_PARAM]);
         $urlParameters = $this->removePrestashopParams($urlParameters);
         $urlParameters[self::ACTION] = self::SHOW;
 
@@ -55,7 +52,7 @@ class NostoTaggingRestoreCartModuleFrontController extends ModuleFrontController
             ) {
                 $redirectUrl = NostoHelperUrl::getPageUrl(self::CART_CONTROLLER, $urlParameters);
             } else {
-                $restoreCartHash = Tools::getValue(self::HASH_PARAM);
+                $restoreCartHash = Tools::getValue(NostoCart::HASH_PARAM);
                 if (!$restoreCartHash) {
                     NostoHelperLogger::error(new NostoSDKException('No hash provided for restore cart'));
                 } else {
