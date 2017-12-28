@@ -24,6 +24,7 @@
  */
 
 use Nosto\Object\Order\Order as NostoSDKOrder;
+use Nosto\Object\Cart\LineItem as NostoSDKLineItem;
 
 class NostoOrder extends NostoSDKOrder
 {
@@ -188,6 +189,7 @@ class NostoOrder extends NostoSDKOrder
 
                 $purchasedItem = new NostoOrderPurchasedItem();
                 $purchasedItem->setProductId((string)$p->id);
+                $purchasedItem->setSkuId((string)$idAttribute);
                 $purchasedItem->setQuantity((int)$item['product_quantity']);
                 $purchasedItem->setName((string)$productName);
                 $purchasedItem->setPrice($item['product_price_wt']);
@@ -204,7 +206,7 @@ class NostoOrder extends NostoSDKOrder
                 $totalDiscountsTaxIncl -= $totalGiftTaxIncl;
                 if ($totalDiscountsTaxIncl > 0) {
                     $purchasedItem = new NostoOrderPurchasedItem();
-                    $purchasedItem->setProductId("-1");
+                    $purchasedItem->setProductId(NostoSDKLineItem::PSEUDO_PRODUCT_ID);
                     $purchasedItem->setQuantity(1);
                     $purchasedItem->setName('Discount');
                     // Note the negative value.
@@ -235,7 +237,7 @@ class NostoOrder extends NostoSDKOrder
 
             /** @var NostoOrderPurchasedItem $purchasedItem */
             foreach ($purchasedItems as $purchasedItem) {
-                if ($purchasedItem->getProductId() === '-1') {
+                if ($purchasedItem->getProductId() === NostoSDKLineItem::PSEUDO_PRODUCT_ID) {
                     continue;
                 }
 
@@ -245,7 +247,7 @@ class NostoOrder extends NostoSDKOrder
 
             if (!$freeShipping && $totalShippingTaxIncl > 0) {
                 $purchasedItem = new NostoOrderPurchasedItem();
-                $purchasedItem->setProductId("-1");
+                $purchasedItem->setProductId(NostoSDKLineItem::PSEUDO_PRODUCT_ID);
                 $purchasedItem->setQuantity(1);
                 $purchasedItem->setName('Shipping');
                 $purchasedItem->setPrice(NostoHelperPrice::roundPrice($totalShippingTaxIncl, $currency));
@@ -255,7 +257,7 @@ class NostoOrder extends NostoSDKOrder
 
             if ($totalWrappingTaxIncl > 0) {
                 $purchasedItem = new NostoOrderPurchasedItem();
-                $purchasedItem->setProductId("-1");
+                $purchasedItem->setProductId(NostoSDKLineItem::PSEUDO_PRODUCT_ID);
                 $purchasedItem->setQuantity(1);
                 $purchasedItem->setName('Gift Wrapping');
                 $purchasedItem->setPrice(NostoHelperPrice::roundPrice($totalWrappingTaxIncl, $currency));

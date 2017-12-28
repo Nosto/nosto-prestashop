@@ -97,6 +97,7 @@ class NostoCart extends NostoSDKCart
 
             $nostoLineItem = new NostoSDKCartItem();
             $nostoLineItem->setProductId($item['id_product']);
+            $nostoLineItem->setSkuId($item['id_product_attribute']);
             $nostoLineItem->setQuantity((int)$item['cart_quantity']);
             $nostoLineItem->setName((string)$name);
             if (is_numeric($item['price_wt'])) {

@@ -2,7 +2,7 @@
   "name": "nosto/nostotagging",
   "description": "Nosto Module for Prestashop",
   "require": {
-    "nosto/php-sdk": "3.1.4"
+    "nosto/php-sdk": "dev-feature/add-sku-id-to-cart-and-order-tagging"
   },
   "require-dev": {
     "phing/phing": "2.*",
