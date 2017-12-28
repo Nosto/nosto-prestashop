@@ -29,6 +29,11 @@ use Nosto\Object\Cart\LineItem as NostoSDKCartItem;
 class NostoCart extends NostoSDKCart
 {
     /**
+     * The name of the hash parameter to look from URL
+     */
+    const HASH_PARAM = 'h';
+
+    /**
      * @param $idCurrency
      * @return Currency
      * @suppress PhanTypeMismatchArgument
@@ -97,6 +102,7 @@ class NostoCart extends NostoSDKCart
 
             $nostoLineItem = new NostoSDKCartItem();
             $nostoLineItem->setProductId($item['id_product']);
+            $nostoLineItem->setSkuId($item['id_product_attribute']);
             $nostoLineItem->setQuantity((int)$item['cart_quantity']);
             $nostoLineItem->setName((string)$name);
             if (is_numeric($item['price_wt'])) {
@@ -108,10 +114,22 @@ class NostoCart extends NostoSDKCart
             $nostoCart->addItem($nostoLineItem);
         }
 
+        $hash = NostoCustomerManager::getRestoreCartHash($cart->id);
+        if ($hash) {
+            $nostoCart->setRestoreLink(
+                NostoHelperUrl::getModuleUrl(
+                    NostoTagging::MODULE_NAME,
+                    'restoreCart',
+                    array(self::HASH_PARAM => $hash)
+                )
+            );
+        }
+
         NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoCart), array(
             'cart' => $cart,
             'nosto_cart' => $nostoCart
         ));
+
         return $nostoCart;
     }
 }

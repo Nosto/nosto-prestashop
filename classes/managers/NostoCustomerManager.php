@@ -66,6 +66,7 @@ class NostoCustomerManager
         $sql = 'CREATE TABLE IF NOT EXISTS `' . $table . '` (
 			`id_cart` INT(10) UNSIGNED NOT NULL,
 			`id_nosto_customer` VARCHAR(64) NOT NULL,
+			`restore_cart_hash` VARCHAR(64) NULL,
 			`date_add` DATETIME NOT NULL,
 			`date_upd` DATETIME NULL,
 			PRIMARY KEY (`id_cart`, `id_nosto_customer`)
@@ -93,6 +94,20 @@ class NostoCustomerManager
     }
 
     /**
+     * Add restore-cart hash column to customer link table.
+     *
+     * @return bool if the creation of the table was successful
+     */
+    public static function addRestoreCartHashColumnToCustomerLinkTable()
+    {
+        $table = self::getCustomerLinkTableName();
+        $sql = 'ALTER TABLE ' . $table . ' 
+            ADD COLUMN `restore_cart_hash` VARCHAR(64) NULL AFTER `id_nosto_customer`';
+
+        return Db::getInstance()->execute($sql);
+    }
+
+    /**
      * Updates the current customers Nosto ID in the reference table.
      *
      * @return bool true if updated correctly and false otherwise.
@@ -112,21 +127,39 @@ class NostoCustomerManager
         $table = self::getCustomerLinkTableName();
         $idCart = (int)$context->cart->id;
         $idNostoCustomer = pSQL($idNostoCustomer);
+        $restoreCartHash = self::generateRestoreCartHash();
         $where = '`id_cart` = ' . $idCart . ' AND `id_nosto_customer` = "' . $idNostoCustomer . '"';
         $existingLink = Db::getInstance()->getRow('SELECT * FROM `' . $table . '` WHERE ' . $where);
         if (empty($existingLink)) {
             $data = array(
                 'id_cart' => $idCart,
                 'id_nosto_customer' => $idNostoCustomer,
-                'date_add' => date('Y-m-d H:i:s')
+                'date_add' => date('Y-m-d H:i:s'),
+                'restore_cart_hash' => $restoreCartHash
             );
             return Db::getInstance()->insert($table, $data, false, true, Db::INSERT, false);
         } else {
             $data = array(
                 'date_upd' => date('Y-m-d H:i:s')
             );
+
+            if (!is_array($existingLink) || !$existingLink['restore_cart_hash']) {
+                $data['restore_cart_hash'] = $restoreCartHash;
+            }
+
             return Db::getInstance()->update($table, $data, $where, 0, false, true, false);
         }
+    }
+
+    /**
+     * Generate unique hash for restore cart
+     * Size of it equals to or less than restore_cart_hash column length
+     *
+     * @return string
+     */
+    private static function generateRestoreCartHash()
+    {
+        return hash('sha256', uniqid(NostoTagging::MODULE_NAME));
     }
 
     /**
@@ -147,6 +180,50 @@ class NostoCustomerManager
         if (is_string($result)) {
             return $result;
         } else {
+            return null;
+        }
+    }
+
+    /**
+     * Returns the restore cart hash code for a given cart id
+     *
+     * @param int $cartId cart Id
+     * @return string|null the restore cart hash code
+     */
+    public static function getRestoreCartHash($cartId)
+    {
+        $table = self::getCustomerLinkTableName();
+        $sql = 'SELECT `restore_cart_hash`'
+            . ' FROM `' . $table . '`'
+            . ' WHERE `restore_cart_hash` IS NOT NULL AND `id_cart` = ' . $cartId
+            . ' ORDER BY `date_add` ASC';
+
+        $result = Db::getInstance()->getValue($sql);
+        if (is_string($result)) {
+            return $result;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Resolves the cart (quote) by the given hash
+     * @param string $restoreCartHash restore cart hash
+     * @return string|null
+     */
+    public static function getCartId($restoreCartHash)
+    {
+        $table = self::getCustomerLinkTableName();
+        $sql = 'SELECT `id_cart`'
+            . ' FROM `' . $table . '`'
+            . ' WHERE `restore_cart_hash` = "' . pSQL($restoreCartHash) . '"'
+            . ' ORDER BY `date_add` ASC';
+
+        $result = Db::getInstance()->getValue($sql);
+        if (is_string($result)) {
+            return $result;
+        } else {
+            NostoHelperLogger::info("Can't find cart id with restore cart hash $restoreCartHash");
             return null;
         }
     }

@@ -69,34 +69,9 @@ your shops frontend by clicking the preview button on the page.
 You can read more about how to modify Nosto to suit your needs in our [support center](https://support.nosto.com/),
 where you will find PrestaShop related documentation and guides.
 
-### Extending
+## Documentation
 
-#### Change position of recommendation elements
-
-All recommendations are added through the PrestaShop hook system, which means that their position is dependent on the
-hooks position in the theme.
-
-In order to change the position of any recommendation element added by Nosto, you can either move the PrestaShop hook
-position in your theme or unlink the Nosto module from the hook and add the elements directly into your theme. Please
-refer to the PrestaShop documentation on how to re-position hooks.
-
-During the module installation, some new hooks are also created. These are:
-
-* displayCategoryTop
-* displayCategoryFooter
-* displaySearchTop
-* displaySearchFooter
-
-These can be used to position the recommendations on the product category and search result pages, as PrestaShop does
-not include any hooks out-of-the-box for these pages. The module will automatically add the recommendations without
-these hooks as well, but for more precise positioning we recommend to include them in your theme. This is as easy as
-adding a line like `{hook h='displayCategoryTop'}` to your theme layout file.
-
-#### Adding new recommendation elements
-
-The easiest way to add your own recommendation elements is to simply add the placeholder "div" in your theme layout,
-e.g. `<div class="nosto_element" id="{id-of-your-choice}"></div>`. Note that you need to register this new element in
-your [Nosto account settings](https://my.nosto.com/), so that Nosto can start using it.
+For more information, please see our exhaustive [wiki](https://github.com/Nosto/nosto-prestashop/wiki)
 
 ## License
 
@@ -104,4 +79,4 @@ Academic Free License ("AFL") v. 3.0
 
 ## Dependencies
 
-PrestaShop version 1.5.x - 1.6.x
+PrestaShop version 1.5.x - 1.7.x

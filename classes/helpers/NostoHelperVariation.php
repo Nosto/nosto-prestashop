@@ -142,7 +142,7 @@ class NostoHelperVariation
             return Cache::retrieve($cacheKey);
         }
 
-        $filter = $shopId ? ' and (sp.id_shop = ' . $shopId . ' OR sp.id_shop = 0)': '';
+        $filter = $shopId ? ' and (sp.id_shop = ' . $shopId . ' OR sp.id_shop = 0)' : '';
         $result = Db::getInstance()->executeS(
             sprintf(
                 "SELECT DISTINCT sp.id_country FROM `%sspecific_price` sp

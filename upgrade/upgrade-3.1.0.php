@@ -1,5 +1,4 @@
 <?php
-
 /**
  * 2013-2017 Nosto Solutions Ltd
  *
@@ -23,28 +22,23 @@
  * @copyright 2013-2017 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
-class NostoCartTagging
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+/**
+ * Upgrades the module to version 3.1.0.
+ *
+ * Add restore cart hash column
+ *
+ * @return bool
+ * @suppress PhanUnreferencedMethod
+ */
+function upgrade_module_3_1_0()
 {
-    /**
-     * Renders the cart tagging by checking the cart contents
-     * @return string|null the tagging
-     */
-    public static function get()
-    {
-        //It was moved here to support restore cart link
-        //because the restore cart hash must be generated before showing the restore cart link tagging
-        NostoCustomerManager::updateNostoId();
+    $success = NostoCustomerManager::addRestoreCartHashColumnToCustomerLinkTable();
+    NostoHelperConfig::clearCache();
 
-        $cid = NostoHelperCookie::readNostoCookie();
-        $hcid = $cid ? hash(NostoTagging::VISITOR_HASH_ALGO, $cid) : '';
-
-        $nostoCart = NostoCart::loadData(Context::getContext()->cart);
-
-        if (!$nostoCart instanceof NostoCart) {
-            return null;
-        }
-        $nostoCart->setHcid($hcid);
-
-        return $nostoCart->toHtml();
-    }
+    return $success;
 }

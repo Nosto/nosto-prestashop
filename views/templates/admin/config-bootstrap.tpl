@@ -259,7 +259,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="panel-footer"  style="display:none">
+                <div class="panel-footer"  style="display:none;margin-bottom: 10px;"">
                     <button type="submit" onclick="Nosto.saveAdvancedSettings()" value="1"
                             name="submit_nostotagging_advanced_settings"
                             id="submit_nostotagging_advanced_settings"

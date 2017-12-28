@@ -27,6 +27,9 @@ use Nosto\Object\Product\Product as NostoSDKProduct;
 
 class NostoProduct extends NostoSDKProduct
 {
+    const NAME = 'name';
+    const VALUE = 'value';
+
     /**
      * Loads the product data from supplied context and product objects.
      *
@@ -53,6 +56,7 @@ class NostoProduct extends NostoSDKProduct
         $nostoProduct->amendImage($product);
         $nostoProduct->amendAlternateImages($product);
         $nostoProduct->amendSupplierCost($product);
+        $nostoProduct->amendCustomFields($product);
 
         if (NostoHelperConfig::getVariationEnabled()) {
             $nostoProduct->amendVariation($product);
@@ -76,6 +80,20 @@ class NostoProduct extends NostoSDKProduct
         ));
 
         return $nostoProduct;
+    }
+
+    protected function amendCustomFields(Product $product)
+    {
+        $features = $product->getFrontFeatures(NostoHelperContext::getLanguageId());
+        if ($features) {
+            foreach ($features as $feature) {
+                if (array_key_exists(self::NAME, $feature)
+                    && array_key_exists(self::VALUE, $feature)
+                ) {
+                    $this->addCustomField($feature[self::NAME], $feature[self::VALUE]);
+                }
+            }
+        }
     }
 
     protected function amendVariation($product)
