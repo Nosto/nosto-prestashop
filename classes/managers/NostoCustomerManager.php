@@ -193,8 +193,9 @@ class NostoCustomerManager
     public static function getRestoreCartHash($cartId)
     {
         $table = self::getCustomerLinkTableName();
-        $sql = 'SELECT `restore_cart_hash` FROM `' . $table
-            . '` WHERE `restore_cart_hash` IS NOT NULL AND `id_cart` = ' . $cartId
+        $sql = 'SELECT `restore_cart_hash`'
+            . ' FROM `' . $table . '`'
+            . ' WHERE `restore_cart_hash` IS NOT NULL AND `id_cart` = ' . $cartId
             . ' ORDER BY `date_add` ASC';
 
         $result = Db::getInstance()->getValue($sql);
@@ -213,13 +214,16 @@ class NostoCustomerManager
     public static function getCartId($restoreCartHash)
     {
         $table = self::getCustomerLinkTableName();
-        $sql = 'SELECT `id_cart` FROM `' . $table . '` WHERE `restore_cart_hash` = "' . pSQL($restoreCartHash) . '"' .
-            ' ORDER BY `date_add` ASC';
+        $sql = 'SELECT `id_cart`'
+            . ' FROM `' . $table . '`'
+            . ' WHERE `restore_cart_hash` = "' . pSQL($restoreCartHash) . '"'
+            . ' ORDER BY `date_add` ASC';
 
         $result = Db::getInstance()->getValue($sql);
         if (is_string($result)) {
             return $result;
         } else {
+            NostoHelperLogger::info("Can't find cart id with restore cart hash $restoreCartHash");
             return null;
         }
     }

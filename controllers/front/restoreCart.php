@@ -80,6 +80,12 @@ class NostoTaggingRestoreCartModuleFrontController extends ModuleFrontController
         Tools::redirect($redirectUrl);
     }
 
+    /**
+     * Remove the prestashop parameters from the parameters list
+     *
+     * @param $urlParameters
+     * @return array return an array without the prestashop parameters
+     */
     private function removePrestashopParams($urlParameters)
     {
         $pretashopParamKeys = array_fill_keys(array('fc', 'module', 'controller', 'id_lang'), null);

@@ -87,7 +87,9 @@ class NostoProduct extends NostoSDKProduct
         $features = $product->getFrontFeatures(NostoHelperContext::getLanguageId());
         if ($features) {
             foreach ($features as $feature) {
-                if (array_key_exists(self::NAME, $feature) && array_key_exists(self::VALUE, $feature)) {
+                if (array_key_exists(self::NAME, $feature)
+                    && array_key_exists(self::VALUE, $feature)
+                ) {
                     $this->addCustomField($feature[self::NAME], $feature[self::VALUE]);
                 }
             }

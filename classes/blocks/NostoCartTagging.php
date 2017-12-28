@@ -31,6 +31,8 @@ class NostoCartTagging
      */
     public static function get()
     {
+        //It was moved here to support restore cart link
+        //because the restore cart hash must be generated before showing the restore cart link tagging
         NostoCustomerManager::updateNostoId();
 
         $cid = NostoHelperCookie::readNostoCookie();

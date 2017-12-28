@@ -115,7 +115,7 @@ class NostoCart extends NostoSDKCart
                 NostoHelperUrl::getModuleUrl(
                     NostoTagging::MODULE_NAME,
                     'restoreCart',
-                    array('h' => $hash)
+                    array(NostoTaggingRestoreCartModuleFrontController::HASH_PARAM => $hash)
                 )
             );
         }

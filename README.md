@@ -79,4 +79,4 @@ Academic Free License ("AFL") v. 3.0
 
 ## Dependencies
 
-PrestaShop version 1.5.x - 1.67.x
+PrestaShop version 1.5.x - 1.7.x
