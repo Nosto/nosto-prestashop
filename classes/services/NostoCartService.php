@@ -96,8 +96,6 @@ class NostoCartService extends AbstractNostoService
 
                 $cart = $params['cart'];
 
-                $hcid = $nostoCustomerId ? hash(NostoTagging::VISITOR_HASH_ALGO, $nostoCustomerId) : '';
-
                 //restore cart hash must be generated before sending the cart to nosto
                 NostoCustomerManager::updateNostoId();
 
@@ -105,6 +103,7 @@ class NostoCartService extends AbstractNostoService
                 $cartUpdate->setCart($nostoCart);
 
                 if ($nostoCart instanceof NostoCart) {
+                    $hcid = hash(NostoTagging::VISITOR_HASH_ALGO, $nostoCustomerId);
                     $nostoCart->setHcid($hcid);
                 }
                 $service = new NostoSDKCartOperation($account);
