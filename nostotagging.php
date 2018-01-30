@@ -187,6 +187,9 @@ class NostoTagging extends Module
                 || !$this->registerHook('postUpdateOrderStatus')
                 || !$this->registerHook('paymentTop')
                 || !$this->registerHook('home')
+                || !$this->registerHook('actionCartSave')
+                || !$this->registerHook('actionCartUpdateQuantityBefore')
+                || !$this->registerHook('actionBeforeCartUpdateQty')
             ) {
                 $success = false;
                 $this->_errors[] = $this->l(
@@ -744,6 +747,31 @@ class NostoTagging extends Module
     public function hookPostUpdateOrderStatus(array $params)
     {
         $this->hookActionOrderStatusPostUpdate($params);
+    }
+
+    public function hookActionCartUpdateQuantityBefore(array $params)
+    {
+        try {
+            $service = new NostoCartService();
+            $service->cartItemQuantityChanged($params);
+        } catch (\Exception $e) {
+            NostoHelperLogger::error($e);
+        }
+    }
+    
+    public function hookActionBeforeCartUpdateQty(array $params)
+    {
+        $this->hookActionCartUpdateQuantityBefore($params);
+    }
+
+    public function hookActionCartSave(array $params)
+    {
+        try {
+            $service = new NostoCartService();
+            $service->cartUpdated($params);
+        } catch (\Exception $e) {
+            NostoHelperLogger::error($e);
+        }
     }
 
     /**

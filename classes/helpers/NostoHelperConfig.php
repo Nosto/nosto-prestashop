@@ -34,6 +34,7 @@ class NostoHelperConfig
     const CRON_ACCESS_TOKEN = 'NOSTOTAGGING_CRON_ACCESS_TOKEN';
     const MULTI_CURRENCY_METHOD = 'NOSTOTAGGING_MC_METHOD';
     const SKU_SWITCH = 'NOSTOTAGGING_SKU_SWITCH';
+    const CART_UPDATE_SWITCH = 'NOSTOTAGGING_CART_UPDATE_SWITCH';
     const VARIATION_SWITCH = 'NOSTOTAGGING_VARIATION_SWITCH';
     const VARIATION_TAX_RULE_SWITCH = 'NOSTOTAGGING_TAX_RULE_SWITCH';
     const TOKEN_CONFIG_PREFIX = 'NOSTOTAGGING_API_TOKEN_';
@@ -348,6 +349,26 @@ class NostoHelperConfig
     public static function saveSkuEnabled($enabled)
     {
         return self::saveSetting(self::SKU_SWITCH, $enabled);
+    }
+
+    /**
+     * Is cart update feature enabled
+     * @return bool true if cart update feature has been enabled, false otherwise
+     */
+    public static function getCartUpdateEnabled()
+    {
+        return (bool)self::read(self::CART_UPDATE_SWITCH);
+    }
+
+    /**
+     * Saves enable/disable of cart update feature
+     *
+     * @param bool $enabled
+     * @return bool true if saving the configuration was successful, false otherwise
+     */
+    public static function saveCartUpdateEnabled($enabled)
+    {
+        return self::saveSetting(self::CART_UPDATE_SWITCH, $enabled);
     }
 
     /**

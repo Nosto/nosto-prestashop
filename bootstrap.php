@@ -57,6 +57,7 @@ class NostoBootstrap
         require_once($moduleDir . '/classes/services/NostoRatesService.php');
         require_once($moduleDir . '/classes/services/NostoSettingsService.php');
         require_once($moduleDir . '/classes/services/NostoSignupService.php');
+        require_once($moduleDir . '/classes/services/NostoCartService.php');
         require_once($moduleDir . '/classes/helpers/NostoHelperUrl.php');
         require_once($moduleDir . '/classes/helpers/NostoHelperCurrency.php');
         require_once($moduleDir . '/classes/helpers/NostoHelperPrice.php');

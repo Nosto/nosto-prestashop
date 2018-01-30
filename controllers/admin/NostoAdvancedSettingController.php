@@ -41,6 +41,7 @@ class NostoAdvancedSettingController extends NostoBaseController
         NostoHelperConfig::saveNostoTaggingRenderPosition(Tools::getValue('nostotagging_position'));
         NostoHelperConfig::saveVariationEnabled(Tools::getValue('nosto_variation_switch'));
         NostoHelperConfig::saveVariationTaxRuleEnabled(Tools::getValue('nosto_variation_tax_rule_switch'));
+        NostoHelperConfig::saveCartUpdateEnabled(Tools::getValue('nosto_cart_update_switch'));
 
         $account = NostoHelperAccount::getAccount();
         $accountMeta = NostoAccountSignup::loadData();
