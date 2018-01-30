@@ -73,7 +73,7 @@ class NostoCartService extends AbstractNostoService
                         NostoSDKSerializationHelper::serialize($cartUpdate),
                         time() + 60,
                         '/',
-                        null,
+                        '',
                         false,
                         false
                     );
