@@ -355,7 +355,7 @@ class NostoHelperConfig
      * Is cart update feature enabled
      * @return bool true if cart update feature has been enabled, false otherwise
      */
-    public static function getCartUpdateEnabled()
+    public static function isCartUpdateEnabled()
     {
         return (bool)self::read(self::CART_UPDATE_SWITCH);
     }

@@ -749,6 +749,12 @@ class NostoTagging extends Module
         $this->hookActionOrderStatusPostUpdate($params);
     }
 
+    /**
+     * Cart item quantity update event. In this hook it send a cart updated event to nosto
+     * or set a cookie to inform javascript about the cart update
+     *
+     * @param array $params the observer parameters, contains the added product information
+     */
     public function hookActionCartUpdateQuantityBefore(array $params)
     {
         try {
@@ -758,12 +764,26 @@ class NostoTagging extends Module
             NostoHelperLogger::error($e);
         }
     }
-    
+
+    /**
+     * Cart item quantity update event. In this hook it send a cart updated event to nosto
+     * or set a cookie to inform javascript about the cart update.
+     * This is for the prestashop 1.6. This hook should
+     * not have any logic and should only delegate to another hook.
+     *
+     * @param array $params the observer parameters, contains the added product information
+     */
     public function hookActionBeforeCartUpdateQty(array $params)
     {
         $this->hookActionCartUpdateQuantityBefore($params);
     }
 
+    /**
+     * Cart updated event. In this hook it send a cart updated event to nosto
+     * or set a cookie to inform javascript about the cart update.
+     *
+     * @param array $params the observer parameters, contains the updated cart model
+     */
     public function hookActionCartSave(array $params)
     {
         try {

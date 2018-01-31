@@ -66,7 +66,7 @@ class NostoCartService extends AbstractNostoService
 
             $cartUpdate = new NostoSDKCartUpdate();
             $cartUpdate->setAddedItems(self::$addedItems);
-            if (!NostoHelperConfig::getCartUpdateEnabled()) {
+            if (!NostoHelperConfig::isCartUpdateEnabled()) {
                 if (!headers_sent()) {
                     setcookie(
                         self::COOKIE_NAME,
