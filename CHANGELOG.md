@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
 ## 3.2.0
-- Support add to cart popup recommendations
+- Add support for add to cart popup recommendations
 
 ## 3.1.0
 - Support restoring abandoned shopping cart
