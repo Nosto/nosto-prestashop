@@ -47,6 +47,10 @@ class NostoCartService extends AbstractNostoService
 
     const ID_PRODUCT_ATTRIBUTE = 'id_product_attribute';
 
+    /**
+     * Cart updated event handler. It is called after cart updated.
+     * @param array $params event parameters
+     */
     public function cartUpdated($params)
     {
         try {
@@ -115,6 +119,10 @@ class NostoCartService extends AbstractNostoService
         }
     }
 
+    /**
+     * Cart item quantity change event handler. It is called before the cart has been saved
+     * @param array $params event parameters
+     */
     public function cartItemQuantityChanged($params)
     {
         try {
