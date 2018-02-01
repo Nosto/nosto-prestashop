@@ -133,6 +133,26 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Send cart update -->
+                        <hr>
+                        <div class="form-group">
+                            <label class="control-label col-lg-3">
+                                <span title="" data-toggle="tooltip" class="label-tooltip" data-original-title="{l s="Set this to no if you don't want to send real-time cart updates to Nosto via API" mod='nostotagging'}" data-html="true">
+                                    {l s='Real-time cart updates to Nosto' mod='nostotagging'}
+                                </span>
+                            </label>
+                            <div class="col-lg-9">
+                                <span class="switch prestashop-switch fixed-width-lg">
+                                    <input type="radio" name="nosto_cart_update_switch" id="nosto_cart_update_switch_on" value="1" {if $cart_update_enabled === true}checked="checked" {/if}/>
+                                    <label for="nosto_cart_update_switch_on" class="radioCheck">Yes</label>
+                                    <input type="radio" name="nosto_cart_update_switch" id="nosto_cart_update_switch_off" value="0" {if $cart_update_enabled !== true}checked="checked" {/if}/>
+                                    <label for="nosto_cart_update_switch_off" class="radioCheck">No</label>
+                                    <a class="slide-button btn"></a>
+                                </span>
+                            </div>
+                        </div>
+
                         <hr>
                         <div class="form-group">
                             <div class="alert alert-danger col-lg-9 col-lg-offset-3 multi-currency-variation-alert">

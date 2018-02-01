@@ -23,6 +23,8 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
+use Nosto\Helper\ExportHelper as NostoSDKExportHelper;
+
 /**
  * Base controller for all Nosto API front controllers.
  *
@@ -68,7 +70,7 @@ abstract class NostoTaggingApiModuleFrontController extends ModuleFrontControlle
     {
         $account = NostoHelperAccount::getAccount();
         if ($account && $account->isConnectedToNosto()) {
-            $cipherText = Nosto\Helper\ExportHelper::export($account, $collection);
+            $cipherText = (new NostoSDKExportHelper())->export($account, $collection);
             echo $cipherText;
         }
         // It is important to stop the script execution after the export,
