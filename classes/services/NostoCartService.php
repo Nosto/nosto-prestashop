@@ -66,21 +66,7 @@ class NostoCartService extends AbstractNostoService
 
             $cartUpdate = new NostoSDKCartUpdate();
             $cartUpdate->setAddedItems(self::$addedItems);
-            if (!NostoHelperConfig::isCartUpdateEnabled()) {
-                if (!headers_sent()) {
-                    setcookie(
-                        self::COOKIE_NAME,
-                        NostoSDKSerializationHelper::serialize($cartUpdate),
-                        time() + 60,
-                        '/',
-                        '',
-                        false,
-                        false
-                    );
-                } else {
-                    NostoHelperLogger::info('Headers sent already. Cannot set the cookie.');
-                }
-            } else {
+            if (NostoHelperConfig::isCartUpdateEnabled()) {
                 $nostoCustomerId = NostoHelperCookie::readNostoCookie();
                 if (!$nostoCustomerId) {
                     NostoHelperLogger::info('Cannot find customer id from cookie');
@@ -108,6 +94,20 @@ class NostoCartService extends AbstractNostoService
                 }
                 $service = new NostoSDKCartOperation($account);
                 $service->updateCart($cartUpdate, $nostoCustomerId, $account->getName());
+            }
+
+            if (!headers_sent()) {
+                setcookie(
+                    self::COOKIE_NAME,
+                    NostoSDKSerializationHelper::serialize($cartUpdate),
+                    time() + 60,
+                    '/',
+                    '',
+                    false,
+                    false
+                );
+            } else {
+                NostoHelperLogger::info('Headers sent already. Cannot set the cookie.');
             }
         } catch (\Exception $e) {
             NostoHelperLogger::error($e);
