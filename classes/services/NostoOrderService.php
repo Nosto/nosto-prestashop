@@ -41,13 +41,13 @@ class NostoOrderService extends AbstractNostoService
                 if (is_scalar($orderId)) {
                     NostoHelperLogger::info(
                         sprintf(
-                            'Got actionOrderStatusPostUpdate event but not able to load order: %s',
+                            'Unable to send not loaded / unsaved order: %s',
                             $orderId
                         )
                     );
                 } else {
                     NostoHelperLogger::info(
-                        'Got actionOrderStatusPostUpdate event but not able to load order.'
+                        'Unable to send not loaded / unsaved order'
                     );
                 }
                 return;
