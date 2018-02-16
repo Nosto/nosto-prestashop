@@ -35,8 +35,21 @@ class NostoOrderService extends AbstractNostoService
     public function send($params)
     {
         if (isset($params['id_order'])) {
-            $order = new Order($params['id_order']);
-            if ($order instanceof Order === false) {
+            $orderId = $params['id_order'];
+            $order = new Order($orderId);
+            if (!Validate::isLoadedObject($order)) {
+                if (is_scalar($orderId)) {
+                    NostoHelperLogger::info(
+                        sprintf(
+                            'Got actionOrderStatusPostUpdate event but not able to load order: %s',
+                            $orderId
+                        )
+                    );
+                } else {
+                    NostoHelperLogger::info(
+                        'Got actionOrderStatusPostUpdate event but not able to load order.'
+                    );
+                }
                 return;
             }
             $this->sendOrder($order);
@@ -63,6 +76,10 @@ class NostoOrderService extends AbstractNostoService
                 function () use ($order) {
                     try {
                         $nostoOrder = NostoOrder::loadData($order);
+                        if (!$nostoOrder instanceof NostoOrder) {
+                            NostoHelperLogger::info('Not able to load order.');
+                            return;
+                        }
                         $account = NostoHelperAccount::getAccount();
                         if ($account !== null && $account->isConnectedToNosto()) {
                             $customerId = NostoCustomerManager::getNostoId($order);
