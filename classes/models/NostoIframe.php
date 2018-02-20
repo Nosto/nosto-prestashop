@@ -99,7 +99,7 @@ class NostoIframe extends NostoSDKIframe
                 $beginDate = $daysBack->sub(new DateInterval("P30D"))->format("Y-m-d");
                 $sales = AdminStatsControllerCore::getTotalSales($beginDate, $today);
                 $visits = AdminStatsControllerCore::getVisits(false, $beginDate, $today);
-                $nostoIframe->setRecentVisits(strval($visits));
+                $nostoIframe->setRecentVisits((string)$visits);
                 $nostoIframe->setRecentSales(number_format((float)$sales));
                 $currency = NostoHelperContext::getCurrency();
                 if ($currency instanceof Currency) {
