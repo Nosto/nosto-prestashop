@@ -158,9 +158,9 @@ class NostoProductService extends AbstractNostoService
             $productsInStore[$accountName][self::KEY_DATA][$batch][] = $nostoProduct;
         }
 
-        foreach ($productsInStore as $nostoAccountName => $data) {
+        foreach ($productsInStore as $data) { //@codingStandardsIgnoreLine
             $nostoAccount = $data[self::KEY_ACCOUNT];
-            foreach ($data[self::KEY_DATA] as $batchIndex => $batches) {
+            foreach ($data[self::KEY_DATA] as $batches) { //@codingStandardsIgnoreLine
                 $op = new NostoSDKUpsertProductOperation($nostoAccount);
                 $op->setResponseTimeout(self::$apiWaitTimeout);
                 foreach ($batches as $product) {

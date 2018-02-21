@@ -262,9 +262,9 @@
 
                     var action = null;
                     if (data.type === 'newAccount') {
-                        action = "{/literal}{$NostoCreateAccountUrl|escape:javascript}{literal}";
+                        action = "{/literal}{$NostoCreateAccountUrl|escape:'javascript'}{literal}";
                     } else if (data.type === 'connectAccount' || data.type === 'syncAccount') {
-                        action = "{/literal}{$NostoConnectAccountUrl|escape:javascript}{literal}";
+                        action = "{/literal}{$NostoConnectAccountUrl|escape:'javascript'}{literal}";
                     } else if (data.type === 'removeAccount') {
                         Nosto.deleteNostoAccount();
                         return;
@@ -282,12 +282,12 @@
             }
 
             window.Nosto.deleteNostoAccount = function () {
-                var action = "{/literal}{$NostoDeleteAccountUrl|escape:javascript}{literal}";
+                var action = "{/literal}{$NostoDeleteAccountUrl|escape:'javascript'}{literal}";
                 submitAction(action);
             };
 
             window.Nosto.updateExchangeRates = function () {
-                var action = "{/literal}{$NostoUpdateExchangeRateUrl|escape:javascript}{literal}";
+                var action = "{/literal}{$NostoUpdateExchangeRateUrl|escape:'javascript'}{literal}";
                 submitAction(action);
             };
 
@@ -310,15 +310,15 @@
             Nosto.checkMultiCurrencyVariationConflict();
 
             window.Nosto.saveAdvancedSettings = function () {
-                var action = "{/literal}{$NostoAdvancedSettingUrl|escape:javascript}{literal}";
+                var action = "{/literal}{$NostoAdvancedSettingUrl|escape:'javascript'}{literal}";
                 submitAction(action);
             };
 
             window.Nosto.showVariationKeys = function () {
-                console.log("Variation keys: {/literal}{$variation_keys|escape:javascript}{literal}");
-                console.log("Countries from tax rules: {/literal}{$variation_countries_from_tax_rule|escape:javascript}{literal}");
-                console.log("Countries from specific price rules: {/literal}{$variation_countries_from_price_rule|escape:javascript}{literal}");
-                console.log("Groups from specific price rules: {/literal}{$variation_groups|escape:javascript}{literal}");
+                console.log("Variation keys: {/literal}{$variation_keys|escape:'javascript'}{literal}");
+                console.log("Countries from tax rules: {/literal}{$variation_countries_from_tax_rule|escape:'javascript'}{literal}");
+                console.log("Countries from specific price rules: {/literal}{$variation_countries_from_price_rule|escape:'javascript'}{literal}");
+                console.log("Groups from specific price rules: {/literal}{$variation_groups|escape:'javascript'}{literal}");
             };
 
             window.addEventListener("message", receiveMessage, false);

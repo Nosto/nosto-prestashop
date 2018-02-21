@@ -127,6 +127,6 @@ class NostoVariationKey
             }
         }
 
-        return strtoupper($currencyCode . '-' . $countryCode . '-' . $customerGroupName);
+        return Tools::strtoupper($currencyCode . '-' . $countryCode . '-' . $customerGroupName);
     }
 }

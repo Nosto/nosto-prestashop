@@ -2,8 +2,12 @@
 All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
+## 3.2.2
+- Fix auto slots timing issue if center_column is not loaded before jQuery 
+- Refactor: remove redundant variables, remove excess whitespaces and fix few Prestashop validation violations
+
 ## 3.2.1
-- Fixed compatibility issue with some checkout modules
+- Fix compatibility issue with some checkout modules
 
 ## 3.2.0
 - Add support for add to cart popup recommendations

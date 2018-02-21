@@ -23,30 +23,31 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-/*
+/**
  * This is a backwards compatibility script for running module front controllers in all supported Prestashop versions.
  * The script is meant to run outside of Prestashop, so if _PS_VERSION_ is already defined, we do nothing.
  */
 if (!defined('_PS_VERSION_')) {
-    /*
-	 * White-list of valid controllers that this script is allowed to run.
-	 */
+    /**
+     * White-list of valid controllers that this script is allowed to run.
+     */
     $controllerWhiteList = array('oauth2', 'product', 'order', 'cronrates');
-    /*
-	 * If this file is symlinked, then we need to parse the `SCRIPT_FILENAME` to get the path of the PS root dir.
-	 * This is because __FILE__ resolves the symlink source path.
-	 * We cannot use `/../..` on dirname() of `SCRIPT_FILENAME` as that will also resolve the symlink source path.
-	 * So combining as many dirname() calls as needed to step up the tree to the second parent, which should be the
-	 * PS root dir, is a solution.
-	 */
+
+    /**
+     * If this file is symlinked, then we need to parse the `SCRIPT_FILENAME` to get the path of the PS root dir.
+     * This is because __FILE__ resolves the symlink source path.
+     * We cannot use `/../..` on dirname() of `SCRIPT_FILENAME` as that will also resolve the symlink source path.
+     * So combining as many dirname() calls as needed to step up the tree to the second parent, which should be the
+     * PS root dir, is a solution.
+     */
     if (!empty($_SERVER['SCRIPT_FILENAME'])) {
         $psDir = dirname(dirname(dirname($_SERVER['SCRIPT_FILENAME'])));
     }
 
-    /*
-	 * If the PS dir is not set, or we cannot resolve the config file, try to to get the path relative to this file.
-	 * This only works if this file is NOT symlinked.
-	 */
+    /**
+     * If the PS dir is not set, or we cannot resolve the config file, try to to get the path relative to this file.
+     * This only works if this file is NOT symlinked.
+     */
     if (!isset($psDir) || !file_exists($psDir.'/config/config.inc.php')) {
         $psDir = dirname(__FILE__).'/../..';
     }
@@ -62,26 +63,18 @@ if (!defined('_PS_VERSION_')) {
         $classFile = $controllerDir.'/'.$controller.'.php';
         /** @noinspection PhpIncludeInspection */
         require_once($classFile);
-        // ControllerFactory is deprecated since Prestashop 1.5 and was removed in 1.7
-        if (!method_exists('ControllerFactory', 'getController')) {
-            switch ($controller) {
-                case 'product':
-                    $nostoController = new NostoTaggingProductModuleFrontController();
-                    break;
-                case 'order':
-                    $nostoController = new NostoTaggingOrderModuleFrontController();
-                    break;
-                default:
-                    die();
-            }
-
-            $nostoController->initContent();
-        } else {
-            /** @noinspection PhpDeprecationInspection */
-            ControllerFactory::getController(
-                'NostoTagging' . Tools::ucfirst($controller) . 'ModuleFrontController'
-            )->run();
+        switch ($controller) {
+            case 'product':
+                $nostoController = new NostoTaggingProductModuleFrontController();
+                break;
+            case 'order':
+                $nostoController = new NostoTaggingOrderModuleFrontController();
+                break;
+            default:
+                die();
         }
+
+        $nostoController->initContent();
     } else {
         die(
             sprintf(
