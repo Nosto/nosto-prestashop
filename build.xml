@@ -165,6 +165,9 @@
         <patternset id="nostotagging.sources">
             <include name="**"/>
             <exclude name="*.DS_STORE"/>
+            <exclude name="phan.php"/>
+            <exclude name="Dockerfile"/>
+            <exclude name="Jenkinsfile"/>
             <exclude name="**/.idea/**"/>
             <exclude name="**/.phan/**"/>
             <exclude name="**/tests/**"/>

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * 2013-2017 Nosto Solutions Ltd
  *

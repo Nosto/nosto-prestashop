@@ -1,5 +1,4 @@
 <?php
-
 /**
  * 2013-2017 Nosto Solutions Ltd
  *
@@ -31,6 +30,7 @@ class NostoExchangeRates extends NostoSDKExchangeRateCollection
 {
     /**
      * @return NostoExchangeRates the exchange rates object
+     * @throws \Nosto\NostoException
      */
     public static function loadData()
     {
@@ -39,8 +39,7 @@ class NostoExchangeRates extends NostoSDKExchangeRateCollection
         $nostoRates = new NostoExchangeRates();
         foreach ($currencies as $currency) {
             // Skip base currencyCode.
-            if (
-                $currency['iso_code'] === $baseCurrencyCode
+            if ($currency['iso_code'] === $baseCurrencyCode
                 || $currency['deleted'] == 1
             ) {
                 continue;
