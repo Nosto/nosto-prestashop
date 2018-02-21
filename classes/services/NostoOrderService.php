@@ -87,7 +87,7 @@ class NostoOrderService extends AbstractNostoService
                             $operation = new NostoSDKOrderConfirmOperation($account);
                             $operation->send($nostoOrder, $customerId);
                             try {
-                                if (self::$syncInventoriesAfterOrder === true) {
+                                if (NostoOrderService::$syncInventoriesAfterOrder === true) {
                                     $purchasedItems = $nostoOrder->getPurchasedItems();
                                     $products = array();
                                     foreach ($purchasedItems as $item) {
