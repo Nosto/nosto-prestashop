@@ -65,8 +65,7 @@ class NostoIframe extends NostoSDKIframe
         $nostoIframe = new NostoIframe();
         $shopLanguage = new Language(NostoHelperContext::getLanguageId());
         $shopContext = NostoHelperContext::getShop()->getContext();
-        if (
-            !Validate::isLoadedObject($shopLanguage)
+        if (!Validate::isLoadedObject($shopLanguage)
             || $shopContext !== Shop::CONTEXT_SHOP
         ) {
             return null;
