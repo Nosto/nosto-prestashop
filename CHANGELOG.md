@@ -4,6 +4,7 @@ This project adheres to Semantic Versioning(http://semver.org/).
 
 ## 3.2.2
 - Fix auto slots timing issue if center_column is not loaded before jQuery 
+- Refactor: remove redundant variables, remove excess whitespaces and fix few Prestashop validation violations
 
 ## 3.2.1
 - Fix compatibility issue with some checkout modules

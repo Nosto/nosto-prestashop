@@ -87,12 +87,9 @@ class NostoIndexController
         // Always update the url to the module admin page when we access it.
         // This can then later be used by the oauth2 controller to redirect the user back.
         $adminUrl = $this->getAdminUrl();
-
         NostoHelperConfig::saveAdminUrl($adminUrl);
         $languages = Language::getLanguages(true, NostoHelperContext::getShopId());
-
         $shopId = (int)NostoHelperContext::getShopId();
-
         $languageId = (int)Tools::getValue('nostotagging_current_language', 0);
         $currentLanguage = NostoHelperLanguage::ensureAdminLanguage($languages, $languageId);
 
@@ -100,7 +97,7 @@ class NostoIndexController
             function () use ($nostoTagging, $languages, $currentLanguage) {
                 return self::generateSmartyData($nostoTagging, $languages, $currentLanguage);
             },
-            $languageId,
+            $currentLanguage['id_lang'],
             $shopId
         );
     }

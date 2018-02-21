@@ -138,7 +138,7 @@
                         <hr>
                         <div class="form-group">
                             <label class="control-label col-lg-3">
-                                <span title="" data-toggle="tooltip" class="label-tooltip" data-original-title="{l s="Set this to no if you don't want to send real-time cart updates to Nosto via API" mod='nostotagging'}" data-html="true">
+                                <span title="" data-toggle="tooltip" class="label-tooltip" data-original-title="{l s='Set this to no if you don\'t want to send real-time cart updates to Nosto via API' mod='nostotagging'}" data-html="true">
                                     {l s='Real-time cart updates to Nosto' mod='nostotagging'}
                                 </span>
                             </label>
