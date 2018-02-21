@@ -1,5 +1,4 @@
 <?php
-
 /**
  * 2013-2017 Nosto Solutions Ltd
  *
@@ -96,12 +95,7 @@ class NostoIndexController
         $shopId = (int)NostoHelperContext::getShopId();
 
         $languageId = (int)Tools::getValue('nostotagging_current_language', 0);
-
-        // Choose current language if it has not been set.
-        if (!isset($currentLanguage)) {
-            $currentLanguage = NostoHelperLanguage::ensureAdminLanguage($languages, $languageId);
-            $languageId = (int)$currentLanguage['id_lang'];
-        }
+        $currentLanguage = NostoHelperLanguage::ensureAdminLanguage($languages, $languageId);
 
         return NostoHelperContext::runInContext(
             function () use ($nostoTagging, $languages, $currentLanguage) {
