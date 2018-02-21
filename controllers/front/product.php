@@ -40,7 +40,7 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
     public function initContent()
     {
         // We need to forge the employee in order to get a price for a product
-        $employee = new Employee();
+        $employee = new Employee(); //@codingStandardsIgnoreLine
 
         $controller = $this;
         NostoHelperContext::runInContext(

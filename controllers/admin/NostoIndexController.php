@@ -91,7 +91,6 @@ class NostoIndexController
         NostoHelperConfig::saveAdminUrl($adminUrl);
         $languages = Language::getLanguages(true, NostoHelperContext::getShopId());
 
-        $shopGroupId = null;
         $shopId = (int)NostoHelperContext::getShopId();
 
         $languageId = (int)Tools::getValue('nostotagging_current_language', 0);

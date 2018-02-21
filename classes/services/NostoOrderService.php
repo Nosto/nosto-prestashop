@@ -67,7 +67,7 @@ class NostoOrderService extends AbstractNostoService
     {
         NostoHelperContext::runWithEachNostoAccount(function () use ($order) {
             // We need to forge the employee in order to get a price for a product
-            $employeeId = false;
+            $employeeId = false; //@codingStandardsIgnoreLine
             if (!is_object(Context::getContext()->employee) && !is_object(Context::getContext()->cart)) {
                 //if employee is null and cart is null, new Product() kills the process. (SoNice issue)
                 $employeeId = 0;
@@ -90,7 +90,7 @@ class NostoOrderService extends AbstractNostoService
                                 if (NostoOrderService::$syncInventoriesAfterOrder === true) {
                                     $purchasedItems = $nostoOrder->getPurchasedItems();
                                     $products = array();
-                                    foreach ($purchasedItems as $item) {
+                                    foreach ($purchasedItems as $item) { //@codingStandardsIgnoreLine
                                         $productId = $item->getProductId();
                                         if (empty($productId) || $productId < 0) {
                                             continue;
@@ -100,7 +100,7 @@ class NostoOrderService extends AbstractNostoService
                                             $products[] = $product;
                                         }
                                     }
-                                    $nostoProductOperation = new NostoProductService();
+                                    $nostoProductOperation = new NostoProductService(); //@codingStandardsIgnoreLine
                                     $nostoProductOperation->updateBatch($products);
                                 }
                             } catch (Exception $e) {
