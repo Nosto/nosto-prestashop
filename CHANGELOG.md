@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
+## 3.2.3
+- Fix the issue that custom field keys were converted to snake case by html serializer
+ 
 ## 3.2.2
 - Fix auto slots timing issue if center_column is not loaded before jQuery 
 - Refactor: remove redundant variables, remove excess whitespaces and fix few Prestashop validation violations
