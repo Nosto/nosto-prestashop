@@ -23,6 +23,7 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
+use Nosto\Object\Signup\Account as NostoSDKAccount;
 use Nosto\Object\Event\Cart\Update as NostoSDKCartUpdate;
 use Nosto\Object\Cart\LineItem as NostoSDKCartItem;
 use Nosto\Operation\CartOperation as NostoSDKCartOperation;
@@ -59,7 +60,7 @@ class NostoCartService extends AbstractNostoService
             }
 
             $account = NostoHelperAccount::getAccount();
-            if (!$account->isConnectedToNosto()) {
+            if (!$account instanceof NostoSDKAccount || !$account->isConnectedToNosto()) {
                 return;
             }
 
@@ -131,7 +132,7 @@ class NostoCartService extends AbstractNostoService
             }
 
             $account = NostoHelperAccount::getAccount();
-            if (!$account->isConnectedToNosto()) {
+            if (!$account instanceof NostoSDKAccount || !$account->isConnectedToNosto()) {
                 return;
             }
 
