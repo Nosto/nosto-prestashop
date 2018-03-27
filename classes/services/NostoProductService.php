@@ -189,9 +189,23 @@ class NostoProductService extends AbstractNostoService
             if ($object instanceof Product) {
                 //run over all the nosto account
                 $nostoProductService = $this;
-                NostoHelperContext::runWithEachNostoAccount(function () use ($object, $nostoProductService) {
-                    $nostoProductService->updateProduct($object);
-                });
+                // We need to forge the employee in order to get a price for a product
+                $employeeId = false; //@codingStandardsIgnoreLine
+                if (!is_object(Context::getContext()->employee) && !is_object(Context::getContext()->cart)) {
+                    //if employee is null and cart is null, new Product() kills the process.
+                    $employeeId = 0;
+                }
+                NostoHelperContext::runInContext(
+                    function () use ($object, $nostoProductService) {
+                        NostoHelperContext::runWithEachNostoAccount(function () use ($object, $nostoProductService) {
+                            $nostoProductService->updateProduct($object);
+                        });
+                    },
+                    false,
+                    false,
+                    false,
+                    $employeeId
+                );
             }
         }
     }
