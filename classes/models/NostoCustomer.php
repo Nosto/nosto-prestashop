@@ -39,6 +39,7 @@ class NostoCustomer extends NostoSDKCustomer
         $nostoCustomer->setFirstName($customer->firstname);
         $nostoCustomer->setLastName($customer->lastname);
         $nostoCustomer->setEmail($customer->email);
+        $nostoCustomer->setMarketingPermission($customer->newsletter);
         try {
             $nostoCustomer->populateCustomerReference($customer);
         } catch (Exception $e) {
