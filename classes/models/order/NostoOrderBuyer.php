@@ -40,6 +40,7 @@ class NostoOrderBuyer extends NostoSDKOrderBuyer
         $nostoBuyer->setFirstName($customer->firstname);
         $nostoBuyer->setLastName($customer->lastname);
         $nostoBuyer->setEmail($customer->email);
+        $nostoBuyer->setMarketingPermission($customer->newsletter);
 
         $billingAddressId = $order->id_address_invoice;
         $addresses = $customer->getAddresses($order->id_lang);
