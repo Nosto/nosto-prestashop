@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
+## 3.3.1
+- Fixed a bug that nosto injects html content to prestashop ajax responses on older prestashop version
+
 ## 3.3.0
 - Add marketing permission for customer tagging and for buyer 
 - Fix the compatibility issue with some third-party plugins which update catalog without setting employee to prestashop context
