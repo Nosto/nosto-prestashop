@@ -56,7 +56,7 @@ class NostoTagging extends Module
      *
      * @var string
      */
-    const PLUGIN_VERSION = '3.3.0';
+    const PLUGIN_VERSION = '3.3.1';
 
     /**
      * Internal name of the Nosto plug-in
@@ -946,7 +946,7 @@ class NostoTagging extends Module
     {
         //Do not render any thing when it is a ajax request
         if (!array_key_exists(self::AJAX_REQUEST_PARAMETER_KEY, $_REQUEST)
-            || $_REQUEST[self::AJAX_REQUEST_PARAMETER_KEY] != 1
+            || $_REQUEST[self::AJAX_REQUEST_PARAMETER_KEY] != true
         ) {
             NostoNotificationManager::checkAndDisplay($this);
         }
