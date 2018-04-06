@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
+## 3.3.2
+- Fixed a bug that after upgrading nosto from 2.x to 3.x, some of the nosto controllers and hooks are not registered to prestashop
+
 ## 3.3.1
 - Fixed a bug that nosto injects html content to prestashop ajax responses on older prestashop version
 

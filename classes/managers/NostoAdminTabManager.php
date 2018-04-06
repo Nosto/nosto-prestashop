@@ -144,7 +144,7 @@ class NostoAdminTabManager
         /** @noinspection PhpDeprecationInspection */
         $tab->id = (int)Tab::getIdFromClassName($className);
         $tab->active = true;
-        $languageIds = Language::getLanguages(true, false, true);
+        $languageIds = Language::getLanguages(false, false, true);
         if ($languageIds) {
             $tab->name = array();
             foreach ($languageIds as $languageId) {
