@@ -52,10 +52,10 @@
                             api.loadRecommendations();
                         }
                     } else {
-                        console.log('Can not find the elements for');
+                        console.log('Could not find the elements: "center_column", "content-wrapper" or "hidden_nosto_element"');
                     }
                 }
-                nosto.context.site.domReady(placeSlots);
+                jQuery(document).ready(placeSlots);
             } else if (maxTriesForJquery > 0){
                 //jQuery is loaded to the page after nosto scripts on prestashop 1.7
                 //wait for it
