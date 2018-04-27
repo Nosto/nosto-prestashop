@@ -30,7 +30,6 @@
         var maxTriesForJquery = 60;
         var waitForJQuery = function () {
             if (window.jQuery) {
-                var maxTriesForSlot = 5;
                 var placeSlots = function() {
                     var $center_column = jQuery('#center_column, #content-wrapper');
                     var $hidden_elements = jQuery('.hidden_nosto_element');
@@ -52,13 +51,11 @@
                         if (slotsMoved && nostoRecosLoaded) {
                             api.loadRecommendations();
                         }
-                    } else if(maxTriesForSlot > 0) {
-                        // In some cases the center slot can be loaded before hidden elements
-                        maxTriesForSlot--;
-                        setTimeout(placeSlots, 500);
+                    } else {
+                        console.log('Can not find the elements for');
                     }
                 }
-                placeSlots();
+                nosto.context.site.domReady(placeSlots);
             } else if (maxTriesForJquery > 0){
                 //jQuery is loaded to the page after nosto scripts on prestashop 1.7
                 //wait for it
