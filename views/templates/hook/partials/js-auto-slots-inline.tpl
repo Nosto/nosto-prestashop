@@ -51,8 +51,6 @@
                         if (slotsMoved && nostoRecosLoaded) {
                             api.loadRecommendations();
                         }
-                    } else {
-                        console.log('Could not find the elements: "center_column", "content-wrapper" or "hidden_nosto_element"');
                     }
                 }
                 jQuery(document).ready(placeSlots);
