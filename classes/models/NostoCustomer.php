@@ -31,10 +31,13 @@ class NostoCustomer extends NostoSDKCustomer
      * Loads the customer data from supplied context and customer objects.
      *
      * @param Customer $customer the customer model to process
-     * @return NostoCustomer the customer object
+     * @return NostoCustomer|null the customer object
      */
     public static function loadData(Customer $customer)
     {
+        if (!NostoHelperConfig::isCustomerTaggingEnabled()) {
+            return null;
+        }
         $nostoCustomer = new NostoCustomer();
         $nostoCustomer->setFirstName($customer->firstname);
         $nostoCustomer->setLastName($customer->lastname);

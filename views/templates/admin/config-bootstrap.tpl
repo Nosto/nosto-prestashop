@@ -277,6 +277,25 @@
                                 </span>
                             </div>
                         </div>
+
+                        <hr>
+                        <!-- Customer information switch -->
+                        <div class="form-group">
+                            <label class="control-label col-lg-3">
+                                <span title="" data-toggle="tooltip" class="label-tooltip" data-original-title="{l s='Send customer data to nosto' mod='nostotagging'}" data-html="true">
+                                    {l s='Send customer data to nosto' mod='nostotagging'}
+                                </span>
+                            </label>
+                            <div class="col-lg-9">
+                                <span class="switch prestashop-switch fixed-width-lg">
+                                    <input type="radio" name="nosto_customer_tagging_switch" id="nosto_customer_tagging_switch_on"  value="1" {if $customer_tagging_switch === true}checked="checked" {/if} />
+                                    <label for="nosto_customer_tagging_switch_on" class="radioCheck">Yes</label>
+                                    <input type="radio" name="nosto_customer_tagging_switch" id="nosto_customer_tagging_switch_off" value="0" {if $customer_tagging_switch !== true}checked="checked" {/if} />
+                                    <label for="nosto_customer_tagging_switch_off" class="radioCheck">No</label>
+                                    <a class="slide-button btn"></a>
+                                </span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="panel-footer"  style="display:none;margin-bottom: 10px;"">
