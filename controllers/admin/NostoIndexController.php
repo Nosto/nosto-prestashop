@@ -176,6 +176,7 @@ class NostoIndexController
             'iframe_origin' => NostoSDK::getIframeOriginRegex(),
             'sku_enabled' => NostoHelperConfig::getSkuEnabled(),
             'cart_update_enabled' => NostoHelperConfig::isCartUpdateEnabled(),
+            'customer_tagging_switch' => NostoHelperConfig::isCustomerTaggingEnabled(),
             'variation_keys' => NostoSDKSerializationHelper::serialize($variationKeys),
             'variation_countries_from_tax_rule' => implode(
                 ', ',

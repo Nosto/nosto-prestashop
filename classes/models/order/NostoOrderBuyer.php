@@ -32,10 +32,13 @@ class NostoOrderBuyer extends NostoSDKOrderBuyer
      *
      * @param Customer $customer the customer model to process
      * @param Order $order the order object
-     * @return NostoOrderBuyer the buyer object
+     * @return NostoOrderBuyer|null the buyer object
      */
     public static function loadData(Customer $customer, Order $order)
     {
+        if (!NostoHelperConfig::isCustomerTaggingEnabled()) {
+            return null;
+        }
         $nostoBuyer = new NostoOrderBuyer();
         $nostoBuyer->setFirstName($customer->firstname);
         $nostoBuyer->setLastName($customer->lastname);
