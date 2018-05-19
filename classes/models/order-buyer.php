@@ -44,6 +44,11 @@ class NostoTaggingOrderBuyer implements NostoOrderBuyerInterface
     protected $email;
 
     /**
+     * @var bool the customer marketing permission.
+     */
+    protected $marketing_permission;
+
+    /**
      * @inheritdoc
      */
     public function getFirstName()
@@ -68,6 +73,22 @@ class NostoTaggingOrderBuyer implements NostoOrderBuyerInterface
     }
 
     /**
+     * @return bool
+     */
+    public function getMarketingPermission()
+    {
+        return $this->marketing_permission;
+    }
+
+    /**
+     * @param bool $marketing_permission
+     */
+    public function setMarketingPermission($marketing_permission)
+    {
+        $this->marketing_permission = $marketing_permission;
+    }
+
+    /**
      * Loads the buyer data from the customer object.
      *
      * @param Customer $customer the customer object.
@@ -77,5 +98,6 @@ class NostoTaggingOrderBuyer implements NostoOrderBuyerInterface
         $this->first_name = $customer->firstname;
         $this->last_name = $customer->lastname;
         $this->email = $customer->email;
+        $this->marketing_permission = $customer->newsletter;
     }
 }

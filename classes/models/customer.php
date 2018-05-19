@@ -44,6 +44,11 @@ class NostoTaggingCustomer extends NostoTaggingModel
     public $email;
 
     /**
+     * @var bool the customer marketing permission.
+     */
+    public $marketing_permission;
+
+    /**
      * Loads the customer data from supplied context and customer objects.
      *
      * @param Context $context the context object.
@@ -58,6 +63,7 @@ class NostoTaggingCustomer extends NostoTaggingModel
         $this->first_name = $customer->firstname;
         $this->last_name = $customer->lastname;
         $this->email = $customer->email;
+        $this->marketing_permission = $customer->newsletter;
     }
 
     /**
