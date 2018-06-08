@@ -23,7 +23,7 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use \Nosto\Object\MarkupableString;
+use \Nosto\Object\PageType as NostoSDKPageType;
 
 class NostoPageTypeTagging
 {
@@ -51,9 +51,8 @@ class NostoPageTypeTagging
         }
 
         if (array_key_exists(NostoHelperController::getControllerName(), self::$controllers)) {
-            $pageType = new MarkupableString(
-                self::$controllers[NostoHelperController::getControllerName()],
-                'nosto_page_type'
+            $pageType = new NostoSDKPageType(
+                self::$controllers[NostoHelperController::getControllerName()]
             );
 
             return $pageType->toHtml();

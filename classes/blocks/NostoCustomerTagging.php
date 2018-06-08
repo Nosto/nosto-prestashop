@@ -43,8 +43,11 @@ class NostoCustomerTagging
             return null;
         }
         $nostoCustomer->setHcid($hcid);
+        unset($nostoCustomer->marketing_permission);
 
-        return $nostoCustomer->toHtml();
+        $html =  $nostoCustomer->toHtml();
+//        $html = str_replace('marketing', '', $html);
+        return $html;
     }
 
     /**
