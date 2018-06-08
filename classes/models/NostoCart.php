@@ -69,6 +69,12 @@ class NostoCart extends NostoSDKCart
         return $nostoCart;
     }
 
+    /**
+     * Load cart items and restore cart link if there is any item in cart
+     * @param Cart $cart
+     * @param NostoCart $nostoCart
+     * @param Currency $currency
+     */
     private static function loadCartItems(Cart $cart, NostoCart $nostoCart, Currency $currency)
     {
         $products = $cart->getProducts();
