@@ -23,9 +23,9 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use \Nosto\Object\MarkupableString;
+use \Nosto\Object\Category as NostoSDKCatetory;
 
-class NostoCategory extends MarkupableString
+class NostoCategory extends NostoSDKCatetory
 {
     /**
      * @param $idCategory
@@ -39,7 +39,7 @@ class NostoCategory extends MarkupableString
 
     public function __construct($category)
     {
-        parent::__construct($category, 'nosto_category');
+        parent::__construct($category);
     }
 
     /**
