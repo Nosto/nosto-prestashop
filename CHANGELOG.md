@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
+## 3.4.0
+- Made it possible to override category by hooking to nosto events
+- Add a switch to disable sending customer information to nosto
+- Send an empty cart to nosto if the cart is empty to empty the cart in nosto server
+
 ## 3.3.3
 - Fixed a bug that recommendations could get displayed on top of the product info on product page or similarly on category page
  
