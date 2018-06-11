@@ -37,11 +37,6 @@ class NostoCategory extends NostoSDKCatetory
         return new Category((int)$idCategory, NostoHelperContext::getLanguageId());
     }
 
-    public function __construct($category)
-    {
-        parent::__construct($category);
-    }
-
     /**
      * Loads the category data from supplied context and category objects.
      * Builds a tagging string of the given category including all its parent categories.

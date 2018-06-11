@@ -27,11 +27,6 @@ use \Nosto\Object\SearchTerm as NostoSDKSearchTerm;
 
 class NostoSearch extends NostoSDKSearchTerm
 {
-    public function __construct($searchTerm)
-    {
-        parent::__construct($searchTerm);
-    }
-
     /**
      * @param string $term the current search term
      * @return NostoSearch the search object
