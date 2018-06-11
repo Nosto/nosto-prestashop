@@ -51,16 +51,33 @@ class NostoCart extends NostoSDKCart
      */
     public static function loadData(Cart $cart)
     {
-        if (!Validate::isLoadedObject($cart) || ($products = $cart->getProducts()) === array()) {
-            return null;
-        }
+        $nostoCart = new NostoCart();
 
         $currency = self::loadCurrency($cart->id_currency);
-        if (!Validate::isLoadedObject($currency)) {
-            return null;
+        if (Validate::isLoadedObject($cart)
+            && $cart->getProducts() !== array()
+            && Validate::isLoadedObject($currency)
+        ) {
+            self::loadCartItems($cart, $nostoCart, $currency);
         }
 
-        $nostoCart = new NostoCart();
+        NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoCart), array(
+            'cart' => $cart,
+            'nosto_cart' => $nostoCart
+        ));
+
+        return $nostoCart;
+    }
+
+    /**
+     * Load cart items and restore cart link if there is any item in cart
+     * @param Cart $cart
+     * @param NostoCart $nostoCart
+     * @param Currency $currency
+     */
+    private static function loadCartItems(Cart $cart, NostoCart $nostoCart, Currency $currency)
+    {
+        $products = $cart->getProducts();
         $cartRules = (array)$cart->getCartRules(CartRule::FILTER_ACTION_GIFT);
 
         $giftProducts = array();
@@ -124,12 +141,5 @@ class NostoCart extends NostoSDKCart
                 )
             );
         }
-
-        NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoCart), array(
-            'cart' => $cart,
-            'nosto_cart' => $nostoCart
-        ));
-
-        return $nostoCart;
     }
 }

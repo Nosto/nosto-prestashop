@@ -24,6 +24,7 @@
  */
 
 use Nosto\Object\Order\Order as NostoSDKOrder;
+use Nosto\Types\Order\BuyerInterface as NostoSDKBuyer;
 use Nosto\Object\Cart\LineItem as NostoSDKLineItem;
 
 class NostoOrder extends NostoSDKOrder
@@ -72,7 +73,10 @@ class NostoOrder extends NostoSDKOrder
             $nostoOrder->setOrderNumber((string)$order->id);
         }
         $nostoOrder->setOrderNumber(isset($order->reference) ? (string)$order->reference : $order->id);
-        $nostoOrder->setCustomer(NostoOrderBuyer::loadData($customer, $order));
+        $customer = NostoOrderBuyer::loadData($customer, $order);
+        if ($customer instanceof NostoSDKBuyer) {
+            $nostoOrder->setCustomer($customer);
+        }
         $nostoOrder->setCreatedAt(DateTime::createFromFormat('Y-m-d H:i:s', $order->date_add));
         $nostoOrder->setPurchasedItems(self::findPurchasedItems($order));
         $nostoOrder->setPaymentProvider('unknown');

@@ -23,15 +23,10 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use \Nosto\Object\MarkupableString;
+use \Nosto\Object\SearchTerm as NostoSDKSearchTerm;
 
-class NostoSearch extends MarkupableString
+class NostoSearch extends NostoSDKSearchTerm
 {
-    public function __construct($searchTerm)
-    {
-        parent::__construct($searchTerm, 'nosto_search_term');
-    }
-
     /**
      * @param string $term the current search term
      * @return NostoSearch the search object
