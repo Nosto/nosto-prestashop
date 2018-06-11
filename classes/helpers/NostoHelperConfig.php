@@ -50,15 +50,17 @@ class NostoHelperConfig
      * Reads and returns a config entry value.
      *
      * @param string $name the name of the config entry in the db.
+     * @param bool $defaultValue
      * @return mixed
      */
-    private static function read($name)
+    private static function read($name, $defaultValue = false)
     {
         return Configuration::get(
             $name,
             NostoHelperContext::getLanguageId(),
             NostoHelperContext::getShopGroupId(),
-            NostoHelperContext::getShopId()
+            NostoHelperContext::getShopId(),
+            $defaultValue
         );
     }
 
@@ -378,13 +380,7 @@ class NostoHelperConfig
      */
     public static function isCustomerTaggingEnabled()
     {
-        return (bool)Configuration::get(
-            self::CUSTOMER_TAGGING_SWITCH,
-            NostoHelperContext::getLanguageId(),
-            NostoHelperContext::getShopGroupId(),
-            NostoHelperContext::getShopId(),
-            true
-        );
+        return (bool)self::read(self::CUSTOMER_TAGGING_SWITCH, true);
     }
 
     /**
