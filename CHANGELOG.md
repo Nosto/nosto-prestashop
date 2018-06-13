@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
+## 3.4.1
+- Fixed a issue that it failed to be installed to some special prestashop environments
+
 ## 3.4.0
 - Made it possible to override category by hooking to nosto events
 - Add a switch to disable sending customer information to nosto

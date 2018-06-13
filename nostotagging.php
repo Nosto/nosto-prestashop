@@ -56,7 +56,7 @@ class NostoTagging extends Module
      *
      * @var string
      */
-    const PLUGIN_VERSION = '3.4.0';
+    const PLUGIN_VERSION = '3.4.1';
 
     /**
      * Internal name of the Nosto plug-in
@@ -1005,7 +1005,7 @@ class NostoTagging extends Module
      * @return Smarty|Smarty_Data
      * @throws \Nosto\NostoException
      */
-    protected function getSmarty()
+    public function getSmarty()
     {
         if (!empty($this->smarty) && method_exists($this->smarty, 'assign')) {
             return $this->smarty;
