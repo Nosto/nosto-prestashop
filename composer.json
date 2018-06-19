@@ -2,7 +2,7 @@
   "name": "nosto/nostotagging",
   "description": "Nosto Module for Prestashop",
   "require": {
-    "nosto/php-sdk": "3.4.2"
+    "nosto/php-sdk": "dev-feature/marketing-permission-operation#b0ce44c"
   },
   "require-dev": {
     "phing/phing": "2.*",

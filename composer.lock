@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "53c37fbb4f7883beca572cba805978a7",
+    "content-hash": "86ce31f411f3605729cede06452e775f",
     "packages": [
         {
             "name": "nosto/php-sdk",
-            "version": "3.4.2",
+            "version": "dev-feature/marketing-permission-operation",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Nosto/nosto-php-sdk.git",
-                "reference": "9864b233a7a17eb678c30e43422a14ae967fc703"
+                "reference": "b0ce44c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Nosto/nosto-php-sdk/zipball/9864b233a7a17eb678c30e43422a14ae967fc703",
-                "reference": "9864b233a7a17eb678c30e43422a14ae967fc703",
+                "url": "https://api.github.com/repos/Nosto/nosto-php-sdk/zipball/b0ce44c",
+                "reference": "b0ce44c",
                 "shasum": ""
             },
             "require": {
@@ -51,7 +51,7 @@
                 "BSD-3-Clause"
             ],
             "description": "PHP SDK for developing Nosto modules for e-commerce platforms",
-            "time": "2018-06-11T06:46:11+00:00"
+            "time": "2018-06-13T14:29:49+00:00"
         },
         {
             "name": "phpseclib/phpseclib",
@@ -2078,7 +2078,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "nosto/php-sdk": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],

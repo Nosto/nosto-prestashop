@@ -129,6 +129,11 @@ class NostoTagging extends Module
             'title' => 'After load nosto variation key collection',
             'description' => 'Action hook fired after a Nosto variation key collection has been initialized.',
         ),
+        array(
+            'name' => 'actionNostoCustomerLoadAfter',
+            'title' => 'After load nosto customer',
+            'description' => 'Action hook fired after a Nosto customer has been loaded.',
+        ),
     );
 
     /**
@@ -190,6 +195,8 @@ class NostoTagging extends Module
                 || !$this->registerHook('actionCartSave')
                 || !$this->registerHook('actionCartUpdateQuantityBefore')
                 || !$this->registerHook('actionBeforeCartUpdateQty')
+                || !$this->registerHook('actionCustomerAccountAdd')
+                || !$this->registerHook('actionCustomerAccountUpdate')
             ) {
                 $success = false;
                 $this->_errors[] = $this->l(
@@ -789,6 +796,40 @@ class NostoTagging extends Module
         try {
             $service = new NostoCartService();
             $service->cartUpdated($params);
+        } catch (\Exception $e) {
+            NostoHelperLogger::error($e);
+        }
+    }
+
+    /**
+     * Customer created event handler. It works if the customer was created on front end, not from backend.
+     * The customer's newsletter subscription status could not be set in the backend.
+     * @param array $params the observer parameters
+     */
+    public function hookActionCustomerAccountAdd(array $params)
+    {
+        try {
+            if (isset($params['newCustomer']) && $params['newCustomer'] instanceof Customer) {
+                $service = new NostoCustomerService();
+                $service->customerUpdated($params['newCustomer']);
+            }
+        } catch (\Exception $e) {
+            NostoHelperLogger::error($e);
+        }
+    }
+
+    /**
+     * Customer updated event handler. It works if the customer was updated on front end, not from backend.
+     * The customer's newsletter subscription status could not be changed in the backend.
+     * @param array $params the observer parameters
+     */
+    public function hookActionCustomerAccountUpdate(array $params)
+    {
+        try {
+            if (isset($params['customer']) && $params['customer'] instanceof Customer) {
+                $service = new NostoCustomerService();
+                $service->customerUpdated($params['customer']);
+            }
         } catch (\Exception $e) {
             NostoHelperLogger::error($e);
         }
