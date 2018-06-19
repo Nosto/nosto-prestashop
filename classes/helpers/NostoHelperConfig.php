@@ -35,7 +35,7 @@ class NostoHelperConfig
     const MULTI_CURRENCY_METHOD = 'NOSTOTAGGING_MC_METHOD';
     const SKU_SWITCH = 'NOSTOTAGGING_SKU_SWITCH';
     const CART_UPDATE_SWITCH = 'NOSTOTAGGING_CART_UPDATE_SWITCH';
-    const CUSTOMER_TAGGING_SWITCH = 'NOSTOTAGGING_CUSTOMER_TAGGING_SWITCH';
+    const SKIP_CUSTOMER_TAGGING_SWITCH = 'NOSTOTAGGING_SKIP_CUSTOMER_TAGGING_SWITCH';
     const VARIATION_SWITCH = 'NOSTOTAGGING_VARIATION_SWITCH';
     const VARIATION_TAX_RULE_SWITCH = 'NOSTOTAGGING_TAX_RULE_SWITCH';
     const TOKEN_CONFIG_PREFIX = 'NOSTOTAGGING_API_TOKEN_';
@@ -50,17 +50,15 @@ class NostoHelperConfig
      * Reads and returns a config entry value.
      *
      * @param string $name the name of the config entry in the db.
-     * @param bool $defaultValue
      * @return mixed
      */
-    private static function read($name, $defaultValue = false)
+    private static function read($name)
     {
         return Configuration::get(
             $name,
             NostoHelperContext::getLanguageId(),
             NostoHelperContext::getShopGroupId(),
-            NostoHelperContext::getShopId(),
-            $defaultValue
+            NostoHelperContext::getShopId()
         );
     }
 
@@ -380,7 +378,9 @@ class NostoHelperConfig
      */
     public static function isCustomerTaggingEnabled()
     {
-        return (bool)self::read(self::CUSTOMER_TAGGING_SWITCH, true);
+        $skipped =  self::read(self::SKIP_CUSTOMER_TAGGING_SWITCH);
+
+        return !(bool)$skipped;
     }
 
     /**
@@ -391,7 +391,9 @@ class NostoHelperConfig
      */
     public static function saveCustomerTaggingEnabled($enabled)
     {
-        return self::saveSetting(self::CUSTOMER_TAGGING_SWITCH, $enabled);
+        $skipped = $enabled ? '0' : '1';
+
+        return self::saveSetting(self::SKIP_CUSTOMER_TAGGING_SWITCH, $skipped);
     }
 
     /**
