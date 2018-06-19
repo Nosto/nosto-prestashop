@@ -50,17 +50,15 @@ class NostoHelperConfig
      * Reads and returns a config entry value.
      *
      * @param string $name the name of the config entry in the db.
-     * @param bool $defaultValue
      * @return mixed
      */
-    private static function read($name, $defaultValue = false)
+    private static function read($name)
     {
         return Configuration::get(
             $name,
             NostoHelperContext::getLanguageId(),
             NostoHelperContext::getShopGroupId(),
-            NostoHelperContext::getShopId(),
-            $defaultValue
+            NostoHelperContext::getShopId()
         );
     }
 
@@ -380,7 +378,17 @@ class NostoHelperConfig
      */
     public static function isCustomerTaggingEnabled()
     {
-        return (bool)self::read(self::CUSTOMER_TAGGING_SWITCH, true);
+        //default value doesn't work in prestashop 1.6
+        $hasKey = Configuration::hasKey(
+            self::CUSTOMER_TAGGING_SWITCH,
+            NostoHelperContext::getLanguageId(),
+            NostoHelperContext::getShopGroupId(),
+            NostoHelperContext::getShopId()
+        );
+        if (!$hasKey) {
+            return true;
+        }
+        return (bool)self::read(self::CUSTOMER_TAGGING_SWITCH);
     }
 
     /**
