@@ -79,11 +79,6 @@ class NostoProduct extends NostoSDKProduct
             'nosto_product' => $nostoProduct
         ));
 
-
-//        $nostoProduct->setPriceCurrencyCode("");
-        $nostoProduct->setAvailability("OutOfStock");
-        $nostoProduct->setVariationId("");
-
         return $nostoProduct;
     }
 
@@ -281,7 +276,7 @@ class NostoProduct extends NostoSDKProduct
 
     /**
      * Returns the product list price including taxes for the given currency.
-     *`
+     *
      * @param Product $product the product.
      * @param Currency $currency the currency.
      * @return float the price.
