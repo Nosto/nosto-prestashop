@@ -35,6 +35,7 @@ class NostoCustomerService extends AbstractNostoService
     /**
      * Customer updated event handler. It is called after Customer updated or created.
      * @param Customer $customer event parameters
+     * @return bool
      */
     public function customerUpdated($customer)
     {
