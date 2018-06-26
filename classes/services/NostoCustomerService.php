@@ -25,6 +25,7 @@
 
 use Nosto\Object\Signup\Account as NostoSDKAccount;
 use Nosto\Operation\MarketingPermission as NostoSDKMarketingPermission;
+use Nosto\Request\Api\Token as NostoSDKToken;
 
 /**
  * Helper class for sending Customer data to Nosto.
@@ -38,23 +39,34 @@ class NostoCustomerService extends AbstractNostoService
     public function customerUpdated($customer)
     {
         if (!$customer->email) {
-            return;
+            return false;
         }
         try {
             if (!NostoTagging::isEnabled(NostoTagging::MODULE_NAME)) {
-                return;
+                return false;
             }
 
             $account = NostoHelperAccount::getAccount();
             if (!$account instanceof NostoSDKAccount || !$account->isConnectedToNosto()) {
-                return;
+                return false;
+            }
+
+            if (!$account->getApiToken(NostoSDKToken::API_EMAIL)) {
+                NostoHelperLogger::info(
+                    sprintf(
+                        "API_EMAIL api token is missing. Please reconnect nosto account to create API_EMAIL token",
+                        $account->getName()
+                    )
+                );
+
+                return false;
             }
 
             $newsletter = $customer->newsletter;
             $email = $customer->email;
-
             $service = new NostoSDKMarketingPermission($account);
-            $service->update($email, $newsletter);
+
+            return $service->update($email, $newsletter);
         } catch (\Exception $e) {
             NostoHelperLogger::error($e);
         }
