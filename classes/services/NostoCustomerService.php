@@ -55,7 +55,7 @@ class NostoCustomerService extends AbstractNostoService
             if (!$account->getApiToken(NostoSDKToken::API_EMAIL)) {
                 NostoHelperLogger::info(
                     sprintf(
-                        "API_EMAIL api token is missing. Please reconnect nosto account to create API_EMAIL token",
+                        "API_EMAIL api token is missing (%s). Please reconnect nosto account to create API_EMAIL token",
                         $account->getName()
                     )
                 );
