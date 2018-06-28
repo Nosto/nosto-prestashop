@@ -70,6 +70,7 @@ class NostoCustomerService extends AbstractNostoService
             return $service->update($email, $newsletter);
         } catch (\Exception $e) {
             NostoHelperLogger::error($e);
+            return false;
         }
     }
 }
