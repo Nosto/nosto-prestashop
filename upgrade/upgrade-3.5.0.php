@@ -28,7 +28,7 @@ if (!defined('_PS_VERSION_')) {
 }
 
 /**
- * Upgrades the module to version 3.3.2.
+ * Upgrades the module to version 3.5.0.
  *
  * Fix the controller registering issue
  * @param $module Module
