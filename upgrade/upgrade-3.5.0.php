@@ -37,17 +37,15 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_3_5_0($module)
 {
-    $success = NostoAdminTabManager::uninstall() && NostoAdminTabManager::install();
-
-    $module->registerHook('actionCustomerAccountAdd');
-    $module->registerHook('actionCustomerAccountUpdate');
+    $success = $module->registerHook('actionCustomerAccountAdd');
+    $success = $module->registerHook('actionCustomerAccountUpdate') && $success;
 
     $hooks = array(array(
         'name' => 'actionNostoCustomerLoadAfter',
         'title' => 'After load nosto customer',
         'description' => 'Action hook fired after a Nosto customer has been loaded.',
     ));
-    NostoHookManager::initHooks($hooks);
+    $success = NostoHookManager::initHooks($hooks) && $success;
 
     NostoHelperConfig::clearCache();
 
