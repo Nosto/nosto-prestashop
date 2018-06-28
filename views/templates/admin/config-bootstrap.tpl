@@ -97,6 +97,7 @@
                                 </div>
                                 <div class="col-lg-offset-3">
                                     <button class="btn btn-default btn-warning btn-lg" type="submit"
+                                            onclick="if(confirm('{l s='Are you sure you want to reconnect Nosto?' mod='nostotagging'}'))Nosto.reconnectNostoAccount();"
                                             name="submit_nostotagging_authorize_account">
                                     <span class="ladda-label">
                                         <i class="icon-exchange"></i>
@@ -407,6 +408,11 @@
 
             window.Nosto.deleteNostoAccount = function () {
                 var action = "{/literal}{$NostoDeleteAccountUrl|escape:'javascript'}{literal}";
+                submitAction(action);
+            };
+
+            window.Nosto.reconnectNostoAccount = function () {
+                var action = "{/literal}{$NostoConnectAccountUrl|escape:'javascript'}{literal}";
                 submitAction(action);
             };
 

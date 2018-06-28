@@ -109,6 +109,7 @@ class NostoIndexController
         if ($account instanceof NostoSDKAccountInterface
             && $account->getApiToken(NostoSDKAPIToken::API_EXCHANGE_RATES)
             && $account->getApiToken(NostoSDKAPIToken::API_SETTINGS)
+            && $account->getApiToken(NostoSDKAPIToken::API_EMAIL)
         ) {
             $missingTokens = false;
         }
