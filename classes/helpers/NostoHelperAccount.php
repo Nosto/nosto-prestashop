@@ -82,9 +82,11 @@ class NostoHelperAccount
      *
      * @return NostoSDKAccount|null the account with loaded API tokens, or null if not found.
      */
-    public static function getAccount()
+    public static function getAccount($accountName = null)
     {
-        $accountName = NostoHelperConfig::getAccountName();
+        if ($accountName === null) {
+            $accountName = NostoHelperConfig::getAccountName();
+        }
         if (!empty($accountName)) {
             $account = new NostoSDKAccount($accountName);
             $tokens = array();
@@ -94,13 +96,11 @@ class NostoHelperAccount
                     $tokens[$tokenName] = $tokenValue;
                 }
             }
-
             if (!empty($tokens)) {
                 foreach ($tokens as $name => $value) {
                     $account->addApiToken(new NostoSDKAPIToken($name, $value));
                 }
             }
-
             return $account;
         }
         return null;
@@ -115,5 +115,17 @@ class NostoHelperAccount
     {
         $account = self::getAccount();
         return ($account !== null && $account->isConnectedToNosto());
+    }
+
+    /**
+     * Checks if an account exists.
+     *
+     * @param $accountName
+     * @return bool true if it does, false otherwise.
+     */
+    public static function exists($accountName)
+    {
+        $account = self::getAccount($accountName);
+        return $account !== null;
     }
 }

@@ -26,6 +26,7 @@
 use Nosto\Mixins\OauthTrait as NostoSDKOauthTrait;
 use Nosto\Request\Http\HttpRequest as NostoSDKHttpRequest;
 use Nosto\Types\Signup\AccountInterface as NostoSDKAccountInterface;
+use Nosto\NostoException;
 
 /**
  * @property NostoTagging $module
@@ -77,9 +78,33 @@ class OauthTraitAdapter
      * the current store view (as defined by the parameter.)
      *
      * @param Nosto\Types\Signup\AccountInterface $account the account to save
+     * @throws NostoException
      */
     public function save(NostoSDKAccountInterface $account)
     {
+        $shops = Shop::getShops();
+        foreach ($shops as $shop) {
+            $shopLanguages = Language::getLanguages(true, $shop['id_shop']);
+            if ($shopLanguages === []) {
+                continue;
+            }
+            foreach ($shopLanguages as $shopLanguage) {
+                $nostoAccountName = NostoHelperConfig::getAccountName(
+                    isset($shopLanguage['id_lang']) ? $shopLanguage['id_lang'] : null,
+                    isset($shop['id_shop_group']) ? $shop['id_shop_group'] : null,
+                    isset($shop['id_shop']) ? $shop['id_shop'] : null
+                );
+                if ($nostoAccountName !== false && NostoHelperAccount::exists($nostoAccountName)) {
+                    throw new NostoException(
+                        sprintf(
+                            'This account is already being used by "%s". 
+                                Please create a new account for each store view',
+                            isset($shop['name']) ? $shop['name'] : $shop['id_shop']
+                        )
+                    );
+                }
+            }
+        }
         NostoHelperAccount::save($account);
     }
 
@@ -113,7 +138,7 @@ class OauthTraitAdapter
     }
 
     /**
-     * Implemented trait method that is responsible for logging an exception to the Magento error
+     * Implemented trait method that is responsible for logging an exception to the Prestashop error
      * log when an error occurs.
      *
      * @param Exception $e the exception to be logged

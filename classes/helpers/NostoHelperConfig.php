@@ -197,16 +197,33 @@ class NostoHelperConfig
 
     /**
      * Gets a account name from the config.
+     * Parameters are optional.
+     * If none passed, will get from the current scope
      *
+     * @param int|null $languageId
+     * @param int|null $shopGroupId
+     * @param int|null $shopId
      * @return mixed
      */
-    public static function getAccountName()
-    {
+    public static function getAccountName(
+        $languageId = null,
+        $shopGroupId = null,
+        $shopId = null
+    ) {
+        if ($languageId === null) {
+            $languageId = NostoHelperContext::getLanguageId();
+        }
+        if ($shopGroupId === null) {
+            $shopGroupId = NostoHelperContext::getShopGroupId();
+        }
+        if ($shopId === null) {
+            $shopId = NostoHelperContext::getShopId();
+        }
         return Configuration::get(
             self::ACCOUNT_NAME,
-            NostoHelperContext::getLanguageId(),
-            NostoHelperContext::getShopGroupId(),
-            NostoHelperContext::getShopId()
+            $languageId,
+            $shopGroupId,
+            $shopId
         );
     }
 
