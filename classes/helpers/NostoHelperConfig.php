@@ -245,13 +245,26 @@ class NostoHelperConfig
      * @param string $tokenName the name of the token to get.
      * @return mixed
      */
-    public static function getToken($tokenName)
-    {
+    public static function getToken(
+        $tokenName,
+        $languageId = null,
+        $shopGroupId = null,
+        $shopId = null
+    ) {
+        if ($languageId === null) {
+            $languageId = NostoHelperContext::getLanguageId();
+        }
+        if ($shopGroupId === null) {
+            $shopGroupId = NostoHelperContext::getShopGroupId();
+        }
+        if ($shopId === null) {
+            $shopId = NostoHelperContext::getShopId();
+        }
         return Configuration::get(
             self::getTokenConfigKey($tokenName),
-            NostoHelperContext::getLanguageId(),
-            NostoHelperContext::getShopGroupId(),
-            NostoHelperContext::getShopId()
+            $languageId,
+            $shopGroupId,
+            $shopId
         );
     }
 

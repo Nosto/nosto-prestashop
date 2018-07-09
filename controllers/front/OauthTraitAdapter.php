@@ -89,17 +89,28 @@ class OauthTraitAdapter
                 continue;
             }
             foreach ($shopLanguages as $shopLanguage) {
+                $languageId = isset($shopLanguage['id_lang']) ? $shopLanguage['id_lang'] : null;
+                $shopGroupId = isset($shop['id_shop_group']) ? $shop['id_shop_group'] : null;
+                $shopId = isset($shop['id_shop']) ? $shop['id_shop'] : null;
+
                 $nostoAccountName = NostoHelperConfig::getAccountName(
-                    isset($shopLanguage['id_lang']) ? $shopLanguage['id_lang'] : null,
-                    isset($shop['id_shop_group']) ? $shop['id_shop_group'] : null,
-                    isset($shop['id_shop']) ? $shop['id_shop'] : null
+                    $languageId,
+                    $shopGroupId,
+                    $shopId
                 );
-                if ($nostoAccountName !== false && NostoHelperAccount::exists($nostoAccountName)) {
+                if ($nostoAccountName !== false
+                    && NostoHelperAccount::existsAndIsConnected(
+                        $nostoAccountName,
+                        $languageId,
+                        $shopGroupId,
+                        $shopId
+                    )
+                ) {
                     throw new NostoException(
                         sprintf(
                             'This account is already being used by "%s". 
                                 Please create a new account for each store view',
-                            isset($shop['name']) ? $shop['name'] : $shop['id_shop']
+                            isset($shop['name']) ? $shop['name'] : $shopId
                         )
                     );
                 }
