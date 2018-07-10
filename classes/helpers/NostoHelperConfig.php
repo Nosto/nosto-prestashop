@@ -197,34 +197,16 @@ class NostoHelperConfig
 
     /**
      * Gets a account name from the config.
-     * Parameters are optional.
-     * If none passed, will get from the current scope
      *
-     * @param int|null $languageId
-     * @param int|null $shopGroupId
-     * @param int|null $shopId
      * @return mixed
-     * @suppress PhanTypeMismatchArgument
      */
-    public static function getAccountName(
-        $languageId = null,
-        $shopGroupId = null,
-        $shopId = null
-    ) {
-        if ($languageId === null) {
-            $languageId = NostoHelperContext::getLanguageId();
-        }
-        if ($shopGroupId === null) {
-            $shopGroupId = NostoHelperContext::getShopGroupId();
-        }
-        if ($shopId === null) {
-            $shopId = NostoHelperContext::getShopId();
-        }
+    public static function getAccountName()
+    {
         return Configuration::get(
             self::ACCOUNT_NAME,
-            $languageId,
-            $shopGroupId,
-            $shopId
+            NostoHelperContext::getLanguageId(),
+            NostoHelperContext::getShopGroupId(),
+            NostoHelperContext::getShopId()
         );
     }
 
@@ -246,26 +228,13 @@ class NostoHelperConfig
      * @param string $tokenName the name of the token to get.
      * @return mixed
      */
-    public static function getToken(
-        $tokenName,
-        $languageId = null,
-        $shopGroupId = null,
-        $shopId = null
-    ) {
-        if ($languageId === null) {
-            $languageId = NostoHelperContext::getLanguageId();
-        }
-        if ($shopGroupId === null) {
-            $shopGroupId = NostoHelperContext::getShopGroupId();
-        }
-        if ($shopId === null) {
-            $shopId = NostoHelperContext::getShopId();
-        }
+    public static function getToken($tokenName)
+    {
         return Configuration::get(
             self::getTokenConfigKey($tokenName),
-            $languageId,
-            $shopGroupId,
-            $shopId
+            NostoHelperContext::getLanguageId(),
+            NostoHelperContext::getShopGroupId(),
+            NostoHelperContext::getShopId()
         );
     }
 

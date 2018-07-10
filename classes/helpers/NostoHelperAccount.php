@@ -79,32 +79,17 @@ class NostoHelperAccount
     /**
      * Finds and returns an account for given criteria.
      *
-     * @param null $accountName
-     * @param null $languageId
-     * @param null $shopGroupId
-     * @param null $shopId
      * @return NostoSDKAccount|null the account with loaded API tokens, or null if not found.
      * @throws \Nosto\NostoException
      */
-    public static function getAccount(
-        $accountName = null,
-        $languageId = null,
-        $shopGroupId = null,
-        $shopId = null
-    ) {
-        if ($accountName === null) {
-            $accountName = NostoHelperConfig::getAccountName();
-        }
+    public static function getAccount()
+    {
+        $accountName = NostoHelperConfig::getAccountName();
         if (!empty($accountName)) {
             $account = new NostoSDKAccount($accountName);
             $tokens = array();
             foreach (NostoSDKAPIToken::getApiTokenNames() as $tokenName) {
-                $tokenValue = NostoHelperConfig::getToken(
-                    $tokenName,
-                    $languageId,
-                    $shopGroupId,
-                    $shopId
-                );
+                $tokenValue = NostoHelperConfig::getToken($tokenName);
                 if (!empty($tokenValue)) {
                     $tokens[$tokenName] = $tokenValue;
                 }
@@ -122,24 +107,12 @@ class NostoHelperAccount
     /**
      * Checks if an account exists and is "connected to Nosto" for given criteria.
      *
-     * @param null $accountName
-     * @param null $languageId
-     * @param null $shopGroupId
-     * @param null $shopId
      * @return bool true if it does, false otherwise.
      * @throws \Nosto\NostoException
      */
-    public static function existsAndIsConnected(
-        $accountName = null,
-        $languageId = null,
-        $shopGroupId = null,
-        $shopId = null
-    ) {
-        if ($accountName === null) {
-            $account = self::getAccount();
-        } else {
-            $account = self::getAccount($accountName, $languageId, $shopGroupId, $shopId);
-        }
+    public static function existsAndIsConnected()
+    {
+        $account = self::getAccount();
         return ($account !== null && $account->isConnectedToNosto());
     }
 }

@@ -82,41 +82,25 @@ class OauthTraitAdapter
      */
     public function save(NostoSDKAccountInterface $account)
     {
-        $shops = Shop::getShops();
-        foreach ($shops as $shop) {
-            $shopLanguages = Language::getLanguages(true, $shop['id_shop']);
-            if ($shopLanguages === []) {
-                continue;
+       $success = true;
+       NostoHelperContext::runInContextForEachLanguageEachShop(function () use ($account, &$success) {
+            if ($account->getName() === NostoHelperConfig::getAccountName()
+                && NostoHelperAccount::existsAndIsConnected()
+            ) {
+                $success = false;
+                return;
             }
-            foreach ($shopLanguages as $shopLanguage) {
-                $languageId = isset($shopLanguage['id_lang']) ? $shopLanguage['id_lang'] : null;
-                $shopGroupId = isset($shop['id_shop_group']) ? $shop['id_shop_group'] : null;
-                $shopId = isset($shop['id_shop']) ? $shop['id_shop'] : null;
-
-                $nostoAccountName = NostoHelperConfig::getAccountName(
-                    $languageId,
-                    $shopGroupId,
-                    $shopId
-                );
-                if ($nostoAccountName !== false
-                    && NostoHelperAccount::existsAndIsConnected(
-                        $nostoAccountName,
-                        $languageId,
-                        $shopGroupId,
-                        $shopId
-                    )
-                ) {
-                    throw new NostoException(
-                        sprintf(
-                            'This account is already being used by "%s". 
-                                Please create a new account for each store view',
-                            isset($shop['name']) ? $shop['name'] : $shopId
-                        )
-                    );
-                }
-            }
-        }
-        NostoHelperAccount::save($account);
+        });
+       if ($success === false) {
+           throw new NostoException(
+               sprintf(
+                   'This account is already being used by "%s". 
+                                        Please create a new account for each store view',
+                   NostoHelperContext::getShop()->name
+               )
+           );
+       }
+       NostoHelperAccount::save($account);
     }
 
     /**
