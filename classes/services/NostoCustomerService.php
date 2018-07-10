@@ -39,38 +39,91 @@ class NostoCustomerService extends AbstractNostoService
      */
     public function customerUpdated($customer)
     {
-        if (!$customer->email) {
+        if (!$customer->email
+            || !NostoTagging::isEnabled(NostoTagging::MODULE_NAME)
+        ) {
             return false;
         }
+
+        // Try to update marketing permission to all store views that has share_customer flag on
+        $updatedAccounts = [];
+        NostoHelperContext::runInContextForEachLanguageEachShop(function () use ($customer, &$updatedAccounts) {
+            $shopGroup = Shop::getContextShopGroup();
+            if ($shopGroup !== null
+                && (bool)$shopGroup->active
+                && (bool)$shopGroup->share_customer
+            ) {
+                try {
+                    $account = NostoHelperAccount::getAccount();
+                    if (!$account instanceof NostoSDKAccount || !$account->isConnectedToNosto()) {
+                        return;
+                    }
+                    $this->updateMarketingPermissionInCurrentContext($updatedAccounts, $customer, $account);
+                } catch (\Exception $e) {
+                    NostoHelperLogger::error($e);
+                    return;
+                }
+            }
+        });
+        // Update marketing permission for the current context, in case it's a single store
         try {
-            if (!NostoTagging::isEnabled(NostoTagging::MODULE_NAME)) {
-                return false;
-            }
-
             $account = NostoHelperAccount::getAccount();
-            if (!$account instanceof NostoSDKAccount || !$account->isConnectedToNosto()) {
-                return false;
+            if ($account instanceof NostoSDKAccount
+                && $account->isConnectedToNosto()
+                && !array_key_exists($account->getName(), $updatedAccounts)
+            ) {
+                $this->updateMarketingPermissionInCurrentContext($updatedAccounts, $customer, $account);
             }
-
-            if (!$account->getApiToken(NostoSDKToken::API_EMAIL)) {
-                NostoHelperLogger::info(
-                    sprintf(
-                        "API_EMAIL api token is missing (%s). Please reconnect nosto account to create API_EMAIL token",
-                        $account->getName()
-                    )
-                );
-
-                return false;
-            }
-
-            $newsletter = $customer->newsletter;
-            $email = $customer->email;
-            $service = new NostoSDKMarketingPermission($account);
-
-            return $service->update($email, $newsletter);
         } catch (\Exception $e) {
             NostoHelperLogger::error($e);
-            return false;
         }
+        return $this->isAllUpdated($updatedAccounts);
+    }
+
+    /**
+     * @param $updatedAccounts
+     * @param $customer
+     * @param NostoSDKAccount $account
+     */
+    private function updateMarketingPermissionInCurrentContext(&$updatedAccounts, $customer, NostoSDKAccount $account)
+    {
+        $updatedAccounts[$account->getName()] = false;
+        if (!$account->getApiToken(NostoSDKToken::API_EMAIL)) {
+            NostoHelperLogger::info(
+                sprintf(
+                    'API_EMAIL api token is missing (%s). Please reconnect Nosto account to create API_EMAIL token',
+                    $account->getName()
+                )
+            );
+            return;
+        }
+        $newsletter = $customer->newsletter;
+        $email = $customer->email;
+        $service = new NostoSDKMarketingPermission($account);
+        $updatedAccounts[$account->getName()] = $service->update($email, $newsletter);
+    }
+
+    /**
+     * Check if all store views that the customer belongs to
+     * were updated. Logs stores that failed to update.
+     *
+     * @param $updatedAccounts
+     * @return bool
+     */
+    private function isAllUpdated($updatedAccounts)
+    {
+        $success = true;
+        foreach ($updatedAccounts as $accountName => $isUpdated) {
+            if ($isUpdated === false) {
+                NostoHelperLogger::info(
+                    sprintf(
+                        'Failed to update marketing permission for the account (%s) ',
+                        $accountName
+                    )
+                );
+                $success = false;
+            }
+        }
+        return $success;
     }
 }
