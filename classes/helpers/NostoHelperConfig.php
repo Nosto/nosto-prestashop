@@ -204,6 +204,7 @@ class NostoHelperConfig
      * @param int|null $shopGroupId
      * @param int|null $shopId
      * @return mixed
+     * @suppress PhanTypeMismatchArgument
      */
     public static function getAccountName(
         $languageId = null,
