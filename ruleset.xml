@@ -70,13 +70,14 @@
     <rule ref="Squiz.NamingConventions.ValidVariableName.NotCamelCaps"/>
     <rule ref="Squiz.NamingConventions.ValidVariableName.MemberNotCamelCaps"/>
     <rule ref="Squiz.NamingConventions.ValidVariableName.StringNotCamelCaps"/>
-    <config name="testVersion" value="5.3"/>
-    <exclude-pattern>/build/</exclude-pattern>
-    <exclude-pattern>/libs/</exclude-pattern>
-    <exclude-pattern>/.phan/</exclude-pattern>
-    <exclude-pattern>de.php</exclude-pattern>
-    <exclude-pattern>en.php</exclude-pattern>
-    <exclude-pattern>es.php</exclude-pattern>
-    <exclude-pattern>fr.php</exclude-pattern>
-    <exclude-pattern>*.js</exclude-pattern>
+    <config name="testVersion" value="5.4"/>
+    <exclude-pattern>*/build/*</exclude-pattern>
+    <exclude-pattern>*/.git/*</exclude-pattern>
+    <exclude-pattern>*/.idea/*</exclude-pattern>
+    <exclude-pattern>*/.phan/*</exclude-pattern>
+    <exclude-pattern type="relative">libs/*</exclude-pattern>
+    <exclude-pattern type="relative">de.php</exclude-pattern>
+    <exclude-pattern type="relative">en.php</exclude-pattern>
+    <exclude-pattern type="relative">es.php</exclude-pattern>
+    <exclude-pattern type="relative">fr.php</exclude-pattern>
 </ruleset>

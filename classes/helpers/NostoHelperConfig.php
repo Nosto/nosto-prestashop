@@ -378,7 +378,7 @@ class NostoHelperConfig
      */
     public static function isCustomerTaggingEnabled()
     {
-        $skipped =  self::read(self::SKIP_CUSTOMER_TAGGING_SWITCH);
+        $skipped = self::read(self::SKIP_CUSTOMER_TAGGING_SWITCH);
 
         return !(bool)$skipped;
     }
