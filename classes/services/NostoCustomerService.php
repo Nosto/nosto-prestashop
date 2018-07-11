@@ -55,10 +55,9 @@ class NostoCustomerService extends AbstractNostoService
             ) {
                 try {
                     $account = NostoHelperAccount::getAccount();
-                    if (!$account instanceof NostoSDKAccount || !$account->isConnectedToNosto()) {
-                        return;
+                    if ($account instanceof NostoSDKAccount && $account->isConnectedToNosto()) {
+                        $this->updateMarketingPermissionInCurrentContext($updatedAccounts, $customer, $account);
                     }
-                    $this->updateMarketingPermissionInCurrentContext($updatedAccounts, $customer, $account);
                 } catch (\Exception $e) {
                     NostoHelperLogger::error($e);
                     return;
