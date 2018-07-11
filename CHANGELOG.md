@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
+## 3.4.3
+- Fixed a bug that was preventing the tagging to show due to a missing cache clear after the update
+
 ## 3.4.2
 - Fixed a bug that customer tagging has been disabled by default on prestashop 1.6
 - Fixed a bug that it is not possible to enable or disable customer tagging
