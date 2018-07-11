@@ -75,6 +75,7 @@
     <exclude-pattern>*/.git/*</exclude-pattern>
     <exclude-pattern>*/.idea/*</exclude-pattern>
     <exclude-pattern>*/.phan/*</exclude-pattern>
+    <exclude-pattern>*.js</exclude-pattern>
     <exclude-pattern type="relative">libs/*</exclude-pattern>
     <exclude-pattern type="relative">de.php</exclude-pattern>
     <exclude-pattern type="relative">en.php</exclude-pattern>
