@@ -60,7 +60,6 @@ class NostoCustomerService extends AbstractNostoService
                     }
                 } catch (\Exception $e) {
                     NostoHelperLogger::error($e);
-                    return;
                 }
             }
         });
