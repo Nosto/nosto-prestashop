@@ -39,7 +39,8 @@ class NostoDefaultTagging
         }
 
         $html = '';
-        $html .= NostoCustomerTagging::get();
+        $html .= NostoPageTypeTagging::get();
+	$html .= NostoCustomerTagging::get();
         $html .= NostoCartTagging::get();
         $html .= NostoVariationTagging::get();
         if (NostoHelperController::isController('category')) {
