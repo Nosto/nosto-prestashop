@@ -34,17 +34,17 @@ class NostoCustomerService extends AbstractNostoService
 {
     /**
      * Customer updated event handler. It is called after Customer updated or created.
+     *
      * @param Customer $customer event parameters
      * @return bool
      */
-    public function customerUpdated($customer)
+    public function customerUpdated(Customer $customer)
     {
         if (!$customer->email
             || !NostoTagging::isEnabled(NostoTagging::MODULE_NAME)
         ) {
             return false;
         }
-
         // Try to update marketing permission to all store views that has share_customer flag on
         $updatedAccounts = [];
         NostoHelperContext::runInContextForEachLanguageEachShop(function () use ($customer, &$updatedAccounts) {
@@ -56,7 +56,8 @@ class NostoCustomerService extends AbstractNostoService
                 try {
                     $account = NostoHelperAccount::getAccount();
                     if ($account instanceof NostoSDKAccount && $account->isConnectedToNosto()) {
-                        $this->updateMarketingPermissionInCurrentContext($updatedAccounts, $customer, $account);
+                        $updatedAccounts[$account->getName()] =
+                            $this->updateMarketingPermissionInCurrentContext($customer, $account);
                     }
                 } catch (\Exception $e) {
                     NostoHelperLogger::error($e);
@@ -70,7 +71,8 @@ class NostoCustomerService extends AbstractNostoService
                 && $account->isConnectedToNosto()
                 && !array_key_exists($account->getName(), $updatedAccounts)
             ) {
-                $this->updateMarketingPermissionInCurrentContext($updatedAccounts, $customer, $account);
+                $updatedAccounts[$account->getName()] =
+                    $this->updateMarketingPermissionInCurrentContext($customer, $account);
             }
         } catch (\Exception $e) {
             NostoHelperLogger::error($e);
@@ -79,13 +81,15 @@ class NostoCustomerService extends AbstractNostoService
     }
 
     /**
-     * @param $updatedAccounts
-     * @param $customer
+     * Fires the update for the given customer and account
+     * returns true if the update was successful
+     *
+     * @param Customer $customer
      * @param NostoSDKAccount $account
+     * @return bool
      */
-    private function updateMarketingPermissionInCurrentContext(&$updatedAccounts, $customer, NostoSDKAccount $account)
+    private function updateMarketingPermissionInCurrentContext(Customer $customer, NostoSDKAccount $account)
     {
-        $updatedAccounts[$account->getName()] = false;
         if (!$account->getApiToken(NostoSDKToken::API_EMAIL)) {
             NostoHelperLogger::info(
                 sprintf(
@@ -93,12 +97,12 @@ class NostoCustomerService extends AbstractNostoService
                     $account->getName()
                 )
             );
-            return;
+            return false;
         }
         $newsletter = $customer->newsletter;
         $email = $customer->email;
         $service = new NostoSDKMarketingPermission($account);
-        $updatedAccounts[$account->getName()] = $service->update($email, $newsletter);
+        return $service->update($email, $newsletter);
     }
 
     /**
@@ -108,7 +112,7 @@ class NostoCustomerService extends AbstractNostoService
      * @param $updatedAccounts
      * @return bool
      */
-    private function isAllUpdated($updatedAccounts)
+    private function isAllUpdated(array $updatedAccounts)
     {
         $success = true;
         foreach ($updatedAccounts as $accountName => $isUpdated) {
@@ -120,6 +124,7 @@ class NostoCustomerService extends AbstractNostoService
                     )
                 );
                 $success = false;
+                break;
             }
         }
         return $success;
