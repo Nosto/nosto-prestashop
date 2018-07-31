@@ -4,6 +4,7 @@ This project adheres to Semantic Versioning(http://semver.org/).
 
 ## 3.5.0
 - Update customer's marketing permission to nosto via api
+- Fixed a bug that page type div was rendered inside html head
 
 ## 3.4.3
 - Fixed a bug that was preventing the tagging to show due to a missing cache clear after the update
