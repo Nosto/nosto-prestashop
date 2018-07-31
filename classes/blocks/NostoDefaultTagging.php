@@ -40,7 +40,7 @@ class NostoDefaultTagging
 
         $html = '';
         $html .= NostoPageTypeTagging::get();
-	$html .= NostoCustomerTagging::get();
+        $html .= NostoCustomerTagging::get();
         $html .= NostoCartTagging::get();
         $html .= NostoVariationTagging::get();
         if (NostoHelperController::isController('category')) {
