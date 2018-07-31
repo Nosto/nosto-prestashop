@@ -35,9 +35,7 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_3_4_3()
 {
-    $success = NostoAdminTabManager::uninstall() && NostoAdminTabManager::install();
-
     NostoHelperConfig::clearCache();
 
-    return $success;
+    return true;
 }
