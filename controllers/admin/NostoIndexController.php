@@ -84,7 +84,7 @@ class NostoIndexController
 
     public function displayErrorMessage(NostoTagging $nostoTagging)
     {
-        $text = Tools::getValue("message_text");
+        $text = Tools::getValue(NostoSDK::URL_PARAM_MESSAGE_TEXT);
         if ($text) {
             $nostoTagging->adminDisplayWarning($text);
         }
