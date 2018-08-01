@@ -46,7 +46,7 @@ class NostoCustomerService extends AbstractNostoService
             return false;
         }
         // Try to update marketing permission to all store views that has share_customer flag on
-        $updatedAccounts = [];
+        $updatedAccounts = array();
         NostoHelperContext::runInContextForEachLanguageEachShop(function () use ($customer, &$updatedAccounts) {
             $shopGroup = Shop::getContextShopGroup();
             if ($shopGroup !== null
@@ -57,7 +57,7 @@ class NostoCustomerService extends AbstractNostoService
                     $account = NostoHelperAccount::getAccount();
                     if ($account instanceof NostoSDKAccount && $account->isConnectedToNosto()) {
                         $updatedAccounts[$account->getName()] =
-                            $this->updateMarketingPermissionInCurrentContext($customer, $account);
+                            self::updateMarketingPermissionInCurrentContext($customer, $account);
                     }
                 } catch (\Exception $e) {
                     NostoHelperLogger::error($e);
@@ -72,7 +72,7 @@ class NostoCustomerService extends AbstractNostoService
                 && !array_key_exists($account->getName(), $updatedAccounts)
             ) {
                 $updatedAccounts[$account->getName()] =
-                    $this->updateMarketingPermissionInCurrentContext($customer, $account);
+                    self::updateMarketingPermissionInCurrentContext($customer, $account);
             }
         } catch (\Exception $e) {
             NostoHelperLogger::error($e);
@@ -88,7 +88,7 @@ class NostoCustomerService extends AbstractNostoService
      * @param NostoSDKAccount $account
      * @return bool
      */
-    private function updateMarketingPermissionInCurrentContext(Customer $customer, NostoSDKAccount $account)
+    private static function updateMarketingPermissionInCurrentContext(Customer $customer, NostoSDKAccount $account)
     {
         if (!$account->getApiToken(NostoSDKToken::API_EMAIL)) {
             NostoHelperLogger::info(

@@ -308,6 +308,7 @@ class NostoTagging extends Module
         }
 
         $indexController = new NostoIndexController();
+        $indexController->displayErrorMessage($this);
         $smartyMetaData = $indexController->getSmartyMetaData($this);
         $this->getSmarty()->assign($smartyMetaData);
 

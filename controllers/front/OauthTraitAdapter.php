@@ -36,8 +36,8 @@ class OauthTraitAdapter
     use NostoSDKOauthTrait;
 
     private $languageId;
-    /** @var string */
-    private $moduleName;
+    /** @var NostoTagging $module */
+    private $module;
 
     /**
      * Handles the redirect from Nosto oauth2 authorization server when an existing account is
@@ -45,12 +45,12 @@ class OauthTraitAdapter
      * "return_url" sent in the first step of the authorization cycle, and requires it to be from
      * the same domain that the account is configured for and only redirects to that domain.
      *
-     * @param string $moduleName module name
+     * @param NostoTagging $module
      * @return void
      */
-    public function initContent($moduleName)
+    public function initContent($module)
     {
-        $this->moduleName = $moduleName;
+        $this->module = $module;
         $this->languageId = (int)Tools::getValue('language_id', NostoHelperContext::getLanguageId());
         self::connect();
     }
@@ -67,7 +67,7 @@ class OauthTraitAdapter
         $oauthTraitAdapter = $this;
         return NostoHelperContext::runInContext(
             function () use ($oauthTraitAdapter) {
-                return NostoOAuth::loadData($oauthTraitAdapter->moduleName);
+                return NostoOAuth::loadData($oauthTraitAdapter->module->name);
             },
             $oauthTraitAdapter->languageId
         );
@@ -82,25 +82,25 @@ class OauthTraitAdapter
      */
     public function save(NostoSDKAccountInterface $account)
     {
-       $success = true;
-       NostoHelperContext::runInContextForEachLanguageEachShop(function () use ($account, &$success) {
-            if ($account->getName() === NostoHelperConfig::getAccountName()
+        $success = true;
+        NostoHelperContext::runInContextForEachLanguageEachShop(function () use ($account, &$success) {
+            if ($success
+                && $account->getName() === NostoHelperConfig::getAccountName()
                 && NostoHelperAccount::existsAndIsConnected()
             ) {
                 $success = false;
-                return;
             }
         });
-       if ($success === false) {
-           throw new NostoException(
-               sprintf(
-                   'This account is already being used by "%s". 
+        if (!$success) {
+            throw new NostoException(
+                sprintf(
+                    'This account is already being used by "%s". 
                                         Please create a new account for each store view',
-                   NostoHelperContext::getShop()->name
-               )
-           );
-       }
-       NostoHelperAccount::save($account);
+                    NostoHelperContext::getShop()->name
+                )
+            );
+        }
+        NostoHelperAccount::save($account);
     }
 
     /**

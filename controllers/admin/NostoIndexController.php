@@ -82,6 +82,14 @@ class NostoIndexController
         return null;
     }
 
+    public function displayErrorMessage(NostoTagging $nostoTagging)
+    {
+        $text = Tools::getValue("message_text");
+        if ($text) {
+            $nostoTagging->adminDisplayWarning($text);
+        }
+    }
+
     public function getSmartyMetaData(NostoTagging $nostoTagging)
     {
         // Always update the url to the module admin page when we access it.
