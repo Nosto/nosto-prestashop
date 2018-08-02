@@ -3,8 +3,9 @@ All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
 ## 3.5.0
-- Update customer's marketing permission to nosto via api
+- Update customer's marketing permission to Nosto via api
 - Fixed a bug that page type div was rendered inside html head
+- Fixed a bug that same Nosto account could be connected to different stores or languages.
 
 ## 3.4.3
 - Fixed a bug that was preventing the tagging to show due to a missing cache clear after the update
