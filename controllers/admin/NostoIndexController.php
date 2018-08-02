@@ -82,6 +82,18 @@ class NostoIndexController
         return null;
     }
 
+    /**
+     * Display the error message if is there any
+     * @param NostoTagging $nostoTagging
+     */
+    public function displayErrorMessage(NostoTagging $nostoTagging)
+    {
+        $text = Tools::getValue(NostoSDK::URL_PARAM_MESSAGE_TEXT);
+        if ($text) {
+            $nostoTagging->adminDisplayWarning($text);
+        }
+    }
+
     public function getSmartyMetaData(NostoTagging $nostoTagging)
     {
         // Always update the url to the module admin page when we access it.
@@ -109,6 +121,7 @@ class NostoIndexController
         if ($account instanceof NostoSDKAccountInterface
             && $account->getApiToken(NostoSDKAPIToken::API_EXCHANGE_RATES)
             && $account->getApiToken(NostoSDKAPIToken::API_SETTINGS)
+            && $account->getApiToken(NostoSDKAPIToken::API_EMAIL)
         ) {
             $missingTokens = false;
         }

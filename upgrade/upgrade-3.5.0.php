@@ -23,26 +23,32 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use Nosto\Mixins\OauthTrait as NostoSDKOauthTrait;
-use Nosto\Request\Http\HttpRequest as NostoSDKHttpRequest;
-use Nosto\Types\Signup\AccountInterface as NostoSDKAccountInterface;
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 /**
- * @property NostoTagging $module
+ * Upgrades the module to version 3.5.0.
+ *
+ * Fix the controller registering issue
+ * @param $module Module
+ * @return bool
+ * @throws PrestaShopException
+ * @suppress PhanUnreferencedMethod
  */
-class NostoTaggingOauth2ModuleFrontController extends ModuleFrontController
+function upgrade_module_3_5_0($module)
 {
-    /**
-     * Handles the redirect from Nosto oauth2 authorization server when an existing account is
-     * connected to a store. This is handled in the front end as the oauth2 server validates the
-     * "return_url" sent in the first step of the authorization cycle, and requires it to be from
-     * the same domain that the account is configured for and only redirects to that domain.
-     *
-     * @return void
-     */
-    public function initContent()
-    {
-        $oauthAdaptor = new OauthTraitAdapter();
-        $oauthAdaptor->initContent($this->module);
-    }
+    $success = $module->registerHook('actionCustomerAccountAdd');
+    $success = $module->registerHook('actionCustomerAccountUpdate') && $success;
+
+    $hooks = array(array(
+        'name' => 'actionNostoCustomerLoadAfter',
+        'title' => 'After load nosto customer',
+        'description' => 'Action hook fired after a Nosto customer has been loaded.',
+    ));
+    $success = NostoHookManager::initHooks($hooks) && $success;
+
+    NostoHelperConfig::clearCache();
+
+    return $success;
 }

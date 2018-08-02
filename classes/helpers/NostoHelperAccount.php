@@ -59,8 +59,7 @@ class NostoHelperAccount
      */
     public static function delete()
     {
-        $success = NostoHelperConfig::deleteAllFromContext();
-        return $success;
+        return NostoHelperConfig::deleteAllFromContext();
     }
 
     /**
@@ -81,6 +80,7 @@ class NostoHelperAccount
      * Finds and returns an account for given criteria.
      *
      * @return NostoSDKAccount|null the account with loaded API tokens, or null if not found.
+     * @throws \Nosto\NostoException
      */
     public static function getAccount()
     {
@@ -94,13 +94,11 @@ class NostoHelperAccount
                     $tokens[$tokenName] = $tokenValue;
                 }
             }
-
             if (!empty($tokens)) {
                 foreach ($tokens as $name => $value) {
                     $account->addApiToken(new NostoSDKAPIToken($name, $value));
                 }
             }
-
             return $account;
         }
         return null;
@@ -110,6 +108,7 @@ class NostoHelperAccount
      * Checks if an account exists and is "connected to Nosto" for given criteria.
      *
      * @return bool true if it does, false otherwise.
+     * @throws \Nosto\NostoException
      */
     public static function existsAndIsConnected()
     {

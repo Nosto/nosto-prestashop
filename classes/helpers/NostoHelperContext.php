@@ -56,7 +56,7 @@ class NostoHelperContext
         self::emulateContext($languageId, $shopId, $currencyId, $employeeId, $countryId);
         try {
             $retVal = $callable();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             NostoHelperLogger::log($e->getMessage());
         }
         self::revertToOriginalContext();
