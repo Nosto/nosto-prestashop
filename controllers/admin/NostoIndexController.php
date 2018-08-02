@@ -82,6 +82,10 @@ class NostoIndexController
         return null;
     }
 
+    /**
+     * Display the error message if is there any
+     * @param NostoTagging $nostoTagging
+     */
     public function displayErrorMessage(NostoTagging $nostoTagging)
     {
         $text = Tools::getValue(NostoSDK::URL_PARAM_MESSAGE_TEXT);
