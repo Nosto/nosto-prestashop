@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
+## 3.5.1
+- Fixed a bug that was causing discrepancy in data sent to Nosto (Object Resolver)
+
 ## 3.5.0
 - Update customer's marketing permission to Nosto via api
 - Fixed a bug that page type div was rendered inside html head
