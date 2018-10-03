@@ -75,12 +75,17 @@ class NostoHelperController
         if (method_exists(Context::getContext()->controller, $method)) {
             $object = Context::getContext()->controller->$method();
         }
-        if ($object instanceof $klass == false) {
-            $id = null;
-            if (Tools::getValue($idName)) {
-                $id = Tools::getValue($idName);
-            }
-            if ($id) {
+        $id = Tools::getValue($idName) ?: null;
+        if ($object instanceof $klass === false && $id !== null) {
+            if ($klass === 'Product') {
+                $object = new $klass
+                (
+                    (int)$id,
+                    false,
+                    $multiLanguageObject ? NostoHelperContext::getLanguageId() : null,
+                    NostoHelperContext::getShopId()
+                );
+            } else {
                 $object = new $klass
                 (
                     (int)$id,
