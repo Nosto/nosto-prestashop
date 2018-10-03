@@ -68,6 +68,7 @@ class NostoHelperController
      * @return mixed the resolved object or null
      *
      * @suppress PhanTypeMismatchArgument
+     * @throws ReflectionException
      */
     public static function resolveObject($idName, $klass, $method, $multiLanguageObject = true)
     {
@@ -77,28 +78,30 @@ class NostoHelperController
         }
         $id = Tools::getValue($idName) ?: null;
         if ($object instanceof $klass === false && $id !== null) {
-            if ($klass === 'Product') {
-                $object = new $klass
-                (
-                    (int)$id,
-                    false,
-                    $multiLanguageObject ? NostoHelperContext::getLanguageId() : null,
-                    NostoHelperContext::getShopId()
-                );
-            } else {
-                $object = new $klass
-                (
-                    (int)$id,
-                    $multiLanguageObject ? NostoHelperContext::getLanguageId() : null,
-                    NostoHelperContext::getShopId()
-                );
+            try {
+                $reflectionMethod = new ReflectionMethod($klass, '__construct');
+            } catch (\ReflectionException $e) {
+                NostoHelperLogger::error($e);
+                return null;
             }
+            $argsArray['full'] = false;
+            $argsArray['idlang'] = $multiLanguageObject ? NostoHelperContext::getLanguageId() : null;
+            $argsArray['idshop'] = NostoHelperContext::getShopId();
+            $argsForObject[] = $id; // First argument is always the id
+            $constructorArgs = $reflectionMethod->getParameters();
+            foreach ($constructorArgs as $constructorArg) {
+                // Remove snake case
+                $argName = strtolower(str_replace('_', '', $constructorArg->getName()));
+                if (array_key_exists($argName, $argsArray)) {
+                    $argsForObject[$argName] = $argsArray[$argName];
+                }
+            }
+            $reflectionClass = new ReflectionClass($klass);
+            $object = $reflectionClass->newInstanceArgs($argsForObject);
         }
-
         if ($object instanceof $klass === false || !Validate::isLoadedObject($object)) {
             $object = null;
         }
-
         return $object;
     }
 }
