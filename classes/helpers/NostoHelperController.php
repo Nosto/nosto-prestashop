@@ -84,9 +84,11 @@ class NostoHelperController
                 NostoHelperLogger::error($e);
                 return null;
             }
+            $argsArray = array();
             $argsArray['full'] = false;
             $argsArray['idlang'] = $multiLanguageObject ? NostoHelperContext::getLanguageId() : null;
             $argsArray['idshop'] = NostoHelperContext::getShopId();
+            $argsForObject = array();
             $argsForObject[] = $id; // First argument is always the id
             $constructorArgs = $reflectionMethod->getParameters();
             foreach ($constructorArgs as $constructorArg) {
