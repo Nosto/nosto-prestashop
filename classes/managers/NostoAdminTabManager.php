@@ -31,6 +31,7 @@ class NostoAdminTabManager
 
     const MAIN_MENU_ITEM_CLASS = 'AdminNosto';
     const SUB_MENU_ITEM_CLASS = 'AdminNostoPersonalization';
+    const ID_LANG = "id_lang";
 
     public static $controllers = array(
         "NostoCreateAccount",
@@ -84,7 +85,7 @@ class NostoAdminTabManager
             $tab->class_name = self::MAIN_MENU_ITEM_CLASS;
             $tab->name = array();
             foreach ($languages as $lang) {
-                $tab->name[$lang['id_lang']] = 'Nosto';
+                $tab->name[$lang[self::ID_LANG]] = 'Nosto';
             }
 
             $tab->id_parent = 0;
@@ -104,9 +105,9 @@ class NostoAdminTabManager
                 $tab->name = array();
                 foreach ($languages as $lang) {
                     if (isset(self::$itemTranslations[$lang['iso_code']])) {
-                        $tab->name[$lang['id_lang']] = self::$itemTranslations[$lang['iso_code']];
+                        $tab->name[$lang[self::ID_LANG]] = self::$itemTranslations[$lang['iso_code']];
                     } else {
-                        $tab->name[$lang['id_lang']] = 'Personalization';
+                        $tab->name[$lang[self::ID_LANG]] = 'Personalization';
                     }
                 }
                 $tab->id_parent = self::getAdminTabId(AdminNostoController::getClassName());
@@ -144,11 +145,11 @@ class NostoAdminTabManager
         /** @noinspection PhpDeprecationInspection */
         $tab->id = (int)Tab::getIdFromClassName($className);
         $tab->active = true;
-        $languageIds = Language::getLanguages(false, false, true);
-        if ($languageIds) {
+        $languages = Language::getLanguages(false, false);
+        if ($languages) {
             $tab->name = array();
-            foreach ($languageIds as $languageId) {
-                $tab->name[(int)$languageId] = $className;
+            foreach ($languages as $language) {
+                $tab->name[(int)$language[self::ID_LANG]] = $className;
             }
         } else {
             //In prestashop 1.5, the tab name length is limited to max 32
