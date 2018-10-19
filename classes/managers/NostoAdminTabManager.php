@@ -31,7 +31,7 @@ class NostoAdminTabManager
 
     const MAIN_MENU_ITEM_CLASS = 'AdminNosto';
     const SUB_MENU_ITEM_CLASS = 'AdminNostoPersonalization';
-    const ID_LANG = "id_lang";
+    const ID_LANG = 'id_lang';
 
     public static $controllers = array(
         "NostoCreateAccount",
