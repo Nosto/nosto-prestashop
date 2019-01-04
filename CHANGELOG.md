@@ -4,6 +4,7 @@ This project adheres to Semantic Versioning(http://semver.org/).
 
 ## 3.5.3
 - Fix negative SKU inventory in product availability
+- Escape search term in tagging
 
 ## 3.5.2
 - Fixed a bug that it failed to be installed to prestashop below version 1.6.1.0 with multi-language enabled
