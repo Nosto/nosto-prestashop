@@ -255,7 +255,19 @@ class NostoProduct extends NostoSDKProduct
         if (!$product->active || $product->visibility === 'none') {
             return self::INVISIBLE;
         }
-        return ($product->checkQty(1)) ? self::IN_STOCK : self::OUT_OF_STOCK;
+        if ($product->checkQty(1)) {
+            return self::IN_STOCK;
+        }
+        $combinations = $product->getAttributeCombinations();
+        if (empty($combinations)) {
+            return $product->checkQty(1) ? self::IN_STOCK : self::OUT_OF_STOCK;
+        }
+        foreach ($combinations as $combination) {
+            if (array_key_exists('quantity', $combination) && $combination['quantity'] > 0) {
+                return self::IN_STOCK;
+            }
+        }
+        return self::OUT_OF_STOCK;
     }
 
     /**

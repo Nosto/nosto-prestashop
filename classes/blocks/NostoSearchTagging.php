@@ -38,7 +38,7 @@ class NostoSearchTagging
             return null;
         }
 
-        $nostoQuery = NostoSearch::loadData($searchTerm);
+        $nostoQuery = NostoSearch::loadData(Tools::htmlentitiesUTF8($searchTerm));
 
         return $nostoQuery ? $nostoQuery->toHtml() : null;
     }
