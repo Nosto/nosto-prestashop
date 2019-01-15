@@ -65,15 +65,30 @@ class NostoCategory extends NostoSDKCatetory
             return null;
         }
 
-        $nostoCategory = new NostoCategory(
-            implode(DIRECTORY_SEPARATOR, array_reverse($categoryList))
-            . DIRECTORY_SEPARATOR
-        );
+        $nostoCategory = new NostoCategory();
+        $nostoCategory->setCategoryString(self::buildCategoryString($categoryList));
 
         NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoCategory), array(
             'category' => $category,
             'nosto_category' => $nostoCategory
         ));
         return $nostoCategory;
+    }
+
+    /**
+     * Builds the category string
+     *
+     * @param array $categoryList
+     * @return string|null
+     */
+    private static function buildCategoryString($categoryList)
+    {
+        if(!is_array($categoryList)) {
+            return implode(DIRECTORY_SEPARATOR, array_reverse($categoryList))
+                . DIRECTORY_SEPARATOR;
+        }
+
+        return null;
+
     }
 }
