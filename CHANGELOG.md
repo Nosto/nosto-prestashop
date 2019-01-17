@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
+## 3.6.0
+- Bump Nosto SDK version to support HTTP 2
+
 ## 3.5.3
 - Fix negative SKU inventory in product availability
 - Escape search term in tagging
