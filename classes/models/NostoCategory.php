@@ -83,12 +83,11 @@ class NostoCategory extends NostoSDKCatetory
      */
     private static function buildCategoryString($categoryList)
     {
-        if(!is_array($categoryList)) {
+        if (is_array($categoryList)) {
             return implode(DIRECTORY_SEPARATOR, array_reverse($categoryList))
                 . DIRECTORY_SEPARATOR;
         }
 
         return null;
-
     }
 }
