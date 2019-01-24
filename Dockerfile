@@ -20,6 +20,12 @@ ENV         DEBIAN_FRONTEND noninteractive
 
 MAINTAINER  Nosto "platforms@nosto.com"
 
+# Add php-7.1 Source List
+RUN         apt-get -y -qq install lsb-release ca-certificates wget
+RUN         wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
+RUN         sh -c 'echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list'
+RUN         apt-get -y -qq update
+
 # Install all core dependencies required for setting up Apache and PHP atleast
 RUN         apt-get update && apt-get -y -q install unzip wget libfreetype6-dev libjpeg-dev \
             libmcrypt-dev libreadline-dev libpng-dev libicu-dev default-mysql-client \
