@@ -1,15 +1,34 @@
 FROM debian:stretch-slim
 
+MAINTAINER  Nosto "platforms@nosto.com"
+
+# Do not install suggested dependencies
+RUN echo -n "APT::Install-Recommends \"false\";\nAPT::Install-Suggests \"false\";" \
+            | tee /etc/apt/apt.conf
+
+# Enable access to metadata and packages using https
+RUN apt-get update && \
+            apt-get -y -qq install apt-transport-https
+
+# Setup locale
+RUN apt-get update && \
+            apt-get -y -qq upgrade && \
+            apt-get -y -qq install apt-utils locales && \
+            sed -i 's/^# *\(en_US.UTF-8\)/\1/' /etc/locale.gen && \
+            ln -sf /etc/locale.alias /usr/share/locale/locale.alias && \
+            locale-gen && \
+            apt-get -y -qq clean
+
 ENV         LANGUAGE en_US.UTF-8
 ENV         LANG en_US.UTF-8
+ENV         LC_ALL en_US.UTF-8
 ENV         TERM xterm
-RUN         export LC_ALL=en_US.UTF-8
 
 # Environment variables to force the extension to connect to a specified instance
-ENV         NOSTO_SERVER_URL staging.nosto.com
-ENV         NOSTO_API_BASE_URL https://staging-api.nosto.com
-ENV         NOSTO_OAUTH_BASE_URL https://staging.nosto.com/oauth
-ENV         NOSTO_WEB_HOOK_BASE_URL https://staging.nosto.com
+ENV         NOSTO_SERVER_URL connect.staging.nosto.com
+ENV         NOSTO_API_BASE_URL https://api.staging.nosto.com
+ENV         NOSTO_OAUTH_BASE_URL https://my.staging.nosto.com/oauth
+ENV         NOSTO_WEB_HOOK_BASE_URL https://my.staging.nosto.com
 ENV         NOSTO_IFRAME_ORIGIN_REGEXP .*
 
 ENV         MYSQL_ENV_MYSQL_DATABASE prestashop
@@ -18,7 +37,6 @@ ENV         MYSQL_ENV_MYSQL_ROOT root
 ENV         COMPOSER_ALLOW_SUPERUSER 1
 ENV         DEBIAN_FRONTEND noninteractive
 
-MAINTAINER  Nosto "platforms@nosto.com"
 
 # Add php-7.1 Source List
 RUN         apt-get -y -qq install lsb-release ca-certificates wget
@@ -40,11 +58,14 @@ RUN         apt-get -y -qq install apache2 php7.1 php7.1-common default-mysql-cl
             php7.1-curl php7.1-mbstring php7.1-mysql php7.1-soap php-xml php7.1-xml && \
             apt-get -y clean
 
-# Upgrade ast extension
-RUN         apt-get -y -q install build-essential php-pear && \
+# Upgrade AST extension
+RUN         apt-get -y -qq install build-essential php-pear && \
             pecl install ast-0.1.6 && \
             apt-get purge -y build-essential && \
             apt-get -y clean
+
+# Enable AST extension
+RUN         echo "extension=ast.so" >> /etc/php/7.1/cli/php.ini
 
 RUN         a2enmod rewrite && phpenmod ast soap && \
             a2dissite 000-default.conf
