@@ -169,6 +169,7 @@
             <exclude name="Dockerfile"/>
             <exclude name="Jenkinsfile"/>
             <exclude name="**/.idea/**"/>
+            <exclude name="**/.github/**"/>
             <exclude name="**/.phan/**"/>
             <exclude name="**/tests/**"/>
             <exclude name="**/phing/**"/>
