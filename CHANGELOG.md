@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
+## 3.6.1
+- Bump Nosto SDK version to fix the double encoded Oauth redirect URL
+- Fix constructing the product categories 
+
 ## 3.6.0
 - Bump Nosto SDK version to support HTTP 2
 

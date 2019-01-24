@@ -343,9 +343,9 @@ class NostoProduct extends NostoSDKProduct
         $productCategories = $product->getCategories();
         foreach ($productCategories as $categoryId) {
             $category = new Category((int)$categoryId, NostoHelperContext::getLanguageId());
-            $category = NostoCategory::loadData($category);
-            if (!empty($category)) {
-                $this->addCategory($category->getValue());
+            $nostoCategory = NostoCategory::loadData($category);
+            if (!empty($nostoCategory)) {
+                $this->addCategory($nostoCategory->getCategoryString());
             }
         }
     }
