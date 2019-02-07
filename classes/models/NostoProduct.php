@@ -258,7 +258,8 @@ class NostoProduct extends NostoSDKProduct
         if ($product->checkQty(1)) {
             return self::IN_STOCK;
         }
-        $combinations = $product->getAttributeCombinations();
+        // Note that for Prestashop 1.6 and below, the langID is a required parameter
+        $combinations = $product->getAttributeCombinations(Context::getContext()->language->id);
         if (empty($combinations)) {
             return $product->checkQty(1) ? self::IN_STOCK : self::OUT_OF_STOCK;
         }
