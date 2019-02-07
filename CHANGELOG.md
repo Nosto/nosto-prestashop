@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
+## 3.6.2
+- Fix missing language id parameter for Prestashop < 1.6 in item availability
+
 ## 3.6.1
 - Bump Nosto SDK version to fix the double encoded Oauth redirect URL
 - Fix constructing the product categories 
