@@ -23,6 +23,7 @@ pipeline {
         catchError {
           sh "./libs/bin/phpcs --standard=ruleset.xml --severity=10 --report=checkstyle --report-file=chkphpcs.xml . || true"
         }
+        archiveArtifacts 'chkphpcs.xml'
       }
     }
 
@@ -31,6 +32,7 @@ pipeline {
         catchError {
           sh "./libs/bin/phpcpd --exclude=libs --exclude=build --log-pmd=phdpcpd.xml app || true"
         }
+        archiveArtifacts 'phdpcpd.xml'
       }
     }
 
@@ -39,6 +41,7 @@ pipeline {
         catchError {
           sh "./libs/bin/phpmd . xml codesize,naming,unusedcode,controversial,design --exclude libs,var,build,tests --reportfile pmdphpmd.xml || true"
         }
+        archiveArtifacts 'pmdphpmd.xml'
       }
     }
 
@@ -46,7 +49,10 @@ pipeline {
       steps {
         script {
           version = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
+          sh "composer archive --file=${version} --format=zip"
+          sh 'chmod 644 *.zip'
         }
+        archiveArtifacts "${version}.zip"
       }
     }
 
@@ -55,6 +61,7 @@ pipeline {
         catchError {
           sh "./libs/bin/phan --config-file=phan.php --output-mode=checkstyle --output=chkphan.xml || true"
         }
+        archiveArtifacts 'chkphan.xml'
       }
     }
   }
