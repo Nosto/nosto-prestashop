@@ -82,53 +82,6 @@ class NostoProduct extends NostoSDKProduct
         return $nostoProduct;
     }
 
-
-    public static function dataLoad(Product $product)
-    {
-        if (!Validate::isLoadedObject($product)) {
-            return null;
-        }
-
-        $nostoProduct = new NostoProduct();
-
-        $nostoProduct->setUrl(NostoHelperUrl::getProductUrl($product));
-        $nostoProduct->setProductId((string)$product->id);
-        $nostoProduct->setName($product->name);
-        $nostoProduct->setAvailability(self::checkAvailability($product));
-        $nostoProduct->amendTags($product);
-        $nostoProduct->amendCategories($product);
-        $nostoProduct->setDescription($product->description_short . $product->description);
-        $nostoProduct->setInventoryLevel((int)$product->quantity);
-        $nostoProduct->amendBrand($product);
-        $nostoProduct->amendImage($product);
-        $nostoProduct->amendAlternateImages($product);
-        $nostoProduct->amendSupplierCost($product);
-        $nostoProduct->amendCustomFields($product);
-
-        if (NostoHelperConfig::getVariationEnabled()) {
-            $nostoProduct->amendVariation($product);
-        } else {
-            $taggingCurrency = NostoHelperCurrency::getBaseCurrency();
-            $nostoProduct->setPriceCurrencyCode(Tools::strtoupper($taggingCurrency->iso_code));
-            $nostoProduct->setPrice(self::getPriceInclTax($product, $taggingCurrency));
-            $nostoProduct->setListPrice(self::getListPriceInclTax($product, $taggingCurrency));
-            if (NostoHelperConfig::useMultipleCurrencies()) {
-                $nostoProduct->setVariationId($taggingCurrency->iso_code);
-            }
-        }
-
-        if (NostoHelperConfig::getSkuEnabled()) {
-            $nostoProduct->amendSkus($product);
-        }
-
-        NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoProduct), array(
-            'product' => $product,
-            'nosto_product' => $nostoProduct
-        ));
-
-        return $nostoProduct;
-    }
-
     protected function amendCustomFields(Product $product)
     {
         $features = $product->getFrontFeatures(NostoHelperContext::getLanguageId());
