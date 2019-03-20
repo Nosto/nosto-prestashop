@@ -36,4 +36,3 @@
     "post-update-cmd" : "if [ -f ./libs/bin/phpcs ]; then \"libs/bin/phpcs\" --config-set installed_paths libs/wimg/php-compatibility; fi"
   }
 }
-g
