@@ -23,14 +23,16 @@ pipeline {
         catchError {
           sh "./libs/bin/phpcs --standard=ruleset.xml --severity=10 --report=checkstyle --report-file=chkphpcs.xml . || true"
         }
+        archiveArtifacts 'chkphpcs.xml'
       }
     }
 
     stage('Copy-Paste Detection') {
       steps {
         catchError {
-          sh "./libs/bin/phpcpd --exclude=libs --exclude=build --log-pmd=phdpcpd.xml app || true"
+          sh "./libs/bin/phpcpd --exclude=libs --exclude=build --log-pmd=phdpcpd.xml ."
         }
+        archiveArtifacts 'phdpcpd.xml'
       }
     }
 
@@ -39,14 +41,7 @@ pipeline {
         catchError {
           sh "./libs/bin/phpmd . xml codesize,naming,unusedcode,controversial,design --exclude libs,var,build,tests --reportfile pmdphpmd.xml || true"
         }
-      }
-    }
-
-    stage('Package') {
-      steps {
-        script {
-          version = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
-        }
+        archiveArtifacts 'pmdphpmd.xml'
       }
     }
 
@@ -55,6 +50,7 @@ pipeline {
         catchError {
           sh "./libs/bin/phan --config-file=phan.php --output-mode=checkstyle --output=chkphan.xml || true"
         }
+        archiveArtifacts 'chkphan.xml'
       }
     }
   }
