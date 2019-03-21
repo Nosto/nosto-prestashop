@@ -60,7 +60,7 @@ pipeline {
           version = sh(returnStdout: true, script: 'grep "const PLUGIN_VERSION = " nostotagging.php | cut -d= -f2 | tr "," " "| tr ";" " " | tr "\'" " "').trim()
           sh "./libs/bin/phing -Dversion=${version}"
         }
-        archiveArtifacts "build/package/NostoTagging-${version}.zip"
+        archiveArtifacts "build/package/${version}-Nosto.-.Personalization.for.PrestaShop.zip"
       }
     }
   }
