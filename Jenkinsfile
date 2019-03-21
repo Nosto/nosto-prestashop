@@ -58,7 +58,7 @@ pipeline {
       steps {
         script {
           version = sh(returnStdout: true, script: 'grep "const PLUGIN_VERSION = " nostotagging.php | cut -d= -f2 | tr "," " "| tr ";" " " | tr "\'" " "').trim()
-          sh "./vendor/bin/phing -Dversion=${version}"
+          sh "./libs/bin/phing -Dversion=${version}"
         }
         archiveArtifacts "build/package/NostoTagging-${version}.zip"
       }
