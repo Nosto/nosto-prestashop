@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
+## 3.6.3
+- Fix order import sorting
+
 ## 3.6.2
 - Fix missing language id parameter for Prestashop < 1.6 in item availability
 
