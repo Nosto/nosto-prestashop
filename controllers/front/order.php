@@ -82,6 +82,7 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
                 SELECT id_order
                 FROM %sorders
                 WHERE %s
+                ORDER BY date_add DESC
                 LIMIT %d
                 OFFSET %d
             ',
