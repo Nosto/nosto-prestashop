@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
+## 3.7.0
+- Encode HTML characters automatically
+
 ## 3.6.3
 - Fix order import sorting
 
