@@ -41,6 +41,6 @@ class NostoSearchTagging
         }
         $searchTerm = new SearchTerm($searchQuery);
         $searchTerm->disableAutoEncodeAll();
-        return $searchTerm ? $searchTerm->toHtml() : null;
+        return $searchTerm->toHtml();
     }
 }
