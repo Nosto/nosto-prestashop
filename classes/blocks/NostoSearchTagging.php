@@ -23,6 +23,8 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
+use Nosto\Object\SearchTerm;
+
 class NostoSearchTagging
 {
     /**
@@ -32,14 +34,13 @@ class NostoSearchTagging
      */
     public static function get()
     {
-        $searchTerm = Tools::getValue('search_query', Tools::getValue('s'));
-        //$searchTerm could be boolean value false. Don't use is_null() here to verify the value
-        if (!is_string($searchTerm) || $searchTerm == '') {
+        $searchQuery = Tools::getValue('search_query', Tools::getValue('s'));
+        // $searchQuery could be boolean value false. Don't use is_null() here to verify the value
+        if (!is_string($searchQuery) || $searchQuery === '') {
             return null;
         }
-
-        $nostoQuery = NostoSearch::loadData(Tools::htmlentitiesUTF8($searchTerm));
-
-        return $nostoQuery ? $nostoQuery->toHtml() : null;
+        $searchTerm = new SearchTerm($searchQuery);
+        $searchTerm->disableAutoEncodeAll();
+        return $searchTerm->toHtml();
     }
 }
