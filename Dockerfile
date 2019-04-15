@@ -45,7 +45,7 @@ RUN         sh -c 'echo "deb https://packages.sury.org/php/ $(lsb_release -sc) m
 RUN         apt-get -y -qq update
 
 # Install all core dependencies required for setting up Apache and PHP atleast
-RUN         apt-get update && apt-get -y -q install unzip wget libfreetype6-dev libjpeg-dev \
+RUN         apt-get update && apt-get -y -q install zip unzip wget libfreetype6-dev libjpeg-dev \
             libmcrypt-dev libreadline-dev libpng-dev libicu-dev default-mysql-client \
             libmcrypt-dev libxml2-dev libxml2-utils libxslt1-dev vim nano git tree curl \
             supervisor ca-certificates && \
