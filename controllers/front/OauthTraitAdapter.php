@@ -86,12 +86,13 @@ class OauthTraitAdapter
         $currentShopId = (int)Context::getContext()->shop->id;
         $currentLangId = (int)Context::getContext()->language->id;
 
-        NostoHelperContext::checkNostoInstallationForEachLanguageEachShop(
-            function ($contextShopId, $contextLangId) use ($account, &$success, $currentShopId, $currentLangId) {
+        NostoHelperContext::runInContextForEachLanguageEachShop(
+            function () use ($account, &$success, $currentShopId, $currentLangId) {
                 if ($success
                     && $account->getName() === NostoHelperConfig::getAccountName()
                     && NostoHelperAccount::existsAndIsConnected()
-                    && ($currentShopId !== (int)$contextShopId || $currentLangId !== (int)$contextLangId)
+                    && ($currentShopId !== (int)NostoHelperContext::getShopId()
+                        || $currentLangId !== (int)NostoHelperContext::getLanguageId())
                 ) {
                     $success = false;
                 }

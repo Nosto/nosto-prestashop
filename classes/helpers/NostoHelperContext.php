@@ -95,30 +95,6 @@ class NostoHelperContext
     }
 
     /**
-     * @param $callable
-     * @return bool
-     * @throws Exception
-     */
-    public static function checkNostoInstallationForEachLanguageEachShop($callable)
-    {
-        foreach (Shop::getShops() as $shop) {
-            $shopId = isset($shop['id_shop']) ? $shop['id_shop'] : null;
-            foreach (Language::getLanguages(true, $shopId) as $language) {
-                $languageId = $language['id_lang'];
-                self::emulateContext($languageId, $shopId);
-                try {
-                    $callable($languageId, $shopId);
-                } catch (\Exception $e) {
-                    NostoHelperLogger::log($e->getMessage());
-                }
-                self::revertToOriginalContext();
-            }
-        }
-
-        return true;
-    }
-
-    /**
      * emulate context
      * @param bool|int $languageId the language identifier. False means do not manipulate it
      * @param bool|int $shopId the shop identifier. False means do not manipulate it
