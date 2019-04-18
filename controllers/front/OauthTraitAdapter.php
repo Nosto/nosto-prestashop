@@ -88,6 +88,7 @@ class OauthTraitAdapter
 
         NostoHelperContext::runInContextForEachLanguageEachShop(
             function () use ($account, &$success, $currentShopId, $currentLangId) {
+                //Checks that nosto account does not exits or in case it exists it is for the same shop & lang
                 if ($success
                     && $account->getName() === NostoHelperConfig::getAccountName()
                     && NostoHelperAccount::existsAndIsConnected()
