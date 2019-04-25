@@ -83,14 +83,21 @@ class OauthTraitAdapter
     public function save(NostoSDKAccountInterface $account)
     {
         $success = true;
-        NostoHelperContext::runInContextForEachLanguageEachShop(function () use ($account, &$success) {
-            if ($success
-                && $account->getName() === NostoHelperConfig::getAccountName()
-                && NostoHelperAccount::existsAndIsConnected()
-            ) {
-                $success = false;
-            }
-        });
+        $currentShopId = (int)Context::getContext()->shop->id;
+        $currentLangId = (int)Context::getContext()->language->id;
+
+        NostoHelperContext::runInContextForEachLanguageEachShop(
+            function () use ($account, &$success, $currentShopId, $currentLangId) {
+                //Checks that nosto account does not exits or in case it exists it is for the same shop & lang
+                if ($success
+                    && $account->getName() === NostoHelperConfig::getAccountName()
+                    && NostoHelperAccount::existsAndIsConnected()
+                    && ($currentShopId !== (int)NostoHelperContext::getShopId()
+                        || $currentLangId !== (int)NostoHelperContext::getLanguageId())
+                ) {
+                    $success = false;
+                }
+            });
         if (!$success) {
             throw new NostoException(
                 sprintf(
@@ -100,7 +107,7 @@ class OauthTraitAdapter
                 )
             );
         }
-        NostoHelperAccount::save($account);
+        return NostoHelperAccount::save($account);
     }
 
     /**
