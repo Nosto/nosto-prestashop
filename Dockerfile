@@ -40,7 +40,7 @@ ENV         DEBIAN_FRONTEND noninteractive
 
 # Add php-7.1 Source List
 RUN         apt-get -y -qq install lsb-release ca-certificates wget
-RUN         wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
+RUN         wget -4 -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
 RUN         sh -c 'echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list'
 RUN         apt-get -y -qq update
 
