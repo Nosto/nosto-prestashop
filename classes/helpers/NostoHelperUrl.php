@@ -282,7 +282,7 @@ class NostoHelperUrl
      *
      * @return string the base url.
      */
-    private static function getBaseUrl()
+    public static function getBaseUrl()
     {
         $idShop = (int)NostoHelperContext::getShopId();
         $ssl = Configuration::get(self::PS_SSL_ENABLED);
