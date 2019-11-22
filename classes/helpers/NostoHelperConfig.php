@@ -391,7 +391,9 @@ class NostoHelperConfig
      */
     public static function saveTaggingEncodingEnabled($enabled)
     {
-        return self::saveSetting(self::TAGGING_ENCODING_SWITCH, $enabled);
+        $default = $enabled ? '0' : '1';
+        
+        return self::saveSetting(self::TAGGING_ENCODING_SWITCH, $default);
     }
 
     /**
