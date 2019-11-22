@@ -297,6 +297,23 @@
                                 </span>
                             </div>
                         </div>
+                        <!-- Tagging Encoding Switch -->
+                        <div class="form-group" id="nosto_variation_tax_rule_switch_div">
+                            <label class="control-label col-lg-3">
+                                <span title="" data-toggle="tooltip" class="label-tooltip" data-original-title="{l s='Auto encode tagging' mod='nostotagging'}" data-html="true">
+                                    {l s='Auto Encode Tagging' mod='nostotagging'}
+                                </span>
+                            </label>
+                            <div class="col-lg-9">
+                                <span class="switch prestashop-switch fixed-width-lg">
+                                    <input type="radio" name="nosto_tagging_encoding" id="nosto_tagging_encoding_on"  value="1" {if $nosto_tagging_encoding_switch === true}checked="checked" {/if}/>
+                                    <label for="nosto_tagging_encoding_on" class="radioCheck">Yes</label>
+                                    <input type="radio" name="nosto_tagging_encoding" id="nosto_tagging_encoding_off" value="0" {if $nosto_tagging_encoding_switch !== true}checked="checked" {/if}/>
+                                    <label for="nosto_tagging_encoding_off" class="radioCheck">No</label>
+                                    <a class="slide-button btn"></a>
+                                </span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="panel-footer"  style="display:none;margin-bottom: 10px;"">
