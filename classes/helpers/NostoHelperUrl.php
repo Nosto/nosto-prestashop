@@ -23,7 +23,9 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
+use Nosto\NostoException;
 use Nosto\Request\Http\HttpRequest as NostoSDKHttpRequest;
+use Nosto\Helper\UrlHelper;
 
 class NostoHelperUrl
 {
@@ -282,7 +284,7 @@ class NostoHelperUrl
      *
      * @return string the base url.
      */
-    private static function getBaseUrl()
+    public static function getBaseUrl()
     {
         $idShop = (int)NostoHelperContext::getShopId();
         $ssl = Configuration::get(self::PS_SSL_ENABLED);
@@ -324,5 +326,16 @@ class NostoHelperUrl
         }
 
         return $base . $lang;
+    }
+
+    /**
+     * Returns shop domain
+     *
+     * @return string
+     * @throws NostoException
+     */
+    public static function getShopDomain()
+    {
+        return UrlHelper::parseDomain(self::getBaseUrl());
     }
 }
