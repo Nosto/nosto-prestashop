@@ -81,11 +81,11 @@ class NostoOrderService extends AbstractNostoService
                             return;
                         }
                         $account = NostoHelperAccount::getAccount();
-                        $storeUrl = NostoHelperUrl::getBaseUrl();
+                        $shopDomain = NostoHelperUrl::getShopDomain();
                         if ($account !== null && $account->isConnectedToNosto()) {
                             $customerId = NostoCustomerManager::getNostoId($order);
 
-                            $operation = new NostoSDKOrderConfirmOperation($account, $storeUrl);
+                            $operation = new NostoSDKOrderConfirmOperation($account, $shopDomain);
                             $operation->send($nostoOrder, $customerId);
                             try {
                                 if (NostoOrderService::$syncInventoriesAfterOrder === true) {
