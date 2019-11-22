@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
 ## 3.8.0
-- Add feature flag to enable/disable tagging auto encoding
+- Add feature flag to enable/disable search term escaping for Nosto tagging
 
 ## 3.7.1
 - Allow reconnecting same account to the same store in same language
