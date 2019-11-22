@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
-## 3.7.2
+## 3.8.0
 - Add feature flag to enable/disable tagging auto encoding
 
 ## 3.7.1
