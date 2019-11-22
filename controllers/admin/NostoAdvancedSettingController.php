@@ -42,8 +42,10 @@ class NostoAdvancedSettingController extends NostoBaseController
         NostoHelperConfig::saveVariationEnabled(Tools::getValue('nosto_variation_switch'));
         NostoHelperConfig::saveVariationTaxRuleEnabled(Tools::getValue('nosto_variation_tax_rule_switch'));
         NostoHelperConfig::saveCartUpdateEnabled(Tools::getValue('nosto_cart_update_switch'));
-        NostoHelperConfig::saveEscapeSearchTerms(Tools::getValue('nosto_tagging_escape_search_terms_switch'));
         NostoHelperConfig::saveCustomerTaggingEnabled(Tools::getValue('nosto_customer_tagging_switch'));
+        NostoHelperConfig::saveDisableEscapeSearchTerms(
+            Tools::getValue('nosto_tagging_disable_escape_search_terms_switch')
+        );
 
         $account = NostoHelperAccount::getAccount();
         $accountMeta = NostoAccountSignup::loadData();

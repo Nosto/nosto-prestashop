@@ -179,7 +179,7 @@ class NostoIndexController
             'nostotagging_position' => NostoHelperConfig::getNostotaggingRenderPosition(),
             'nostotagging_variation_switch' => NostoHelperConfig::getVariationEnabled(),
             'nostotagging_variation_tax_rule_switch' => NostoHelperConfig::getVariationTaxRuleEnabled(),
-            'nosto_tagging_encoding_switch' => NostoHelperConfig::isSearchTermEscapingEnabled(),
+            'nosto_tagging_disable_escape_search_terms_switch' => NostoHelperConfig::isSearchTermEscapingDisabled(),
             'nostotagging_ps_version_class' => 'ps-' . str_replace(
                 '.',
                 '',
