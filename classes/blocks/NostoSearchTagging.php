@@ -40,7 +40,7 @@ class NostoSearchTagging
             return null;
         }
         $searchTerm = new SearchTerm($searchQuery);
-        if (!NostoHelperConfig::isTaggingEncodingEnabled()) {
+        if (!NostoHelperConfig::isSearchTermEscapingEnabled()) {
             $searchTerm->disableAutoEncodeAll();
         }
         return $searchTerm->toHtml();
