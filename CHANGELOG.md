@@ -4,6 +4,7 @@ This project adheres to Semantic Versioning(http://semver.org/).
 
 ## 3.8.0
 - Add feature flag to enable/disable search term escaping for Nosto tagging
+- Send active domain with API calls when upserting product and creating order
 
 ## 3.7.1
 - Allow reconnecting same account to the same store in same language
