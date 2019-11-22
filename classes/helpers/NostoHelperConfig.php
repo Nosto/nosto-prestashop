@@ -35,6 +35,7 @@ class NostoHelperConfig
     const MULTI_CURRENCY_METHOD = 'NOSTOTAGGING_MC_METHOD';
     const SKU_SWITCH = 'NOSTOTAGGING_SKU_SWITCH';
     const CART_UPDATE_SWITCH = 'NOSTOTAGGING_CART_UPDATE_SWITCH';
+    const DISABLE_ESCAPE_SEARCH_TERMS_SWITCH = 'NOSTOTAGGING_DISABLE_ESCAPE_SEARCH_TERMS';
     const SKIP_CUSTOMER_TAGGING_SWITCH = 'NOSTOTAGGING_SKIP_CUSTOMER_TAGGING_SWITCH';
     const VARIATION_SWITCH = 'NOSTOTAGGING_VARIATION_SWITCH';
     const VARIATION_TAX_RULE_SWITCH = 'NOSTOTAGGING_TAX_RULE_SWITCH';
@@ -311,6 +312,16 @@ class NostoHelperConfig
     }
 
     /**
+     * Checks if search term tagging escaping should be enabled
+     *
+     * @return bool enabled/disabled
+     */
+    public static function isSearchTermEscapingDisabled()
+    {
+        return (bool)self::read(self::DISABLE_ESCAPE_SEARCH_TERMS_SWITCH);
+    }
+
+    /**
      * Returns the position where to render Nosto tagging
      *
      * @return string
@@ -370,6 +381,17 @@ class NostoHelperConfig
     public static function saveCartUpdateEnabled($enabled)
     {
         return self::saveSetting(self::CART_UPDATE_SWITCH, $enabled);
+    }
+
+    /**
+     * Saves enable/disable for search term tagging escaping
+     *
+     * @param bool $enabled
+     * @return bool true if saving the configuration was successful, false otherwise
+     */
+    public static function saveDisableEscapeSearchTerms($enabled)
+    {
+        return self::saveSetting(self::DISABLE_ESCAPE_SEARCH_TERMS_SWITCH, $enabled);
     }
 
     /**
