@@ -48,7 +48,7 @@ jobs:
 
     - name: Report annotations
       id: report-annotations
-      run: ./libs/bin/cs2pr /path/to/chkphan.xml
+      run: ./libs/bin/cs2pr chkphan.xml
 
     - name: Archive static analysis results
       uses: actions/upload-artifact@v1
