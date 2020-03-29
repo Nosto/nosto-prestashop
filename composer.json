@@ -15,7 +15,8 @@
     "phpmd/phpmd": "^2.6",
     "wimg/php-compatibility": "^9.0",
     "prestashop/ps": "1.7.1.1",
-    "icanboogie/cldr": "1.8.0"
+    "icanboogie/cldr": "1.8.0",
+    "staabm/annotate-pull-request-from-checkstyle": "*"
   },
   "config": {
     "vendor-dir": "libs"
