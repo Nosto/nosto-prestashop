@@ -46,12 +46,12 @@ jobs:
       run: ./libs/bin/phan --config-file=phan.php --output-mode=checkstyle --output=chkphan.xml --processes=4
       continue-on-error: true
 
-    - name: Report annotations
-      id: report-annotations
-      run: ./libs/bin/cs2pr chkphan.xml
-
     - name: Archive static analysis results
       uses: actions/upload-artifact@v1
       with:
         name: phan-analysis-results
         path: chkphan.xml
+
+    - name: Report annotations
+      id: report-annotations
+      run: ./libs/bin/cs2pr chkphan.xml
