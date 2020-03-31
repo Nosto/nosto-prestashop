@@ -45,5 +45,6 @@ return [
     ],
     "file_list" => [
         'nostotagging.php'
-    ]
+    ],
+    "color_issue_messages_if_supported" => true
 ];

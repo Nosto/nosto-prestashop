@@ -152,7 +152,6 @@ class CustomerThread extends CustomerThreadCore {}
 class Customization extends CustomizationCore {}
 class CustomizationField extends CustomizationFieldCore {}
 class DateRange extends DateRangeCore {}
-abstract class Db extends DbCore {}
 class DbMySQLi extends DbMySQLiCore {}
 class DbPDO extends DbPDOCore {}
 class DbQuery extends DbQueryCore {}
@@ -221,7 +220,6 @@ class MyAccountController extends MyAccountControllerCore {}
 class MySQL extends MySQLCore {}
 class NewProductsController extends NewProductsControllerCore {}
 class Notification extends NotificationCore {}
-class ObjectModel extends ObjectModelCore {}
 class Order extends OrderCore {}
 class OrderCarrier extends OrderCarrierCore {}
 class OrderCartRule extends OrderCartRuleCore {}
@@ -315,7 +313,6 @@ class TaxRule extends TaxRuleCore {}
 class TaxRulesGroup extends TaxRulesGroupCore {}
 class TaxRulesTaxManager extends TaxRulesTaxManagerCore {}
 class Theme extends ThemeCore {}
-class Tools extends ToolsCore {}
 class Translate extends TranslateCore {}
 class TranslatedConfiguration extends TranslatedConfigurationCore {}
 class Tree extends TreeCore {}
