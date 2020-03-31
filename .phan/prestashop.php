@@ -140,7 +140,6 @@ class ConnectionsSource extends ConnectionsSourceCore {}
 class Contact extends ContactCore {}
 class ContactController extends ContactControllerCore {}
 class Context extends ContextCore {}
-abstract class Controller extends ControllerCore {}
 class ControllerFactory extends ControllerFactoryCore {}
 class Cookie extends CookieCore {}
 class Country extends CountryCore {}
@@ -211,7 +210,6 @@ class Message extends MessageCore {}
 class Meta extends MetaCore {}
 class Module extends ModuleCore {}
 class ModuleAdminController extends ModuleAdminControllerCore {}
-class ModuleFrontController extends ModuleFrontControllerCore {}
 abstract class ModuleGraph extends ModuleGraphCore {}
 abstract class ModuleGraphEngine extends ModuleGraphEngineCore {}
 abstract class ModuleGrid extends ModuleGridCore {}
