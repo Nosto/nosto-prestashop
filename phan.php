@@ -30,7 +30,7 @@ ini_set('xdebug.max_nesting_level', 5120);
 return [
     'analyze_signature_compatibility' => false,
     'backward_compatibility_checks' => false,
-    'exclude_file_regex' => '@^vendor/.*/(tests|test|Tests|Test)/@',
+    'exclude_file_regex' => '@^libs/.*/(tests|test|Tests|Test)/@',
     'directory_list' => [
         'classes',
         'controllers',
