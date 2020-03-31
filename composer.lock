@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a08eee9b8fab24f64c157b033c0c1fda",
+    "content-hash": "b20a921dce4d2aaa732a3f0e91dff014",
     "packages": [
         {
             "name": "nosto/php-sdk",
@@ -404,21 +404,21 @@
         },
         {
             "name": "icanboogie/accessor",
-            "version": "v1.0.3",
+            "version": "v2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ICanBoogie/Accessor.git",
-                "reference": "96b5511180f46481add11a2b447d17e38bdb55a1"
+                "reference": "cf29bf0a51c5c8abb3a0a7c42770a5c8902ed153"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ICanBoogie/Accessor/zipball/96b5511180f46481add11a2b447d17e38bdb55a1",
-                "reference": "96b5511180f46481add11a2b447d17e38bdb55a1",
+                "url": "https://api.github.com/repos/ICanBoogie/Accessor/zipball/cf29bf0a51c5c8abb3a0a7c42770a5c8902ed153",
+                "reference": "cf29bf0a51c5c8abb3a0a7c42770a5c8902ed153",
                 "shasum": ""
             },
             "require": {
-                "icanboogie/common": ">=1.2",
-                "php": ">=5.4.0"
+                "icanboogie/common": "^1.2",
+                "php": ">=5.6"
             },
             "type": "library",
             "autoload": {
@@ -434,42 +434,43 @@
                 {
                     "name": "Olivier Laviale",
                     "email": "olivier.laviale@gmail.com",
-                    "homepage": "http://www.weirdog.com/",
+                    "homepage": "https://olvlvl.com/",
                     "role": "Developer"
                 }
             ],
             "description": "Implements getters/setters, read-only/write-only properties, volatile defaults, type control…",
-            "homepage": "http://icanboogie.org/",
+            "homepage": "https://icanboogie.org/",
             "keywords": [
                 "facade",
                 "getter",
                 "setter"
             ],
-            "time": "2015-08-24T20:23:06+00:00"
+            "time": "2018-11-25T16:30:12+00:00"
         },
         {
             "name": "icanboogie/cldr",
-            "version": "v1.8.0",
+            "version": "v3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ICanBoogie/CLDR.git",
-                "reference": "773a82122a9865b41b1c9d14f0abfe1f0c2091bd"
+                "reference": "621364248863cb3eac87a5181779fec8446db5fb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ICanBoogie/CLDR/zipball/773a82122a9865b41b1c9d14f0abfe1f0c2091bd",
-                "reference": "773a82122a9865b41b1c9d14f0abfe1f0c2091bd",
+                "url": "https://api.github.com/repos/ICanBoogie/CLDR/zipball/621364248863cb3eac87a5181779fec8446db5fb",
+                "reference": "621364248863cb3eac87a5181779fec8446db5fb",
                 "shasum": ""
             },
             "require": {
                 "ext-curl": "*",
-                "icanboogie/accessor": "^1.0.2",
+                "ext-json": "*",
+                "ext-mbstring": "*",
+                "icanboogie/accessor": "^1.0|^2.0|^3.0",
                 "icanboogie/common": "^1.2.2",
-                "icanboogie/storage": "^1.1.1|^2.0.0",
-                "php": ">=5.5.0"
+                "php": ">=5.6"
             },
             "require-dev": {
-                "icanboogie/datetime": "^1.1"
+                "ext-redis": "*"
             },
             "type": "library",
             "autoload": {
@@ -485,12 +486,12 @@
                 {
                     "name": "Olivier Laviale",
                     "email": "olivier.laviale@gmail.com",
-                    "homepage": "http://www.weirdog.com/",
+                    "homepage": "https://olvlvl.com/",
                     "role": "Developer"
                 }
             ],
             "description": "An API to localize applications using Unicode's CLDR",
-            "homepage": "http://icanboogie.org/",
+            "homepage": "https://icanboogie.org/",
             "keywords": [
                 "cldr",
                 "currency",
@@ -499,7 +500,7 @@
                 "locale",
                 "territory"
             ],
-            "time": "2016-09-22T21:53:44+00:00"
+            "time": "2018-12-01T13:35:19+00:00"
         },
         {
             "name": "icanboogie/common",
@@ -546,53 +547,6 @@
                 "toolkit"
             ],
             "time": "2019-12-01T08:40:14+00:00"
-        },
-        {
-            "name": "icanboogie/storage",
-            "version": "v2.1.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/ICanBoogie/Storage.git",
-                "reference": "3c8b4a0a2736fcdf98b3a3d9fdef9796ec9011f4"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/ICanBoogie/Storage/zipball/3c8b4a0a2736fcdf98b3a3d9fdef9796ec9011f4",
-                "reference": "3c8b4a0a2736fcdf98b3a3d9fdef9796ec9011f4",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.5.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "ICanBoogie\\Storage\\": "lib/"
-                },
-                "files": [
-                    "polyfills.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Olivier Laviale",
-                    "email": "olivier.laviale@gmail.com",
-                    "homepage": "http://www.weirdog.com/",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Store and retrieve values, using different/multiple storage backends.",
-            "homepage": "http://icanboogie.org/",
-            "keywords": [
-                "cache",
-                "retrieve",
-                "store"
-            ],
-            "time": "2016-11-29T23:48:45+00:00"
         },
         {
             "name": "microsoft/tolerant-php-parser",

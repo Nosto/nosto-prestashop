@@ -15,7 +15,7 @@
     "phing/phing": "2.*",
     "wimg/php-compatibility": "^9.0",
     "prestashop/ps": "1.7.5.0",
-    "icanboogie/cldr": "1.8.0",
+    "icanboogie/cldr": "3.0.0",
     "staabm/annotate-pull-request-from-checkstyle": "^1.1",
     "mridang/pmd-annotations": "^0.0.2"
   },
