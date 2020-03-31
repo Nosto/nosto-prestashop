@@ -179,11 +179,7 @@ class NostoSku extends NostoSDKSku
      */
     public static function getPriceInclTax(Combination $combination, Currency $currency)
     {
-        return NostoHelperPrice::calcPrice(
-            $combination->id_product,
-            $currency,
-            array('user_reduction' => true, 'id_product_attribute' => $combination->id)
-        );
+        return NostoHelperPrice::calcPrice($combination->id_product, $currency, true, $combination->id);
     }
 
     /**
@@ -195,10 +191,6 @@ class NostoSku extends NostoSDKSku
      */
     public static function getListPriceInclTax(Combination $combination, Currency $currency)
     {
-        return NostoHelperPrice::calcPrice(
-            $combination->id_product,
-            $currency,
-            array('user_reduction' => false, 'id_product_attribute' => $combination->id)
-        );
+        return NostoHelperPrice::calcPrice($combination->id_product, $currency, false, $combination->id);
     }
 }

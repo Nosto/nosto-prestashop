@@ -4,8 +4,258 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "dc9b708090c1f6b4d9d20db97c6f2468",
+    "content-hash": "a08eee9b8fab24f64c157b033c0c1fda",
     "packages": [
+        {
+            "name": "nosto/php-sdk",
+            "version": "3.12.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Nosto/nosto-php-sdk.git",
+                "reference": "4ab720d3fb1cb95a8edfb9c4a303f8957601beb5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Nosto/nosto-php-sdk/zipball/4ab720d3fb1cb95a8edfb9c4a303f8957601beb5",
+                "reference": "4ab720d3fb1cb95a8edfb9c4a303f8957601beb5",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0",
+                "phpseclib/phpseclib": "2.0.*",
+                "vlucas/phpdotenv": ">=2.4.0 <=2.6"
+            },
+            "require-dev": {
+                "codeception/base": "2.2.9",
+                "codeception/c3": "^2.0",
+                "codeception/specify": "^0.4.6",
+                "phan/phan": "^1.2",
+                "phing/phing": "2.*",
+                "phpmd/phpmd": "^2.6",
+                "sebastian/phpcpd": "^3.0",
+                "squizlabs/php_codesniffer": "^2.6",
+                "symfony/console": "3.2.8",
+                "wimg/php-compatibility": "^8.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Nosto\\": "src"
+                },
+                "files": [
+                    "src/bootstrap.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "PHP SDK for developing Nosto modules for e-commerce platforms",
+            "time": "2019-03-28T08:25:44+00:00"
+        },
+        {
+            "name": "phpseclib/phpseclib",
+            "version": "2.0.26",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phpseclib/phpseclib.git",
+                "reference": "09655fcc1f8bab65727be036b28f6f20311c126c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/09655fcc1f8bab65727be036b28f6f20311c126c",
+                "reference": "09655fcc1f8bab65727be036b28f6f20311c126c",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "phing/phing": "~2.7",
+                "phpunit/phpunit": "^4.8.35|^5.7|^6.0",
+                "sami/sami": "~2.0",
+                "squizlabs/php_codesniffer": "~2.0"
+            },
+            "suggest": {
+                "ext-gmp": "Install the GMP (GNU Multiple Precision) extension in order to speed up arbitrary precision integer arithmetic operations.",
+                "ext-libsodium": "SSH2/SFTP can make use of some algorithms provided by the libsodium-php extension.",
+                "ext-mcrypt": "Install the Mcrypt extension in order to speed up a few other cryptographic operations.",
+                "ext-openssl": "Install the OpenSSL extension in order to speed up a wide variety of cryptographic operations."
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "phpseclib/bootstrap.php"
+                ],
+                "psr-4": {
+                    "phpseclib\\": "phpseclib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jim Wigginton",
+                    "email": "terrafrost@php.net",
+                    "role": "Lead Developer"
+                },
+                {
+                    "name": "Patrick Monnerat",
+                    "email": "pm@datasphere.ch",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Andreas Fischer",
+                    "email": "bantu@phpbb.com",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Hans-Jürgen Petrich",
+                    "email": "petrich@tronic-media.com",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Graham Campbell",
+                    "email": "graham@alt-three.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "PHP Secure Communications Library - Pure-PHP implementations of RSA, AES, SSH2, SFTP, X.509 etc.",
+            "homepage": "http://phpseclib.sourceforge.net",
+            "keywords": [
+                "BigInteger",
+                "aes",
+                "asn.1",
+                "asn1",
+                "blowfish",
+                "crypto",
+                "cryptography",
+                "encryption",
+                "rsa",
+                "security",
+                "sftp",
+                "signature",
+                "signing",
+                "ssh",
+                "twofish",
+                "x.509",
+                "x509"
+            ],
+            "time": "2020-03-13T04:15:39+00:00"
+        },
+        {
+            "name": "symfony/polyfill-ctype",
+            "version": "v1.15.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/polyfill-ctype.git",
+                "reference": "4719fa9c18b0464d399f1a63bf624b42b6fa8d14"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/polyfill-ctype/zipball/4719fa9c18b0464d399f1a63bf624b42b6fa8d14",
+                "reference": "4719fa9c18b0464d399f1a63bf624b42b6fa8d14",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "suggest": {
+                "ext-ctype": "For best performance"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.15-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Polyfill\\Ctype\\": ""
+                },
+                "files": [
+                    "bootstrap.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Gert de Pagter",
+                    "email": "BackEndTea@gmail.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony polyfill for ctype functions",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "compatibility",
+                "ctype",
+                "polyfill",
+                "portable"
+            ],
+            "time": "2020-02-27T09:26:54+00:00"
+        },
+        {
+            "name": "vlucas/phpdotenv",
+            "version": "v2.6.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/vlucas/phpdotenv.git",
+                "reference": "f3aae2877ecf916ee802b7a5b249d36658171df6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/vlucas/phpdotenv/zipball/f3aae2877ecf916ee802b7a5b249d36658171df6",
+                "reference": "f3aae2877ecf916ee802b7a5b249d36658171df6",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.9",
+                "symfony/polyfill-ctype": "^1.9"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8.35 || ^5.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.6-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Dotenv\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Vance Lucas",
+                    "email": "vance@vancelucas.com",
+                    "homepage": "http://www.vancelucas.com"
+                }
+            ],
+            "description": "Loads environment variables from `.env` to `getenv()`, `$_ENV` and `$_SERVER` automagically.",
+            "keywords": [
+                "dotenv",
+                "env",
+                "environment"
+            ],
+            "time": "2019-01-28T20:57:27+00:00"
+        }
+    ],
+    "packages-dev": [
         {
             "name": "composer/semver",
             "version": "1.5.1",
@@ -153,6 +403,198 @@
             "time": "2020-03-11T15:21:41+00:00"
         },
         {
+            "name": "icanboogie/accessor",
+            "version": "v1.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ICanBoogie/Accessor.git",
+                "reference": "96b5511180f46481add11a2b447d17e38bdb55a1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ICanBoogie/Accessor/zipball/96b5511180f46481add11a2b447d17e38bdb55a1",
+                "reference": "96b5511180f46481add11a2b447d17e38bdb55a1",
+                "shasum": ""
+            },
+            "require": {
+                "icanboogie/common": ">=1.2",
+                "php": ">=5.4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "ICanBoogie\\Accessor\\": "lib"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Olivier Laviale",
+                    "email": "olivier.laviale@gmail.com",
+                    "homepage": "http://www.weirdog.com/",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Implements getters/setters, read-only/write-only properties, volatile defaults, type control…",
+            "homepage": "http://icanboogie.org/",
+            "keywords": [
+                "facade",
+                "getter",
+                "setter"
+            ],
+            "time": "2015-08-24T20:23:06+00:00"
+        },
+        {
+            "name": "icanboogie/cldr",
+            "version": "v1.8.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ICanBoogie/CLDR.git",
+                "reference": "773a82122a9865b41b1c9d14f0abfe1f0c2091bd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ICanBoogie/CLDR/zipball/773a82122a9865b41b1c9d14f0abfe1f0c2091bd",
+                "reference": "773a82122a9865b41b1c9d14f0abfe1f0c2091bd",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "icanboogie/accessor": "^1.0.2",
+                "icanboogie/common": "^1.2.2",
+                "icanboogie/storage": "^1.1.1|^2.0.0",
+                "php": ">=5.5.0"
+            },
+            "require-dev": {
+                "icanboogie/datetime": "^1.1"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "ICanBoogie\\CLDR\\": "lib"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Olivier Laviale",
+                    "email": "olivier.laviale@gmail.com",
+                    "homepage": "http://www.weirdog.com/",
+                    "role": "Developer"
+                }
+            ],
+            "description": "An API to localize applications using Unicode's CLDR",
+            "homepage": "http://icanboogie.org/",
+            "keywords": [
+                "cldr",
+                "currency",
+                "format",
+                "i18n",
+                "locale",
+                "territory"
+            ],
+            "time": "2016-09-22T21:53:44+00:00"
+        },
+        {
+            "name": "icanboogie/common",
+            "version": "v1.3.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ICanBoogie/Common.git",
+                "reference": "2a08c4fd0d3303aaaee48bf9163c37f87582dcd5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ICanBoogie/Common/zipball/2a08c4fd0d3303aaaee48bf9163c37f87582dcd5",
+                "reference": "2a08c4fd0d3303aaaee48bf9163c37f87582dcd5",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "ICanBoogie\\": "lib"
+                },
+                "files": [
+                    "bootstrap.php",
+                    "lib/helpers.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Olivier Laviale",
+                    "email": "olivier.laviale@gmail.com",
+                    "homepage": "https://olvlvl.com/",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Common helpers and classes for ICanBoogie",
+            "homepage": "https://icanboogie.org/",
+            "keywords": [
+                "toolkit"
+            ],
+            "time": "2019-12-01T08:40:14+00:00"
+        },
+        {
+            "name": "icanboogie/storage",
+            "version": "v2.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ICanBoogie/Storage.git",
+                "reference": "3c8b4a0a2736fcdf98b3a3d9fdef9796ec9011f4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ICanBoogie/Storage/zipball/3c8b4a0a2736fcdf98b3a3d9fdef9796ec9011f4",
+                "reference": "3c8b4a0a2736fcdf98b3a3d9fdef9796ec9011f4",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "ICanBoogie\\Storage\\": "lib/"
+                },
+                "files": [
+                    "polyfills.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Olivier Laviale",
+                    "email": "olivier.laviale@gmail.com",
+                    "homepage": "http://www.weirdog.com/",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Store and retrieve values, using different/multiple storage backends.",
+            "homepage": "http://icanboogie.org/",
+            "keywords": [
+                "cache",
+                "retrieve",
+                "store"
+            ],
+            "time": "2016-11-29T23:48:45+00:00"
+        },
+        {
             "name": "microsoft/tolerant-php-parser",
             "version": "v0.0.20",
             "source": {
@@ -192,6 +634,49 @@
             ],
             "description": "Tolerant PHP-to-AST parser designed for IDE usage scenarios",
             "time": "2020-02-18T02:57:19+00:00"
+        },
+        {
+            "name": "mridang/pmd-annotations",
+            "version": "0.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mridang/pmd-annotations.git",
+                "reference": "0fcaf0e31698c4d81ddb6fa2538edfda8123a7a2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mridang/pmd-annotations/zipball/0fcaf0e31698c4d81ddb6fa2538edfda8123a7a2",
+                "reference": "0fcaf0e31698c4d81ddb6fa2538edfda8123a7a2",
+                "shasum": ""
+            },
+            "require": {
+                "ext-simplexml": "*",
+                "php": "^7.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^7.5"
+            },
+            "bin": [
+                "pmd2pr"
+            ],
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Mridang Agarwalla"
+                }
+            ],
+            "description": "Turns PMD style XML reports into Github pull-request annotations via the Checks API. This script is meant for use within your Github Action.",
+            "keywords": [
+                "actions",
+                "annotations",
+                "github",
+                "pmd"
+            ],
+            "time": "2020-03-31T08:41:21+00:00"
         },
         {
             "name": "netresearch/jsonmapper",
@@ -240,51 +725,51 @@
             "time": "2020-03-04T17:23:33+00:00"
         },
         {
-            "name": "nosto/php-sdk",
-            "version": "3.12.1",
+            "name": "pdepend/pdepend",
+            "version": "2.7.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/Nosto/nosto-php-sdk.git",
-                "reference": "4ab720d3fb1cb95a8edfb9c4a303f8957601beb5"
+                "url": "https://github.com/pdepend/pdepend.git",
+                "reference": "daba1cf0a6edaf172fa02a17807ae29f4c1c7471"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Nosto/nosto-php-sdk/zipball/4ab720d3fb1cb95a8edfb9c4a303f8957601beb5",
-                "reference": "4ab720d3fb1cb95a8edfb9c4a303f8957601beb5",
+                "url": "https://api.github.com/repos/pdepend/pdepend/zipball/daba1cf0a6edaf172fa02a17807ae29f4c1c7471",
+                "reference": "daba1cf0a6edaf172fa02a17807ae29f4c1c7471",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.4.0",
-                "phpseclib/phpseclib": "2.0.*",
-                "vlucas/phpdotenv": ">=2.4.0 <=2.6"
+                "php": ">=5.3.7",
+                "symfony/config": "^2.3.0|^3|^4|^5",
+                "symfony/dependency-injection": "^2.3.0|^3|^4|^5",
+                "symfony/filesystem": "^2.3.0|^3|^4|^5"
             },
             "require-dev": {
-                "codeception/base": "2.2.9",
-                "codeception/c3": "^2.0",
-                "codeception/specify": "^0.4.6",
-                "phan/phan": "^1.2",
-                "phing/phing": "2.*",
-                "phpmd/phpmd": "^2.6",
-                "sebastian/phpcpd": "^3.0",
-                "squizlabs/php_codesniffer": "^2.6",
-                "symfony/console": "3.2.8",
-                "wimg/php-compatibility": "^8.0"
+                "easy-doc/easy-doc": "0.0.0 || ^1.2.3",
+                "gregwar/rst": "^1.0",
+                "phpunit/phpunit": "^4.8.35|^5.7",
+                "squizlabs/php_codesniffer": "^2.0.0"
             },
+            "bin": [
+                "src/bin/pdepend"
+            ],
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.x-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
-                    "Nosto\\": "src"
-                },
-                "files": [
-                    "src/bootstrap.php"
-                ]
+                    "PDepend\\": "src/main/php/PDepend"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-3-Clause"
             ],
-            "description": "PHP SDK for developing Nosto modules for e-commerce platforms",
-            "time": "2019-03-28T08:25:44+00:00"
+            "description": "Official version of pdepend to be handled with Composer",
+            "time": "2020-02-08T12:06:13+00:00"
         },
         {
             "name": "phan/phan",
@@ -358,6 +843,99 @@
                 "static"
             ],
             "time": "2020-03-13T21:34:53+00:00"
+        },
+        {
+            "name": "phing/phing",
+            "version": "2.16.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phingofficial/phing.git",
+                "reference": "b34c2bf9cd6abd39b4287dee31e68673784c8567"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phingofficial/phing/zipball/b34c2bf9cd6abd39b4287dee31e68673784c8567",
+                "reference": "b34c2bf9cd6abd39b4287dee31e68673784c8567",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.2.0"
+            },
+            "require-dev": {
+                "ext-pdo_sqlite": "*",
+                "mikey179/vfsstream": "^1.6",
+                "pdepend/pdepend": "2.x",
+                "pear/archive_tar": "1.4.x",
+                "pear/http_request2": "dev-trunk",
+                "pear/net_growl": "dev-trunk",
+                "pear/pear-core-minimal": "1.10.1",
+                "pear/versioncontrol_git": "@dev",
+                "pear/versioncontrol_svn": "~0.5",
+                "phpdocumentor/phpdocumentor": "2.x",
+                "phploc/phploc": "~2.0.6",
+                "phpmd/phpmd": "~2.2",
+                "phpunit/phpunit": ">=3.7",
+                "sebastian/git": "~1.0",
+                "sebastian/phpcpd": "2.x",
+                "siad007/versioncontrol_hg": "^1.0",
+                "simpletest/simpletest": "^1.1",
+                "squizlabs/php_codesniffer": "~2.2",
+                "symfony/yaml": "^2.8 || ^3.1 || ^4.0"
+            },
+            "suggest": {
+                "pdepend/pdepend": "PHP version of JDepend",
+                "pear/archive_tar": "Tar file management class",
+                "pear/versioncontrol_git": "A library that provides OO interface to handle Git repository",
+                "pear/versioncontrol_svn": "A simple OO-style interface for Subversion, the free/open-source version control system",
+                "phpdocumentor/phpdocumentor": "Documentation Generator for PHP",
+                "phploc/phploc": "A tool for quickly measuring the size of a PHP project",
+                "phpmd/phpmd": "PHP version of PMD tool",
+                "phpunit/php-code-coverage": "Library that provides collection, processing, and rendering functionality for PHP code coverage information",
+                "phpunit/phpunit": "The PHP Unit Testing Framework",
+                "sebastian/phpcpd": "Copy/Paste Detector (CPD) for PHP code",
+                "siad007/versioncontrol_hg": "A library for interfacing with Mercurial repositories.",
+                "tedivm/jshrink": "Javascript Minifier built in PHP"
+            },
+            "bin": [
+                "bin/phing"
+            ],
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.16.x-dev"
+                }
+            },
+            "autoload": {
+                "classmap": [
+                    "classes/phing/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "include-path": [
+                "classes"
+            ],
+            "license": [
+                "LGPL-3.0-only"
+            ],
+            "authors": [
+                {
+                    "name": "Michiel Rook",
+                    "email": "mrook@php.net"
+                },
+                {
+                    "name": "Phing Community",
+                    "homepage": "https://www.phing.info/trac/wiki/Development/Contributors"
+                }
+            ],
+            "description": "PHing Is Not GNU make; it's a PHP project build system or build tool based on Apache Ant.",
+            "homepage": "https://www.phing.info/",
+            "keywords": [
+                "build",
+                "phing",
+                "task",
+                "tool"
+            ],
+            "time": "2020-02-03T18:50:54+00:00"
         },
         {
             "name": "phpdocumentor/reflection-common",
@@ -511,96 +1089,74 @@
             "time": "2020-02-18T18:59:58+00:00"
         },
         {
-            "name": "phpseclib/phpseclib",
-            "version": "2.0.26",
+            "name": "phpmd/phpmd",
+            "version": "2.8.2",
             "source": {
                 "type": "git",
-                "url": "https://github.com/phpseclib/phpseclib.git",
-                "reference": "09655fcc1f8bab65727be036b28f6f20311c126c"
+                "url": "https://github.com/phpmd/phpmd.git",
+                "reference": "714629ed782537f638fe23c4346637659b779a77"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/09655fcc1f8bab65727be036b28f6f20311c126c",
-                "reference": "09655fcc1f8bab65727be036b28f6f20311c126c",
+                "url": "https://api.github.com/repos/phpmd/phpmd/zipball/714629ed782537f638fe23c4346637659b779a77",
+                "reference": "714629ed782537f638fe23c4346637659b779a77",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.3"
+                "composer/xdebug-handler": "^1.0",
+                "ext-xml": "*",
+                "pdepend/pdepend": "^2.7.1",
+                "php": ">=5.3.9"
             },
             "require-dev": {
-                "phing/phing": "~2.7",
-                "phpunit/phpunit": "^4.8.35|^5.7|^6.0",
-                "sami/sami": "~2.0",
-                "squizlabs/php_codesniffer": "~2.0"
+                "easy-doc/easy-doc": "0.0.0 || ^1.3.2",
+                "gregwar/rst": "^1.0",
+                "mikey179/vfsstream": "^1.6.4",
+                "phpunit/phpunit": "^4.8.36 || ^5.7.27",
+                "squizlabs/php_codesniffer": "^2.0"
             },
-            "suggest": {
-                "ext-gmp": "Install the GMP (GNU Multiple Precision) extension in order to speed up arbitrary precision integer arithmetic operations.",
-                "ext-libsodium": "SSH2/SFTP can make use of some algorithms provided by the libsodium-php extension.",
-                "ext-mcrypt": "Install the Mcrypt extension in order to speed up a few other cryptographic operations.",
-                "ext-openssl": "Install the OpenSSL extension in order to speed up a wide variety of cryptographic operations."
-            },
+            "bin": [
+                "src/bin/phpmd"
+            ],
             "type": "library",
             "autoload": {
-                "files": [
-                    "phpseclib/bootstrap.php"
-                ],
-                "psr-4": {
-                    "phpseclib\\": "phpseclib/"
+                "psr-0": {
+                    "PHPMD\\": "src/main/php"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "MIT"
+                "BSD-3-Clause"
             ],
             "authors": [
                 {
-                    "name": "Jim Wigginton",
-                    "email": "terrafrost@php.net",
-                    "role": "Lead Developer"
+                    "name": "Manuel Pichler",
+                    "email": "github@manuel-pichler.de",
+                    "homepage": "https://github.com/manuelpichler",
+                    "role": "Project Founder"
                 },
                 {
-                    "name": "Patrick Monnerat",
-                    "email": "pm@datasphere.ch",
-                    "role": "Developer"
+                    "name": "Marc Würth",
+                    "email": "ravage@bluewin.ch",
+                    "homepage": "https://github.com/ravage84",
+                    "role": "Project Maintainer"
                 },
                 {
-                    "name": "Andreas Fischer",
-                    "email": "bantu@phpbb.com",
-                    "role": "Developer"
-                },
-                {
-                    "name": "Hans-Jürgen Petrich",
-                    "email": "petrich@tronic-media.com",
-                    "role": "Developer"
-                },
-                {
-                    "name": "Graham Campbell",
-                    "email": "graham@alt-three.com",
-                    "role": "Developer"
+                    "name": "Other contributors",
+                    "homepage": "https://github.com/phpmd/phpmd/graphs/contributors",
+                    "role": "Contributors"
                 }
             ],
-            "description": "PHP Secure Communications Library - Pure-PHP implementations of RSA, AES, SSH2, SFTP, X.509 etc.",
-            "homepage": "http://phpseclib.sourceforge.net",
+            "description": "PHPMD is a spin-off project of PHP Depend and aims to be a PHP equivalent of the well known Java tool PMD.",
+            "homepage": "https://phpmd.org/",
             "keywords": [
-                "BigInteger",
-                "aes",
-                "asn.1",
-                "asn1",
-                "blowfish",
-                "crypto",
-                "cryptography",
-                "encryption",
-                "rsa",
-                "security",
-                "sftp",
-                "signature",
-                "signing",
-                "ssh",
-                "twofish",
-                "x.509",
-                "x509"
+                "mess detection",
+                "mess detector",
+                "pdepend",
+                "phpmd",
+                "pmd"
             ],
-            "time": "2020-03-13T04:15:39+00:00"
+            "time": "2020-02-16T20:15:50+00:00"
         },
         {
             "name": "phpunit/php-timer",
@@ -650,6 +1206,16 @@
                 "timer"
             ],
             "time": "2019-06-07T04:22:29+00:00"
+        },
+        {
+            "name": "prestashop/ps",
+            "version": "v1.7.5.0",
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/PrestaShop/PrestaShop/archive/1.7.5.0.zip",
+                "reference": "1.7.5.0"
+            },
+            "type": "library"
         },
         {
             "name": "psr/container",
@@ -946,63 +1512,36 @@
         },
         {
             "name": "squizlabs/php_codesniffer",
-            "version": "2.9.2",
+            "version": "3.5.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
-                "reference": "2acf168de78487db620ab4bc524135a13cfe6745"
+                "reference": "dceec07328401de6211037abbb18bda423677e26"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/2acf168de78487db620ab4bc524135a13cfe6745",
-                "reference": "2acf168de78487db620ab4bc524135a13cfe6745",
+                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/dceec07328401de6211037abbb18bda423677e26",
+                "reference": "dceec07328401de6211037abbb18bda423677e26",
                 "shasum": ""
             },
             "require": {
                 "ext-simplexml": "*",
                 "ext-tokenizer": "*",
                 "ext-xmlwriter": "*",
-                "php": ">=5.1.2"
+                "php": ">=5.4.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "~4.0"
+                "phpunit/phpunit": "^4.0 || ^5.0 || ^6.0 || ^7.0"
             },
             "bin": [
-                "scripts/phpcs",
-                "scripts/phpcbf"
+                "bin/phpcs",
+                "bin/phpcbf"
             ],
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.x-dev"
+                    "dev-master": "3.x-dev"
                 }
-            },
-            "autoload": {
-                "classmap": [
-                    "CodeSniffer.php",
-                    "CodeSniffer/CLI.php",
-                    "CodeSniffer/Exception.php",
-                    "CodeSniffer/File.php",
-                    "CodeSniffer/Fixer.php",
-                    "CodeSniffer/Report.php",
-                    "CodeSniffer/Reporting.php",
-                    "CodeSniffer/Sniff.php",
-                    "CodeSniffer/Tokens.php",
-                    "CodeSniffer/Reports/",
-                    "CodeSniffer/Tokenizers/",
-                    "CodeSniffer/DocGenerators/",
-                    "CodeSniffer/Standards/AbstractPatternSniff.php",
-                    "CodeSniffer/Standards/AbstractScopeSniff.php",
-                    "CodeSniffer/Standards/AbstractVariableSniff.php",
-                    "CodeSniffer/Standards/IncorrectPatternException.php",
-                    "CodeSniffer/Standards/Generic/Sniffs/",
-                    "CodeSniffer/Standards/MySource/Sniffs/",
-                    "CodeSniffer/Standards/PEAR/Sniffs/",
-                    "CodeSniffer/Standards/PSR1/Sniffs/",
-                    "CodeSniffer/Standards/PSR2/Sniffs/",
-                    "CodeSniffer/Standards/Squiz/Sniffs/",
-                    "CodeSniffer/Standards/Zend/Sniffs/"
-                ]
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -1015,12 +1554,112 @@
                 }
             ],
             "description": "PHP_CodeSniffer tokenizes PHP, JavaScript and CSS files and detects violations of a defined set of coding standards.",
-            "homepage": "http://www.squizlabs.com/php-codesniffer",
+            "homepage": "https://github.com/squizlabs/PHP_CodeSniffer",
             "keywords": [
                 "phpcs",
                 "standards"
             ],
-            "time": "2018-11-07T22:31:41+00:00"
+            "time": "2020-01-30T22:20:29+00:00"
+        },
+        {
+            "name": "staabm/annotate-pull-request-from-checkstyle",
+            "version": "1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/staabm/annotate-pull-request-from-checkstyle.git",
+                "reference": "7d3bcdf21e4b30b14c8ca0a7ef39f4b856d3fbfb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/staabm/annotate-pull-request-from-checkstyle/zipball/7d3bcdf21e4b30b14c8ca0a7ef39f4b856d3fbfb",
+                "reference": "7d3bcdf21e4b30b14c8ca0a7ef39f4b856d3fbfb",
+                "shasum": ""
+            },
+            "require": {
+                "ext-simplexml": "*",
+                "php": "^7.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2.16.1"
+            },
+            "bin": [
+                "cs2pr"
+            ],
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Markus Staab"
+                }
+            ],
+            "time": "2020-02-26T08:24:03+00:00"
+        },
+        {
+            "name": "symfony/config",
+            "version": "v5.0.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/config.git",
+                "reference": "3e633c31a34738f7f4ed7a225c43fc45ca74c986"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/config/zipball/3e633c31a34738f7f4ed7a225c43fc45ca74c986",
+                "reference": "3e633c31a34738f7f4ed7a225c43fc45ca74c986",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.2.5",
+                "symfony/filesystem": "^4.4|^5.0",
+                "symfony/polyfill-ctype": "~1.8"
+            },
+            "conflict": {
+                "symfony/finder": "<4.4"
+            },
+            "require-dev": {
+                "symfony/event-dispatcher": "^4.4|^5.0",
+                "symfony/finder": "^4.4|^5.0",
+                "symfony/messenger": "^4.4|^5.0",
+                "symfony/service-contracts": "^1.1|^2",
+                "symfony/yaml": "^4.4|^5.0"
+            },
+            "suggest": {
+                "symfony/yaml": "To use the yaml reference dumper"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "5.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\Config\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony Config Component",
+            "homepage": "https://symfony.com",
+            "time": "2020-03-27T16:56:45+00:00"
         },
         {
             "name": "symfony/console",
@@ -1099,6 +1738,129 @@
             "time": "2020-03-30T11:41:10+00:00"
         },
         {
+            "name": "symfony/dependency-injection",
+            "version": "v5.0.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/dependency-injection.git",
+                "reference": "4e48dc44680d8efa357410c78093a04753196981"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/dependency-injection/zipball/4e48dc44680d8efa357410c78093a04753196981",
+                "reference": "4e48dc44680d8efa357410c78093a04753196981",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.2.5",
+                "psr/container": "^1.0",
+                "symfony/service-contracts": "^1.1.6|^2"
+            },
+            "conflict": {
+                "symfony/config": "<5.0",
+                "symfony/finder": "<4.4",
+                "symfony/proxy-manager-bridge": "<4.4",
+                "symfony/yaml": "<4.4"
+            },
+            "provide": {
+                "psr/container-implementation": "1.0",
+                "symfony/service-implementation": "1.0"
+            },
+            "require-dev": {
+                "symfony/config": "^5.0",
+                "symfony/expression-language": "^4.4|^5.0",
+                "symfony/yaml": "^4.4|^5.0"
+            },
+            "suggest": {
+                "symfony/config": "",
+                "symfony/expression-language": "For using expressions in service container configuration",
+                "symfony/finder": "For using double-star glob patterns or when GLOB_BRACE portability is required",
+                "symfony/proxy-manager-bridge": "Generate service proxies to lazy load them",
+                "symfony/yaml": ""
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "5.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\DependencyInjection\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony DependencyInjection Component",
+            "homepage": "https://symfony.com",
+            "time": "2020-03-30T11:42:42+00:00"
+        },
+        {
+            "name": "symfony/filesystem",
+            "version": "v5.0.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/filesystem.git",
+                "reference": "ca3b87dd09fff9b771731637f5379965fbfab420"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/filesystem/zipball/ca3b87dd09fff9b771731637f5379965fbfab420",
+                "reference": "ca3b87dd09fff9b771731637f5379965fbfab420",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.2.5",
+                "symfony/polyfill-ctype": "~1.8"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "5.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\Filesystem\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony Filesystem Component",
+            "homepage": "https://symfony.com",
+            "time": "2020-03-27T16:56:45+00:00"
+        },
+        {
             "name": "symfony/finder",
             "version": "v5.0.7",
             "source": {
@@ -1146,64 +1908,6 @@
             "description": "Symfony Finder Component",
             "homepage": "https://symfony.com",
             "time": "2020-03-27T16:56:45+00:00"
-        },
-        {
-            "name": "symfony/polyfill-ctype",
-            "version": "v1.15.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/polyfill-ctype.git",
-                "reference": "4719fa9c18b0464d399f1a63bf624b42b6fa8d14"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-ctype/zipball/4719fa9c18b0464d399f1a63bf624b42b6fa8d14",
-                "reference": "4719fa9c18b0464d399f1a63bf624b42b6fa8d14",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.3"
-            },
-            "suggest": {
-                "ext-ctype": "For best performance"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.15-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Polyfill\\Ctype\\": ""
-                },
-                "files": [
-                    "bootstrap.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Gert de Pagter",
-                    "email": "BackEndTea@gmail.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Symfony polyfill for ctype functions",
-            "homepage": "https://symfony.com",
-            "keywords": [
-                "compatibility",
-                "ctype",
-                "polyfill",
-                "portable"
-            ],
-            "time": "2020-02-27T09:26:54+00:00"
         },
         {
             "name": "symfony/polyfill-mbstring",
@@ -1421,57 +2125,6 @@
             "time": "2017-06-30T11:53:12+00:00"
         },
         {
-            "name": "vlucas/phpdotenv",
-            "version": "v2.6.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/vlucas/phpdotenv.git",
-                "reference": "f3aae2877ecf916ee802b7a5b249d36658171df6"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/vlucas/phpdotenv/zipball/f3aae2877ecf916ee802b7a5b249d36658171df6",
-                "reference": "f3aae2877ecf916ee802b7a5b249d36658171df6",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.9",
-                "symfony/polyfill-ctype": "^1.9"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^4.8.35 || ^5.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.6-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Dotenv\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Vance Lucas",
-                    "email": "vance@vancelucas.com",
-                    "homepage": "http://www.vancelucas.com"
-                }
-            ],
-            "description": "Loads environment variables from `.env` to `getenv()`, `$_ENV` and `$_SERVER` automagically.",
-            "keywords": [
-                "dotenv",
-                "env",
-                "environment"
-            ],
-            "time": "2019-01-28T20:57:27+00:00"
-        },
-        {
             "name": "webmozart/assert",
             "version": "1.7.0",
             "source": {
@@ -1518,686 +2171,6 @@
                 "validate"
             ],
             "time": "2020-02-14T12:15:55+00:00"
-        }
-    ],
-    "packages-dev": [
-        {
-            "name": "icanboogie/accessor",
-            "version": "v1.0.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/ICanBoogie/Accessor.git",
-                "reference": "96b5511180f46481add11a2b447d17e38bdb55a1"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/ICanBoogie/Accessor/zipball/96b5511180f46481add11a2b447d17e38bdb55a1",
-                "reference": "96b5511180f46481add11a2b447d17e38bdb55a1",
-                "shasum": ""
-            },
-            "require": {
-                "icanboogie/common": ">=1.2",
-                "php": ">=5.4.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "ICanBoogie\\Accessor\\": "lib"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Olivier Laviale",
-                    "email": "olivier.laviale@gmail.com",
-                    "homepage": "http://www.weirdog.com/",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Implements getters/setters, read-only/write-only properties, volatile defaults, type control…",
-            "homepage": "http://icanboogie.org/",
-            "keywords": [
-                "facade",
-                "getter",
-                "setter"
-            ],
-            "time": "2015-08-24T20:23:06+00:00"
-        },
-        {
-            "name": "icanboogie/cldr",
-            "version": "v1.8.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/ICanBoogie/CLDR.git",
-                "reference": "773a82122a9865b41b1c9d14f0abfe1f0c2091bd"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/ICanBoogie/CLDR/zipball/773a82122a9865b41b1c9d14f0abfe1f0c2091bd",
-                "reference": "773a82122a9865b41b1c9d14f0abfe1f0c2091bd",
-                "shasum": ""
-            },
-            "require": {
-                "ext-curl": "*",
-                "icanboogie/accessor": "^1.0.2",
-                "icanboogie/common": "^1.2.2",
-                "icanboogie/storage": "^1.1.1|^2.0.0",
-                "php": ">=5.5.0"
-            },
-            "require-dev": {
-                "icanboogie/datetime": "^1.1"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "ICanBoogie\\CLDR\\": "lib"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Olivier Laviale",
-                    "email": "olivier.laviale@gmail.com",
-                    "homepage": "http://www.weirdog.com/",
-                    "role": "Developer"
-                }
-            ],
-            "description": "An API to localize applications using Unicode's CLDR",
-            "homepage": "http://icanboogie.org/",
-            "keywords": [
-                "cldr",
-                "currency",
-                "format",
-                "i18n",
-                "locale",
-                "territory"
-            ],
-            "time": "2016-09-22T21:53:44+00:00"
-        },
-        {
-            "name": "icanboogie/common",
-            "version": "v1.3.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/ICanBoogie/Common.git",
-                "reference": "2a08c4fd0d3303aaaee48bf9163c37f87582dcd5"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/ICanBoogie/Common/zipball/2a08c4fd0d3303aaaee48bf9163c37f87582dcd5",
-                "reference": "2a08c4fd0d3303aaaee48bf9163c37f87582dcd5",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "ICanBoogie\\": "lib"
-                },
-                "files": [
-                    "bootstrap.php",
-                    "lib/helpers.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Olivier Laviale",
-                    "email": "olivier.laviale@gmail.com",
-                    "homepage": "https://olvlvl.com/",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Common helpers and classes for ICanBoogie",
-            "homepage": "https://icanboogie.org/",
-            "keywords": [
-                "toolkit"
-            ],
-            "time": "2019-12-01T08:40:14+00:00"
-        },
-        {
-            "name": "icanboogie/storage",
-            "version": "v2.1.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/ICanBoogie/Storage.git",
-                "reference": "3c8b4a0a2736fcdf98b3a3d9fdef9796ec9011f4"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/ICanBoogie/Storage/zipball/3c8b4a0a2736fcdf98b3a3d9fdef9796ec9011f4",
-                "reference": "3c8b4a0a2736fcdf98b3a3d9fdef9796ec9011f4",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.5.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "ICanBoogie\\Storage\\": "lib/"
-                },
-                "files": [
-                    "polyfills.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Olivier Laviale",
-                    "email": "olivier.laviale@gmail.com",
-                    "homepage": "http://www.weirdog.com/",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Store and retrieve values, using different/multiple storage backends.",
-            "homepage": "http://icanboogie.org/",
-            "keywords": [
-                "cache",
-                "retrieve",
-                "store"
-            ],
-            "time": "2016-11-29T23:48:45+00:00"
-        },
-        {
-            "name": "mridang/pmd-annotations",
-            "version": "0.0.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/mridang/pmd-annotations.git",
-                "reference": "0fcaf0e31698c4d81ddb6fa2538edfda8123a7a2"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/mridang/pmd-annotations/zipball/0fcaf0e31698c4d81ddb6fa2538edfda8123a7a2",
-                "reference": "0fcaf0e31698c4d81ddb6fa2538edfda8123a7a2",
-                "shasum": ""
-            },
-            "require": {
-                "ext-simplexml": "*",
-                "php": "^7.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^7.5"
-            },
-            "bin": [
-                "pmd2pr"
-            ],
-            "type": "library",
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Mridang Agarwalla"
-                }
-            ],
-            "description": "Turns PMD style XML reports into Github pull-request annotations via the Checks API. This script is meant for use within your Github Action.",
-            "keywords": [
-                "actions",
-                "annotations",
-                "github",
-                "pmd"
-            ],
-            "time": "2020-03-31T08:41:21+00:00"
-        },
-        {
-            "name": "pdepend/pdepend",
-            "version": "2.7.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/pdepend/pdepend.git",
-                "reference": "daba1cf0a6edaf172fa02a17807ae29f4c1c7471"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/pdepend/pdepend/zipball/daba1cf0a6edaf172fa02a17807ae29f4c1c7471",
-                "reference": "daba1cf0a6edaf172fa02a17807ae29f4c1c7471",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.7",
-                "symfony/config": "^2.3.0|^3|^4|^5",
-                "symfony/dependency-injection": "^2.3.0|^3|^4|^5",
-                "symfony/filesystem": "^2.3.0|^3|^4|^5"
-            },
-            "require-dev": {
-                "easy-doc/easy-doc": "0.0.0 || ^1.2.3",
-                "gregwar/rst": "^1.0",
-                "phpunit/phpunit": "^4.8.35|^5.7",
-                "squizlabs/php_codesniffer": "^2.0.0"
-            },
-            "bin": [
-                "src/bin/pdepend"
-            ],
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "PDepend\\": "src/main/php/PDepend"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "description": "Official version of pdepend to be handled with Composer",
-            "time": "2020-02-08T12:06:13+00:00"
-        },
-        {
-            "name": "phing/phing",
-            "version": "2.16.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/phingofficial/phing.git",
-                "reference": "b34c2bf9cd6abd39b4287dee31e68673784c8567"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/phingofficial/phing/zipball/b34c2bf9cd6abd39b4287dee31e68673784c8567",
-                "reference": "b34c2bf9cd6abd39b4287dee31e68673784c8567",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.2.0"
-            },
-            "require-dev": {
-                "ext-pdo_sqlite": "*",
-                "mikey179/vfsstream": "^1.6",
-                "pdepend/pdepend": "2.x",
-                "pear/archive_tar": "1.4.x",
-                "pear/http_request2": "dev-trunk",
-                "pear/net_growl": "dev-trunk",
-                "pear/pear-core-minimal": "1.10.1",
-                "pear/versioncontrol_git": "@dev",
-                "pear/versioncontrol_svn": "~0.5",
-                "phpdocumentor/phpdocumentor": "2.x",
-                "phploc/phploc": "~2.0.6",
-                "phpmd/phpmd": "~2.2",
-                "phpunit/phpunit": ">=3.7",
-                "sebastian/git": "~1.0",
-                "sebastian/phpcpd": "2.x",
-                "siad007/versioncontrol_hg": "^1.0",
-                "simpletest/simpletest": "^1.1",
-                "squizlabs/php_codesniffer": "~2.2",
-                "symfony/yaml": "^2.8 || ^3.1 || ^4.0"
-            },
-            "suggest": {
-                "pdepend/pdepend": "PHP version of JDepend",
-                "pear/archive_tar": "Tar file management class",
-                "pear/versioncontrol_git": "A library that provides OO interface to handle Git repository",
-                "pear/versioncontrol_svn": "A simple OO-style interface for Subversion, the free/open-source version control system",
-                "phpdocumentor/phpdocumentor": "Documentation Generator for PHP",
-                "phploc/phploc": "A tool for quickly measuring the size of a PHP project",
-                "phpmd/phpmd": "PHP version of PMD tool",
-                "phpunit/php-code-coverage": "Library that provides collection, processing, and rendering functionality for PHP code coverage information",
-                "phpunit/phpunit": "The PHP Unit Testing Framework",
-                "sebastian/phpcpd": "Copy/Paste Detector (CPD) for PHP code",
-                "siad007/versioncontrol_hg": "A library for interfacing with Mercurial repositories.",
-                "tedivm/jshrink": "Javascript Minifier built in PHP"
-            },
-            "bin": [
-                "bin/phing"
-            ],
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.16.x-dev"
-                }
-            },
-            "autoload": {
-                "classmap": [
-                    "classes/phing/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "include-path": [
-                "classes"
-            ],
-            "license": [
-                "LGPL-3.0-only"
-            ],
-            "authors": [
-                {
-                    "name": "Michiel Rook",
-                    "email": "mrook@php.net"
-                },
-                {
-                    "name": "Phing Community",
-                    "homepage": "https://www.phing.info/trac/wiki/Development/Contributors"
-                }
-            ],
-            "description": "PHing Is Not GNU make; it's a PHP project build system or build tool based on Apache Ant.",
-            "homepage": "https://www.phing.info/",
-            "keywords": [
-                "build",
-                "phing",
-                "task",
-                "tool"
-            ],
-            "time": "2020-02-03T18:50:54+00:00"
-        },
-        {
-            "name": "phpmd/phpmd",
-            "version": "2.8.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/phpmd/phpmd.git",
-                "reference": "714629ed782537f638fe23c4346637659b779a77"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/phpmd/phpmd/zipball/714629ed782537f638fe23c4346637659b779a77",
-                "reference": "714629ed782537f638fe23c4346637659b779a77",
-                "shasum": ""
-            },
-            "require": {
-                "composer/xdebug-handler": "^1.0",
-                "ext-xml": "*",
-                "pdepend/pdepend": "^2.7.1",
-                "php": ">=5.3.9"
-            },
-            "require-dev": {
-                "easy-doc/easy-doc": "0.0.0 || ^1.3.2",
-                "gregwar/rst": "^1.0",
-                "mikey179/vfsstream": "^1.6.4",
-                "phpunit/phpunit": "^4.8.36 || ^5.7.27",
-                "squizlabs/php_codesniffer": "^2.0"
-            },
-            "bin": [
-                "src/bin/phpmd"
-            ],
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "PHPMD\\": "src/main/php"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Manuel Pichler",
-                    "email": "github@manuel-pichler.de",
-                    "homepage": "https://github.com/manuelpichler",
-                    "role": "Project Founder"
-                },
-                {
-                    "name": "Marc Würth",
-                    "email": "ravage@bluewin.ch",
-                    "homepage": "https://github.com/ravage84",
-                    "role": "Project Maintainer"
-                },
-                {
-                    "name": "Other contributors",
-                    "homepage": "https://github.com/phpmd/phpmd/graphs/contributors",
-                    "role": "Contributors"
-                }
-            ],
-            "description": "PHPMD is a spin-off project of PHP Depend and aims to be a PHP equivalent of the well known Java tool PMD.",
-            "homepage": "https://phpmd.org/",
-            "keywords": [
-                "mess detection",
-                "mess detector",
-                "pdepend",
-                "phpmd",
-                "pmd"
-            ],
-            "time": "2020-02-16T20:15:50+00:00"
-        },
-        {
-            "name": "prestashop/ps",
-            "version": "v1.7.5.0",
-            "dist": {
-                "type": "zip",
-                "url": "https://github.com/PrestaShop/PrestaShop/archive/1.7.5.0.zip",
-                "reference": "1.7.5.0"
-            },
-            "type": "library"
-        },
-        {
-            "name": "staabm/annotate-pull-request-from-checkstyle",
-            "version": "1.1.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/staabm/annotate-pull-request-from-checkstyle.git",
-                "reference": "7d3bcdf21e4b30b14c8ca0a7ef39f4b856d3fbfb"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/staabm/annotate-pull-request-from-checkstyle/zipball/7d3bcdf21e4b30b14c8ca0a7ef39f4b856d3fbfb",
-                "reference": "7d3bcdf21e4b30b14c8ca0a7ef39f4b856d3fbfb",
-                "shasum": ""
-            },
-            "require": {
-                "ext-simplexml": "*",
-                "php": "^7.0"
-            },
-            "require-dev": {
-                "friendsofphp/php-cs-fixer": "^2.16.1"
-            },
-            "bin": [
-                "cs2pr"
-            ],
-            "type": "library",
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Markus Staab"
-                }
-            ],
-            "time": "2020-02-26T08:24:03+00:00"
-        },
-        {
-            "name": "symfony/config",
-            "version": "v5.0.7",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/config.git",
-                "reference": "3e633c31a34738f7f4ed7a225c43fc45ca74c986"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/config/zipball/3e633c31a34738f7f4ed7a225c43fc45ca74c986",
-                "reference": "3e633c31a34738f7f4ed7a225c43fc45ca74c986",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^7.2.5",
-                "symfony/filesystem": "^4.4|^5.0",
-                "symfony/polyfill-ctype": "~1.8"
-            },
-            "conflict": {
-                "symfony/finder": "<4.4"
-            },
-            "require-dev": {
-                "symfony/event-dispatcher": "^4.4|^5.0",
-                "symfony/finder": "^4.4|^5.0",
-                "symfony/messenger": "^4.4|^5.0",
-                "symfony/service-contracts": "^1.1|^2",
-                "symfony/yaml": "^4.4|^5.0"
-            },
-            "suggest": {
-                "symfony/yaml": "To use the yaml reference dumper"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "5.0-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Component\\Config\\": ""
-                },
-                "exclude-from-classmap": [
-                    "/Tests/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Symfony Config Component",
-            "homepage": "https://symfony.com",
-            "time": "2020-03-27T16:56:45+00:00"
-        },
-        {
-            "name": "symfony/dependency-injection",
-            "version": "v5.0.7",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/dependency-injection.git",
-                "reference": "4e48dc44680d8efa357410c78093a04753196981"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/dependency-injection/zipball/4e48dc44680d8efa357410c78093a04753196981",
-                "reference": "4e48dc44680d8efa357410c78093a04753196981",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^7.2.5",
-                "psr/container": "^1.0",
-                "symfony/service-contracts": "^1.1.6|^2"
-            },
-            "conflict": {
-                "symfony/config": "<5.0",
-                "symfony/finder": "<4.4",
-                "symfony/proxy-manager-bridge": "<4.4",
-                "symfony/yaml": "<4.4"
-            },
-            "provide": {
-                "psr/container-implementation": "1.0",
-                "symfony/service-implementation": "1.0"
-            },
-            "require-dev": {
-                "symfony/config": "^5.0",
-                "symfony/expression-language": "^4.4|^5.0",
-                "symfony/yaml": "^4.4|^5.0"
-            },
-            "suggest": {
-                "symfony/config": "",
-                "symfony/expression-language": "For using expressions in service container configuration",
-                "symfony/finder": "For using double-star glob patterns or when GLOB_BRACE portability is required",
-                "symfony/proxy-manager-bridge": "Generate service proxies to lazy load them",
-                "symfony/yaml": ""
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "5.0-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Component\\DependencyInjection\\": ""
-                },
-                "exclude-from-classmap": [
-                    "/Tests/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Symfony DependencyInjection Component",
-            "homepage": "https://symfony.com",
-            "time": "2020-03-30T11:42:42+00:00"
-        },
-        {
-            "name": "symfony/filesystem",
-            "version": "v5.0.7",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/filesystem.git",
-                "reference": "ca3b87dd09fff9b771731637f5379965fbfab420"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/filesystem/zipball/ca3b87dd09fff9b771731637f5379965fbfab420",
-                "reference": "ca3b87dd09fff9b771731637f5379965fbfab420",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^7.2.5",
-                "symfony/polyfill-ctype": "~1.8"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "5.0-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Component\\Filesystem\\": ""
-                },
-                "exclude-from-classmap": [
-                    "/Tests/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Symfony Filesystem Component",
-            "homepage": "https://symfony.com",
-            "time": "2020-03-27T16:56:45+00:00"
         },
         {
             "name": "wimg/php-compatibility",

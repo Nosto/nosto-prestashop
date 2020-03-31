@@ -33,6 +33,8 @@ class NostoOrder extends NostoSDKOrder
     /**
      * @param Order $order
      * @return Customer
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      * @suppress PhanTypeMismatchArgument
      */
     private static function loadCustomer(Order $order)
@@ -55,6 +57,8 @@ class NostoOrder extends NostoSDKOrder
      *
      * @param Order $order the order model to process
      * @return NostoOrder|null the order object
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      */
     public static function loadData(Order $order)
     {
@@ -104,6 +108,8 @@ class NostoOrder extends NostoSDKOrder
      *
      * @param Order $order the order object.
      * @return NostoOrderPurchasedItem[] the purchased items.
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      */
     protected static function findPurchasedItems(Order $order)
     {
@@ -126,9 +132,13 @@ class NostoOrder extends NostoSDKOrder
         foreach ($orderCollection as $item) {
             /** @var $item Order */
             $products = array_merge($products, $item->getProducts());
+            // @phan-suppress-next-line PhanUndeclaredProperty
             $totalDiscountsTaxIncl += $item->total_discounts_tax_incl;
+            // @phan-suppress-next-line PhanUndeclaredProperty
             $totalShippingTaxIncl += $item->total_shipping_tax_incl;
+            // @phan-suppress-next-line PhanUndeclaredProperty
             $totalWrappingTaxIncl += $item->total_wrapping_tax_incl;
+            // @phan-suppress-next-line PhanUndeclaredProperty
             $totalProductTaxIncl += $item->total_products_wt;
         }
 

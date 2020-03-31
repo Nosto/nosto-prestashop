@@ -50,15 +50,14 @@ class NostoNotification extends NostoSDKNotification
         $this->addMessageAttribute($language->name);
     }
 
+    /** @noinspection PhpUnused */
     public function getFormattedMessage()
     {
-        $message = Translate::getModuleTranslation(
+        return Translate::getModuleTranslation(
             NostoTagging::MODULE_NAME,
             $this->getMessage(),
             NostoTagging::MODULE_NAME,
             $this->getMessageAttributes()
         );
-
-        return $message;
     }
 }

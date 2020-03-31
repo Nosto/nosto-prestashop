@@ -32,7 +32,6 @@ class NostoHelperVariation
     const ID_COUNTRY = 'id_country';
     const ID_GROUP = 'id_group';
     const ID_CURRENCY = 'id_currency';
-    const COUNTRY = 'country';
     const GROUP = 'group';
 
     /**
@@ -90,6 +89,8 @@ class NostoHelperVariation
             $res[] = $row[self::ID_COUNTRY];
         }
 
+        /** @noinspection PhpParamsInspection */
+        // @phan-suppress-next-line PhanTypeMismatchArgument
         Cache::store($cacheKey, $res);
 
         return $res;
@@ -124,6 +125,8 @@ class NostoHelperVariation
             $groupIds[] = 0;
         }
 
+        /** @noinspection PhpParamsInspection */
+        // @phan-suppress-next-line PhanTypeMismatchArgument
         Cache::store($cacheKey, $groupIds);
 
         return $groupIds;
@@ -165,6 +168,8 @@ class NostoHelperVariation
             $countryIds[] = 0;
         }
 
+        /** @noinspection PhpParamsInspection */
+        // @phan-suppress-next-line PhanTypeMismatchArgument
         Cache::store($cacheKey, $countryIds);
 
         return $countryIds;
@@ -187,6 +192,9 @@ class NostoHelperVariation
             $countryIdsFromTaxRules = self::getCountriesBeingUsedInTaxRules();
             $countryIds = array_unique(array_merge($countryIds, $countryIdsFromTaxRules));
         }
+
+        /** @noinspection PhpParamsInspection */
+        // @phan-suppress-next-line PhanTypeMismatchArgument
         Cache::store($cacheKey, $countryIds);
 
         return $countryIds;
