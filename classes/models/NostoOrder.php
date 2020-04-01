@@ -131,14 +131,15 @@ class NostoOrder extends NostoSDKOrder
         $orderCollection = Order::getByReference($order->reference);
         foreach ($orderCollection as $item) {
             /** @var $item Order */
+            /** @phan-suppress-next-line PhanUndeclaredMethod */
             $products = array_merge($products, $item->getProducts());
-            // @phan-suppress-next-line PhanUndeclaredProperty
+            /** @phan-suppress-next-line PhanUndeclaredProperty */
             $totalDiscountsTaxIncl += $item->total_discounts_tax_incl;
-            // @phan-suppress-next-line PhanUndeclaredProperty
+            /** @phan-suppress-next-line PhanUndeclaredProperty */
             $totalShippingTaxIncl += $item->total_shipping_tax_incl;
-            // @phan-suppress-next-line PhanUndeclaredProperty
+            /** @phan-suppress-next-line PhanUndeclaredProperty */
             $totalWrappingTaxIncl += $item->total_wrapping_tax_incl;
-            // @phan-suppress-next-line PhanUndeclaredProperty
+            /** @phan-suppress-next-line PhanUndeclaredProperty */
             $totalProductTaxIncl += $item->total_products_wt;
         }
 
