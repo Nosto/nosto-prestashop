@@ -65,7 +65,6 @@ class NostoHelperPrice
      *
      * @param int $idProduct the product ID.
      * @param Currency $currency the currency object.
-     * @param array $options options for the Product::getPriceStatic method.
      * @return float the price.
      */
     public static function calcPrice(
