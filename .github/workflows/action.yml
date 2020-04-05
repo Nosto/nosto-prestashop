@@ -89,7 +89,7 @@ jobs:
     ############################################################################
 
     - name: Run the mess detector
-      run: ./libs/bin/phpmd . text codesize,naming,unusedcode,controversial,design --exclude libs,var,build,tests --reportfile pmdphpmd.xml --ignore-violations-on-exit
+      run: ./libs/bin/phpmd . text codesize,naming,unusedcode,controversial,design --exclude libs,var,build,tests,.phan --reportfile pmdphpmd.xml --ignore-violations-on-exit
 
     - name: Archive mess detection results
       uses: actions/upload-artifact@v1
