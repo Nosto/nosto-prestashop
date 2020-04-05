@@ -150,7 +150,7 @@ jobs:
       id: report-annotations
       run: |
         composer require mridang/cpd-annotations
-        ./vendor/bin/cpd2pr phdpcpd.xml
+        ./libs/bin/cpd2pr phdpcpd.xml
 
   package:
     name: Package
@@ -188,7 +188,7 @@ jobs:
     - name: Build archive using composer
       run: composer archive --format=zip --file=archive
 
-    - name: Archive built arhive
+    - name: Archive built package
       uses: actions/upload-artifact@v1
       with:
         name: composer-zip-archive
