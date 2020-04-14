@@ -15,7 +15,7 @@ jobs:
       uses: shivammathur/setup-php@v2
       with:
         php-version: '7.2'
-        tools: composer
+        tools: composer, prestissimo
         extensions: ast
         coverage: none
 
@@ -65,7 +65,7 @@ jobs:
       uses: shivammathur/setup-php@v2
       with:
         php-version: '7.2'
-        tools: composer
+        tools: composer, prestissimo
         extensions: ast
         coverage: none
 
@@ -112,7 +112,7 @@ jobs:
       uses: shivammathur/setup-php@v2
       with:
         php-version: '7.2'
-        tools: composer
+        tools: composer, prestissimo
         extensions: ast
         coverage: none
 
@@ -163,7 +163,7 @@ jobs:
       uses: shivammathur/setup-php@v2
       with:
         php-version: '7.2'
-        tools: composer
+        tools: composer, prestissimo
         extensions: ast
         coverage: none
 
