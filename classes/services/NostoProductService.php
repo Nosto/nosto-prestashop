@@ -25,7 +25,6 @@
 
 use Nosto\NostoException as NostoSDKException;
 use Nosto\Operation\UpsertProduct as NostoSDKUpsertProductOperation;
-use Nosto\Request\Http\HttpRequest as NostoSDKHttpRequest;
 use Nosto\Types\Product\ProductInterface as NostoSDKProductInterface;
 
 /**

@@ -280,11 +280,7 @@ class NostoProduct extends NostoSDKProduct
      */
     public static function getPriceInclTax(Product $product, Currency $currency)
     {
-        return NostoHelperPrice::calcPrice(
-            $product->id,
-            $currency,
-            array('user_reduction' => true)
-        );
+        return NostoHelperPrice::calcPrice($product->id, $currency, true);
     }
 
     /**
@@ -296,11 +292,7 @@ class NostoProduct extends NostoSDKProduct
      */
     public static function getListPriceInclTax(Product $product, Currency $currency)
     {
-        return NostoHelperPrice::calcPrice(
-            $product->id,
-            $currency,
-            array('user_reduction' => false)
-        );
+        return NostoHelperPrice::calcPrice($product->id, $currency, false);
     }
 
     /**

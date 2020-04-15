@@ -39,7 +39,6 @@ class AdminNostoController extends ModuleAdminController
 
     /**
      * @inheritdoc
-     * @suppress
      */
     public function initContent()
     {

@@ -85,7 +85,8 @@ class NostoAdminTabManager
             $tab->class_name = self::MAIN_MENU_ITEM_CLASS;
             $tab->name = array();
             foreach ($languages as $lang) {
-                $tab->name[$lang[self::ID_LANG]] = 'Nosto';
+                $key = (int)$lang[self::ID_LANG];
+                $tab->name[$key] = 'Nosto';
             }
 
             $tab->id_parent = 0;
@@ -105,9 +106,9 @@ class NostoAdminTabManager
                 $tab->name = array();
                 foreach ($languages as $lang) {
                     if (isset(self::$itemTranslations[$lang['iso_code']])) {
-                        $tab->name[$lang[self::ID_LANG]] = self::$itemTranslations[$lang['iso_code']];
+                        $tab->name[(int)$lang[self::ID_LANG]] = self::$itemTranslations[$lang['iso_code']];
                     } else {
-                        $tab->name[$lang[self::ID_LANG]] = 'Personalization';
+                        $tab->name[(int)$lang[self::ID_LANG]] = 'Personalization';
                     }
                 }
                 $tab->id_parent = self::getAdminTabId(AdminNostoController::getClassName());

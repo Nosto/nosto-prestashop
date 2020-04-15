@@ -74,6 +74,8 @@ class NostoVariationKeyCollection extends NostoSDKAbstractCollection
                 'nosto_variation_key_collection' => $this
             ));
 
+            /** @noinspection PhpParamsInspection */
+            // @phan-suppress-next-line PhanTypeMismatchArgument
             Cache::store($cacheKey, $this->var);
         }
     }

@@ -30,12 +30,9 @@ use Nosto\Object\Signup\Account as NostoSDKAccount;
 use Nosto\Request\Api\Token as NostoSDKAPIToken;
 use Nosto\Request\Http\HttpRequest as NostoSDKHttpRequest;
 use Nosto\Types\Signup\AccountInterface as NostoSDKAccountInterface;
-use Nosto\NostoException as NostoSDKException;
 
 class NostoIndexController
 {
-    const DEFAULT_SERVER_ADDRESS = 'connect.nosto.com';
-    const DEFAULT_IFRAME_ORIGIN_REGEXP = '(https:\/\/(.*)\.hub\.nosto\.com)|(https:\/\/my\.nosto\.com)';
 
     /**
      * Get the associative array for setting to smarty with all the controller's url
@@ -70,13 +67,9 @@ class NostoIndexController
             && $account->isConnectedToNosto()
             && Shop::getContext() === Shop::CONTEXT_SHOP
         ) {
-            try {
-                $currentUser = NostoCurrentUser::loadData();
-                $meta = NostoIframe::loadData();
-                return NostoSDKIframeHelper::getUrl($meta, $account, $currentUser);
-            } catch (NostoSDKException $e) {
-                NostoHelperLogger::error($e, 'Unable to load the Nosto IFrame');
-            }
+            $currentUser = NostoCurrentUser::loadData();
+            $meta = NostoIframe::loadData();
+            return NostoSDKIframeHelper::getUrl($meta, $account, $currentUser);
         }
 
         return null;

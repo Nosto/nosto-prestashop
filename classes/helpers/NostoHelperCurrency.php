@@ -103,6 +103,7 @@ class NostoHelperCurrency
         $allCurrencies = Currency::getCurrenciesByIdShop(NostoHelperContext::getShopId());
         if ($onlyActive === true) {
             $currencies = array();
+            // @phan-suppress-next-line PhanTypeSuspiciousNonTraversableForeach
             foreach ($allCurrencies as $currency) {
                 if (self::currencyActive($currency)) {
                     $currencies[] = $currency;
@@ -239,7 +240,7 @@ class NostoHelperCurrency
             $currencyDecimalsEnabled = $currencyObject->decimals;
         }
 
-        return $currencyDecimalsEnabled * _PS_PRICE_DISPLAY_PRECISION_;
+        return $currencyDecimalsEnabled * (int) _PS_PRICE_DISPLAY_PRECISION_;
     }
 
     private static function currencyActive(array $currency)

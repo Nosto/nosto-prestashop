@@ -63,15 +63,22 @@ class NostoCurrentVariation extends NostoSDKMarkupableString
             }
 
             $nostoVariation = new NostoCurrentVariation($currentVariationKey->getVariationId());
+
+            NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoVariation), array(
+                'nosto_variation' => $nostoVariation
+            ));
+
+            return $nostoVariation;
+
         } elseif (NostoHelperConfig::useMultipleCurrencies()) {
             $nostoVariation = new NostoCurrentVariation(NostoHelperContext::getCurrency()->iso_code);
+
+            NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoVariation), array(
+                'nosto_variation' => $nostoVariation
+            ));
+
+            return $nostoVariation;
         }
-
-        NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoVariation), array(
-            'nosto_variation' => $nostoVariation
-        ));
-
-        return $nostoVariation;
     }
 
     /**
