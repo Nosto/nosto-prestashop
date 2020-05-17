@@ -39,7 +39,7 @@ jobs:
     ############################################################################
 
     - name: Run PHPStorm
-      uses: mridang/action-phpstorm@v2
+      uses: mridang/action-phpstorm@v3
       with:
         target: .
         profile: ./.idea/inspectionProfiles/Project_Default.xml
