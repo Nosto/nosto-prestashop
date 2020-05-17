@@ -1,11 +1,11 @@
-name: Phan
+name: PHPStorm
 
 on: [push]
 
 jobs:
 
-  phan:
-    name: Phan Analysis
+  ide:
+    name: IDE Inspection
     runs-on: ubuntu-latest
 
     steps:
