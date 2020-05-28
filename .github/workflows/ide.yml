@@ -45,3 +45,4 @@ jobs:
         profile: ./.idea/inspectionProfiles/Project_Default.xml
         output: ./output
         verbosity: v2
+        scope: Project

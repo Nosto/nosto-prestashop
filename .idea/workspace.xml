@@ -6,7 +6,10 @@
     <option name="CUSTOM_SCOPE_NAME" value="Project Files" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5ce1db35-3237-4e89-b4af-9c0ae953d611" name="Default" comment="" />
+    <list default="true" id="5ce1db35-3237-4e89-b4af-9c0ae953d611" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.github/workflows/ide.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/ide.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -66,7 +69,7 @@
     <other-services-enabled>true</other-services-enabled>
   </component>
   <component name="NamedScopeManager">
-    <scope name="Project" pattern="file[Prestashop]:*/&amp;&amp;!file[Prestashop]:.idea//*&amp;&amp;!file[Prestashop]:.phan//*&amp;&amp;!file[Prestashop]:.github//*||file[Prestashop]:classes/blocks//*" />
+    <scope name="Project" pattern="(file[Prestashop]:*/&amp;&amp;!file[Prestashop]:.idea//*&amp;&amp;!file[Prestashop]:.phan//*&amp;&amp;!file[Prestashop]:.github//*||file[Prestashop]:classes/blocks//*)&amp;&amp;!file[Prestashop]:output//*&amp;&amp;!file[Prestashop]:output/*" />
   </component>
   <component name="PhpWorkspaceProjectConfiguration" interpreter_name="PHP 7">
     <include_path>
@@ -337,6 +340,7 @@
       <workItem from="1512666118108" duration="20000" />
       <workItem from="1585678776829" duration="9562000" />
       <workItem from="1590678722683" duration="97000" />
+      <workItem from="1590680897672" duration="1377000" />
     </task>
     <servers />
   </component>
@@ -358,10 +362,10 @@
     </ignored-roots>
   </component>
   <component name="WindowStateProjectService">
-    <state x="229" y="79" key="SettingsEditor" timestamp="1590678818332">
+    <state x="229" y="79" key="SettingsEditor" timestamp="1590684220225">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state x="229" y="79" key="SettingsEditor/0.0.1440.900@0.0.1440.900" timestamp="1590678818332" />
+    <state x="229" y="79" key="SettingsEditor/0.0.1440.900@0.0.1440.900" timestamp="1590684220225" />
     <state x="229" y="100" key="SettingsEditor/0.23.1440.877@0.23.1440.877" timestamp="1585678804252" />
     <state x="420" y="217" width="701" height="488" key="find.popup" timestamp="1585686720294">
       <screen x="0" y="23" width="1440" height="877" />
