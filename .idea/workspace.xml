@@ -66,7 +66,7 @@
     <other-services-enabled>true</other-services-enabled>
   </component>
   <component name="NamedScopeManager">
-    <scope name="Unnamed" pattern="file[Prestashop]:*/&amp;&amp;!file[Prestashop]:.idea//*&amp;&amp;!file[Prestashop]:.phan//*" />
+    <scope name="Project" pattern="file[Prestashop]:*/&amp;&amp;!file[Prestashop]:.idea//*&amp;&amp;!file[Prestashop]:.phan//*&amp;&amp;!file[Prestashop]:.github//*||file[Prestashop]:classes/blocks//*" />
   </component>
   <component name="PhpWorkspaceProjectConfiguration" interpreter_name="PHP 7">
     <include_path>
@@ -120,6 +120,7 @@
       <path value="$PROJECT_DIR$/libs/symfony/polyfill-php73" />
       <path value="$PROJECT_DIR$/libs/symfony/polyfill-ctype" />
       <path value="$PROJECT_DIR$/libs/symfony/service-contracts" />
+      <path value="$PROJECT_DIR$/libs/symfony/polyfill-php72" />
     </include_path>
   </component>
   <component name="ProjectCodeStyleSettingsMigration">
@@ -225,7 +226,7 @@
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_interpreter_path" value="/usr/local/bin/node" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
-    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+    <property name="settings.editor.selected.configurable" value="project.scopes" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -335,6 +336,7 @@
       <workItem from="1512132625304" duration="186000" />
       <workItem from="1512666118108" duration="20000" />
       <workItem from="1585678776829" duration="9562000" />
+      <workItem from="1590678722683" duration="97000" />
     </task>
     <servers />
   </component>
@@ -356,9 +358,10 @@
     </ignored-roots>
   </component>
   <component name="WindowStateProjectService">
-    <state x="229" y="100" key="SettingsEditor" timestamp="1585678804252">
-      <screen x="0" y="23" width="1440" height="877" />
+    <state x="229" y="79" key="SettingsEditor" timestamp="1590678818332">
+      <screen x="0" y="0" width="1440" height="900" />
     </state>
+    <state x="229" y="79" key="SettingsEditor/0.0.1440.900@0.0.1440.900" timestamp="1590678818332" />
     <state x="229" y="100" key="SettingsEditor/0.23.1440.877@0.23.1440.877" timestamp="1585678804252" />
     <state x="420" y="217" width="701" height="488" key="find.popup" timestamp="1585686720294">
       <screen x="0" y="23" width="1440" height="877" />
@@ -368,36 +371,5 @@
       <screen x="0" y="23" width="1440" height="877" />
     </state>
     <state x="385" y="213" width="670" height="676" key="search.everywhere.popup/0.23.1440.877@0.23.1440.877" timestamp="1585725559416" />
-  </component>
-  <component name="masterDetails">
-    <states>
-      <state key="Copyright.UI">
-        <settings>
-          <last-edited>Nosto</last-edited>
-          <splitter-proportions>
-            <option name="proportions">
-              <list>
-                <option value="0.2275" />
-              </list>
-            </option>
-          </splitter-proportions>
-        </settings>
-      </state>
-      <state key="ScopeChooserConfigurable.UI">
-        <settings>
-          <last-edited>Unnamed</last-edited>
-          <splitter-proportions>
-            <option name="proportions">
-              <list>
-                <option value="0.2275" />
-              </list>
-            </option>
-          </splitter-proportions>
-          <order>
-            <scope name="Unnamed" />
-          </order>
-        </settings>
-      </state>
-    </states>
   </component>
 </project>

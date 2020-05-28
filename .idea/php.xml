@@ -62,6 +62,7 @@
       <path value="$PROJECT_DIR$/libs/symfony/polyfill-php73" />
       <path value="$PROJECT_DIR$/libs/symfony/polyfill-ctype" />
       <path value="$PROJECT_DIR$/libs/symfony/service-contracts" />
+      <path value="$PROJECT_DIR$/libs/symfony/polyfill-php72" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
