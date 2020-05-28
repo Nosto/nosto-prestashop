@@ -1,0 +1,8 @@
+<component name="CopyrightManager">
+  <copyright>
+    <option name="allowReplaceRegexp" value="2013-2016 Nosto Solutions Ltd" />
+    <option name="keyword" value="\/\*\*.*NOTICE.*?\*\/" />
+    <option name="notice" value="2013-2017 Nosto Solutions Ltd&#10;&#10;NOTICE OF LICENSE&#10;&#10;This source file is subject to the Academic Free License (AFL 3.0)&#10;that is bundled with this package in the file LICENSE.txt.&#10;It is also available through the world-wide-web at this URL:&#10;http://opensource.org/licenses/afl-3.0.php&#10;If you did not receive a copy of the license and are unable to&#10;obtain it through the world-wide-web, please send an email&#10;to contact@nosto.com so we can send you a copy immediately.&#10;&#10;DISCLAIMER&#10;&#10;Do not edit or add to this file if you wish to upgrade PrestaShop to newer&#10;versions in the future. If you wish to customize PrestaShop for your&#10;needs please refer to http://www.prestashop.com for more information.&#10;&#10;@author    Nosto Solutions Ltd &lt;contact@nosto.com&gt;&#10;@copyright 2013-2017 Nosto Solutions Ltd&#10;@license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)" />
+    <option name="myName" value="Nosto" />
+  </copyright>
+</component>

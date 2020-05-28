@@ -1,0 +1,403 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AnalysisUIOptions">
+    <option name="SPLITTER_PROPORTION" value="0.4479016" />
+    <option name="SCOPE_TYPE" value="3" />
+    <option name="CUSTOM_SCOPE_NAME" value="Project Files" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="5ce1db35-3237-4e89-b4af-9c0ae953d611" name="Default" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CodeStyleSettingsInfer">
+    <option name="done" value="true" />
+  </component>
+  <component name="ComposerSettings" doNotAsk="true">
+    <pharConfigPath>$PROJECT_DIR$/composer.json</pharConfigPath>
+    <execution />
+  </component>
+  <component name="CreatePatchCommitExecutor">
+    <option name="PATCH_PATH" value="" />
+  </component>
+  <component name="DatabaseView">
+    <option name="SHOW_INTERMEDIATE" value="true" />
+    <option name="GROUP_SCHEMA" value="true" />
+    <option name="GROUP_CONTENTS" value="false" />
+    <option name="SORT_POSITIONED" value="false" />
+    <option name="SHOW_TABLE_DETAILS" value="true" />
+    <option name="SHOW_EMPTY_GROUPS" value="false" />
+    <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JavaScript File" />
+      </list>
+    </option>
+  </component>
+  <component name="FindManager">
+    <FindUsagesManager>
+      <setting name="OPEN_NEW_TAB" value="true" />
+    </FindUsagesManager>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="develop" />
+      </map>
+    </option>
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/.phan/prestashop.php" root0="FORCE_HIGHLIGHTING" root1="SKIP_INSPECTION" />
+  </component>
+  <component name="JsBowerSettings">
+    <node-interpreter value="project" />
+    <exe-path>/usr/local/bin/bower</exe-path>
+    <config-path />
+  </component>
+  <component name="JsFlowSettings">
+    <service-enabled>true</service-enabled>
+    <exe-path />
+    <annotation-enable>false</annotation-enable>
+    <other-services-enabled>true</other-services-enabled>
+  </component>
+  <component name="NamedScopeManager">
+    <scope name="Unnamed" pattern="file[Prestashop]:*/&amp;&amp;!file[Prestashop]:.idea//*&amp;&amp;!file[Prestashop]:.phan//*" />
+  </component>
+  <component name="PhpWorkspaceProjectConfiguration" interpreter_name="PHP 7">
+    <include_path>
+      <path value="$PROJECT_DIR$/libs" />
+      <path value="/Applications/MAMP/htdocs/prestashop/1615/classes" />
+      <path value="/Applications/MAMP/htdocs/prestashop/1615/controllers" />
+      <path value="/Applications/MAMP/htdocs/prestashop/1615/config" />
+      <path value="/Applications/MAMP/htdocs/prestashop/1615/tools" />
+      <path value="/Applications/MAMP/htdocs/prestashop/1615/modules" />
+      <path value="/Applications/MAMP/htdocs/prestashop/1615/themes" />
+      <path value="$PROJECT_DIR$/libs/nosto/php-sdk" />
+      <path value="$PROJECT_DIR$/libs/phpmd/phpmd" />
+      <path value="$PROJECT_DIR$/libs/symfony/yaml" />
+      <path value="$PROJECT_DIR$/libs/wimg/php-compatibility" />
+      <path value="$PROJECT_DIR$/libs/prestashop/ps" />
+      <path value="$PROJECT_DIR$/libs/icanboogie/common" />
+      <path value="$PROJECT_DIR$/libs/icanboogie/accessor" />
+      <path value="$PROJECT_DIR$/libs/symfony/console" />
+      <path value="$PROJECT_DIR$/libs/icanboogie/cldr" />
+      <path value="$PROJECT_DIR$/libs/psr/container" />
+      <path value="$PROJECT_DIR$/libs/symfony/debug" />
+      <path value="$PROJECT_DIR$/libs/symfony/polyfill-mbstring" />
+      <path value="$PROJECT_DIR$/libs/psr/log" />
+      <path value="$PROJECT_DIR$/libs/vlucas/phpdotenv" />
+      <path value="$PROJECT_DIR$/libs/phpseclib/phpseclib" />
+      <path value="$PROJECT_DIR$/libs/symfony/dependency-injection" />
+      <path value="$PROJECT_DIR$/libs/phing/phing" />
+      <path value="$PROJECT_DIR$/libs/symfony/filesystem" />
+      <path value="$PROJECT_DIR$/libs/composer" />
+      <path value="$PROJECT_DIR$/libs/squizlabs/php_codesniffer" />
+      <path value="$PROJECT_DIR$/libs/pdepend/pdepend" />
+      <path value="$PROJECT_DIR$/libs/symfony/config" />
+      <path value="$PROJECT_DIR$/libs/felixfbecker/advanced-json-rpc" />
+      <path value="$PROJECT_DIR$/libs/phpdocumentor/reflection-docblock" />
+      <path value="$PROJECT_DIR$/libs/phpdocumentor/type-resolver" />
+      <path value="$PROJECT_DIR$/libs/phpdocumentor/reflection-common" />
+      <path value="$PROJECT_DIR$/libs/sebastian/finder-facade" />
+      <path value="$PROJECT_DIR$/libs/sebastian/version" />
+      <path value="$PROJECT_DIR$/libs/webmozart/assert" />
+      <path value="$PROJECT_DIR$/libs/netresearch/jsonmapper" />
+      <path value="$PROJECT_DIR$/libs/sabre/event" />
+      <path value="$PROJECT_DIR$/libs/phpunit/php-timer" />
+      <path value="$PROJECT_DIR$/libs/theseer/fdomdocument" />
+      <path value="$PROJECT_DIR$/libs/sebastian/phpcpd" />
+      <path value="$PROJECT_DIR$/libs/phan/phan" />
+      <path value="$PROJECT_DIR$/libs/nikic/php-parser" />
+      <path value="$PROJECT_DIR$/libs/symfony/finder" />
+      <path value="$PROJECT_DIR$/libs/mridang/pmd-annotations" />
+      <path value="$PROJECT_DIR$/libs/microsoft/tolerant-php-parser" />
+      <path value="$PROJECT_DIR$/libs/staabm/annotate-pull-request-from-checkstyle" />
+      <path value="$PROJECT_DIR$/libs/symfony/polyfill-php73" />
+      <path value="$PROJECT_DIR$/libs/symfony/polyfill-ctype" />
+      <path value="$PROJECT_DIR$/libs/symfony/service-contracts" />
+    </include_path>
+  </component>
+  <component name="ProjectCodeStyleSettingsMigration">
+    <option name="version" value="1" />
+  </component>
+  <component name="ProjectId" id="1ZuAnmtpd1iWBzUJ0203PVTojQO" />
+  <component name="ProjectInspectionProfilesVisibleTreeState">
+    <entry key="Project Default">
+      <profile-state>
+        <expanded-state>
+          <State>
+            <id />
+          </State>
+          <State>
+            <id>CSS</id>
+          </State>
+          <State>
+            <id>Code SmellPHP</id>
+          </State>
+          <State>
+            <id>Code StylePHP</id>
+          </State>
+          <State>
+            <id>Code style issuesCSS</id>
+          </State>
+          <State>
+            <id>Control flow issuesJavaScript</id>
+          </State>
+          <State>
+            <id>DOM issuesJavaScript</id>
+          </State>
+          <State>
+            <id>General</id>
+          </State>
+          <State>
+            <id>GeneralJavaScript</id>
+          </State>
+          <State>
+            <id>HTML</id>
+          </State>
+          <State>
+            <id>Invalid elementsCSS</id>
+          </State>
+          <State>
+            <id>JavaScript</id>
+          </State>
+          <State>
+            <id>PHP</id>
+          </State>
+          <State>
+            <id>Probable bugsCSS</id>
+          </State>
+          <State>
+            <id>Probable bugsPHP</id>
+          </State>
+          <State>
+            <id>SQL</id>
+          </State>
+        </expanded-state>
+      </profile-state>
+    </entry>
+  </component>
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectReloadState">
+    <option name="STATE" value="0" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="autoscrollFromSource" value="true" />
+    <option name="autoscrollToSource" value="true" />
+    <option name="showMembers" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="FullScreen" value="true" />
+    <property name="JavaScriptPreferStrict" value="false" />
+    <property name="JavaScriptWeakerCompletionTypeGuess" value="true" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="true" />
+    <property name="WebServerToolWindowPanel.toolwindow.highlight.mappings" value="true" />
+    <property name="WebServerToolWindowPanel.toolwindow.highlight.symlinks" value="true" />
+    <property name="WebServerToolWindowPanel.toolwindow.show.date" value="false" />
+    <property name="WebServerToolWindowPanel.toolwindow.show.permissions" value="false" />
+    <property name="WebServerToolWindowPanel.toolwindow.show.size" value="false" />
+    <property name="add_unversioned_files" value="$PROJECT_DIR$/libs/squizlabs/php_codesniffer/CodeSniffer/Standards/Zend/Sniffs/NamingConventions/ValidVariableNameSniff.php" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="full.screen.before.presentation.mode" value="false" />
+    <property name="ignore_missing_gitignore" value="true" />
+    <property name="js-jscs-nodeInterpreter" value="/usr/local/bin/node" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.jscs" value="true" />
+    <property name="node.js.detected.package.standard" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.jscs" value="project" />
+    <property name="node.js.path.for.package.standard" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.jscs" value="" />
+    <property name="node.js.selected.package.standard" value="" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="nodejs_interpreter_path" value="/usr/local/bin/node" />
+    <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/classes/managers" />
+      <recent name="$PROJECT_DIR$/classes/blocks" />
+      <recent name="$PROJECT_DIR$/.phan" />
+      <recent name="$PROJECT_DIR$/classes/models" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/scripts/src" />
+      <recent name="$PROJECT_DIR$/classes/models" />
+      <recent name="$PROJECT_DIR$/classes/managers" />
+      <recent name="$PROJECT_DIR$/classes/services" />
+      <recent name="$PROJECT_DIR$/classes/helpers" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="CodeceptionConfigurationType" factoryName="Codeception">
+      <PhpTestRunnerSettings />
+      <method />
+    </configuration>
+    <configuration default="true" type="PhpBehatConfigurationType" factoryName="Behat">
+      <BehatRunner />
+      <method />
+    </configuration>
+    <configuration default="true" type="PhpSpecConfigurationType" factoryName="PHPSpec">
+      <PhpTestRunnerSettings />
+      <method />
+    </configuration>
+    <configuration default="true" type="PhpUnitRemoteRunConfigurationType" factoryName="PHPUnit on Server">
+      <method />
+    </configuration>
+    <configuration default="true" type="js.build_tools.gulp">
+      <node-interpreter>project</node-interpreter>
+      <node-options />
+      <gulpfile />
+      <tasks />
+      <arguments />
+      <pass-parent-envs>true</pass-parent-envs>
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="5ce1db35-3237-4e89-b4af-9c0ae953d611" name="Default" comment="" />
+      <created>1416915540811</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1416915540811</updated>
+      <workItem from="1458730719736" duration="4230000" />
+      <workItem from="1459841869506" duration="10713000" />
+      <workItem from="1463991939860" duration="86000" />
+      <workItem from="1463992044313" duration="19000" />
+      <workItem from="1464347107193" duration="258000" />
+      <workItem from="1465222071782" duration="1768000" />
+      <workItem from="1465398602882" duration="3163000" />
+      <workItem from="1465997927609" duration="7000" />
+      <workItem from="1465997944636" duration="11000" />
+      <workItem from="1466515062794" duration="5204000" />
+      <workItem from="1467266881099" duration="8601000" />
+      <workItem from="1469013295986" duration="888000" />
+      <workItem from="1470898112919" duration="9150000" />
+      <workItem from="1471503145105" duration="1707000" />
+      <workItem from="1474350050858" duration="2530000" />
+      <workItem from="1474360319843" duration="174000" />
+      <workItem from="1474628004312" duration="999000" />
+      <workItem from="1474803379655" duration="13000" />
+      <workItem from="1475824914166" duration="483000" />
+      <workItem from="1475833542248" duration="1068000" />
+      <workItem from="1483098768583" duration="32000" />
+      <workItem from="1484128116329" duration="2312000" />
+      <workItem from="1484330091559" duration="968000" />
+      <workItem from="1485113546748" duration="3662000" />
+      <workItem from="1485352164800" duration="4000" />
+      <workItem from="1486044172970" duration="2416000" />
+      <workItem from="1486541043199" duration="195000" />
+      <workItem from="1487708895854" duration="1983000" />
+      <workItem from="1490033696680" duration="6823000" />
+      <workItem from="1490082319747" duration="16414000" />
+      <workItem from="1490523778859" duration="287000" />
+      <workItem from="1490524130695" duration="175000" />
+      <workItem from="1493022662412" duration="327000" />
+      <workItem from="1493360723973" duration="3472000" />
+      <workItem from="1493706853435" duration="2621000" />
+      <workItem from="1494231553146" duration="1149000" />
+      <workItem from="1496936071633" duration="7127000" />
+      <workItem from="1497345578719" duration="20000" />
+      <workItem from="1500206981708" duration="1399000" />
+      <workItem from="1500215940740" duration="709000" />
+      <workItem from="1501530630346" duration="9000" />
+      <workItem from="1501789127595" duration="17697000" />
+      <workItem from="1501850544296" duration="1957000" />
+      <workItem from="1501918871786" duration="65359000" />
+      <workItem from="1502137287831" duration="73039000" />
+      <workItem from="1502707414949" duration="63063000" />
+      <workItem from="1506012689350" duration="5059000" />
+      <workItem from="1507753632585" duration="1630000" />
+      <workItem from="1509442027722" duration="2662000" />
+      <workItem from="1509999871501" duration="182000" />
+      <workItem from="1510084076698" duration="1116000" />
+      <workItem from="1510647161289" duration="1000" />
+      <workItem from="1511369845258" duration="10045000" />
+      <workItem from="1512132625304" duration="186000" />
+      <workItem from="1512666118108" duration="20000" />
+      <workItem from="1585678776829" duration="9562000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TodoView" selected-index="2" />
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="2" />
+  </component>
+  <component name="Vcs.Log.UiProperties">
+    <option name="RECENTLY_FILTERED_USER_GROUPS">
+      <collection />
+    </option>
+    <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+      <collection />
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <ignored-roots>
+      <path value="$PROJECT_DIR$/backward_compatibility" />
+    </ignored-roots>
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="229" y="100" key="SettingsEditor" timestamp="1585678804252">
+      <screen x="0" y="23" width="1440" height="877" />
+    </state>
+    <state x="229" y="100" key="SettingsEditor/0.23.1440.877@0.23.1440.877" timestamp="1585678804252" />
+    <state x="420" y="217" width="701" height="488" key="find.popup" timestamp="1585686720294">
+      <screen x="0" y="23" width="1440" height="877" />
+    </state>
+    <state x="420" y="217" width="701" height="488" key="find.popup/0.23.1440.877@0.23.1440.877" timestamp="1585686720294" />
+    <state x="385" y="213" width="670" height="676" key="search.everywhere.popup" timestamp="1585725559416">
+      <screen x="0" y="23" width="1440" height="877" />
+    </state>
+    <state x="385" y="213" width="670" height="676" key="search.everywhere.popup/0.23.1440.877@0.23.1440.877" timestamp="1585725559416" />
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="Copyright.UI">
+        <settings>
+          <last-edited>Nosto</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2275" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ScopeChooserConfigurable.UI">
+        <settings>
+          <last-edited>Unnamed</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2275" />
+              </list>
+            </option>
+          </splitter-proportions>
+          <order>
+            <scope name="Unnamed" />
+          </order>
+        </settings>
+      </state>
+    </states>
+  </component>
+</project>
