@@ -48,4 +48,4 @@ jobs:
         scope: Inspection
 
     - name: Archive inspection results
-      run: ls-lah
+      run: ls -lah
