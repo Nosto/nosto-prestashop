@@ -46,3 +46,9 @@ jobs:
         output: ./output
         verbosity: v2
         scope: Inspection
+
+    - name: Archive inspection results
+      uses: actions/upload-artifact@v1
+      with:
+        name: inspection-results
+        path: output/*
