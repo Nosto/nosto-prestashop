@@ -48,7 +48,4 @@ jobs:
         scope: Inspection
 
     - name: Archive inspection results
-      uses: actions/upload-artifact@v1
-      with:
-        name: inspection-results
-        path: output/*
+      run: ls-lah
