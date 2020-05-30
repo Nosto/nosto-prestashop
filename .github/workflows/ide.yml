@@ -42,11 +42,10 @@ jobs:
       uses: mridang/action-phpstorm@master
       with:
         target: .
-        profile: ./.idea/inspectionProfiles/Project_Default.xml
+        profile: ./.idea/inspectionProfiles/CI.xml
         output: ./output
         verbosity: v2
         scope: Inspection
-        noinspect: SpellCheckingInspection.xml,GrazieInspection.xml
 
     - name: Archive inspection results
       uses: actions/upload-artifact@v1
