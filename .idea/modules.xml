@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/Prestashop.iml" filepath="$PROJECT_DIR$/.idea/Prestashop.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Prestashop.iml" filepath="$PROJECT_DIR$/Prestashop.iml" />
     </modules>
   </component>
 </project>
