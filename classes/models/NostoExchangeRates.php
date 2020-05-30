@@ -23,6 +23,7 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
+use Nosto\NostoException;
 use Nosto\Object\ExchangeRate as NostoSDKExchangeRate;
 use Nosto\Object\ExchangeRateCollection as NostoSDKExchangeRateCollection;
 
@@ -30,7 +31,7 @@ class NostoExchangeRates extends NostoSDKExchangeRateCollection
 {
     /**
      * @return NostoExchangeRates the exchange rates object
-     * @throws \Nosto\NostoException
+     * @throws NostoException
      */
     public static function loadData()
     {

@@ -57,7 +57,7 @@ class NostoHelperContext
         try {
             // @phan-suppress-next-line PhanTypeVoidAssignment
             $retVal = $callable();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             NostoHelperLogger::log($e->getMessage());
         }
         self::revertToOriginalContext();

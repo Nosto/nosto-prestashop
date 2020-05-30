@@ -59,7 +59,7 @@ class NostoCustomerService extends AbstractNostoService
                         $updatedAccounts[$account->getName()] =
                             self::updateMarketingPermissionInCurrentContext($customer, $account);
                     }
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     NostoHelperLogger::error($e);
                 }
             }
@@ -74,7 +74,7 @@ class NostoCustomerService extends AbstractNostoService
                 $updatedAccounts[$account->getName()] =
                     self::updateMarketingPermissionInCurrentContext($customer, $account);
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             NostoHelperLogger::error($e);
         }
         return $this->isAllUpdated($updatedAccounts);

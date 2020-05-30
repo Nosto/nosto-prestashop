@@ -7,9 +7,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5ce1db35-3237-4e89-b4af-9c0ae953d611" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.github/workflows/ide.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/ide.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/Prestashop.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Prestashop.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/classes/helpers/NostoHelperAccount.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/helpers/NostoHelperAccount.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/classes/helpers/NostoHelperContext.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/helpers/NostoHelperContext.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/classes/helpers/NostoHelperController.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/helpers/NostoHelperController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/classes/helpers/NostoHelperCurrency.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/helpers/NostoHelperCurrency.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/classes/models/NostoExchangeRates.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/models/NostoExchangeRates.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/classes/services/NostoCartService.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/services/NostoCartService.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/classes/services/NostoCustomerService.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/services/NostoCustomerService.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nostotagging.php" beforeDir="false" afterPath="$PROJECT_DIR$/nostotagging.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -173,8 +180,8 @@
     <property name="node.js.selected.package.standard" value="" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_interpreter_path" value="/usr/local/bin/node" />
-    <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
-    <property name="settings.editor.selected.configurable" value="Errors" />
+    <property name="run.code.analysis.last.selected.profile" value="pCI" />
+    <property name="settings.editor.selected.configurable" value="project.scopes" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -285,7 +292,7 @@
       <workItem from="1512666118108" duration="20000" />
       <workItem from="1585678776829" duration="9562000" />
       <workItem from="1590678722683" duration="97000" />
-      <workItem from="1590680897672" duration="4621000" />
+      <workItem from="1590680897672" duration="6492000" />
     </task>
     <servers />
   </component>
@@ -307,10 +314,14 @@
     </ignored-roots>
   </component>
   <component name="WindowStateProjectService">
-    <state x="229" y="79" key="SettingsEditor" timestamp="1590831454430">
+    <state x="468" y="312" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1" timestamp="1590835609682">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state x="229" y="79" key="SettingsEditor/0.0.1440.900@0.0.1440.900" timestamp="1590831454430" />
+    <state x="468" y="312" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1/0.0.1440.900@0.0.1440.900" timestamp="1590835609682" />
+    <state x="229" y="79" key="SettingsEditor" timestamp="1590835568268">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state x="229" y="79" key="SettingsEditor/0.0.1440.900@0.0.1440.900" timestamp="1590835568268" />
     <state x="229" y="100" key="SettingsEditor/0.23.1440.877@0.23.1440.877" timestamp="1585678804252" />
     <state x="420" y="217" width="701" height="488" key="find.popup" timestamp="1585686720294">
       <screen x="0" y="23" width="1440" height="877" />

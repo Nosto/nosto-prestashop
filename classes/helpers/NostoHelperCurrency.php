@@ -23,6 +23,7 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
+use ICanBoogie\CLDR\Currency;
 use Nosto\NostoException as NostoSDKException;
 use Nosto\Object\Format as NostoSDKCurrencyFormat;
 
@@ -205,7 +206,7 @@ class NostoHelperCurrency
     {
         $cldr = Tools::getCldr(null, NostoHelperContext::getLanguage()->language_code);
         /** @noinspection PhpParamsInspection */
-        $cldrCurrency = new \ICanBoogie\CLDR\Currency($cldr->getRepository(), $currency[self::ISO_CODE_FIELD]);
+        $cldrCurrency = new Currency($cldr->getRepository(), $currency[self::ISO_CODE_FIELD]);
         $localizedCurrency = $cldrCurrency->localize($cldr->getCulture());
         $pattern = $localizedCurrency->locale->numbers->currency_formats[self::STANDARD_FIELD];
         $symbols = $localizedCurrency->locale->numbers->symbols;

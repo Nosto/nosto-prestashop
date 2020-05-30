@@ -23,6 +23,7 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
+use Nosto\NostoException;
 use Nosto\Object\Signup\Account as NostoSDKAccount;
 use Nosto\Request\Api\Token as NostoSDKAPIToken;
 use Nosto\Types\Signup\AccountInterface as NostoSDKSignupAccountInterface;
@@ -80,7 +81,7 @@ class NostoHelperAccount
      * Finds and returns an account for given criteria.
      *
      * @return NostoSDKAccount|null the account with loaded API tokens, or null if not found.
-     * @throws \Nosto\NostoException
+     * @throws NostoException
      */
     public static function getAccount()
     {
@@ -108,7 +109,7 @@ class NostoHelperAccount
      * Checks if an account exists and is "connected to Nosto" for given criteria.
      *
      * @return bool true if it does, false otherwise.
-     * @throws \Nosto\NostoException
+     * @throws NostoException
      */
     public static function existsAndIsConnected()
     {

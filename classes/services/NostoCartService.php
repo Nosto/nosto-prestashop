@@ -115,7 +115,7 @@ class NostoCartService extends AbstractNostoService
                 $service = new NostoSDKCartOperation($account);
                 $service->updateCart($cartUpdate, $nostoCustomerId, $account->getName());
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             NostoHelperLogger::error($e);
         }
     }
@@ -151,7 +151,7 @@ class NostoCartService extends AbstractNostoService
 
                 self::$addedItems[] = $nostoLineItem;
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             NostoHelperLogger::error($e);
         }
     }
