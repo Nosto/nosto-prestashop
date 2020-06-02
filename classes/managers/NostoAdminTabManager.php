@@ -79,7 +79,6 @@ class NostoAdminTabManager
         if ($idTab) {
             $mainTabAdded = new Tab($idTab);
         } else {
-            /** @var TabCore $tab */
             $tab = new Tab();
             $tab->active = true;
             $tab->class_name = self::MAIN_MENU_ITEM_CLASS;
@@ -174,7 +173,6 @@ class NostoAdminTabManager
         foreach ($tabs as $tabName) {
             $tabId = self::getAdminTabId($tabName);
             if ($tabId) {
-                /** @var TabCore $tab */
                 $tab = new Tab($tabId);
                 $tab->delete();
             }

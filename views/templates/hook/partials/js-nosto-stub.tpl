@@ -22,5 +22,6 @@
 * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *}
 <script type="text/javascript">
-{literal}(function(){var name="nostojs";window[name]=window[name]||function(cb){(window[name].q=window[name].q||[]).push(cb);};})();{/literal}
+{literal}(function(){
+  const name = "nostojs";window[name]=window[name]||function(cb){(window[name].q=window[name].q||[]).push(cb);};})();{/literal}
 </script>

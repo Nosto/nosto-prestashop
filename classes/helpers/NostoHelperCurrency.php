@@ -131,8 +131,7 @@ class NostoHelperCurrency
         ) {
             // In Prestashop 1.7 we use the CLDR
             try {
-                $nostoCurrency = self::createWithCldr($currency);
-                return $nostoCurrency;
+                return self::createWithCldr($currency);
             } catch (Exception $e) {
                 NostoHelperLogger::error($e);
             }
@@ -205,7 +204,6 @@ class NostoHelperCurrency
     private static function createWithCldr(array $currency)
     {
         $cldr = Tools::getCldr(null, NostoHelperContext::getLanguage()->language_code);
-        /** @noinspection PhpParamsInspection */
         $cldrCurrency = new Currency($cldr->getRepository(), $currency[self::ISO_CODE_FIELD]);
         $localizedCurrency = $cldrCurrency->localize($cldr->getCulture());
         $pattern = $localizedCurrency->locale->numbers->currency_formats[self::STANDARD_FIELD];
@@ -235,9 +233,9 @@ class NostoHelperCurrency
     public static function getDecimalWithCurrency($currencyId)
     {
         $currencyDecimalsEnabled = 1;
-        /** @var Currency $currencyObject */
         $currencyObject = self::loadCurrency($currencyId);
         if (Validate::isLoadedObject($currencyObject)) {
+            /** @noinspection PhpUndefinedFieldInspection */
             $currencyDecimalsEnabled = $currencyObject->decimals;
         }
 

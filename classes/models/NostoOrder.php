@@ -33,8 +33,6 @@ class NostoOrder extends NostoSDKOrder
     /**
      * @param Order $order
      * @return Customer
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
      * @suppress PhanTypeMismatchArgument
      */
     private static function loadCustomer(Order $order)
@@ -57,7 +55,6 @@ class NostoOrder extends NostoSDKOrder
      *
      * @param Order $order the order model to process
      * @return NostoOrder|null the order object
-     * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
     public static function loadData(Order $order)
@@ -108,8 +105,6 @@ class NostoOrder extends NostoSDKOrder
      *
      * @param Order $order the order object.
      * @return NostoOrderPurchasedItem[] the purchased items.
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
      */
     protected static function findPurchasedItems(Order $order)
     {

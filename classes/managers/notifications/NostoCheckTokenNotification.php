@@ -23,6 +23,7 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
+use Nosto\NostoException;
 use Nosto\Object\Notification as NostoSDKNotification;
 use Nosto\Types\Signup\AccountInterface as NostoSDKAccount;
 
@@ -33,6 +34,7 @@ class NostoCheckTokenNotification extends NostoNotification
      * notification if any token is is
      *
      * @return NostoNotification|null a notification or null if no notification is needed
+     * @throws NostoException
      */
     public static function check()
     {

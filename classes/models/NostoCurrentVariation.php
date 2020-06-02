@@ -79,6 +79,7 @@ class NostoCurrentVariation extends NostoSDKMarkupableString
 
             return $nostoVariation;
         }
+        return null;
     }
 
     /**

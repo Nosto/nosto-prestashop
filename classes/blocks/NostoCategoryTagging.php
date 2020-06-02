@@ -29,6 +29,8 @@ class NostoCategoryTagging
      * Renders the current category tagging by checking if the underlying controller has
      * an accessor for it and if not, it falls back to using the identifier
      * @return string|null the tagging
+     * @throws PrestaShopException
+     * @throws ReflectionException
      */
     public static function get()
     {

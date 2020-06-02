@@ -31,6 +31,7 @@ class NostoAccountOwner extends NostoSDKSignupOwner
      * Loads the meta data from the given context.
      *
      * @return NostoAccountOwner the account owner object
+     * @throws PrestaShopException
      */
     public static function loadData()
     {

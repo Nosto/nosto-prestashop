@@ -32,9 +32,11 @@ class NostoExchangeRates extends NostoSDKExchangeRateCollection
     /**
      * @return NostoExchangeRates the exchange rates object
      * @throws NostoException
+     * @throws PrestaShopException
      */
     public static function loadData()
     {
+        /** @noinspection PhpUndefinedFieldInspection */
         $baseCurrencyCode = NostoHelperCurrency::getBaseCurrency()->iso_code;
         $currencies = NostoHelperCurrency::getCurrencies(true);
         $nostoRates = new NostoExchangeRates();

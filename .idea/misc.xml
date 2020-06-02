@@ -1,9 +1,94 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="JavaScriptSettings">
-    <option name="languageLevel" value="ES6" />
+  <component name="PhpEntryPointsManager">
+    <entry_point>
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTagging hookActionBeforeCartUpdateQty" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoTagging" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTagging __construct" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTagging hookActionCartSave" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTagging hookActionCustomerAccountAdd" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTagging hookActionCustomerAccountUpdate" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTagging hookActionObjectCurrencyUpdateAfter" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTagging hookAddProduct" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTagging hookBackOfficeFooter" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTagging hookDeleteProduct" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTagging hookDisplayBackOfficeHeader" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTagging hookDisplayBackOfficeTop" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTagging hookDisplayCategoryFooter" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTagging hookDisplayCategoryTop" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTagging hookDisplayNav1" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTagging hookDisplaySearchFooter" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTagging hookDisplaySearchTop" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTagging hookFooter" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTagging hookHeader" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTagging hookHome" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTagging hookLeftColumn" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTagging hookPaymentTop" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTagging hookPostUpdateOrderStatus" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTagging hookProductFooter" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTagging hookRightColumn" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTagging hookShoppingCart" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTagging hookTop" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTagging hookUpdateProduct" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTagging hookUpdateQuantity" />
+      <entry_point TYPE="phpFunction" FQNAME="\upgrade_module_1_1_0" />
+      <entry_point TYPE="phpFunction" FQNAME="\upgrade_module_1_2_0" />
+      <entry_point TYPE="phpFunction" FQNAME="\upgrade_module_1_3_0" />
+      <entry_point TYPE="phpFunction" FQNAME="\upgrade_module_2_1_0" />
+      <entry_point TYPE="phpFunction" FQNAME="\upgrade_module_2_2_0" />
+      <entry_point TYPE="phpFunction" FQNAME="\upgrade_module_2_4_0" />
+      <entry_point TYPE="phpFunction" FQNAME="\upgrade_module_2_5_0" />
+      <entry_point TYPE="phpFunction" FQNAME="\upgrade_module_2_6_0" />
+      <entry_point TYPE="phpFunction" FQNAME="\upgrade_module_2_7_0" />
+      <entry_point TYPE="phpFunction" FQNAME="\upgrade_module_3_1_0" />
+      <entry_point TYPE="phpFunction" FQNAME="\upgrade_module_3_3_2" />
+      <entry_point TYPE="phpFunction" FQNAME="\upgrade_module_3_4_3" />
+      <entry_point TYPE="phpFunction" FQNAME="\upgrade_module_3_5_0" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/upgrade/upgrade-1.1.0.php" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/upgrade/upgrade-1.2.0.php" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/upgrade/upgrade-1.3.0.php" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/upgrade/upgrade-2.1.0.php" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/upgrade/upgrade-2.2.0.php" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/upgrade/upgrade-2.4.0.php" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/upgrade/upgrade-2.5.0.php" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/upgrade/upgrade-2.6.0.php" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/upgrade/upgrade-2.7.0.php" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/upgrade/upgrade-3.1.0.php" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/upgrade/upgrade-3.3.2.php" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/upgrade/upgrade-3.4.3.php" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/upgrade/upgrade-3.5.0.php" />
+    </entry_point>
+    <pattern value="\NostoTagging" member="hookActionBeforeCartUpdateQty" />
+    <pattern value="\NostoTagging" />
+    <pattern value="\NostoTagging" member="__construct" />
+    <pattern value="\NostoTagging" member="hookActionCartSave" />
+    <pattern value="\NostoTagging" member="hookActionCustomerAccountAdd" />
+    <pattern value="\NostoTagging" member="hookActionCustomerAccountUpdate" />
+    <pattern value="\NostoTagging" member="hookActionObjectCurrencyUpdateAfter" />
+    <pattern value="\NostoTagging" member="hookAddProduct" />
+    <pattern value="\NostoTagging" member="hookBackOfficeFooter" />
+    <pattern value="\NostoTagging" member="hookDeleteProduct" />
+    <pattern value="\NostoTagging" member="hookDisplayBackOfficeHeader" />
+    <pattern value="\NostoTagging" member="hookDisplayBackOfficeTop" />
+    <pattern value="\NostoTagging" member="hookDisplayCategoryFooter" />
+    <pattern value="\NostoTagging" member="hookDisplayCategoryTop" />
+    <pattern value="\NostoTagging" member="hookDisplayNav1" />
+    <pattern value="\NostoTagging" member="hookDisplaySearchFooter" />
+    <pattern value="\NostoTagging" member="hookDisplaySearchTop" />
+    <pattern value="\NostoTagging" member="hookFooter" />
+    <pattern value="\NostoTagging" member="hookHeader" />
+    <pattern value="\NostoTagging" member="hookHome" />
+    <pattern value="\NostoTagging" member="hookLeftColumn" />
+    <pattern value="\NostoTagging" member="hookPaymentTop" />
+    <pattern value="\NostoTagging" member="hookPostUpdateOrderStatus" />
+    <pattern value="\NostoTagging" member="hookProductFooter" />
+    <pattern value="\NostoTagging" member="hookRightColumn" />
+    <pattern value="\NostoTagging" member="hookShoppingCart" />
+    <pattern value="\NostoTagging" member="hookTop" />
+    <pattern value="\NostoTagging" member="hookUpdateProduct" />
+    <pattern value="\NostoTagging" member="hookUpdateQuantity" />
   </component>
-  <component name="ProjectPlainTextFileTypeManager">
-    <file url="file://$PROJECT_DIR$/.idea/Prestashop.iml" />
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6">
+    <output url="file://$PROJECT_DIR$/out" />
   </component>
 </project>

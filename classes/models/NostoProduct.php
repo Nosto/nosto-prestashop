@@ -23,6 +23,7 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
+use Nosto\NostoException;
 use Nosto\Object\Product\Product as NostoSDKProduct;
 
 class NostoProduct extends NostoSDKProduct
@@ -35,6 +36,9 @@ class NostoProduct extends NostoSDKProduct
      *
      * @param Product $product the product model to process
      * @return NostoProduct|null the product object
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     * @throws NostoException
      */
     public static function loadData(Product $product)
     {
@@ -62,10 +66,12 @@ class NostoProduct extends NostoSDKProduct
             $nostoProduct->amendVariation($product);
         } else {
             $taggingCurrency = NostoHelperCurrency::getBaseCurrency();
+            /** @noinspection PhpUndefinedFieldInspection */
             $nostoProduct->setPriceCurrencyCode(Tools::strtoupper($taggingCurrency->iso_code));
             $nostoProduct->setPrice(self::getPriceInclTax($product, $taggingCurrency));
             $nostoProduct->setListPrice(self::getListPriceInclTax($product, $taggingCurrency));
             if (NostoHelperConfig::useMultipleCurrencies()) {
+                /** @noinspection PhpUndefinedFieldInspection */
                 $nostoProduct->setVariationId($taggingCurrency->iso_code);
             }
         }
@@ -145,6 +151,9 @@ class NostoProduct extends NostoSDKProduct
      * Amend skus
      *
      * @param Product $product
+     * @throws NostoException
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      */
     protected function amendSkus(Product $product)
     {
@@ -277,6 +286,8 @@ class NostoProduct extends NostoSDKProduct
      * @param Product $product the product.
      * @param Currency $currency the currency.
      * @return float the price.
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      */
     public static function getPriceInclTax(Product $product, Currency $currency)
     {
@@ -289,6 +300,8 @@ class NostoProduct extends NostoSDKProduct
      * @param Product $product the product.
      * @param Currency $currency the currency.
      * @return float the price.
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      */
     public static function getListPriceInclTax(Product $product, Currency $currency)
     {
@@ -329,6 +342,7 @@ class NostoProduct extends NostoSDKProduct
      *
      * @param Product $product the product model.
      *
+     * @throws PrestaShopException
      * @suppress PhanTypeMismatchArgument
      */
     protected function amendCategories(Product $product)

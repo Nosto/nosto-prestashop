@@ -33,6 +33,7 @@ class NostoOAuth extends NostoSDKOAuth
      *
      * @param string $moduleName the name of the module
      * @return NostoOAuth|null the oauth object
+     * @throws PrestaShopException
      */
     public static function loadData($moduleName)
     {

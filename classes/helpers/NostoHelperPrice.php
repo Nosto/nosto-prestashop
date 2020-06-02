@@ -65,7 +65,11 @@ class NostoHelperPrice
      *
      * @param int $idProduct the product ID.
      * @param Currency $currency the currency object.
+     * @param bool $isUserReduced
+     * @param null $productAttributeId
      * @return float the price.
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      */
     public static function calcPrice(
         $idProduct,
@@ -108,6 +112,7 @@ class NostoHelperPrice
                 //default currency. If multi-store is enabled and default currencies are different in
                 //different stores, it cause problem. Big number 1000,000 is used to avoid rounding issue.
                 // @phan-suppress-next-line PhanDeprecatedFunction
+                /** @noinspection PhpDeprecationInspection */
                 $exchangeRate = Tools::convertPrice(
                     1000000,
                     Currency::getCurrencyInstance((int)Configuration::get('PS_CURRENCY_DEFAULT'))
@@ -162,6 +167,7 @@ class NostoHelperPrice
         //default currency. If multi-store is enabled and default currencies are different in
         //different stores, it cause problem. Big number 1000,000 is used to avoid rounding issue.
         // @phan-suppress-next-line PhanDeprecatedFunction
+        /** @noinspection PhpDeprecationInspection */
         $exchangeRate = Tools::convertPrice(
             1000000,
             Currency::getCurrencyInstance((int)Configuration::get('PS_CURRENCY_DEFAULT'))

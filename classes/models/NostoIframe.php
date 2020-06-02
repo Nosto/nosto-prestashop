@@ -59,6 +59,7 @@ class NostoIframe extends NostoSDKIframe
      * Loads the meta-data from context.
      *
      * @return NostoIframe|null the iframe object
+     * @throws PrestaShopException
      */
     public static function loadData()
     {

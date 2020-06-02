@@ -33,6 +33,10 @@ class NostoAdvancedSettingController extends NostoBaseController
      * @inheritdoc
      *
      * @suppress PhanDeprecatedFunction
+     * @return bool
+     * @throws NostoSDKException
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      */
     public function execute()
     {
@@ -51,17 +55,10 @@ class NostoAdvancedSettingController extends NostoBaseController
         $accountMeta = NostoAccountSignup::loadData();
 
         if (!empty($account) && $account->isConnectedToNosto()) {
-            try {
-                $operation = new NostoSettingsService($account);
-                $operation->update($accountMeta);
-                NostoHelperFlash::add('success', $this->l('The settings have been saved.'));
-            } catch (NostoSDKException $e) {
-                NostoHelperLogger::error($e, 'Unable to update Nosto account settings');
-                NostoHelperFlash::add(
-                    'error',
-                    $this->l('There was an error saving the settings. Please, see log for details.')
-                );
-            }
+            $operation = new NostoSettingsService($account);
+            $operation->update($accountMeta);
+            /** @noinspection PhpDeprecationInspection */
+            NostoHelperFlash::add('success', $this->l('The settings have been saved.'));
 
             // Also update the exchange rates if multi currency is used
             if ($accountMeta->getUseExchangeRates()) {
@@ -71,6 +68,7 @@ class NostoAdvancedSettingController extends NostoBaseController
         } else {
             $message = "Couldn't save advanced settings since there is no connected nosto account.";
             NostoHelperLogger::info($message);
+            /** @noinspection PhpDeprecationInspection */
             NostoHelperFlash::add('error', $this->l($message));
         }
 

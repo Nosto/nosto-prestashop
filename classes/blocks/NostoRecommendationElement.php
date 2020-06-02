@@ -1,4 +1,7 @@
 <?php
+
+use Nosto\NostoException;
+
 /**
  * 2013-2019 Nosto Solutions Ltd
  *
@@ -32,6 +35,7 @@ class NostoRecommendationElement
      *
      * @param string $id the identifier of the recommendation element
      * @return string the tagging
+     * @throws NostoException
      */
     public static function get($id)
     {

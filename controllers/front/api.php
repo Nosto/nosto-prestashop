@@ -24,6 +24,7 @@
  */
 
 use Nosto\Helper\ExportHelper as NostoSDKExportHelper;
+use Nosto\NostoException;
 
 /**
  * Base controller for all Nosto API front controllers.
@@ -65,6 +66,7 @@ abstract class NostoTaggingApiModuleFrontController extends ModuleFrontControlle
      *
      * @param Nosto\Object\AbstractCollection $collection the data collection to output as
      *     encrypted response.
+     * @throws NostoException
      */
     public function encryptOutput(Nosto\Object\AbstractCollection $collection)
     {

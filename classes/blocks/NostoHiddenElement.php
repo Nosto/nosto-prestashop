@@ -1,4 +1,7 @@
 <?php
+
+use Nosto\NostoException;
+
 /**
  * 2013-2019 Nosto Solutions Ltd
  *
@@ -25,7 +28,7 @@
 
 class NostoHiddenElement
 {
-    const HIDDEN_ELEMENT = '<div class="hidden_nosto_element" data-nosto-id="%s" nosto_insert_position="%s"></div>';
+    const HIDDEN_ELEMENT = '<!--suppress HtmlUnknownAttribute --> <div class="hidden_nosto_element" data-nosto-id="%s" nosto_insert_position="%s"></div>';
     const INSERT_POSITION_PREPEND = 'prepend';
     const INSERT_POSITION_APPEND = 'append';
 
@@ -35,6 +38,7 @@ class NostoHiddenElement
      *
      * @param string $nostoDataId the identifier of the hidden element
      * @return string the tagging
+     * @throws NostoException
      */
     public static function append($nostoDataId)
     {
@@ -51,6 +55,7 @@ class NostoHiddenElement
      *
      * @param string $nostoDataId the identifier of the hidden element
      * @return string the tagging
+     * @throws NostoException
      */
     public static function prepend($nostoDataId)
     {

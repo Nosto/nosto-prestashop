@@ -35,6 +35,8 @@ class NostoSignupService extends AbstractNostoService
      * @param stdClass|string $accountDetails the details for the account.
      * @return bool true if successful, false otherwise.
      * @throws NostoSDKException on failure.
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      */
     public function createAccount($email, $accountDetails = "")
     {

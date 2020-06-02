@@ -30,6 +30,7 @@ class NostoSearch extends NostoSDKSearchTerm
     /**
      * @param string $term the current search term
      * @return NostoSearch the search object
+     * @throws PrestaShopException
      */
     public static function loadData($term)
     {

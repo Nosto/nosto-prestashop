@@ -25,6 +25,7 @@
 
 require_once 'NostoBaseController.php';
 
+use Nosto\NostoException;
 use Nosto\Request\Api\Token as NostoSDKAPIToken;
 
 class NostoUpdateExchangeRateController extends NostoBaseController
@@ -33,6 +34,7 @@ class NostoUpdateExchangeRateController extends NostoBaseController
      * @inheritdoc
      *
      * @suppress PhanDeprecatedFunction
+     * @throws NostoException
      */
     public function execute()
     {
@@ -40,6 +42,7 @@ class NostoUpdateExchangeRateController extends NostoBaseController
         $operation = new NostoRatesService();
         if ($nostoAccount && $operation->updateCurrencyExchangeRates($nostoAccount)
         ) {
+            /** @noinspection PhpDeprecationInspection */
             NostoHelperFlash::add(
                 'success',
                 $this->l('Exchange rates successfully updated to Nosto')
@@ -52,6 +55,7 @@ class NostoUpdateExchangeRateController extends NostoBaseController
                 $message = 'There was an error updating the exchange rates. 
                             See Prestashop logs for more information.';
             }
+            /** @noinspection PhpDeprecationInspection */
             NostoHelperFlash::add('error', $this->l($message));
         }
 

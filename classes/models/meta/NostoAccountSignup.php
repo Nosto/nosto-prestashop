@@ -75,6 +75,8 @@ class NostoAccountSignup extends NostoSDKAccountSignup
      * Loads the meta data for the context and given language.
      *
      * @return NostoAccountSignup|null the signup object
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      */
     public static function loadData()
     {
@@ -111,6 +113,7 @@ class NostoAccountSignup extends NostoSDKAccountSignup
                 $nostoSignup->setCurrencies(self::buildCurrencies());
                 if (NostoHelperConfig::useMultipleCurrencies()) {
                     $nostoSignup->setUseCurrencyExchangeRates(true);
+                    /** @noinspection PhpUndefinedFieldInspection */
                     $nostoSignup->setDefaultVariantId(NostoHelperCurrency::getBaseCurrency()->iso_code);
                 } elseif (NostoHelperConfig::getVariationEnabled()) {
                     $keyCollection = new NostoVariationKeyCollection();

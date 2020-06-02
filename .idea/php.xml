@@ -7,22 +7,11 @@
   </component>
   <component name="PhpCodeSniffer">
     <phpcs_settings>
-      <PhpCSConfiguration beautifier_path="$PROJECT_DIR$/libs/bin/phpcbf" tool_path="$PROJECT_DIR$/libs/bin/phpcs" />
+      <PhpCSConfiguration beautifier_path="$PROJECT_DIR$/libs/bin/phpcbf" standards="MySource;PEAR;PHPCompatibility;PSR1;PSR12;PSR2;Squiz;Zend" tool_path="$PROJECT_DIR$/libs/bin/phpcs" />
     </phpcs_settings>
   </component>
   <component name="PhpIncludePathManager">
     <include_path>
-      <path value="$PROJECT_DIR$/libs" />
-      <path value="/Applications/MAMP/htdocs/prestashop/1615/classes" />
-      <path value="/Applications/MAMP/htdocs/prestashop/1615/controllers" />
-      <path value="/Applications/MAMP/htdocs/prestashop/1615/config" />
-      <path value="/Applications/MAMP/htdocs/prestashop/1615/tools" />
-      <path value="/Applications/MAMP/htdocs/prestashop/1615/modules" />
-      <path value="/Applications/MAMP/htdocs/prestashop/1615/themes" />
-      <path value="$PROJECT_DIR$/libs/symfony/yaml" />
-      <path value="$PROJECT_DIR$/libs/symfony/debug" />
-      <path value="$PROJECT_DIR$/libs/nikic/php-parser" />
-      <path value="" />
       <path value="$PROJECT_DIR$/libs/psr/container" />
       <path value="$PROJECT_DIR$/libs/psr/log" />
       <path value="$PROJECT_DIR$/libs/webmozart/assert" />
@@ -37,7 +26,6 @@
       <path value="$PROJECT_DIR$/libs/sebastian/phpcpd" />
       <path value="$PROJECT_DIR$/libs/pdepend/pdepend" />
       <path value="$PROJECT_DIR$/libs/phpmd/phpmd" />
-      <path value="$PROJECT_DIR$/libs/prestashop/ps" />
       <path value="$PROJECT_DIR$/libs/squizlabs/php_codesniffer" />
       <path value="$PROJECT_DIR$/libs/staabm/annotate-pull-request-from-checkstyle" />
       <path value="$PROJECT_DIR$/libs/phan/phan" />
@@ -64,14 +52,11 @@
       <path value="$PROJECT_DIR$/libs/sabre/event" />
       <path value="$PROJECT_DIR$/libs/icanboogie/cldr" />
       <path value="$PROJECT_DIR$/libs/phpseclib/phpseclib" />
+      <path value="$PROJECT_DIR$/libs/symfony/polyfill-php80" />
+      <path value="$PROJECT_DIR$/libs/prestashop/ps" />
     </include_path>
   </component>
-  <component name="PhpInterpreters">
-    <interpreters>
-      <interpreter id="d091f24c-e66f-4d5c-82bf-026088a86aeb" name="Interpreter for Composer" home="php" debugger_id="php.debugger.XDebug" />
-    </interpreters>
-  </component>
-  <component name="PhpProjectSharedConfiguration" php_language_level="7.1" />
+  <component name="PhpRuntimeConfiguration" default_stubs_path="$PROJECT_DIR$/.phan" />
   <component name="PhpUnit">
     <phpunit_settings>
       <PhpUnitSettings custom_loader_path="$PROJECT_DIR$/libs/autoload.php" />

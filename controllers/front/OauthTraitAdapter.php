@@ -60,6 +60,8 @@ class OauthTraitAdapter
      * OAuth operations
      *
      * @return Nosto\Oauth the OAuth parameters for the operations
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      * @suppress PhanUndeclaredMethod
      */
     public function getMeta()
@@ -78,6 +80,8 @@ class OauthTraitAdapter
      * the current store view (as defined by the parameter.)
      *
      * @param Nosto\Types\Signup\AccountInterface $account the account to save
+     * @return bool
+     * @return bool
      * @throws NostoException
      */
     public function save(NostoSDKAccountInterface $account)

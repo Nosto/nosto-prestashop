@@ -32,6 +32,7 @@ class NostoOrderStatus extends NostoSDKOrderStatus
      *
      * @param Order $order the order model to process
      * @return NostoOrderStatus the order status object
+     * @throws PrestaShopException
      */
     public static function loadData(Order $order)
     {

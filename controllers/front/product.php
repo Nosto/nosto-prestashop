@@ -54,6 +54,7 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
                         NostoHelperContext::getShopId()
                     );
                     if (!Validate::isLoadedObject($product)) {
+                        /** @noinspection PhpUndefinedClassInspection */
                         Controller::getController('PageNotFoundController')->run();
                     }
                     $nostoProduct = NostoProduct::loadData($product);
@@ -91,7 +92,6 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
     protected function getProductIds()
     {
         $productIds = array();
-        /** @noinspection SqlNoDataSourceInspection */
         $sql = sprintf(
             '
                 SELECT id_product

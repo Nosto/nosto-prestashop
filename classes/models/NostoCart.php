@@ -48,6 +48,7 @@ class NostoCart extends NostoSDKCart
      *
      * @param Cart $cart the cart model to process
      * @return NostoCart|null the cart object
+     * @throws PrestaShopException
      */
     public static function loadData(Cart $cart)
     {

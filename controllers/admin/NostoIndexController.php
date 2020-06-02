@@ -60,6 +60,7 @@ class NostoIndexController
      *
      * @param NostoSDKAccount $account NostoAccount|null
      * @return string|null
+     * @throws PrestaShopException
      */
     public function getIframeUrl(NostoSDKAccount $account)
     {

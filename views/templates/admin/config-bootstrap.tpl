@@ -47,6 +47,7 @@
                         {l s='Manage accounts:' mod='nostotagging'}
                     </div>
                     <div class="col-md-2">
+                        <!--suppress HtmlFormInputWithoutLabel -->
                         <select id="nostotagging_language">
                             {foreach from=$nostotagging_languages item=language}
                                 <option value="{$language.id_lang|escape:'htmlall':'UTF-8'}"
@@ -335,6 +336,7 @@
                         <div class="row nostotagging_iframe_container"
                              style="margin-left: -25px;margin-right: -25px;margin-top: 15px;">
                             <div class="col-md-12">
+                                <!--suppress HtmlDeprecatedAttribute, HtmlDeprecatedAttribute -->
                                 <iframe id="nostotagging_iframe" frameborder="0" width="100%"
                                         scrolling="no"
                                         src="{$iframe_url|escape:'htmlall':'UTF-8'}"></iframe>
@@ -344,8 +346,9 @@
                 {else}
                     <div class="row nostotagging_iframe_container"
                          style="margin-left: -25px;margin-right: -25px;margin-top: 15px;">
-                        <div class="col-md-12">
-                            <iframe id="nostotagging_iframe" frameborder="0" width="100%" scrolling="no"
+
+                            <!--suppress HtmlDeprecatedAttribute, HtmlDeprecatedAttribute -->
+                                                     <iframe id="nostotagging_iframe" frameborder="0" width="100%" scrolling="no"
                                     src="{$iframe_installation_url|escape:'htmlall':'UTF-8'}"></iframe>
                         </div>
                     </div>
@@ -358,9 +361,9 @@
     <script type="text/javascript"
             src="{$module_path|escape:'htmlall':'UTF-8'}views/js/iframeresizer.min.js"></script>
     <script type="text/javascript">
-        $(document).on('click', '.panel-heading span.clickable', function (e) {
-            var $this = $(this);
-            if (!$this.hasClass('panel-collapsed')) {
+        $(document).on('click', '.panel-heading span.clickable', function () {
+          const $this = $(this);
+          if (!$this.hasClass('panel-collapsed')) {
                 $this.parents('.panel').find('.panel-body').slideUp();
                 $this.parents('.panel').find('.panel-footer').slideUp();
                 $this.addClass('panel-collapsed');
@@ -378,16 +381,16 @@
         $(document).ready(function () {
             iFrameResize({heightCalculationMethod: "bodyScroll"});
             function receiveMessage(event) {
-                var originRegexp = new RegExp("{/literal}{$iframe_origin|escape:'htmlall':'UTF-8'}{literal}");
-                if (!originRegexp.test(event.origin)) {
+              const originRegexp = new RegExp("{/literal}{$iframe_origin|escape:'htmlall':'UTF-8'}{literal}");
+              if (!originRegexp.test(event.origin)) {
                     return;
                 }
                 if (("" + event.data).substr(0, 7) !== "[Nosto]") {
                     return;
                 }
-                var json = ("" + event.data).substr(7);
-                var data = JSON.parse(json);
-                if (typeof data === "object" && data.type) {
+              const json = ("" + event.data).substr(7);
+              const data = JSON.parse(json);
+              if (typeof data === "object" && data.type) {
                     $('#nostotagging_account_action').val(data.type);
                     if (data.params) {
                         if (data.params.email) {
@@ -402,8 +405,8 @@
                         }
                     }
 
-                    var action = null;
-                    if (data.type === 'newAccount') {
+                  let action = null;
+                  if (data.type === 'newAccount') {
                         action = "{/literal}{$NostoCreateAccountUrl|escape:'javascript'}{literal}";
                     } else if (data.type === 'connectAccount' || data.type === 'syncAccount') {
                         action = "{/literal}{$NostoConnectAccountUrl|escape:'javascript'}{literal}";
@@ -424,23 +427,23 @@
             }
 
             window.Nosto.deleteNostoAccount = function () {
-                var action = "{/literal}{$NostoDeleteAccountUrl|escape:'javascript'}{literal}";
-                submitAction(action);
+              const action = "{/literal}{$NostoDeleteAccountUrl|escape:'javascript'}{literal}";
+              submitAction(action);
             };
 
             window.Nosto.reconnectNostoAccount = function () {
-                var action = "{/literal}{$NostoConnectAccountUrl|escape:'javascript'}{literal}";
-                submitAction(action);
+              const action = "{/literal}{$NostoConnectAccountUrl|escape:'javascript'}{literal}";
+              submitAction(action);
             };
 
             window.Nosto.updateExchangeRates = function () {
-                var action = "{/literal}{$NostoUpdateExchangeRateUrl|escape:'javascript'}{literal}";
-                submitAction(action);
+              const action = "{/literal}{$NostoUpdateExchangeRateUrl|escape:'javascript'}{literal}";
+              submitAction(action);
             };
 
             window.Nosto.checkMultiCurrencyVariationConflict = function () {
-                if ($("input[name='multi_currency_method']:checked").val() == 'exchangeRates'
-                    && $("input[name='nosto_variation_switch']:checked").val() == '1' ) {
+                if ($("input[name='multi_currency_method']:checked").val() === 'exchangeRates'
+                    && $("input[name='nosto_variation_switch']:checked").val() === '1' ) {
                     $('.multi-currency-variation-alert').show();
                     $('#submit_nostotagging_advanced_settings').attr("disabled", "disabled");
                 } else {
@@ -448,7 +451,7 @@
                     $('#submit_nostotagging_advanced_settings').removeAttr("disabled");
                 }
 
-                if ($("input[name='nosto_variation_switch']:checked").val() == '1') {
+                if ($("input[name='nosto_variation_switch']:checked").val() === '1') {
                     $('#nosto_variation_tax_rule_switch_div').show();
                 } else {
                     $('#nosto_variation_tax_rule_switch_div').hide();
@@ -457,8 +460,8 @@
             Nosto.checkMultiCurrencyVariationConflict();
 
             window.Nosto.saveAdvancedSettings = function () {
-                var action = "{/literal}{$NostoAdvancedSettingUrl|escape:'javascript'}{literal}";
-                submitAction(action);
+              const action = "{/literal}{$NostoAdvancedSettingUrl|escape:'javascript'}{literal}";
+              submitAction(action);
             };
 
             window.Nosto.showVariationKeys = function () {

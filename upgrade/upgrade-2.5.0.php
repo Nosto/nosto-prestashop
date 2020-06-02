@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection DuplicatedCode */
 /**
  * 2013-2019 Nosto Solutions Ltd
  *
@@ -64,6 +64,7 @@ function upgrade_module_2_5_0()
             $newHook->name = $hook['name'];
             $newHook->title = $hook['title'];
             $newHook->description = $hook['description'];
+            /** @noinspection PhpUnhandledExceptionInspection */
             $newHook->add();
             $idHook = $newHook->id;
             if (!$idHook) {

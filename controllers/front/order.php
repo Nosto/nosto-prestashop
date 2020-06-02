@@ -76,7 +76,6 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
             pSQL((string)NostoHelperContext::getLanguageId())
         );
 
-        /** @noinspection SqlNoDataSourceInspection */
         $sql = sprintf(
             '
                 SELECT id_order

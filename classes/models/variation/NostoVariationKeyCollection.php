@@ -23,6 +23,7 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
+use Nosto\NostoException;
 use Nosto\Object\AbstractCollection as NostoSDKAbstractCollection;
 
 class NostoVariationKeyCollection extends NostoSDKAbstractCollection
@@ -39,12 +40,15 @@ class NostoVariationKeyCollection extends NostoSDKAbstractCollection
 
     /**
      * Load variation Ids
+     * @throws PrestaShopException
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopDatabaseException
      */
     public function loadData()
     {
         $shopId = NostoHelperContext::getShopId();
         $cacheKey = 'NostoVariationKeyCollection-loadData-' . $shopId;
-        
+
         if (Cache::isStored($cacheKey)) {
             $this->var = Cache::retrieve($cacheKey);
         } else {
@@ -83,9 +87,11 @@ class NostoVariationKeyCollection extends NostoSDKAbstractCollection
     /**
      * Get default variation key
      * @return NostoVariationKey
+     * @throws NostoException
      */
     public function getDefaultVariationKey()
     {
+        /** @noinspection PhpUndefinedFieldInspection */
         $defaultVariationKey = new NostoVariationKey(
             NostoHelperCurrency::getBaseCurrency()->id,
             0,

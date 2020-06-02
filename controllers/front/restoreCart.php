@@ -35,6 +35,7 @@ class NostoTaggingRestoreCartModuleFrontController extends ModuleFrontController
 
     /**
      * @inheritdoc
+     * @throws NostoSDKException
      */
     public function initContent()
     {
@@ -58,6 +59,7 @@ class NostoTaggingRestoreCartModuleFrontController extends ModuleFrontController
                 } else {
                     try {
                         $cartId = NostoCustomerManager::getCartId($restoreCartHash);
+                        /** @noinspection PhpUndefinedClassInspection */
                         $newCart = new Cart($cartId);
                         //restore the cart only if it had not been ordered yet
                         if (Validate::isLoadedObject($newCart) && !$newCart->orderExists()) {

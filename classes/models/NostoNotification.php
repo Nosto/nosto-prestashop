@@ -23,6 +23,7 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
+use Nosto\NostoException;
 use Nosto\Object\Notification as NostoSDKNotification;
 
 class NostoNotification extends NostoSDKNotification
@@ -35,6 +36,7 @@ class NostoNotification extends NostoSDKNotification
      * @param $type
      * @param $severity
      * @param $message
+     * @throws NostoException
      * @suppress PhanTypeMismatchArgument
      */
     public function __construct(Shop $shop, Language $language, $type, $severity, $message)

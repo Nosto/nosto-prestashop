@@ -32,6 +32,7 @@ class NostoCustomer extends NostoSDKCustomer
      *
      * @param Customer $customer the customer model to process
      * @return NostoCustomer|null the customer object
+     * @throws PrestaShopException
      */
     public static function loadData(Customer $customer)
     {

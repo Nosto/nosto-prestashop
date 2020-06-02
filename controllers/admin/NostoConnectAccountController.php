@@ -31,6 +31,7 @@ class NostoConnectAccountController extends NostoBaseController
 {
     /**
      * @inheritdoc
+     * @throws PrestaShopException
      */
     public function execute()
     {

@@ -37,7 +37,6 @@ class NostoHookManager
     {
         $success = true;
         if (!empty($hooks)) {
-            /** @var array $hook */
             foreach ($hooks as $hookInfo) {
                 $callback = array(
                     'Hook',

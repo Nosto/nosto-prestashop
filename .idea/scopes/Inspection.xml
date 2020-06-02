@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="Inspection" pattern="file[Prestashop]:classes//*||file[Prestashop]:controllers//*||file[Prestashop]:upgrade//*||file[Prestashop]:views//*" />
+</component>

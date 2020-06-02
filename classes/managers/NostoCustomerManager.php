@@ -289,9 +289,7 @@ class NostoCustomerManager
     public static function generateCustomerReference(Customer $customer)
     {
         $hash = md5($customer->id . $customer->email);
-        $uuid = uniqid(Tools::substr($hash, 0, 8), true);
-
-        return $uuid;
+        return uniqid(Tools::substr($hash, 0, 8), true);
     }
 
     /**

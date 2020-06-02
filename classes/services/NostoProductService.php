@@ -74,6 +74,9 @@ class NostoProductService extends AbstractNostoService
      *
      * @param Product[] $products
      * @return bool
+     * @throws NostoSDKException
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      */
     public function updateBatch(array $products)
     {
@@ -85,6 +88,9 @@ class NostoProductService extends AbstractNostoService
      *
      * @param Product $product
      * @return bool
+     * @throws NostoSDKException
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      */
     public function updateProduct(Product $product)
     {
@@ -103,6 +109,8 @@ class NostoProductService extends AbstractNostoService
      * @param Product[] $products
      * @return bool
      * @throws NostoSDKException
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      */
     private function update(array $products)
     {
@@ -181,6 +189,8 @@ class NostoProductService extends AbstractNostoService
      * Sends a product create API request to Nosto.
      *
      * @param $params
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      */
     public function upsert($params)
     {
@@ -262,6 +272,9 @@ class NostoProductService extends AbstractNostoService
      *
      * @param int $idProduct the PS product ID.
      * @return NostoProduct|null the product or null if could not be loaded.
+     * @throws NostoSDKException
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      */
     protected function loadNostoProduct($idProduct)
     {

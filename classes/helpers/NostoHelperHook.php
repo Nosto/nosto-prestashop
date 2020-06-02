@@ -31,6 +31,7 @@ class NostoHelperHook
      *
      * @param string $klass the name of the class
      * @param array $params the hook params.
+     * @throws PrestaShopException
      */
     public static function dispatchHookActionLoadAfter($klass, array $params)
     {

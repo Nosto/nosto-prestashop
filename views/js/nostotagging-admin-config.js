@@ -25,10 +25,10 @@
 $(document).ready(function () {
     // Change event handler for "Manage Accounts:".
     $("#nostotagging_language").change(function () {
-        var langId = parseInt($(this).val()),
-            $currentLanguage = $('#nostotagging_current_language'),
-            $form = $('form.nostotagging');
-        $currentLanguage.val(langId);
+      const langId = parseInt($(this).val()),
+        $currentLanguage = $('#nostotagging_current_language'),
+        $form = $('form.nostotagging');
+      $currentLanguage.val(langId);
         $form.submit();
     });
 

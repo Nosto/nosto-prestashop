@@ -103,6 +103,7 @@ class NostoHelperContext
      * @param bool|int $employeeId the employee id. False means do not manipulate it
      * @param bool|int $countryId the country id. False means do not manipulate it
      *
+     * @throws PrestaShopException
      * @suppress PhanTypeMismatchArgument
      * @suppress PhanTypeMismatchProperty
      */
@@ -164,7 +165,7 @@ class NostoHelperContext
     public static function revertToOriginalContext()
     {
         if (!self::$backupContextStack || !self::$backupShopContextStack) {
-            throw new Exception('revertToOriginalContext() is called before calling emulateContext()');
+            throw new RuntimeException('revertToOriginalContext() is called before calling emulateContext()');
         }
 
         $backupContext = array_pop(self::$backupContextStack);
@@ -324,6 +325,7 @@ class NostoHelperContext
      * Set value to cookie
      * @param $key
      * @param $value
+     * @throws Exception
      */
     public static function setCookieValue($key, $value)
     {

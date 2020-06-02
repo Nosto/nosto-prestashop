@@ -36,7 +36,6 @@ if (!defined('_PS_VERSION_')) {
  */
 if ((basename(__FILE__) === 'nostotagging.php')) {
     define('NOSTO_DIR', dirname(__FILE__));
-    /** @noinspection PhpIncludeInspection */
     require_once(dirname(__FILE__) . "/bootstrap.php");
 }
 
@@ -294,6 +293,7 @@ class NostoTagging extends Module
      * Also handles the form submit action.
      *
      * @return string The HTML to output.
+     * @throws NostoException
      */
     public function getContent()
     {
@@ -332,6 +332,7 @@ class NostoTagging extends Module
      * client script, the add-to-cart script and some meta tags
      *
      * @return string The HTML to output
+     * @throws NostoException
      */
     public function hookDisplayHeader()
     {
@@ -342,8 +343,9 @@ class NostoTagging extends Module
      * Backwards compatibility layout hook for adding content to the <head> of every page. This hook
      * should not have any logic and should only delegate to another hook.
      *
-     * @see NostoTagging::hookDisplayHeader()
      * @return string The HTML to output
+     * @throws NostoException
+     * @see NostoTagging::hookDisplayHeader()
      */
     public function hookHeader()
     {
@@ -376,6 +378,10 @@ class NostoTagging extends Module
      * tagging if the tagging wasn't rendered in a previous hook.
      *
      * @return string The HTML to output
+     * @throws NostoException
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     * @throws ReflectionException
      */
     public function hookDisplayTop()
     {
@@ -492,8 +498,12 @@ class NostoTagging extends Module
      * newer 1.7 hook that does the same as the top hook. This hook should not have any logic and
      * should only delegate to another hook.
      *
-     * @since Prestashop 1.7.0.0
      * @return string The HTML to output
+     * @throws NostoException
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     * @throws ReflectionException
+     * @since Prestashop 1.7.0.0
      */
     public function hookDisplayNav1()
     {
@@ -504,8 +514,12 @@ class NostoTagging extends Module
      * Backwards compatibility layout hook that renders content in the header of every page. This
      * hook should not have any logic and should only delegate to another hook.
      *
-     * @see NostoTagging::hookDisplayTop()
      * @return string The HTML to output
+     * @throws NostoException
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     * @throws ReflectionException
+     * @see NostoTagging::hookDisplayTop()
      */
     public function hookTop()
     {
@@ -518,6 +532,10 @@ class NostoTagging extends Module
      * hook.
      *
      * @return string The HTML to output
+     * @throws NostoException
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     * @throws ReflectionException
      */
     public function hookDisplayFooter()
     {
@@ -535,8 +553,12 @@ class NostoTagging extends Module
      * Backwards compatibility layout hook for adding content to the footer of every page. This hook
      * should not have any logic and should only delegate to another hook.
      *
-     * @see NostoTagging::hookDisplayFooter()
      * @return string The HTML to output
+     * @throws NostoException
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     * @throws ReflectionException
+     * @see NostoTagging::hookDisplayFooter()
      */
     public function hookFooter()
     {
@@ -548,6 +570,7 @@ class NostoTagging extends Module
      * recommendation element. This hook is extremely theme-dependant and may not always exist.
      *
      * @return string The HTML to output
+     * @throws NostoException
      */
     public function hookDisplayLeftColumn()
     {
@@ -558,8 +581,9 @@ class NostoTagging extends Module
      * Backwards compatibility layout hook for adding content to the left column of every page.
      * This hook should not have any logic and should only delegate to another hook.
      *
-     * @see NostoTagging::hookDisplayRightColumn()
      * @return string The HTML to output
+     * @throws NostoException
+     * @see NostoTagging::hookDisplayRightColumn()
      */
     public function hookLeftColumn()
     {
@@ -571,6 +595,7 @@ class NostoTagging extends Module
      * recommendation element. This hook is extremely theme-dependant and may not always exist.
      *
      * @return string The HTML to output
+     * @throws NostoException
      */
     public function hookDisplayRightColumn()
     {
@@ -581,8 +606,9 @@ class NostoTagging extends Module
      * Backwards compatibility layout hook for adding content to the right column of every page.
      * This hook should not have any logic and should only delegate to another hook.
      *
-     * @see NostoTagging::hookDisplayRightColumn()
      * @return string The HTML to output
+     * @throws NostoException
+     * @see NostoTagging::hookDisplayRightColumn()
      */
     public function hookRightColumn()
     {
@@ -595,6 +621,7 @@ class NostoTagging extends Module
      * rendered along with the rest of the tagging to keep all the tagging consolidated.
      *
      * @return string The HTML to output
+     * @throws NostoException
      */
     public function hookDisplayFooterProduct()
     {
@@ -609,8 +636,9 @@ class NostoTagging extends Module
      * Backwards compatibility layout hook for adding content below the product description on the
      * product page. This hook should not have any logic and should only delegate to another hook.
      *
-     * @see NostoTagging::hookDisplayFooterProduct()
      * @return string The HTML to output
+     * @throws NostoException
+     * @see NostoTagging::hookDisplayFooterProduct()
      */
     public function hookProductFooter()
     {
@@ -623,6 +651,7 @@ class NostoTagging extends Module
      * table.
      *
      * @return string The HTML to output
+     * @throws NostoException
      */
     public function hookDisplayShoppingCartFooter()
     {
@@ -639,6 +668,7 @@ class NostoTagging extends Module
      *
      * @see NostoTagging::hookDisplayShoppingCartFooter()
      * @return string The HTML to output
+     * @throws NostoException
      */
     public function hookShoppingCart()
     {
@@ -655,6 +685,7 @@ class NostoTagging extends Module
      *   {hook h='displayCategoryTop'}
      *
      * @return string The HTML to output
+     * @throws NostoException
      */
     public function hookDisplayCategoryTop()
     {
@@ -671,6 +702,7 @@ class NostoTagging extends Module
      *   {hook h='displayCategoryFooter'}
      *
      * @return string The HTML to output
+     * @throws NostoException
      */
     public function hookDisplayCategoryFooter()
     {
@@ -687,6 +719,7 @@ class NostoTagging extends Module
      *   {hook h='displaySearchTop'}
      *
      * @return string The HTML to output
+     * @throws NostoException
      */
     public function hookDisplaySearchTop()
     {
@@ -703,6 +736,7 @@ class NostoTagging extends Module
      *   {hook h='displaySearchFooter'}
      *
      * @return string The HTML to output
+     * @throws NostoException
      */
     public function hookDisplaySearchFooter()
     {
@@ -843,6 +877,7 @@ class NostoTagging extends Module
      * elements on the front page
      *
      * @return string The HTML to output
+     * @throws NostoException
      */
     public function hookDisplayHome()
     {
@@ -860,6 +895,7 @@ class NostoTagging extends Module
      *
      * @see NostoTagging::hookDisplayHome()
      * @return string The HTML to output
+     * @throws NostoException
      */
     public function hookHome()
     {
@@ -1131,13 +1167,9 @@ class NostoTagging extends Module
     {
         if ($this->exchangeRatesShouldBeUpdated() || $force === true) {
             $this->defineExchangeRatesAsUpdated(); // This ensures we only try this at once
-            try {
-                $operation = new NostoRatesService();
-                $operation->updateExchangeRatesForAllStores();
-                $this->defineExchangeRatesAsUpdated();
-            } catch (NostoException $e) {
-                NostoHelperLogger::error($e, 'Exchange rate sync failed with error');
-            }
+            $operation = new NostoRatesService();
+            $operation->updateExchangeRatesForAllStores();
+            $this->defineExchangeRatesAsUpdated();
         }
     }
 
@@ -1148,7 +1180,6 @@ class NostoTagging extends Module
      */
     public function adminLoggedIn()
     {
-        /* @var Employee $employee */
         $employee = $this->context->employee;
         $loggedIn = false;
         if ($employee instanceof Employee && $employee->id) {

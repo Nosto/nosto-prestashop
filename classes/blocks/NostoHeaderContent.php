@@ -24,6 +24,7 @@
  */
 
 use Nosto\Nosto as NostoSDK;
+use Nosto\NostoException;
 
 class NostoHeaderContent
 {
@@ -35,6 +36,7 @@ class NostoHeaderContent
      *
      * @param NostoTagging $module the instance of the module for rendering the template
      * @return string the tagging
+     * @throws NostoException
      */
     public static function get(NostoTagging $module)
     {

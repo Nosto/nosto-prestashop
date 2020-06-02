@@ -1,4 +1,7 @@
 <?php
+
+/** @noinspection ALL */
+
 abstract class AbstractLogger extends AbstractLoggerCore {}
 class Address extends AddressCore {}
 class AddressController extends AddressControllerCore {}

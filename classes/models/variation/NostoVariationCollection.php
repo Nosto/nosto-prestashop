@@ -23,6 +23,7 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
+use Nosto\NostoException;
 use Nosto\Object\Product\VariationCollection as NostoSDKVariationCollection;
 use Nosto\Types\Product\ProductInterface as NostoSDKProductInterface;
 
@@ -33,6 +34,9 @@ class NostoVariationCollection extends NostoSDKVariationCollection
      *
      * @param Product $product
      * @param string $productAvailability
+     * @throws NostoException
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      */
     public function loadData(
         Product $product,
@@ -59,7 +63,7 @@ class NostoVariationCollection extends NostoSDKVariationCollection
         /** @var NostoVariationKey $variationKey */
         foreach ($keyCollection as $variationKey) {
             //skip the default
-            if ($defaultVariationKey != $variationKey) {
+            if ($defaultVariationKey !== $variationKey) {
                 $this->append(
                     $this->buildVariation($product, $productAvailability, $hasTaxRules, $variationKey)
                 );

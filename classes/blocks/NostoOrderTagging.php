@@ -28,6 +28,9 @@ class NostoOrderTagging
     /**
      * Renders the order tagging by finding that most recent order that was placed
      * @return string|null the tagging
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     * @throws ReflectionException
      */
     public static function get()
     {
