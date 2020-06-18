@@ -1,5 +1,5 @@
 /*
- * 2013-2019 Nosto Solutions Ltd
+ * 2013-2020 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
