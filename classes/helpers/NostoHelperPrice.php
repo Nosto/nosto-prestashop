@@ -66,7 +66,7 @@ class NostoHelperPrice
      * @param int $idProduct the product ID.
      * @param Currency $currency the currency object.
      * @param bool $isUserReduced
-     * @param null $productAttributeId
+     * @param int|null $productAttributeId
      * @return float the price.
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
@@ -113,6 +113,7 @@ class NostoHelperPrice
                 //different stores, it cause problem. Big number 1000,000 is used to avoid rounding issue.
                 // @phan-suppress-next-line PhanDeprecatedFunction
                 /** @noinspection PhpDeprecationInspection */
+                /** @phan-suppress-next-line  PhanDeprecatedFunction */
                 $exchangeRate = Tools::convertPrice(
                     1000000,
                     Currency::getCurrencyInstance((int)Configuration::get('PS_CURRENCY_DEFAULT'))
@@ -168,6 +169,7 @@ class NostoHelperPrice
         //different stores, it cause problem. Big number 1000,000 is used to avoid rounding issue.
         // @phan-suppress-next-line PhanDeprecatedFunction
         /** @noinspection PhpDeprecationInspection */
+        /** @phan-suppress-next-line  PhanDeprecatedFunction */
         $exchangeRate = Tools::convertPrice(
             1000000,
             Currency::getCurrencyInstance((int)Configuration::get('PS_CURRENCY_DEFAULT'))
@@ -189,6 +191,7 @@ class NostoHelperPrice
             $currency = NostoHelperContext::getCurrency();
         }
         //if the decimals is disabled for this currency, then the precision should be 0
+        /** @phan-suppress-next-line  PhanDeprecatedProperty */
         $currencyDecimalsEnabled = $currency ? (int)$currency->decimals : 1;
 
         return (float)Tools::ps_round(

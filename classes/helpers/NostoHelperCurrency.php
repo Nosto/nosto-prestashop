@@ -25,6 +25,7 @@
 
 use Nosto\NostoException as NostoSDKException;
 use Nosto\Object\Format as NostoSDKCurrencyFormat;
+use ICanBoogie\CLDR\Currency as CldrCurrency;
 
 /**
  * Helper class for currency related tasks.
@@ -199,11 +200,12 @@ class NostoHelperCurrency
      * @param array $currency Prestashop currency array
      * @return NostoSDKCurrencyFormat
      * @suppress PhanTypeMismatchArgument
+     * @suppress PhanDeprecatedFunction
      */
     private static function createWithCldr(array $currency)
     {
         $cldr = Tools::getCldr(null, NostoHelperContext::getLanguage()->language_code);
-        $cldrCurrency = new Currency($cldr->getRepository(), $currency[self::ISO_CODE_FIELD]);
+        $cldrCurrency = new CldrCurrency($cldr->getRepository(), $currency[self::ISO_CODE_FIELD]);
         $localizedCurrency = $cldrCurrency->localize($cldr->getCulture());
         $pattern = $localizedCurrency->locale->numbers->currency_formats[self::STANDARD_FIELD];
         $symbols = $localizedCurrency->locale->numbers->symbols;
@@ -228,13 +230,13 @@ class NostoHelperCurrency
      * Get price decimal with currency
      * @param $currencyId
      * @return int price decimal
+     * @suppress PhanDeprecatedProperty
      */
     public static function getDecimalWithCurrency($currencyId)
     {
         $currencyDecimalsEnabled = 1;
         $currencyObject = self::loadCurrency($currencyId);
         if (Validate::isLoadedObject($currencyObject)) {
-            /** @noinspection PhpUndefinedFieldInspection */
             $currencyDecimalsEnabled = $currencyObject->decimals;
         }
 
