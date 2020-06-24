@@ -32,7 +32,8 @@ return [
     'backward_compatibility_checks' => false,
     'exclude_file_regex' => '@^libs/.*/(tests|test|Tests|Test)/@',
 	'exclude_file_list' => [
-		'libs/prestashop/ps/tests-legacy/resources/ModulesOverrideInstallUninstallTest/Cart.php'
+		'libs/prestashop/ps/tests-legacy/resources/ModulesOverrideInstallUninstallTest/Cart.php',
+		'libs/prestashop/ps/tests-legacy/resources/module/pscsx3241/override/classes/Cart.php'
 	],
     'directory_list' => [
         'classes',

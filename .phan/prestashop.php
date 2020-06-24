@@ -145,7 +145,6 @@ class CacheMemcached extends CacheMemcachedCore {}
 class CacheXcache extends CacheXcacheCore {}
 class Carrier extends CarrierCore {}
 abstract class CarrierModule extends CarrierModuleCore {}
-/* @phan-suppress-next-line PhanRedefinedClassReference */
 class Cart extends CartCore {}
 class CartController extends CartControllerCore {}
 class CartRule extends CartRuleCore {}
