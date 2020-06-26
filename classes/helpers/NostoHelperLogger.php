@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpUnused */
 /**
  * 2013-2020 Nosto Solutions Ltd
  *
@@ -50,6 +50,7 @@ class NostoHelperLogger
         $objectType = null,
         $objectId = null
     ) {
+        /** @noinspection NestedTernaryOperatorInspection */
         $logger = (class_exists('PrestaShopLogger') ? 'PrestaShopLogger' : (class_exists('Logger') ? 'Logger' : null));
         if (!empty($logger)) {
             // The log message is not allowed to contain certain characters, so we url encode them before saving.

@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpUnused */
 /**
  * 2013-2020 Nosto Solutions Ltd
  *
@@ -48,15 +48,13 @@ class NostoHelperPrice
         $wholesalePriceExcTaxes = $product->wholesale_price;
         if ($wholesalePriceExcTaxes > 0) {
             if ($product->tax_rate > 0) {
-                return NostoHelperPrice::roundPrice(
+                return self::roundPrice(
                     $wholesalePriceExcTaxes * (1 + (float) $product->tax_rate / 100)
                 );
-            } else {
-                return $wholesalePriceExcTaxes;
             }
-        } else {
-            return null;
+            return $wholesalePriceExcTaxes;
         }
+        return null;
     }
 
     /**

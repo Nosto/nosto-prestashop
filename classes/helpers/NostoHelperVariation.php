@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpUnused */
 /**
  * 2013-2020 Nosto Solutions Ltd
  *
@@ -39,6 +39,7 @@ class NostoHelperVariation
      *
      * @return array of country ids
      * @throws PrestaShopDatabaseException
+     * @noinspection SqlDialectInspection
      */
     public static function getCountriesBeingUsedInTaxRules()
     {
@@ -102,6 +103,7 @@ class NostoHelperVariation
      * product specific prices and catalog price rules
      * @return array of group ids
      * @throws PrestaShopDatabaseException
+     * @noinspection SqlDialectInspection
      */
     public static function getGroupsBeingUsedInSpecificPrices()
     {
@@ -123,7 +125,7 @@ class NostoHelperVariation
             }
         }
         //make sure it always has 'any'
-        if (!in_array(0, $groupIds)) {
+        if (!in_array(0, $groupIds, false)) {
             $groupIds[] = 0;
         }
 
@@ -139,6 +141,7 @@ class NostoHelperVariation
      * product specific prices and catalog price rules
      * @return array of country ids
      * @throws PrestaShopDatabaseException
+     * @noinspection SqlDialectInspection
      */
     public static function getCountriesBeingUsedInSpecificPrices()
     {
@@ -167,7 +170,7 @@ class NostoHelperVariation
             }
         }
         //make sure it always has 'any'
-        if (!in_array(0, $countryIds)) {
+        if (!in_array(0, $countryIds, false)) {
             $countryIds[] = 0;
         }
 
