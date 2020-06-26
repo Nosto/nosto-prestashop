@@ -36,7 +36,6 @@ class NostoExchangeRates extends NostoSDKExchangeRateCollection
      */
     public static function loadData()
     {
-        /** @noinspection PhpUndefinedFieldInspection */
         $baseCurrencyCode = NostoHelperCurrency::getBaseCurrency()->iso_code;
         $currencies = NostoHelperCurrency::getCurrencies(true);
         $nostoRates = new NostoExchangeRates();

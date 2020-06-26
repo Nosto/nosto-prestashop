@@ -35,7 +35,6 @@ class NostoAdvancedSettingController extends NostoBaseController
      * @suppress PhanDeprecatedFunction
      * @return bool
      * @throws NostoSDKException
-     * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
     public function execute()

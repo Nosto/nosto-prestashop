@@ -26,6 +26,7 @@
 use Nosto\Helper\IframeHelper as NostoSDKIframeHelper;
 use Nosto\Helper\SerializationHelper as NostoSDKSerializationHelper;
 use Nosto\Nosto as NostoSDK;
+use Nosto\NostoException;
 use Nosto\Object\Signup\Account as NostoSDKAccount;
 use Nosto\Request\Api\Token as NostoSDKAPIToken;
 use Nosto\Request\Http\HttpRequest as NostoSDKHttpRequest;
@@ -88,6 +89,7 @@ class NostoIndexController
         }
     }
 
+    /** @noinspection PhpUnhandledExceptionInspection */
     public function getSmartyMetaData(NostoTagging $nostoTagging)
     {
         // Always update the url to the module admin page when we access it.
@@ -108,6 +110,16 @@ class NostoIndexController
         );
     }
 
+    /**
+     * @param NostoTagging $nostoTagging
+     * @param $languages
+     * @param $currentLanguage
+     * @return array
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     * @throws NostoException
+     * @noinspection PhpUnhandledExceptionInspection
+     */
     private function generateSmartyData(NostoTagging $nostoTagging, $languages, $currentLanguage)
     {
         $account = NostoHelperAccount::getAccount();

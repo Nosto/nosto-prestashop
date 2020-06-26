@@ -61,6 +61,7 @@ class NostoCustomer extends NostoSDKCustomer
      * customer reference saved in db a new will be generated and saved
      *
      * @param Customer $customer
+     * @throws PrestaShopDatabaseException
      */
     private function populateCustomerReference(Customer $customer)
     {

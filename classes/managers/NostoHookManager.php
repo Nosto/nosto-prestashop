@@ -31,6 +31,8 @@ class NostoHookManager
      * @param array $hooks the array of custom hook names to register
      * @return bool if the custom hook registration was successful
      *
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      * @suppress PhanTypeArraySuspicious
      */
     public static function initHooks($hooks)

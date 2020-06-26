@@ -42,6 +42,7 @@ class NostoHelperContext
      * @param bool|int $employeeId the employee id. False means do not manipulate it
      * @param bool|int $countryId the country id. False means do not manipulate it
      * @return mixed the return value of the anonymous function
+     * @throws PrestaShopException
      */
     public static function runInContext(
         $callable,
@@ -57,7 +58,7 @@ class NostoHelperContext
         try {
             // @phan-suppress-next-line PhanTypeVoidAssignment
             $retVal = $callable();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             NostoHelperLogger::log($e->getMessage());
         }
         self::revertToOriginalContext();
@@ -77,6 +78,7 @@ class NostoHelperContext
         });
     }
 
+    /** @noinspection PhpUnhandledExceptionInspection */
     public static function runInContextForEachLanguageEachShop($callable)
     {
         foreach (Shop::getShops() as $shop) {
@@ -161,6 +163,7 @@ class NostoHelperContext
 
     /**
      * Revert the active context to the original one (before calling forgeContext)
+     * @noinspection PhpUnhandledExceptionInspection
      */
     public static function revertToOriginalContext()
     {

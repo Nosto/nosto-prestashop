@@ -23,6 +23,7 @@
 *}
 
 {if !empty($iframe_url) or !empty($iframe_installation_url)}
+    <!--suppress JSUnresolvedFunction -->
     <style type="text/css">
         .clickable {
             cursor: pointer;
@@ -350,7 +351,6 @@
                             <!--suppress HtmlDeprecatedAttribute, HtmlDeprecatedAttribute -->
                                                      <iframe id="nostotagging_iframe" frameborder="0" width="100%" scrolling="no"
                                     src="{$iframe_installation_url|escape:'htmlall':'UTF-8'}"></iframe>
-                        </div>
                     </div>
                 {/if}
             </div>
@@ -376,6 +376,7 @@
             }
         })
     </script>
+    <!--suppress JSJQueryEfficiency -->
     <script type="text/javascript">
         {literal}
         $(document).ready(function () {

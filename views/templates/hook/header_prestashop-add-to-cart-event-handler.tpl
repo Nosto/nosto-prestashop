@@ -22,12 +22,12 @@
 * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *}
 
-<!--suppress JSUnresolvedFunction -->
+<!--suppress JSUnresolvedFunction, JSUnresolvedVariable -->
 <script type="text/javascript">
     import * as prestashop from "../../../libs/prestashop/ps/admin-dev/filemanager/js/imagesloaded.pkgd.min";
 
     nostojs(function(){
-        window.Nosto = window.Nosto || {};
+        window.Nosto = window.Nosto || { };
         Nosto.reloadCartTagging = function () {
             if (window.jQuery) {
                 jQuery.ajax({

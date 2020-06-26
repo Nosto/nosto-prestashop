@@ -66,12 +66,10 @@ class NostoProduct extends NostoSDKProduct
             $nostoProduct->amendVariation($product);
         } else {
             $taggingCurrency = NostoHelperCurrency::getBaseCurrency();
-            /** @noinspection PhpUndefinedFieldInspection */
             $nostoProduct->setPriceCurrencyCode(Tools::strtoupper($taggingCurrency->iso_code));
             $nostoProduct->setPrice(self::getPriceInclTax($product, $taggingCurrency));
             $nostoProduct->setListPrice(self::getListPriceInclTax($product, $taggingCurrency));
             if (NostoHelperConfig::useMultipleCurrencies()) {
-                /** @noinspection PhpUndefinedFieldInspection */
                 $nostoProduct->setVariationId($taggingCurrency->iso_code);
             }
         }
@@ -102,6 +100,7 @@ class NostoProduct extends NostoSDKProduct
         }
     }
 
+    /** @noinspection PhpUnhandledExceptionInspection */
     protected function amendVariation($product)
     {
         $variations = new NostoVariationCollection();
@@ -286,7 +285,6 @@ class NostoProduct extends NostoSDKProduct
      * @param Product $product the product.
      * @param Currency $currency the currency.
      * @return float the price.
-     * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
     public static function getPriceInclTax(Product $product, Currency $currency)
@@ -300,7 +298,6 @@ class NostoProduct extends NostoSDKProduct
      * @param Product $product the product.
      * @param Currency $currency the currency.
      * @return float the price.
-     * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
     public static function getListPriceInclTax(Product $product, Currency $currency)

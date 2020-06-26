@@ -71,6 +71,7 @@ class NostoVariationCollection extends NostoSDKVariationCollection
         }
     }
 
+    /** @noinspection PhpUnhandledExceptionInspection */
     private function buildVariation(
         Product $product,
         $productAvailability,

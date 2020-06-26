@@ -60,7 +60,6 @@ class OauthTraitAdapter
      * OAuth operations
      *
      * @return Nosto\Oauth the OAuth parameters for the operations
-     * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      * @suppress PhanUndeclaredMethod
      */

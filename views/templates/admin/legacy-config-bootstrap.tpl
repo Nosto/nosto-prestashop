@@ -23,7 +23,7 @@
 *}
 
 {if !empty($iframe_url) or !empty($iframe_installation_url)}
-    <!--suppress HtmlUnknownTarget -->
+    <!--suppress HtmlUnknownTarget, JSUnresolvedFunction -->
     <form id="nosto_form_id" role="form" class="nostotagging form-horizontal"
           action="{$nostotagging_form_action|escape:'htmlall':'UTF-8'}" method="post" novalidate>
         <input type="hidden" id="nostotagging_current_language" name="nostotagging_current_language"
@@ -235,6 +235,7 @@
             src="{$module_path|escape:'htmlall':'UTF-8'}views/js/nostotagging-admin-config.js"></script>
     <script type="text/javascript"
             src="{$module_path|escape:'htmlall':'UTF-8'}views/js/iframeresizer.min.js"></script>
+    <!--suppress JSUnresolvedFunction -->
     <script type="text/javascript">
         {literal}
         $(document).ready(function () {
@@ -281,7 +282,9 @@
             window.Nosto = window.Nosto || {};
 
             function submitAction(action) {
+                // noinspection JSJQueryEfficiency
                 $('#nosto_form_id').attr("action", action);
+                // noinspection JSJQueryEfficiency
                 $('#nosto_form_id').submit();
             }
 
@@ -296,6 +299,7 @@
             };
 
             window.Nosto.checkMultiCurrencyVariationConflict = function () {
+                // noinspection JSJQueryEfficiency
                 if ($("input[name='multi_currency_method']:checked").val() === 'exchangeRates'
                     && $("input[name='nosto_variation_switch']:checked").val() === '1' ) {
                     $('.multi-currency-variation-alert').show();
@@ -304,7 +308,7 @@
                     $('.multi-currency-variation-alert').hide();
                     $('#desc-configuration-save').show();
                 }
-
+                // noinspection JSJQueryEfficiency
                 if ($("input[name='nosto_variation_switch']:checked").val() === '1') {
                     $('.nosto_variation_tax_rule_switch_div').show();
                 } else {
@@ -328,8 +332,8 @@
             window.addEventListener("message", receiveMessage, false);
 
             window.Nosto.toggleSettings = function() {
-                hidden = $('.panel-collapsed#nosto-settings-panel');
-                shown = $('.panel-showing#nosto-settings-panel');
+                const hidden = $('.panel-collapsed#nosto-settings-panel');
+                const shown = $('.panel-showing#nosto-settings-panel');
                 hidden.slideDown().removeClass('panel-collapsed').addClass('panel-showing');
                 shown.slideUp().removeClass('panel-showing').addClass('panel-collapsed');
 

@@ -30,6 +30,7 @@ class NostoTaggingReloadCartModuleFrontController extends ModuleFrontController
 {
     /**
      * @inheritdoc
+     * @noinspection PhpUnhandledExceptionInspection
      */
     public function initContent()
     {

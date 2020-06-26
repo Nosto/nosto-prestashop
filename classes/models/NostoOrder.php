@@ -105,6 +105,8 @@ class NostoOrder extends NostoSDKOrder
      *
      * @param Order $order the order object.
      * @return NostoOrderPurchasedItem[] the purchased items.
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      */
     protected static function findPurchasedItems(Order $order)
     {

@@ -96,6 +96,8 @@ class NostoVariationKey
     /**
      * Get variation id from currency id, country id and group id
      * @return string variation id
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      * @suppress PhanTypeMismatchArgument
      */
     public function getVariationId()

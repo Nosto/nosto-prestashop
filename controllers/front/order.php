@@ -23,6 +23,8 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
+use Nosto\NostoException;
+
 require_once(dirname(__FILE__) . '/api.php');
 
 /**
@@ -35,6 +37,8 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
 {
     /**
      * @inheritdoc
+     * @throws PrestaShopException
+     * @throws NostoException
      */
     public function initContent()
     {
@@ -43,10 +47,12 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
         $id = Tools::getValue(NostoTagging::ID);
         if (!empty($id)) {
             $orders = Order::getByReference($id);
-            if ($orders->count() == 0) {
+            if ($orders->count() === 0) {
                 Controller::getController('PageNotFoundController')->run();
             }
+            /** @noinspection PhpParamsInspection */
             $nostoOrder = NostoOrder::loadData($orders[0]);
+            /** @noinspection NullPointerExceptionInspection */
             $collection->append($nostoOrder);
         } else {
             foreach ($this->getOrderIds() as $idOrder) {
@@ -55,6 +61,7 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
                     continue;
                 }
                 $nostoOrder = NostoOrder::loadData($order);
+                /** @noinspection NullPointerExceptionInspection */
                 $collection->append($nostoOrder);
             }
         }
@@ -66,6 +73,7 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
      * Returns a list of all order ids with limit and offset applied.
      *
      * @return array the order id list.
+     * @throws PrestaShopDatabaseException
      */
     protected function getOrderIds()
     {

@@ -189,7 +189,6 @@ class NostoProductService extends AbstractNostoService
      * Sends a product create API request to Nosto.
      *
      * @param $params
-     * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
     public function upsert($params)
@@ -239,10 +238,15 @@ class NostoProductService extends AbstractNostoService
         }
     }
 
+    /**
+     * @param Product $product
+     * @throws NostoSDKException
+     * @noinspection PhpUnhandledExceptionInspection
+     */
     private function deleteProduct(Product $product)
     {
         if (!Validate::isLoadedObject($product)
-            || in_array($this->getProductCacheKey($product), self::$processedProducts)
+            || in_array($this->getProductCacheKey($product), self::$processedProducts, false)
         ) {
             return;
         }

@@ -40,9 +40,8 @@ class NostoVariationKeyCollection extends NostoSDKAbstractCollection
 
     /**
      * Load variation Ids
+     * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopDatabaseException
      */
     public function loadData()
     {
@@ -91,7 +90,6 @@ class NostoVariationKeyCollection extends NostoSDKAbstractCollection
      */
     public function getDefaultVariationKey()
     {
-        /** @noinspection PhpUndefinedFieldInspection */
         $defaultVariationKey = new NostoVariationKey(
             NostoHelperCurrency::getBaseCurrency()->id,
             0,

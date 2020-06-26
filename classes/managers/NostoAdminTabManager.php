@@ -66,6 +66,8 @@ class NostoAdminTabManager
      * Installs the Admin Tab in PS backend.
      *
      * @return bool true on success, false otherwise.
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      * @suppress PhanTypeMismatchProperty
      */
     public static function install()
@@ -166,6 +168,8 @@ class NostoAdminTabManager
      * Uninstalls the Admin Tab from PS backend.
      *
      * @return bool true on success false otherwise.
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      */
     public static function uninstall()
     {

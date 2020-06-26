@@ -68,7 +68,6 @@ class NostoHelperPrice
      * @param bool $isUserReduced
      * @param int|null $productAttributeId
      * @return float the price.
-     * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
     public static function calcPrice(
@@ -191,6 +190,7 @@ class NostoHelperPrice
             $currency = NostoHelperContext::getCurrency();
         }
         //if the decimals is disabled for this currency, then the precision should be 0
+        /** @noinspection PhpDeprecationInspection */
         /** @phan-suppress-next-line  PhanDeprecatedProperty */
         $currencyDecimalsEnabled = $currency ? (int)$currency->decimals : 1;
 

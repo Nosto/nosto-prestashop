@@ -111,6 +111,8 @@ class NostoCustomerManager
      * Updates the current customers Nosto ID in the reference table.
      *
      * @return bool true if updated correctly and false otherwise.
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopDatabaseException
      */
     public static function updateNostoId()
     {
@@ -251,6 +253,8 @@ class NostoCustomerManager
      * @param Customer $customer
      * @param $reference
      * @return bool
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopDatabaseException
      */
     public static function saveCustomerReference(Customer $customer, $reference)
     {

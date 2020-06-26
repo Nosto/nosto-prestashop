@@ -34,6 +34,7 @@ class NostoVariation extends NostoSDKVariation
      * @param NostoVariationKey $variationKey
      * @param string $productAvailability
      * @return NostoVariation
+     * @throws PrestaShopException
      */
     public static function loadData(
         Product $product,

@@ -69,7 +69,6 @@ class NostoSku extends NostoSDKSku
      *
      * @param Combination $combination
      * @throws NostoException
-     * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
     protected function amendPrice(Combination $combination)
@@ -83,6 +82,8 @@ class NostoSku extends NostoSDKSku
      * Amend custom fields
      *
      * @param Combination $combination
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      */
     protected function amendCustomFields(Combination $combination)
     {
@@ -183,7 +184,6 @@ class NostoSku extends NostoSDKSku
      * @param Combination $combination the product.
      * @param Currency $currency the currency.
      * @return float the price.
-     * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
     public static function getPriceInclTax(Combination $combination, Currency $currency)
@@ -197,7 +197,6 @@ class NostoSku extends NostoSDKSku
      * @param Combination $combination the product.
      * @param Currency $currency the currency.
      * @return float the price.
-     * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
     public static function getListPriceInclTax(Combination $combination, Currency $currency)
