@@ -44,6 +44,144 @@
       <entry_point TYPE="phpFunction" FQNAME="\upgrade_module_3_3_2" />
       <entry_point TYPE="phpFunction" FQNAME="\upgrade_module_3_4_3" />
       <entry_point TYPE="phpFunction" FQNAME="\upgrade_module_3_5_0" />
+      <entry_point TYPE="phpClass" FQNAME="\AdminNostoController" />
+      <entry_point TYPE="phpMethod" FQNAME="\AdminNostoController initContent" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoAccountSignup __construct" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoAccountSignup" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoSettingsService __construct" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoSettingsService" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTaggingApiModuleFrontController __construct" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoTaggingApiModuleFrontController" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/controllers/admin/AdminNostoController.php" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/controllers/front/api.php" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoHiddenElement append" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoCartService cartItemQuantityChanged" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoCartService" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoCartService cartUpdated" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoNotificationManager checkAndDisplay" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoCustomerManager createTables" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/controllers/front/cron.php" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/controllers/front/cronRates.php" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoCustomerService customerUpdated" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoCustomerService" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoProductService delete" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoProductService" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoHelperAccount deleteAll" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoIndexController displayErrorMessage" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoIndexController" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoCustomerManager dropTables" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoAdvancedSettingController execute" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoAdvancedSettingController" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoConnectAccountController execute" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoConnectAccountController" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoCreateAccountController execute" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoCreateAccountController" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoDeleteAccountController execute" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoDeleteAccountController" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoUpdateExchangeRateController execute" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoUpdateExchangeRateController" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoDefaultTagging get" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoHeaderContent get" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoRecommendationElement get" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoBrand getBrand" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoBrand" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoHelperContext getCartId" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoIframe getCurrency" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoIframe" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoHelperFlash getList" />
+      <entry_point TYPE="phpMethod" FQNAME="\OauthTraitAdapter getMeta" />
+      <entry_point TYPE="phpClass" FQNAME="\OauthTraitAdapter" />
+      <entry_point TYPE="phpMethod" FQNAME="\OauthTraitAdapter getParam" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoIframe getRecentSales" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoIframe getRecentVisits" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoSearch getSearchTerm" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoSearch" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoIndexController getSmartyMetaData" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoCurrentVariation getVariationId" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoCurrentVariation" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoCurrentVariation __construct" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTaggingCronModuleFrontController init" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoTaggingCronModuleFrontController" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoBaseController initContent" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoBaseController" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTaggingCronRatesModuleFrontController initContent" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoTaggingCronRatesModuleFrontController" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTaggingOrderModuleFrontController initContent" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoTaggingOrderModuleFrontController" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTaggingProductModuleFrontController initContent" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoTaggingProductModuleFrontController" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTaggingReloadCartModuleFrontController initContent" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoTaggingReloadCartModuleFrontController" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTaggingRestoreCartModuleFrontController initContent" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoTaggingRestoreCartModuleFrontController" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoSearch loadData" />
+      <entry_point TYPE="phpMethod" FQNAME="\OauthTraitAdapter logError" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/classes/models/meta/NostoAccountSignup.php" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/controllers/admin/NostoAdvancedSettingController.php" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/controllers/admin/NostoBaseController.php" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/classes/models/NostoBrand.php" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/classes/services/NostoCartService.php" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/controllers/admin/NostoConnectAccountController.php" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/controllers/admin/NostoCreateAccountController.php" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/classes/models/NostoCurrentVariation.php" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoCustomerManager" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/classes/managers/NostoCustomerManager.php" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/classes/services/NostoCustomerService.php" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoDefaultTagging" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/classes/blocks/NostoDefaultTagging.php" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/controllers/admin/NostoDeleteAccountController.php" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoHeaderContent" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/classes/blocks/NostoHeaderContent.php" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoHelperAccount" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/classes/helpers/NostoHelperAccount.php" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoHelperConfig" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/classes/helpers/NostoHelperConfig.php" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoHelperContext" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/classes/helpers/NostoHelperContext.php" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoHelperCurrency" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/classes/helpers/NostoHelperCurrency.php" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoHelperFlash" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/classes/helpers/NostoHelperFlash.php" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoHelperLogger" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/classes/helpers/NostoHelperLogger.php" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoHelperPrice" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/classes/helpers/NostoHelperPrice.php" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoHelperVariation" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/classes/helpers/NostoHelperVariation.php" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoHiddenElement" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/classes/blocks/NostoHiddenElement.php" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/classes/models/NostoIframe.php" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/controllers/admin/NostoIndexController.php" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoNotificationManager" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/classes/managers/NostoNotificationManager.php" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoOrderService" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/classes/services/NostoOrderService.php" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/classes/services/NostoProductService.php" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoRatesService" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/classes/services/NostoRatesService.php" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoRecommendationElement" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/classes/blocks/NostoRecommendationElement.php" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/classes/models/NostoSearch.php" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/classes/services/NostoSettingsService.php" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/controllers/admin/NostoUpdateExchangeRateController.php" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoVariationKey" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoVariationKey __construct" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/classes/models/variation/NostoVariationKey.php" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoVariationKeyCollection" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/classes/models/variation/NostoVariationKeyCollection.php" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/controllers/front/OauthTraitAdapter.php" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/controllers/front/order.php" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoHiddenElement prepend" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/controllers/front/product.php" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoHelperConfig purge" />
+      <entry_point TYPE="phpMethod" FQNAME="\OauthTraitAdapter redirect" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/controllers/front/reloadCart.php" />
+      <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/controllers/front/restoreCart.php" />
+      <entry_point TYPE="phpMethod" FQNAME="\OauthTraitAdapter save" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoOrderService send" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoVariationKey setCurrencyId" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoVariationKeyCollection setVariationIds" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoRatesService updateExchangeRatesForAllStores" />
       <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/upgrade/upgrade-1.1.0.php" />
       <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/upgrade/upgrade-1.2.0.php" />
       <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/upgrade/upgrade-1.3.0.php" />
@@ -57,6 +195,7 @@
       <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/upgrade/upgrade-3.3.2.php" />
       <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/upgrade/upgrade-3.4.3.php" />
       <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/upgrade/upgrade-3.5.0.php" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoProductService upsert" />
     </entry_point>
     <pattern value="\NostoTagging" member="hookActionBeforeCartUpdateQty" />
     <pattern value="\NostoTagging" />
@@ -87,8 +226,101 @@
     <pattern value="\NostoTagging" member="hookTop" />
     <pattern value="\NostoTagging" member="hookUpdateProduct" />
     <pattern value="\NostoTagging" member="hookUpdateQuantity" />
-  </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6">
-    <output url="file://$PROJECT_DIR$/out" />
+    <pattern value="\AdminNostoController" />
+    <pattern value="\AdminNostoController" member="initContent" />
+    <pattern value="\NostoAccountSignup" member="__construct" />
+    <pattern value="\NostoAccountSignup" />
+    <pattern value="\NostoSettingsService" member="__construct" />
+    <pattern value="\NostoSettingsService" />
+    <pattern value="\NostoTaggingApiModuleFrontController" member="__construct" />
+    <pattern value="\NostoTaggingApiModuleFrontController" />
+    <pattern value="\NostoHiddenElement" member="append" />
+    <pattern value="\NostoCartService" member="cartItemQuantityChanged" />
+    <pattern value="\NostoCartService" />
+    <pattern value="\NostoCartService" member="cartUpdated" />
+    <pattern value="\NostoNotificationManager" member="checkAndDisplay" />
+    <pattern value="\NostoCustomerManager" member="createTables" />
+    <pattern value="\NostoCustomerService" member="customerUpdated" />
+    <pattern value="\NostoCustomerService" />
+    <pattern value="\NostoProductService" member="delete" />
+    <pattern value="\NostoProductService" />
+    <pattern value="\NostoHelperAccount" member="deleteAll" />
+    <pattern value="\NostoIndexController" member="displayErrorMessage" />
+    <pattern value="\NostoIndexController" />
+    <pattern value="\NostoCustomerManager" member="dropTables" />
+    <pattern value="\NostoAdvancedSettingController" member="execute" />
+    <pattern value="\NostoAdvancedSettingController" />
+    <pattern value="\NostoConnectAccountController" member="execute" />
+    <pattern value="\NostoConnectAccountController" />
+    <pattern value="\NostoCreateAccountController" member="execute" />
+    <pattern value="\NostoCreateAccountController" />
+    <pattern value="\NostoDeleteAccountController" member="execute" />
+    <pattern value="\NostoDeleteAccountController" />
+    <pattern value="\NostoUpdateExchangeRateController" member="execute" />
+    <pattern value="\NostoUpdateExchangeRateController" />
+    <pattern value="\NostoDefaultTagging" member="get" />
+    <pattern value="\NostoHeaderContent" member="get" />
+    <pattern value="\NostoRecommendationElement" member="get" />
+    <pattern value="\NostoBrand" member="getBrand" />
+    <pattern value="\NostoBrand" />
+    <pattern value="\NostoHelperContext" member="getCartId" />
+    <pattern value="\NostoIframe" member="getCurrency" />
+    <pattern value="\NostoIframe" />
+    <pattern value="\NostoHelperFlash" member="getList" />
+    <pattern value="\OauthTraitAdapter" member="getMeta" />
+    <pattern value="\OauthTraitAdapter" />
+    <pattern value="\OauthTraitAdapter" member="getParam" />
+    <pattern value="\NostoIframe" member="getRecentSales" />
+    <pattern value="\NostoIframe" member="getRecentVisits" />
+    <pattern value="\NostoSearch" member="getSearchTerm" />
+    <pattern value="\NostoSearch" />
+    <pattern value="\NostoIndexController" member="getSmartyMetaData" />
+    <pattern value="\NostoCurrentVariation" member="getVariationId" />
+    <pattern value="\NostoCurrentVariation" />
+    <pattern value="\NostoCurrentVariation" member="__construct" />
+    <pattern value="\NostoTaggingCronModuleFrontController" member="init" />
+    <pattern value="\NostoTaggingCronModuleFrontController" />
+    <pattern value="\NostoBaseController" member="initContent" />
+    <pattern value="\NostoBaseController" />
+    <pattern value="\NostoTaggingCronRatesModuleFrontController" member="initContent" />
+    <pattern value="\NostoTaggingCronRatesModuleFrontController" />
+    <pattern value="\NostoTaggingOrderModuleFrontController" member="initContent" />
+    <pattern value="\NostoTaggingOrderModuleFrontController" />
+    <pattern value="\NostoTaggingProductModuleFrontController" member="initContent" />
+    <pattern value="\NostoTaggingProductModuleFrontController" />
+    <pattern value="\NostoTaggingReloadCartModuleFrontController" member="initContent" />
+    <pattern value="\NostoTaggingReloadCartModuleFrontController" />
+    <pattern value="\NostoTaggingRestoreCartModuleFrontController" member="initContent" />
+    <pattern value="\NostoTaggingRestoreCartModuleFrontController" />
+    <pattern value="\NostoSearch" member="loadData" />
+    <pattern value="\OauthTraitAdapter" member="logError" />
+    <pattern value="\NostoCustomerManager" />
+    <pattern value="\NostoDefaultTagging" />
+    <pattern value="\NostoHeaderContent" />
+    <pattern value="\NostoHelperAccount" />
+    <pattern value="\NostoHelperConfig" />
+    <pattern value="\NostoHelperContext" />
+    <pattern value="\NostoHelperCurrency" />
+    <pattern value="\NostoHelperFlash" />
+    <pattern value="\NostoHelperLogger" />
+    <pattern value="\NostoHelperPrice" />
+    <pattern value="\NostoHelperVariation" />
+    <pattern value="\NostoHiddenElement" />
+    <pattern value="\NostoNotificationManager" />
+    <pattern value="\NostoOrderService" />
+    <pattern value="\NostoRatesService" />
+    <pattern value="\NostoRecommendationElement" />
+    <pattern value="\NostoVariationKey" />
+    <pattern value="\NostoVariationKey" member="__construct" />
+    <pattern value="\NostoVariationKeyCollection" />
+    <pattern value="\NostoHiddenElement" member="prepend" />
+    <pattern value="\NostoHelperConfig" member="purge" />
+    <pattern value="\OauthTraitAdapter" member="redirect" />
+    <pattern value="\OauthTraitAdapter" member="save" />
+    <pattern value="\NostoOrderService" member="send" />
+    <pattern value="\NostoVariationKey" member="setCurrencyId" />
+    <pattern value="\NostoVariationKeyCollection" member="setVariationIds" />
+    <pattern value="\NostoRatesService" member="updateExchangeRatesForAllStores" />
+    <pattern value="\NostoProductService" member="upsert" />
   </component>
 </project>
