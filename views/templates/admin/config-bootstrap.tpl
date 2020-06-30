@@ -23,7 +23,7 @@
 *}
 
 {if !empty($iframe_url) or !empty($iframe_installation_url)}
-    <!--suppress JSUnresolvedFunction -->
+    <!--suppress JSUnresolvedFunction, Annotator -->
     <style type="text/css">
         .clickable {
             cursor: pointer;

@@ -39,7 +39,6 @@ class NostoHelperVariation
      *
      * @return array of country ids
      * @throws PrestaShopDatabaseException
-     * @noinspection SqlDialectInspection
      */
     public static function getCountriesBeingUsedInTaxRules()
     {
@@ -103,7 +102,6 @@ class NostoHelperVariation
      * product specific prices and catalog price rules
      * @return array of group ids
      * @throws PrestaShopDatabaseException
-     * @noinspection SqlDialectInspection
      */
     public static function getGroupsBeingUsedInSpecificPrices()
     {
@@ -141,7 +139,6 @@ class NostoHelperVariation
      * product specific prices and catalog price rules
      * @return array of country ids
      * @throws PrestaShopDatabaseException
-     * @noinspection SqlDialectInspection
      */
     public static function getCountriesBeingUsedInSpecificPrices()
     {

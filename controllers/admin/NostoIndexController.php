@@ -118,7 +118,6 @@ class NostoIndexController
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      * @throws NostoException
-     * @noinspection PhpUnhandledExceptionInspection
      */
     private function generateSmartyData(NostoTagging $nostoTagging, $languages, $currentLanguage)
     {
