@@ -52,7 +52,7 @@ class OauthTraitAdapter
     {
         $this->module = $module;
         $this->languageId = (int)Tools::getValue('language_id', NostoHelperContext::getLanguageId());
-        self::connect();
+        $this->connect();
     }
 
     /**

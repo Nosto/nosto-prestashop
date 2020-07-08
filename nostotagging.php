@@ -422,6 +422,7 @@ class NostoTagging extends Module
         return '';
     }
 
+    /** @noinspection PhpUnusedPrivateMethodInspection */
     private static function pseudoHookLoadingPageIndex()
     {
         $html = '';
@@ -437,6 +438,7 @@ class NostoTagging extends Module
         return $html;
     }
 
+    /** @noinspection PhpUnusedPrivateMethodInspection */
     private static function pseudoHookLoadingPageProduct()
     {
         $html = '';
@@ -451,6 +453,7 @@ class NostoTagging extends Module
         return $html;
     }
 
+    /** @noinspection PhpUnusedPrivateMethodInspection */
     private static function pseudoHookLoadingPageOrder()
     {
         if ((int)Tools::getValue('step', 0) !== 0) {
@@ -480,11 +483,13 @@ class NostoTagging extends Module
         return $html;
     }
 
+    /** @noinspection PhpUnusedPrivateMethodInspection */
     private static function pseudoHookLoadingPageManufacturer()
     {
         return self::pseudoHookLoadingPageCategory();
     }
 
+    /** @noinspection PhpUnusedPrivateMethodInspection */
     private static function pseudoHookLoadingPageSearch()
     {
         $html = '';
@@ -512,11 +517,13 @@ class NostoTagging extends Module
         return $html;
     }
 
+    /** @noinspection PhpUnusedPrivateMethodInspection */
     private static function pseudoHookLoadingPage404()
     {
         return self::pseudoHookLoadingPagePageNotFound();
     }
 
+    /** @noinspection PhpUnusedPrivateMethodInspection */
     private static function pseudoHookLoadingPageOrderConfirmation()
     {
         $html = '';
@@ -1067,7 +1074,7 @@ class NostoTagging extends Module
     {
         //Do not render any thing when it is a ajax request
         if (!array_key_exists(self::AJAX_REQUEST_PARAMETER_KEY, $_REQUEST)
-            || $_REQUEST[self::AJAX_REQUEST_PARAMETER_KEY] != true
+            || (bool)$_REQUEST[self::AJAX_REQUEST_PARAMETER_KEY] !== true
         ) {
             NostoNotificationManager::checkAndDisplay($this);
         }
@@ -1101,6 +1108,7 @@ class NostoTagging extends Module
      *
      * @param string $message the warning message to be displayed
      * @return bool if the displaying of the warning message was successful
+     * @noinspection SenselessProxyMethodInspection
      */
     public function adminDisplayWarning($message)
     {
@@ -1130,7 +1138,9 @@ class NostoTagging extends Module
     {
         if (!empty($this->smarty) && method_exists($this->smarty, 'assign')) {
             return $this->smarty;
-        } elseif (!empty($this->context->smarty) && method_exists($this->context->smarty, 'assign')) {
+        }
+
+        if (!empty($this->context->smarty) && method_exists($this->context->smarty, 'assign')) {
             return $this->context->smarty;
         }
 
@@ -1161,14 +1171,8 @@ class NostoTagging extends Module
         }
 
         $cookie = Context::getContext()->cookie;
-        if (isset($cookie->nostoExchangeRatesUpdated)
-            && $cookie->nostoExchangeRatesUpdated == true //@codingStandardsIgnoreLine
-        ) {
-
-            return false;
-        }
-
-        return true;
+        return !(isset($cookie->nostoExchangeRatesUpdated)
+            && (bool)$cookie->nostoExchangeRatesUpdated === true);
     }
 
     /**
@@ -1191,7 +1195,7 @@ class NostoTagging extends Module
      */
     public function display($file, $template, $cache_id = null, $compile_id = null)
     {
-        if ($this->smarty == null) {
+        if ($this->smarty === null) {
             NostoHelperLogger::info('Module::smarty is null, skip rendering nosto content');
             return '';
         }
@@ -1206,7 +1210,7 @@ class NostoTagging extends Module
      */
     public function updateExchangeRatesIfNeeded($force = false)
     {
-        if ($this->exchangeRatesShouldBeUpdated() || $force === true) {
+        if ($force === true || $this->exchangeRatesShouldBeUpdated()) {
             $this->defineExchangeRatesAsUpdated(); // This ensures we only try this at once
             $operation = new NostoRatesService();
             $operation->updateExchangeRatesForAllStores();
