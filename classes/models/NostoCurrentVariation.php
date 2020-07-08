@@ -85,6 +85,7 @@ class NostoCurrentVariation extends NostoSDKMarkupableString
 
     /**
      * @return mixed
+     * @noinspection PhpUnused
      */
     public function getVariationId()
     {

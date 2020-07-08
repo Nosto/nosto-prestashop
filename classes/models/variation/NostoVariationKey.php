@@ -55,6 +55,7 @@ class NostoVariationKey
 
     /**
      * @param int $currencyId
+     * @noinspection PhpUnused
      */
     public function setCurrencyId($currencyId)
     {

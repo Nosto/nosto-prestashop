@@ -38,6 +38,7 @@ if (!defined('_PS_VERSION_')) {
  * @throws PrestaShopDatabaseException
  * @throws PrestaShopException
  * @suppress PhanUnreferencedMethod
+ * @noinspection PhpUnused
  */
 function upgrade_module_2_4_0($object)
 {

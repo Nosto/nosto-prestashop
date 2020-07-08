@@ -29,6 +29,7 @@ require_once 'NostoBaseController.php';
  * Class CreateAccountController
  *
  * @property Context $context
+ * @noinspection PhpUnused
  */
 class NostoCreateAccountController extends NostoBaseController
 {
@@ -36,6 +37,7 @@ class NostoCreateAccountController extends NostoBaseController
      * @inheritdoc
      *
      * @suppress PhanDeprecatedFunction
+     * @noinspection PhpUnused
      */
     public function execute()
     {

@@ -30,6 +30,7 @@ abstract class NostoBaseController extends ModuleAdminController
      *
      * @suppress PhanDeprecatedFunction
      * @throws PrestaShopException
+     * @noinspection PhpUnused
      */
     public function initContent()
     {

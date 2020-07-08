@@ -98,6 +98,7 @@ class NostoIframe extends NostoSDKIframe
      * Return visits in last 30 days
      *
      * @return string
+     * @noinspection PhpUnused
      */
     public function getRecentVisits()
     {
@@ -118,6 +119,7 @@ class NostoIframe extends NostoSDKIframe
      * Get sales in last 30 days
      *
      * @return string
+     * @noinspection PhpUnused
      */
     public function getRecentSales()
     {
@@ -138,6 +140,7 @@ class NostoIframe extends NostoSDKIframe
      * Get main currency of the shop
      *
      * @return string $currency
+     * @noinspection PhpUnused
      */
     public function getCurrency()
     {

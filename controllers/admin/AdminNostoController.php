@@ -39,6 +39,7 @@ class AdminNostoController extends ModuleAdminController
 
     /**
      * @inheritdoc
+     * @noinspection PhpUnused
      */
     public function initContent()
     {

@@ -39,6 +39,7 @@ if (!defined('_PS_VERSION_')) {
  * @return bool
  *
  * @suppress PhanUnreferencedMethod
+ * @noinspection PhpUnused
  */
 function upgrade_module_1_1_0($object)
 {

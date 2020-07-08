@@ -26,7 +26,7 @@
 require_once 'NostoBaseController.php';
 
 use Nosto\NostoException as NostoSDKException;
-
+/** @noinspection PhpUnused */
 class NostoAdvancedSettingController extends NostoBaseController
 {
     /**
@@ -36,6 +36,7 @@ class NostoAdvancedSettingController extends NostoBaseController
      * @return bool
      * @throws NostoSDKException
      * @throws PrestaShopException
+     * @noinspection PhpUnused
      */
     public function execute()
     {

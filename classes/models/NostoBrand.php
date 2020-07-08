@@ -51,6 +51,7 @@ class NostoBrand extends MarkupableString
 
     /**
      * @return string
+     * @noinspection PhpUnused
      */
     public function getBrand()
     {

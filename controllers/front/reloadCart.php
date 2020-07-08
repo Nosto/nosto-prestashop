@@ -25,12 +25,14 @@
 
 /**
  * Front controller for reload cart tagging
+ * @noinspection PhpUnused
  */
 class NostoTaggingReloadCartModuleFrontController extends ModuleFrontController
 {
     /**
      * @inheritdoc
      * @noinspection PhpUnhandledExceptionInspection
+     * @noinspection PhpUnused
      */
     public function initContent()
     {

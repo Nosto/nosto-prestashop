@@ -117,6 +117,7 @@ class NostoVariationKeyCollection extends NostoSDKAbstractCollection
 
     /**
      * @param array $variationIds
+     * @noinspection PhpUnused
      */
     public function setVariationIds($variationIds)
     {

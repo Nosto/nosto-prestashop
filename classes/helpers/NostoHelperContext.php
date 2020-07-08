@@ -224,6 +224,7 @@ class NostoHelperContext
      * Get cart Id from current context
      *
      * @return int|null
+     * @noinspection PhpUnused
      */
     public static function getCartId()
     {

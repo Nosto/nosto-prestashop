@@ -30,11 +30,13 @@ require_once(dirname(__FILE__) . '/cron.php');
  *
  * This controller can be called directly from the servers cron tab or, using the PS "cronjob"
  * module. The authentication is
+ * @noinspection PhpUnused
  */
 class NostoTaggingCronRatesModuleFrontController extends NostoTaggingCronModuleFrontController
 {
     /**
      * @inheritdoc
+     * @noinspection PhpUnused
      */
     public function initContent()
     {

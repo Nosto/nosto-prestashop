@@ -24,7 +24,7 @@
  */
 
 use Nosto\NostoException as NostoSDKException;
-
+/** @noinspection PhpUnused */
 class NostoTaggingRestoreCartModuleFrontController extends ModuleFrontController
 {
     const CART_CONTROLLER = 'cart';
@@ -36,6 +36,7 @@ class NostoTaggingRestoreCartModuleFrontController extends ModuleFrontController
     /**
      * @inheritdoc
      * @throws NostoSDKException
+     * @noinspection PhpUnused
      */
     public function initContent()
     {

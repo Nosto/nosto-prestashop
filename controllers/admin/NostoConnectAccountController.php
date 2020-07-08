@@ -27,11 +27,13 @@ require_once 'NostoBaseController.php';
 
 use Nosto\Helper\OAuthHelper as NostoSDKOAuthHelper;
 
+/** @noinspection PhpUnused */
 class NostoConnectAccountController extends NostoBaseController
 {
     /**
      * @inheritdoc
      * @throws PrestaShopException
+     * @noinspection PhpUnused
      */
     public function execute()
     {

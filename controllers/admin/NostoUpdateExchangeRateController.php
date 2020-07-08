@@ -27,7 +27,7 @@ require_once 'NostoBaseController.php';
 
 use Nosto\NostoException;
 use Nosto\Request\Api\Token as NostoSDKAPIToken;
-
+/** @noinspection PhpUnused */
 class NostoUpdateExchangeRateController extends NostoBaseController
 {
     /**
@@ -35,6 +35,7 @@ class NostoUpdateExchangeRateController extends NostoBaseController
      *
      * @suppress PhanDeprecatedFunction
      * @throws NostoException
+     * @noinspection PhpUnused
      */
     public function execute()
     {

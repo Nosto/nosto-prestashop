@@ -24,11 +24,12 @@
  */
 
 require_once 'NostoBaseController.php';
-
+/** @noinspection PhpUnused */
 class NostoDeleteAccountController extends NostoBaseController
 {
     /**
      * @inheritdoc
+     * @noinspection PhpUnused
      */
     public function execute()
     {
