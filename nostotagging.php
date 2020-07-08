@@ -390,8 +390,8 @@ class NostoTagging extends Module
     public function hookDisplayTop()
     {
         $html = '';
-        if (NostoHelperConfig::getNostotaggingRenderPosition() !== NostoHelperConfig::NOSTOTAGGING_POSITION_FOOTER
-            && $this->topHookExecuted !== true
+        if ($this->topHookExecuted !== true
+            && NostoHelperConfig::getNostotaggingRenderPosition() !== NostoHelperConfig::NOSTOTAGGING_POSITION_FOOTER
         ) {
             $html = NostoDefaultTagging::get($this);
             $html .= self::dispatchPseudoHooks();
@@ -415,28 +415,38 @@ class NostoTagging extends Module
         $methodName .= str_replace('-', '', NostoHelperController::getControllerName());
         if (method_exists(__CLASS__, $methodName)) {
             return self::$methodName();
-        } else {
-            // If the current page is not one of the ones we want to show recommendations on, just
-            // return empty.
-            return '';
         }
+
+        // If the current page is not one of the ones we want to show recommendations on, just
+        // return empty.
+        return '';
     }
 
     private static function pseudoHookLoadingPageIndex()
     {
-        $html = NostoHiddenElement::append('frontpage-nosto-1');
-        $html .= NostoHiddenElement::append('frontpage-nosto-2');
-        $html .= NostoHiddenElement::append('frontpage-nosto-3');
-        $html .= NostoHiddenElement::append('frontpage-nosto-4');
+        $html = '';
+        try {
+            $html = NostoHiddenElement::append('frontpage-nosto-1');
+            $html .= NostoHiddenElement::append('frontpage-nosto-2');
+            $html .= NostoHiddenElement::append('frontpage-nosto-3');
+            $html .= NostoHiddenElement::append('frontpage-nosto-4');
+        } catch (NostoException $e) {
+            NostoHelperLogger::error($e);
+        }
 
         return $html;
     }
 
     private static function pseudoHookLoadingPageProduct()
     {
-        $html = NostoHiddenElement::append('nosto-page-product1');
-        $html .= NostoHiddenElement::append('nosto-page-product2');
-        $html .= NostoHiddenElement::append('nosto-page-product3');
+        $html = '';
+        try {
+            $html = NostoHiddenElement::append('nosto-page-product1');
+            $html .= NostoHiddenElement::append('nosto-page-product2');
+            $html .= NostoHiddenElement::append('nosto-page-product3');
+        } catch (NostoException $e) {
+            NostoHelperLogger::error($e);
+        }
 
         return $html;
     }
@@ -446,19 +456,27 @@ class NostoTagging extends Module
         if ((int)Tools::getValue('step', 0) !== 0) {
             return '';
         }
-
-        $html = NostoHiddenElement::append('nosto-page-cart1');
-        $html .= NostoHiddenElement::append('nosto-page-cart2');
-        $html .= NostoHiddenElement::append('nosto-page-cart3');
+        $html = '';
+        try {
+            $html = NostoHiddenElement::append('nosto-page-cart1');
+            $html .= NostoHiddenElement::append('nosto-page-cart2');
+            $html .= NostoHiddenElement::append('nosto-page-cart3');
+        } catch (NostoException $e) {
+            NostoHelperLogger::error($e);
+        }
 
         return $html;
     }
 
     private static function pseudoHookLoadingPageCategory()
     {
-        $html = NostoHiddenElement::append('nosto-page-category1');
-        $html .= NostoHiddenElement::append('nosto-page-category2');
-
+        $html = '';
+        try {
+            $html = NostoHiddenElement::append('nosto-page-category1');
+            $html .= NostoHiddenElement::append('nosto-page-category2');
+        } catch (NostoException $e) {
+            NostoHelperLogger::error($e);
+        }
         return $html;
     }
 
@@ -469,17 +487,27 @@ class NostoTagging extends Module
 
     private static function pseudoHookLoadingPageSearch()
     {
-        $html = NostoHiddenElement::prepend('nosto-page-search1');
-        $html .= NostoHiddenElement::append('nosto-page-search2');
+        $html = '';
+        try {
+            $html = NostoHiddenElement::prepend('nosto-page-search1');
+            $html .= NostoHiddenElement::append('nosto-page-search2');
+        } catch (NostoException $e) {
+            NostoHelperLogger::error($e);
+        }
 
         return $html;
     }
 
     private static function pseudoHookLoadingPagePageNotFound()
     {
-        $html = NostoHiddenElement::append('notfound-nosto-1');
-        $html .= NostoHiddenElement::append('notfound-nosto-2');
-        $html .= NostoHiddenElement::append('notfound-nosto-3');
+        $html = '';
+        try {
+            $html = NostoHiddenElement::append('notfound-nosto-1');
+            $html .= NostoHiddenElement::append('notfound-nosto-2');
+            $html .= NostoHiddenElement::append('notfound-nosto-3');
+        } catch (NostoException $e) {
+            NostoHelperLogger::error($e);
+        }
 
         return $html;
     }
@@ -491,8 +519,13 @@ class NostoTagging extends Module
 
     private static function pseudoHookLoadingPageOrderConfirmation()
     {
-        $html = NostoHiddenElement::append('thankyou-nosto-1');
-        $html .= NostoHiddenElement::append('thankyou-nosto-2');
+        $html = '';
+        try {
+            $html = NostoHiddenElement::append('thankyou-nosto-1');
+            $html .= NostoHiddenElement::append('thankyou-nosto-2');
+        } catch (NostoException $e) {
+            NostoHelperLogger::error($e);
+        }
 
         return $html;
     }
@@ -755,7 +788,11 @@ class NostoTagging extends Module
      */
     public function hookDisplayPaymentTop()
     {
-        NostoCustomerManager::updateNostoId();
+        try {
+            NostoCustomerManager::updateNostoId();
+        } catch (PrestaShopDatabaseException $e) {
+            NostoHelperLogger::error($e);
+        }
     }
 
     /**
