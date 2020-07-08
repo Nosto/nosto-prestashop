@@ -33,7 +33,7 @@
     font-style: normal;
 }
 
-/*noinspection Duplicates, CssUnusedSymbol*/
+/*noinspection Duplicates,CssUnusedSymbol*/
 #subtab-AdminNostoPersonalization .material-icons:before {
     /* use !important to prevent issues with browser extensions that change fonts */
     /*noinspection CssNoGenericFontName*/
@@ -51,7 +51,7 @@
     content: "\e900";
 }
 
-/*noinspection Duplicates CssUnusedSymbol*/
+/*noinspection Duplicates,CssUnusedSymbol*/
 .icon-AdminNosto:before {
     /*noinspection CssNoGenericFontName*/
     font-family: 'nosto' !important;
