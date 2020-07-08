@@ -177,6 +177,7 @@ class NostoTagging extends Module
      * @return bool
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
+     * @noinspection PhpUnused
      */
     public function install()
     {
@@ -247,6 +248,7 @@ class NostoTagging extends Module
      * @return bool
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
+     * @noinspection PhpUnused
      */
     public function uninstall()
     {
@@ -298,6 +300,7 @@ class NostoTagging extends Module
      *
      * @return string The HTML to output.
      * @throws NostoException
+     * @noinspection PhpUnused
      */
     public function getContent()
     {
@@ -350,6 +353,7 @@ class NostoTagging extends Module
      * @return string The HTML to output
      * @throws NostoException
      * @see NostoTagging::hookDisplayHeader()
+     * @noinspection PhpUnused
      */
     public function hookHeader()
     {
@@ -363,6 +367,7 @@ class NostoTagging extends Module
      * Note: PS 1.5+ only.
      *
      * Adds Nosto admin tab CSS.
+     * @noinspection PhpUnused
      */
     public function hookDisplayBackOfficeHeader()
     {
@@ -408,6 +413,7 @@ class NostoTagging extends Module
      * JavaScript.
      *
      * @return string the html.
+     * @noinspection PhpUnused
      */
     public static function dispatchPseudoHooks()
     {
@@ -422,7 +428,7 @@ class NostoTagging extends Module
         return '';
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
+    /** @noinspection PhpUnused */
     private static function pseudoHookLoadingPageIndex()
     {
         $html = '';
@@ -438,7 +444,7 @@ class NostoTagging extends Module
         return $html;
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
+    /** @noinspection PhpUnused */
     private static function pseudoHookLoadingPageProduct()
     {
         $html = '';
@@ -453,7 +459,7 @@ class NostoTagging extends Module
         return $html;
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
+    /** @noinspection PhpUnused */
     private static function pseudoHookLoadingPageOrder()
     {
         if ((int)Tools::getValue('step', 0) !== 0) {
@@ -471,6 +477,7 @@ class NostoTagging extends Module
         return $html;
     }
 
+    /** @noinspection PhpUnused */
     private static function pseudoHookLoadingPageCategory()
     {
         $html = '';
@@ -483,13 +490,13 @@ class NostoTagging extends Module
         return $html;
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
+    /** @noinspection PhpUnused */
     private static function pseudoHookLoadingPageManufacturer()
     {
         return self::pseudoHookLoadingPageCategory();
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
+    /** @noinspection PhpUnused */
     private static function pseudoHookLoadingPageSearch()
     {
         $html = '';
@@ -517,13 +524,13 @@ class NostoTagging extends Module
         return $html;
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
+    /** @noinspection PhpUnused */
     private static function pseudoHookLoadingPage404()
     {
         return self::pseudoHookLoadingPagePageNotFound();
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
+    /** @noinspection PhpUnused */
     private static function pseudoHookLoadingPageOrderConfirmation()
     {
         $html = '';
@@ -548,6 +555,7 @@ class NostoTagging extends Module
      * @throws PrestaShopException
      * @throws ReflectionException
      * @since Prestashop 1.7.0.0
+     * @noinspection PhpUnused
      */
     public function hookDisplayNav1()
     {
@@ -564,6 +572,7 @@ class NostoTagging extends Module
      * @throws PrestaShopException
      * @throws ReflectionException
      * @see NostoTagging::hookDisplayTop()
+     * @noinspection PhpUnused
      */
     public function hookTop()
     {
@@ -603,6 +612,7 @@ class NostoTagging extends Module
      * @throws PrestaShopException
      * @throws ReflectionException
      * @see NostoTagging::hookDisplayFooter()
+     * @noinspection PhpUnused
      */
     public function hookFooter()
     {
@@ -615,6 +625,7 @@ class NostoTagging extends Module
      *
      * @return string The HTML to output
      * @throws NostoException
+     * @noinspection PhpUnused
      */
     public function hookDisplayLeftColumn()
     {
@@ -628,6 +639,7 @@ class NostoTagging extends Module
      * @return string The HTML to output
      * @throws NostoException
      * @see NostoTagging::hookDisplayRightColumn()
+     * @noinspection PhpUnused
      */
     public function hookLeftColumn()
     {
@@ -653,6 +665,7 @@ class NostoTagging extends Module
      * @return string The HTML to output
      * @throws NostoException
      * @see NostoTagging::hookDisplayRightColumn()
+     * @noinspection PhpUnused
      */
     public function hookRightColumn()
     {
@@ -683,6 +696,7 @@ class NostoTagging extends Module
      * @return string The HTML to output
      * @throws NostoException
      * @see NostoTagging::hookDisplayFooterProduct()
+     * @noinspection PhpUnused
      */
     public function hookProductFooter()
     {
@@ -713,6 +727,7 @@ class NostoTagging extends Module
      * @see NostoTagging::hookDisplayShoppingCartFooter()
      * @return string The HTML to output
      * @throws NostoException
+     * @noinspection PhpUnused
      */
     public function hookShoppingCart()
     {
@@ -730,6 +745,7 @@ class NostoTagging extends Module
      *
      * @return string The HTML to output
      * @throws NostoException
+     * @noinspection PhpUnused
      */
     public function hookDisplayCategoryTop()
     {
@@ -747,6 +763,7 @@ class NostoTagging extends Module
      *
      * @return string The HTML to output
      * @throws NostoException
+     * @noinspection PhpUnused
      */
     public function hookDisplayCategoryFooter()
     {
@@ -764,6 +781,7 @@ class NostoTagging extends Module
      *
      * @return string The HTML to output
      * @throws NostoException
+     * @noinspection PhpUnused
      */
     public function hookDisplaySearchTop()
     {
@@ -781,6 +799,7 @@ class NostoTagging extends Module
      *
      * @return string The HTML to output
      * @throws NostoException
+     * @noinspection PhpUnused
      */
     public function hookDisplaySearchFooter()
     {
@@ -807,6 +826,7 @@ class NostoTagging extends Module
      * hook should not have any logic and should only delegate to another hook.
      *
      * @see NostoTagging::hookDisplayPaymentTop()
+     * @noinspection PhpUnused
      */
     public function hookPaymentTop()
     {
@@ -822,6 +842,7 @@ class NostoTagging extends Module
      * completed.
      *
      * @param array $params the observer parameters, one of which contains the order model
+     * @noinspection PhpUnused
      */
     public function hookActionOrderStatusPostUpdate(array $params)
     {
@@ -835,6 +856,7 @@ class NostoTagging extends Module
      *
      * @see NostoTagging::hookActionOrderStatusPostUpdate()
      * @param array $params the observer parameters, one of which contains the order model
+     * @noinspection PhpUnused
      */
     public function hookPostUpdateOrderStatus(array $params)
     {
@@ -846,6 +868,7 @@ class NostoTagging extends Module
      * or set a cookie to inform javascript about the cart update
      *
      * @param array $params the observer parameters, contains the added product information
+     * @noinspection PhpUnused
      */
     public function hookActionCartUpdateQuantityBefore(array $params)
     {
@@ -864,6 +887,7 @@ class NostoTagging extends Module
      * not have any logic and should only delegate to another hook.
      *
      * @param array $params the observer parameters, contains the added product information
+     * @noinspection PhpUnused
      */
     public function hookActionBeforeCartUpdateQty(array $params)
     {
@@ -875,6 +899,7 @@ class NostoTagging extends Module
      * or set a cookie to inform javascript about the cart update.
      *
      * @param array $params the observer parameters, contains the updated cart model
+     * @noinspection PhpUnused
      */
     public function hookActionCartSave(array $params)
     {
@@ -890,6 +915,7 @@ class NostoTagging extends Module
      * Customer created event handler. It works if the customer was created on front end, not from backend.
      * The customer's newsletter subscription status could not be set in the backend.
      * @param array $params the observer parameters
+     * @noinspection PhpUnused
      */
     public function hookActionCustomerAccountAdd(array $params)
     {
@@ -907,6 +933,7 @@ class NostoTagging extends Module
      * Customer updated event handler. It works if the customer was updated on front end, not from backend.
      * The customer's newsletter subscription status could not be changed in the backend.
      * @param array $params the observer parameters
+     * @noinspection PhpUnused
      */
     public function hookActionCustomerAccountUpdate(array $params)
     {
@@ -926,6 +953,7 @@ class NostoTagging extends Module
      *
      * @return string The HTML to output
      * @throws NostoException
+     * @noinspection PhpUnused
      */
     public function hookDisplayHome()
     {
@@ -944,6 +972,7 @@ class NostoTagging extends Module
      * @see NostoTagging::hookDisplayHome()
      * @return string The HTML to output
      * @throws NostoException
+     * @noinspection PhpUnused
      */
     public function hookHome()
     {
@@ -956,6 +985,7 @@ class NostoTagging extends Module
      * parameter named `object` don't have a product object.
      *
      * @param array $params the observer parameters, one of which contains the mutated model
+     * @noinspection PhpUnused
      */
     public function hookActionObjectUpdateAfter(array $params)
     {
@@ -973,6 +1003,7 @@ class NostoTagging extends Module
      * parameter named `object` don't have a product object.
      *
      * @param array $params the observer parameters, one of which contains the mutated model
+     * @noinspection PhpUnused
      */
     public function hookActionObjectDeleteAfter(array $params)
     {
@@ -990,6 +1021,7 @@ class NostoTagging extends Module
      * parameter named `object` don't have a product object.
      *
      * @param array $params the observer parameters, one of which contains the mutated model
+     * @noinspection PhpUnused
      */
     public function hookActionObjectAddAfter(array $params)
     {
@@ -1007,6 +1039,7 @@ class NostoTagging extends Module
      *
      * @see NostoTagging::hookActionObjectAddAfter
      * @param array $params the observer parameters, one of which contains the product model
+     * @noinspection PhpUnused
      */
     public function hookUpdateProduct(array $params)
     {
@@ -1023,6 +1056,7 @@ class NostoTagging extends Module
      *
      * @see NostoTagging::hookActionObjectDeleteAfter
      * @param array $params the observer parameters, one of which contains the product model
+     * @noinspection PhpUnused
      */
     public function hookDeleteProduct(array $params)
     {
@@ -1039,6 +1073,7 @@ class NostoTagging extends Module
      *
      * @see NostoTagging::hookActionObjectAddAfter
      * @param array $params the observer parameters, one of which contains the product model
+     * @noinspection PhpUnused
      */
     public function hookAddProduct(array $params)
     {
@@ -1056,6 +1091,7 @@ class NostoTagging extends Module
      *
      * @see NostoTagging::hookActionObjectUpdateAfter
      * @param array $params
+     * @noinspection PhpUnused
      */
     public function hookUpdateQuantity(array $params)
     {
@@ -1069,6 +1105,7 @@ class NostoTagging extends Module
     /**
      * Admin hook that is triggered when the header of the back-office is being rendered. This hook
      * renders all the different warnings and information messages to be displayed.
+     * @noinspection PhpUnused
      */
     public function hookDisplayBackOfficeTop()
     {
@@ -1084,6 +1121,7 @@ class NostoTagging extends Module
      * Admin hook that is triggered when the footer of the back-office is being rendered. This hook
      * sends all the exchange-rates to Nosto so if the merchant has forgotten to configure the cron,
      * we should still get some updates.
+     * @noinspection PhpUnused
      */
     public function hookBackOfficeFooter()
     {
@@ -1163,6 +1201,7 @@ class NostoTagging extends Module
      * admin session
      *
      * @return boolean
+     * @noinspection PhpUnused
      */
     public function exchangeRatesShouldBeUpdated()
     {
@@ -1177,6 +1216,7 @@ class NostoTagging extends Module
 
     /**
      * Updates the exchange rates to Nosto when currency object is saved
+     * @noinspection PhpUnused
      */
     public function hookActionObjectCurrencyUpdateAfter()
     {
