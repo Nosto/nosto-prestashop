@@ -31,6 +31,58 @@
       <entry_point TYPE="phpMethod" FQNAME="\NostoTagging hookTop" />
       <entry_point TYPE="phpMethod" FQNAME="\NostoTagging hookUpdateProduct" />
       <entry_point TYPE="phpMethod" FQNAME="\NostoTagging hookUpdateQuantity" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTagging hookDisplayHeader" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTagging hookDisplayTop" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTagging hookDisplayFooter" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTagging hookDisplayLeftColumn" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTagging hookDisplayRightColumn" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTagging hookDisplayFooterProduct" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTagging hookDisplayShoppingCartFooter" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTagging hookDisplayPaymentTop" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTagging hookActionOrderStatusPostUpdate" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTagging hookActionCartUpdateQuantityBefore" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTagging hookDisplayHome" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTagging hookActionObjectUpdateAfter" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTagging hookActionObjectDeleteAfter" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTagging hookActionObjectAddAfter" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTagging hookActionObjectAddAfter" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoCurrentVariation getVariationId" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoBrand getBrand" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoSearch" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoSearch getSearchTerm" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoSearch loadData" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoIframe getRecentVisits" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoIframe getCurrency" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoIframe getRecentSales" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoVariationKey setCurrencyId" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoVariationKeyCollection setVariationIds" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoHelperContext getCartId" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoSettingsService __construct" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoCreateAccountController execute" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoCreateAccountController" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoBaseController initContent" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoUpdateExchangeRateController execute" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoUpdateExchangeRateController" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoDeleteAccountController execute" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoDeleteAccountController" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoConnectAccountController execute" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoConnectAccountController" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoAdvancedSettingController" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoAdvancedSettingController execute" />
+      <entry_point TYPE="phpMethod" FQNAME="\AdminNostoController initContent" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoTaggingReloadCartModuleFrontController" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTaggingReloadCartModuleFrontController initContent" />
+      <entry_point TYPE="phpMethod" FQNAME="\OauthTraitAdapter redirect" />
+      <entry_point TYPE="phpMethod" FQNAME="\OauthTraitAdapter logError" />
+      <entry_point TYPE="phpMethod" FQNAME="\OauthTraitAdapter save" />
+      <entry_point TYPE="phpMethod" FQNAME="\OauthTraitAdapter getParam" />
+      <entry_point TYPE="phpMethod" FQNAME="\OauthTraitAdapter getMeta" />
+      <entry_point TYPE="phpField" FQNAME="\OauthTraitAdapter module" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTaggingCronModuleFrontController init" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTaggingRestoreCartModuleFrontController initContent" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoTaggingRestoreCartModuleFrontController" />
+      <entry_point TYPE="phpMethod" FQNAME="\NostoTaggingCronRatesModuleFrontController initContent" />
+      <entry_point TYPE="phpClass" FQNAME="\NostoTaggingCronRatesModuleFrontController" />
       <entry_point TYPE="phpFunction" FQNAME="\upgrade_module_1_1_0" />
       <entry_point TYPE="phpFunction" FQNAME="\upgrade_module_1_2_0" />
       <entry_point TYPE="phpFunction" FQNAME="\upgrade_module_1_3_0" />
