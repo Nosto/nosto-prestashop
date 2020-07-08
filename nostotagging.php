@@ -175,6 +175,8 @@ class NostoTagging extends Module
      * Initializes config, adds custom hooks and registers used hooks.
      *
      * @return bool
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      */
     public function install()
     {
@@ -243,6 +245,8 @@ class NostoTagging extends Module
      * as that is handled by the parent class.
      *
      * @return bool
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      */
     public function uninstall()
     {
