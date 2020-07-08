@@ -428,7 +428,7 @@ class NostoTagging extends Module
         return '';
     }
 
-    /** @noinspection PhpUnused */
+    /** @noinspection PhpUnusedPrivateMethodInspection */
     private static function pseudoHookLoadingPageIndex()
     {
         $html = '';
@@ -444,7 +444,7 @@ class NostoTagging extends Module
         return $html;
     }
 
-    /** @noinspection PhpUnused */
+    /** @noinspection PhpUnusedPrivateMethodInspection */
     private static function pseudoHookLoadingPageProduct()
     {
         $html = '';
@@ -459,7 +459,7 @@ class NostoTagging extends Module
         return $html;
     }
 
-    /** @noinspection PhpUnused */
+    /** @noinspection PhpUnusedPrivateMethodInspection */
     private static function pseudoHookLoadingPageOrder()
     {
         if ((int)Tools::getValue('step', 0) !== 0) {
@@ -490,13 +490,13 @@ class NostoTagging extends Module
         return $html;
     }
 
-    /** @noinspection PhpUnused */
+    /** @noinspection PhpUnusedPrivateMethodInspection */
     private static function pseudoHookLoadingPageManufacturer()
     {
         return self::pseudoHookLoadingPageCategory();
     }
 
-    /** @noinspection PhpUnused */
+    /** @noinspection PhpUnusedPrivateMethodInspection */
     private static function pseudoHookLoadingPageSearch()
     {
         $html = '';
@@ -524,13 +524,13 @@ class NostoTagging extends Module
         return $html;
     }
 
-    /** @noinspection PhpUnused */
+    /** @noinspection PhpUnusedPrivateMethodInspection */
     private static function pseudoHookLoadingPage404()
     {
         return self::pseudoHookLoadingPagePageNotFound();
     }
 
-    /** @noinspection PhpUnused */
+    /** @noinspection PhpUnusedPrivateMethodInspection */
     private static function pseudoHookLoadingPageOrderConfirmation()
     {
         $html = '';
