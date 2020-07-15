@@ -23,7 +23,7 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use Nosto\Object\Product\VariationCollection as NostoSDKVariationCollection;
+use Nosto\Model\Product\VariationCollection as NostoSDKVariationCollection;
 use Nosto\Types\Product\ProductInterface as NostoSDKProductInterface;
 
 class NostoVariationCollection extends NostoSDKVariationCollection

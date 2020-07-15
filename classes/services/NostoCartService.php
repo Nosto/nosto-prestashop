@@ -23,9 +23,9 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use Nosto\Object\Signup\Account as NostoSDKAccount;
-use Nosto\Object\Event\Cart\Update as NostoSDKCartUpdate;
-use Nosto\Object\Cart\LineItem as NostoSDKCartItem;
+use Nosto\Model\Signup\Account as NostoSDKAccount;
+use Nosto\Model\Event\Cart\Update as NostoSDKCartUpdate;
+use Nosto\Model\Cart\LineItem as NostoSDKCartItem;
 use Nosto\Operation\CartOperation as NostoSDKCartOperation;
 use Nosto\Helper\SerializationHelper as NostoSDKSerializationHelper;
 

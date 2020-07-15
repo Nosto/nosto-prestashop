@@ -23,9 +23,9 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use Nosto\Object\Order\Order as NostoSDKOrder;
+use Nosto\Model\Order\Order as NostoSDKOrder;
 use Nosto\Types\Order\BuyerInterface as NostoSDKBuyer;
-use Nosto\Object\Cart\LineItem as NostoSDKLineItem;
+use Nosto\Model\Cart\LineItem as NostoSDKLineItem;
 
 class NostoOrder extends NostoSDKOrder
 {

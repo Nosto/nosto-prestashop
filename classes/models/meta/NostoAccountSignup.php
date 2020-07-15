@@ -23,7 +23,7 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use Nosto\Object\Signup\Signup as NostoSDKAccountSignup;
+use Nosto\Model\Signup\Signup as NostoSDKAccountSignup;
 
 class NostoAccountSignup extends NostoSDKAccountSignup
 {

@@ -23,8 +23,8 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use Nosto\Object\ExchangeRate as NostoSDKExchangeRate;
-use Nosto\Object\ExchangeRateCollection as NostoSDKExchangeRateCollection;
+use Nosto\Model\ExchangeRate as NostoSDKExchangeRate;
+use Nosto\Model\ExchangeRateCollection as NostoSDKExchangeRateCollection;
 
 class NostoExchangeRates extends NostoSDKExchangeRateCollection
 {
