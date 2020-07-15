@@ -23,7 +23,7 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use Nosto\Object\Signup\Account as NostoSDKAccount;
+use Nosto\Model\Signup\Account as NostoSDKAccount;
 use Nosto\Request\Api\Token as NostoSDKAPIToken;
 use Nosto\Types\Signup\AccountInterface as NostoSDKSignupAccountInterface;
 

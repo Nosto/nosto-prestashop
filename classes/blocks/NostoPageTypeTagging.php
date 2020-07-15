@@ -23,7 +23,7 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use \Nosto\Object\PageType as NostoSDKPageType;
+use \Nosto\Model\PageType as NostoSDKPageType;
 
 class NostoPageTypeTagging
 {

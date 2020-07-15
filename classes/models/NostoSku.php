@@ -23,7 +23,7 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use Nosto\Object\Product\Sku as NostoSDKSku;
+use Nosto\Model\Product\Sku as NostoSDKSku;
 
 class NostoSku extends NostoSDKSku
 {

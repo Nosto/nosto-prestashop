@@ -24,7 +24,7 @@
  */
 
 use Nosto\NostoException as NostoSDKException;
-use Nosto\Object\Format as NostoSDKCurrencyFormat;
+use Nosto\Model\Format as NostoSDKCurrencyFormat;
 
 /**
  * Helper class for currency related tasks.
