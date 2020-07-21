@@ -5,7 +5,7 @@
     "AFL-3.0"
   ],
   "require": {
-    "nosto/php-sdk": "3.12.*"
+    "nosto/php-sdk": "5.1.*"
   },
   "require-dev": {
     "phan/phan": "^2.6",
