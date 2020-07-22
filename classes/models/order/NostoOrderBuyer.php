@@ -24,7 +24,6 @@
  */
 
 use Nosto\Model\Order\Buyer as NostoSDKOrderBuyer;
-use Country;
 
 class NostoOrderBuyer extends NostoSDKOrderBuyer
 {
