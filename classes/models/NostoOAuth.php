@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2019 Nosto Solutions Ltd
+ * 2013-2020 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,11 +19,10 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2019 Nosto Solutions Ltd
+ * @copyright 2013-2020 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use Nosto\NostoException as NostoSDKException;
 use Nosto\OAuth as NostoSDKOAuth;
 use Nosto\Request\Api\Token as NostoSDKAPIToken;
 
@@ -41,22 +40,18 @@ class NostoOAuth extends NostoSDKOAuth
             return null;
         }
         $nostoOAuth = new NostoOAuth();
-        try {
-            $nostoOAuth->setScopes(NostoSDKAPIToken::getApiTokenNames());
+        $nostoOAuth->setScopes(NostoSDKAPIToken::getApiTokenNames());
 
-            $redirectUrl = NostoHelperUrl::getModuleUrl(
-                $moduleName,
-                'oauth2',
-                array('language_id' => NostoHelperContext::getLanguageId())
-            );
+        $redirectUrl = NostoHelperUrl::getModuleUrl(
+            $moduleName,
+            'oauth2',
+            array('language_id' => NostoHelperContext::getLanguageId())
+        );
 
-            $nostoOAuth->setClientId('prestashop');
-            $nostoOAuth->setClientSecret('prestashop');
-            $nostoOAuth->setRedirectUrl($redirectUrl);
-            $nostoOAuth->setLanguageIsoCode(NostoHelperContext::getLanguage()->iso_code);
-        } catch (NostoSDKException $e) {
-            NostoHelperLogger::error($e);
-        }
+        $nostoOAuth->setClientId('prestashop');
+        $nostoOAuth->setClientSecret('prestashop');
+        $nostoOAuth->setRedirectUrl($redirectUrl);
+        $nostoOAuth->setLanguageIsoCode(NostoHelperContext::getLanguage()->iso_code);
 
         NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoOAuth), array(
             'nosto_oauth' => $nostoOAuth

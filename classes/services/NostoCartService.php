@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2019 Nosto Solutions Ltd
+ * 2013-2020 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,13 +19,13 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2019 Nosto Solutions Ltd
+ * @copyright 2013-2020 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use Nosto\Object\Signup\Account as NostoSDKAccount;
-use Nosto\Object\Event\Cart\Update as NostoSDKCartUpdate;
-use Nosto\Object\Cart\LineItem as NostoSDKCartItem;
+use Nosto\Model\Signup\Account as NostoSDKAccount;
+use Nosto\Model\Event\Cart\Update as NostoSDKCartUpdate;
+use Nosto\Model\Cart\LineItem as NostoSDKCartItem;
 use Nosto\Operation\CartOperation as NostoSDKCartOperation;
 use Nosto\Helper\SerializationHelper as NostoSDKSerializationHelper;
 
@@ -144,7 +144,7 @@ class NostoCartService extends AbstractNostoService
 
             if ($params[self::QUANTITY] && $params[self::OPERATOR] == self::OPERATOR_UP) {
                 $nostoLineItem = new NostoSDKCartItem();
-                $nostoLineItem->setProductId($product->id);
+                $nostoLineItem->setProductId(strval($product->id));
                 $nostoLineItem->setSkuId($params[self::ID_PRODUCT_ATTRIBUTE]);
                 $nostoLineItem->setQuantity((int)$params[self::QUANTITY]);
                 $nostoLineItem->setName($product->name);

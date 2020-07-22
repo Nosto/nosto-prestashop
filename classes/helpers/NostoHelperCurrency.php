@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2019 Nosto Solutions Ltd
+ * 2013-2020 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,12 +19,12 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2019 Nosto Solutions Ltd
+ * @copyright 2013-2020 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
 use Nosto\NostoException as NostoSDKException;
-use Nosto\Object\Format as NostoSDKCurrencyFormat;
+use Nosto\Model\Format as NostoSDKCurrencyFormat;
 
 /**
  * Helper class for currency related tasks.
@@ -103,6 +103,7 @@ class NostoHelperCurrency
         $allCurrencies = Currency::getCurrenciesByIdShop(NostoHelperContext::getShopId());
         if ($onlyActive === true) {
             $currencies = array();
+            // @phan-suppress-next-line PhanTypeSuspiciousNonTraversableForeach
             foreach ($allCurrencies as $currency) {
                 if (self::currencyActive($currency)) {
                     $currencies[] = $currency;
@@ -239,7 +240,7 @@ class NostoHelperCurrency
             $currencyDecimalsEnabled = $currencyObject->decimals;
         }
 
-        return $currencyDecimalsEnabled * _PS_PRICE_DISPLAY_PRECISION_;
+        return $currencyDecimalsEnabled * (int) _PS_PRICE_DISPLAY_PRECISION_;
     }
 
     private static function currencyActive(array $currency)

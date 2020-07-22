@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2019 Nosto Solutions Ltd
+ * 2013-2020 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,7 +19,7 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2019 Nosto Solutions Ltd
+ * @copyright 2013-2020 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
@@ -85,7 +85,8 @@ class NostoAdminTabManager
             $tab->class_name = self::MAIN_MENU_ITEM_CLASS;
             $tab->name = array();
             foreach ($languages as $lang) {
-                $tab->name[$lang[self::ID_LANG]] = 'Nosto';
+                $key = (int)$lang[self::ID_LANG];
+                $tab->name[$key] = 'Nosto';
             }
 
             $tab->id_parent = 0;
@@ -105,9 +106,9 @@ class NostoAdminTabManager
                 $tab->name = array();
                 foreach ($languages as $lang) {
                     if (isset(self::$itemTranslations[$lang['iso_code']])) {
-                        $tab->name[$lang[self::ID_LANG]] = self::$itemTranslations[$lang['iso_code']];
+                        $tab->name[(int)$lang[self::ID_LANG]] = self::$itemTranslations[$lang['iso_code']];
                     } else {
-                        $tab->name[$lang[self::ID_LANG]] = 'Personalization';
+                        $tab->name[(int)$lang[self::ID_LANG]] = 'Personalization';
                     }
                 }
                 $tab->id_parent = self::getAdminTabId(AdminNostoController::getClassName());

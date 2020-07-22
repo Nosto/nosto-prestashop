@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2019 Nosto Solutions Ltd
+ * 2013-2020 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,13 +19,13 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2019 Nosto Solutions Ltd
+ * @copyright 2013-2020 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use Nosto\Object\Order\Order as NostoSDKOrder;
+use Nosto\Model\Order\Order as NostoSDKOrder;
 use Nosto\Types\Order\BuyerInterface as NostoSDKBuyer;
-use Nosto\Object\Cart\LineItem as NostoSDKLineItem;
+use Nosto\Model\Cart\LineItem as NostoSDKLineItem;
 
 class NostoOrder extends NostoSDKOrder
 {
@@ -33,6 +33,8 @@ class NostoOrder extends NostoSDKOrder
     /**
      * @param Order $order
      * @return Customer
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      * @suppress PhanTypeMismatchArgument
      */
     private static function loadCustomer(Order $order)
@@ -55,6 +57,8 @@ class NostoOrder extends NostoSDKOrder
      *
      * @param Order $order the order model to process
      * @return NostoOrder|null the order object
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      */
     public static function loadData(Order $order)
     {
@@ -104,6 +108,8 @@ class NostoOrder extends NostoSDKOrder
      *
      * @param Order $order the order object.
      * @return NostoOrderPurchasedItem[] the purchased items.
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      */
     protected static function findPurchasedItems(Order $order)
     {
@@ -125,10 +131,15 @@ class NostoOrder extends NostoSDKOrder
         $orderCollection = Order::getByReference($order->reference);
         foreach ($orderCollection as $item) {
             /** @var $item Order */
+            /** @phan-suppress-next-line PhanUndeclaredMethod */
             $products = array_merge($products, $item->getProducts());
+            /** @phan-suppress-next-line PhanUndeclaredProperty */
             $totalDiscountsTaxIncl += $item->total_discounts_tax_incl;
+            /** @phan-suppress-next-line PhanUndeclaredProperty */
             $totalShippingTaxIncl += $item->total_shipping_tax_incl;
+            /** @phan-suppress-next-line PhanUndeclaredProperty */
             $totalWrappingTaxIncl += $item->total_wrapping_tax_incl;
+            /** @phan-suppress-next-line PhanUndeclaredProperty */
             $totalProductTaxIncl += $item->total_products_wt;
         }
 

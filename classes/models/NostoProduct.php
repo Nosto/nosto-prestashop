@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2019 Nosto Solutions Ltd
+ * 2013-2020 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,11 +19,11 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2019 Nosto Solutions Ltd
+ * @copyright 2013-2020 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use Nosto\Object\Product\Product as NostoSDKProduct;
+use Nosto\Model\Product\Product as NostoSDKProduct;
 
 class NostoProduct extends NostoSDKProduct
 {
@@ -280,11 +280,7 @@ class NostoProduct extends NostoSDKProduct
      */
     public static function getPriceInclTax(Product $product, Currency $currency)
     {
-        return NostoHelperPrice::calcPrice(
-            $product->id,
-            $currency,
-            array('user_reduction' => true)
-        );
+        return NostoHelperPrice::calcPrice($product->id, $currency, true);
     }
 
     /**
@@ -296,11 +292,7 @@ class NostoProduct extends NostoSDKProduct
      */
     public static function getListPriceInclTax(Product $product, Currency $currency)
     {
-        return NostoHelperPrice::calcPrice(
-            $product->id,
-            $currency,
-            array('user_reduction' => false)
-        );
+        return NostoHelperPrice::calcPrice($product->id, $currency, false);
     }
 
     /**

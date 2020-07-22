@@ -21,7 +21,7 @@
  * @category  Nosto
  * @package   Nosto_Tagging
  * @author    Nosto Solutions Ltd <magento@nosto.com>
- * @copyright Copyright (c) 2013-2019 Nosto Solutions Ltd (http://www.nosto.com)
+ * @copyright Copyright (c) 2013-2020 Nosto Solutions Ltd (http://www.nosto.com)
  * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
@@ -30,7 +30,7 @@ ini_set('xdebug.max_nesting_level', 5120);
 return [
     'analyze_signature_compatibility' => false,
     'backward_compatibility_checks' => false,
-    'exclude_file_regex' => '@^vendor/.*/(tests|test|Tests|Test)/@',
+    'exclude_file_regex' => '@^libs/.*/(tests|test|Tests|Test)/@',
     'directory_list' => [
         'classes',
         'controllers',
@@ -45,5 +45,6 @@ return [
     ],
     "file_list" => [
         'nostotagging.php'
-    ]
+    ],
+    "color_issue_messages_if_supported" => true
 ];

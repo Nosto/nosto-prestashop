@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2019 Nosto Solutions Ltd
+ * 2013-2020 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,11 +19,11 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2019 Nosto Solutions Ltd
+ * @copyright 2013-2020 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use Nosto\Object\Product\Sku as NostoSDKSku;
+use Nosto\Model\Product\Sku as NostoSDKSku;
 
 class NostoSku extends NostoSDKSku
 {
@@ -179,11 +179,7 @@ class NostoSku extends NostoSDKSku
      */
     public static function getPriceInclTax(Combination $combination, Currency $currency)
     {
-        return NostoHelperPrice::calcPrice(
-            $combination->id_product,
-            $currency,
-            array('user_reduction' => true, 'id_product_attribute' => $combination->id)
-        );
+        return NostoHelperPrice::calcPrice($combination->id_product, $currency, true, $combination->id);
     }
 
     /**
@@ -195,10 +191,6 @@ class NostoSku extends NostoSDKSku
      */
     public static function getListPriceInclTax(Combination $combination, Currency $currency)
     {
-        return NostoHelperPrice::calcPrice(
-            $combination->id_product,
-            $currency,
-            array('user_reduction' => false, 'id_product_attribute' => $combination->id)
-        );
+        return NostoHelperPrice::calcPrice($combination->id_product, $currency, false, $combination->id);
     }
 }

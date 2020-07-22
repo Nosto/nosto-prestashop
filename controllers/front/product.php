@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2019 Nosto Solutions Ltd
+ * 2013-2020 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,13 +19,13 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2019 Nosto Solutions Ltd
+ * @copyright 2013-2020 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
 require_once(dirname(__FILE__) . '/api.php');
 
-use Nosto\Object\Product\ProductCollection as NostoSDKProductCollection;
+use Nosto\Model\Product\ProductCollection as NostoSDKProductCollection;
 
 /**
  * Front controller for gathering all products from the shop and sending the meta-data to Nosto.

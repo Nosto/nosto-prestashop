@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2019 Nosto Solutions Ltd
+ * 2013-2020 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,11 +19,13 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2019 Nosto Solutions Ltd
+ * @copyright 2013-2020 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use Nosto\Operation\OrderConfirm as NostoSDKOrderConfirmOperation;
+use Nosto\Operation\Order\OrderCreate as NostoSDKOrderCreateOperation;
+use Nosto\Operation\AbstractGraphQLOperation;
+
 
 /**
  * Helper class for sending order data to Nosto.
@@ -84,9 +86,14 @@ class NostoOrderService extends AbstractNostoService
                         $shopDomain = NostoHelperUrl::getShopDomain();
                         if ($account !== null && $account->isConnectedToNosto()) {
                             $customerId = NostoCustomerManager::getNostoId($order);
-
-                            $operation = new NostoSDKOrderConfirmOperation($account, $shopDomain);
-                            $operation->send($nostoOrder, $customerId);
+                            $orderService = new NostoSDKOrderCreateOperation(
+                                $nostoOrder,
+                                $account,
+                                AbstractGraphQLOperation::IDENTIFIER_BY_CID,
+                                $customerId,
+                                $shopDomain
+                            );
+                            $orderService->execute();
                             try {
                                 if (NostoOrderService::$syncInventoriesAfterOrder === true) {
                                     $purchasedItems = $nostoOrder->getPurchasedItems();

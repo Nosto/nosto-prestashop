@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2019 Nosto Solutions Ltd
+ * 2013-2020 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,7 +19,7 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2019 Nosto Solutions Ltd
+ * @copyright 2013-2020 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
@@ -63,10 +63,10 @@ abstract class NostoTaggingApiModuleFrontController extends ModuleFrontControlle
      * Only send the response if we can encrypt it, i.e. we have an shared encryption secret with
      * nosto.
      *
-     * @param Nosto\Object\AbstractCollection $collection the data collection to output as
+     * @param Nosto\Model\AbstractCollection $collection the data collection to output as
      *     encrypted response.
      */
-    public function encryptOutput(Nosto\Object\AbstractCollection $collection)
+    public function encryptOutput(Nosto\Model\AbstractCollection $collection)
     {
         $account = NostoHelperAccount::getAccount();
         if ($account && $account->isConnectedToNosto()) {

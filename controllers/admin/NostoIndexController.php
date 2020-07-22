@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2019 Nosto Solutions Ltd
+ * 2013-2020 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,23 +19,20 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2019 Nosto Solutions Ltd
+ * @copyright 2013-2020 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
 use Nosto\Helper\IframeHelper as NostoSDKIframeHelper;
 use Nosto\Helper\SerializationHelper as NostoSDKSerializationHelper;
 use Nosto\Nosto as NostoSDK;
-use Nosto\Object\Signup\Account as NostoSDKAccount;
+use Nosto\Model\Signup\Account as NostoSDKAccount;
 use Nosto\Request\Api\Token as NostoSDKAPIToken;
 use Nosto\Request\Http\HttpRequest as NostoSDKHttpRequest;
 use Nosto\Types\Signup\AccountInterface as NostoSDKAccountInterface;
-use Nosto\NostoException as NostoSDKException;
 
 class NostoIndexController
 {
-    const DEFAULT_SERVER_ADDRESS = 'connect.nosto.com';
-    const DEFAULT_IFRAME_ORIGIN_REGEXP = '(https:\/\/(.*)\.hub\.nosto\.com)|(https:\/\/my\.nosto\.com)';
 
     /**
      * Get the associative array for setting to smarty with all the controller's url
@@ -70,13 +67,9 @@ class NostoIndexController
             && $account->isConnectedToNosto()
             && Shop::getContext() === Shop::CONTEXT_SHOP
         ) {
-            try {
-                $currentUser = NostoCurrentUser::loadData();
-                $meta = NostoIframe::loadData();
-                return NostoSDKIframeHelper::getUrl($meta, $account, $currentUser);
-            } catch (NostoSDKException $e) {
-                NostoHelperLogger::error($e, 'Unable to load the Nosto IFrame');
-            }
+            $currentUser = NostoCurrentUser::loadData();
+            $meta = NostoIframe::loadData();
+            return NostoSDKIframeHelper::getUrl($meta, $account, $currentUser);
         }
 
         return null;

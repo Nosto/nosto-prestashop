@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2019 Nosto Solutions Ltd
+ * 2013-2020 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,12 +19,12 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2019 Nosto Solutions Ltd
+ * @copyright 2013-2020 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use Nosto\Object\Cart\Cart as NostoSDKCart;
-use Nosto\Object\Cart\LineItem as NostoSDKCartItem;
+use Nosto\Model\Cart\Cart as NostoSDKCart;
+use Nosto\Model\Cart\LineItem as NostoSDKCartItem;
 
 class NostoCart extends NostoSDKCart
 {
@@ -120,6 +120,7 @@ class NostoCart extends NostoSDKCart
             $nostoLineItem = new NostoSDKCartItem();
             $nostoLineItem->setProductId($item['id_product']);
             $nostoLineItem->setSkuId($item['id_product_attribute']);
+            // @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
             $nostoLineItem->setQuantity((int)$item['cart_quantity']);
             $nostoLineItem->setName((string)$name);
             if (is_numeric($item['price_wt'])) {

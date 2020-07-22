@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2019 Nosto Solutions Ltd
+ * 2013-2020 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,11 +19,11 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2019 Nosto Solutions Ltd
+ * @copyright 2013-2020 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use Nosto\Object\AbstractCollection as NostoSDKAbstractCollection;
+use Nosto\Model\AbstractCollection as NostoSDKAbstractCollection;
 
 class NostoVariationKeyCollection extends NostoSDKAbstractCollection
 {
@@ -74,6 +74,8 @@ class NostoVariationKeyCollection extends NostoSDKAbstractCollection
                 'nosto_variation_key_collection' => $this
             ));
 
+            /** @noinspection PhpParamsInspection */
+            // @phan-suppress-next-line PhanTypeMismatchArgument
             Cache::store($cacheKey, $this->var);
         }
     }

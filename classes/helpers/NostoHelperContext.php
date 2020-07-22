@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2019 Nosto Solutions Ltd
+ * 2013-2020 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,7 +19,7 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2019 Nosto Solutions Ltd
+ * @copyright 2013-2020 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
@@ -35,7 +35,7 @@ class NostoHelperContext
      * Runs a function in the scope of another shop's context and reverts back to the original
      * context after the the function invocation
      *
-     * @param $callable
+     * @param callable $callable
      * @param bool|int $languageId the language identifier. False means do not manipulate it
      * @param bool|int $shopId the shop identifier. False means do not manipulate it
      * @param bool|int $currencyId the currency id. False means do not manipulate it
@@ -55,6 +55,7 @@ class NostoHelperContext
 
         self::emulateContext($languageId, $shopId, $currencyId, $employeeId, $countryId);
         try {
+            // @phan-suppress-next-line PhanTypeVoidAssignment
             $retVal = $callable();
         } catch (\Exception $e) {
             NostoHelperLogger::log($e->getMessage());
