@@ -24,6 +24,7 @@
  */
 
 use Nosto\Model\Order\Buyer as NostoSDKOrderBuyer;
+use Country;
 
 class NostoOrderBuyer extends NostoSDKOrderBuyer
 {
@@ -59,7 +60,9 @@ class NostoOrderBuyer extends NostoSDKOrderBuyer
                         $nostoBuyer->setPhone($addressObject->phone);
                     }
                     $nostoBuyer->setPostcode($addressObject->postcode);
-                    $nostoBuyer->setCountry($addressObject->country);
+                    if (array_key_exists('id_country', $address)) {
+                        $nostoBuyer->setCountry(Country::getIsoById($address['id_country']));
+                    }
                     break;
                 }
             }
