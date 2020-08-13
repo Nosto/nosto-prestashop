@@ -186,10 +186,13 @@ jobs:
     ############################################################################
 
     - name: Build archive using composer
-      run: composer archive --format=zip --file=archive
+      run: |
+        composer install
+        export VERSION=$(cat nostotagging.php | grep "const PLUGIN_VERSION = " | cut -d= -f2 | tr "," " "| tr ";" " " | tr "\'" " " | xargs)
+        ./libs/bin/phing -Dversion=$VERSION
 
     - name: Archive built package
       uses: actions/upload-artifact@v1
       with:
-        name: composer-zip-archive
-        path: archive.zip
+        name: Nosto.-.Personalization.for.PrestaShop.zip
+        path: build/package/3.9.0-Nosto.-.Personalization.for.PrestaShop.zip
