@@ -185,14 +185,16 @@ jobs:
         composer dump-autoload --optimize
     ############################################################################
 
-    - name: Build archive using composer
+    - name: Build archive using Phing
+      id: phing-packaging
       run: |
         composer install
         export VERSION=$(cat nostotagging.php | grep "const PLUGIN_VERSION = " | cut -d= -f2 | tr "," " "| tr ";" " " | tr "\'" " " | xargs)
+        echo "::set-output name=VERSION::$VERSION"
         ./libs/bin/phing -Dversion=$VERSION
 
     - name: Archive built package
       uses: actions/upload-artifact@v1
       with:
-        name: Nosto.-.Personalization.for.PrestaShop.zip
-        path: build/package/3.9.0-Nosto.-.Personalization.for.PrestaShop.zip
+        name: ${{ steps.phing-packaging.outputs.VERSION }}-Nosto.-.Personalization.for.PrestaShop.zip
+        path: build/package/${{ steps.phing-packaging.outputs.VERSION }}-Nosto.-.Personalization.for.PrestaShop.zip
