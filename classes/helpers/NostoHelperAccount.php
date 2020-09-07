@@ -24,7 +24,7 @@
  */
 
 use Nosto\NostoException;
-use Nosto\Object\Signup\Account as NostoSDKAccount;
+use Nosto\Model\Signup\Account as NostoSDKAccount;
 use Nosto\Request\Api\Token as NostoSDKAPIToken;
 use Nosto\Types\Signup\AccountInterface as NostoSDKSignupAccountInterface;
 

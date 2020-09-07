@@ -42,7 +42,7 @@ class NostoTaggingOrderModuleFrontController extends NostoTaggingApiModuleFrontC
      */
     public function initContent()
     {
-        $collection = new Nosto\Object\Order\OrderCollection();
+        $collection = new Nosto\Model\Order\OrderCollection();
 
         $id = Tools::getValue(NostoTagging::ID);
         if (!empty($id)) {

@@ -64,11 +64,11 @@ abstract class NostoTaggingApiModuleFrontController extends ModuleFrontControlle
      * Only send the response if we can encrypt it, i.e. we have an shared encryption secret with
      * nosto.
      *
-     * @param Nosto\Object\AbstractCollection $collection the data collection to output as
+     * @param Nosto\Model\AbstractCollection $collection the data collection to output as
      *     encrypted response.
      * @throws NostoException
      */
-    public function encryptOutput(Nosto\Object\AbstractCollection $collection)
+    public function encryptOutput(Nosto\Model\AbstractCollection $collection)
     {
         $account = NostoHelperAccount::getAccount();
         if ($account && $account->isConnectedToNosto()) {

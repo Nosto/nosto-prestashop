@@ -24,8 +24,8 @@
  */
 
 use Nosto\NostoException;
-use Nosto\Object\ExchangeRate as NostoSDKExchangeRate;
-use Nosto\Object\ExchangeRateCollection as NostoSDKExchangeRateCollection;
+use Nosto\Model\ExchangeRate as NostoSDKExchangeRate;
+use Nosto\Model\ExchangeRateCollection as NostoSDKExchangeRateCollection;
 
 class NostoExchangeRates extends NostoSDKExchangeRateCollection
 {

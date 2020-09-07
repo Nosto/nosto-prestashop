@@ -23,7 +23,7 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use Nosto\Object\Product\Variation as NostoSDKVariation;
+use Nosto\Model\Product\Variation as NostoSDKVariation;
 
 class NostoVariation extends NostoSDKVariation
 {

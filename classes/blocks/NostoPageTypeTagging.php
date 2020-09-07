@@ -24,7 +24,7 @@
  */
 
 use \Nosto\NostoException;
-use \Nosto\Object\PageType as NostoSDKPageType;
+use \Nosto\Model\PageType as NostoSDKPageType;
 
 class NostoPageTypeTagging
 {

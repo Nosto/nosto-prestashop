@@ -24,7 +24,7 @@
  */
 
 use Nosto\NostoException;
-use Nosto\Object\AbstractCollection as NostoSDKAbstractCollection;
+use Nosto\Model\AbstractCollection as NostoSDKAbstractCollection;
 
 class NostoVariationKeyCollection extends NostoSDKAbstractCollection
 {

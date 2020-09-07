@@ -24,7 +24,7 @@
  */
 
 use Nosto\NostoException;
-use Nosto\Object\Notification as NostoSDKNotification;
+use Nosto\Model\Notification as NostoSDKNotification;
 
 class NostoCheckMulticurrencyNotification extends NostoNotification
 {

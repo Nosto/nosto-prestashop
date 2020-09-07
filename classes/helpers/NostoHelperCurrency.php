@@ -27,7 +27,7 @@
  */
 
 use Nosto\NostoException as NostoSDKException;
-use Nosto\Object\Format as NostoSDKCurrencyFormat;
+use Nosto\Model\Format as NostoSDKCurrencyFormat;
 use ICanBoogie\CLDR\Currency as CldrCurrency;
 
 /**

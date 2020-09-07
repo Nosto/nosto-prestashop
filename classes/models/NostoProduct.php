@@ -24,7 +24,7 @@
  */
 
 use Nosto\NostoException;
-use Nosto\Object\Product\Product as NostoSDKProduct;
+use Nosto\Model\Product\Product as NostoSDKProduct;
 
 class NostoProduct extends NostoSDKProduct
 {

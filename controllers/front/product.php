@@ -25,7 +25,7 @@
 
 require_once(dirname(__FILE__) . '/api.php');
 
-use Nosto\Object\Product\ProductCollection as NostoSDKProductCollection;
+use Nosto\Model\Product\ProductCollection as NostoSDKProductCollection;
 
 /**
  * Front controller for gathering all products from the shop and sending the meta-data to Nosto.

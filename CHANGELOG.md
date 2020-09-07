@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
+## 3.9.0
+- Upgrade Nosto-PHP-SDK to improve compatibility with Prestashop ps_checkout module
+- Update copyright headers
+- Update Github workflow and remove Jenkins
+- Use GraphQL to send orders
+
 ## 3.8.1
 - Update composer dependencies
 

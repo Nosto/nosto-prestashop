@@ -24,7 +24,7 @@
  */
 
 use Nosto\NostoException;
-use Nosto\Object\Product\Sku as NostoSDKSku;
+use Nosto\Model\Product\Sku as NostoSDKSku;
 
 class NostoSku extends NostoSDKSku
 {

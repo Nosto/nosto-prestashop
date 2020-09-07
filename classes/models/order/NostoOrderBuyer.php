@@ -23,7 +23,7 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use Nosto\Object\Order\Buyer as NostoSDKOrderBuyer;
+use Nosto\Model\Order\Buyer as NostoSDKOrderBuyer;
 
 class NostoOrderBuyer extends NostoSDKOrderBuyer
 {
@@ -60,7 +60,9 @@ class NostoOrderBuyer extends NostoSDKOrderBuyer
                         $nostoBuyer->setPhone($addressObject->phone);
                     }
                     $nostoBuyer->setPostcode($addressObject->postcode);
-                    $nostoBuyer->setCountry($addressObject->country);
+                    if (array_key_exists('id_country', $address)) {
+                        $nostoBuyer->setCountry(Country::getIsoById($address['id_country']));
+                    }
                     break;
                 }
             }
