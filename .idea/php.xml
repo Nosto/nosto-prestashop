@@ -54,6 +54,8 @@
       <path value="$PROJECT_DIR$/libs/phpseclib/phpseclib" />
       <path value="$PROJECT_DIR$/libs/symfony/polyfill-php80" />
       <path value="$PROJECT_DIR$/libs/prestashop/ps" />
+      <path value="$PROJECT_DIR$/libs/phpoption/phpoption" />
+      <path value="$PROJECT_DIR$/libs/symfony/deprecation-contracts" />
     </include_path>
   </component>
   <component name="PhpRuntimeConfiguration" default_stubs_path="$PROJECT_DIR$/.phan" />
