@@ -205,15 +205,11 @@ class NostoHelperCurrency
      * @suppress PhanTypeMismatchArgument
      * @suppress PhanDeprecatedFunction
      * @throws PrestaShopException
-     * @noinspection PhpDeprecationInspection
      */
     private static function createWithCldr(array $currency)
     {
-        /** @noinspection PhpVoidFunctionResultUsedInspection */
         $cldr = Tools::getCldr(null, NostoHelperContext::getLanguage()->language_code);
-        /** @noinspection PhpUndefinedMethodInspection */
         $cldrCurrency = new CldrCurrency($cldr->getRepository(), $currency[self::ISO_CODE_FIELD]);
-        /** @noinspection PhpUndefinedMethodInspection */
         $localizedCurrency = $cldrCurrency->localize($cldr->getCulture());
         $pattern = $localizedCurrency->locale->numbers->currency_formats[self::STANDARD_FIELD];
         $symbols = $localizedCurrency->locale->numbers->symbols;
@@ -239,7 +235,6 @@ class NostoHelperCurrency
      * @param $currencyId
      * @return int price decimal
      * @suppress PhanDeprecatedProperty
-     * @noinspection PhpDeprecationInspection
      */
     public static function getDecimalWithCurrency($currencyId)
     {

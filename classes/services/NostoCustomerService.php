@@ -24,6 +24,7 @@
  */
 
 use Nosto\Model\Signup\Account as NostoSDKAccount;
+use Nosto\NostoException;
 use Nosto\Operation\MarketingPermission as NostoSDKMarketingPermission;
 use Nosto\Request\Api\Token as NostoSDKToken;
 
@@ -87,6 +88,8 @@ class NostoCustomerService extends AbstractNostoService
      * @param Customer $customer
      * @param NostoSDKAccount $account
      * @return bool
+     * @throws NostoException
+     * @throws NostoException
      */
     private static function updateMarketingPermissionInCurrentContext(Customer $customer, NostoSDKAccount $account)
     {

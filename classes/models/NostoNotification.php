@@ -53,7 +53,6 @@ class NostoNotification extends NostoSDKNotification
     }
 
     /** @noinspection PhpUnused
-     * @noinspection PhpUnhandledExceptionInspection
      */
     public function getFormattedMessage()
     {
