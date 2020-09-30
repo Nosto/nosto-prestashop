@@ -26,6 +26,7 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
+use Nosto\NostoException;
 use Nosto\NostoException as NostoSDKException;
 use Nosto\Model\Format as NostoSDKCurrencyFormat;
 use ICanBoogie\CLDR\Currency as CldrCurrency;
@@ -49,6 +50,8 @@ class NostoHelperCurrency
     const FORMAT_FIELD = 'format';
     const STANDARD_FIELD = 'standard';
     const ISO_CODE_FIELD = 'iso_code';
+
+    const DEFAULT_SYMBOL_FIELD = 'latn';
 
     /**
      * @param $id
@@ -129,14 +132,23 @@ class NostoHelperCurrency
      */
     public static function getNostoCurrency(array $currency)
     {
-        if (Context::getContext() instanceof Context
-            && (_PS_VERSION_ >= '1.7')
-        ) {
-            // In Prestashop 1.7 we use the CLDR
-            try {
-                return self::createWithCldr($currency);
-            } catch (Exception $e) {
-                NostoHelperLogger::error($e);
+        $context = Context::getContext();
+        if ($context instanceof Context) {
+            // In Prestashop 1.7.0 - 1.7.5 we use the CLDR
+            if (
+                version_compare(_PS_VERSION_, '1.7', '>')
+                && version_compare(_PS_VERSION_,  '1.7.6', '<')) {
+                try {
+                    return self::createWithCldr($currency);
+                } catch (Exception $e) {
+                    NostoHelperLogger::error($e);
+                }
+            } elseif(version_compare(_PS_VERSION_,  '1.7.6', '>=')) {
+                try {
+                    return self::createWithContextLocale($context, $currency);
+                } catch (Exception $e) {
+                    NostoHelperLogger::error($e);
+                }
             }
         }
         if (empty($currency[self::FORMAT_FIELD])) {
@@ -230,6 +242,40 @@ class NostoHelperCurrency
         );
     }
 
+    /**
+     * @param Context $context
+     * @param array $currency
+     * @return NostoSDKCurrencyFormat
+     * @throws NostoSDKException
+     * @throws \PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException
+     */
+    private static function createWithContextLocale(Context $context, array $currency) {
+        $locale = $context->getCurrentLocale();
+        $priceSpec = $locale->getPriceSpecification($currency[self::ISO_CODE_FIELD]);
+        $symbols = $priceSpec->getAllSymbols();
+        if (!isset($symbols[self::DEFAULT_SYMBOL_FIELD])) {
+            throw new NostoException(
+                sprintf(
+                    'Could not find default %s symbol to use in currency formatting',
+                    self::DEFAULT_SYMBOL_FIELD
+                )
+            );
+        }
+        $numberSymbolList = $symbols[self::DEFAULT_SYMBOL_FIELD];
+        $symbolPos = Tools::strpos($priceSpec->getPositivePattern(), self::CURRENCY_SYMBOL_MARKER);
+        $symbolPosition = $symbolPos === 0;
+        $currencySymbol = $priceSpec->getCurrencySymbol();
+        $decimalSymbol = $numberSymbolList->getDecimal();
+        $groupSymbol = $numberSymbolList->getGroup();
+        $pricePrecision = self::getDecimalWithCurrency($currency['id_currency']);
+        return new NostoSDKCurrencyFormat(
+            $symbolPosition,
+            $currencySymbol,
+            $decimalSymbol,
+            $groupSymbol,
+            $pricePrecision
+        );
+    }
     /**
      * Get price decimal with currency
      * @param $currencyId
