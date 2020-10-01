@@ -228,13 +228,13 @@ class NostoHelperCurrency
         $symbolPos = Tools::strpos($pattern, self::CURRENCY_SYMBOL_MARKER);
 
         // Check if the currency symbol is before or after the amount.
-        $symbolPosition = $symbolPos === 0;
+        $isCurrencyBeforeAmount = $symbolPos === 0;
         $groupSymbol = isset($symbols[self::GROUP_FIELD]) ? $symbols[self::GROUP_FIELD] : ',';
         $decimalSymbol = isset($symbols[self::DECIMAL_SYMBOL_FIELD]) ? $symbols[self::DECIMAL_SYMBOL_FIELD] : ',';
         $pricePrecision = self::getDecimalWithCurrency($currency['id_currency']);
 
         return new NostoSDKCurrencyFormat(
-            $symbolPosition,
+            $isCurrencyBeforeAmount,
             $currency[self::SYMBOL_FIELD],
             $decimalSymbol,
             $groupSymbol,
@@ -263,13 +263,13 @@ class NostoHelperCurrency
         }
         $numberSymbolList = $symbols[self::DEFAULT_SYMBOL_FIELD];
         $symbolPos = Tools::strpos($priceSpec->getPositivePattern(), self::CURRENCY_SYMBOL_MARKER);
-        $symbolPosition = $symbolPos === 0;
+        $isCurrencyBeforeAmount = $symbolPos === 0;
         $currencySymbol = $priceSpec->getCurrencySymbol();
         $decimalSymbol = $numberSymbolList->getDecimal();
         $groupSymbol = $numberSymbolList->getGroup();
         $pricePrecision = self::getDecimalWithCurrency($currency['id_currency']);
         return new NostoSDKCurrencyFormat(
-            $symbolPosition,
+            $isCurrencyBeforeAmount,
             $currencySymbol,
             $decimalSymbol,
             $groupSymbol,
