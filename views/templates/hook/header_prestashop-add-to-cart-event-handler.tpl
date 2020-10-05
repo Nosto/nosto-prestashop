@@ -24,8 +24,6 @@
 
 <!--suppress JSUnresolvedFunction, JSUnresolvedVariable -->
 <script type="text/javascript">
-    import * as prestashop from "../../../libs/prestashop/ps/admin-dev/filemanager/js/imagesloaded.pkgd.min";
-
     nostojs(function () {
         window.Nosto = window.Nosto || {};
         Nosto.reloadCartTagging = function () {
