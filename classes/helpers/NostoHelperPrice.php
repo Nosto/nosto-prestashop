@@ -188,6 +188,7 @@ class NostoHelperPrice
             $currency = NostoHelperContext::getCurrency();
         }
         //if the decimals is disabled for this currency, then the precision should be 0
+        /** @noinspection PhpDeprecationInspection */
         /** @phan-suppress-next-line  PhanDeprecatedProperty */
         $currencyDecimalsEnabled = $currency ? (int)$currency->decimals : 1;
 

@@ -30,6 +30,7 @@ use Nosto\NostoException;
 use Nosto\NostoException as NostoSDKException;
 use Nosto\Model\Format as NostoSDKCurrencyFormat;
 use ICanBoogie\CLDR\Currency as CldrCurrency;
+use PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException;
 
 /**
  * Helper class for currency related tasks.
@@ -220,8 +221,12 @@ class NostoHelperCurrency
      */
     private static function createWithCldr(array $currency)
     {
+        /** @noinspection PhpDeprecationInspection */
+        /** @noinspection PhpVoidFunctionResultUsedInspection */
         $cldr = Tools::getCldr(null, NostoHelperContext::getLanguage()->language_code);
+        /** @noinspection PhpUndefinedMethodInspection */
         $cldrCurrency = new CldrCurrency($cldr->getRepository(), $currency[self::ISO_CODE_FIELD]);
+        /** @noinspection PhpUndefinedMethodInspection */
         $localizedCurrency = $cldrCurrency->localize($cldr->getCulture());
         $pattern = $localizedCurrency->locale->numbers->currency_formats[self::STANDARD_FIELD];
         $symbols = $localizedCurrency->locale->numbers->symbols;
@@ -247,7 +252,7 @@ class NostoHelperCurrency
      * @param array $currency
      * @return NostoSDKCurrencyFormat
      * @throws NostoSDKException
-     * @throws \PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException
+     * @throws LocalizationException
      */
     private static function createWithContextLocale(Context $context, array $currency) {
         $locale = $context->getCurrentLocale();
@@ -287,6 +292,7 @@ class NostoHelperCurrency
         $currencyDecimalsEnabled = 1;
         $currencyObject = self::loadCurrency($currencyId);
         if (Validate::isLoadedObject($currencyObject)) {
+            /** @noinspection PhpDeprecationInspection */
             $currencyDecimalsEnabled = $currencyObject->decimals;
         }
 

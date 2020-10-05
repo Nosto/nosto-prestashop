@@ -52,7 +52,9 @@ class NostoNotification extends NostoSDKNotification
         $this->addMessageAttribute($language->name);
     }
 
-    /** @noinspection PhpUnused
+    /**
+     * @throws Exception
+     * @noinspection PhpUnused
      */
     public function getFormattedMessage()
     {
