@@ -28,7 +28,7 @@ $(document).ready(function () {
     // noinspection JSUnresolvedFunction
     $("#nostotagging_language").change(function () {
       // noinspection JSUnresolvedFunction
-        const langId = parseInt($(this).val()),
+        var langId = parseInt($(this).val()),
         $currentLanguage = $('#nostotagging_current_language'),
         $form = $('form.nostotagging');
       // noinspection JSUnresolvedFunction

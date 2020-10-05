@@ -26,12 +26,12 @@
 <script type="text/javascript">
     {literal}
     if (typeof Nosto === "undefined") {
-        const Nosto = {};
+        var Nosto = {};
     }
     {/literal}
     Nosto.addProductToCart = function (productId, element, quantity) {
         quantity = quantity || 1;
-      const productData = {
+      var productData = {
         "productId": productId
       };
       Nosto.addSkuToCart(productData, element, quantity);
@@ -41,7 +41,7 @@
     Nosto.addSkuToCart = function (product, element, quantity) {
         quantity = quantity || 1;
         if (typeof nostojs !== 'undefined' && typeof element === 'object') {
-          const slotId = Nosto.resolveContextSlotId(element);
+          var slotId = Nosto.resolveContextSlotId(element);
           if (slotId) {
                 nostojs(function (api) {
                     api.recommendedProductAddedToCart(product.productId, slotId);
@@ -61,7 +61,7 @@
         }
 
         //if ajax way failed, submit a form to add it to cart
-      const hiddenFields = {
+      var hiddenFields = {
         "qty": quantity,
         "controller": "cart",
         "id_product": product.productId,
@@ -74,13 +74,13 @@
 
     Nosto.postAddToCartForm = function (data, url) {
 
-      const form = document.createElement("form");
+      var form = document.createElement("form");
       form.setAttribute("method", "post");
         form.setAttribute("action", url);
 
-        for (let key in data) {
+        for (var key in data) {
             if (data.hasOwnProperty(key)) {
-              const hiddenField = document.createElement("input");
+              var hiddenField = document.createElement("input");
               hiddenField.setAttribute("type", "hidden");
                 hiddenField.setAttribute("name", key);
                 hiddenField.setAttribute("value", data[key]);
@@ -96,9 +96,9 @@
         if (!element) {
             return false;
         }
-      const m = 20;
-      let n = 0;
-      let e = element;
+      var m = 20;
+      var n = 0;
+      var e = element;
       while (typeof e.parentElement !== "undefined" && e.parentElement) {
             ++n;
             e = e.parentElement;

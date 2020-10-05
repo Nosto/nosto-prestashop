@@ -23,22 +23,22 @@
 *}
 <!--suppress JSUnresolvedFunction -->
 <script type="text/javascript">
-  let nostoRecosLoaded = false;
+  var nostoRecosLoaded = false;
   // noinspection JSUnresolvedFunction
   nostojs(function(api){
         api.listen('postrender', function () {
             nostoRecosLoaded = true;
         });
-      let maxTriesForJquery = 60;
-      const waitForJQuery = function () {
+      var maxTriesForJquery = 60;
+      var waitForJQuery = function () {
         if (window.jQuery) {
-          const placeSlots = function () {
-            const $center_column = jQuery('#center_column, #content-wrapper');
-            const $hidden_elements = jQuery('.hidden_nosto_element');
-            let slotsMoved = false;
+          var placeSlots = function () {
+            var $center_column = jQuery('#center_column, #content-wrapper');
+            var $hidden_elements = jQuery('.hidden_nosto_element');
+            var slotsMoved = false;
             if ($center_column.length && $hidden_elements.length) {
               $hidden_elements.each(function () {
-                const $slot = jQuery(this), nostoId = $slot.data('nosto-id');
+                var $slot = jQuery(this), nostoId = $slot.data('nosto-id');
                 if (nostoId && !jQuery('#' + nostoId).length) {
                   $slot.attr('id', nostoId);
                   $slot.attr('class', 'nosto_element');

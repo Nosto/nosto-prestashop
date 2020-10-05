@@ -51,8 +51,8 @@
             }
         };
 
-      let maxTry = 60;
-      const waitForJQuery = function () {
+      var maxTry = 60;
+      var waitForJQuery = function () {
         if (window.jQuery) {
           //On prestashop 1.7+, use prestashop built-in js object
           if (window.prestashop && prestashop._events && prestashop._events.updateCart) {

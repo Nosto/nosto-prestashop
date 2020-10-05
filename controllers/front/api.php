@@ -24,6 +24,7 @@
  */
 
 use Nosto\Helper\ExportHelper as NostoSDKExportHelper;
+use Nosto\Model\AbstractCollection;
 use Nosto\NostoException;
 
 /**
@@ -64,11 +65,11 @@ abstract class NostoTaggingApiModuleFrontController extends ModuleFrontControlle
      * Only send the response if we can encrypt it, i.e. we have an shared encryption secret with
      * nosto.
      *
-     * @param Nosto\Model\AbstractCollection $collection the data collection to output as
+     * @param AbstractCollection $collection the data collection to output as
      *     encrypted response.
      * @throws NostoException
      */
-    public function encryptOutput(Nosto\Model\AbstractCollection $collection)
+    public function encryptOutput(AbstractCollection $collection)
     {
         $account = NostoHelperAccount::getAccount();
         if ($account && $account->isConnectedToNosto()) {

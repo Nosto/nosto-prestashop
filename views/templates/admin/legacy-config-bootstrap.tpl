@@ -241,15 +241,15 @@
         $(document).ready(function () {
             iFrameResize({heightCalculationMethod: "bodyScroll"});
             function receiveMessage(event) {
-              const originRegexp = new RegExp("{/literal}{$iframe_origin|escape:'htmlall':'UTF-8'}{literal}");
+              var originRegexp = new RegExp("{/literal}{$iframe_origin|escape:'htmlall':'UTF-8'}{literal}");
               if (!originRegexp.test(event.origin)) {
                     return;
                 }
                 if (("" + event.data).substr(0, 7) !== "[Nosto]") {
                     return;
                 }
-              const json = ("" + event.data).substr(7);
-              const data = JSON.parse(json);
+              var json = ("" + event.data).substr(7);
+              var data = JSON.parse(json);
               if (typeof data === "object" && data.type) {
                     $('#nostotagging_account_action').val(data.type);
                     if (data.params) {
@@ -265,7 +265,7 @@
                         }
                     }
 
-                  let action = null;
+                  var action = null;
                   if (data.type === 'newAccount') {
                         action = "{/literal}{$NostoCreateAccountUrl|escape:'javascript'}{literal}";
                     } else if (data.type === 'connectAccount' || data.type === 'syncAccount') {
@@ -289,12 +289,12 @@
             }
 
             window.Nosto.deleteNostoAccount = function () {
-              const action = "{/literal}{$NostoDeleteAccountUrl|escape:'javascript'}{literal}";
+              var action = "{/literal}{$NostoDeleteAccountUrl|escape:'javascript'}{literal}";
               submitAction(action);
             };
 
             window.Nosto.updateExchangeRates = function () {
-              const action = "{/literal}{$NostoUpdateExchangeRateUrl|escape:'javascript'}{literal}";
+              var action = "{/literal}{$NostoUpdateExchangeRateUrl|escape:'javascript'}{literal}";
               submitAction(action);
             };
 
@@ -318,7 +318,7 @@
             Nosto.checkMultiCurrencyVariationConflict();
 
             window.Nosto.saveAdvancedSettings = function () {
-              const action = "{/literal}{$NostoAdvancedSettingUrl|escape:'javascript'}{literal}";
+              var action = "{/literal}{$NostoAdvancedSettingUrl|escape:'javascript'}{literal}";
               submitAction(action);
             };
 
@@ -332,8 +332,8 @@
             window.addEventListener("message", receiveMessage, false);
 
             window.Nosto.toggleSettings = function() {
-                const hidden = $('.panel-collapsed#nosto-settings-panel');
-                const shown = $('.panel-showing#nosto-settings-panel');
+                var hidden = $('.panel-collapsed#nosto-settings-panel');
+                var shown = $('.panel-showing#nosto-settings-panel');
                 hidden.slideDown().removeClass('panel-collapsed').addClass('panel-showing');
                 shown.slideUp().removeClass('panel-showing').addClass('panel-collapsed');
 

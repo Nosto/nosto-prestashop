@@ -23,5 +23,5 @@
 *}
 <script type="text/javascript">
 {literal}(function(){
-  const name = "nostojs";window[name]=window[name]||function(cb){(window[name].q=window[name].q||[]).push(cb);};})();{/literal}
+  var name = "nostojs";window[name]=window[name]||function(cb){(window[name].q=window[name].q||[]).push(cb);};})();{/literal}
 </script>
