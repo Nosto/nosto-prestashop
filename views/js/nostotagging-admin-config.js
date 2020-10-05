@@ -27,11 +27,11 @@ $(document).ready(function () {
     // Change event handler for "Manage Accounts:".
     // noinspection JSUnresolvedFunction
     $("#nostotagging_language").change(function () {
-      // noinspection JSUnresolvedFunction
+        // noinspection JSUnresolvedFunction
         var langId = parseInt($(this).val()),
-        $currentLanguage = $('#nostotagging_current_language'),
-        $form = $('form.nostotagging');
-      // noinspection JSUnresolvedFunction
+            $currentLanguage = $('#nostotagging_current_language'),
+            $form = $('form.nostotagging');
+        // noinspection JSUnresolvedFunction
         $currentLanguage.val(langId);
         $form.submit();
     });
@@ -48,5 +48,5 @@ $(document).ready(function () {
 
     // Init the iframe re-sizer.
     // noinspection JSUnresolvedFunction
-    $('#nostotagging_iframe').iFrameResize({heightCalculationMethod : 'bodyScroll'});
+    $('#nostotagging_iframe').iFrameResize({heightCalculationMethod: 'bodyScroll'});
 });

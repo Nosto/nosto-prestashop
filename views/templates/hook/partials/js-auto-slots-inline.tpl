@@ -23,46 +23,46 @@
 *}
 <!--suppress JSUnresolvedFunction -->
 <script type="text/javascript">
-  var nostoRecosLoaded = false;
-  // noinspection JSUnresolvedFunction
-  nostojs(function(api){
+    var nostoRecosLoaded = false;
+    // noinspection JSUnresolvedFunction
+    nostojs(function (api) {
         api.listen('postrender', function () {
             nostoRecosLoaded = true;
         });
-      var maxTriesForJquery = 60;
-      var waitForJQuery = function () {
-        if (window.jQuery) {
-          var placeSlots = function () {
-            var $center_column = jQuery('#center_column, #content-wrapper');
-            var $hidden_elements = jQuery('.hidden_nosto_element');
-            var slotsMoved = false;
-            if ($center_column.length && $hidden_elements.length) {
-              $hidden_elements.each(function () {
-                var $slot = jQuery(this), nostoId = $slot.data('nosto-id');
-                if (nostoId && !jQuery('#' + nostoId).length) {
-                  $slot.attr('id', nostoId);
-                  $slot.attr('class', 'nosto_element');
-                  if ($slot.attr('nosto_insert_position') === 'prepend') {
-                    $slot.prependTo($center_column);
-                  } else {
-                    $slot.appendTo($center_column);
-                  }
-                  slotsMoved = true;
-                }
-              });
-              if (slotsMoved && nostoRecosLoaded) {
-                api.loadRecommendations();
-              }
+        var maxTriesForJquery = 60;
+        var waitForJQuery = function () {
+            if (window.jQuery) {
+                var placeSlots = function () {
+                    var $center_column = jQuery('#center_column, #content-wrapper');
+                    var $hidden_elements = jQuery('.hidden_nosto_element');
+                    var slotsMoved = false;
+                    if ($center_column.length && $hidden_elements.length) {
+                        $hidden_elements.each(function () {
+                            var $slot = jQuery(this), nostoId = $slot.data('nosto-id');
+                            if (nostoId && !jQuery('#' + nostoId).length) {
+                                $slot.attr('id', nostoId);
+                                $slot.attr('class', 'nosto_element');
+                                if ($slot.attr('nosto_insert_position') === 'prepend') {
+                                    $slot.prependTo($center_column);
+                                } else {
+                                    $slot.appendTo($center_column);
+                                }
+                                slotsMoved = true;
+                            }
+                        });
+                        if (slotsMoved && nostoRecosLoaded) {
+                            api.loadRecommendations();
+                        }
+                    }
+                };
+                jQuery(document).ready(placeSlots);
+            } else if (maxTriesForJquery > 0) {
+                //jQuery is loaded to the page after nosto scripts on prestashop 1.7
+                //wait for it
+                maxTriesForJquery--;
+                setTimeout(waitForJQuery, 500);
             }
-          };
-          jQuery(document).ready(placeSlots);
-        } else if (maxTriesForJquery > 0) {
-          //jQuery is loaded to the page after nosto scripts on prestashop 1.7
-          //wait for it
-          maxTriesForJquery--;
-          setTimeout(waitForJQuery, 500);
-        }
-      };
-      waitForJQuery();
+        };
+        waitForJQuery();
     });
 </script>

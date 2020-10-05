@@ -31,18 +31,18 @@
     {/literal}
     Nosto.addProductToCart = function (productId, element, quantity) {
         quantity = quantity || 1;
-      var productData = {
-        "productId": productId
-      };
-      Nosto.addSkuToCart(productData, element, quantity);
+        var productData = {
+            "productId": productId
+        };
+        Nosto.addSkuToCart(productData, element, quantity);
     };
 
     //Product object must have fields productId and skuId productId: 123, skuId: 321
     Nosto.addSkuToCart = function (product, element, quantity) {
         quantity = quantity || 1;
         if (typeof nostojs !== 'undefined' && typeof element === 'object') {
-          var slotId = Nosto.resolveContextSlotId(element);
-          if (slotId) {
+            var slotId = Nosto.resolveContextSlotId(element);
+            if (slotId) {
                 nostojs(function (api) {
                     api.recommendedProductAddedToCart(product.productId, slotId);
                 });
@@ -61,27 +61,27 @@
         }
 
         //if ajax way failed, submit a form to add it to cart
-      var hiddenFields = {
-        "qty": quantity,
-        "controller": "cart",
-        "id_product": product.productId,
-        "ipa": product.skuId,
-        "add": 1,
-        "token": "{$static_token|escape:"javascript":"UTF-8"}"
-      };
-      Nosto.postAddToCartForm(hiddenFields, "{$add_to_cart_url|escape:"javascript":"UTF-8"}");
+        var hiddenFields = {
+            "qty": quantity,
+            "controller": "cart",
+            "id_product": product.productId,
+            "ipa": product.skuId,
+            "add": 1,
+            "token": "{$static_token|escape:"javascript":"UTF-8"}"
+        };
+        Nosto.postAddToCartForm(hiddenFields, "{$add_to_cart_url|escape:"javascript":"UTF-8"}");
     };
 
     Nosto.postAddToCartForm = function (data, url) {
 
-      var form = document.createElement("form");
-      form.setAttribute("method", "post");
+        var form = document.createElement("form");
+        form.setAttribute("method", "post");
         form.setAttribute("action", url);
 
         for (var key in data) {
             if (data.hasOwnProperty(key)) {
-              var hiddenField = document.createElement("input");
-              hiddenField.setAttribute("type", "hidden");
+                var hiddenField = document.createElement("input");
+                hiddenField.setAttribute("type", "hidden");
                 hiddenField.setAttribute("name", key);
                 hiddenField.setAttribute("value", data[key]);
                 form.appendChild(hiddenField);
@@ -96,10 +96,10 @@
         if (!element) {
             return false;
         }
-      var m = 20;
-      var n = 0;
-      var e = element;
-      while (typeof e.parentElement !== "undefined" && e.parentElement) {
+        var m = 20;
+        var n = 0;
+        var e = element;
+        while (typeof e.parentElement !== "undefined" && e.parentElement) {
             ++n;
             e = e.parentElement;
             if (e.getAttribute('class') === 'nosto_element' && e.getAttribute('id')) {
