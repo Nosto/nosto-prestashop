@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpDeprecationInspection */
 /**
  * 2013-2020 Nosto Solutions Ltd
  *
@@ -29,9 +29,6 @@
  */
 class NostoHelperFlash
 {
-    const TYPE_SUCCESS = 'success';
-    const TYPE_ERROR = 'error';
-
     /**
      * Adds a new flash message to the users cookie.
      *

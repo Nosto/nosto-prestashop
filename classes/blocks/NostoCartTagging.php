@@ -28,6 +28,7 @@ class NostoCartTagging
     /**
      * Renders the cart tagging by checking the cart contents
      * @return string|null the tagging
+     * @throws PrestaShopException
      */
     public static function get()
     {

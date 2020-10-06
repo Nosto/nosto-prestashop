@@ -28,6 +28,7 @@ class NostoCustomerTagging
     /**
      * Renders the customer tagging by checking if the customer if currently logged in
      * @return string|null the tagging
+     * @throws PrestaShopException
      */
     public static function get()
     {

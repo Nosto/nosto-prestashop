@@ -24,6 +24,7 @@
  */
 
 use Nosto\Model\Signup\Account as NostoSDKAccount;
+use Nosto\NostoException;
 use Nosto\Operation\MarketingPermission as NostoSDKMarketingPermission;
 use Nosto\Request\Api\Token as NostoSDKToken;
 
@@ -59,7 +60,7 @@ class NostoCustomerService extends AbstractNostoService
                         $updatedAccounts[$account->getName()] =
                             self::updateMarketingPermissionInCurrentContext($customer, $account);
                     }
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     NostoHelperLogger::error($e);
                 }
             }
@@ -74,7 +75,7 @@ class NostoCustomerService extends AbstractNostoService
                 $updatedAccounts[$account->getName()] =
                     self::updateMarketingPermissionInCurrentContext($customer, $account);
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             NostoHelperLogger::error($e);
         }
         return $this->isAllUpdated($updatedAccounts);
@@ -87,6 +88,8 @@ class NostoCustomerService extends AbstractNostoService
      * @param Customer $customer
      * @param NostoSDKAccount $account
      * @return bool
+     * @throws NostoException
+     * @throws NostoException
      */
     private static function updateMarketingPermissionInCurrentContext(Customer $customer, NostoSDKAccount $account)
     {

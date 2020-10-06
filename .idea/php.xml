@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="MessDetector">
+    <phpmd_settings>
+      <MessDetectorConfiguration tool_path="$PROJECT_DIR$/libs/bin/phpmd" />
+    </phpmd_settings>
+  </component>
+  <component name="PhpCodeSniffer">
+    <phpcs_settings>
+      <PhpCSConfiguration beautifier_path="$PROJECT_DIR$/libs/bin/phpcbf" standards="MySource;PEAR;PHPCompatibility;PSR1;PSR12;PSR2;Squiz;Zend" tool_path="$PROJECT_DIR$/libs/bin/phpcs" />
+    </phpcs_settings>
+  </component>
+  <component name="PhpIncludePathManager">
+    <include_path>
+      <path value="$PROJECT_DIR$/libs/psr/container" />
+      <path value="$PROJECT_DIR$/libs/psr/log" />
+      <path value="$PROJECT_DIR$/libs/webmozart/assert" />
+      <path value="$PROJECT_DIR$/libs/vlucas/phpdotenv" />
+      <path value="$PROJECT_DIR$/libs/phpunit/php-timer" />
+      <path value="$PROJECT_DIR$/libs/felixfbecker/advanced-json-rpc" />
+      <path value="$PROJECT_DIR$/libs/mridang/pmd-annotations" />
+      <path value="$PROJECT_DIR$/libs/sebastian/version" />
+      <path value="$PROJECT_DIR$/libs/sebastian/finder-facade" />
+      <path value="$PROJECT_DIR$/libs/netresearch/jsonmapper" />
+      <path value="$PROJECT_DIR$/libs/microsoft/tolerant-php-parser" />
+      <path value="$PROJECT_DIR$/libs/sebastian/phpcpd" />
+      <path value="$PROJECT_DIR$/libs/pdepend/pdepend" />
+      <path value="$PROJECT_DIR$/libs/phpmd/phpmd" />
+      <path value="$PROJECT_DIR$/libs/squizlabs/php_codesniffer" />
+      <path value="$PROJECT_DIR$/libs/staabm/annotate-pull-request-from-checkstyle" />
+      <path value="$PROJECT_DIR$/libs/phan/phan" />
+      <path value="$PROJECT_DIR$/libs/phing/phing" />
+      <path value="$PROJECT_DIR$/libs/symfony/polyfill-mbstring" />
+      <path value="$PROJECT_DIR$/libs/composer" />
+      <path value="$PROJECT_DIR$/libs/phpdocumentor/type-resolver" />
+      <path value="$PROJECT_DIR$/libs/symfony/polyfill-php73" />
+      <path value="$PROJECT_DIR$/libs/symfony/console" />
+      <path value="$PROJECT_DIR$/libs/symfony/filesystem" />
+      <path value="$PROJECT_DIR$/libs/symfony/dependency-injection" />
+      <path value="$PROJECT_DIR$/libs/wimg/php-compatibility" />
+      <path value="$PROJECT_DIR$/libs/symfony/config" />
+      <path value="$PROJECT_DIR$/libs/phpdocumentor/reflection-common" />
+      <path value="$PROJECT_DIR$/libs/phpdocumentor/reflection-docblock" />
+      <path value="$PROJECT_DIR$/libs/symfony/polyfill-php72" />
+      <path value="$PROJECT_DIR$/libs/icanboogie/common" />
+      <path value="$PROJECT_DIR$/libs/icanboogie/accessor" />
+      <path value="$PROJECT_DIR$/libs/symfony/finder" />
+      <path value="$PROJECT_DIR$/libs/symfony/polyfill-ctype" />
+      <path value="$PROJECT_DIR$/libs/symfony/service-contracts" />
+      <path value="$PROJECT_DIR$/libs/theseer/fdomdocument" />
+      <path value="$PROJECT_DIR$/libs/nosto/php-sdk" />
+      <path value="$PROJECT_DIR$/libs/sabre/event" />
+      <path value="$PROJECT_DIR$/libs/icanboogie/cldr" />
+      <path value="$PROJECT_DIR$/libs/phpseclib/phpseclib" />
+      <path value="$PROJECT_DIR$/libs/symfony/polyfill-php80" />
+      <path value="$PROJECT_DIR$/libs/prestashop/ps" />
+      <path value="$PROJECT_DIR$/libs/phpoption/phpoption" />
+      <path value="$PROJECT_DIR$/libs/symfony/deprecation-contracts" />
+    </include_path>
+  </component>
+  <component name="PhpRuntimeConfiguration" default_stubs_path="$PROJECT_DIR$/.phan" />
+  <component name="PhpUnit">
+    <phpunit_settings>
+      <PhpUnitSettings custom_loader_path="$PROJECT_DIR$/libs/autoload.php" />
+    </phpunit_settings>
+  </component>
+</project>

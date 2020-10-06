@@ -37,6 +37,7 @@ class NostoCurrentVariation extends NostoSDKMarkupableString
         parent::__construct($variationId, 'nosto_variation');
     }
 
+    /** @noinspection PhpUnhandledExceptionInspection */
     public static function loadData()
     {
         $nostoVariation = null;
@@ -79,10 +80,12 @@ class NostoCurrentVariation extends NostoSDKMarkupableString
 
             return $nostoVariation;
         }
+        return null;
     }
 
     /**
      * @return mixed
+     * @noinspection PhpUnused
      */
     public function getVariationId()
     {

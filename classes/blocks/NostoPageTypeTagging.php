@@ -23,6 +23,7 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
+use \Nosto\NostoException;
 use \Nosto\Model\PageType as NostoSDKPageType;
 
 class NostoPageTypeTagging
@@ -43,6 +44,7 @@ class NostoPageTypeTagging
      * Renders the page-type tagging by checking the current controller's name against a list
      * of pre-defined page type and controller-name mappings
      * @return string the tagging
+     * @throws NostoException
      */
     public static function get()
     {

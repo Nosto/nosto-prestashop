@@ -29,6 +29,8 @@ abstract class NostoBaseController extends ModuleAdminController
      * @inheritdoc
      *
      * @suppress PhanDeprecatedFunction
+     * @throws PrestaShopException
+     * @noinspection PhpUnused
      */
     public function initContent()
     {
@@ -43,6 +45,7 @@ abstract class NostoBaseController extends ModuleAdminController
             $this->redirectToAdmin($handlingLanguage['id_lang']);
             return;
         } elseif ($handlingLanguage['id_lang'] != $this->getLanguageId()) {
+            /** @noinspection PhpDeprecationInspection */
             NostoHelperFlash::add('error', $this->l('Language cannot be empty.'));
             $this->redirectToAdmin($handlingLanguage['id_lang']);
             return;
@@ -77,7 +80,9 @@ abstract class NostoBaseController extends ModuleAdminController
      */
     protected function redirectToAdmin($languageId)
     {
+        /** @noinspection PhpDeprecationInspection */
         $tabId = (int)Tab::getIdFromClassName('AdminModules');
+        /** @noinspection PhpUndefinedFieldInspection */
         $employeeId = (int)$this->context->cookie->id_employee;
         $token = Tools::getAdminToken('AdminModules' . $tabId . $employeeId);
         Tools::redirectAdmin(

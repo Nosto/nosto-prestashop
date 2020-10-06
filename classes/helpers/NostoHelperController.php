@@ -80,7 +80,7 @@ class NostoHelperController
         if ($object instanceof $klass === false && $id !== null) {
             try {
                 $reflectionMethod = new ReflectionMethod($klass, '__construct');
-            } catch (\ReflectionException $e) {
+            } catch (ReflectionException $e) {
                 NostoHelperLogger::error($e);
                 return null;
             }

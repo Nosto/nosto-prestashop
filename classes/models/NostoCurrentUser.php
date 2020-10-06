@@ -31,6 +31,7 @@ class NostoCurrentUser extends NostoSDKUser
      * Loads the meta data from the given context.
      *
      * @return NostoCurrentUser the current user object
+     * @throws PrestaShopException
      */
     public static function loadData()
     {

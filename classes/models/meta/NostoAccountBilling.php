@@ -31,6 +31,7 @@ class NostoAccountBilling extends NostoSDKSignupBilling
      * Loads the meta data from the given context.
      *
      * @return NostoAccountBilling the billing details object
+     * @throws PrestaShopException
      */
     public static function loadData()
     {

@@ -1,4 +1,7 @@
-<?php
+<?php /** @noinspection PhpUnused */
+/** @noinspection PhpUnused */
+/** @noinspection PhpUnused */
+
 /**
  * 2013-2020 Nosto Solutions Ltd
  *
@@ -23,8 +26,11 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
+use Nosto\NostoException;
 use Nosto\NostoException as NostoSDKException;
 use Nosto\Model\Format as NostoSDKCurrencyFormat;
+use ICanBoogie\CLDR\Currency as CldrCurrency;
+use PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException;
 
 /**
  * Helper class for currency related tasks.
@@ -45,6 +51,8 @@ class NostoHelperCurrency
     const FORMAT_FIELD = 'format';
     const STANDARD_FIELD = 'standard';
     const ISO_CODE_FIELD = 'iso_code';
+
+    const DEFAULT_SYMBOL_FIELD = 'latn';
 
     /**
      * @param $id
@@ -125,15 +133,23 @@ class NostoHelperCurrency
      */
     public static function getNostoCurrency(array $currency)
     {
-        if (Context::getContext() instanceof Context
-            && (_PS_VERSION_ >= '1.7')
-        ) {
-            // In Prestashop 1.7 we use the CLDR
-            try {
-                $nostoCurrency = self::createWithCldr($currency);
-                return $nostoCurrency;
-            } catch (Exception $e) {
-                NostoHelperLogger::error($e);
+        $context = Context::getContext();
+        if ($context instanceof Context) {
+            // In Prestashop 1.7.0 - 1.7.5 we use the CLDR
+            if (
+                version_compare(_PS_VERSION_, '1.7', '>')
+                && version_compare(_PS_VERSION_,  '1.7.6', '<')) {
+                try {
+                    return self::createWithCldr($currency);
+                } catch (Exception $e) {
+                    NostoHelperLogger::error($e);
+                }
+            } elseif(version_compare(_PS_VERSION_,  '1.7.6', '>=')) {
+                try {
+                    return self::createWithContextLocale($context, $currency);
+                } catch (Exception $e) {
+                    NostoHelperLogger::error($e);
+                }
             }
         }
         if (empty($currency[self::FORMAT_FIELD])) {
@@ -200,25 +216,30 @@ class NostoHelperCurrency
      * @param array $currency Prestashop currency array
      * @return NostoSDKCurrencyFormat
      * @suppress PhanTypeMismatchArgument
+     * @suppress PhanDeprecatedFunction
+     * @throws PrestaShopException
      */
     private static function createWithCldr(array $currency)
     {
+        /** @noinspection PhpDeprecationInspection */
+        /** @noinspection PhpVoidFunctionResultUsedInspection */
         $cldr = Tools::getCldr(null, NostoHelperContext::getLanguage()->language_code);
-        /** @noinspection PhpParamsInspection */
-        $cldrCurrency = new \ICanBoogie\CLDR\Currency($cldr->getRepository(), $currency[self::ISO_CODE_FIELD]);
+        /** @noinspection PhpUndefinedMethodInspection */
+        $cldrCurrency = new CldrCurrency($cldr->getRepository(), $currency[self::ISO_CODE_FIELD]);
+        /** @noinspection PhpUndefinedMethodInspection */
         $localizedCurrency = $cldrCurrency->localize($cldr->getCulture());
         $pattern = $localizedCurrency->locale->numbers->currency_formats[self::STANDARD_FIELD];
         $symbols = $localizedCurrency->locale->numbers->symbols;
         $symbolPos = Tools::strpos($pattern, self::CURRENCY_SYMBOL_MARKER);
 
         // Check if the currency symbol is before or after the amount.
-        $symbolPosition = $symbolPos === 0;
+        $isCurrencyBeforeAmount = $symbolPos === 0;
         $groupSymbol = isset($symbols[self::GROUP_FIELD]) ? $symbols[self::GROUP_FIELD] : ',';
         $decimalSymbol = isset($symbols[self::DECIMAL_SYMBOL_FIELD]) ? $symbols[self::DECIMAL_SYMBOL_FIELD] : ',';
         $pricePrecision = self::getDecimalWithCurrency($currency['id_currency']);
 
         return new NostoSDKCurrencyFormat(
-            $symbolPosition,
+            $isCurrencyBeforeAmount,
             $currency[self::SYMBOL_FIELD],
             $decimalSymbol,
             $groupSymbol,
@@ -227,16 +248,51 @@ class NostoHelperCurrency
     }
 
     /**
+     * @param Context $context
+     * @param array $currency
+     * @return NostoSDKCurrencyFormat
+     * @throws NostoSDKException
+     * @throws LocalizationException
+     */
+    private static function createWithContextLocale(Context $context, array $currency) {
+        $locale = $context->getCurrentLocale();
+        $priceSpec = $locale->getPriceSpecification($currency[self::ISO_CODE_FIELD]);
+        $symbols = $priceSpec->getAllSymbols();
+        if (!isset($symbols[self::DEFAULT_SYMBOL_FIELD])) {
+            throw new NostoException(
+                sprintf(
+                    'Could not find default %s symbol to use in currency formatting',
+                    self::DEFAULT_SYMBOL_FIELD
+                )
+            );
+        }
+        $numberSymbolList = $symbols[self::DEFAULT_SYMBOL_FIELD];
+        $symbolPos = Tools::strpos($priceSpec->getPositivePattern(), self::CURRENCY_SYMBOL_MARKER);
+        $isCurrencyBeforeAmount = $symbolPos === 0;
+        $currencySymbol = $priceSpec->getCurrencySymbol();
+        $decimalSymbol = $numberSymbolList->getDecimal();
+        $groupSymbol = $numberSymbolList->getGroup();
+        $pricePrecision = self::getDecimalWithCurrency($currency['id_currency']);
+        return new NostoSDKCurrencyFormat(
+            $isCurrencyBeforeAmount,
+            $currencySymbol,
+            $decimalSymbol,
+            $groupSymbol,
+            $pricePrecision
+        );
+    }
+    /**
      * Get price decimal with currency
      * @param $currencyId
      * @return int price decimal
+     * @suppress PhanDeprecatedProperty
      */
     public static function getDecimalWithCurrency($currencyId)
     {
         $currencyDecimalsEnabled = 1;
-        /** @var Currency $currencyObject */
         $currencyObject = self::loadCurrency($currencyId);
         if (Validate::isLoadedObject($currencyObject)) {
+            /** @noinspection PhpDeprecationInspection */
             $currencyDecimalsEnabled = $currencyObject->decimals;
         }
 

@@ -34,6 +34,7 @@ class NostoOrderService extends AbstractNostoService
 {
     public static $syncInventoriesAfterOrder = true;
 
+    /** @noinspection PhpUnhandledExceptionInspection */
     public function send($params)
     {
         if (isset($params['id_order'])) {

@@ -39,10 +39,12 @@ class AdminNostoController extends ModuleAdminController
 
     /**
      * @inheritdoc
+     * @noinspection PhpUnused
      */
     public function initContent()
     {
         if (!$this->viewAccess()) {
+            /** @noinspection PhpUnhandledExceptionInspection */
             $this->errors[] = Tools::displayError('You do not have permission to view this.');
             return;
         }

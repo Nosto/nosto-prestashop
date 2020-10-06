@@ -4,3 +4,4 @@ build/src
 config*.xml
 .idea/
 chk*.xml
+output/

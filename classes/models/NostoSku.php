@@ -23,6 +23,7 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
+use Nosto\NostoException;
 use Nosto\Model\Product\Sku as NostoSDKSku;
 
 class NostoSku extends NostoSDKSku
@@ -35,6 +36,9 @@ class NostoSku extends NostoSDKSku
      * @param Combination $combination the prestashop combination object
      * @param array|null $attributesGroup
      * @return NostoSku|null
+     * @throws NostoException
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      */
     public static function loadData(
         Product $product,
@@ -64,6 +68,8 @@ class NostoSku extends NostoSDKSku
      * Amend price
      *
      * @param Combination $combination
+     * @throws NostoException
+     * @throws PrestaShopException
      */
     protected function amendPrice(Combination $combination)
     {
@@ -76,6 +82,8 @@ class NostoSku extends NostoSDKSku
      * Amend custom fields
      *
      * @param Combination $combination
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      */
     protected function amendCustomFields(Combination $combination)
     {
@@ -176,6 +184,7 @@ class NostoSku extends NostoSDKSku
      * @param Combination $combination the product.
      * @param Currency $currency the currency.
      * @return float the price.
+     * @throws PrestaShopException
      */
     public static function getPriceInclTax(Combination $combination, Currency $currency)
     {
@@ -188,6 +197,7 @@ class NostoSku extends NostoSDKSku
      * @param Combination $combination the product.
      * @param Currency $currency the currency.
      * @return float the price.
+     * @throws PrestaShopException
      */
     public static function getListPriceInclTax(Combination $combination, Currency $currency)
     {
