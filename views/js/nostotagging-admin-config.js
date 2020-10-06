@@ -27,7 +27,7 @@ $(document).ready(function () {
     // Change event handler for "Manage Accounts:".
     // noinspection JSUnresolvedFunction
     $("#nostotagging_language").change(function () {
-        // noinspection JSUnresolvedFunction
+      // noinspection JSUnresolvedFunction,ES6ConvertVarToLetConst
         var langId = parseInt($(this).val()),
             $currentLanguage = $('#nostotagging_current_language'),
             $form = $('form.nostotagging');

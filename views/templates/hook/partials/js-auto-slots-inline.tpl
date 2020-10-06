@@ -21,7 +21,7 @@
 * @copyright 2013-2019 Nosto Solutions Ltd
 * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *}
-<!--suppress JSUnresolvedFunction -->
+<!--suppress JSUnresolvedFunction, ES6ConvertVarToLetConst -->
 <script type="text/javascript">
     var nostoRecosLoaded = false;
     // noinspection JSUnresolvedFunction

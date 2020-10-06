@@ -23,7 +23,7 @@
 *}
 
 {if !empty($iframe_url) or !empty($iframe_installation_url)}
-    <!--suppress HtmlUnknownTarget, JSUnresolvedFunction -->
+    <!--suppress HtmlUnknownTarget, JSUnresolvedFunction, ES6ConvertVarToLetConst -->
     <form id="nosto_form_id" role="form" class="nostotagging form-horizontal"
           action="{$nostotagging_form_action|escape:'htmlall':'UTF-8'}" method="post" novalidate>
         <input type="hidden" id="nostotagging_current_language" name="nostotagging_current_language"

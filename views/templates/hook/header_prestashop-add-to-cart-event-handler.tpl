@@ -22,10 +22,13 @@
 * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *}
 
-<!--suppress JSUnresolvedFunction, JSUnresolvedVariable -->
+<!--suppress ALL -->
+
 <script type="text/javascript">
     nostojs(function () {
-        window.Nosto = window.Nosto || {};
+        window.Nosto = window.Nosto || {
+          //
+        };
         Nosto.reloadCartTagging = function () {
             if (window.jQuery) {
                 jQuery.ajax({
