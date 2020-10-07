@@ -25,7 +25,8 @@
     "mridang/pmd-annotations": "^0.0.2"
   },
   "config": {
-    "vendor-dir": "libs"
+    "vendor-dir": "libs",
+    "process-timeout": 3600
   },
   "repositories": [
     {
