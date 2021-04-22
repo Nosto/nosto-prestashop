@@ -43,6 +43,7 @@ class NostoCategory extends NostoSDKCatetory
      *
      * @param Category $category the category model to process
      * @return NostoCategory|null the category object
+     * @throws PrestaShopException
      */
     public static function loadData(Category $category)
     {

@@ -22,23 +22,31 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
+// noinspection JSUnresolvedFunction
 $(document).ready(function () {
     // Change event handler for "Manage Accounts:".
+    // noinspection JSUnresolvedFunction
     $("#nostotagging_language").change(function () {
+      // noinspection JSUnresolvedFunction,ES6ConvertVarToLetConst
         var langId = parseInt($(this).val()),
             $currentLanguage = $('#nostotagging_current_language'),
             $form = $('form.nostotagging');
+        // noinspection JSUnresolvedFunction
         $currentLanguage.val(langId);
         $form.submit();
     });
 
     // Toggle the Nosto settings
+    // noinspection JSCheckFunctionSignatures,JSUnresolvedFunction
     $("#nostotagging_account_setup").click(function (event) {
         event.preventDefault();
+        // noinspection JSCheckFunctionSignatures,JSUnresolvedFunction
         $('div.nostotagging_settings').toggle();
+        // noinspection JSCheckFunctionSignatures,JSUnresolvedFunction
         $('#nostotagging_iframe').toggle();
     });
 
     // Init the iframe re-sizer.
-    $('#nostotagging_iframe').iFrameResize({heightCalculationMethod : 'bodyScroll'});
+    // noinspection JSUnresolvedFunction
+    $('#nostotagging_iframe').iFrameResize({heightCalculationMethod: 'bodyScroll'});
 });

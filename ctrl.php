@@ -74,7 +74,16 @@ if (!defined('_PS_VERSION_')) {
                 die();
         }
 
-        $nostoController->initContent();
+        try {
+            $nostoController->initContent();
+        } catch (Exception $e) {
+            die(
+                sprintf(
+                    'Unknown error happened when initializing content. Message was: %s',
+                    $e->getMessage()
+                )
+            );
+        }
     } else {
         die(
             sprintf(

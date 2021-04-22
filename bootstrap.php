@@ -25,6 +25,7 @@
 
 class NostoBootstrap
 {
+    /** @noinspection PhpIncludeInspection */
     public static function init($moduleDir)
     {
         require_once($moduleDir . '/libs/autoload.php');

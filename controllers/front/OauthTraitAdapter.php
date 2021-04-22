@@ -36,7 +36,8 @@ class OauthTraitAdapter
     use NostoSDKOauthTrait;
 
     private $languageId;
-    /** @var NostoTagging $module */
+
+    /** @var NostoTagging $module @noinspection PhpUnused*/
     private $module;
 
     /**
@@ -52,7 +53,7 @@ class OauthTraitAdapter
     {
         $this->module = $module;
         $this->languageId = (int)Tools::getValue('language_id', NostoHelperContext::getLanguageId());
-        self::connect();
+        $this->connect();
     }
 
     /**
@@ -60,7 +61,9 @@ class OauthTraitAdapter
      * OAuth operations
      *
      * @return Nosto\Oauth the OAuth parameters for the operations
+     * @throws PrestaShopException
      * @suppress PhanUndeclaredMethod
+     * @noinspection PhpUnused
      */
     public function getMeta()
     {
@@ -78,7 +81,10 @@ class OauthTraitAdapter
      * the current store view (as defined by the parameter.)
      *
      * @param Nosto\Types\Signup\AccountInterface $account the account to save
+     * @return bool
+     * @return bool
      * @throws NostoException
+     * @noinspection PhpUnused
      */
     public function save(NostoSDKAccountInterface $account)
     {
@@ -115,6 +121,7 @@ class OauthTraitAdapter
      * admin controller.
      *
      * @param array $params the parameters to be used when building the redirect
+     * @noinspection PhpUnused
      */
     public function redirect(array $params)
     {
@@ -133,6 +140,7 @@ class OauthTraitAdapter
      *
      * @param string $name the name of the query parameter to fetch
      * @return string the value of the specified query parameter
+     * @noinspection PhpUnused
      */
     public function getParam($name)
     {
@@ -144,6 +152,7 @@ class OauthTraitAdapter
      * log when an error occurs.
      *
      * @param Exception $e the exception to be logged
+     * @noinspection PhpUnused
      */
     public function logError(Exception $e)
     {
@@ -153,6 +162,7 @@ class OauthTraitAdapter
     /**
      * Implemented trait method that is responsible for redirecting the user to a 404 page when
      * the authorization code is invalid.
+     * @noinspection PhpUnused
      */
     public function notFound()
     {

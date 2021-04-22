@@ -33,6 +33,7 @@ class NostoOrderBuyer extends NostoSDKOrderBuyer
      * @param Customer $customer the customer model to process
      * @param Order $order the order object
      * @return NostoOrderBuyer|null the buyer object
+     * @throws PrestaShopException
      */
     public static function loadData(Customer $customer, Order $order)
     {

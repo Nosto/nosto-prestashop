@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpUnused */
 /**
  * 2013-2020 Nosto Solutions Ltd
  *
@@ -48,15 +48,13 @@ class NostoHelperPrice
         $wholesalePriceExcTaxes = $product->wholesale_price;
         if ($wholesalePriceExcTaxes > 0) {
             if ($product->tax_rate > 0) {
-                return NostoHelperPrice::roundPrice(
+                return self::roundPrice(
                     $wholesalePriceExcTaxes * (1 + (float) $product->tax_rate / 100)
                 );
-            } else {
-                return $wholesalePriceExcTaxes;
             }
-        } else {
-            return null;
+            return $wholesalePriceExcTaxes;
         }
+        return null;
     }
 
     /**
@@ -65,7 +63,10 @@ class NostoHelperPrice
      *
      * @param int $idProduct the product ID.
      * @param Currency $currency the currency object.
+     * @param bool $isUserReduced
+     * @param int|null $productAttributeId
      * @return float the price.
+     * @throws PrestaShopException
      */
     public static function calcPrice(
         $idProduct,
@@ -108,6 +109,8 @@ class NostoHelperPrice
                 //default currency. If multi-store is enabled and default currencies are different in
                 //different stores, it cause problem. Big number 1000,000 is used to avoid rounding issue.
                 // @phan-suppress-next-line PhanDeprecatedFunction
+                /** @noinspection PhpDeprecationInspection */
+                /** @phan-suppress-next-line  PhanDeprecatedFunction */
                 $exchangeRate = Tools::convertPrice(
                     1000000,
                     Currency::getCurrencyInstance((int)Configuration::get('PS_CURRENCY_DEFAULT'))
@@ -162,6 +165,8 @@ class NostoHelperPrice
         //default currency. If multi-store is enabled and default currencies are different in
         //different stores, it cause problem. Big number 1000,000 is used to avoid rounding issue.
         // @phan-suppress-next-line PhanDeprecatedFunction
+        /** @noinspection PhpDeprecationInspection */
+        /** @phan-suppress-next-line  PhanDeprecatedFunction */
         $exchangeRate = Tools::convertPrice(
             1000000,
             Currency::getCurrencyInstance((int)Configuration::get('PS_CURRENCY_DEFAULT'))
@@ -183,6 +188,8 @@ class NostoHelperPrice
             $currency = NostoHelperContext::getCurrency();
         }
         //if the decimals is disabled for this currency, then the precision should be 0
+        /** @noinspection PhpDeprecationInspection */
+        /** @phan-suppress-next-line  PhanDeprecatedProperty */
         $currencyDecimalsEnabled = $currency ? (int)$currency->decimals : 1;
 
         return (float)Tools::ps_round(
