@@ -2,8 +2,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
-## 3.9.1
+## 3.9.2
 - Set correct price to variation based on tax include configuration 
+
+### 3.9.1
+- Add PHPStorm Inspections as a CI build step
 
 ## 3.9.0
 - Upgrade Nosto-PHP-SDK to improve compatibility with Prestashop ps_checkout module

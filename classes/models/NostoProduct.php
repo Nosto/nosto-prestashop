@@ -23,6 +23,7 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
+use Nosto\NostoException;
 use Nosto\Model\Product\Product as NostoSDKProduct;
 
 class NostoProduct extends NostoSDKProduct
@@ -35,6 +36,9 @@ class NostoProduct extends NostoSDKProduct
      *
      * @param Product $product the product model to process
      * @return NostoProduct|null the product object
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     * @throws NostoException
      */
     public static function loadData(Product $product)
     {
@@ -96,6 +100,7 @@ class NostoProduct extends NostoSDKProduct
         }
     }
 
+    /** @noinspection PhpUnhandledExceptionInspection */
     protected function amendVariation($product)
     {
         $variations = new NostoVariationCollection();
@@ -145,6 +150,9 @@ class NostoProduct extends NostoSDKProduct
      * Amend skus
      *
      * @param Product $product
+     * @throws NostoException
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      */
     protected function amendSkus(Product $product)
     {
@@ -277,6 +285,7 @@ class NostoProduct extends NostoSDKProduct
      * @param Product $product the product.
      * @param Currency $currency the currency.
      * @return float the price.
+     * @throws PrestaShopException
      */
     public static function getPriceInclTax(Product $product, Currency $currency)
     {
@@ -289,6 +298,7 @@ class NostoProduct extends NostoSDKProduct
      * @param Product $product the product.
      * @param Currency $currency the currency.
      * @return float the price.
+     * @throws PrestaShopException
      */
     public static function getListPriceInclTax(Product $product, Currency $currency)
     {
@@ -329,6 +339,7 @@ class NostoProduct extends NostoSDKProduct
      *
      * @param Product $product the product model.
      *
+     * @throws PrestaShopException
      * @suppress PhanTypeMismatchArgument
      */
     protected function amendCategories(Product $product)

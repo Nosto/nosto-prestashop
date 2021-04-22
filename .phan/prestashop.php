@@ -1,4 +1,5 @@
 <?php
+/** @noinspection ALL */
 /**
  * 2013-2020 Nosto Solutions Ltd
  *

@@ -22,14 +22,19 @@
 * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *}
 
+<!--suppress ALL -->
+
 <script type="text/javascript">
-    nostojs(function(api){
-        window.Nosto = window.Nosto || {};
+    nostojs(function () {
+        window.Nosto = window.Nosto || {
+          //
+        };
         Nosto.reloadCartTagging = function () {
             if (window.jQuery) {
                 jQuery.ajax({
                     url: decodeURIComponent("{$reload_cart_url|escape:'url'}")
                 }).done(function (data) {
+                    // noinspection JSJQueryEfficiency
                     if (jQuery('.nosto_cart').length > 0) {
                         jQuery('.nosto_cart').replaceWith(data);
                     } else {
@@ -54,7 +59,7 @@
                 if (window.prestashop && prestashop._events && prestashop._events.updateCart) {
                     prestashop.on(
                         'updateCart',
-                        function (event) {
+                        function () {
                             Nosto.reloadCartTagging();
                         }
                     );
@@ -73,7 +78,7 @@
                         Nosto.reloadCartTagging();
                     });
                 }
-            } else if (maxTry > 0){
+            } else if (maxTry > 0) {
                 //jQuery is loaded to the page after nosto scripts on prestashop 1.7
                 //wait for it
                 maxTry--;

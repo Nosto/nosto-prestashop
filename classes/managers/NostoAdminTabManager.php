@@ -66,6 +66,8 @@ class NostoAdminTabManager
      * Installs the Admin Tab in PS backend.
      *
      * @return bool true on success, false otherwise.
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      * @suppress PhanTypeMismatchProperty
      */
     public static function install()
@@ -79,7 +81,6 @@ class NostoAdminTabManager
         if ($idTab) {
             $mainTabAdded = new Tab($idTab);
         } else {
-            /** @var TabCore $tab */
             $tab = new Tab();
             $tab->active = true;
             $tab->class_name = self::MAIN_MENU_ITEM_CLASS;
@@ -167,6 +168,8 @@ class NostoAdminTabManager
      * Uninstalls the Admin Tab from PS backend.
      *
      * @return bool true on success false otherwise.
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      */
     public static function uninstall()
     {
@@ -174,7 +177,6 @@ class NostoAdminTabManager
         foreach ($tabs as $tabName) {
             $tabId = self::getAdminTabId($tabName);
             if ($tabId) {
-                /** @var TabCore $tab */
                 $tab = new Tab($tabId);
                 $tab->delete();
             }

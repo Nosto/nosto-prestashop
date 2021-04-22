@@ -14,30 +14,32 @@
     "sebastian/phpcpd": "4.1.0",
     "phing/phing": "2.*",
     "wimg/php-compatibility": "^9.0",
-    "prestashop/ps": "1.7.5.0",
+    "prestashop/ps": "1.7.6.5 ",
     "icanboogie/cldr": "3.0.0",
     "staabm/annotate-pull-request-from-checkstyle": "^1.1",
     "mridang/pmd-annotations": "^0.0.2"
   },
   "config": {
-    "vendor-dir": "libs"
+    "vendor-dir": "libs",
+    "process-timeout": 3600
   },
   "repositories": [
     {
       "type": "package",
       "package": {
         "name": "prestashop/ps",
-        "version": "v1.7.5.0",
+        "version": "v1.7.6.5",
         "dist": {
-          "url": "https://github.com/PrestaShop/PrestaShop/archive/1.7.5.0.zip",
+          "url": "https://github.com/PrestaShop/PrestaShop/archive/1.7.6.5.zip",
           "type": "zip",
-          "reference": "1.7.5.0"
+          "reference": "1.7.6.5"
         }
       }
     }
   ],
   "scripts": {
     "post-install-cmd": "if [ -f ./libs/bin/phpcs ]; then \"libs/bin/phpcs\" --config-set installed_paths libs/wimg/php-compatibility; fi",
-    "post-update-cmd" : "if [ -f ./libs/bin/phpcs ]; then \"libs/bin/phpcs\" --config-set installed_paths libs/wimg/php-compatibility; fi"
+    "post-update-cmd" : "if [ -f ./libs/bin/phpcs ]; then \"libs/bin/phpcs\" --config-set installed_paths libs/wimg/php-compatibility; fi",
+    "ci:inspect": "./inspect.sh"
   }
 }

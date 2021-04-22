@@ -25,12 +25,11 @@
 
 require_once 'NostoBaseController.php';
 
-use Nosto\Request\Api\Exception\ApiResponseException as NostoSDKAPIResponseException;
-
 /**
  * Class CreateAccountController
  *
  * @property Context $context
+ * @noinspection PhpUnused
  */
 class NostoCreateAccountController extends NostoBaseController
 {
@@ -38,17 +37,21 @@ class NostoCreateAccountController extends NostoBaseController
      * @inheritdoc
      *
      * @suppress PhanDeprecatedFunction
+     * @noinspection PhpUnused
      */
     public function execute()
     {
         $accountEmail = (string)Tools::getValue(NostoTagging::MODULE_NAME . '_account_email');
         if (empty($accountEmail)) {
+            /** @noinspection PhpDeprecationInspection */
             NostoHelperFlash::add('error', $this->l('Email cannot be empty.'));
         } elseif (!Validate::isEmail($accountEmail)) {
+            /** @noinspection PhpDeprecationInspection */
             NostoHelperFlash::add('error', $this->l('Email is not a valid email address.'));
         } else {
             try {
                 if (Tools::isSubmit('nostotagging_account_details')) {
+                    /** @noinspection PhpDeprecationInspection */
                     $accountDetails = (object)Tools::jsonDecode(Tools::getValue('nostotagging_account_details'));
                 } else {
                     $accountDetails = false;
@@ -57,6 +60,8 @@ class NostoCreateAccountController extends NostoBaseController
                 $service->createAccount($accountEmail, $accountDetails);
 
                 NostoHelperConfig::clearCache();
+                /** @noinspection PhpDeprecationInspection */
+                /** @noinspection PhpDeprecationInspection */
                 NostoHelperFlash::add(
                     'success',
                     $this->l(
@@ -64,16 +69,8 @@ class NostoCreateAccountController extends NostoBaseController
                         . ' password for your new account within three days.'
                     )
                 );
-            } catch (NostoSDKAPIResponseException $e) {
-                NostoHelperFlash::add(
-                    'error',
-                    $this->l(
-                        'Account could not be automatically created due to missing or invalid parameters.'
-                        . ' Please see your Prestashop logs for details'
-                    )
-                );
-                NostoHelperLogger::error($e, 'Creating Nosto account failed');
             } catch (Exception $e) {
+                /** @noinspection PhpDeprecationInspection */
                 NostoHelperFlash::add(
                     'error',
                     $this->l('Account could not be automatically created. Please see logs for details.')

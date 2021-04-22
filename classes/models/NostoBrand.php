@@ -32,6 +32,7 @@ class NostoBrand extends MarkupableString
      *
      * @param Manufacturer $manufacturer the manufacturer model to process
      * @return NostoBrand|null the brand object
+     * @throws PrestaShopException
      */
     public static function loadData(Manufacturer $manufacturer)
     {
@@ -50,6 +51,7 @@ class NostoBrand extends MarkupableString
 
     /**
      * @return string
+     * @noinspection PhpUnused
      */
     public function getBrand()
     {

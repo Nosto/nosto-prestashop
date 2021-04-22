@@ -24,6 +24,7 @@
  */
 
 use Nosto\Model\Signup\Signup as NostoSDKAccountSignup;
+use Nosto\NostoException;
 
 class NostoAccountSignup extends NostoSDKAccountSignup
 {
@@ -38,6 +39,7 @@ class NostoAccountSignup extends NostoSDKAccountSignup
 
     /**
      * NostoAccountSignup constructor.
+     * @throws NostoException
      */
     public function __construct()
     {
@@ -75,6 +77,7 @@ class NostoAccountSignup extends NostoSDKAccountSignup
      * Loads the meta data for the context and given language.
      *
      * @return NostoAccountSignup|null the signup object
+     * @throws PrestaShopException
      */
     public static function loadData()
     {
@@ -134,6 +137,7 @@ class NostoAccountSignup extends NostoSDKAccountSignup
         return $nostoSignup;
     }
 
+    /** @noinspection PhpUnhandledExceptionInspection */
     protected static function buildCurrencies()
     {
         $nostoCurrencies = array();

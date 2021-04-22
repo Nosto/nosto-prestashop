@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4804ad7b254696306cae544215792266",
+    "content-hash": "c394ed9ff616def0365a4409016f7618",
     "packages": [
         {
             "name": "nosto/php-sdk",
@@ -1424,11 +1424,11 @@
         },
         {
             "name": "prestashop/ps",
-            "version": "v1.7.5.0",
+            "version": "v1.7.6.5",
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/PrestaShop/PrestaShop/archive/1.7.5.0.zip",
-                "reference": "1.7.5.0"
+                "url": "https://github.com/PrestaShop/PrestaShop/archive/1.7.6.5.zip",
+                "reference": "1.7.6.5"
             },
             "type": "library"
         },

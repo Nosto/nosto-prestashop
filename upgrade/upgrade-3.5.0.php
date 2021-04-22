@@ -33,8 +33,10 @@ if (!defined('_PS_VERSION_')) {
  * Fix the controller registering issue
  * @param $module Module
  * @return bool
+ * @throws PrestaShopDatabaseException
  * @throws PrestaShopException
  * @suppress PhanUnreferencedMethod
+ * @noinspection PhpUnused
  */
 function upgrade_module_3_5_0($module)
 {

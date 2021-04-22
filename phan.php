@@ -31,6 +31,9 @@ return [
     'analyze_signature_compatibility' => false,
     'backward_compatibility_checks' => false,
     'exclude_file_regex' => '@^libs/.*/(tests|test|Tests|Test)/@',
+    'suppress_issue_types' => [
+        'PhanRedefinedClassReference'
+    ],
     'directory_list' => [
         'classes',
         'controllers',

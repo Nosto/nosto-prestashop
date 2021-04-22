@@ -1,4 +1,7 @@
 <?php
+
+use Nosto\NostoException;
+
 /**
  * 2013-2020 Nosto Solutions Ltd
  *
@@ -32,6 +35,10 @@ class NostoProductTagging
      * Renders the customer tagging by checking if the customer if currently logged in
      *
      * @return string|null the tagging
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     * @throws ReflectionException
+     * @throws NostoException
      */
     public static function get()
     {

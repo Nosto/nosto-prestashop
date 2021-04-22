@@ -32,6 +32,7 @@ abstract class NostoTaggingCronModuleFrontController extends ModuleFrontControll
 {
     /**
      * @inheritdoc
+     * @noinspection PhpUnused
      */
     public function init()
     {

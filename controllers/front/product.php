@@ -36,6 +36,7 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
 {
     /**
      * @inheritdoc
+     * @noinspection PhpUnhandledExceptionInspection
      */
     public function initContent()
     {
@@ -87,11 +88,11 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
      * Returns a list of all active product ids with limit and offset applied.
      *
      * @return array the product id list.
+     * @throws PrestaShopDatabaseException
      */
     protected function getProductIds()
     {
         $productIds = array();
-        /** @noinspection SqlNoDataSourceInspection */
         $sql = sprintf(
             '
                 SELECT id_product

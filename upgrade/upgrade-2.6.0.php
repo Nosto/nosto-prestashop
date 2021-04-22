@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection DuplicatedCode */
 /**
  * 2013-2020 Nosto Solutions Ltd
  *
@@ -33,7 +33,10 @@ if (!defined('_PS_VERSION_')) {
  * Creates "action{MODEL}LoadAfter" hooks dispatched by the tagging model.
  *
  * @return bool
+ * @throws PrestaShopDatabaseException
+ * @throws PrestaShopException
  * @suppress PhanUnreferencedMethod
+ * @noinspection PhpUnused
  */
 function upgrade_module_2_6_0()
 {

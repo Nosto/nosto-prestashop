@@ -24,12 +24,14 @@
  */
 
 use \Nosto\Model\SearchTerm as NostoSDKSearchTerm;
-
+/** @noinspection PhpUnused */
 class NostoSearch extends NostoSDKSearchTerm
 {
     /**
      * @param string $term the current search term
      * @return NostoSearch the search object
+     * @throws PrestaShopException
+     * @noinspection PhpUnused
      */
     public static function loadData($term)
     {
@@ -45,6 +47,7 @@ class NostoSearch extends NostoSDKSearchTerm
      * Getter for the search term.
      *
      * @return string the term.
+     * @noinspection PhpUnused
      */
     public function getSearchTerm()
     {

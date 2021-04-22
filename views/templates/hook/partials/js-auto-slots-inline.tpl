@@ -21,16 +21,18 @@
 * @copyright 2013-2019 Nosto Solutions Ltd
 * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *}
+<!--suppress JSUnresolvedFunction, ES6ConvertVarToLetConst -->
 <script type="text/javascript">
     var nostoRecosLoaded = false;
-    nostojs(function(api){
+    // noinspection JSUnresolvedFunction
+    nostojs(function (api) {
         api.listen('postrender', function () {
             nostoRecosLoaded = true;
         });
         var maxTriesForJquery = 60;
         var waitForJQuery = function () {
             if (window.jQuery) {
-                var placeSlots = function() {
+                var placeSlots = function () {
                     var $center_column = jQuery('#center_column, #content-wrapper');
                     var $hidden_elements = jQuery('.hidden_nosto_element');
                     var slotsMoved = false;
@@ -40,7 +42,7 @@
                             if (nostoId && !jQuery('#' + nostoId).length) {
                                 $slot.attr('id', nostoId);
                                 $slot.attr('class', 'nosto_element');
-                                if($slot.attr('nosto_insert_position') === 'prepend') {
+                                if ($slot.attr('nosto_insert_position') === 'prepend') {
                                     $slot.prependTo($center_column);
                                 } else {
                                     $slot.appendTo($center_column);
@@ -52,9 +54,9 @@
                             api.loadRecommendations();
                         }
                     }
-                }
+                };
                 jQuery(document).ready(placeSlots);
-            } else if (maxTriesForJquery > 0){
+            } else if (maxTriesForJquery > 0) {
                 //jQuery is loaded to the page after nosto scripts on prestashop 1.7
                 //wait for it
                 maxTriesForJquery--;

@@ -31,6 +31,7 @@ class NostoSettingsService extends AbstractNostoService
 {
     private $account;
 
+    /** @noinspection PhpUnused */
     public function __construct(NostoSDKSignupAccount $account)
     {
         $this->account = $account;
