@@ -127,6 +127,11 @@ class NostoHelperVariation
             $groupIds[] = 0;
         }
 
+        //make sure it always has 'visitor'
+        if (!in_array(1, $groupIds, false)) {
+            $groupIds[] = 1;
+        }
+
         /** @noinspection PhpParamsInspection */
         // @phan-suppress-next-line PhanTypeMismatchArgument
         Cache::store($cacheKey, $groupIds);
