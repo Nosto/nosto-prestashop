@@ -311,7 +311,6 @@
             }
 
             // Define the "Nosto" global namespace if not already defined.
-            // noinspection JSConstantReassignment
             window.Nosto = window.Nosto || {};
 
             function submitAction(action) {

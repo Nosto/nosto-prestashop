@@ -46,9 +46,6 @@ return [
         '.phan',
         'libs'
     ],
-    "exclude_file_list" => [
-        'libs/symfony/polyfill-php80/Resources/stubs/Attribute.php'
-    ],
     "file_list" => [
         'nostotagging.php'
     ],
