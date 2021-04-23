@@ -152,7 +152,7 @@ class NostoHelperPrice
             NostoHelperContext::getCurrencyId(),
             $groupId,
             2,
-            Group::getPriceDisplayMethod($groupId) == PS_TAX_INC, 
+            true,
             $decimals,
             false,
             $useReduction,
