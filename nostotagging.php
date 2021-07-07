@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpFullyQualifiedNameUsageInspection */
 /**
  * 2013-2020 Nosto Solutions Ltd
  *
@@ -22,8 +22,6 @@
  * @copyright 2013-2020 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
-
-use Nosto\NostoException;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -57,7 +55,7 @@ class NostoTagging extends Module
      *
      * @var string
      */
-    const PLUGIN_VERSION = '3.9.3';
+    const PLUGIN_VERSION = '3.9.4';
 
     /**
      * Internal name of the Nosto plug-in
@@ -299,7 +297,7 @@ class NostoTagging extends Module
      * Also handles the form submit action.
      *
      * @return string The HTML to output.
-     * @throws NostoException
+     * @throws \Nosto\NostoException
      * @noinspection PhpUnused
      */
     public function getContent()
@@ -339,7 +337,7 @@ class NostoTagging extends Module
      * client script, the add-to-cart script and some meta tags
      *
      * @return string The HTML to output
-     * @throws NostoException
+     * @throws \Nosto\NostoException
      */
     public function hookDisplayHeader()
     {
@@ -351,7 +349,7 @@ class NostoTagging extends Module
      * should not have any logic and should only delegate to another hook.
      *
      * @return string The HTML to output
-     * @throws NostoException
+     * @throws \Nosto\NostoException
      * @see NostoTagging::hookDisplayHeader()
      * @noinspection PhpUnused
      */
@@ -387,7 +385,7 @@ class NostoTagging extends Module
      * tagging if the tagging wasn't rendered in a previous hook.
      *
      * @return string The HTML to output
-     * @throws NostoException
+     * @throws \Nosto\NostoException
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      * @throws ReflectionException
@@ -437,7 +435,7 @@ class NostoTagging extends Module
             $html .= NostoHiddenElement::append('frontpage-nosto-2');
             $html .= NostoHiddenElement::append('frontpage-nosto-3');
             $html .= NostoHiddenElement::append('frontpage-nosto-4');
-        } catch (NostoException $e) {
+        } catch (\Nosto\NostoException $e) {
             NostoHelperLogger::error($e);
         }
 
@@ -452,7 +450,7 @@ class NostoTagging extends Module
             $html = NostoHiddenElement::append('nosto-page-product1');
             $html .= NostoHiddenElement::append('nosto-page-product2');
             $html .= NostoHiddenElement::append('nosto-page-product3');
-        } catch (NostoException $e) {
+        } catch (\Nosto\NostoException $e) {
             NostoHelperLogger::error($e);
         }
 
@@ -470,7 +468,7 @@ class NostoTagging extends Module
             $html = NostoHiddenElement::append('nosto-page-cart1');
             $html .= NostoHiddenElement::append('nosto-page-cart2');
             $html .= NostoHiddenElement::append('nosto-page-cart3');
-        } catch (NostoException $e) {
+        } catch (\Nosto\NostoException $e) {
             NostoHelperLogger::error($e);
         }
 
@@ -484,7 +482,7 @@ class NostoTagging extends Module
         try {
             $html = NostoHiddenElement::append('nosto-page-category1');
             $html .= NostoHiddenElement::append('nosto-page-category2');
-        } catch (NostoException $e) {
+        } catch (\Nosto\NostoException $e) {
             NostoHelperLogger::error($e);
         }
         return $html;
@@ -503,7 +501,7 @@ class NostoTagging extends Module
         try {
             $html = NostoHiddenElement::prepend('nosto-page-search1');
             $html .= NostoHiddenElement::append('nosto-page-search2');
-        } catch (NostoException $e) {
+        } catch (\Nosto\NostoException $e) {
             NostoHelperLogger::error($e);
         }
 
@@ -517,7 +515,7 @@ class NostoTagging extends Module
             $html = NostoHiddenElement::append('notfound-nosto-1');
             $html .= NostoHiddenElement::append('notfound-nosto-2');
             $html .= NostoHiddenElement::append('notfound-nosto-3');
-        } catch (NostoException $e) {
+        } catch (\Nosto\NostoException $e) {
             NostoHelperLogger::error($e);
         }
 
@@ -537,7 +535,7 @@ class NostoTagging extends Module
         try {
             $html = NostoHiddenElement::append('thankyou-nosto-1');
             $html .= NostoHiddenElement::append('thankyou-nosto-2');
-        } catch (NostoException $e) {
+        } catch (\Nosto\NostoException $e) {
             NostoHelperLogger::error($e);
         }
 
@@ -550,7 +548,7 @@ class NostoTagging extends Module
      * should only delegate to another hook.
      *
      * @return string The HTML to output
-     * @throws NostoException
+     * @throws \Nosto\NostoException
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      * @throws ReflectionException
@@ -567,7 +565,7 @@ class NostoTagging extends Module
      * hook should not have any logic and should only delegate to another hook.
      *
      * @return string The HTML to output
-     * @throws NostoException
+     * @throws \Nosto\NostoException
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      * @throws ReflectionException
@@ -585,7 +583,7 @@ class NostoTagging extends Module
      * hook.
      *
      * @return string The HTML to output
-     * @throws NostoException
+     * @throws \Nosto\NostoException
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      * @throws ReflectionException
@@ -607,7 +605,7 @@ class NostoTagging extends Module
      * should not have any logic and should only delegate to another hook.
      *
      * @return string The HTML to output
-     * @throws NostoException
+     * @throws \Nosto\NostoException
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      * @throws ReflectionException
@@ -624,7 +622,7 @@ class NostoTagging extends Module
      * recommendation element. This hook is extremely theme-dependant and may not always exist.
      *
      * @return string The HTML to output
-     * @throws NostoException
+     * @throws \Nosto\NostoException
      * @noinspection PhpUnused
      */
     public function hookDisplayLeftColumn()
@@ -637,7 +635,7 @@ class NostoTagging extends Module
      * This hook should not have any logic and should only delegate to another hook.
      *
      * @return string The HTML to output
-     * @throws NostoException
+     * @throws \Nosto\NostoException
      * @see NostoTagging::hookDisplayRightColumn()
      * @noinspection PhpUnused
      */
@@ -651,7 +649,7 @@ class NostoTagging extends Module
      * recommendation element. This hook is extremely theme-dependant and may not always exist.
      *
      * @return string The HTML to output
-     * @throws NostoException
+     * @throws \Nosto\NostoException
      */
     public function hookDisplayRightColumn()
     {
@@ -663,7 +661,7 @@ class NostoTagging extends Module
      * This hook should not have any logic and should only delegate to another hook.
      *
      * @return string The HTML to output
-     * @throws NostoException
+     * @throws \Nosto\NostoException
      * @see NostoTagging::hookDisplayRightColumn()
      * @noinspection PhpUnused
      */
@@ -678,7 +676,7 @@ class NostoTagging extends Module
      * rendered along with the rest of the tagging to keep all the tagging consolidated.
      *
      * @return string The HTML to output
-     * @throws NostoException
+     * @throws \Nosto\NostoException
      */
     public function hookDisplayFooterProduct()
     {
@@ -694,7 +692,7 @@ class NostoTagging extends Module
      * product page. This hook should not have any logic and should only delegate to another hook.
      *
      * @return string The HTML to output
-     * @throws NostoException
+     * @throws \Nosto\NostoException
      * @see NostoTagging::hookDisplayFooterProduct()
      * @noinspection PhpUnused
      */
@@ -709,7 +707,7 @@ class NostoTagging extends Module
      * table.
      *
      * @return string The HTML to output
-     * @throws NostoException
+     * @throws \Nosto\NostoException
      */
     public function hookDisplayShoppingCartFooter()
     {
@@ -726,7 +724,7 @@ class NostoTagging extends Module
      *
      * @see NostoTagging::hookDisplayShoppingCartFooter()
      * @return string The HTML to output
-     * @throws NostoException
+     * @throws \Nosto\NostoException
      * @noinspection PhpUnused
      */
     public function hookShoppingCart()
@@ -744,7 +742,7 @@ class NostoTagging extends Module
      *   {hook h='displayCategoryTop'}
      *
      * @return string The HTML to output
-     * @throws NostoException
+     * @throws \Nosto\NostoException
      * @noinspection PhpUnused
      */
     public function hookDisplayCategoryTop()
@@ -762,7 +760,7 @@ class NostoTagging extends Module
      *   {hook h='displayCategoryFooter'}
      *
      * @return string The HTML to output
-     * @throws NostoException
+     * @throws \Nosto\NostoException
      * @noinspection PhpUnused
      */
     public function hookDisplayCategoryFooter()
@@ -780,7 +778,7 @@ class NostoTagging extends Module
      *   {hook h='displaySearchTop'}
      *
      * @return string The HTML to output
-     * @throws NostoException
+     * @throws \Nosto\NostoException
      * @noinspection PhpUnused
      */
     public function hookDisplaySearchTop()
@@ -798,7 +796,7 @@ class NostoTagging extends Module
      *   {hook h='displaySearchFooter'}
      *
      * @return string The HTML to output
-     * @throws NostoException
+     * @throws \Nosto\NostoException
      * @noinspection PhpUnused
      */
     public function hookDisplaySearchFooter()
@@ -952,7 +950,7 @@ class NostoTagging extends Module
      * elements on the front page
      *
      * @return string The HTML to output
-     * @throws NostoException
+     * @throws \Nosto\NostoException
      * @noinspection PhpUnused
      */
     public function hookDisplayHome()
@@ -971,7 +969,7 @@ class NostoTagging extends Module
      *
      * @see NostoTagging::hookDisplayHome()
      * @return string The HTML to output
-     * @throws NostoException
+     * @throws \Nosto\NostoException
      * @noinspection PhpUnused
      */
     public function hookHome()
@@ -1170,7 +1168,7 @@ class NostoTagging extends Module
      * Method for resolving correct smarty object
      *
      * @return Smarty|Smarty_Data
-     * @throws NostoException
+     * @throws \Nosto\NostoException
      */
     public function getSmarty()
     {
@@ -1182,7 +1180,7 @@ class NostoTagging extends Module
             return $this->context->smarty;
         }
 
-        throw new NostoException('Could not find smarty');
+        throw new \Nosto\NostoException('Could not find smarty');
     }
 
     /**
