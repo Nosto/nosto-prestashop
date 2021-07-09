@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
+## 3.9.4
+* Fix backward compatibility with Prestashop 1.6
+
 ## 3.9.3
 * Round product price, list_price and supplier_cost to 2 decimals
 
