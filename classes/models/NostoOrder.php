@@ -74,7 +74,7 @@ class NostoOrder extends NostoSDKOrder
             $nostoOrder->setOrderNumber((string)$order->id);
         }
         $nostoOrder->setOrderNumber(isset($order->reference) ? (string)$order->reference : $order->id);
-        $customer = NostoOrderBuyer::loadData($customer, $order);
+        $customer = NostoOrderBuyer::loadData($customer);
         if ($customer instanceof NostoSDKBuyer) {
             $nostoOrder->setCustomer($customer);
         }
