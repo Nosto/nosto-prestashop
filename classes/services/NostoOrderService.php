@@ -76,13 +76,14 @@ class NostoOrderService extends AbstractNostoService
                 $employeeId = 0;
             }
             NostoHelperContext::runInContext(
-                function () use ($order) {
+                static function () use ($order) {
                     try {
                         $nostoOrder = NostoOrder::loadData($order);
                         if (!$nostoOrder instanceof NostoOrder) {
                             NostoHelperLogger::info('Not able to load order.');
                             return;
                         }
+                        $nostoOrder->setCustomer(null);
                         $account = NostoHelperAccount::getAccount();
                         $shopDomain = NostoHelperUrl::getShopDomain();
                         if ($account !== null && $account->isConnectedToNosto()) {
