@@ -25,7 +25,7 @@
 
 use Nosto\Operation\Order\OrderCreate as NostoSDKOrderCreateOperation;
 use Nosto\Operation\AbstractGraphQLOperation;
-
+use Nosto\Model\Order\Buyer;
 
 /**
  * Helper class for sending order data to Nosto.
@@ -83,7 +83,7 @@ class NostoOrderService extends AbstractNostoService
                             NostoHelperLogger::info('Not able to load order.');
                             return;
                         }
-                        $nostoOrder->setCustomer(null);
+                        $nostoOrder->setCustomer(new Buyer());
                         $account = NostoHelperAccount::getAccount();
                         $shopDomain = NostoHelperUrl::getShopDomain();
                         if ($account !== null && $account->isConnectedToNosto()) {
