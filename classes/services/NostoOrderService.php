@@ -83,7 +83,7 @@ class NostoOrderService extends AbstractNostoService
                             NostoHelperLogger::info('Not able to load order.');
                             return;
                         }
-                        $nostoOrder->setCustomer(new Buyer());
+                        $nostoOrder->setCustomer(new Buyer()); // Remove customer data from order API calls
                         $account = NostoHelperAccount::getAccount();
                         $shopDomain = NostoHelperUrl::getShopDomain();
                         if ($account !== null && $account->isConnectedToNosto()) {
