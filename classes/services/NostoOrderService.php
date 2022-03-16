@@ -25,7 +25,7 @@
 
 use Nosto\Operation\Order\OrderCreate as NostoSDKOrderCreateOperation;
 use Nosto\Operation\AbstractGraphQLOperation;
-
+use Nosto\Model\Order\Buyer;
 
 /**
  * Helper class for sending order data to Nosto.
@@ -76,13 +76,14 @@ class NostoOrderService extends AbstractNostoService
                 $employeeId = 0;
             }
             NostoHelperContext::runInContext(
-                function () use ($order) {
+                static function () use ($order) {
                     try {
                         $nostoOrder = NostoOrder::loadData($order);
                         if (!$nostoOrder instanceof NostoOrder) {
                             NostoHelperLogger::info('Not able to load order.');
                             return;
                         }
+                        $nostoOrder->setCustomer(new Buyer()); // Remove customer data from order API calls
                         $account = NostoHelperAccount::getAccount();
                         $shopDomain = NostoHelperUrl::getShopDomain();
                         if ($account !== null && $account->isConnectedToNosto()) {
