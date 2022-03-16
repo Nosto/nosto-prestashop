@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "45b5159ca42c56ec75f68c5692ad17b6",
+    "content-hash": "77e713b49154ac5c2e65493889d63a0b",
     "packages": [
         {
             "name": "nosto/php-sdk",
-            "version": "5.5.0",
+            "version": "dev-feature/upgrade-dotenv",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Nosto/nosto-php-sdk.git",
-                "reference": "a471b4a8a2b76a626218daec7d834f991f406c4e"
+                "reference": "b8c268b38f940daae5a376ef7a926d739864f4c9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Nosto/nosto-php-sdk/zipball/a471b4a8a2b76a626218daec7d834f991f406c4e",
-                "reference": "a471b4a8a2b76a626218daec7d834f991f406c4e",
+                "url": "https://api.github.com/repos/Nosto/nosto-php-sdk/zipball/b8c268b38f940daae5a376ef7a926d739864f4c9",
+                "reference": "b8c268b38f940daae5a376ef7a926d739864f4c9",
                 "shasum": ""
             },
             "require": {
@@ -25,7 +25,7 @@
                 "ext-json": "*",
                 "php": ">=5.5",
                 "phpseclib/phpseclib": "2.0.*",
-                "vlucas/phpdotenv": ">=2.4.0 <=3.6"
+                "vlucas/phpdotenv": "^3.6"
             },
             "require-dev": {
                 "codeception/c3": "^2.6",
@@ -56,7 +56,7 @@
                 "BSD-3-Clause"
             ],
             "description": "PHP SDK for developing Nosto modules for e-commerce platforms",
-            "time": "2021-12-21T12:54:43+00:00"
+            "time": "2022-03-16T12:14:59+00:00"
         },
         {
             "name": "phpoption/phpoption",
@@ -311,25 +311,31 @@
         },
         {
             "name": "vlucas/phpdotenv",
-            "version": "v3.6.0",
+            "version": "v3.6.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/vlucas/phpdotenv.git",
-                "reference": "1bdf24f065975594f6a117f0f1f6cabf1333b156"
+                "reference": "5b547cdb25825f10251370f57ba5d9d924e6f68e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vlucas/phpdotenv/zipball/1bdf24f065975594f6a117f0f1f6cabf1333b156",
-                "reference": "1bdf24f065975594f6a117f0f1f6cabf1333b156",
+                "url": "https://api.github.com/repos/vlucas/phpdotenv/zipball/5b547cdb25825f10251370f57ba5d9d924e6f68e",
+                "reference": "5b547cdb25825f10251370f57ba5d9d924e6f68e",
                 "shasum": ""
             },
             "require": {
-                "php": "^5.4 || ^7.0",
-                "phpoption/phpoption": "^1.5",
-                "symfony/polyfill-ctype": "^1.9"
+                "php": "^5.4 || ^7.0 || ^8.0",
+                "phpoption/phpoption": "^1.5.2",
+                "symfony/polyfill-ctype": "^1.17"
             },
             "require-dev": {
-                "phpunit/phpunit": "^4.8.35 || ^5.0 || ^6.0 || ^7.0"
+                "ext-filter": "*",
+                "ext-pcre": "*",
+                "phpunit/phpunit": "^4.8.36 || ^5.7.27 || ^6.5.14 || ^7.5.20 || ^8.5.21"
+            },
+            "suggest": {
+                "ext-filter": "Required to use the boolean validator.",
+                "ext-pcre": "Required to use most of the library."
             },
             "type": "library",
             "extra": {
@@ -349,13 +355,13 @@
             "authors": [
                 {
                     "name": "Graham Campbell",
-                    "email": "graham@alt-three.com",
-                    "homepage": "https://gjcampbell.co.uk/"
+                    "email": "hello@gjcampbell.co.uk",
+                    "homepage": "https://github.com/GrahamCampbell"
                 },
                 {
                     "name": "Vance Lucas",
                     "email": "vance@vancelucas.com",
-                    "homepage": "https://vancelucas.com/"
+                    "homepage": "https://github.com/vlucas"
                 }
             ],
             "description": "Loads environment variables from `.env` to `getenv()`, `$_ENV` and `$_SERVER` automagically.",
@@ -364,11 +370,17 @@
                 "env",
                 "environment"
             ],
-            "support": {
-                "issues": "https://github.com/vlucas/phpdotenv/issues",
-                "source": "https://github.com/vlucas/phpdotenv/tree/v3.6.0"
-            },
-            "time": "2019-09-10T21:37:39+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/GrahamCampbell",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/vlucas/phpdotenv",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2021-12-12T23:02:06+00:00"
         }
     ],
     "packages-dev": [
@@ -432,11 +444,6 @@
                 "validation",
                 "versioning"
             ],
-            "support": {
-                "irc": "irc://irc.freenode.org/composer",
-                "issues": "https://github.com/composer/semver/issues",
-                "source": "https://github.com/composer/semver/tree/2.0.0"
-            },
             "funding": [
                 {
                     "url": "https://packagist.com",
@@ -492,11 +499,6 @@
                 "Xdebug",
                 "performance"
             ],
-            "support": {
-                "irc": "irc://irc.freenode.org/composer",
-                "issues": "https://github.com/composer/xdebug-handler/issues",
-                "source": "https://github.com/composer/xdebug-handler/tree/1.4.6"
-            },
             "funding": [
                 {
                     "url": "https://packagist.com",
@@ -597,10 +599,6 @@
                 "getter",
                 "setter"
             ],
-            "support": {
-                "issues": "https://github.com/ICanBoogie/Accessor/issues",
-                "source": "https://github.com/ICanBoogie/Accessor"
-            },
             "time": "2020-04-26T09:36:00+00:00"
         },
         {
@@ -656,10 +654,6 @@
                 "locale",
                 "territory"
             ],
-            "support": {
-                "issues": "https://github.com/ICanBoogie/CLDR/issues",
-                "source": "https://github.com/ICanBoogie/CLDR"
-            },
             "time": "2018-12-01T13:35:19+00:00"
         },
         {
@@ -681,13 +675,13 @@
             },
             "type": "library",
             "autoload": {
-                "psr-4": {
-                    "ICanBoogie\\": "lib"
-                },
                 "files": [
                     "bootstrap.php",
                     "lib/helpers.php"
-                ]
+                ],
+                "psr-4": {
+                    "ICanBoogie\\": "lib"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -706,10 +700,6 @@
             "keywords": [
                 "toolkit"
             ],
-            "support": {
-                "issues": "https://github.com/ICanBoogie/Common/issues",
-                "source": "https://github.com/ICanBoogie/Common"
-            },
             "time": "2019-12-01T08:40:14+00:00"
         },
         {
@@ -751,10 +741,6 @@
                 }
             ],
             "description": "Tolerant PHP-to-AST parser designed for IDE usage scenarios",
-            "support": {
-                "issues": "https://github.com/microsoft/tolerant-php-parser/issues",
-                "source": "https://github.com/microsoft/tolerant-php-parser/tree/master"
-            },
             "time": "2020-02-18T02:57:19+00:00"
         },
         {
@@ -798,10 +784,6 @@
                 "github",
                 "pmd"
             ],
-            "support": {
-                "issues": "https://github.com/mridang/pmd-annotations/issues",
-                "source": "https://github.com/mridang/pmd-annotations/tree/0.0.2"
-            },
             "funding": [
                 {
                     "url": "https://github.com/mridang",
@@ -854,11 +836,6 @@
                 }
             ],
             "description": "Map nested JSON structures onto PHP classes",
-            "support": {
-                "email": "cweiske@cweiske.de",
-                "issues": "https://github.com/cweiske/jsonmapper/issues",
-                "source": "https://github.com/cweiske/jsonmapper/tree/master"
-            },
             "time": "2020-04-16T18:48:43+00:00"
         },
         {
@@ -986,10 +963,6 @@
                 "php",
                 "static"
             ],
-            "support": {
-                "issues": "https://github.com/phan/phan/issues",
-                "source": "https://github.com/phan/phan/tree/v2"
-            },
             "time": "2020-07-02T01:28:55+00:00"
         },
         {
@@ -1146,10 +1119,6 @@
                 "reflection",
                 "static analysis"
             ],
-            "support": {
-                "issues": "https://github.com/phpDocumentor/ReflectionCommon/issues",
-                "source": "https://github.com/phpDocumentor/ReflectionCommon/tree/2.x"
-            },
             "time": "2020-06-27T09:03:43+00:00"
         },
         {
@@ -1376,10 +1345,6 @@
             "keywords": [
                 "timer"
             ],
-            "support": {
-                "issues": "https://github.com/sebastianbergmann/php-timer/issues",
-                "source": "https://github.com/sebastianbergmann/php-timer/tree/2.1.3"
-            },
             "funding": [
                 {
                     "url": "https://github.com/sebastianbergmann",
@@ -1440,10 +1405,6 @@
                 "container-interop",
                 "psr"
             ],
-            "support": {
-                "issues": "https://github.com/php-fig/container/issues",
-                "source": "https://github.com/php-fig/container/tree/1.1.1"
-            },
             "time": "2021-03-05T17:36:06+00:00"
         },
         {
@@ -1491,9 +1452,6 @@
                 "psr",
                 "psr-3"
             ],
-            "support": {
-                "source": "https://github.com/php-fig/log/tree/1.1.4"
-            },
             "time": "2021-05-03T11:20:27+00:00"
         },
         {
@@ -1598,10 +1556,6 @@
             ],
             "description": "FinderFacade is a convenience wrapper for Symfony's Finder component.",
             "homepage": "https://github.com/sebastianbergmann/finder-facade",
-            "support": {
-                "issues": "https://github.com/sebastianbergmann/finder-facade/issues",
-                "source": "https://github.com/sebastianbergmann/finder-facade/tree/1.2"
-            },
             "abandoned": true,
             "time": "2020-01-16T08:08:45+00:00"
         },
@@ -1654,10 +1608,6 @@
             ],
             "description": "Copy/Paste Detector (CPD) for PHP code.",
             "homepage": "https://github.com/sebastianbergmann/phpcpd",
-            "support": {
-                "issues": "https://github.com/sebastianbergmann/phpcpd/issues",
-                "source": "https://github.com/sebastianbergmann/phpcpd/tree/4.1.0"
-            },
             "time": "2018-09-17T17:17:27+00:00"
         },
         {
@@ -1701,10 +1651,6 @@
             ],
             "description": "Library that helps with managing the version number of Git-hosted PHP projects",
             "homepage": "https://github.com/sebastianbergmann/version",
-            "support": {
-                "issues": "https://github.com/sebastianbergmann/version/issues",
-                "source": "https://github.com/sebastianbergmann/version/tree/master"
-            },
             "time": "2016-10-03T07:35:21+00:00"
         },
         {
@@ -2796,10 +2742,6 @@
                 "check",
                 "validate"
             ],
-            "support": {
-                "issues": "https://github.com/webmozarts/assert/issues",
-                "source": "https://github.com/webmozarts/assert/tree/1.10.0"
-            },
             "time": "2021-03-09T10:59:23+00:00"
         },
         {
@@ -2858,17 +2800,15 @@
                 "phpcs",
                 "standards"
             ],
-            "support": {
-                "issues": "https://github.com/PHPCompatibility/PHPCompatibility/issues",
-                "source": "https://github.com/PHPCompatibility/PHPCompatibility"
-            },
             "abandoned": "phpcompatibility/php-compatibility",
             "time": "2019-12-27T09:44:58+00:00"
         }
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "nosto/php-sdk": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],

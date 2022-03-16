@@ -5,7 +5,7 @@
     "AFL-3.0"
   ],
   "require": {
-    "nosto/php-sdk": ">=5.5.0"
+    "nosto/php-sdk": "dev-feature/upgrade-dotenv"
   },
   "require-dev": {
     "phan/phan": "^2.6",
