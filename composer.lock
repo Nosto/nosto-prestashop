@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "123e90a9b2fd3d1f956c09715a6ef623",
+    "content-hash": "47eaa88a5d46dc723faa212ff2080772",
     "packages": [
         {
             "name": "nosto/php-sdk",
@@ -1222,22 +1222,22 @@
         },
         {
             "name": "phpmd/phpmd",
-            "version": "2.11.1",
+            "version": "2.9.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpmd/phpmd.git",
-                "reference": "08b60a2eb7e14c23f46ff8865b510ae08b75d0fd"
+                "reference": "ce10831d4ddc2686c1348a98069771dd314534a8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpmd/phpmd/zipball/08b60a2eb7e14c23f46ff8865b510ae08b75d0fd",
-                "reference": "08b60a2eb7e14c23f46ff8865b510ae08b75d0fd",
+                "url": "https://api.github.com/repos/phpmd/phpmd/zipball/ce10831d4ddc2686c1348a98069771dd314534a8",
+                "reference": "ce10831d4ddc2686c1348a98069771dd314534a8",
                 "shasum": ""
             },
             "require": {
-                "composer/xdebug-handler": "^1.0 || ^2.0",
+                "composer/xdebug-handler": "^1.0",
                 "ext-xml": "*",
-                "pdepend/pdepend": "^2.10.2",
+                "pdepend/pdepend": "^2.7.1",
                 "php": ">=5.3.9"
             },
             "require-dev": {
@@ -1245,7 +1245,7 @@
                 "ext-json": "*",
                 "ext-simplexml": "*",
                 "gregwar/rst": "^1.0",
-                "mikey179/vfsstream": "^1.6.8",
+                "mikey179/vfsstream": "^1.6.4",
                 "phpunit/phpunit": "^4.8.36 || ^5.7.27",
                 "squizlabs/php_codesniffer": "^2.0"
             },
@@ -1296,7 +1296,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-12-17T11:25:43+00:00"
+            "time": "2020-09-23T22:06:32+00:00"
         },
         {
             "name": "phpunit/php-timer",
