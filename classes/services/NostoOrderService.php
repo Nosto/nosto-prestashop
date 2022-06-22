@@ -75,59 +75,63 @@ class NostoOrderService extends AbstractNostoService
                 //if employee is null and cart is null, new Product() kills the process. (SoNice issue)
                 $employeeId = 0;
             }
-            if($order->id_lang == Context::getContext()->language->getId()) {
-                NostoHelperContext::runInContext(
-                    static function () use ($order) {
-                        try {
-                            $nostoOrder = NostoOrder::loadData($order);
-                            if (!$nostoOrder instanceof NostoOrder) {
-                                NostoHelperLogger::info('Not able to load order.');
-                                return;
-                            }
-                            $nostoOrder->setCustomer(new Buyer()); // Remove customer data from order API calls
-                            $account = NostoHelperAccount::getAccount();
-                            $shopDomain = NostoHelperUrl::getShopDomain();
-                            if ($account !== null && $account->isConnectedToNosto()) {
-                                $customerId = NostoCustomerManager::getNostoId($order);
-                                $orderService = new NostoSDKOrderCreateOperation(
-                                    $nostoOrder,
-                                    $account,
-                                    AbstractGraphQLOperation::IDENTIFIER_BY_CID,
-                                    $customerId,
-                                    $shopDomain
-                                );
-                                $orderService->execute();
-                                try {
-                                    if (NostoOrderService::$syncInventoriesAfterOrder === true) {
-                                        $purchasedItems = $nostoOrder->getPurchasedItems();
-                                        $products = array();
-                                        foreach ($purchasedItems as $item) { //@codingStandardsIgnoreLine
-                                            $productId = $item->getProductId();
-                                            if (empty($productId) || $productId < 0) {
-                                                continue;
-                                            }
-                                            $product = new Product($productId);
-                                            if ($product instanceof Product) {
-                                                $products[] = $product;
-                                            }
-                                        }
-                                        $nostoProductOperation = new NostoProductService(); //@codingStandardsIgnoreLine
-                                        $nostoProductOperation->updateBatch($products);
-                                    }
-                                } catch (Exception $e) {
-                                    NostoHelperLogger::error($e, 'Failed to synchronize products after order');
-                                }
-                            }
-                        } catch (Exception $e) {
-                            NostoHelperLogger::error($e, 'Failed to send order confirmation');
+            NostoHelperContext::runInContext(
+                static function () use ($order) {
+                    try {
+                        //Check that the order is related to the store in context
+                        $language = Context::getContext()->language;
+                        if($language instanceof LanguageCore && $order->id_lang != $language->getId()) {
+                            return;
                         }
-                    },
-                    false,
-                    false,
-                    false,
-                    $employeeId
-                );
-            }
+
+                        $nostoOrder = NostoOrder::loadData($order);
+                        if (!$nostoOrder instanceof NostoOrder) {
+                            NostoHelperLogger::info('Not able to load order.');
+                            return;
+                        }
+                        $nostoOrder->setCustomer(new Buyer()); // Remove customer data from order API calls
+                        $account = NostoHelperAccount::getAccount();
+                        $shopDomain = NostoHelperUrl::getShopDomain();
+                        if ($account !== null && $account->isConnectedToNosto()) {
+                            $customerId = NostoCustomerManager::getNostoId($order);
+                            $orderService = new NostoSDKOrderCreateOperation(
+                                $nostoOrder,
+                                $account,
+                                AbstractGraphQLOperation::IDENTIFIER_BY_CID,
+                                $customerId,
+                                $shopDomain
+                            );
+                            $orderService->execute();
+                            try {
+                                if (NostoOrderService::$syncInventoriesAfterOrder === true) {
+                                    $purchasedItems = $nostoOrder->getPurchasedItems();
+                                    $products = array();
+                                    foreach ($purchasedItems as $item) { //@codingStandardsIgnoreLine
+                                        $productId = $item->getProductId();
+                                        if (empty($productId) || $productId < 0) {
+                                            continue;
+                                        }
+                                        $product = new Product($productId);
+                                        if ($product instanceof Product) {
+                                            $products[] = $product;
+                                        }
+                                    }
+                                    $nostoProductOperation = new NostoProductService(); //@codingStandardsIgnoreLine
+                                    $nostoProductOperation->updateBatch($products);
+                                }
+                            } catch (Exception $e) {
+                                NostoHelperLogger::error($e, 'Failed to synchronize products after order');
+                            }
+                        }
+                    } catch (Exception $e) {
+                        NostoHelperLogger::error($e, 'Failed to send order confirmation');
+                    }
+                },
+                false,
+                false,
+                false,
+                $employeeId
+            );
         });
     }
 }
