@@ -80,7 +80,8 @@ class NostoOrderService extends AbstractNostoService
                     try {
                         //Check that the order is related to the store in context
                         $language = Context::getContext()->language;
-                        /** @phan-suppress-next-line PhanUndeclaredMethod */
+                        /** @phan-suppress-next-next-line PhanUndeclaredMethod */
+                        /** @noinspection PhpUndefinedMethodInspection */
                         if ($language instanceof LanguageCore && $order->id_lang != $language->getId()) {
                             NostoHelperLogger::info('Could not get shop language id from shop');
                             return;
