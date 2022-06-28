@@ -78,6 +78,13 @@ class NostoOrderService extends AbstractNostoService
             NostoHelperContext::runInContext(
                 static function () use ($order) {
                     try {
+                        //Check that the order is related to the store in context
+                        $language = Context::getContext()->language;
+                        if ($language instanceof LanguageCore && $order->id_lang != $language->id) {
+                            NostoHelperLogger::info('Could not get shop language id from shop');
+                            return;
+                        }
+
                         $nostoOrder = NostoOrder::loadData($order);
                         if (!$nostoOrder instanceof NostoOrder) {
                             NostoHelperLogger::info('Not able to load order.');
