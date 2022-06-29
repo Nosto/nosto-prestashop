@@ -73,7 +73,7 @@ class NostoProduct extends NostoSDKProduct
                 $nostoProduct->setVariationId($taggingCurrency->iso_code);
             }
         }
-
+        $nostoProduct->setDatePublished($product->date_add);
         if (NostoHelperConfig::getSkuEnabled()) {
             $nostoProduct->amendSkus($product);
         }
