@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
+## 3.11.0
+- Add product published date to product tagging
+
 ## 3.10.1
 - Fix issue where orders were synced to all connected Nosto accounts
 
