@@ -49,6 +49,6 @@ class NostoCategoryTagging
         }
         $nostoCategory = NostoCategory::loadData($category);
 
-        return $nostoCategory ? $nostoCategory->toHtml() : null;
+        return $nostoCategory ? rtrim($nostoCategory->toHtml(), '/') : null;
     }
 }
