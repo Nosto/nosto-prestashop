@@ -379,10 +379,15 @@
             {else}
                 <div class="row nostotagging_iframe_container"
                      style="margin-left: -25px;margin-right: -25px;margin-top: 15px;">
-
-                    <!--suppress HtmlDeprecatedAttribute, HtmlDeprecatedAttribute -->
-                    <iframe id="nostotagging_iframe" frameborder="0" width="100%" scrolling="no"
-                            src="{$iframe_installation_url|escape:'htmlall':'UTF-8'}"></iframe>
+                    <button class="btn btn-lg"
+                            onclick="Nosto.openNostoAccount();"
+{*                            onclick="window.open('{$iframe_installation_url}', '_self');"*}
+                            name="nostotagging_install_account">
+                                <span class="ladda-label">
+                                    {l s='Install Nosto' mod='nostotagging'}
+                                </span>
+                        <span class="ladda-spinner"></span>
+                    </button>
                 </div>
             {/if}
         </div>
@@ -460,6 +465,12 @@
                 $('#nosto_form_id').attr("action", action);
                 $('#nosto_form_id').submit();
             }
+
+            window.Nosto.openNostoAccount = function () {
+                var action = "{/literal}{$NostoOpenAccountUrl|escape:'javascript'}{literal}";
+                console.log(action)
+                submitAction(action);
+            };
 
             window.Nosto.deleteNostoAccount = function () {
                 var action = "{/literal}{$NostoDeleteAccountUrl|escape:'javascript'}{literal}";

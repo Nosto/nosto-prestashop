@@ -33,6 +33,7 @@ class NostoBootstrap
         require_once($moduleDir . '/controllers/admin/AdminNostoController.php');
         require_once($moduleDir . '/controllers/admin/AdminNostoPersonalizationController.php');
         require_once($moduleDir . '/controllers/admin/NostoAdvancedSettingController.php');
+        require_once($moduleDir . '/controllers/admin/NostoOpenAccountController.php');
         require_once($moduleDir . '/controllers/admin/NostoConnectAccountController.php');
         require_once($moduleDir . '/controllers/admin/NostoCreateAccountController.php');
         require_once($moduleDir . '/controllers/admin/NostoUpdateExchangeRateController.php');
