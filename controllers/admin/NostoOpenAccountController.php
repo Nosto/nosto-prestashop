@@ -45,31 +45,39 @@ class NostoOpenAccountController extends NostoBaseController
     public function execute()
     {
         $account = NostoHelperAccount::getAccount();
+        $currentUser = NostoCurrentUser::loadData();
+        $accountIframe = NostoIframe::loadData();
+        $iframeInstallationUrl = NostoSDKIframeHelper::getUrl(
+            $accountIframe,
+            $account,
+            $currentUser,
+            array('v' => 1)
+        );
 
         // When no account is found we will redirect to the installation URL
         if ($account instanceof NostoSDKAccountInterface === false
             && Shop::getContext() === Shop::CONTEXT_SHOP) {
 
-            $urls = [
-                'createUrl'  => $this->context->link->getAdminLink('NostoCreateAccount'),
-                'connectUrl' => $this->context->link->getAdminLink('NostoConnectAccount'),
-                'deleteUrl'  => $this->context->link->getAdminLink('NostoDeleteAccount')
+            $langIdLabel = NostoTagging::MODULE_NAME . '_current_language';
+            $langIdValue = $this->getLanguageId();
+            $langIdParam = [$langIdLabel => $langIdValue];
+
+            $params = [
+                'createUrl'  => $this->context->link->getAdminLink('NostoCreateAccount', true, [], $langIdParam),
+                'connectUrl' => $this->context->link->getAdminLink('NostoConnectAccount', true, [], $langIdParam),
+                'deleteUrl'  => $this->context->link->getAdminLink('NostoDeleteAccount', true, [], $langIdParam),
             ];
 
-            $currentUser = NostoCurrentUser::loadData();
-            $accountIframe = NostoIframe::loadData();
-            $iframeInstallationUrl = NostoSDKIframeHelper::getUrl(
-                $accountIframe,
-                $account,
-                $currentUser,
-                array('v' => 1)
-            );
+            $iframeInstallationUrl .= '&' . http_build_query($params);
+        } else {
+            $params = [
+                'dashboard_rd' => 'true'
+            ];
 
-            $iframeInstallationUrl .= '&' . http_build_query($urls);
-
-            Tools::redirect($iframeInstallationUrl, '');
-            return false;
+            $iframeInstallationUrl .= '&' . http_build_query($params);
         }
+
+        Tools::redirect($iframeInstallationUrl, '');
 
         return true;
     }

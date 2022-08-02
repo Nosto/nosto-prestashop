@@ -364,32 +364,22 @@
             <div class="panel-heading">
                 <i class="icon-desktop"></i>
             </div>
-            {if $nostotagging_account_authorized}
-                {if !empty($iframe_url)}
-                    <div class="row nostotagging_iframe_container"
-                         style="margin-left: -25px;margin-right: -25px;margin-top: 15px;">
-                        <div class="col-md-12">
-                            <!--suppress HtmlDeprecatedAttribute, HtmlDeprecatedAttribute -->
-                            <iframe id="nostotagging_iframe" frameborder="0" width="100%"
-                                    scrolling="no"
-                                    src="{$iframe_url|escape:'htmlall':'UTF-8'}"></iframe>
-                        </div>
-                    </div>
-                {/if}
-            {else}
-                <div class="row nostotagging_iframe_container"
-                     style="margin-left: -25px;margin-right: -25px;margin-top: 15px;">
-                    <button class="btn btn-lg"
-                            onclick="Nosto.openNostoAccount();"
-{*                            onclick="window.open('{$iframe_installation_url}', '_self');"*}
-                            name="nostotagging_install_account">
+            <div class="row nostotagging_iframe_container"
+                 style="margin-left: -25px;margin-right: -25px;margin-top: 15px;">
+                <button class="btn btn-lg"
+                        onclick="Nosto.openNostoAccount();"
+                        {*                            onclick="window.open('{$iframe_installation_url}', '_self');"*}
+                        name="nostotagging_install_account">
                                 <span class="ladda-label">
-                                    {l s='Install Nosto' mod='nostotagging'}
+                                    {if $nostotagging_account_authorized}
+                                        {l s='Open Nosto' mod='nostotagging'}
+                                    {else}
+                                        {l s='Install Nosto' mod='nostotagging'}
+                                    {/if}
                                 </span>
-                        <span class="ladda-spinner"></span>
-                    </button>
-                </div>
-            {/if}
+                    <span class="ladda-spinner"></span>
+                </button>
+            </div>
         </div>
         </div>
     </form>
@@ -474,11 +464,6 @@
 
             window.Nosto.deleteNostoAccount = function () {
                 var action = "{/literal}{$NostoDeleteAccountUrl|escape:'javascript'}{literal}";
-                submitAction(action);
-            };
-
-            window.Nosto.reconnectNostoAccount = function () {
-                var action = "{/literal}{$NostoConnectAccountUrl|escape:'javascript'}{literal}";
                 submitAction(action);
             };
 
