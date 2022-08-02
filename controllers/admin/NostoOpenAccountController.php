@@ -46,9 +46,15 @@ class NostoOpenAccountController extends NostoBaseController
     {
         $account = NostoHelperAccount::getAccount();
 
-        // When no account is found we will show the installation URL
+        // When no account is found we will redirect to the installation URL
         if ($account instanceof NostoSDKAccountInterface === false
             && Shop::getContext() === Shop::CONTEXT_SHOP) {
+
+            $urls = [
+                'createUrl'  => $this->context->link->getAdminLink('NostoCreateAccount'),
+                'connectUrl' => $this->context->link->getAdminLink('NostoConnectAccount'),
+                'deleteUrl'  => $this->context->link->getAdminLink('NostoDeleteAccount')
+            ];
 
             $currentUser = NostoCurrentUser::loadData();
             $accountIframe = NostoIframe::loadData();
@@ -58,6 +64,8 @@ class NostoOpenAccountController extends NostoBaseController
                 $currentUser,
                 array('v' => 1)
             );
+
+            $iframeInstallationUrl .= '&' . http_build_query($urls);
 
             Tools::redirect($iframeInstallationUrl, '');
             return false;
