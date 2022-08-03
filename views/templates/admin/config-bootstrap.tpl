@@ -42,7 +42,7 @@
                value="">
 
         <div class="panel" id="nosto-settings">
-            <div class="panel-heading">
+            <div class="panel-heading container-fluid">
                 {if count($nostotagging_languages) > 1}
                     <div class="col-md-1">
                         {l s='Manage accounts:' mod='nostotagging'}
@@ -361,15 +361,10 @@
         {/if}
 
         <div class="panel">
-            <div class="panel-heading">
-                <i class="icon-desktop"></i>
-            </div>
-            <div class="row nostotagging_iframe_container"
-                 style="margin-left: -25px;margin-right: -25px;margin-top: 15px;">
+            <div class="row nostotagging_account_container">
                 <button class="btn btn-lg"
-                        onclick="Nosto.openNostoAccount();"
-                        {*                            onclick="window.open('{$iframe_installation_url}', '_self');"*}
-                        name="nostotagging_install_account">
+                        onclick="Nosto.openNostoAccount({if $nostotagging_account_authorized}{"true"}{else}{"false"}{/if});"
+                        name="nostotagging_open_account">
                                 <span class="ladda-label">
                                     {if $nostotagging_account_authorized}
                                         {l s='Open Nosto' mod='nostotagging'}
@@ -453,12 +448,18 @@
 
             function submitAction(action) {
                 $('#nosto_form_id').attr("action", action);
-                $('#nosto_form_id').submit();
+                // $('#nosto_form_id').submit();
             }
 
-            window.Nosto.openNostoAccount = function () {
+            function targetBlank() {
+                $('#nosto_form_id').attr("target", '_blank');
+            }
+
+            window.Nosto.openNostoAccount = function (newTab) {
                 var action = "{/literal}{$NostoOpenAccountUrl|escape:'javascript'}{literal}";
-                console.log(action)
+                if (newTab) {
+                    targetBlank();
+                }
                 submitAction(action);
             };
 
