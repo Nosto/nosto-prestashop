@@ -4,28 +4,28 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "47eaa88a5d46dc723faa212ff2080772",
+    "content-hash": "d753a14535adc3e672a3c318d2aa1749",
     "packages": [
         {
             "name": "nosto/php-sdk",
-            "version": "5.7.0",
+            "version": "6.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Nosto/nosto-php-sdk.git",
-                "reference": "02b2ab3b7c614ea438319ebb48d319ae6a3793e9"
+                "reference": "65541193b17503b69a510cb380f14d5580396f39"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Nosto/nosto-php-sdk/zipball/02b2ab3b7c614ea438319ebb48d319ae6a3793e9",
-                "reference": "02b2ab3b7c614ea438319ebb48d319ae6a3793e9",
+                "url": "https://api.github.com/repos/Nosto/nosto-php-sdk/zipball/65541193b17503b69a510cb380f14d5580396f39",
+                "reference": "65541193b17503b69a510cb380f14d5580396f39",
                 "shasum": ""
             },
             "require": {
                 "ext-curl": "*",
                 "ext-json": "*",
                 "php": ">=5.5",
-                "phpseclib/phpseclib": "2.0.*",
-                "vlucas/phpdotenv": "^3.6"
+                "phpseclib/phpseclib": "2.0.* || ~3.0.9",
+                "vlucas/phpdotenv": "^2.4 || ^3.6"
             },
             "require-dev": {
                 "codeception/c3": "^2.6",
@@ -56,7 +56,11 @@
                 "BSD-3-Clause"
             ],
             "description": "PHP SDK for developing Nosto modules for e-commerce platforms",
-            "time": "2022-03-16T13:56:27+00:00"
+            "support": {
+                "issues": "https://github.com/Nosto/nosto-php-sdk/issues",
+                "source": "https://github.com/Nosto/nosto-php-sdk/tree/6.0.0"
+            },
+            "time": "2022-08-01T12:59:51+00:00"
         },
         {
             "name": "phpoption/phpoption",
@@ -2811,5 +2815,5 @@
     "prefer-lowest": false,
     "platform": [],
     "platform-dev": [],
-    "plugin-api-version": "1.1.0"
+    "plugin-api-version": "2.1.0"
 }

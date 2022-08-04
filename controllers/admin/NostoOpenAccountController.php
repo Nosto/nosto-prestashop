@@ -25,7 +25,7 @@
 
 require_once 'NostoBaseController.php';
 
-use Nosto\Helper\IframeHelper as NostoSDKIframeHelper;
+use Nosto\Helper\ConnectionHelper as NostoSDKConnectionHelper;
 use Nosto\Types\Signup\AccountInterface as NostoSDKAccountInterface;
 
 /**
@@ -46,9 +46,9 @@ class NostoOpenAccountController extends NostoBaseController
     {
         $account = NostoHelperAccount::getAccount();
         $currentUser = NostoCurrentUser::loadData();
-        $accountIframe = NostoIframe::loadData();
-        $iframeInstallationUrl = NostoSDKIframeHelper::getUrl(
-            $accountIframe,
+        $accountConnection = NostoConnection::loadData();
+        $connectionUrl = NostoSDKConnectionHelper::getUrl(
+            $accountConnection,
             $account,
             $currentUser,
             array('v' => 1)
@@ -68,16 +68,16 @@ class NostoOpenAccountController extends NostoBaseController
                 'deleteUrl'  => $this->context->link->getAdminLink('NostoDeleteAccount', true, [], $langIdParam),
             ];
 
-            $iframeInstallationUrl .= '&' . http_build_query($params);
+            $connectionUrl .= '&' . http_build_query($params);
         } else {
             $params = [
                 'dashboard_rd' => 'true'
             ];
 
-            $iframeInstallationUrl .= '&' . http_build_query($params);
+            $connectionUrl .= '&' . http_build_query($params);
         }
 
-        Tools::redirect($iframeInstallationUrl, '');
+        Tools::redirect($connectionUrl, '');
 
         return true;
     }
