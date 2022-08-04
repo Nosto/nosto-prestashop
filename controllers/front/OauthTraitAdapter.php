@@ -24,6 +24,7 @@
  */
 
 use Nosto\Mixins\OauthTrait as NostoSDKOauthTrait;
+use Nosto\Nosto;
 use Nosto\Request\Http\HttpRequest as NostoSDKHttpRequest;
 use Nosto\Types\Signup\AccountInterface as NostoSDKAccountInterface;
 use Nosto\NostoException;
@@ -127,6 +128,20 @@ class OauthTraitAdapter
     {
         $adminUrl = NostoHelperConfig::getAdminUrl();
         if (!empty($adminUrl)) {
+            if ($params[Nosto::URL_PARAM_MESSAGE_TYPE] == Nosto::TYPE_SUCCESS) {
+                NostoHelperFlash::add(
+                    'success',
+                    Context::getContext()->getTranslator()->trans(
+                        sprintf(
+                            'Shop %s (language %s) was successfully connected to the Nosto account %s',
+                            NostoHelperContext::getShop()->name,
+                            NostoHelperContext::getLanguage()->getName(),
+                            NostoHelperConfig::getAccountName(),
+                        )
+                    )
+                );
+            }
+            $params[NostoTagging::MODULE_NAME . '_current_language'] = $this->languageId;
             $adminUrl = NostoSDKHttpRequest::replaceQueryParamsInUrl($params, $adminUrl);
             Tools::redirect($adminUrl, '');
             die;

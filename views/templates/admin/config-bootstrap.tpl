@@ -22,54 +22,53 @@
 * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *}
 
-{if !empty($iframe_url) or !empty($iframe_installation_url)}
-    <!--suppress JSUnresolvedFunction, Annotator, ES6ConvertVarToLetConst -->
-    <style type="text/css">
-        .clickable {
-            cursor: pointer;
-            padding-right: 5px;
-        }
-    </style>
-    <form id="nosto_form_id" role="form" class="nostotagging form-horizontal"
-          action="{$nostotagging_form_action|escape:'htmlall':'UTF-8'}" method="post" novalidate>
-        <input type="hidden" id="nostotagging_current_language" name="nostotagging_current_language"
-               value="{$nostotagging_current_language.id_lang|escape:'htmlall':'UTF-8'}">
-        <input type="hidden" id="nostotagging_account_action" name="nostotagging_account_action"
-               value="">
-        <input type="hidden" id="nostotagging_account_email" name="nostotagging_account_email"
-               value="">
-        <input type="hidden" id="nostotagging_account_details" name="nostotagging_account_details"
-               value="">
+<!--suppress JSUnresolvedFunction, Annotator, ES6ConvertVarToLetConst -->
+<style type="text/css">
+    .clickable {
+        cursor: pointer;
+        padding-right: 5px;
+    }
+</style>
+<form id="nosto_form_id" role="form" class="nostotagging form-horizontal"
+      action="{$nostotagging_form_action|escape:'htmlall':'UTF-8'}" method="post" novalidate>
+    <input type="hidden" id="nostotagging_current_language" name="nostotagging_current_language"
+           value="{$nostotagging_current_language.id_lang|escape:'htmlall':'UTF-8'}">
+    <input type="hidden" id="nostotagging_account_action" name="nostotagging_account_action"
+           value="">
+    <input type="hidden" id="nostotagging_account_email" name="nostotagging_account_email"
+           value="">
+    <input type="hidden" id="nostotagging_account_details" name="nostotagging_account_details"
+           value="">
 
-        <div class="panel" id="nosto-settings">
-            <div class="panel-heading container-fluid">
-                {if count($nostotagging_languages) > 1}
-                    <div class="col-md-1">
-                        {l s='Manage accounts:' mod='nostotagging'}
-                    </div>
-                    <div class="col-md-2">
-                        <!--suppress HtmlFormInputWithoutLabel -->
-                        <select id="nostotagging_language">
-                            {foreach from=$nostotagging_languages item=language}
-                                <option value="{$language.id_lang|escape:'htmlall':'UTF-8'}"
-                                        {if $language.id_lang == $nostotagging_current_language.id_lang}selected="selected"{/if}>
-                                    {$language.name|escape:'htmlall':'UTF-8'}
-                                </option>
-                            {/foreach}
-                        </select>
-                    </div>
-                {else}
-                    <div class="col-md-3">
-                    </div>
-                {/if}
-                {if $nostotagging_account_authorized}
-                    <span class="pull-right clickable panel-collapsed">
-                        <i class="icon-chevron-down"></i>
-                        {l s='Settings' mod='nostotagging'}
-                    </span>
-                {/if}
-            </div>
+    <div class="panel" id="nosto-settings">
+        <div class="panel-heading container-fluid">
+            {if count($nostotagging_languages) > 1}
+                <div class="col-md-1">
+                    {l s='Manage accounts:' mod='nostotagging'}
+                </div>
+                <div class="col-md-2">
+                    <!--suppress HtmlFormInputWithoutLabel -->
+                    <select id="nostotagging_language">
+                        {foreach from=$nostotagging_languages item=language}
+                            <option value="{$language.id_lang|escape:'htmlall':'UTF-8'}"
+                                    {if $language.id_lang == $nostotagging_current_language.id_lang}selected="selected"{/if}>
+                                {$language.name|escape:'htmlall':'UTF-8'}
+                            </option>
+                        {/foreach}
+                    </select>
+                </div>
+            {else}
+                <div class="col-md-3">
+                </div>
+            {/if}
             {if $nostotagging_account_authorized}
+                <span class="pull-right clickable panel-collapsed">
+                    <i class="icon-chevron-down"></i>
+                    {l s='Settings' mod='nostotagging'}
+                </span>
+            {/if}
+        </div>
+        {if $nostotagging_account_authorized}
             <div class="panel-body" style="display:none">
                 <div class="form-wrapper nostotagging_settings">
                     <div class="form-group">
@@ -81,7 +80,7 @@
                         </div>
                         <div class="col-lg-offset-3">
                             <button class="btn btn-danger btn-lg" type="submit"
-                                    onclick="if(confirm('{l s='Are you sure you want to uninstall Nosto?' mod='nostotagging'}'))Nosto.deleteNostoAccount();"
+                                    onclick="if(confirm('{l s='Are you sure you want to uninstall Nosto?' mod='nostotagging'}'))deleteNostoAccount();"
                                     name="submit_nostotagging_reset_account">
                                 <span class="ladda-label">
                                     <i class="icon-remove"></i>
@@ -99,7 +98,7 @@
                             </div>
                             <div class="col-lg-offset-3">
                                 <button class="btn btn-default btn-warning btn-lg" type="submit"
-                                        onclick="if(confirm('{l s='Are you sure you want to reconnect Nosto?' mod='nostotagging'}'))Nosto.reconnectNostoAccount();"
+                                        onclick="if(confirm('{l s='Are you sure you want to reconnect Nosto?' mod='nostotagging'}'))reconnectNostoAccount();"
                                         name="submit_nostotagging_authorize_account">
                                     <span class="ladda-label">
                                         <i class="icon-exchange"></i>
@@ -175,7 +174,7 @@
                             <div class="radio ">
                                 <label>
                                     <input type="radio" name="multi_currency_method" value="disabled"
-                                           onchange="Nosto.checkMultiCurrencyVariationConflict()"
+                                           onchange="checkMultiCurrencyVariationConflict()"
                                            {if $multi_currency_method==="disabled"}checked="checked"{/if}/>
                                     {l s='Disabled' mod='nostotagging'}
                                 </label>
@@ -183,7 +182,7 @@
                             <div class="radio ">
                                 <label>
                                     <input type="radio" name="multi_currency_method" value="exchangeRates"
-                                           onchange="Nosto.checkMultiCurrencyVariationConflict()"
+                                           onchange="checkMultiCurrencyVariationConflict()"
                                            {if $multi_currency_method==="exchangeRates"}checked="checked"{/if}/>
                                     {l s='Exchange rates' mod='nostotagging'}
                                 </label>
@@ -211,7 +210,7 @@
                                 </p>
                                 <div class="form-group">
                                     <button class="btn btn-default btn-info btn-lg"
-                                            onclick="Nosto.updateExchangeRates()"
+                                            onclick="updateExchangeRates()"
                                             name="submit_nostotagging_update_exchange_rates"
                                             value="1">
                                         <span class="ladda-label">
@@ -264,11 +263,11 @@
                                 <span class="switch prestashop-switch fixed-width-lg">
                                     <input type="radio" name="nosto_variation_switch" id="nosto_variation_switch_on"
                                            value="1" {if $nostotagging_variation_switch === true}checked="checked" {/if}
-                                           onchange="Nosto.checkMultiCurrencyVariationConflict()"/>
+                                           onchange="checkMultiCurrencyVariationConflict()"/>
                                     <label for="nosto_variation_switch_on" class="radioCheck">Yes</label>
                                     <input type="radio" name="nosto_variation_switch" id="nosto_variation_switch_off"
                                            value="0" {if $nostotagging_variation_switch !== true}checked="checked" {/if}
-                                           onchange="Nosto.checkMultiCurrencyVariationConflict()"/>
+                                           onchange="checkMultiCurrencyVariationConflict()"/>
                                     <label for="nosto_variation_switch_off" class="radioCheck">No</label>
                                     <a class="slide-button btn"></a>
                                 </span>
@@ -349,21 +348,20 @@
                     </div>
                 </div>
             </div>
-            <div class="panel-footer" style="display:none;margin-bottom: 10px;"
-            ">
-            <button type="submit" onclick="Nosto.saveAdvancedSettings()" value="1"
-                    name="submit_nostotagging_advanced_settings"
-                    id="submit_nostotagging_advanced_settings"
-                    class="btn btn-default pull-right">
-                <i class="process-icon-save"></i> Save
-            </button>
-        </div>
+            <div class="panel-footer" style="display:none;margin-bottom: 10px;">
+                <button type="submit" onclick="saveAdvancedSettings()" value="1"
+                        name="submit_nostotagging_advanced_settings"
+                        id="submit_nostotagging_advanced_settings"
+                        class="btn btn-default pull-right">
+                    <i class="process-icon-save"></i> Save
+                </button>
+            </div>
         {/if}
 
         <div class="panel">
             <div class="row nostotagging_account_container">
                 <button class="btn btn-lg"
-                        onclick="Nosto.openNostoAccount({if $nostotagging_account_authorized}{"true"}{else}{"false"}{/if});"
+                        onclick="openNostoAccount({if $nostotagging_account_authorized}{"true"}{else}{"false"}{/if});"
                         name="nostotagging_open_account">
                                 <span class="ladda-label">
                                     {if $nostotagging_account_authorized}
@@ -376,135 +374,85 @@
                 </button>
             </div>
         </div>
-        </div>
-    </form>
-    <script type="text/javascript"
-            src="{$module_path|escape:'htmlall':'UTF-8'}views/js/nostotagging-admin-config.js"></script>
-    <script type="text/javascript"
-            src="{$module_path|escape:'htmlall':'UTF-8'}views/js/iframeresizer.min.js"></script>
-    <script type="text/javascript">
-        $(document).on('click', '.panel-heading span.clickable', function () {
-            var $this = $(this);
-            if (!$this.hasClass('panel-collapsed')) {
-                $this.parents('.panel').find('.panel-body').slideUp();
-                $this.parents('.panel').find('.panel-footer').slideUp();
-                $this.addClass('panel-collapsed');
-                $this.find('i').removeClass('icon-chevron-up').addClass('icon-chevron-down');
+    </div>
+</form>
+<script type="text/javascript"
+        src="{$module_path|escape:'htmlall':'UTF-8'}views/js/nostotagging-admin-config.js"></script>
+<!-- Toggle Nosto Settings -->
+<script type="text/javascript">
+    $(document).on('click', '.panel-heading span.clickable', function () {
+        var $this = $(this);
+        if (!$this.hasClass('panel-collapsed')) {
+            $this.parents('.panel').find('.panel-body').slideUp();
+            $this.parents('.panel').find('.panel-footer').slideUp();
+            $this.addClass('panel-collapsed');
+            $this.find('i').removeClass('icon-chevron-up').addClass('icon-chevron-down');
+        } else {
+            $this.parents('.panel').find('.panel-body').slideDown();
+            $this.parents('.panel').find('.panel-footer').slideDown();
+            $this.removeClass('panel-collapsed');
+            $this.find('i').removeClass('icon-chevron-down').addClass('icon-chevron-up');
+        }
+    })
+</script>
+<!--suppress JSJQueryEfficiency -->
+<script type="text/javascript">
+    {literal}
+        function submitAction(action) {
+            $('#nosto_form_id').attr("action", action);
+        }
+
+        function targetBlank() {
+            $('#nosto_form_id').attr("target", '_blank');
+        }
+
+        function openNostoAccount(newTab) {
+            var action = "{/literal}{$NostoOpenAccountUrl|escape:'javascript'}{literal}";
+            if (newTab) {
+                targetBlank();
+            }
+            submitAction(action);
+        }
+
+        function deleteNostoAccount() {
+            var action = "{/literal}{$NostoDeleteAccountUrl|escape:'javascript'}{literal}";
+            submitAction(action);
+        }
+
+        function updateExchangeRates() {
+            var action = "{/literal}{$NostoUpdateExchangeRateUrl|escape:'javascript'}{literal}";
+            submitAction(action);
+        }
+
+        function checkMultiCurrencyVariationConflict() {
+            if ($("input[name='multi_currency_method']:checked").val() === 'exchangeRates'
+                && $("input[name='nosto_variation_switch']:checked").val() === '1') {
+                $('.multi-currency-variation-alert').show();
+                $('#submit_nostotagging_advanced_settings').attr("disabled", "disabled");
             } else {
-                $this.parents('.panel').find('.panel-body').slideDown();
-                $this.parents('.panel').find('.panel-footer').slideDown();
-                $this.removeClass('panel-collapsed');
-                $this.find('i').removeClass('icon-chevron-down').addClass('icon-chevron-up');
-            }
-        })
-    </script>
-    <!--suppress JSJQueryEfficiency -->
-    <script type="text/javascript">
-        {literal}
-        $(document).ready(function () {
-            iFrameResize({heightCalculationMethod: "bodyScroll"});
-
-            function receiveMessage(event) {
-                var originRegexp = new RegExp("{/literal}{$iframe_origin|escape:'htmlall':'UTF-8'}{literal}");
-                if (!originRegexp.test(event.origin)) {
-                    return;
-                }
-                if (("" + event.data).substr(0, 7) !== "[Nosto]") {
-                    return;
-                }
-                var json = ("" + event.data).substr(7);
-                var data = JSON.parse(json);
-                if (typeof data === "object" && data.type) {
-                    $('#nostotagging_account_action').val(data.type);
-                    if (data.params) {
-                        if (data.params.email) {
-                            $('#nostotagging_account_email').val(data.params.email);
-                        } else {
-                            $('#nostotagging_account_email').val('');
-                        }
-                        if (data.params.details) {
-                            $('#nostotagging_account_details').val(JSON.stringify(data.params.details));
-                        } else {
-                            $('#nostotagging_account_details').val('');
-                        }
-                    }
-
-                    var action = null;
-                    if (data.type === 'newAccount') {
-                        action = "{/literal}{$NostoCreateAccountUrl|escape:'javascript'}{literal}";
-                    } else if (data.type === 'connectAccount' || data.type === 'syncAccount') {
-                        action = "{/literal}{$NostoConnectAccountUrl|escape:'javascript'}{literal}";
-                    } else if (data.type === 'removeAccount') {
-                        Nosto.deleteNostoAccount();
-                        return;
-                    }
-                    submitAction(action);
-                }
+                $('.multi-currency-variation-alert').hide();
+                $('#submit_nostotagging_advanced_settings').removeAttr("disabled");
             }
 
-            // Define the "Nosto" global namespace if not already defined.
-            // noinspection JSConstantReassignment
-            window.Nosto = window.Nosto || {};
-
-            function submitAction(action) {
-                $('#nosto_form_id').attr("action", action);
-                // $('#nosto_form_id').submit();
+            if ($("input[name='nosto_variation_switch']:checked").val() === '1') {
+                $('#nosto_variation_tax_rule_switch_div').show();
+            } else {
+                $('#nosto_variation_tax_rule_switch_div').hide();
             }
+        }
 
-            function targetBlank() {
-                $('#nosto_form_id').attr("target", '_blank');
-            }
+        function saveAdvancedSettings() {
+            var action = "{/literal}{$NostoAdvancedSettingUrl|escape:'javascript'}{literal}";
+            submitAction(action);
+        }
 
-            window.Nosto.openNostoAccount = function (newTab) {
-                var action = "{/literal}{$NostoOpenAccountUrl|escape:'javascript'}{literal}";
-                if (newTab) {
-                    targetBlank();
-                }
-                submitAction(action);
-            };
+        function showVariationKeys() {
+            console.log("Variation keys: {/literal}{$variation_keys|escape:'javascript'}{literal}");
+            console.log("Countries from tax rules: {/literal}{$variation_countries_from_tax_rule|escape:'javascript'}{literal}");
+            console.log("Countries from specific price rules: {/literal}{$variation_countries_from_price_rule|escape:'javascript'}{literal}");
+            console.log("Groups from specific price rules: {/literal}{$variation_groups|escape:'javascript'}{literal}");
+        }
 
-            window.Nosto.deleteNostoAccount = function () {
-                var action = "{/literal}{$NostoDeleteAccountUrl|escape:'javascript'}{literal}";
-                submitAction(action);
-            };
-
-            window.Nosto.updateExchangeRates = function () {
-                var action = "{/literal}{$NostoUpdateExchangeRateUrl|escape:'javascript'}{literal}";
-                submitAction(action);
-            };
-
-            window.Nosto.checkMultiCurrencyVariationConflict = function () {
-                if ($("input[name='multi_currency_method']:checked").val() === 'exchangeRates'
-                    && $("input[name='nosto_variation_switch']:checked").val() === '1') {
-                    $('.multi-currency-variation-alert').show();
-                    $('#submit_nostotagging_advanced_settings').attr("disabled", "disabled");
-                } else {
-                    $('.multi-currency-variation-alert').hide();
-                    $('#submit_nostotagging_advanced_settings').removeAttr("disabled");
-                }
-
-                if ($("input[name='nosto_variation_switch']:checked").val() === '1') {
-                    $('#nosto_variation_tax_rule_switch_div').show();
-                } else {
-                    $('#nosto_variation_tax_rule_switch_div').hide();
-                }
-            }
-            Nosto.checkMultiCurrencyVariationConflict();
-
-            window.Nosto.saveAdvancedSettings = function () {
-                var action = "{/literal}{$NostoAdvancedSettingUrl|escape:'javascript'}{literal}";
-                submitAction(action);
-            };
-
-            window.Nosto.showVariationKeys = function () {
-                console.log("Variation keys: {/literal}{$variation_keys|escape:'javascript'}{literal}");
-                console.log("Countries from tax rules: {/literal}{$variation_countries_from_tax_rule|escape:'javascript'}{literal}");
-                console.log("Countries from specific price rules: {/literal}{$variation_countries_from_price_rule|escape:'javascript'}{literal}");
-                console.log("Groups from specific price rules: {/literal}{$variation_groups|escape:'javascript'}{literal}");
-            };
-
-            window.addEventListener("message", receiveMessage, false);
-        });
-        {/literal}
-    </script>
-{/if}
+        window.addEventListener("message", receiveMessage, false);
+    {/literal}
+</script>
