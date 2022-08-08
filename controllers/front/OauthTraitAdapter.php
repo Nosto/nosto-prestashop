@@ -135,7 +135,7 @@ class OauthTraitAdapter
                         sprintf(
                             'Shop %s (language %s) was successfully connected to the Nosto account %s',
                             NostoHelperContext::getShop()->name,
-                            NostoHelperContext::getLanguage()->getName(),
+                            NostoHelperContext::getLanguage()->name,
                             NostoHelperConfig::getAccountName(),
                         )
                     )

@@ -38,11 +38,11 @@ class NostoDeleteAccountController extends NostoBaseController
         NostoHelperAccount::delete();
         NostoHelperFlash::add(
             'success',
-            $this->l(
+            Context::getContext()->getTranslator()->trans(
                 sprintf(
                     'Shop %s and language %s was successfully disconnected from the Nosto account %s',
                     NostoHelperContext::getShop()->name,
-                    NostoHelperContext::getLanguage()->getName(),
+                    NostoHelperContext::getLanguage()->name,
                     $accountName,
                 )
             )

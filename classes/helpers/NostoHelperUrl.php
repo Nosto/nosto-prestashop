@@ -36,113 +36,6 @@ class NostoHelperUrl
     const PS_MULTISHOP_FEATURE_ACTIVE = 'PS_MULTISHOP_FEATURE_ACTIVE';
 
     /**
-     * Returns a preview url to a product page.
-     *
-     * @return string the url.
-     */
-    public static function getPreviewUrlProduct()
-    {
-        try {
-            $idLang = NostoHelperContext::getLanguageId();
-
-            $row = Product::getProducts($idLang, 0, 1, self::ID_PRODUCT, "ASC", false, true);
-            $productId = isset($row[self::ID_PRODUCT]) ? (int)$row[self::ID_PRODUCT] : 0;
-
-            $product = new Product($productId, $idLang, NostoHelperContext::getShopId());
-            if (!Validate::isLoadedObject($product)) {
-                return '';
-            }
-
-            $params = array('nostodebug' => 'true');
-            return self::getProductUrl($product, $params);
-        } catch (Exception $e) {
-            NostoHelperLogger::error($e, "Unable to build the product page preview URL");
-            return '';
-        }
-    }
-
-    /**
-     * Returns a preview url to a category page.
-     *
-     * @return string the url.
-     *
-     * @suppress PhanTypeMismatchArgument
-     */
-    public static function getPreviewUrlCategory()
-    {
-        try {
-            $idLang = NostoHelperContext::getLanguageId();
-
-            $rows = Category::getHomeCategories($idLang, true);
-            $row = $rows[0];
-            $categoryId = isset($row['id_category']) ? (int)$row['id_category'] : 0;
-
-            $category = new Category($categoryId, $idLang);
-            if (!Validate::isLoadedObject($category)) {
-                return '';
-            }
-
-            $params = array('nostodebug' => 'true');
-            return self::getCategoryUrl($category, $params);
-        } catch (Exception $e) {
-            NostoHelperLogger::error($e, "Unable to build the category page preview URL");
-            return '';
-        }
-    }
-
-    /**
-     * Returns a preview url to the search page.
-     *
-     * @return string the url.
-     */
-    public static function getPreviewUrlSearch()
-    {
-        try {
-            $params = array(
-                'controller' => 'search',
-                'search_query' => 'nosto',
-                'nostodebug' => 'true',
-            );
-            return self::getPageUrl('search.php', $params);
-        } catch (Exception $e) {
-            NostoHelperLogger::error($e, "Unable to build the search page preview URL");
-            return '';
-        }
-    }
-
-    /**
-     * Returns a preview url to cart page.
-     *
-     * @return string the url.
-     */
-    public static function getPreviewUrlCart()
-    {
-        try {
-            $params = array('nostodebug' => 'true');
-            return self::getPageUrl('order.php', $params);
-        } catch (Exception $e) {
-            NostoHelperLogger::error($e, "Unable to build the cart page preview URL");
-            return '';
-        }
-    }
-
-    /**
-     * Returns a preview url to the home page.
-     *
-     * @return string the url.
-     */
-    public static function getPreviewUrlHome()
-    {
-        try {
-            $params = array('nostodebug' => 'true');
-            return self::getPageUrl('index.php', $params);
-        } catch (Exception $e) {
-            NostoHelperLogger::error($e, "Unable to build the home page preview URL");
-            return '';
-        }
-    }
-
-    /**
      * Builds a product page url for the language and shop.
      *
      * We created our own method due to the existing one in `Link` behaving differently across
@@ -176,7 +69,7 @@ class NostoHelperUrl
             $params[self::ID_LANG] = $idLang;
         }
 
-        return NostoSDKHttpRequest::replaceQueryParamsInUrl($params, $url);
+        return NostoSDKHttpRequest::replaceQueryParamInUrl($params, $url);
     }
 
     /**
@@ -200,7 +93,7 @@ class NostoHelperUrl
             $params[self::ID_LANG] = $idLang;
         }
 
-        return NostoSDKHttpRequest::replaceQueryParamsInUrl($params, $url);
+        return NostoSDKHttpRequest::replaceQueryParamInUrl($params, $url);
     }
 
     /**
@@ -225,7 +118,7 @@ class NostoHelperUrl
             $params[self::ID_LANG] = $idLang;
         }
 
-        return NostoSDKHttpRequest::replaceQueryParamsInUrl($params, $url);
+        return NostoSDKHttpRequest::replaceQueryParamInUrl($params, $url);
     }
 
     /**
