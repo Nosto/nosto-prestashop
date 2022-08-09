@@ -69,7 +69,7 @@ class NostoHelperUrl
             $params[self::ID_LANG] = $idLang;
         }
 
-        return NostoSDKHttpRequest::replaceQueryParamInUrl($params, $url);
+        return NostoSDKHttpRequest::replaceQueryParamsInUrl($params, $url);
     }
 
     /**
@@ -93,7 +93,7 @@ class NostoHelperUrl
             $params[self::ID_LANG] = $idLang;
         }
 
-        return NostoSDKHttpRequest::replaceQueryParamInUrl($params, $url);
+        return NostoSDKHttpRequest::replaceQueryParamsInUrl($params, $url);
     }
 
     /**
@@ -118,7 +118,7 @@ class NostoHelperUrl
             $params[self::ID_LANG] = $idLang;
         }
 
-        return NostoSDKHttpRequest::replaceQueryParamInUrl($params, $url);
+        return NostoSDKHttpRequest::replaceQueryParamsInUrl($params, $url);
     }
 
     /**

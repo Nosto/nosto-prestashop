@@ -25,6 +25,7 @@
 
 use Nosto\Mixins\OauthTrait as NostoSDKOauthTrait;
 use Nosto\Nosto;
+use Nosto\Oauth;
 use Nosto\Request\Http\HttpRequest as NostoSDKHttpRequest;
 use Nosto\Types\Signup\AccountInterface as NostoSDKAccountInterface;
 use Nosto\NostoException;
