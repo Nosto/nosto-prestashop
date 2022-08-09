@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d753a14535adc3e672a3c318d2aa1749",
+    "content-hash": "f0c86301f3793ff98468502963d70068",
     "packages": [
         {
             "name": "nosto/php-sdk",
-            "version": "6.0.0",
+            "version": "dev-feature/remove-iframe-prestashop",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Nosto/nosto-php-sdk.git",
-                "reference": "65541193b17503b69a510cb380f14d5580396f39"
+                "reference": "a4f542da10815661ea5bf969637d7a7d6dbf8c51"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Nosto/nosto-php-sdk/zipball/65541193b17503b69a510cb380f14d5580396f39",
-                "reference": "65541193b17503b69a510cb380f14d5580396f39",
+                "url": "https://api.github.com/repos/Nosto/nosto-php-sdk/zipball/a4f542da10815661ea5bf969637d7a7d6dbf8c51",
+                "reference": "a4f542da10815661ea5bf969637d7a7d6dbf8c51",
                 "shasum": ""
             },
             "require": {
@@ -58,9 +58,9 @@
             "description": "PHP SDK for developing Nosto modules for e-commerce platforms",
             "support": {
                 "issues": "https://github.com/Nosto/nosto-php-sdk/issues",
-                "source": "https://github.com/Nosto/nosto-php-sdk/tree/6.0.0"
+                "source": "https://github.com/Nosto/nosto-php-sdk/tree/feature/remove-iframe-prestashop"
             },
-            "time": "2022-08-01T12:59:51+00:00"
+            "time": "2022-08-09T06:30:29+00:00"
         },
         {
             "name": "phpoption/phpoption",
@@ -2810,7 +2810,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "nosto/php-sdk": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
