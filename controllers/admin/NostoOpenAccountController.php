@@ -44,41 +44,50 @@ class NostoOpenAccountController extends NostoBaseController
      */
     public function execute()
     {
-        $account = NostoHelperAccount::getAccount();
-        $currentUser = NostoCurrentUser::loadData();
-        $accountConnection = NostoConnection::loadData();
-        $connectionUrl = NostoSDKConnectionHelper::getUrl(
-            $accountConnection,
-            $account,
-            $currentUser,
-            array('v' => 1)
-        );
+        try {
+            $account = NostoHelperAccount::getAccount();
+            $currentUser = NostoCurrentUser::loadData();
+            $accountConnection = NostoConnection::loadData();
+            $connectionUrl = NostoSDKConnectionHelper::getUrl(
+                $accountConnection,
+                $account,
+                $currentUser,
+                array('v' => 1)
+            );
 
-        // When no account is found we will redirect to the installation URL
-        if ($account instanceof NostoSDKAccountInterface === false
-            && Shop::getContext() === Shop::CONTEXT_SHOP) {
+            // When no account is found we will redirect to the installation URL
+            if ($account instanceof NostoSDKAccountInterface === false
+                && Shop::getContext() === Shop::CONTEXT_SHOP) {
 
-            $langIdLabel = NostoTagging::MODULE_NAME . '_current_language';
-            $langIdValue = $this->getLanguageId();
-            $langIdParam = [$langIdLabel => $langIdValue];
+                $langIdLabel = NostoTagging::MODULE_NAME . '_current_language';
+                $langIdValue = $this->getLanguageId();
+                $langIdParam = [$langIdLabel => $langIdValue];
 
-            $params = [
-                'createUrl'  => $this->context->link->getAdminLink('NostoCreateAccount', true, [], $langIdParam),
-                'connectUrl' => $this->context->link->getAdminLink('NostoConnectAccount', true, [], $langIdParam),
-                'deleteUrl'  => $this->context->link->getAdminLink('NostoDeleteAccount', true, [], $langIdParam),
-            ];
+                $params = [
+                    'createUrl'  => $this->context->link->getAdminLink('NostoCreateAccount', true, [], $langIdParam),
+                    'connectUrl' => $this->context->link->getAdminLink('NostoConnectAccount', true, [], $langIdParam),
+                    'deleteUrl'  => $this->context->link->getAdminLink('NostoDeleteAccount', true, [], $langIdParam),
+                ];
 
-            $connectionUrl .= '&' . http_build_query($params);
-        } else {
-            $params = [
-                'dashboard_rd' => 'true'
-            ];
+                $connectionUrl .= '&' . http_build_query($params);
+            } else {
+                $params = [
+                    'dashboard_rd' => 'true'
+                ];
 
-            $connectionUrl .= '&' . http_build_query($params);
+                $connectionUrl .= '&' . http_build_query($params);
+            }
+
+            Tools::redirect($connectionUrl, '');
+
+        } catch (Exception $e) {
+            /** @noinspection PhpDeprecationInspection */
+            NostoHelperFlash::add(
+                'error',
+                Context::getContext()->getTranslator()->trans('Connection controls could not be opened. Please see logs for details.')
+            );
+            NostoHelperLogger::error($e, 'Opening Nosto view failed');
         }
-
-        Tools::redirect($connectionUrl, '');
-
         return true;
     }
 }

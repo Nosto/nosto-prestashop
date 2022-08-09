@@ -52,7 +52,7 @@ class NostoDeleteAccountController extends NostoBaseController
             /** @noinspection PhpDeprecationInspection */
             NostoHelperFlash::add(
                 'error',
-                $this->l('Account could not be removed. Please see logs for details.')
+                Context::getContext()->getTranslator()->trans('Account could not be removed. Please see logs for details.')
             );
             NostoHelperLogger::error($e, 'Deleting Nosto account failed');
         }
