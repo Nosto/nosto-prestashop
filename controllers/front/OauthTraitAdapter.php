@@ -61,7 +61,7 @@ class OauthTraitAdapter
      * Implemented trait method that is responsible for fetching the OAuth parameters used for all
      * OAuth operations
      *
-     * @return Nosto\Oauth the OAuth parameters for the operations
+     * @return Oauth the OAuth parameters for the operations
      * @throws PrestaShopException
      * @suppress PhanUndeclaredMethod
      * @noinspection PhpUnused
@@ -81,7 +81,7 @@ class OauthTraitAdapter
      * Implemented trait method that is responsible for saving an account with the all tokens for
      * the current store view (as defined by the parameter.)
      *
-     * @param Nosto\Types\Signup\AccountInterface $account the account to save
+     * @param NostoSDKAccountInterface $account the account to save
      * @return bool
      * @return bool
      * @throws NostoException
