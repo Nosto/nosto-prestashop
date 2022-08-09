@@ -445,14 +445,5 @@
             var action = "{/literal}{$NostoAdvancedSettingUrl|escape:'javascript'}{literal}";
             submitAction(action);
         }
-
-        function showVariationKeys() {
-            console.log("Variation keys: {/literal}{$variation_keys|escape:'javascript'}{literal}");
-            console.log("Countries from tax rules: {/literal}{$variation_countries_from_tax_rule|escape:'javascript'}{literal}");
-            console.log("Countries from specific price rules: {/literal}{$variation_countries_from_price_rule|escape:'javascript'}{literal}");
-            console.log("Groups from specific price rules: {/literal}{$variation_groups|escape:'javascript'}{literal}");
-        }
-
-        window.addEventListener("message", receiveMessage, false);
     {/literal}
 </script>

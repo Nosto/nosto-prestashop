@@ -325,9 +325,6 @@ class NostoTagging extends Module
         ));
 
         $templateFile = 'views/templates/admin/config-bootstrap.tpl';
-        if (_PS_VERSION_ < '1.6') {
-            $templateFile = 'views/templates/admin/legacy-config-bootstrap.tpl';
-        }
         $output .= $this->display(__FILE__, $templateFile);
 
         return $output;
