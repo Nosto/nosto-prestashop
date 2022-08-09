@@ -81,7 +81,6 @@ class NostoOpenAccountController extends NostoBaseController
             Tools::redirect($connectionUrl, '');
 
         } catch (Exception $e) {
-            /** @noinspection PhpDeprecationInspection */
             NostoHelperFlash::add(
                 'error',
                 Context::getContext()->getTranslator()->trans('Connection controls could not be opened. Please see logs for details.')

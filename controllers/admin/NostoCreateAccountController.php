@@ -66,7 +66,6 @@ class NostoCreateAccountController extends NostoBaseController
                 );
             }
         } catch (Exception $e) {
-            /** @noinspection PhpDeprecationInspection */
             NostoHelperFlash::add(
                 'error',
                 Context::getContext()->getTranslator()->trans('Account could not be automatically created. Please see logs for details.')
