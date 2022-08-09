@@ -137,7 +137,7 @@ class OauthTraitAdapter
                             'Shop %s (language %s) was successfully connected to the Nosto account %s',
                             NostoHelperContext::getShop()->name,
                             NostoHelperContext::getLanguage()->name,
-                            NostoHelperConfig::getAccountName(),
+                            NostoHelperConfig::getAccountName()
                         )
                     )
                 );
