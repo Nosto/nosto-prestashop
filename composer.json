@@ -5,7 +5,7 @@
     "AFL-3.0"
   ],
   "require": {
-    "nosto/php-sdk": "dev-feature/remove-iframe-prestashop",
+    "nosto/php-sdk": "^6.0",
     "ext-json": "*"
   },
   "require-dev": {
