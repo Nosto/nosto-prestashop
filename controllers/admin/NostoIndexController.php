@@ -23,11 +23,9 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use Nosto\Helper\IframeHelper as NostoSDKIframeHelper;
 use Nosto\Helper\SerializationHelper as NostoSDKSerializationHelper;
 use Nosto\Nosto as NostoSDK;
 use Nosto\NostoException;
-use Nosto\Model\Signup\Account as NostoSDKAccount;
 use Nosto\Request\Api\Token as NostoSDKAPIToken;
 use Nosto\Request\Http\HttpRequest as NostoSDKHttpRequest;
 use Nosto\Types\Signup\AccountInterface as NostoSDKAccountInterface;
@@ -56,25 +54,27 @@ class NostoIndexController
         return $urlMap;
     }
 
-    /**
-     * Get Iframe url
-     *
-     * @param NostoSDKAccount $account NostoAccount|null
-     * @return string|null
-     * @throws PrestaShopException
-     */
-    public function getIframeUrl(NostoSDKAccount $account)
-    {
-        if ($account
-            && $account->isConnectedToNosto()
-            && Shop::getContext() === Shop::CONTEXT_SHOP
-        ) {
-            $currentUser = NostoCurrentUser::loadData();
-            $meta = NostoIframe::loadData();
-            return NostoSDKIframeHelper::getUrl($meta, $account, $currentUser);
-        }
 
-        return null;
+    /**
+     * Display the success message if is there any
+     */
+    public function displaySuccessMessage()
+    {
+        if (Tools::getValue(NostoSDK::URL_PARAM_MESSAGE_CODE) === NostoSDK::CODE_ACCOUNT_CONNECT) {
+            if (Tools::getValue(NostoSDK::URL_PARAM_MESSAGE_TYPE) === NostoSDK::TYPE_SUCCESS) {
+                NostoHelperFlash::add(
+                    'success',
+                    Context::getContext()->getTranslator()->trans(
+                        sprintf(
+                            'Shop %s (language %s) was successfully connected to the Nosto account %s',
+                            NostoHelperContext::getShop()->name,
+                            NostoHelperContext::getLanguage()->name,
+                            NostoHelperConfig::getAccountName()
+                        )
+                    )
+                );
+            }
+        }
     }
 
     /**
@@ -130,21 +130,6 @@ class NostoIndexController
         ) {
             $missingTokens = false;
         }
-        // When no account is found we will show the installation URL
-        if ($account instanceof NostoSDKAccountInterface === false
-            && Shop::getContext() === Shop::CONTEXT_SHOP
-        ) {
-            $currentUser = NostoCurrentUser::loadData();
-            $accountIframe = NostoIframe::loadData();
-            $iframeInstallationUrl = NostoSDKIframeHelper::getUrl(
-                $accountIframe,
-                $account,
-                $currentUser,
-                array('v' => 1)
-            );
-        } else {
-            $iframeInstallationUrl = null;
-        }
 
         $accountEmail = NostoHelperContext::getEmployee()->email;
         $variationKeys = new NostoVariationKeyCollection();
@@ -152,8 +137,6 @@ class NostoIndexController
 
         $smartyMetaData = array(
             'nostotagging_form_action' => $this->getAdminUrl(),
-            'nostotagging_has_account' => ($account !== null),
-            'nostotagging_account_name' => ($account !== null) ? $account->getName() : null,
             'nostotagging_account_email' => $accountEmail,
             'nostotagging_account_authorized' => ($account !== null) ? $account->isConnectedToNosto() : false,
             'nostotagging_languages' => $languages,
@@ -185,14 +168,7 @@ class NostoIndexController
             'nostotagging_variation_switch' => NostoHelperConfig::getVariationEnabled(),
             'nostotagging_variation_tax_rule_switch' => NostoHelperConfig::getVariationTaxRuleEnabled(),
             'nosto_tagging_disable_escape_search_terms_switch' => NostoHelperConfig::isSearchTermEscapingDisabled(),
-            'nostotagging_ps_version_class' => 'ps-' . str_replace(
-                '.',
-                '',
-                Tools::substr(_PS_VERSION_, 0, 3)
-            ),
             'missing_tokens' => $missingTokens,
-            'iframe_installation_url' => $iframeInstallationUrl,
-            'iframe_origin' => NostoSDK::getIframeOriginRegex(),
             'sku_enabled' => NostoHelperConfig::getSkuEnabled(),
             'cart_update_enabled' => NostoHelperConfig::isCartUpdateEnabled(),
             'customer_tagging_switch' => NostoHelperConfig::isCustomerTaggingEnabled(),
@@ -210,15 +186,6 @@ class NostoIndexController
                 NostoHelperVariation::getGroupsBeingUsedInSpecificPrices()
             )
         );
-
-        if ($account) {
-            // Try to login employee to Nosto in order to get a url to the internal setting pages,
-            // which are then shown in an iframe on the module config page.
-            $url = $this->getIframeUrl($account);
-            if (!empty($url)) {
-                $smartyMetaData['iframe_url'] = $url;
-            }
-        }
 
         $controllerUrls = $this->getControllerUrls(NostoHelperContext::getEmployee()->id);
 

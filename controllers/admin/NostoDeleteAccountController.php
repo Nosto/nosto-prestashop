@@ -33,8 +33,29 @@ class NostoDeleteAccountController extends NostoBaseController
      */
     public function execute()
     {
-        NostoHelperConfig::clearCache();
-        NostoHelperAccount::delete();
+        try {
+            $accountName = NostoHelperConfig::getAccountName();
+            NostoHelperConfig::clearCache();
+            NostoHelperAccount::delete();
+            NostoHelperFlash::add(
+                'success',
+                Context::getContext()->getTranslator()->trans(
+                    sprintf(
+                        'Shop %s and language %s was successfully disconnected from the Nosto account %s',
+                        NostoHelperContext::getShop()->name,
+                        NostoHelperContext::getLanguage()->name,
+                        $accountName
+                    )
+                )
+            );
+        } catch (Exception $e) {
+            NostoHelperFlash::add(
+                'error',
+                Context::getContext()->getTranslator()->trans('Account could not be removed. Please see logs for details.')
+            );
+            NostoHelperLogger::error($e, 'Deleting Nosto account failed');
+        }
+
         return true;
     }
 }

@@ -41,21 +41,16 @@ class NostoCreateAccountController extends NostoBaseController
      */
     public function execute()
     {
-        $accountEmail = (string)Tools::getValue(NostoTagging::MODULE_NAME . '_account_email');
-        if (empty($accountEmail)) {
-            /** @noinspection PhpDeprecationInspection */
-            NostoHelperFlash::add('error', $this->l('Email cannot be empty.'));
-        } elseif (!Validate::isEmail($accountEmail)) {
-            /** @noinspection PhpDeprecationInspection */
-            NostoHelperFlash::add('error', $this->l('Email is not a valid email address.'));
-        } else {
-            try {
-                if (Tools::isSubmit('nostotagging_account_details')) {
-                    /** @noinspection PhpDeprecationInspection */
-                    $accountDetails = (object)Tools::jsonDecode(Tools::getValue('nostotagging_account_details'));
-                } else {
-                    $accountDetails = false;
-                }
+        try {
+            $accountDetails = json_decode(Tools::getValue('details'));
+            $accountEmail = $accountDetails->email;
+            if (empty($accountEmail)) {
+                /** @noinspection PhpDeprecationInspection */
+                NostoHelperFlash::add('error', $this->l('Email cannot be empty.'));
+            } elseif (!Validate::isEmail($accountEmail)) {
+                /** @noinspection PhpDeprecationInspection */
+                NostoHelperFlash::add('error', $this->l('Email is not a valid email address.'));
+            } else {
                 $service = new NostoSignupService();
                 $service->createAccount($accountEmail, $accountDetails);
 
@@ -69,14 +64,13 @@ class NostoCreateAccountController extends NostoBaseController
                         . ' password for your new account within three days.'
                     )
                 );
-            } catch (Exception $e) {
-                /** @noinspection PhpDeprecationInspection */
-                NostoHelperFlash::add(
-                    'error',
-                    $this->l('Account could not be automatically created. Please see logs for details.')
-                );
-                NostoHelperLogger::error($e, 'Creating Nosto account failed');
             }
+        } catch (Exception $e) {
+            NostoHelperFlash::add(
+                'error',
+                Context::getContext()->getTranslator()->trans('Account could not be automatically created. Please see logs for details.')
+            );
+            NostoHelperLogger::error($e, 'Creating Nosto account failed');
         }
 
         return true;
