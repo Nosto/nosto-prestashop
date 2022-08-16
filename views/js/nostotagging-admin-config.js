@@ -35,18 +35,4 @@ $(document).ready(function () {
         $currentLanguage.val(langId);
         $form.submit();
     });
-
-    // Toggle the Nosto settings
-    // noinspection JSCheckFunctionSignatures,JSUnresolvedFunction
-    $("#nostotagging_account_setup").click(function (event) {
-        event.preventDefault();
-        // noinspection JSCheckFunctionSignatures,JSUnresolvedFunction
-        $('div.nostotagging_settings').toggle();
-        // noinspection JSCheckFunctionSignatures,JSUnresolvedFunction
-        $('#nostotagging_iframe').toggle();
-    });
-
-    // Init the iframe re-sizer.
-    // noinspection JSUnresolvedFunction
-    $('#nostotagging_iframe').iFrameResize({heightCalculationMethod: 'bodyScroll'});
 });

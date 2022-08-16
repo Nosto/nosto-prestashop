@@ -24,6 +24,8 @@
  */
 
 use Nosto\Mixins\OauthTrait as NostoSDKOauthTrait;
+use Nosto\Nosto;
+use Nosto\Oauth;
 use Nosto\Request\Http\HttpRequest as NostoSDKHttpRequest;
 use Nosto\Types\Signup\AccountInterface as NostoSDKAccountInterface;
 use Nosto\NostoException;
@@ -60,7 +62,7 @@ class OauthTraitAdapter
      * Implemented trait method that is responsible for fetching the OAuth parameters used for all
      * OAuth operations
      *
-     * @return Nosto\Oauth the OAuth parameters for the operations
+     * @return Oauth the OAuth parameters for the operations
      * @throws PrestaShopException
      * @suppress PhanUndeclaredMethod
      * @noinspection PhpUnused
@@ -80,7 +82,7 @@ class OauthTraitAdapter
      * Implemented trait method that is responsible for saving an account with the all tokens for
      * the current store view (as defined by the parameter.)
      *
-     * @param Nosto\Types\Signup\AccountInterface $account the account to save
+     * @param NostoSDKAccountInterface $account the account to save
      * @return bool
      * @return bool
      * @throws NostoException
@@ -127,6 +129,20 @@ class OauthTraitAdapter
     {
         $adminUrl = NostoHelperConfig::getAdminUrl();
         if (!empty($adminUrl)) {
+            if ($params[Nosto::URL_PARAM_MESSAGE_TYPE] == Nosto::TYPE_SUCCESS) {
+                NostoHelperFlash::add(
+                    'success',
+                    Context::getContext()->getTranslator()->trans(
+                        sprintf(
+                            'Shop %s (language %s) was successfully connected to the Nosto account %s',
+                            NostoHelperContext::getShop()->name,
+                            NostoHelperContext::getLanguage()->name,
+                            NostoHelperConfig::getAccountName()
+                        )
+                    )
+                );
+            }
+            $params[NostoTagging::MODULE_NAME . '_current_language'] = $this->languageId;
             $adminUrl = NostoSDKHttpRequest::replaceQueryParamsInUrl($params, $adminUrl);
             Tools::redirect($adminUrl, '');
             die;

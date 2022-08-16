@@ -35,6 +35,7 @@ class NostoAdminTabManager
 
     public static $controllers = array(
         "NostoCreateAccount",
+        "NostoOpenAccount",
         "NostoConnectAccount",
         "NostoDeleteAccount",
         "NostoUpdateExchangeRate",

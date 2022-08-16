@@ -23,9 +23,9 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use Nosto\Model\Iframe as NostoSDKIframe;
+use Nosto\Model\ConnectionMetadata as NostoConnectionMetadata;
 
-class NostoIframe extends NostoSDKIframe
+class NostoConnection extends NostoConnectionMetadata
 {
     private $recentVisits;
     private $recentSales;
@@ -34,12 +34,12 @@ class NostoIframe extends NostoSDKIframe
     /**
      * Loads the meta-data from context.
      *
-     * @return NostoIframe|null the iframe object
+     * @return NostoConnection|null the conenction object
      * @throws PrestaShopException
      */
     public static function loadData()
     {
-        $nostoIframe = new NostoIframe();
+        $nostoConnection = new NostoConnection();
         $shopLanguage = new Language(NostoHelperContext::getLanguageId());
         $shopContext = NostoHelperContext::getShop()->getContext();
         if (!Validate::isLoadedObject($shopLanguage)
@@ -48,21 +48,16 @@ class NostoIframe extends NostoSDKIframe
             return null;
         }
 
-        $nostoIframe->setFirstName(NostoHelperContext::getEmployee()->firstname);
-        $nostoIframe->setLastName(NostoHelperContext::getEmployee()->lastname);
-        $nostoIframe->setEmail(NostoHelperContext::getEmployee()->email);
-        $nostoIframe->setLanguageIsoCode(NostoHelperContext::getLanguage()->iso_code);
-        $nostoIframe->setLanguageIsoCodeShop($shopLanguage->iso_code);
-        $nostoIframe->setPreviewUrlProduct(NostoHelperUrl::getPreviewUrlProduct());
-        $nostoIframe->setPreviewUrlCategory(NostoHelperUrl::getPreviewUrlCategory());
-        $nostoIframe->setPreviewUrlSearch(NostoHelperUrl::getPreviewUrlSearch());
-        $nostoIframe->setPreviewUrlCart(NostoHelperUrl::getPreviewUrlCart());
-        $nostoIframe->setPreviewUrlFront(NostoHelperUrl::getPreviewUrlHome());
-        $nostoIframe->setShopName($shopLanguage->name);
-        $nostoIframe->setVersionModule(NostoTagging::PLUGIN_VERSION);
-        $nostoIframe->setVersionPlatform(_PS_VERSION_);
-        $nostoIframe->setUniqueId('');
-        $nostoIframe->setPlatform('prestashop');
+        $nostoConnection->setFirstName(NostoHelperContext::getEmployee()->firstname);
+        $nostoConnection->setLastName(NostoHelperContext::getEmployee()->lastname);
+        $nostoConnection->setEmail(NostoHelperContext::getEmployee()->email);
+        $nostoConnection->setLanguageIsoCode(NostoHelperContext::getLanguage()->iso_code);
+        $nostoConnection->setLanguageIsoCodeShop($shopLanguage->iso_code);
+        $nostoConnection->setShopName($shopLanguage->name);
+        $nostoConnection->setVersionModule(NostoTagging::PLUGIN_VERSION);
+        $nostoConnection->setVersionPlatform(_PS_VERSION_);
+        $nostoConnection->setUniqueId('');
+        $nostoConnection->setPlatform('prestashop');
 
         try {
             //Check the recent visits and sales and get the shop traffic for the qualification
@@ -75,11 +70,11 @@ class NostoIframe extends NostoSDKIframe
                 $beginDate = $daysBack->sub(new DateInterval("P30D"))->format("Y-m-d");
                 $sales = AdminStatsControllerCore::getTotalSales($beginDate, $today);
                 $visits = AdminStatsControllerCore::getVisits(false, $beginDate, $today);
-                $nostoIframe->setRecentVisits((string)$visits);
-                $nostoIframe->setRecentSales(number_format((float)$sales));
+                $nostoConnection->setRecentVisits((string)$visits);
+                $nostoConnection->setRecentSales(number_format((float)$sales));
                 $currency = NostoHelperContext::getCurrency();
                 if ($currency instanceof Currency) {
-                    $nostoIframe->setCurrency($currency->iso_code);
+                    $nostoConnection->setCurrency($currency->iso_code);
                 }
             }
         } catch (Exception $e) {
@@ -88,10 +83,10 @@ class NostoIframe extends NostoSDKIframe
             NostoHelperLogger::error($e);
         }
 
-        NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoIframe), array(
-            'nosto_iframe' => $nostoIframe
+        NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoConnection), array(
+            'nosto_connection' => $nostoConnection
         ));
-        return $nostoIframe;
+        return $nostoConnection;
     }
 
     /**
