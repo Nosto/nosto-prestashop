@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
+## 4.0.1
+- Add redirect parameters for uninstalling Nosto account when SSO fails 
+
 ## 4.0.0
 - Remove Iframe. Nosto account connection is now configured externally and redirects back to the Magento 2 admin
 - Remove preview URLs that were used in the iframe
