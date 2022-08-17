@@ -62,11 +62,12 @@ class NostoOpenAccountController extends NostoBaseController
                 $langIdLabel = NostoTagging::MODULE_NAME . '_current_language';
                 $langIdValue = $this->getLanguageId();
                 $langIdParam = [$langIdLabel => $langIdValue];
+                $baseUrl = NostoHelperUrl::getBaseUrl();
 
                 $params = [
-                    'createUrl'  => $this->context->link->getAdminLink('NostoCreateAccount', true, [], $langIdParam),
-                    'connectUrl' => $this->context->link->getAdminLink('NostoConnectAccount', true, [], $langIdParam),
-                    'deleteUrl'  => $this->context->link->getAdminLink('NostoDeleteAccount', true, [], $langIdParam),
+                    'createUrl'  => $baseUrl . basename(_PS_ADMIN_DIR_) . '/' . $this->context->link->getAdminLink('NostoCreateAccount', true)  . '&' . http_build_query($langIdParam) ,
+                    'connectUrl' => $baseUrl . basename(_PS_ADMIN_DIR_) . '/' . $this->context->link->getAdminLink('NostoConnectAccount', true) . '&' . http_build_query($langIdParam) ,
+                    'deleteUrl'  => $baseUrl . basename(_PS_ADMIN_DIR_) . '/' . $this->context->link->getAdminLink('NostoDeleteAccount', true)  . '&' . http_build_query($langIdParam) ,
                 ];
 
                 $connectionUrl .= '&' . http_build_query($params);
