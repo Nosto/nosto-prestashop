@@ -65,9 +65,9 @@ class NostoOpenAccountController extends NostoBaseController
                 $baseUrl = NostoHelperUrl::getBaseUrl();
 
                 $params = [
-                    'createUrl'  => $baseUrl . basename(_PS_ADMIN_DIR_) . '/' . $this->context->link->getAdminLink('NostoCreateAccount', true)  . '&' . http_build_query($langIdParam) ,
-                    'connectUrl' => $baseUrl . basename(_PS_ADMIN_DIR_) . '/' . $this->context->link->getAdminLink('NostoConnectAccount', true) . '&' . http_build_query($langIdParam) ,
-                    'deleteUrl'  => $baseUrl . basename(_PS_ADMIN_DIR_) . '/' . $this->context->link->getAdminLink('NostoDeleteAccount', true)  . '&' . http_build_query($langIdParam) ,
+                    'createUrl'  => NostoHelperUrl::getFullAdminControllerUrl('NostoCreateAccount', $langIdValue),
+                    'connectUrl' => NostoHelperUrl::getFullAdminControllerUrl('NostoConnectAccount', $langIdValue),
+                    'deleteUrl'  => NostoHelperUrl::getFullAdminControllerUrl('NostoDeleteAccount', $langIdValue),
                 ];
 
                 $connectionUrl .= '&' . http_build_query($params);
