@@ -179,11 +179,7 @@ class NostoCustomerManager
             ' ORDER BY `date_add` ASC';
 
         $result = Db::getInstance()->getValue($sql);
-        if (is_string($result)) {
-            return $result;
-        } else {
-            return null;
-        }
+        return is_string($result) ? $result : '';
     }
 
     /**
