@@ -64,7 +64,7 @@ class NostoIndexController
             if (Tools::getValue(NostoSDK::URL_PARAM_MESSAGE_TYPE) === NostoSDK::TYPE_SUCCESS) {
                 NostoHelperFlash::add(
                     'success',
-                    Context::getContext()->getTranslator()->trans(
+                    $this->l(
                         sprintf(
                             'Shop %s (language %s) was successfully connected to the Nosto account %s',
                             NostoHelperContext::getShop()->name,

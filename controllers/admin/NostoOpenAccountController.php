@@ -84,7 +84,7 @@ class NostoOpenAccountController extends NostoBaseController
         } catch (Exception $e) {
             NostoHelperFlash::add(
                 'error',
-                Context::getContext()->getTranslator()->trans('Connection controls could not be opened. Please see logs for details.')
+                $this->l('Connection controls could not be opened. Please see logs for details.')
             );
             NostoHelperLogger::error($e, 'Opening Nosto view failed');
         }
