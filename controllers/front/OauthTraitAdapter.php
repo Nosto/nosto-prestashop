@@ -132,13 +132,11 @@ class OauthTraitAdapter
             if ($params[Nosto::URL_PARAM_MESSAGE_TYPE] == Nosto::TYPE_SUCCESS) {
                 NostoHelperFlash::add(
                     'success',
-                    $this->l(
-                        sprintf(
-                            'Shop %s (language %s) was successfully connected to the Nosto account %s',
-                            NostoHelperContext::getShop()->name,
-                            NostoHelperContext::getLanguage()->name,
-                            NostoHelperConfig::getAccountName()
-                        )
+                    sprintf(
+                        'Shop %s (language %s) was successfully connected to the Nosto account %s',
+                        NostoHelperContext::getShop()->name,
+                        NostoHelperContext::getLanguage()->name,
+                        NostoHelperConfig::getAccountName()
                     )
                 );
             }

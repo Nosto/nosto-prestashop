@@ -57,14 +57,15 @@ class NostoIndexController
 
     /**
      * Display the success message if is there any
+     * @param NostoTagging $nostoTagging
      */
-    public function displaySuccessMessage()
+    public function displaySuccessMessage(NostoTagging $nostoTagging)
     {
         if (Tools::getValue(NostoSDK::URL_PARAM_MESSAGE_CODE) === NostoSDK::CODE_ACCOUNT_CONNECT) {
             if (Tools::getValue(NostoSDK::URL_PARAM_MESSAGE_TYPE) === NostoSDK::TYPE_SUCCESS) {
                 NostoHelperFlash::add(
                     'success',
-                    $this->l(
+                    $nostoTagging->l(
                         sprintf(
                             'Shop %s (language %s) was successfully connected to the Nosto account %s',
                             NostoHelperContext::getShop()->name,
