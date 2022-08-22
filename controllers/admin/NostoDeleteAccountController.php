@@ -31,7 +31,7 @@ class NostoDeleteAccountController extends NostoBaseController
      * @inheritdoc
      *
      * @suppress PhanDeprecatedFunction
-     * @noinspection PhpUnused
+     * @noinspection PhpUnused, PhpDeprecationInspection
      */
     public function execute()
     {
@@ -39,7 +39,6 @@ class NostoDeleteAccountController extends NostoBaseController
             $accountName = NostoHelperConfig::getAccountName();
             NostoHelperConfig::clearCache();
             NostoHelperAccount::delete();
-            /** @noinspection PhpDeprecationInspection */
             NostoHelperFlash::add(
                 'success',
                 $this->l(
@@ -52,7 +51,6 @@ class NostoDeleteAccountController extends NostoBaseController
                 )
             );
         } catch (Exception $e) {
-            /** @noinspection PhpDeprecationInspection */
             NostoHelperFlash::add(
                 'error',
                 $this->l('Account could not be removed. Please see logs for details.')

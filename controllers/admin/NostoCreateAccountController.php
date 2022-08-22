@@ -37,7 +37,7 @@ class NostoCreateAccountController extends NostoBaseController
      * @inheritdoc
      *
      * @suppress PhanDeprecatedFunction
-     * @noinspection PhpUnused
+     * @noinspection PhpUnused, PhpDeprecationInspection
      */
     public function execute()
     {
@@ -45,17 +45,14 @@ class NostoCreateAccountController extends NostoBaseController
             $accountDetails = json_decode(Tools::getValue('details'));
             $accountEmail = $accountDetails->email;
             if (empty($accountEmail)) {
-                /** @noinspection PhpDeprecationInspection */
                 NostoHelperFlash::add('error', $this->l('Email cannot be empty.'));
             } elseif (!Validate::isEmail($accountEmail)) {
-                /** @noinspection PhpDeprecationInspection */
                 NostoHelperFlash::add('error', $this->l('Email is not a valid email address.'));
             } else {
                 $service = new NostoSignupService();
                 $service->createAccount($accountEmail, $accountDetails);
 
                 NostoHelperConfig::clearCache();
-                /** @noinspection PhpDeprecationInspection */
                 NostoHelperFlash::add(
                     'success',
                     $this->l(
@@ -67,7 +64,6 @@ class NostoCreateAccountController extends NostoBaseController
                 Tools::redirectAdmin(NostoHelperUrl::getFullAdminControllerUrl('NostoOpenAccount', $this->getLanguageId()));
             }
         } catch (Exception $e) {
-            /** @noinspection PhpDeprecationInspection */
             NostoHelperFlash::add(
                 'error',
                 $this->l('Account could not be automatically created. Please see logs for details.')

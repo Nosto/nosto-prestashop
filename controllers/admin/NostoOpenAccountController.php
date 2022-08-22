@@ -40,7 +40,7 @@ class NostoOpenAccountController extends NostoBaseController
      * @inheritdoc
      *
      * @suppress PhanDeprecatedFunction
-     * @noinspection PhpUnused
+     * @noinspection PhpUnused, PhpDeprecationInspection
      */
     public function execute()
     {
@@ -77,7 +77,6 @@ class NostoOpenAccountController extends NostoBaseController
             }
             Tools::redirect($connectionUrl, '');
         } catch (Exception $e) {
-            /** @noinspection PhpDeprecationInspection */
             NostoHelperFlash::add(
                 'error',
                 $this->l('Connection controls could not be opened. Please see logs for details.')
