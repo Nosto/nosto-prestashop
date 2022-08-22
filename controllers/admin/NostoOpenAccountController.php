@@ -45,6 +45,15 @@ class NostoOpenAccountController extends NostoBaseController
     public function execute()
     {
         try {
+            $langId = $this->getLanguageId();
+
+            $params = [
+                'v' => 1,
+                'createUrl'  => NostoHelperUrl::getFullAdminControllerUrl('NostoCreateAccount', $langId),
+                'connectUrl' => NostoHelperUrl::getFullAdminControllerUrl('NostoConnectAccount', $langId),
+                'deleteUrl'  => NostoHelperUrl::getFullAdminControllerUrl('NostoDeleteAccount', $langId)
+            ];
+
             $account = NostoHelperAccount::getAccount();
             $currentUser = NostoCurrentUser::loadData();
             $accountConnection = NostoConnection::loadData();
@@ -52,27 +61,19 @@ class NostoOpenAccountController extends NostoBaseController
                 $accountConnection,
                 $account,
                 $currentUser,
-                array('v' => 1)
+                $params
             );
 
-            // When no account is found we will redirect to the installation URL
-            if ($account instanceof NostoSDKAccountInterface === false
+            // When account is connected we will redirect to merchant dashboard
+            if ($account instanceof NostoSDKAccountInterface === true
                 && Shop::getContext() === Shop::CONTEXT_SHOP) {
-
-                $langId = $this->getLanguageId();
-                $params = [
-                    'createUrl'  => NostoHelperUrl::getFullAdminControllerUrl('NostoCreateAccount', $langId),
-                    'connectUrl' => NostoHelperUrl::getFullAdminControllerUrl('NostoConnectAccount', $langId),
-                    'deleteUrl'  => NostoHelperUrl::getFullAdminControllerUrl('NostoDeleteAccount', $langId),
-                ];
-
                 $connectionUrl .= '&' . http_build_query($params);
             } else {
-                $params = [
+                $additionalParams = [
                     'dashboard_rd' => 'true'
                 ];
 
-                $connectionUrl .= '&' . http_build_query($params);
+                $connectionUrl .= '&' . http_build_query($additionalParams);
             }
             Tools::redirect($connectionUrl, '');
         } catch (Exception $e) {
