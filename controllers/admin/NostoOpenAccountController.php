@@ -62,7 +62,6 @@ class NostoOpenAccountController extends NostoBaseController
                 $langIdLabel = NostoTagging::MODULE_NAME . '_current_language';
                 $langIdValue = $this->getLanguageId();
                 $langIdParam = [$langIdLabel => $langIdValue];
-                $baseUrl = NostoHelperUrl::getBaseUrl();
 
                 $params = [
                     'createUrl'  => NostoHelperUrl::getFullAdminControllerUrl('NostoCreateAccount', $langIdValue),

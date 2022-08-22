@@ -56,7 +56,6 @@ class NostoCreateAccountController extends NostoBaseController
 
                 NostoHelperConfig::clearCache();
                 /** @noinspection PhpDeprecationInspection */
-                /** @noinspection PhpDeprecationInspection */
                 NostoHelperFlash::add(
                     'success',
                     $this->l(
@@ -64,6 +63,8 @@ class NostoCreateAccountController extends NostoBaseController
                         . ' password for your new account within three days.'
                     )
                 );
+
+                Tools::redirectAdmin(NostoHelperUrl::getFullAdminControllerUrl('NostoOpenAccount', $this->getLanguageId()));
             }
         } catch (Exception $e) {
             NostoHelperFlash::add(
