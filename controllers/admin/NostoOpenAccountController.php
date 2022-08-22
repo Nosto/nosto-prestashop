@@ -45,6 +45,17 @@ class NostoOpenAccountController extends NostoBaseController
     public function execute()
     {
         try {
+            $langIdLabel = NostoTagging::MODULE_NAME . '_current_language';
+            $langIdValue = $this->getLanguageId();
+            $langIdParam = [$langIdLabel => $langIdValue];
+
+            $params = [
+                'v' => 1,
+                'createUrl'  => $this->context->link->getAdminLink('NostoCreateAccount', true, [], $langIdParam),
+                'connectUrl' => $this->context->link->getAdminLink('NostoConnectAccount', true, [], $langIdParam),
+                'deleteUrl'  => $this->context->link->getAdminLink('NostoDeleteAccount', true, [], $langIdParam),
+            ];
+
             $account = NostoHelperAccount::getAccount();
             $currentUser = NostoCurrentUser::loadData();
             $accountConnection = NostoConnection::loadData();
@@ -52,30 +63,17 @@ class NostoOpenAccountController extends NostoBaseController
                 $accountConnection,
                 $account,
                 $currentUser,
-                array('v' => 1)
+                $params
             );
 
-            // When no account is found we will redirect to the installation URL
-            if ($account instanceof NostoSDKAccountInterface === false
+            // When account is connected we will redirect to merchant dashboard
+            if ($account instanceof NostoSDKAccountInterface === true
                 && Shop::getContext() === Shop::CONTEXT_SHOP) {
-
-                $langIdLabel = NostoTagging::MODULE_NAME . '_current_language';
-                $langIdValue = $this->getLanguageId();
-                $langIdParam = [$langIdLabel => $langIdValue];
-
-                $params = [
-                    'createUrl'  => $this->context->link->getAdminLink('NostoCreateAccount', true, [], $langIdParam),
-                    'connectUrl' => $this->context->link->getAdminLink('NostoConnectAccount', true, [], $langIdParam),
-                    'deleteUrl'  => $this->context->link->getAdminLink('NostoDeleteAccount', true, [], $langIdParam),
-                ];
-
-                $connectionUrl .= '&' . http_build_query($params);
-            } else {
-                $params = [
+                $additionalParams = [
                     'dashboard_rd' => 'true'
                 ];
 
-                $connectionUrl .= '&' . http_build_query($params);
+                $connectionUrl .= '&' . http_build_query($additionalParams);
             }
 
             Tools::redirect($connectionUrl, '');
