@@ -29,6 +29,8 @@ class NostoDeleteAccountController extends NostoBaseController
 {
     /**
      * @inheritdoc
+     *
+     * @suppress PhanDeprecatedFunction
      * @noinspection PhpUnused
      */
     public function execute()

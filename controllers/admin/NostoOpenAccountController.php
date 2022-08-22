@@ -59,14 +59,11 @@ class NostoOpenAccountController extends NostoBaseController
             if ($account instanceof NostoSDKAccountInterface === false
                 && Shop::getContext() === Shop::CONTEXT_SHOP) {
 
-                $langIdLabel = NostoTagging::MODULE_NAME . '_current_language';
-                $langIdValue = $this->getLanguageId();
-                $langIdParam = [$langIdLabel => $langIdValue];
-
+                $langId = $this->getLanguageId();
                 $params = [
-                    'createUrl'  => NostoHelperUrl::getFullAdminControllerUrl('NostoCreateAccount', $langIdValue),
-                    'connectUrl' => NostoHelperUrl::getFullAdminControllerUrl('NostoConnectAccount', $langIdValue),
-                    'deleteUrl'  => NostoHelperUrl::getFullAdminControllerUrl('NostoDeleteAccount', $langIdValue),
+                    'createUrl'  => NostoHelperUrl::getFullAdminControllerUrl('NostoCreateAccount', $langId),
+                    'connectUrl' => NostoHelperUrl::getFullAdminControllerUrl('NostoConnectAccount', $langId),
+                    'deleteUrl'  => NostoHelperUrl::getFullAdminControllerUrl('NostoDeleteAccount', $langId),
                 ];
 
                 $connectionUrl .= '&' . http_build_query($params);
