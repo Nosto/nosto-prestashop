@@ -67,6 +67,7 @@ class NostoCreateAccountController extends NostoBaseController
                 Tools::redirectAdmin(NostoHelperUrl::getFullAdminControllerUrl('NostoOpenAccount', $this->getLanguageId()));
             }
         } catch (Exception $e) {
+            /** @noinspection PhpDeprecationInspection */
             NostoHelperFlash::add(
                 'error',
                 $this->l('Account could not be automatically created. Please see logs for details.')

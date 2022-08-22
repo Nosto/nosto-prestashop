@@ -77,10 +77,9 @@ class NostoOpenAccountController extends NostoBaseController
 
                 $connectionUrl .= '&' . http_build_query($params);
             }
-
             Tools::redirect($connectionUrl, '');
-
         } catch (Exception $e) {
+            /** @noinspection PhpDeprecationInspection */
             NostoHelperFlash::add(
                 'error',
                 $this->l('Connection controls could not be opened. Please see logs for details.')
