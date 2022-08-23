@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
+## 4.0.2
+- Fix new Nosto connection setup to be fully compatible with Prestashop versions 1.6.x.x
+- Remove unique id from connection setup
+- Improve message handling for Nosto connection
+
 ## 4.0.1
 - Add redirect parameters for uninstalling Nosto account when SSO fails 
 
