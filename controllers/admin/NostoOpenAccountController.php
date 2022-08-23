@@ -40,20 +40,18 @@ class NostoOpenAccountController extends NostoBaseController
      * @inheritdoc
      *
      * @suppress PhanDeprecatedFunction
-     * @noinspection PhpUnused
+     * @noinspection PhpUnused, PhpDeprecationInspection
      */
     public function execute()
     {
         try {
-            $langIdLabel = NostoTagging::MODULE_NAME . '_current_language';
-            $langIdValue = $this->getLanguageId();
-            $langIdParam = [$langIdLabel => $langIdValue];
+            $langId = $this->getLanguageId();
 
             $params = [
                 'v' => 1,
-                'createUrl'  => $this->context->link->getAdminLink('NostoCreateAccount', true, [], $langIdParam),
-                'connectUrl' => $this->context->link->getAdminLink('NostoConnectAccount', true, [], $langIdParam),
-                'deleteUrl'  => $this->context->link->getAdminLink('NostoDeleteAccount', true, [], $langIdParam),
+                'createUrl'  => NostoHelperUrl::getFullAdminControllerUrl('NostoCreateAccount', $langId),
+                'connectUrl' => NostoHelperUrl::getFullAdminControllerUrl('NostoConnectAccount', $langId),
+                'deleteUrl'  => NostoHelperUrl::getFullAdminControllerUrl('NostoDeleteAccount', $langId)
             ];
 
             $account = NostoHelperAccount::getAccount();
@@ -69,19 +67,19 @@ class NostoOpenAccountController extends NostoBaseController
             // When account is connected we will redirect to merchant dashboard
             if ($account instanceof NostoSDKAccountInterface === true
                 && Shop::getContext() === Shop::CONTEXT_SHOP) {
+                $connectionUrl .= '&' . http_build_query($params);
+            } else {
                 $additionalParams = [
                     'dashboard_rd' => 'true'
                 ];
 
                 $connectionUrl .= '&' . http_build_query($additionalParams);
             }
-
             Tools::redirect($connectionUrl, '');
-
         } catch (Exception $e) {
             NostoHelperFlash::add(
                 'error',
-                Context::getContext()->getTranslator()->trans('Connection controls could not be opened. Please see logs for details.')
+                $this->l('Connection controls could not be opened. Please see logs for details.')
             );
             NostoHelperLogger::error($e, 'Opening Nosto view failed');
         }

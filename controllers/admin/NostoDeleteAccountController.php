@@ -29,7 +29,9 @@ class NostoDeleteAccountController extends NostoBaseController
 {
     /**
      * @inheritdoc
-     * @noinspection PhpUnused
+     *
+     * @suppress PhanDeprecatedFunction
+     * @noinspection PhpUnused, PhpDeprecationInspection
      */
     public function execute()
     {
@@ -39,7 +41,7 @@ class NostoDeleteAccountController extends NostoBaseController
             NostoHelperAccount::delete();
             NostoHelperFlash::add(
                 'success',
-                Context::getContext()->getTranslator()->trans(
+                $this->l(
                     sprintf(
                         'Shop %s and language %s was successfully disconnected from the Nosto account %s',
                         NostoHelperContext::getShop()->name,
@@ -51,7 +53,7 @@ class NostoDeleteAccountController extends NostoBaseController
         } catch (Exception $e) {
             NostoHelperFlash::add(
                 'error',
-                Context::getContext()->getTranslator()->trans('Account could not be removed. Please see logs for details.')
+                $this->l('Account could not be removed. Please see logs for details.')
             );
             NostoHelperLogger::error($e, 'Deleting Nosto account failed');
         }

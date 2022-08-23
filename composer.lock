@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "nosto/php-sdk",
-            "version": "6.0.1",
+            "version": "6.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Nosto/nosto-php-sdk.git",
-                "reference": "40c12d35fc8be16127217ed791ff3f118a183397"
+                "reference": "eea6846743d24cada846c4707af869720808666b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Nosto/nosto-php-sdk/zipball/40c12d35fc8be16127217ed791ff3f118a183397",
-                "reference": "40c12d35fc8be16127217ed791ff3f118a183397",
+                "url": "https://api.github.com/repos/Nosto/nosto-php-sdk/zipball/eea6846743d24cada846c4707af869720808666b",
+                "reference": "eea6846743d24cada846c4707af869720808666b",
                 "shasum": ""
             },
             "require": {
@@ -58,9 +58,9 @@
             "description": "PHP SDK for developing Nosto modules for e-commerce platforms",
             "support": {
                 "issues": "https://github.com/Nosto/nosto-php-sdk/issues",
-                "source": "https://github.com/Nosto/nosto-php-sdk/tree/6.0.1"
+                "source": "https://github.com/Nosto/nosto-php-sdk/tree/6.0.2"
             },
-            "time": "2022-08-16T10:40:46+00:00"
+            "time": "2022-08-23T07:55:23+00:00"
         },
         {
             "name": "phpoption/phpoption",
