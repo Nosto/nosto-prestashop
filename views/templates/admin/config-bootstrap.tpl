@@ -415,6 +415,7 @@
         }
 
         function deleteNostoAccount() {
+            $('#nosto_form_id').attr("target", '_self');
             var action = "{/literal}{$NostoDeleteAccountUrl|escape:'javascript'}{literal}";
             submitAction(action);
         }

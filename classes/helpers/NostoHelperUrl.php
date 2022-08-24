@@ -174,6 +174,24 @@ class NostoHelperUrl
     }
 
     /**
+     * Get the full url for admin controller
+     *
+     * @param string $controller Controller name
+     * @param int $langId id of the language
+     * @return string url
+     * @throws PrestaShopException
+     */
+    public static function getFullAdminControllerUrl($controller, $langId)
+    {
+        $baseUrl = NostoHelperUrl::getBaseUrl();
+        $params = array(
+            'token' => Tools::getAdminTokenLite($controller),
+            NostoTagging::MODULE_NAME . '_current_language' => $langId
+        );
+        return $baseUrl . basename(_PS_ADMIN_DIR_) . '/' . Dispatcher::getInstance()->createUrl($controller, $langId, $params);
+    }
+
+    /**
      * Returns the base url for given shop.
      *
      * @return string the base url.

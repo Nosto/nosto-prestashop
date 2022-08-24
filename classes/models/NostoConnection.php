@@ -56,7 +56,6 @@ class NostoConnection extends NostoConnectionMetadata
         $nostoConnection->setShopName($shopLanguage->name);
         $nostoConnection->setVersionModule(NostoTagging::PLUGIN_VERSION);
         $nostoConnection->setVersionPlatform(_PS_VERSION_);
-        $nostoConnection->setUniqueId('');
         $nostoConnection->setPlatform('prestashop');
 
         try {
