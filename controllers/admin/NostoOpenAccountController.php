@@ -26,7 +26,6 @@
 require_once 'NostoBaseController.php';
 
 use Nosto\Helper\ConnectionHelper as NostoSDKConnectionHelper;
-use Nosto\Types\Signup\AccountInterface as NostoSDKAccountInterface;
 
 /**
  * Class NostoOpenAccountController
