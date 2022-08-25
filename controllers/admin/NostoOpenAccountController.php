@@ -51,7 +51,8 @@ class NostoOpenAccountController extends NostoBaseController
                 'v' => 1,
                 'createUrl'  => NostoHelperUrl::getFullAdminControllerUrl('NostoCreateAccount', $langId),
                 'connectUrl' => NostoHelperUrl::getFullAdminControllerUrl('NostoConnectAccount', $langId),
-                'deleteUrl'  => NostoHelperUrl::getFullAdminControllerUrl('NostoDeleteAccount', $langId)
+                'deleteUrl'  => NostoHelperUrl::getFullAdminControllerUrl('NostoDeleteAccount', $langId),
+                'dashboard_rd' => 'true' // Redirect to Dashboard
             ];
 
             $account = NostoHelperAccount::getAccount();
@@ -63,18 +64,7 @@ class NostoOpenAccountController extends NostoBaseController
                 $currentUser,
                 $params
             );
-
-            // When account is connected we will redirect to merchant dashboard
-            if ($account instanceof NostoSDKAccountInterface === true
-                && Shop::getContext() === Shop::CONTEXT_SHOP) {
-                $connectionUrl .= '&' . http_build_query($params);
-            } else {
-                $additionalParams = [
-                    'dashboard_rd' => 'true'
-                ];
-
-                $connectionUrl .= '&' . http_build_query($additionalParams);
-            }
+            $connectionUrl .= '&' . http_build_query($params);
             Tools::redirect($connectionUrl, '');
         } catch (Exception $e) {
             NostoHelperFlash::add(
