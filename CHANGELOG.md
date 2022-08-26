@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
 ## 4.0.3
-- Always redirect to Nosto dashboard
+- Always redirect to Nosto dashboard after connecting the account
 
 ## 4.0.2
 - Fix new Nosto connection setup to be fully compatible with Prestashop versions 1.6.x.x
