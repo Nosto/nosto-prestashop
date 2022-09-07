@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
 ## 4.0.4
-- Fix the bug where order is sent to all shops with multistore setup
+- Check if order belongs to current shop to avoid duplicates being sent in a multi-store setup
 
 ## 4.0.3
 - Always redirect to Nosto dashboard after connecting the account
