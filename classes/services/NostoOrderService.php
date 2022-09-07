@@ -85,6 +85,11 @@ class NostoOrderService extends AbstractNostoService
                             return;
                         }
 
+                        // Only send orders to the correct shop when multistore is enabled.
+                        if ($order->id_shop != (int)Context::getContext()->shop->id) {
+                            return;
+                        }
+
                         $nostoOrder = NostoOrder::loadData($order);
                         if (!$nostoOrder instanceof NostoOrder) {
                             NostoHelperLogger::info('Not able to load order.');
