@@ -47,7 +47,7 @@ class NostoHelperPrice
     {
         $wholesalePriceExcTaxes = $product->wholesale_price;
         if ($wholesalePriceExcTaxes > 0) {
-            return self::roundPrice($wholesalePriceExcTaxes);
+            return $product->wholesale_price > 0 ? self::roundPrice($product->wholesale_price) : null;
         }
         return null;
     }
