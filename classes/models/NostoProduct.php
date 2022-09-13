@@ -124,7 +124,7 @@ class NostoProduct extends NostoSDKProduct
      */
     protected function amendSupplierCost(Product $product)
     {
-        $supplierCost = NostoHelperPrice::getProductWholesalePriceInclTax($product);
+        $supplierCost = NostoHelperPrice::getProductWholesalePrice($product);
         if ($supplierCost !== null && is_numeric($supplierCost)) {
             $this->setSupplierCost($supplierCost);
         }
