@@ -38,23 +38,14 @@ class NostoHelperPrice
     const ID_PRODUCT = 'id_product';
 
     /**
-     * Returns the product wholesale price including taxes for the given currency.
+     * Returns the product wholesale price for the given currency.
      *
      * @param Product $product the product.
      * @return float|null the price.
      */
-    public static function getProductWholesalePriceInclTax(Product $product)
+    public static function getProductWholesalePrice(Product $product)
     {
-        $wholesalePriceExcTaxes = $product->wholesale_price;
-        if ($wholesalePriceExcTaxes > 0) {
-            if ($product->tax_rate > 0) {
-                return self::roundPrice(
-                    $wholesalePriceExcTaxes * (1 + (float) $product->tax_rate / 100)
-                );
-            }
-            return $wholesalePriceExcTaxes;
-        }
-        return null;
+        return $product->wholesale_price > 0 ? self::roundPrice($product->wholesale_price) : null;
     }
 
     /**

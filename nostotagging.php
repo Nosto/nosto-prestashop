@@ -55,7 +55,7 @@ class NostoTagging extends Module
      *
      * @var string
      */
-    const PLUGIN_VERSION = '4.0.3';
+    const PLUGIN_VERSION = '4.0.5';
 
     /**
      * Internal name of the Nosto plug-in
