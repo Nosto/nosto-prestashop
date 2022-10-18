@@ -34,6 +34,7 @@
     <property name="buildbin" value="./build/bin" override="false"/>
     <property name="buildroot" value="./build" override="true"/>
     <property name="builddest" value="./build/package" override="true"/>
+    <property name="idea" value=".idea" override="true"/>
     <property name="srcdir" value="${project.basedir}" override="true"/>
     <property name="packagename" value="${project.basedir}" override="true"/>
 
@@ -45,6 +46,7 @@
         <delete dir="${builddest}"/>
         <delete dir="${buildsrc}"/>
         <delete dir="${zipbase}"/>
+        <delete dir="${idea}"/>
         <mkdir dir="${builddest}"/>
         <mkdir dir="${zipbase}"/>
         <mkdir dir="${buildsrc}"/>
