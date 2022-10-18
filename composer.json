@@ -22,7 +22,8 @@
   },
   "config": {
     "vendor-dir": "libs",
-    "process-timeout": 3600
+    "process-timeout": 3600,
+    "prepend-autoloader": false
   },
   "repositories": [
     {
