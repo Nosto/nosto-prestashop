@@ -35,6 +35,7 @@
     <property name="buildroot" value="./build" override="true"/>
     <property name="builddest" value="./build/package" override="true"/>
     <property name="idea" value=".idea" override="true"/>
+    <property name="ideasdk" value="./build/src/nostotagging/libs/nosto/php-sdk/.idea" override="true"/>
     <property name="srcdir" value="${project.basedir}" override="true"/>
     <property name="packagename" value="${project.basedir}" override="true"/>
 
@@ -47,6 +48,7 @@
         <delete dir="${buildsrc}"/>
         <delete dir="${zipbase}"/>
         <delete dir="${idea}"/>
+        <delete dir="${ideasdk}"/>
         <mkdir dir="${builddest}"/>
         <mkdir dir="${zipbase}"/>
         <mkdir dir="${buildsrc}"/>
