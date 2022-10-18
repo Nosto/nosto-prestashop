@@ -114,6 +114,13 @@
             <arg value="${buildsrc}/nostotagging.php"/>
         </exec>
         <delete file="${buildsrc}/nostotagging.php-e"/>
+        <exec executable="sed">
+            <arg value="-i" />
+            <arg value="-e" />
+            <arg value="s/$this->version = self::PLUGIN_VERSION/$this->version = '${version}'/g" />
+            <arg value="${buildsrc}/nostotagging.php" />
+        </exec>
+        <delete file="${buildsrc}/nostotagging.php-e"/>
     </target>
 
     <target name="phpmd">
