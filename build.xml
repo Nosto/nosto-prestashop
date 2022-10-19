@@ -59,14 +59,6 @@
         <phingcall target="cleandependencies"/>
         <phingcall target="fixcompatibility"/>
         <phingcall target="autoindex"/>
-        <phingcall target="copyindex"/>
-    </target>
-
-    <target name="copyindex">
-        <echo msg="Copying index file"/>
-        <exec executable="sh">
-            <arg value="${buildbin}/copy_index.sh"/>
-        </exec>
     </target>
 
     <target name="phpcpd">
