@@ -32,7 +32,7 @@
         Nosto.reloadCartTagging = function () {
             if (window.jQuery) {
                 jQuery.ajax({
-                    url: decodeURIComponent("{$reload_cart_url|escape:'url'}")
+                    url: decodeURIComponent("{$reload_cart_url|escape:'url':'UTF-8'}")
                 }).done(function (data) {
                     // noinspection JSJQueryEfficiency
                     if (jQuery('.nosto_cart').length > 0) {

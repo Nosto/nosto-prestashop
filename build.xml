@@ -136,6 +136,7 @@
         <delete file="${buildsrc}/libs/nosto/php-sdk/Gruntfile.js"/>
         <delete file="${buildsrc}/libs/nosto/php-sdk/package.json"/>
         <delete file="${buildsrc}/libs/nosto/php-sdk/composer.json"/>
+        <delete file="${buildsrc}/libs/nosto/php-sdk/.github"/>
         <delete file="${buildsrc}/.env"/>
     </target>
 

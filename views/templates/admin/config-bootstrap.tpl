@@ -407,7 +407,7 @@
         }
 
         function openNostoAccount(newTab) {
-            var action = "{/literal}{$NostoOpenAccountUrl|escape:'javascript'}{literal}";
+            var action = "{/literal}{$NostoOpenAccountUrl|escape:'javascript':'UTF-8'}{literal}";
             if (newTab) {
                 targetBlank();
             }
@@ -416,12 +416,12 @@
 
         function deleteNostoAccount() {
             $('#nosto_form_id').attr("target", '_self');
-            var action = "{/literal}{$NostoDeleteAccountUrl|escape:'javascript'}{literal}";
+            var action = "{/literal}{$NostoDeleteAccountUrl|escape:'javascript':'UTF-8'}{literal}";
             submitAction(action);
         }
 
         function updateExchangeRates() {
-            var action = "{/literal}{$NostoUpdateExchangeRateUrl|escape:'javascript'}{literal}";
+            var action = "{/literal}{$NostoUpdateExchangeRateUrl|escape:'javascript':'UTF-8'}{literal}";
             submitAction(action);
         }
 
@@ -443,7 +443,7 @@
         }
 
         function saveAdvancedSettings() {
-            var action = "{/literal}{$NostoAdvancedSettingUrl|escape:'javascript'}{literal}";
+            var action = "{/literal}{$NostoAdvancedSettingUrl|escape:'javascript':'UTF-8'}{literal}";
             submitAction(action);
         }
     {/literal}
