@@ -186,10 +186,12 @@ jobs:
     ############################################################################
 
     - name: Build archive using composer
-      run: composer archive --format=zip --file=archive
+      run: ./libs/bin/phing -verbose -Dversion="4.0.5"
+      # @TODO: need to parse the version from nostotagging.php
 
     - name: Archive built package
       uses: actions/upload-artifact@v1
       with:
-        name: composer-zip-archive
-        path: archive.zip
+        name: archive phing built package
+        path: build/package/4.0.5-Nosto.-.Personalization.for.PrestaShop.zip
+        # @TODO: need to parse the version from nostotagging.php
