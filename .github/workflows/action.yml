@@ -192,6 +192,6 @@ jobs:
     - name: Archive built package
       uses: actions/upload-artifact@v1
       with:
-        name: 4.0.5-Nosto.-.Personalization.for.PrestaShop.zip
+        name: 4.0.5-Nosto.-.Personalization.for.PrestaShop
         path: build/package/4.0.5-Nosto.-.Personalization.for.PrestaShop.zip
         # @TODO: need to parse the version from nostotagging.php
