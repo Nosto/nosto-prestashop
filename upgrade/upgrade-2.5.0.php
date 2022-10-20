@@ -22,7 +22,9 @@
  * @copyright 2013-2022 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
+
 /** @noinspection DuplicatedCode */
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
