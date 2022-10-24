@@ -144,7 +144,7 @@ class NostoCartService extends AbstractNostoService
 
             if ($params[self::QUANTITY] && $params[self::OPERATOR] == self::OPERATOR_UP) {
                 $nostoLineItem = new NostoSDKCartItem();
-                $nostoLineItem->setProductId(strval($product->id));
+                $nostoLineItem->setProductId((string)($product->id));
                 $nostoLineItem->setSkuId($params[self::ID_PRODUCT_ATTRIBUTE]);
                 $nostoLineItem->setQuantity((int)$params[self::QUANTITY]);
                 $nostoLineItem->setName($product->name);
