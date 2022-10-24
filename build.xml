@@ -174,10 +174,10 @@
         <delete file="${buildsrc}/libs/prestashop/autoindex/assets/index.php-e"/>
 
         <delete file="${buildsrc}/libs/autoload.php-e"/>
-        <exec executable="./libs/bin/autoindex" passthru="true">
-            <arg value="prestashop:add:index"/>
-            <arg value="${buildsrc}"/>
-        </exec>
+<!--        <exec executable="./libs/bin/autoindex" passthru="true">-->
+<!--            <arg value="prestashop:add:index"/>-->
+<!--            <arg value="${buildsrc}"/>-->
+<!--        </exec>-->
         <exec executable="./libs/bin/autoindex" passthru="true">
             <arg value="prestashop:add:index"/>
             <arg value="./libs"/>
