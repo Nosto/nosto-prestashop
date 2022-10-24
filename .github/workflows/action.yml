@@ -187,7 +187,7 @@ jobs:
     - name: Get plugin version number
       id: plugin_version
       run: |
-        echo "::set-output name=PLUGIN_VERSION::$(cat nostotagging.php | grep 'const PLUGIN_VERSION =' | awk '{print $4}' | tr '\'' ' ' | tr ';' ' ' | xargs)"        
+        echo "::set-output name=PLUGIN_VERSION::$(cat nostotagging.php | grep 'const PLUGIN_VERSION =' | awk '{print $4}' | tr "\'" " " | tr ";" " " | xargs)"        
 
     - name: Build archive using composer
       run: ./libs/bin/phing -verbose -Dversion="${{steps.plugin_version.outputs.PLUGIN_VERSION}}"
