@@ -174,10 +174,10 @@
         <delete file="${buildsrc}/libs/prestashop/autoindex/assets/index.php-e"/>
 
         <delete file="${buildsrc}/libs/autoload.php-e"/>
-<!--        <exec executable="./libs/bin/autoindex" passthru="true">-->
-<!--            <arg value="prestashop:add:index"/>-->
-<!--            <arg value="${buildsrc}"/>-->
-<!--        </exec>-->
+        <exec executable="./libs/bin/autoindex" passthru="true">
+            <arg value="prestashop:add:index"/>
+            <arg value="${buildsrc}"/>
+        </exec>
         <exec executable="./libs/bin/autoindex" passthru="true">
             <arg value="prestashop:add:index"/>
             <arg value="./libs"/>
@@ -212,15 +212,15 @@
     <!-- ============================================  -->
     <target name="build" depends="fixcompatibility, prepare, phpcs, phpmd">
         <exec command="xmllint --nocdata --xpath 'module/version/text()' config.xml" outputProperty="version" />
-        <echo msg="Building version ${version}"/>
-        <exec executable="zip" dir="${zipbase}">
-            <arg value="-r"/>
-            <arg value="nostotagging.zip"/>
-            <arg value="nostotagging"/>
-        </exec>
-        <move file="${zipbase}/nostotagging.zip"
-              tofile="${builddest}/${version}-Nosto.-.Personalization.for.PrestaShop.zip"/>
-        <echo msg="Files copied and compressed"/>
+<!--        <echo msg="Building version ${version}"/>-->
+<!--        <exec executable="zip" dir="${zipbase}">-->
+<!--            <arg value="-r"/>-->
+<!--            <arg value="nostotagging.zip"/>-->
+<!--            <arg value="nostotagging"/>-->
+<!--        </exec>-->
+<!--        <move file="${zipbase}/nostotagging.zip"-->
+<!--              tofile="${builddest}/${version}-Nosto.-.Personalization.for.PrestaShop.zip"/>-->
+<!--        <echo msg="Files copied and compressed"/>-->
     </target>
 
     <!-- ============================================  -->
