@@ -39,7 +39,7 @@ class NostoHelperFlash
     public static function add($type, $message)
     {
         $cookie = Context::getContext()->cookie;
-        $cookieData = isset($cookie->nostotagging) ? Tools::jsonDecode($cookie->nostotagging, true) : array();
+        $cookieData = isset($cookie->nostotagging) ? json_decode($cookie->nostotagging, true) : array();
         if (!isset($cookieData['flash_messages'])) {
             $cookieData['flash_messages'] = array();
         }
@@ -47,7 +47,7 @@ class NostoHelperFlash
             $cookieData['flash_messages'][$type] = array();
         }
         $cookieData['flash_messages'][$type][] = $message;
-        $cookie->nostotagging = Tools::jsonEncode($cookieData);
+        $cookie->nostotagging = json_encode($cookieData);
     }
 
     /**
@@ -61,11 +61,11 @@ class NostoHelperFlash
     {
         $flashMessages = array();
         $cookie = Context::getContext()->cookie;
-        $cookieData = isset($cookie->nostotagging) ? Tools::jsonDecode($cookie->nostotagging, true) : array();
+        $cookieData = isset($cookie->nostotagging) ? json_decode($cookie->nostotagging, true) : array();
         if (isset($cookieData['flash_messages'][$type])) {
             $flashMessages = $cookieData['flash_messages'][$type];
             unset($cookieData['flash_messages'][$type]);
-            $cookie->nostotagging = Tools::jsonEncode($cookieData);
+            $cookie->nostotagging = json_encode($cookieData);
         }
         return $flashMessages;
     }
