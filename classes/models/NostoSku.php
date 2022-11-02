@@ -92,11 +92,21 @@ class NostoSku extends NostoSDKSku
         );
         foreach ($attributes as $attributesInfo) {
             $attributeId = $attributesInfo['id_attribute'];
-            $attribute = new Attribute(
-                $attributeId,
-                NostoHelperContext::getLanguageId(),
-                NostoHelperContext::getShopId()
-            );
+
+            if (version_compare(_PS_VERSION_, '8') < 0) {
+                $attribute = new Attribute(
+                    $attributeId,
+                    NostoHelperContext::getLanguageId(),
+                    NostoHelperContext::getShopId()
+                );
+            } else {
+                $attribute = new ProductAttribute(
+                    $attributeId,
+                    NostoHelperContext::getLanguageId(),
+                    NostoHelperContext::getShopId()
+                );
+            }
+
             $attributeName = $attributesInfo['name'];
             $attributeGroup = new AttributeGroup(
                 $attribute->id_attribute_group,
