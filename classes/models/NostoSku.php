@@ -84,7 +84,7 @@ class NostoSku extends NostoSDKSku
      * @param Combination $combination
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
-     * @suppress PhanUndeclaredClass
+     * @suppress PhanUndeclaredClassMethod
      */
     protected function amendCustomFields(Combination $combination)
     {
