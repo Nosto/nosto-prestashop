@@ -84,7 +84,6 @@ class NostoSku extends NostoSDKSku
      * @param Combination $combination
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
-     * @suppress PhanUndeclaredClassMethod
      */
     protected function amendCustomFields(Combination $combination)
     {
@@ -95,12 +94,14 @@ class NostoSku extends NostoSDKSku
             $attributeId = $attributesInfo['id_attribute'];
 
             if (version_compare(_PS_VERSION_, '8') < 0) {
+                /** @phan-suppress-next-line PhanUndeclaredClassMethod */
                 $attribute = new Attribute(
                     $attributeId,
                     NostoHelperContext::getLanguageId(),
                     NostoHelperContext::getShopId()
                 );
             } else {
+                /** @phan-suppress-next-line PhanUndeclaredClassMethod */
                 $attribute = new ProductAttribute(
                     $attributeId,
                     NostoHelperContext::getLanguageId(),
@@ -110,6 +111,7 @@ class NostoSku extends NostoSDKSku
 
             $attributeName = $attributesInfo['name'];
             $attributeGroup = new AttributeGroup(
+            /** @phan-suppress-next-line PhanUndeclaredClassProperty */
                 $attribute->id_attribute_group,
                 NostoHelperContext::getLanguageId(),
                 NostoHelperContext::getShopId()
