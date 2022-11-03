@@ -94,14 +94,14 @@ class NostoSku extends NostoSDKSku
             $attributeId = $attributesInfo['id_attribute'];
 
             if (version_compare(_PS_VERSION_, '8') < 0) {
-                /** @phan-suppress-next-line PhanUndeclaredClassMethod */
                 $attribute = new Attribute(
                     $attributeId,
                     NostoHelperContext::getLanguageId(),
                     NostoHelperContext::getShopId()
                 );
             } else {
-                /** @phan-suppress-next-line PhanUndeclaredClassMethod */
+                /** @phan-suppress-next-next-line PhanUndeclaredClassMethod */
+                /** @noinspection PhpUndefinedClassInspection */
                 $attribute = new ProductAttribute(
                     $attributeId,
                     NostoHelperContext::getLanguageId(),
