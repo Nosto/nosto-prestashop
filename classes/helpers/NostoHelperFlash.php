@@ -1,4 +1,4 @@
-<?php /** @noinspection PhpDeprecationInspection */
+<?php
 /**
  * 2013-2022 Nosto Solutions Ltd
  *

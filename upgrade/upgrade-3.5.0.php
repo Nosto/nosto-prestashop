@@ -23,8 +23,6 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-/** @noinspection DuplicatedCode */
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -37,7 +35,6 @@ if (!defined('_PS_VERSION_')) {
  * @return bool
  * @throws PrestaShopDatabaseException
  * @throws PrestaShopException
- * @suppress PhanUnreferencedMethod
  * @noinspection PhpUnused
  */
 function upgrade_module_3_5_0($module)
