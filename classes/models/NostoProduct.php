@@ -333,7 +333,7 @@ class NostoProduct extends NostoSDKProduct
     }
 
     /**
-     * Builds the category paths the product belongs to and returns them.
+     * Builds the category paths and ids the product belongs to .
      *
      * By "path" we mean the full tree path of the products categories and sub-categories.
      *
@@ -345,6 +345,7 @@ class NostoProduct extends NostoSDKProduct
     protected function amendCategories(Product $product)
     {
         $productCategories = $product->getCategories();
+        $this->setCategoryIds($productCategories);
         foreach ($productCategories as $categoryId) {
             $category = new Category((int)$categoryId, NostoHelperContext::getLanguageId());
             $nostoCategory = NostoCategory::loadData($category);

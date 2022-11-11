@@ -86,7 +86,9 @@ class NostoHelperController
             }
             $argsArray = array();
             $argsArray['full'] = false;
-            $argsArray['idlang'] = $multiLanguageObject ? NostoHelperContext::getLanguageId() : null;
+            if ($multiLanguageObject) {
+                $argsArray['idlang'] = NostoHelperContext::getLanguageId();
+            }
             $argsArray['idshop'] = NostoHelperContext::getShopId();
             $argsForObject = array();
             $argsForObject[] = $id; // First argument is always the id
