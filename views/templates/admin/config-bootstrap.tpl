@@ -361,7 +361,7 @@
         <div class="panel">
             <div class="row nostotagging_account_container">
                 <button class="btn btn-lg"
-                        onclick="openNostoAccount({if $nostotagging_account_authorized nofilter}{"true"}{else}{"false"}{/if});"
+                        onclick="openNostoAccount({if $nostotagging_account_authorized}{"true"}{else}{"false"}{/if});"
                         name="nostotagging_open_account">
                                 <span class="ladda-label">
                                     {if $nostotagging_account_authorized}
