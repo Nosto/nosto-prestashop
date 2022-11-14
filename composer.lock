@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "de53199ec4cd28091ddf14f3eb832e10",
+    "content-hash": "433e0cbb2269f251af7150f355cff3e3",
     "packages": [
         {
             "name": "nosto/php-sdk",
-            "version": "6.1.0",
+            "version": "6.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Nosto/nosto-php-sdk.git",
-                "reference": "3d79b662774153c92d5a84a97d674b9893c93226"
+                "reference": "bb1a3d48db3c42f11f15836ad5fd06da95ef33f2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Nosto/nosto-php-sdk/zipball/3d79b662774153c92d5a84a97d674b9893c93226",
-                "reference": "3d79b662774153c92d5a84a97d674b9893c93226",
+                "url": "https://api.github.com/repos/Nosto/nosto-php-sdk/zipball/bb1a3d48db3c42f11f15836ad5fd06da95ef33f2",
+                "reference": "bb1a3d48db3c42f11f15836ad5fd06da95ef33f2",
                 "shasum": ""
             },
             "require": {
@@ -58,9 +58,9 @@
             "description": "PHP SDK for developing Nosto modules for e-commerce platforms",
             "support": {
                 "issues": "https://github.com/Nosto/nosto-php-sdk/issues",
-                "source": "https://github.com/Nosto/nosto-php-sdk/tree/6.1.0"
+                "source": "https://github.com/Nosto/nosto-php-sdk/tree/6.1.1"
             },
-            "time": "2022-11-11T09:56:42+00:00"
+            "time": "2022-11-14T12:06:55+00:00"
         },
         {
             "name": "phpoption/phpoption",
@@ -2923,5 +2923,5 @@
         "ext-json": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.1.0"
 }
