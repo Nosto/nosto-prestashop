@@ -23,8 +23,6 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-global $_MODULE;
-$_MODULE = array();
 $_MODULE['<{nostotagging}default-bootstrap>nostotagging_4d7be0837e3660ec51a01652f028436b'] = 'Personnalisation Nosto pour PrestaShop';
 $_MODULE['<{nostotagging}default-bootstrap>nostotagging_415e1f8adb980e44d0e0336e544bd9e1'] = 'Un compte Nosto n\'est pas configuré pour chaque boutique et chaque langue.';
 $_MODULE['<{nostotagging}default-bootstrap>nostotagging_0b69722d7a4da2541d7a4ddad2a8bca5'] = 'La partie Langue ne peut rester vide.';
