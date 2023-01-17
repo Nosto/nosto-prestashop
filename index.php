@@ -23,27 +23,12 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-class NostoHelperLanguage
-{
-    /**
-     * Gets the current admin config language data.
-     *
-     * @param array $languages list of valid languages.
-     * @param int $languageId if a specific language is required.
-     * @return array the language data array.
-     */
-    public static function ensureAdminLanguage(array $languages, $languageId)
-    {
-        foreach ($languages as $language) {
-            if ($language['id_lang'] == $languageId) {
-                return $language;
-            }
-        }
+header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 
-        if (isset($languages[0])) {
-            return $languages[0];
-        } else {
-            return array('id_lang' => 0, 'name' => '', 'iso_code' => '');
-        }
-    }
-}
+header('Cache-Control: no-store, no-cache, must-revalidate');
+header('Cache-Control: post-check=0, pre-check=0', false);
+header('Pragma: no-cache');
+
+header('Location: ../');
+exit;

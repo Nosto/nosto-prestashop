@@ -184,12 +184,16 @@ jobs:
         composer install --prefer-dist --no-progress --no-suggest
         composer dump-autoload --optimize
     ############################################################################
+    - name: Get plugin version number
+      id: plugin_version
+      run: |
+        echo "::set-output name=PLUGIN_VERSION::$(cat nostotagging.php | grep 'const PLUGIN_VERSION =' | awk '{print $4}' | tr "\'" " " | tr ";" " " | xargs)"        
 
     - name: Build archive using composer
-      run: composer archive --format=zip --file=archive
+      run: ./libs/bin/phing -verbose -Dversion="${{steps.plugin_version.outputs.PLUGIN_VERSION}}"
 
     - name: Archive built package
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v3
       with:
-        name: composer-zip-archive
-        path: archive.zip
+        name: ${{steps.plugin_version.outputs.PLUGIN_VERSION}}-Nosto.-.Personalization.for.PrestaShop
+        path: build/src
