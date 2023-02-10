@@ -67,6 +67,9 @@ if (!defined('_PS_VERSION_')) {
             case 'product':
                 $nostoController = new NostoTaggingProductModuleFrontController();
                 break;
+            case 'category':
+                $nostoController = new NostoTaggingCategoryModuleFrontController();
+                break;
             case 'order':
                 $nostoController = new NostoTaggingOrderModuleFrontController();
                 break;
