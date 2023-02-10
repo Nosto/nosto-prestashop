@@ -350,7 +350,7 @@ class NostoProduct extends NostoSDKProduct
             $category = new Category((int)$categoryId, NostoHelperContext::getLanguageId());
             $nostoCategory = NostoCategory::loadData($category);
             if (!empty($nostoCategory)) {
-                $this->addCategory($nostoCategory->getCategoryString());
+                $this->addCategory($nostoCategory->getPath());
             }
         }
     }
