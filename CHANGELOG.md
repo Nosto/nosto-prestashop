@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
+## 4.1.1
+- Fix the bug which render the tag product_ids with child's key is product_ids. The right one is product_id
+
 ## 4.1.0
 - Add compatibility with Prestashop 8
 - Add category ids to product tagging
