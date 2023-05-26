@@ -40,7 +40,7 @@ jobs:
     ############################################################################
 
     - name: Run PHPStorm
-      uses: mridang/action-phpstorm@master
+      uses: supercid/action-phpstorm@master
       with:
         target: .
         profile: ./.idea/inspectionProfiles/CI.xml
