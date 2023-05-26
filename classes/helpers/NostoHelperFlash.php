@@ -1,6 +1,6 @@
-<?php /** @noinspection PhpDeprecationInspection */
+<?php
 /**
- * 2013-2020 Nosto Solutions Ltd
+ * 2013-2022 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,7 +19,7 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2020 Nosto Solutions Ltd
+ * @copyright 2013-2022 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
@@ -34,7 +34,6 @@ class NostoHelperFlash
      *
      * @param string $type the type of message (use class constants).
      * @param string $message the message.
-     * @suppress PhanDeprecatedFunction
      */
     public static function add($type, $message)
     {
@@ -55,7 +54,6 @@ class NostoHelperFlash
      *
      * @param string $type the type of messages (use class constants).
      * @return array the message array.
-     * @suppress PhanDeprecatedFunction
      */
     public static function getList($type)
     {

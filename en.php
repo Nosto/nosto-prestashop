@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2020 Nosto Solutions Ltd
+ * 2013-2022 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,12 +19,10 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2020 Nosto Solutions Ltd
+ * @copyright 2013-2022 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-global $_MODULE;
-$_MODULE = array();
 $_MODULE['<{nostotagging}default-bootstrap>nostotagging_4d7be0837e3660ec51a01652f028436b'] = 'Nosto Personalization for PrestaShop';
 $_MODULE['<{nostotagging}default-bootstrap>nostotagging_415e1f8adb980e44d0e0336e544bd9e1'] = 'A Nosto account is not set up for each shop and language.';
 $_MODULE['<{nostotagging}default-bootstrap>nostotagging_0b69722d7a4da2541d7a4ddad2a8bca5'] = 'Language cannot be empty.';

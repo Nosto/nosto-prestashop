@@ -1,6 +1,6 @@
 <?php /** @noinspection PhpUnused */
 /**
- * 2013-2020 Nosto Solutions Ltd
+ * 2013-2022 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,7 +19,7 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2020 Nosto Solutions Ltd
+ * @copyright 2013-2022 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
@@ -73,7 +73,7 @@ class NostoHelperVariation
                 %stax_rules_group trg ON (p.id_tax_rules_group = trg.id_tax_rules_group)
             $innerJoinShop
             INNER JOIN
-                %stax_rule tr ON trg.id_tax_rules_group = tr.id_tax_rules_group					
+                %stax_rule tr ON trg.id_tax_rules_group = tr.id_tax_rules_group
             INNER JOIN
                 %scountry c ON c.id_country = tr.id_country
             WHERE
