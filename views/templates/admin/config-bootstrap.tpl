@@ -1,5 +1,5 @@
 {*
-* 2013-2019 Nosto Solutions Ltd
+* 2013-2022 Nosto Solutions Ltd
 *
 * NOTICE OF LICENSE
 *
@@ -18,7 +18,7 @@
 * needs please refer to http://www.prestashop.com for more information.
 *
 * @author    Nosto Solutions Ltd <contact@nosto.com>
-* @copyright 2013-2019 Nosto Solutions Ltd
+* @copyright 2013-2022 Nosto Solutions Ltd
 * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *}
 
@@ -407,7 +407,7 @@
         }
 
         function openNostoAccount(newTab) {
-            var action = "{/literal}{$NostoOpenAccountUrl|escape:'javascript'}{literal}";
+            var action = "{/literal}{$NostoOpenAccountUrl|escape:'javascript':'UTF-8'}{literal}";
             if (newTab) {
                 targetBlank();
             }
@@ -416,12 +416,12 @@
 
         function deleteNostoAccount() {
             $('#nosto_form_id').attr("target", '_self');
-            var action = "{/literal}{$NostoDeleteAccountUrl|escape:'javascript'}{literal}";
+            var action = "{/literal}{$NostoDeleteAccountUrl|escape:'javascript':'UTF-8'}{literal}";
             submitAction(action);
         }
 
         function updateExchangeRates() {
-            var action = "{/literal}{$NostoUpdateExchangeRateUrl|escape:'javascript'}{literal}";
+            var action = "{/literal}{$NostoUpdateExchangeRateUrl|escape:'javascript':'UTF-8'}{literal}";
             submitAction(action);
         }
 
@@ -443,7 +443,7 @@
         }
 
         function saveAdvancedSettings() {
-            var action = "{/literal}{$NostoAdvancedSettingUrl|escape:'javascript'}{literal}";
+            var action = "{/literal}{$NostoAdvancedSettingUrl|escape:'javascript':'UTF-8'}{literal}";
             submitAction(action);
         }
     {/literal}

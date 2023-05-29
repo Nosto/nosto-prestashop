@@ -1,5 +1,5 @@
 {*
-* 2013-2019 Nosto Solutions Ltd
+* 2013-2022 Nosto Solutions Ltd
 *
 * NOTICE OF LICENSE
 *
@@ -18,7 +18,7 @@
 * needs please refer to http://www.prestashop.com for more information.
 *
 * @author    Nosto Solutions Ltd <contact@nosto.com>
-* @copyright 2013-2019 Nosto Solutions Ltd
+* @copyright 2013-2022 Nosto Solutions Ltd
 * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *}
 
@@ -32,7 +32,7 @@
         Nosto.reloadCartTagging = function () {
             if (window.jQuery) {
                 jQuery.ajax({
-                    url: decodeURIComponent("{$reload_cart_url|escape:'url'}")
+                    url: decodeURIComponent("{$reload_cart_url|escape:'url':'UTF-8'}")
                 }).done(function (data) {
                     // noinspection JSJQueryEfficiency
                     if (jQuery('.nosto_cart').length > 0) {
