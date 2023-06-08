@@ -97,7 +97,7 @@ class NostoHelperController
                 // Remove snake case
                 $argName = Tools::strtolower(str_replace('_', '', $constructorArg->getName()));
                 if (array_key_exists($argName, $argsArray)) {
-                    $argsForObject[$argName] = $argsArray[$argName];
+                    $argsForObject[$constructorArg->getName()] = $argsArray[$argName];
                 }
             }
             $reflectionClass = new ReflectionClass($klass);
