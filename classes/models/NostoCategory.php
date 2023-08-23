@@ -71,7 +71,8 @@ class NostoCategory extends NostoSDKCategory
         $nostoCategory->setParentId($category->id_parent);
         $nostoCategory->setTitle($category->name);
         $nostoCategory->setUrl(NostoHelperUrl::getCategoryUrl($category));
-        $nostoCategory->setPath(self::buildCategoryString($categoryList));
+        $nostoCategory->setCategoryString(self::buildCategoryString($categoryList));
+        $nostoCategory->setAvailable((int)$category->active === 1);
 
         NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoCategory), array(
             'category' => $category,
