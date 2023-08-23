@@ -42,18 +42,13 @@ class NostoTaggingCategoryModuleFrontController extends NostoTaggingApiModuleFro
     {
         // We need to forge the employee in order to get a price for a product
         $employee = new Employee(); //@codingStandardsIgnoreLine
-
         $controller = $this;
-
-        $id = Tools::getValue(NostoTagging::ID);
-
         NostoHelperContext::runInContext(
             function () use ($controller) {
                 $collection = new NostoSDKCategoryCollection();
                 if (Tools::getValue(NostoTagging::ID)) {
                     $category = new Category(
                         Tools::getValue(NostoTagging::ID),
-                        true,
                         NostoHelperContext::getLanguageId(),
                         NostoHelperContext::getShopId()
                     );
@@ -61,12 +56,13 @@ class NostoTaggingCategoryModuleFrontController extends NostoTaggingApiModuleFro
                         Controller::getController('PageNotFoundController')->run();
                     }
                     $nostoCategory = NostoCategory::loadData($category);
-                    $collection->append($category);
+                    if ($nostoCategory) {
+                        $collection->append($nostoCategory);
+                    }
                 } else {
                     foreach ($controller->getCategoryIds() as $idCategory) {
                         $category = new Category(
                             $idCategory,
-                            true,
                             NostoHelperContext::getLanguageId(),
                             NostoHelperContext::getShopId()
                         );
