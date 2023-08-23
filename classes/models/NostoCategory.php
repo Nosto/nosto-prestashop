@@ -23,9 +23,9 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use \Nosto\Model\Category\Category as NostoSDKCatetory;
+use \Nosto\Model\Category\Category as NostoSDKCategory;
 
-class NostoCategory extends NostoSDKCatetory
+class NostoCategory extends NostoSDKCategory
 {
     /**
      * @param $idCategory
