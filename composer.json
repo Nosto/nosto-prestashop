@@ -19,7 +19,8 @@
     "icanboogie/cldr": "3.0.0",
     "staabm/annotate-pull-request-from-checkstyle": "^1.1",
     "mridang/pmd-annotations": "^0.0.2",
-    "prestashop/autoindex": "^2.1"
+    "prestashop/autoindex": "^2.1",
+    "phpseclib/phpseclib": "~3.0.9"
   },
   "config": {
     "vendor-dir": "libs",

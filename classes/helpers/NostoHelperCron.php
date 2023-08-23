@@ -38,7 +38,7 @@ class NostoHelperCron
         $token = NostoHelperConfig::getCronAccessToken();
         if (empty($token)) {
             // Running bin2hex() will make the string length 32 characters.
-            $token = bin2hex(phpseclib\Crypt\Random::string(16));
+            $token = bin2hex(phpseclib3\Crypt\Random::string(16));
             NostoHelperConfig::saveCronAccessToken($token);
         }
         return $token;
