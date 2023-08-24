@@ -40,8 +40,6 @@ class NostoTaggingCategoryModuleFrontController extends NostoTaggingApiModuleFro
      */
     public function initContent()
     {
-        // We need to forge the employee in order to get a price for a product
-        $employee = new Employee(); //@codingStandardsIgnoreLine
         $controller = $this;
         NostoHelperContext::runInContext(
             function () use ($controller) {
@@ -77,11 +75,7 @@ class NostoTaggingCategoryModuleFrontController extends NostoTaggingApiModuleFro
                     }
                 }
                 $controller->encryptOutput($collection);
-            },
-            false,
-            false,
-            false,
-            $employee->id
+            }
         );
     }
 
