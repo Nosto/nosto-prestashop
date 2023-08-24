@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
+## 4.2.0
+- Update tagging with category listing support
+- Add category export
+
 ## 4.1.1
 - Fixes an issue that would cause category id's to be removed by the crawler
 
