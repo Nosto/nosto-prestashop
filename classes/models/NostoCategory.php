@@ -23,9 +23,9 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use \Nosto\Model\Category as NostoSDKCatetory;
+use \Nosto\Model\Category\Category as NostoSDKCategory;
 
-class NostoCategory extends NostoSDKCatetory
+class NostoCategory extends NostoSDKCategory
 {
     /**
      * @param $idCategory
@@ -67,7 +67,12 @@ class NostoCategory extends NostoSDKCatetory
         }
 
         $nostoCategory = new NostoCategory();
+        $nostoCategory->setId($category->id);
+        $nostoCategory->setParentId($category->id_parent);
+        $nostoCategory->setTitle($category->name);
+        $nostoCategory->setUrl(NostoHelperUrl::getCategoryUrl($category));
         $nostoCategory->setCategoryString(self::buildCategoryString($categoryList));
+        $nostoCategory->setAvailable((int)$category->active === 1);
 
         NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoCategory), array(
             'category' => $category,
