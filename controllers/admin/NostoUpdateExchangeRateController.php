@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2020 Nosto Solutions Ltd
+ * 2013-2022 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,7 +19,7 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2020 Nosto Solutions Ltd
+ * @copyright 2013-2022 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
@@ -50,10 +50,10 @@ class NostoUpdateExchangeRateController extends NostoBaseController
             );
         } else {
             if (!$nostoAccount->getApiToken(NostoSDKAPIToken::API_EXCHANGE_RATES)) {
-                $message = 'Failed to update exchange rates to Nosto due to a missing API token. 
+                $message = 'Failed to update exchange rates to Nosto due to a missing API token.
                             Please, reconnect your account with Nosto';
             } else {
-                $message = 'There was an error updating the exchange rates. 
+                $message = 'There was an error updating the exchange rates.
                             See Prestashop logs for more information.';
             }
             /** @noinspection PhpDeprecationInspection */

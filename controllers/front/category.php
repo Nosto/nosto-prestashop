@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2022 Nosto Solutions Ltd
+ * 2013-2023 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,20 +19,20 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2022 Nosto Solutions Ltd
+ * @copyright 2013-2020 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
 require_once(dirname(__FILE__) . '/api.php');
 
-use Nosto\Model\Product\ProductCollection as NostoSDKProductCollection;
+use Nosto\Model\Category\CategoryCollection as NostoSDKCategoryCollection;
 
 /**
- * Front controller for gathering all products from the shop and sending the meta-data to Nosto.
+ * Front controller for gathering all categories from the shop and sending the meta-data to Nosto.
  *
  * This controller should only be invoked once, when the Nosto module has been installed.
  */
-class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFrontController
+class NostoTaggingCategoryModuleFrontController extends NostoTaggingApiModuleFrontController
 {
     /**
      * @inheritdoc
@@ -40,64 +40,59 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
      */
     public function initContent()
     {
-        // We need to forge the employee in order to get a price for a product
-        $employee = new Employee(); //@codingStandardsIgnoreLine
-
         $controller = $this;
         NostoHelperContext::runInContext(
             function () use ($controller) {
-                $collection = new NostoSDKProductCollection();
+                $collection = new NostoSDKCategoryCollection();
                 if (Tools::getValue(NostoTagging::ID)) {
-                    $product = new Product(
+                    $category = new Category(
                         Tools::getValue(NostoTagging::ID),
-                        true,
                         NostoHelperContext::getLanguageId(),
                         NostoHelperContext::getShopId()
                     );
-                    if (!Validate::isLoadedObject($product)) {
+                    if (!Validate::isLoadedObject($category)) {
                         Controller::getController('PageNotFoundController')->run();
                     }
-                    $nostoProduct = NostoProduct::loadData($product);
-                    $collection->append($nostoProduct);
+                    $nostoCategory = NostoCategory::loadData($category);
+                    if ($nostoCategory) {
+                        $collection->append($nostoCategory);
+                    }
                 } else {
-                    foreach ($controller->getProductIds() as $idProduct) {
-                        $product = new Product(
-                            $idProduct,
-                            true,
+                    foreach ($controller->getCategoryIds() as $idCategory) {
+                        $category = new Category(
+                            $idCategory,
                             NostoHelperContext::getLanguageId(),
                             NostoHelperContext::getShopId()
                         );
-                        if (!Validate::isLoadedObject($product)) {
+                        if (!Validate::isLoadedObject($category)) {
                             continue;
                         }
 
-                        $nostoProduct = NostoProduct::loadData($product);
-                        $collection->append($nostoProduct);
+                        $nostoCategory = NostoCategory::loadData($category);
+                        if ($nostoCategory) {
+                            $collection->append($nostoCategory);
+                        }
                     }
                 }
                 $controller->encryptOutput($collection);
-            },
-            false,
-            false,
-            false,
-            $employee->id
+            }
         );
     }
 
     /**
-     * Returns a list of all active product ids with limit and offset applied.
+     * Returns a list of all active category ids with limit and offset applied.
      *
      * @return array the product id list.
      * @throws PrestaShopDatabaseException
      */
-    protected function getProductIds()
+    protected function getCategoryIds()
     {
-        $productIds = array();
+        $categoryIds = array();
         $sql = sprintf(
             '
-                SELECT id_product
-                FROM %sproduct
-                WHERE active = 1 AND available_for_order = 1
+                SELECT id_category
+                FROM %scategory
+                WHERE active = 1
                 LIMIT %d
                 OFFSET %d
             ',
@@ -108,9 +103,9 @@ class NostoTaggingProductModuleFrontController extends NostoTaggingApiModuleFron
 
         $rows = Db::getInstance()->executeS($sql);
         foreach ($rows as $row) {
-            $productIds[] = (int)$row['id_product'];
+            $categoryIds[] = (int)$row['id_category'];
         }
 
-        return $productIds;
+        return $categoryIds;
     }
 }

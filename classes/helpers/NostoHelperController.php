@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2020 Nosto Solutions Ltd
+ * 2013-2022 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,7 +19,7 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2020 Nosto Solutions Ltd
+ * @copyright 2013-2022 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
@@ -97,7 +97,7 @@ class NostoHelperController
                 // Remove snake case
                 $argName = Tools::strtolower(str_replace('_', '', $constructorArg->getName()));
                 if (array_key_exists($argName, $argsArray)) {
-                    $argsForObject[$argName] = $argsArray[$argName];
+                    $argsForObject[$constructorArg->getName()] = $argsArray[$argName];
                 }
             }
             $reflectionClass = new ReflectionClass($klass);

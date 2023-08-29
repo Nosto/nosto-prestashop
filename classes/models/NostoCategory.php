@@ -1,6 +1,6 @@
 <?php
 /**
- * 2013-2020 Nosto Solutions Ltd
+ * 2013-2022 Nosto Solutions Ltd
  *
  * NOTICE OF LICENSE
  *
@@ -19,13 +19,13 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author    Nosto Solutions Ltd <contact@nosto.com>
- * @copyright 2013-2020 Nosto Solutions Ltd
+ * @copyright 2013-2022 Nosto Solutions Ltd
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use \Nosto\Model\Category as NostoSDKCatetory;
+use \Nosto\Model\Category\Category as NostoSDKCategory;
 
-class NostoCategory extends NostoSDKCatetory
+class NostoCategory extends NostoSDKCategory
 {
     /**
      * @param $idCategory
@@ -67,7 +67,12 @@ class NostoCategory extends NostoSDKCatetory
         }
 
         $nostoCategory = new NostoCategory();
+        $nostoCategory->setId($category->id);
+        $nostoCategory->setParentId($category->id_parent);
+        $nostoCategory->setTitle($category->name);
+        $nostoCategory->setUrl(NostoHelperUrl::getCategoryUrl($category));
         $nostoCategory->setCategoryString(self::buildCategoryString($categoryList));
+        $nostoCategory->setAvailable((int)$category->active === 1);
 
         NostoHelperHook::dispatchHookActionLoadAfter(get_class($nostoCategory), array(
             'category' => $category,
