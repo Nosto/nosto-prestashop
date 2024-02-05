@@ -54,6 +54,7 @@ class NostoProduct extends NostoSDKProduct
         $nostoProduct->setAvailability(self::checkAvailability($product));
         $nostoProduct->amendTags($product);
         $nostoProduct->amendCategories($product);
+        $nostoProduct->amendParentCategories($product);
         $nostoProduct->setDescription($product->description_short . $product->description);
         $nostoProduct->setInventoryLevel((int)$product->quantity);
         $nostoProduct->amendBrand($product);
@@ -353,6 +354,20 @@ class NostoProduct extends NostoSDKProduct
                 $this->addCategory($nostoCategory->getCategoryString());
             }
         }
+    }
+
+    /**
+     * Fetches the parent category id's
+     *
+     * @param Product $product the product model.
+     */
+    protected function amendParentCategories(Product $product)
+    {
+        $parentCategories = [];
+        foreach ($product->getParentCategories(NostoHelperContext::getLanguageId()) as $parentCategory) {
+            $parentCategories[] = $parentCategory['id_parent'];
+        }
+        $this->setParentCategoryIds(array_values(array_unique($parentCategories)));
     }
 
     /**
