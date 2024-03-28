@@ -2,8 +2,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
+## 4.3.0
+- Add parent category id's to tagging
+
 ## 4.2.2
--Fix issue that would cause quantity based promotions to be applied to certain customer price groups
+- Fix issue that would cause quantity based promotions to be applied to certain customer price groups
 
 ## 4.2.1
 - Fix a bug where the product categories would not be rendered correctly in the product tagging
