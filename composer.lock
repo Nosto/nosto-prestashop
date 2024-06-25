@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c9b5a0fe3c780c7f5d4b0c9071dfb2cd",
+    "content-hash": "f7e211533164dd15490d93f6c19ceeb6",
     "packages": [
         {
             "name": "nosto/php-sdk",
-            "version": "7.1.1",
+            "version": "7.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Nosto/nosto-php-sdk.git",
-                "reference": "8f14a91acf7f60f6fb48eab1dfdd61a7f97eef4f"
+                "reference": "9588f93424490daf8c2b174842254f63bad0a945"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Nosto/nosto-php-sdk/zipball/8f14a91acf7f60f6fb48eab1dfdd61a7f97eef4f",
-                "reference": "8f14a91acf7f60f6fb48eab1dfdd61a7f97eef4f",
+                "url": "https://api.github.com/repos/Nosto/nosto-php-sdk/zipball/9588f93424490daf8c2b174842254f63bad0a945",
+                "reference": "9588f93424490daf8c2b174842254f63bad0a945",
                 "shasum": ""
             },
             "require": {
@@ -58,9 +58,9 @@
             "description": "PHP SDK for developing Nosto modules for e-commerce platforms",
             "support": {
                 "issues": "https://github.com/Nosto/nosto-php-sdk/issues",
-                "source": "https://github.com/Nosto/nosto-php-sdk/tree/7.1.1"
+                "source": "https://github.com/Nosto/nosto-php-sdk/tree/7.3.0"
             },
-            "time": "2023-06-27T11:31:54+00:00"
+            "time": "2024-02-08T14:56:42+00:00"
         },
         {
             "name": "paragonie/constant_time_encoding",
@@ -256,16 +256,16 @@
         },
         {
             "name": "phpseclib/phpseclib",
-            "version": "3.0.21",
+            "version": "3.0.37",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpseclib/phpseclib.git",
-                "reference": "4580645d3fc05c189024eb3b834c6c1e4f0f30a1"
+                "reference": "cfa2013d0f68c062055180dd4328cc8b9d1f30b8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/4580645d3fc05c189024eb3b834c6c1e4f0f30a1",
-                "reference": "4580645d3fc05c189024eb3b834c6c1e4f0f30a1",
+                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/cfa2013d0f68c062055180dd4328cc8b9d1f30b8",
+                "reference": "cfa2013d0f68c062055180dd4328cc8b9d1f30b8",
                 "shasum": ""
             },
             "require": {
@@ -346,7 +346,7 @@
             ],
             "support": {
                 "issues": "https://github.com/phpseclib/phpseclib/issues",
-                "source": "https://github.com/phpseclib/phpseclib/tree/3.0.21"
+                "source": "https://github.com/phpseclib/phpseclib/tree/3.0.37"
             },
             "funding": [
                 {
@@ -362,7 +362,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-07-09T15:24:48+00:00"
+            "time": "2024-03-03T02:14:58+00:00"
         },
         {
             "name": "symfony/polyfill-ctype",
@@ -3227,5 +3227,5 @@
         "ext-json": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }
