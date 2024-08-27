@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
+## 4.4.0
+- Add compatibility with Prestashop 8.1
+
 ## 4.3.0
 - Add parent category id's to tagging
 
