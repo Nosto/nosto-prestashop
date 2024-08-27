@@ -150,7 +150,7 @@ class NostoTagging extends Module
         $this->bootstrap = true; // Necessary for Bootstrap CSS initialisation in the UI
         $this->author = 'Nosto';
         $this->need_instance = 1;
-        $this->ps_versions_compliancy = array('min' => '1.5.5.0', 'max' => '8.1.0');
+        $this->ps_versions_compliancy = array('min' => '1.5.5.0', 'max' => '8.2.0');
         $this->module_key = '8d80397cab6ca02dfe8ef681b48c37a3';
 
         parent::__construct();
@@ -182,11 +182,7 @@ class NostoTagging extends Module
         $success = false;
         if (parent::install()) {
             $success = true;
-            if (!$this->registerHook('displayCategoryTop')
-                || !$this->registerHook('displayCategoryFooter')
-                || !$this->registerHook('displaySearchTop')
-                || !$this->registerHook('displaySearchFooter')
-                || !$this->registerHook('header')
+            if (!$this->registerHook('header')
                 || !$this->registerHook('top')
                 || !$this->registerHook('footer')
                 || !$this->registerHook('productFooter')
