@@ -45,7 +45,7 @@ jobs:
         ./libs/bin/phpcs --standard=ruleset.xml --severity=10 --report=checkstyle --report-file=chkphpcs.xml .
 
     - name: Archive code sniffing results
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v4
       with:
         name: phpcs-xml-result
         path: chkphpcs.xml
@@ -92,7 +92,7 @@ jobs:
       run: ./libs/bin/phpmd . xml codesize,naming,unusedcode,controversial,design --exclude libs,var,build,tests,.phan --reportfile pmdphpmd.xml --ignore-violations-on-exit
 
     - name: Archive mess detection results
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v4
       with:
         name: phpmd-xml-result
         path: pmdphpmd.xml
@@ -141,7 +141,7 @@ jobs:
       continue-on-error: true
 
     - name: Archive copy-paste detection results
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v4
       with:
         name: phdpcpd-xml-result
         path: phdpcpd.xml
@@ -193,7 +193,7 @@ jobs:
       run: ./libs/bin/phing -verbose -Dversion="${{steps.plugin_version.outputs.PLUGIN_VERSION}}"
 
     - name: Archive built package
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ${{steps.plugin_version.outputs.PLUGIN_VERSION}}-Nosto.-.Personalization.for.PrestaShop
         path: build/src
