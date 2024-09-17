@@ -245,7 +245,9 @@ class NostoOrder extends NostoSDKOrder
 
             //deduct the gift product among from product among
             $totalProductTaxIncl -= $totalGiftTaxIncl;
-            $discountPercentage = max(0, $totalDiscountsTaxIncl / $totalProductTaxIncl);
+            $discountPercentage = ($totalProductTaxIncl > 0)
+                ? max(0, $totalDiscountsTaxIncl / $totalProductTaxIncl)
+                : 0;
 
             /** @var NostoOrderPurchasedItem $purchasedItem */
             foreach ($purchasedItems as $purchasedItem) {
