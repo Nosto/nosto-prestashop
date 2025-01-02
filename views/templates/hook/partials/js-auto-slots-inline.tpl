@@ -50,8 +50,14 @@
                                 slotsMoved = true;
                             }
                         });
-                        if (slotsMoved && nostoRecosLoaded) {
-                            api.loadRecommendations();
+                        if (slotsMoved) {
+                            if (nostoRecosLoaded) {
+                                api.loadRecommendations();
+                            } else {
+                                api.listen('postrender', function () {
+                                    api.loadRecommendations();
+                                });
+                            }
                         }
                     }
                 };
