@@ -40,11 +40,11 @@
     //Product object must have fields productId and skuId productId: 123, skuId: 321
     Nosto.addSkuToCart = function (product, element, quantity) {
         quantity = quantity || 1;
-        if (typeof nostojs !== 'undefined' && typeof element === 'object') {
+        if (typeof nostojs !== 'undefined') {
             var slotId = Nosto.resolveContextSlotId(element);
             if (slotId) {
                 nostojs(function (api) {
-                    api.recommendedProductAddedToCart(product.productId, slotId);
+                    api.reportAddToCart(product, slotId);
                 });
             }
         }
@@ -93,8 +93,8 @@
     };
 
     Nosto.resolveContextSlotId = function (element) {
-        if (!element) {
-            return false;
+        if (!element || typeof element === "string") {
+            return element;
         }
         var m = 20;
         var n = 0;
