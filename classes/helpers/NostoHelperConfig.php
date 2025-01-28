@@ -36,6 +36,7 @@ class NostoHelperConfig
     const SKU_SWITCH = 'NOSTOTAGGING_SKU_SWITCH';
     const CART_UPDATE_SWITCH = 'NOSTOTAGGING_CART_UPDATE_SWITCH';
     const DISABLE_ESCAPE_SEARCH_TERMS_SWITCH = 'NOSTOTAGGING_DISABLE_ESCAPE_SEARCH_TERMS';
+    const ENABLE_CUSTOMER_TAGGING_SANITIZATION = 'ENABLE_CUSTOMER_TAGGING_SANITIZATION';
     const SKIP_CUSTOMER_TAGGING_SWITCH = 'NOSTOTAGGING_SKIP_CUSTOMER_TAGGING_SWITCH';
     const VARIATION_SWITCH = 'NOSTOTAGGING_VARIATION_SWITCH';
     const VARIATION_TAX_RULE_SWITCH = 'NOSTOTAGGING_TAX_RULE_SWITCH';
@@ -322,6 +323,17 @@ class NostoHelperConfig
     }
 
     /**
+     * Checks if the customer tagging should be sanitized
+     * This will prevent customer email being rendered on the tagging once a user is logged in
+     *
+     * @return bool enabled/disabled
+     */
+    public static function isCustomerTaggingSanitizationEnabled()
+    {
+        return (bool)self::read(self::ENABLE_CUSTOMER_TAGGING_SANITIZATION);
+    }
+
+    /**
      * Returns the position where to render Nosto tagging
      *
      * @return string
@@ -361,6 +373,19 @@ class NostoHelperConfig
     public static function saveSkuEnabled($enabled)
     {
         return self::saveSetting(self::SKU_SWITCH, $enabled);
+    }
+
+    /**
+     * Saves enable/disable of customer tagging sanitization feature
+     *
+     * @param bool $enabled
+     * @return bool true if saving the configuration was successful, false otherwise
+     */
+    public static function saveCustomerTaggingSanitization($enabled)
+    {
+        $skipped = $enabled ? '0' : '1';
+
+        return self::saveSetting(self::ENABLE_CUSTOMER_TAGGING_SANITIZATION, $skipped);
     }
 
     /**

@@ -173,6 +173,7 @@ class NostoIndexController
             'sku_enabled' => NostoHelperConfig::getSkuEnabled(),
             'cart_update_enabled' => NostoHelperConfig::isCartUpdateEnabled(),
             'customer_tagging_switch' => NostoHelperConfig::isCustomerTaggingEnabled(),
+            'nosto_customer_tagging_sanitization_switch' => NostoHelperConfig::isCustomerTaggingSanitizationEnabled(),
             'variation_keys' => NostoSDKSerializationHelper::serialize($variationKeys),
             'variation_countries_from_tax_rule' => implode(
                 ', ',

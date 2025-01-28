@@ -45,6 +45,9 @@ class NostoCustomerTagging
         }
         $nostoCustomer->setHcid($hcid);
 
+        if (NostoHelperConfig::isCustomerTaggingSanitizationEnabled()) {
+            return $nostoCustomer->sanitize()->toHtml();
+        }
         return $nostoCustomer->toHtml();
     }
 

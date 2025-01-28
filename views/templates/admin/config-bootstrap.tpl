@@ -322,6 +322,28 @@
                                 </span>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label class="control-label col-lg-3">
+                                <span title="" data-toggle="tooltip" class="label-tooltip"
+                                      data-original-title="{l s='Sanitize customer data in the tagging' mod='nostotagging'}"
+                                      data-html="true">
+                                    {l s='Sanitize customer data in the tagging' mod='nostotagging'}
+                                </span>
+                        </label>
+                        <div class="col-lg-9">
+                                <span class="switch prestashop-switch fixed-width-lg">
+                                    <input type="radio" name="nosto_customer_tagging_sanitization_switch"
+                                           id="nosto_customer_tagging_sanitization" value="1"
+                                           {if $nosto_customer_tagging_sanitization_switch === true}checked="checked" {/if} />
+                                    <label for="nosto_customer_tagging_sanitization" class="radioCheck">Yes</label>
+                                    <input type="radio" name="nosto_customer_tagging_sanitization_switch"
+                                           id="nosto_customer_tagging_sanitization_switch_off" value="0"
+                                           {if $nosto_customer_tagging_sanitization_switch !== true}checked="checked" {/if} />
+                                    <label for="nosto_customer_tagging_sanitization_switch_off" class="radioCheck">No</label>
+                                    <a class="slide-button btn"></a>
+                                </span>
+                        </div>
+                    </div>
                     <!-- Escape search terms switch -->
                     <div class="form-group" id="nosto_variation_tax_rule_switch_div">
                         <label class="control-label col-lg-3">
