@@ -74,4 +74,14 @@ class NostoCustomer extends NostoSDKCustomer
             $this->setCustomerReference($customerReference);
         }
     }
+
+    public function sanitize()
+    {
+        $sanitized = clone $this;
+        $sanitized->setPhone(null);
+        $sanitized->setPostCode(null);
+        $sanitized->setCountry(null);
+        $sanitized->setEmail(null);
+        return $sanitized;
+    }
 }
