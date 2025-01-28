@@ -81,7 +81,7 @@ class NostoCustomer extends NostoSDKCustomer
         $sanitized->setPhone(null);
         $sanitized->setPostCode(null);
         $sanitized->setCountry(null);
-        $sanitized->setEmail(null);
+        $sanitized->setEmail('');
         return $sanitized;
     }
 }
