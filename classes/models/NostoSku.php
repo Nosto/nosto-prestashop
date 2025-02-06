@@ -44,7 +44,8 @@ class NostoSku extends NostoSDKSku
         Product $product,
         NostoProduct $nostoProduct,
         Combination $combination,
-        $attributesGroup
+        $attributesGroup,
+        $productImages
     ) {
         if (!Validate::isLoadedObject($combination)) {
             return null;
@@ -53,7 +54,7 @@ class NostoSku extends NostoSDKSku
         $nostoSku = new NostoSku();
         $nostoSku->amendAvailability($attributesGroup);
         $nostoSku->setId($combination->id);
-        $nostoSku->amendImage($product, $combination, $nostoProduct);
+        $nostoSku->amendImage($product, $combination, $nostoProduct, $productImages);
         $nostoSku->amendCustomFields($combination);
         $nostoSku->amendPrice($combination);
         $nostoSku->amendName($combination);
@@ -148,32 +149,50 @@ class NostoSku extends NostoSDKSku
     protected function amendImage(
         Product $product,
         Combination $combination,
-        NostoProduct $nostoProduct
+        NostoProduct $nostoProduct,
+        $productImages
     ) {
-        $images = $combination->getWsImages();
-        if ($images && is_array($images)) {
-            foreach ($images as $image) {
-                if (!is_array($image) || !array_key_exists(NostoTagging::ID, $image)) {
+        $combinationImages = $combination->getWsImages();
+
+        if ($productImages && is_array($productImages) && $combinationImages && is_array($combinationImages)) {
+
+            foreach ($productImages as $productImage) {
+                if (!is_array($productImage) || !array_key_exists(NostoTagging::ID, $productImage)) {
                     continue;
                 }
 
-                $imageId = $image[NostoTagging::ID];
-                if ((int)$imageId > 0) {
-                    $url = NostoHelperLink::getImageLink(
-                        $product->link_rewrite,
-                        $combination->id_product . '-' . $imageId
-                    );
-                    if ($url) {
-                        $this->setImageUrl($url);
-                        //image url found, break from loop
-                        break;
+                $productImageId = $productImage[NostoTagging::ID];
+
+                foreach ($combinationImages as $image) {
+                    if (!is_array($image) || !array_key_exists(NostoTagging::ID, $image)) {
+                        continue;
+                    }
+
+                    $imageId = $image[NostoTagging::ID];
+
+                    if ((int)$productImageId === (int)$imageId) {
+                        $url = NostoHelperLink::getImageLink(
+                            $product->link_rewrite,
+                            $combination->id_product . '-' . $imageId
+                        );
+                        if ($url) {
+                            $this->setImageUrl($url);
+                            //image url found, break from both loops
+                            break 2;
+                        }
                     }
                 }
             }
         }
 
         if (!$this->getImageUrl()) {
-            $this->setImageUrl($nostoProduct->getImageUrl());
+
+            $firstImageId = $productImages[0][NostoTagging::ID] ?? null;
+            $url = $firstImageId
+                ? NostoHelperLink::getImageLink($product->link_rewrite, $combination->id_product . '-' . $firstImageId)
+                : $nostoProduct->getImageUrl();
+
+            $this->setImageUrl($url);
         }
     }
 
