@@ -158,6 +158,7 @@ class NostoProduct extends NostoSDKProduct
     protected function amendSkus(Product $product)
     {
         $attributesGroups = $product->getAttributesGroups(NostoHelperContext::getLanguageId());
+        $productImages = $product->getWsImages();
         $variants = array();
         foreach ($attributesGroups as $attributesGroup) {
             $variants[$attributesGroup['id_product_attribute']] = $attributesGroup;
@@ -175,7 +176,7 @@ class NostoProduct extends NostoSDKProduct
                 NostoHelperLogger::info('Could not find combination with id:' . $combinationId[NostoTagging::ID]);
                 continue;
             }
-            $this->addSku(NostoSku::loadData($product, $this, $combination, $variants[$combination->id]));
+            $this->addSku(NostoSku::loadData($product, $this, $combination, $variants[$combination->id], $productImages));
         }
     }
 
