@@ -55,7 +55,7 @@ class NostoTagging extends Module
      *
      * @var string
      */
-    const PLUGIN_VERSION = '4.4.1';
+    const PLUGIN_VERSION = '4.4.2';
 
     /**
      * Internal name of the Nosto plug-in
@@ -150,7 +150,7 @@ class NostoTagging extends Module
         $this->bootstrap = true; // Necessary for Bootstrap CSS initialisation in the UI
         $this->author = 'Nosto';
         $this->need_instance = 1;
-        $this->ps_versions_compliancy = array('min' => '1.5.5.0', 'max' => '8.2.0');
+        $this->ps_versions_compliancy = array('min' => '1.5.5.0', 'max' => '8.2.1');
         $this->module_key = '8d80397cab6ca02dfe8ef681b48c37a3';
 
         parent::__construct();
