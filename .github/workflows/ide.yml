@@ -44,7 +44,7 @@ jobs:
         docker run --rm \
           -v ${{ github.workspace }}:/data/project:ro \
           -v ${{ runner.temp }}/qodana:/data/results \
-          jetbrains/qodana-php:latest --print-problems
+          jetbrains/qodana-php-community:latest --print-problems
 
     - name: Archive inspection results
       if: always()
