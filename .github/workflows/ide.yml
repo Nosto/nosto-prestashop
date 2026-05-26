@@ -9,48 +9,48 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v1
+      - uses: actions/checkout@v1
 
-    ############################################################################
-    - name: Set up PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: '7.2'
-        tools: composer, prestissimo, pecl
-        coverage: none
+      ############################################################################
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.2'
+          tools: composer, prestissimo, pecl
+          coverage: none
 
-      #https://github.com/actions/cache/blob/master/examples.md#php---composer
-    - name: Cache composer packages
-      id: composer-cache
-      run: |
-        composer config cache-files-dir
-        echo "::set-output name=dir::$(composer config cache-files-dir)"
-    - uses: actions/cache@v4
-      with:
-        path: ${{ steps.composer-cache.outputs.dir }}
-        key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-composer-
+        #https://github.com/actions/cache/blob/master/examples.md#php---composer
+      - name: Cache composer packages
+        id: composer-cache
+        run: |
+          composer config cache-files-dir
+          echo "::set-output name=dir::$(composer config cache-files-dir)"
+      - uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
 
-    - name: Update project dependencies
-      run: |
-        composer install --prefer-dist --no-progress --no-suggest
-        composer dump-autoload --optimize
-        rm -rf libs/bin
-    ############################################################################
+      - name: Update project dependencies
+        run: |
+          composer install --prefer-dist --no-progress --no-suggest
+          composer dump-autoload --optimize
+          rm -rf libs/bin
+      ############################################################################
 
-    - name: Run PHPStorm
-      uses: supercid/action-phpstorm@master
-      with:
-        target: .
-        profile: ./.idea/inspectionProfiles/CI.xml
-        output: ./output
-        verbosity: v2
-        scope: Inspection
+      - name: Run PHPStorm
+        uses: Nosto/action-phpstorm@master
+        with:
+          target: .
+          profile: ./.idea/inspectionProfiles/CI.xml
+          output: ./output
+          verbosity: v2
+          scope: Inspection
 
-    - name: Archive inspection results
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: inspection-results
-        path: output
+      - name: Archive inspection results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: inspection-results
+          path: output
