@@ -40,7 +40,7 @@ jobs:
       ############################################################################
 
       - name: Run PHPStorm
-        uses: supercid/action-phpstorm@master
+        uses: Nosto/action-phpstorm@master
         with:
           target: .
           profile: ./.idea/inspectionProfiles/CI.xml
