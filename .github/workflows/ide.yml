@@ -40,9 +40,11 @@ jobs:
     ############################################################################
 
     - name: Run Qodana (Code Inspection)
-      uses: JetBrains/qodana-action@v2023.3
-      with:
-        args: --print-problems
+      run: |
+        docker run --rm \
+          -v ${{ github.workspace }}:/data/project:ro \
+          -v ${{ runner.temp }}/qodana:/data/results \
+          jetbrains/qodana-php:latest --print-problems
 
     - name: Archive inspection results
       if: always()
