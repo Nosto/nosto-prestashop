@@ -39,18 +39,14 @@ jobs:
         rm -rf libs/bin
     ############################################################################
 
-    - name: Run PHPStorm
-      uses: supercid/action-phpstorm@master
+    - name: Run Qodana (Code Inspection)
+      uses: JetBrains/qodana-action@v2023.3
       with:
-        target: .
-        profile: ./.idea/inspectionProfiles/CI.xml
-        output: ./output
-        verbosity: v2
-        scope: Inspection
+        args: --baseline /dev/null
 
     - name: Archive inspection results
       if: always()
       uses: actions/upload-artifact@v4
       with:
-        name: inspection-results
-        path: output
+        name: qodana-results
+        path: ${{ runner.temp }}/qodana/results
