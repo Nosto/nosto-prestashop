@@ -97,10 +97,6 @@ jobs:
         name: phpmd-xml-result
         path: pmdphpmd.xml
 
-    - name: Report annotations
-      id: report-annotations
-      run: ./libs/bin/pmd2pr --graceful-warnings pmdphpmd.xml
-
   phpcpd:
     name: Copy-Paste Detect
     runs-on: ubuntu-latest
@@ -145,12 +141,6 @@ jobs:
       with:
         name: phdpcpd-xml-result
         path: phdpcpd.xml
-
-    - name: Report annotations
-      id: report-annotations
-      run: |
-        composer require mridang/cpd-annotations
-        ./libs/bin/cpd2pr phdpcpd.xml
 
   package:
     name: Package
