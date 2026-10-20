@@ -221,6 +221,7 @@ class NostoTagging extends Module
                     && $this->registerHook('actionObjectDeleteAfter')
                     && $this->registerHook('actionObjectAddAfter')
                     && $this->registerHook('actionObjectCurrencyUpdateAfter')
+                    && $this->registerHook('actionUpdateQuantity')
                     && $this->registerHook('displayBackOfficeTop')
                     && $this->registerHook('displayBackOfficeHeader');
                 // New hooks in 1.7
@@ -1089,6 +1090,30 @@ class NostoTagging extends Module
     {
         try {
             $this->hookActionObjectUpdateAfter(array('object' => $params['product']));
+        } catch (Exception $e) {
+            NostoHelperLogger::error($e);
+        }
+    }
+
+    /**
+     * Hook that is fired after the available quantity of a product has changed, e.g. when an
+     * order is placed or the stock is edited or imported. Stock changes do not update the product
+     * object itself, so without this hook the inventory level in Nosto is never refreshed.
+     *
+     * @see NostoTagging::hookActionObjectUpdateAfter
+     * @param array $params the hook parameters, one of which is the `id_product`
+     * @noinspection PhpUnused
+     */
+    public function hookActionUpdateQuantity(array $params)
+    {
+        try {
+            if (empty($params['id_product'])) {
+                return;
+            }
+            $product = new Product((int)$params['id_product']);
+            if (Validate::isLoadedObject($product)) {
+                $this->hookActionObjectUpdateAfter(array('object' => $product));
+            }
         } catch (Exception $e) {
             NostoHelperLogger::error($e);
         }
