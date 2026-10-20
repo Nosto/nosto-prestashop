@@ -100,14 +100,31 @@ class NostoOrderService extends AbstractNostoService
                         $shopDomain = NostoHelperUrl::getShopDomain();
                         if ($account !== null && $account->isConnectedToNosto()) {
                             $customerId = NostoCustomerManager::getNostoId($order);
-                            $orderService = new NostoSDKOrderCreateOperation(
-                                $nostoOrder,
-                                $account,
-                                AbstractGraphQLOperation::IDENTIFIER_BY_CID,
-                                $customerId,
-                                $shopDomain
-                            );
-                            $orderService->execute();
+                            // The order API requires the Nosto customer id, which is missing when no Nosto cookie
+                            // was linked to the cart (e.g. tracking not consented), so the request would be rejected
+                            if ($customerId === null) {
+                                NostoHelperLogger::info(
+                                    sprintf(
+                                        'Order %s not sent to Nosto: no Nosto customer id found for cart %s',
+                                        $order->id,
+                                        $order->id_cart
+                                    )
+                                );
+                            } else {
+                                try {
+                                    $orderService = new NostoSDKOrderCreateOperation(
+                                        $nostoOrder,
+                                        $account,
+                                        AbstractGraphQLOperation::IDENTIFIER_BY_CID,
+                                        $customerId,
+                                        $shopDomain
+                                    );
+                                    $orderService->execute();
+                                } catch (Exception $e) {
+                                    NostoHelperLogger::error($e, 'Failed to send order confirmation');
+                                }
+                            }
+                            // Inventory levels must be updated even when the order could not be sent
                             try {
                                 if (NostoOrderService::$syncInventoriesAfterOrder === true) {
                                     $purchasedItems = $nostoOrder->getPurchasedItems();
