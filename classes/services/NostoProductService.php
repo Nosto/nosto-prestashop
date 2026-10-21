@@ -70,6 +70,13 @@ class NostoProductService extends AbstractNostoService
     private static $processedProducts = array();
 
     /**
+     * @var array ids of the products whose stock has changed during this request. They are sent to
+     *     Nosto once when the request ends, so that the final inventory level is sent even when the
+     *     stock of the same product changes several times, e.g. for multiple variants or order lines.
+     */
+    private static $pendingStockUpdates = array();
+
+    /**
      * Updates a batch of products to Nosto
      *
      * @param Product[] $products
@@ -216,6 +223,63 @@ class NostoProductService extends AbstractNostoService
                     $employeeId
                 );
             }
+        }
+    }
+
+    /**
+     * Queues a product whose stock has changed to be sent to Nosto when the request ends
+     *
+     * @param int $productId
+     */
+    public static function queueStockUpdate($productId)
+    {
+        if (empty(self::$pendingStockUpdates)) {
+            register_shutdown_function(array(__CLASS__, 'sendStockUpdates'));
+        }
+        self::$pendingStockUpdates[(int)$productId] = true;
+    }
+
+    /**
+     * Sends the final state of the products whose stock has changed during this request to all
+     * Nosto accounts. Called when the request ends, after all stock changes have been saved.
+     */
+    public static function sendStockUpdates()
+    {
+        try {
+            $products = array();
+            foreach (array_keys(self::$pendingStockUpdates) as $productId) {
+                $product = new Product($productId);
+                if (Validate::isLoadedObject($product)) {
+                    $products[] = $product;
+                }
+            }
+            self::$pendingStockUpdates = array();
+            if (empty($products)) {
+                return;
+            }
+            // The products may have already been sent earlier in this request with an outdated stock
+            self::$processedProducts = array();
+
+            $nostoProductService = new NostoProductService();
+            // We need to forge the employee in order to get a price for a product
+            $employeeId = false; //@codingStandardsIgnoreLine
+            if (!is_object(Context::getContext()->employee) && !is_object(Context::getContext()->cart)) {
+                //if employee is null and cart is null, new Product() kills the process.
+                $employeeId = 0;
+            }
+            NostoHelperContext::runInContext(
+                function () use ($products, $nostoProductService) {
+                    NostoHelperContext::runWithEachNostoAccount(function () use ($products, $nostoProductService) {
+                        $nostoProductService->updateBatch($products);
+                    });
+                },
+                false,
+                false,
+                false,
+                $employeeId
+            );
+        } catch (Exception $e) {
+            NostoHelperLogger::error($e, 'Failed to send stock updates');
         }
     }
 
