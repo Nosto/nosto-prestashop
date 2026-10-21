@@ -1100,7 +1100,7 @@ class NostoTagging extends Module
      * order is placed or the stock is edited or imported. Stock changes do not update the product
      * object itself, so without this hook the inventory level in Nosto is never refreshed.
      *
-     * @see NostoTagging::hookActionObjectUpdateAfter
+     * @see NostoProductService::queueStockUpdate
      * @param array $params the hook parameters, one of which is the `id_product`
      * @noinspection PhpUnused
      */
@@ -1110,10 +1110,9 @@ class NostoTagging extends Module
             if (empty($params['id_product'])) {
                 return;
             }
-            $product = new Product((int)$params['id_product']);
-            if (Validate::isLoadedObject($product)) {
-                $this->hookActionObjectUpdateAfter(array('object' => $product));
-            }
+            // The stock of a product can change several times in one request (e.g. one change per
+            // variant), so the product is sent once with its final stock when the request ends
+            NostoProductService::queueStockUpdate((int)$params['id_product']);
         } catch (Exception $e) {
             NostoHelperLogger::error($e);
         }

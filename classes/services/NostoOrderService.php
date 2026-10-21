@@ -124,26 +124,16 @@ class NostoOrderService extends AbstractNostoService
                                     NostoHelperLogger::error($e, 'Failed to send order confirmation');
                                 }
                             }
-                            // Inventory levels must be updated even when the order could not be sent
-                            try {
-                                if (NostoOrderService::$syncInventoriesAfterOrder === true) {
-                                    $purchasedItems = $nostoOrder->getPurchasedItems();
-                                    $products = array();
-                                    foreach ($purchasedItems as $item) { //@codingStandardsIgnoreLine
-                                        $productId = $item->getProductId();
-                                        if (empty($productId) || $productId < 0) {
-                                            continue;
-                                        }
-                                        $product = new Product($productId);
-                                        if ($product instanceof Product) {
-                                            $products[] = $product;
-                                        }
+                            // Inventory levels must be updated even when the order could not be sent. The
+                            // products are sent once with their final stock when the request ends.
+                            if (NostoOrderService::$syncInventoriesAfterOrder === true) {
+                                foreach ($nostoOrder->getPurchasedItems() as $item) { //@codingStandardsIgnoreLine
+                                    $productId = $item->getProductId();
+                                    if (empty($productId) || $productId < 0) {
+                                        continue;
                                     }
-                                    $nostoProductOperation = new NostoProductService(); //@codingStandardsIgnoreLine
-                                    $nostoProductOperation->updateBatch($products);
+                                    NostoProductService::queueStockUpdate($productId);
                                 }
-                            } catch (Exception $e) {
-                                NostoHelperLogger::error($e, 'Failed to synchronize products after order');
                             }
                         }
                     } catch (Exception $e) {
