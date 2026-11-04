@@ -185,7 +185,26 @@ class NostoHelperPrice
 
         return (float)Tools::ps_round(
             $price,
-            $currencyDecimalsEnabled * (int)_PS_PRICE_DISPLAY_PRECISION_
+            $currencyDecimalsEnabled * self::getDisplayPrecision($currency)
         );
+    }
+
+    /**
+     * Price display precision. PrestaShop 9 removed _PS_PRICE_DISPLAY_PRECISION_: the precision is the one of the
+     * currency (Currency::$precision, PrestaShop 1.7.7+), 2 by default.
+     *
+     * @param Currency|null $currency
+     * @return int
+     */
+    public static function getDisplayPrecision($currency = null)
+    {
+        if (defined('_PS_PRICE_DISPLAY_PRECISION_')) {
+            return (int)_PS_PRICE_DISPLAY_PRECISION_;
+        }
+        if ($currency instanceof Currency && isset($currency->precision)) {
+            return (int)$currency->precision;
+        }
+
+        return 2;
     }
 }

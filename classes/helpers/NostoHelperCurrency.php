@@ -296,7 +296,9 @@ class NostoHelperCurrency
             $currencyDecimalsEnabled = $currencyObject->decimals;
         }
 
-        return $currencyDecimalsEnabled * (int) _PS_PRICE_DISPLAY_PRECISION_;
+        return $currencyDecimalsEnabled * NostoHelperPrice::getDisplayPrecision(
+            Validate::isLoadedObject($currencyObject) ? $currencyObject : null
+        );
     }
 
     private static function currencyActive(array $currency)
