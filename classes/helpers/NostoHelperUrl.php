@@ -166,6 +166,12 @@ class NostoHelperUrl
      */
     public static function getControllerUrl($controllerClassName, $employeeId)
     {
+        // PrestaShop 9: the module configuration page is a Symfony route (.../improve/modules/manage/action/configure/
+        // nostotagging), a relative "index.php?controller=" URL would resolve below it (404). Absolute admin URL instead.
+        if (version_compare(_PS_VERSION_, '9.0.0', '>=')) {
+            return Context::getContext()->link->getAdminLink($controllerClassName);
+        }
+
         /** @noinspection PhpDeprecationInspection */
         $tabId = (int)Tab::getIdFromClassName($controllerClassName);
         $token = Tools::getAdminToken($controllerClassName . $tabId . $employeeId);

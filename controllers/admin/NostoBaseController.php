@@ -26,6 +26,27 @@
 abstract class NostoBaseController extends ModuleAdminController
 {
     /**
+     * PrestaShop 9 removed AdminController::l(). The core method is used where it still exists (PrestaShop 1.6 to 8);
+     * on PrestaShop 9, translations of the module with the controller class name as source, the file name under which
+     * the translation tool of PrestaShop saves them.
+     *
+     * @param string $string
+     * @param string|null $class
+     * @param bool $addslashes
+     * @param bool $htmlentities
+     * @return string
+     */
+    protected function l($string, $class = null, $addslashes = false, $htmlentities = true)
+    {
+        if (method_exists('ModuleAdminController', 'l')) {
+            return parent::l($string, $class, $addslashes, $htmlentities);
+        }
+        $translation = Translate::getModuleTranslation($this->module, $string, get_class($this));
+
+        return $addslashes ? addslashes($translation) : $translation;
+    }
+
+    /**
      * @inheritdoc
      *
      * @suppress PhanDeprecatedFunction
