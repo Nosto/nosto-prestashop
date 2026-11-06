@@ -38,14 +38,22 @@ class NostoHelperPrice
     const ID_PRODUCT = 'id_product';
 
     /**
-     * Returns the product wholesale price for the given currency.
+     * Returns the product wholesale price, in the default currency of the shop.
      *
      * @param Product $product the product.
      * @return float|null the price.
      */
     public static function getProductWholesalePrice(Product $product)
     {
-        return $product->wholesale_price > 0 ? self::roundPrice($product->wholesale_price) : null;
+        if ($product->wholesale_price <= 0) {
+            return null;
+        }
+        $defaultCurrency = Currency::getDefaultCurrency();
+
+        return self::roundPrice(
+            $product->wholesale_price,
+            $defaultCurrency instanceof Currency ? $defaultCurrency : null
+        );
     }
 
     /**
