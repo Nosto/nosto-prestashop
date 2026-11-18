@@ -35,7 +35,7 @@ class NostoOrder extends NostoSDKOrder
      * @return Customer
      * @suppress PhanTypeMismatchArgument
      */
-    private static function loadCustomer(Order $order)
+    public static function loadCustomer(Order $order)
     {
         return new Customer((string)$order->id_customer);
     }
