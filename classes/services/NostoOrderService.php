@@ -104,7 +104,7 @@ class NostoOrderService extends AbstractNostoService
                             if ($customerId === null) {
                                 $identifierMethod = AbstractGraphQLOperation::IDENTIFIER_BY_REF;
                                 $customerId = NostoCustomerManager::getOrCreateCustomerReference(
-                                    new Customer($order->id_customer)
+                                    NostoOrder::loadCustomer($order)
                                 );
                             }
                             if ($customerId === null) {
