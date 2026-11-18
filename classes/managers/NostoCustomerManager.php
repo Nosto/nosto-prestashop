@@ -247,6 +247,27 @@ class NostoCustomerManager
     }
 
     /**
+     * Returns the customer reference, generating and saving a new one if the customer doesn't have one yet
+     *
+     * @param Customer $customer the customer whose reference to return
+     * @return string|null the customer reference or null if the customer is not loaded
+     * @throws PrestaShopDatabaseException
+     */
+    public static function getOrCreateCustomerReference(Customer $customer)
+    {
+        if (!Validate::isLoadedObject($customer)) {
+            return null;
+        }
+        $customerReference = self::getCustomerReference($customer);
+        if (empty($customerReference)) {
+            $customerReference = self::generateCustomerReference($customer);
+            self::saveCustomerReference($customer, $customerReference);
+        }
+
+        return $customerReference;
+    }
+
+    /**
      * Saves customer reference into a db. This method checks if the customer id already
      * exists in the table and updates or inserts accordingly.
      *

@@ -99,15 +99,19 @@ class NostoOrderService extends AbstractNostoService
                         $account = NostoHelperAccount::getAccount();
                         $shopDomain = NostoHelperUrl::getShopDomain();
                         if ($account !== null && $account->isConnectedToNosto()) {
+                            $identifierMethod = AbstractGraphQLOperation::IDENTIFIER_BY_CID;
                             $customerId = NostoCustomerManager::getNostoId($order);
-                            // The order API requires the Nosto customer id, which is missing when no Nosto cookie
-                            // was linked to the cart (e.g. tracking not consented), so the request would be rejected
+                            if ($customerId === null) {
+                                $identifierMethod = AbstractGraphQLOperation::IDENTIFIER_BY_REF;
+                                $customerId = NostoCustomerManager::getOrCreateCustomerReference(
+                                    new Customer($order->id_customer)
+                                );
+                            }
                             if ($customerId === null) {
                                 NostoHelperLogger::info(
                                     sprintf(
-                                        'Order %s not sent to Nosto: no Nosto customer id found for cart %s',
-                                        $order->id,
-                                        $order->id_cart
+                                        'Order %s not sent to Nosto: no Nosto customer id or customer reference found',
+                                        $order->id
                                     )
                                 );
                             } else {
@@ -115,7 +119,7 @@ class NostoOrderService extends AbstractNostoService
                                     $orderService = new NostoSDKOrderCreateOperation(
                                         $nostoOrder,
                                         $account,
-                                        AbstractGraphQLOperation::IDENTIFIER_BY_CID,
+                                        $identifierMethod,
                                         $customerId,
                                         $shopDomain
                                     );
