@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
+## 4.4.6
+- Send orders by customer reference when the Nosto customer id is missing
+- Send stock changes made through the PrestaShop webservice to Nosto
+
 ## 4.4.5
 - Send product updates to Nosto when the stock quantity changes, so the inventory level stays in sync
 - Update the inventory level of ordered products even when the order could not be sent to Nosto
