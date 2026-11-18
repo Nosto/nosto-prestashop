@@ -13,6 +13,8 @@ jobs:
     ############################################################################
     - name: Set up PHP
       uses: shivammathur/setup-php@v2
+      env:
+        update: true
       with:
         php-version: '7.3'
         tools: composer, prestissimo
@@ -63,6 +65,8 @@ jobs:
     ############################################################################
     - name: Set up PHP
       uses: shivammathur/setup-php@v2
+      env:
+        update: true
       with:
         php-version: '7.3'
         tools: composer, prestissimo
@@ -106,6 +110,8 @@ jobs:
     ############################################################################
     - name: Set up PHP
       uses: shivammathur/setup-php@v2
+      env:
+        update: true
       with:
         php-version: '7.3'
         tools: composer, prestissimo
@@ -151,6 +157,8 @@ jobs:
     ############################################################################
     - name: Set up PHP
       uses: shivammathur/setup-php@v2
+      env:
+        update: true
       with:
         php-version: '7.3'
         tools: composer, prestissimo
