@@ -70,17 +70,24 @@ class NostoProductService extends AbstractNostoService
     private static $processedProducts = array();
 
     /**
+     * @var array ids of the products whose stock has changed during this request. They are sent to
+     *     Nosto once when the request ends, so that the final inventory level is sent even when the
+     *     stock of the same product changes several times, e.g. for multiple variants or order lines.
+     */
+    private static $pendingStockUpdates = array();
+
+    /**
      * Updates a batch of products to Nosto
      *
-     * @param Product[] $products
+     * @param int[] $productIds
      * @return bool
      * @throws NostoSDKException
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
-    public function updateBatch(array $products)
+    public function updateBatch(array $productIds)
     {
-        return $this->update($products);
+        return $this->update($productIds);
     }
 
     /**
@@ -94,50 +101,42 @@ class NostoProductService extends AbstractNostoService
      */
     public function updateProduct(Product $product)
     {
-        return $this->update(array($product));
+        if (!Validate::isLoadedObject($product)) {
+            throw new NostoSDKException(sprintf('Not loaded product object with id %s', $product->id));
+        }
+
+        return $this->update(array($product->id));
     }
 
-    private function getProductCacheKey(Product $product)
+    private function getProductCacheKey($productId)
     {
-        return NostoHelperContext::getShopId() . '-' . NostoHelperContext::getLanguageId() . '-' . $product->id;
+        return NostoHelperContext::getShopId() . '-' . NostoHelperContext::getLanguageId() . '-' . $productId;
     }
 
     /**
      * Sends a product update to Nosto for all stores and installed Nosto
      * accounts
      *
-     * @param Product[] $products
+     * @param int[] $productIds
      * @return bool
      * @throws NostoSDKException
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
-    private function update(array $products)
+    private function update(array $productIds)
     {
         $productsInStore = array();
         $counter = 0;
         $batch = 1;
-        foreach ($products as $product) {
+        foreach ($productIds as $productId) {
             if ($counter > 0 && $counter % self::$maxBatchSize === 0) {
                 ++$batch;
             }
             ++$counter;
-            if ($product instanceof Product === false
-                || !Validate::isLoadedObject($product)
-            ) {
-                throw new NostoSDKException(
-                    sprintf(
-                        'Invalid data type or not loaded object, expecting Product' .
-                        ', got %s with id %s',
-                        get_class($product),
-                        $product->id
-                    )
-                );
-            }
-            if (in_array($this->getProductCacheKey($product), self::$processedProducts)) {
+            if (in_array($this->getProductCacheKey($productId), self::$processedProducts)) {
                 continue;
             }
-            self::$processedProducts[] = $this->getProductCacheKey($product);
+            self::$processedProducts[] = $this->getProductCacheKey($productId);
 
             $nostoAccount = NostoHelperAccount::getAccount();
             if (!$nostoAccount) {
@@ -145,7 +144,7 @@ class NostoProductService extends AbstractNostoService
             }
 
             $accountName = $nostoAccount->getName();
-            $nostoProduct = $this->loadNostoProduct($product->id);
+            $nostoProduct = $this->loadNostoProduct($productId);
             if ($nostoProduct instanceof NostoProduct === false) {
                 continue;
             }
@@ -195,6 +194,9 @@ class NostoProductService extends AbstractNostoService
     {
         if (isset($params['object'])) {
             $object = $params['object'];
+            if ($object instanceof StockAvailable && !empty($object->id_product)) {
+                self::queueStockUpdate($object->id_product);
+            }
             if ($object instanceof Product) {
                 //run over all the nosto account
                 $nostoProductService = $this;
@@ -216,6 +218,57 @@ class NostoProductService extends AbstractNostoService
                     $employeeId
                 );
             }
+        }
+    }
+
+    /**
+     * Queues a product whose stock has changed to be sent to Nosto when the request ends
+     *
+     * @param int $productId
+     */
+    public static function queueStockUpdate($productId)
+    {
+        if (empty(self::$pendingStockUpdates)) {
+            register_shutdown_function(array(__CLASS__, 'sendStockUpdates'));
+        }
+        self::$pendingStockUpdates[(int)$productId] = true;
+    }
+
+    /**
+     * Sends the final state of the products whose stock has changed during this request to all
+     * Nosto accounts. Called when the request ends, after all stock changes have been saved.
+     */
+    public static function sendStockUpdates()
+    {
+        try {
+            $productIds = array_keys(self::$pendingStockUpdates);
+            self::$pendingStockUpdates = array();
+            if (empty($productIds)) {
+                return;
+            }
+            // The products may have already been sent earlier in this request with an outdated stock
+            self::$processedProducts = array();
+
+            $nostoProductService = new NostoProductService();
+            // We need to forge the employee in order to get a price for a product
+            $employeeId = false; //@codingStandardsIgnoreLine
+            if (!is_object(Context::getContext()->employee) && !is_object(Context::getContext()->cart)) {
+                //if employee is null and cart is null, new Product() kills the process.
+                $employeeId = 0;
+            }
+            NostoHelperContext::runInContext(
+                function () use ($productIds, $nostoProductService) {
+                    NostoHelperContext::runWithEachNostoAccount(function () use ($productIds, $nostoProductService) {
+                        $nostoProductService->updateBatch($productIds);
+                    });
+                },
+                false,
+                false,
+                false,
+                $employeeId
+            );
+        } catch (Exception $e) {
+            NostoHelperLogger::error($e, 'Failed to send stock updates');
         }
     }
 
@@ -246,12 +299,12 @@ class NostoProductService extends AbstractNostoService
     private function deleteProduct(Product $product)
     {
         if (!Validate::isLoadedObject($product)
-            || in_array($this->getProductCacheKey($product), self::$processedProducts, false)
+            || in_array($this->getProductCacheKey($product->id), self::$processedProducts, false)
         ) {
             return;
         }
 
-        self::$processedProducts[] = $this->getProductCacheKey($product);
+        self::$processedProducts[] = $this->getProductCacheKey($product->id);
 
         $nostoAccount = NostoHelperAccount::getAccount();
         if (!$nostoAccount) {

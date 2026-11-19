@@ -99,34 +99,45 @@ class NostoOrderService extends AbstractNostoService
                         $account = NostoHelperAccount::getAccount();
                         $shopDomain = NostoHelperUrl::getShopDomain();
                         if ($account !== null && $account->isConnectedToNosto()) {
+                            $identifierMethod = AbstractGraphQLOperation::IDENTIFIER_BY_CID;
                             $customerId = NostoCustomerManager::getNostoId($order);
-                            $orderService = new NostoSDKOrderCreateOperation(
-                                $nostoOrder,
-                                $account,
-                                AbstractGraphQLOperation::IDENTIFIER_BY_CID,
-                                $customerId,
-                                $shopDomain
-                            );
-                            $orderService->execute();
-                            try {
-                                if (NostoOrderService::$syncInventoriesAfterOrder === true) {
-                                    $purchasedItems = $nostoOrder->getPurchasedItems();
-                                    $products = array();
-                                    foreach ($purchasedItems as $item) { //@codingStandardsIgnoreLine
-                                        $productId = $item->getProductId();
-                                        if (empty($productId) || $productId < 0) {
-                                            continue;
-                                        }
-                                        $product = new Product($productId);
-                                        if ($product instanceof Product) {
-                                            $products[] = $product;
-                                        }
-                                    }
-                                    $nostoProductOperation = new NostoProductService(); //@codingStandardsIgnoreLine
-                                    $nostoProductOperation->updateBatch($products);
+                            if ($customerId === null) {
+                                $identifierMethod = AbstractGraphQLOperation::IDENTIFIER_BY_REF;
+                                $customerId = NostoCustomerManager::getOrCreateCustomerReference(
+                                    NostoOrder::loadCustomer($order)
+                                );
+                            }
+                            if ($customerId === null) {
+                                NostoHelperLogger::info(
+                                    sprintf(
+                                        'Order %s not sent to Nosto: no Nosto customer id or customer reference found',
+                                        $order->id
+                                    )
+                                );
+                            } else {
+                                try {
+                                    $orderService = new NostoSDKOrderCreateOperation(
+                                        $nostoOrder,
+                                        $account,
+                                        $identifierMethod,
+                                        $customerId,
+                                        $shopDomain
+                                    );
+                                    $orderService->execute();
+                                } catch (Exception $e) {
+                                    NostoHelperLogger::error($e, 'Failed to send order confirmation');
                                 }
-                            } catch (Exception $e) {
-                                NostoHelperLogger::error($e, 'Failed to synchronize products after order');
+                            }
+                            // Inventory levels must be updated even when the order could not be sent. The
+                            // products are sent once with their final stock when the request ends.
+                            if (NostoOrderService::$syncInventoriesAfterOrder === true) {
+                                foreach ($nostoOrder->getPurchasedItems() as $item) { //@codingStandardsIgnoreLine
+                                    $productId = $item->getProductId();
+                                    if (empty($productId) || $productId < 0) {
+                                        continue;
+                                    }
+                                    NostoProductService::queueStockUpdate($productId);
+                                }
                             }
                         }
                     } catch (Exception $e) {
