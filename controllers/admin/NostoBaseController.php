@@ -35,6 +35,8 @@ abstract class NostoBaseController extends ModuleAdminController
      * @param bool $addslashes
      * @param bool $htmlentities
      * @return string
+     *
+     * @suppress PhanDeprecatedFunction
      */
     protected function l($string, $class = null, $addslashes = false, $htmlentities = true)
     {
