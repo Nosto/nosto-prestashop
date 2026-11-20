@@ -41,7 +41,11 @@ class NostoHelperLink
      */
     public static function getLink()
     {
-        if (Configuration::get(self::PS_SSL_ENABLED_EVERYWHERE)) {
+        // PrestaShop 9 removed PS_SSL_ENABLED_EVERYWHERE: SSL on the whole shop is PS_SSL_ENABLED alone
+        $sslEverywhere = version_compare(_PS_VERSION_, '9.0.0', '>=')
+            ? Configuration::get('PS_SSL_ENABLED')
+            : Configuration::get(self::PS_SSL_ENABLED_EVERYWHERE);
+        if ($sslEverywhere) {
             $link = new Link('https://', 'https://');
         } else {
             $link = new Link('http://', 'http://');
