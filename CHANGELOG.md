@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to Semantic Versioning(http://semver.org/).
 
+## 4.5.0
+- Add compatibility with PrestaShop 9
+
 ## 4.4.6
 - Send orders by customer reference when the Nosto customer id is missing
 - Send stock changes made through the PrestaShop webservice to Nosto
